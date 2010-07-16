@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="100%" height="100%"
+	applicationComplete="Init();">
+	<mx:Script>
+		<![CDATA[
+			import mx.utils.ObjectUtil;
+			private var _nc:NetConnection;
+			private function Init():void{
+				_nc=new NetConnection();
+				_nc.addEventListener(NetStatusEvent.NET_STATUS,OnNcStatus);
+				_nc.connect("rtmp://localhost/admin","gigi","spaima");
+			}
+			
+			private function OnNcStatus(e:NetStatusEvent):void{
+				AppendLog(e);
+				_nc.call("StartTests",new Responder(OnTestsResult));
+			}
+			
+			private function AppendLog(o:Object):void{
+				res.text+="\n-------------\n"+ObjectUtil.toString(o);
+			}
+			
+			private function OnTestsResult(o:Object):void{
+				AppendLog(o);
+			}
+		]]>
+	</mx:Script>
+	<mx:TextArea width="100%" height="100%" id="res" />
+</mx:Application>

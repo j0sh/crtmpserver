@@ -1,0 +1,374 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{DDC93AD7-6622-4EAC-AB28-32B7D718F14D}</ProjectGuid>
+    <RootNamespace>thelib</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>NotSet</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>NotSet</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Configuration)\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Configuration)\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>..\..\..\sources\common\include;..\..\..\3rdparty\OpenSSL\include;..\..\..\sources\thelib\include;..\..\..\3rdparty\lua\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;THELIB_EXPORTS;_CRT_SECURE_NO_WARNINGS;NET_IOCP2;LITTLE_ENDIAN_BYTE_ALIGNED;HAS_LUA;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <PrecompiledHeaderFile>utils/core.h</PrecompiledHeaderFile>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <DisableSpecificWarnings>4251;4800;4503;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <ForcedIncludeFiles>utils/core.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>libeay32.lib;ssleay32.lib;ws2_32.lib;Mswsock.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\..\3rdparty\OpenSSL\lib_MTd;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <AdditionalIncludeDirectories>..\..\..\sources\common\include;..\..\..\3rdparty\OpenSSL\include;..\..\..\sources\thelib\include;..\..\..\3rdparty\lua\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;THELIB_EXPORTS;_CRT_SECURE_NO_WARNINGS;NET_IOCP2;LITTLE_ENDIAN_BYTE_ALIGNED;HAS_LUA;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <PrecompiledHeaderFile>utils/core.h</PrecompiledHeaderFile>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DisableSpecificWarnings>4251;4800;4503;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <ForcedIncludeFiles>utils/core.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>libeay32.lib;ssleay32.lib;ws2_32.lib;Mswsock.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\..\3rdparty\OpenSSL\lib_MT;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\common\common.vcxproj">
+      <Project>{0527601c-06c4-4af6-bc87-48fc042c1437}</Project>
+      <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
+      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\sources\thelib\src\application\baseappprotocolhandler.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\application\baseclientapplication.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\application\clientapplicationmanager.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\configuration\configfile.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\netio\iocp2\iohandler.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\netio\iocp2\iohandlermanager.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\netio\iocp2\iotimer.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\netio\iocp2\stdiocarrier.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\netio\iocp2\tcpacceptor.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\netio\iocp2\tcpcarrier.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\netio\iocp2\udpcarrier.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\baseprotocol.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\baseprotocolfactory.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\defaultprotocolfactory.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\protocolfactorymanager.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\protocolmanager.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\streaming\outfilertmpflvstream.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtp\basertpappprotocolhandler.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtp\inboundrtpprotocol.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\sslprotocol.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\tcpprotocol.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\udpprotocol.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\dns\inbounddnsresolverprotocol.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\dns\outbounddnsresolverprotocol.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\http\basehttpappprotocolhandler.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\http\basehttpprotocol.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\http\inboundhttpprotocol.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\http\outboundhttpprotocol.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\amf0serializer.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\amf3serializer.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\basertmpappprotocolhandler.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\basertmpprotocol.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\channel.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\header_be_ba.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\header_le_ba.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\header_le_sa.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\inboundhttp4rtmp.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\inboundrtmpprotocol.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\outboundrtmpprotocol.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\rtmpeprotocol.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\rtmpprotocolserializer.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\sharedobjects\so.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\sharedobjects\somanager.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\streaming\baseoutnetrtmpstream.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\streaming\infilertmpflvstream.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\streaming\infilertmpmp3stream.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\streaming\infilertmpmp4stream.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\streaming\infilertmpstream.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\streaming\innetrtmpstream.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\streaming\outnetrtmp4rtmpstream.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\streaming\outnetrtmp4tsstream.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\streaming\rtmpstream.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\messagefactories\connectionmessagefactory.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\messagefactories\genericmessagefactory.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\messagefactories\somessagefactory.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\messagefactories\streammessagefactory.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\timer\basetimerprotocol.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\ts\basetsappprotocolhandler.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\ts\inboundtsprotocol.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\ts\innettsstream.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\ts\pidtypes.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\ts\streamdescriptors.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\ts\tsadaptationfield.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\ts\tspacketheader.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\ts\tspacketpat.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\ts\tspacketpmt.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\liveflv\baseliveflvappprotocolhandler.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\liveflv\inboundliveflvprotocol.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\liveflv\innetliveflvstream.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\variant\basevariantappprotocolhandler.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\variant\basevariantprotocol.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\variant\binvariantprotocol.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\variant\xmlvariantprotocol.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\basemediadocument.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\flv\flvdocument.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp3\id3parser.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp3\mp3document.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomavc1.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomavcc.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomco64.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomctts.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomdata.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomdinf.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomdref.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomesds.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomftyp.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomhdlr.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomilst.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atommdhd.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atommdia.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atommeta.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atommetafield.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomminf.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atommoov.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atommp4a.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atommvhd.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomnull.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomsmhd.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomstbl.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomstco.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomstsc.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomstsd.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomstss.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomstsz.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomstts.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomtkhd.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomtrak.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomudta.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomurl.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomvmhd.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomwave.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\baseatom.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\boxatom.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\ignoredatom.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\mp4document.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\versionedatom.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\versionedboxatom.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\streaming\baseinfilestream.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\streaming\baseinnetstream.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\streaming\baseinstream.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\streaming\baseoutfilestream.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\streaming\baseoutnetstream.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\streaming\baseoutstream.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\streaming\basestream.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\streaming\streamsmanager.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\sources\thelib\include\application\baseappprotocolhandler.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\application\baseclientapplication.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\application\clientapplicationmanager.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\configuration\configfile.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\netio\netio.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\netio\iocp2\iohandler.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\netio\iocp2\iohandlermanager.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\netio\iocp2\iohandlermanagertoken.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\netio\iocp2\iotimer.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\netio\iocp2\stdiocarrier.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\netio\iocp2\tcpacceptor.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\netio\iocp2\tcpcarrier.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\netio\iocp2\tcpconnector.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\netio\iocp2\udpcarrier.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\baseprotocol.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\baseprotocolfactory.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\defaultprotocolfactory.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\protocolfactorymanager.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\protocolmanager.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\protocoltypes.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtp\basertpappprotocolhandler.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtp\inboundrtpprotocol.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\sslprotocol.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\tcpprotocol.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\udpprotocol.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\dns\inbounddnsresolverprotocol.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\dns\outbounddnsresolverprotocol.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\http\basehttpprotocol.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\http\basehttpprotocolhandler.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\http\inboundhttpprotocol.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\http\outboundhttpprotocol.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\amf0serializer.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\amf3serializer.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\amfserializer.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\amftypes.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\basertmpappprotocolhandler.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\basertmpprotocol.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\channel.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\header.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\header_be_ba.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\header_le_ba.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\header_le_sa.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\inboundhttp4rtmp.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\inboundrtmpprotocol.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\outboundrtmpprotocol.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\rtmpeprotocol.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\rtmpprotocolserializer.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\sharedobjects\so.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\sharedobjects\somanager.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\streaming\baseoutnetrtmpstream.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\streaming\infilertmpflvstream.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\streaming\infilertmpmp3stream.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\streaming\infilertmpmp4stream.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\streaming\infilertmpstream.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\streaming\innetrtmpstream.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\streaming\outnetrtmp4rtmpstream.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\streaming\outnetrtmp4tsstream.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\streaming\rtmpstream.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\messagefactories\connectionmessagefactory.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\messagefactories\genericmessagefactory.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\messagefactories\messagefactories.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\messagefactories\somessagefactory.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\messagefactories\streammessagefactory.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\timer\basetimerprotocol.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\ts\basetsappprotocolhandler.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\ts\inboundtsprotocol.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\ts\innettsstream.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\ts\pidtypes.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\ts\streamdescriptors.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\ts\tsadaptationfield.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\ts\tsboundscheck.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\ts\tspacketheader.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\ts\tspacketpat.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\ts\tspacketpmt.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\liveflv\baseliveflvappprotocolhandler.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\liveflv\inboundliveflvprotocol.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\liveflv\innetliveflvstream.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\variant\basevariantappprotocolhandler.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\variant\basevariantprotocol.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\variant\binvariantprotocol.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\variant\xmlvariantprotocol.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\basemediadocument.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mediaframe.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\flv\flvdocument.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp3\id3parser.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp3\mp3document.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomavc1.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomavcc.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomco64.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomctts.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomdata.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomdinf.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomdref.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomesds.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomftyp.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomhdlr.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomilst.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atommdhd.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atommdia.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atommeta.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atommetafield.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomminf.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atommoov.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atommp4a.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atommvhd.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomnull.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomsmhd.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomstbl.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomstco.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomstsc.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomstsd.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomstss.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomstsz.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomstts.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomtkhd.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomtrak.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomudta.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomurl.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomvmhd.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomwave.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\baseatom.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\boxatom.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\ignoredatom.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\mp4document.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\versionedatom.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\versionedboxatom.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\streaming\baseinfilestream.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\streaming\baseinnetstream.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\streaming\baseinstream.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\streaming\baseoutfilestream.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\streaming\baseoutnetstream.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\streaming\baseoutstream.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\streaming\basestream.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\streaming\streamsmanager.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\streaming\streamstypes.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\cmake\rtmpserver\rtmpserver.lua" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

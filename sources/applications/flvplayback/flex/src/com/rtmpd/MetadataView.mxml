@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="800" height="600" backgroundColor="black" color="white" borderColor="#BABABA">
+	<mx:Script>
+		<![CDATA[
+			import mx.controls.Alert;
+			import mx.managers.PopUpManager;
+			import mx.utils.ObjectUtil;
+			[Bindable] private var _metadata:Object;
+			private var _pictures:Array;
+			
+			public function Init(metadata:Object):void{
+				_metadata=metadata;
+				_pictures=new Array();
+				GetPictures(_metadata);
+				b1.rawChildren.addChild(_pictures[0]);
+				b2.rawChildren.addChild(_pictures[1]);
+				b3.rawChildren.addChild(_pictures[2]);
+				b4.rawChildren.addChild(_pictures[3]);
+			}
+			
+			private function GetPictures(o:Object):void{
+				if(o==null)
+					return;
+				for (var p:String in o) {
+					if(o[p] is ByteArray){
+						var loader:Loader= new Loader();
+						loader.loadBytes(o[p]);
+						_pictures.push(loader);
+					}
+					else{
+						GetPictures(o[p]);
+					}
+				}
+			}
+		]]>
+	</mx:Script>
+		<mx:VBox width="100%" height="100%">
+			<mx:Box width="100%" height="100%">
+				<mx:HBox width="100%" height="100%">
+					<mx:Box width="300" height="100%">
+						<mx:TextArea text="{ObjectUtil.toString(_metadata)}" width="100%" height="100%" backgroundColor="#404040"/>
+					</mx:Box>
+					<mx:VBox width="100%" height="100%" id="pict">
+						<mx:Box id="b1" width="100%" height="25%" />
+						<mx:Box id="b2" width="100%" height="25%" />
+						<mx:Box id="b3" width="100%" height="25%" />
+						<mx:Box id="b4" width="100%" height="25%" />
+					</mx:VBox>
+				</mx:HBox>
+			</mx:Box>
+			<mx:Box width="100%">
+				<mx:HBox width="100%" height="100%">
+					<mx:Box width="100%" />
+					<mx:Box>
+						<mx:Button label="Close" click="PopUpManager.removePopUp(this);" />
+					</mx:Box>
+				</mx:HBox>
+			</mx:Box>
+		</mx:VBox>
+</mx:TitleWindow>

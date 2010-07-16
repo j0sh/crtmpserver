@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:UIComponent xmlns:mx="http://www.adobe.com/2006/mxml">
+	<mx:Script>
+		<![CDATA[
+			import mx.utils.StringUtil;
+			import mx.utils.ObjectUtil;
+			import mx.controls.Alert;
+			private var _video:Video;
+			private var _stream:NetStream;
+			private var _lastOnMetaData:Object;
+			private var _streamName:String;
+			
+			public function Init():void {
+				_video=new Video(width,height);
+				try {
+					addChild(_video);
+				}catch(e:Error){
+    				Alert.show(e.message);
+    			}
+			}
+			
+			public function get BufferLength():Number{
+				if(_stream!=null)
+					return _stream.bufferLength;
+				return 0;
+			}
+			
+			public function get TimeHead():Number{
+				if(_stream!=null)
+					return _stream.time;
+				return 0;
+			}
+			
+			public function get StreamName():String{
+				return _streamName;
+			}
+			
+			public function myHandler(o1:Object, o2:Object):void{
+				Alert.show(ObjectUtil.toString(o1));
+				Alert.show(ObjectUtil.toString(o2));
+			}
+			
+			public function onMetaData(event:Object):void{
+				_lastOnMetaData=event;
+				if(event["width"]!=null&&event["height"]){
+					_video.x=(width-event["width"])/2;
+					_video.y=(height-event["height"])/2;
+					_video.width=event["width"];
+					_video.height=event["height"];
+				}
+			}
+			
+			public function myMsg(o:Object):void{
+				Alert.show(ObjectUtil.toString(o));
+			}
+			
+			public function get VideoRect():Rectangle{
+				var position:Point=localToGlobal(new Point(_video.x,_video.y));
+				return new Rectangle(position.x,position.y,_video.width,_video.height);
+			}
+			
+			public function PlayStream(nc:NetConnection, streamName:String):void{
+				Reset();
+				_stream=new NetStream(nc);
+				_stream.client=this;
+				_stream.bufferTime=1;
+				_stream.play(streamName);
+				_streamName=streamName;
+				
+				_video.attachNetStream(_stream);
+			}
+			
+			public function Reset():void {
+				_video.attachNetStream(null);
+				_video.clear();
+				_video.x=0;
+				_video.y=0;
+				_video.width=width;
+				_video.height=height;
+				_lastOnMetaData=null;
+				_streamName=null;
+				
+				if(_stream!=null){
+					_stream.close();
+					_stream=null;
+				}
+			}
+			
+			public function SeekTo(seekPos:Number):void{
+				if(_stream==null)
+					return;
+				_stream.seek(30);
+			}
+			
+			public function Pause():void{
+				if(_stream==null)
+					return;
+				_stream.pause();
+			}
+			
+			public function Resume():void{
+				if(_stream==null)
+					return;
+				_stream.resume();
+			}
+			
+			public function LastOnMetaData():Object{
+				return _lastOnMetaData;	
+			}
+		]]>
+	</mx:Script>
+</mx:UIComponent>

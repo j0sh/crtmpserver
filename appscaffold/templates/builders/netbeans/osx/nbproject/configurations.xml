@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="62">
+  <logicalFolder name="root" displayName="root" projectFiles="true">
+    <logicalFolder name="HeaderFiles"
+                   displayName="Header Files"
+                   projectFiles="true">
+      <itemPath>../../../../sources/applications/#APPNAME_LC#/include/#APPNAME_LC#.h</itemPath>
+      <itemPath>../../../../sources/applications/#APPNAME_LC#/include/#APPNAME_LC#application.h</itemPath>
+      <itemPath>../../../../sources/applications/#APPNAME_LC#/include/rtmpappprotocolhandler.h</itemPath>
+    </logicalFolder>
+    <logicalFolder name="SourceFiles"
+                   displayName="Source Files"
+                   projectFiles="true">
+      <itemPath>../../../../sources/applications/#APPNAME_LC#/src/#APPNAME_LC#.cpp</itemPath>
+      <itemPath>../../../../sources/applications/#APPNAME_LC#/src/#APPNAME_LC#application.cpp</itemPath>
+      <itemPath>../../../../sources/applications/#APPNAME_LC#/src/rtmpappprotocolhandler.cpp</itemPath>
+    </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false">
+      <itemPath>Makefile.nb</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <sourceRootList>
+    <Elem>../../../sources/applications/#APPNAME_LC#/include</Elem>
+    <Elem>../../../sources/applications/#APPNAME_LC#/src</Elem>
+  </sourceRootList>
+  <projectmakefile>Makefile.nb</projectmakefile>
+  <confs>
+    <conf name="Debug" type="2">
+      <toolsSet>
+        <developmentServer>localhost</developmentServer>
+        <compilerSet>GNU|GNU</compilerSet>
+        <platform>4</platform>
+      </toolsSet>
+      <compileType>
+        <ccTool>
+          <incDir>
+            <pElem>/opt/local/include</pElem>
+            <pElem>../../../../sources/common/include</pElem>
+            <pElem>../../../../sources/thelib/include</pElem>
+            <pElem>../../../../sources/applications/#APPNAME_LC#/include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>OSX</Elem>
+            <Elem>NET_KQUEUE</Elem>
+          </preprocessorList>
+        </ccTool>
+        <linkerTool>
+          <output>../${CND_CONF}/${CND_PLATFORM}/applications/#APPNAME_LC#/lib#APPNAME_LC#.dylib</output>
+          <linkerLibItems>
+            <linkerLibProjectItem>
+              <makeArtifact PL="../thelib"
+                            CT="2"
+                            CN="Debug"
+                            AC="true"
+                            BL="true"
+                            WD="../thelib"
+                            BC="${MAKE}  -f Makefile.nb CONF=Debug"
+                            CC="${MAKE}  -f Makefile.nb CONF=Debug clean"
+                            OP="../Debug/GNU-MacOSX/libthelib.dylib">
+              </makeArtifact>
+            </linkerLibProjectItem>
+            <linkerLibProjectItem>
+              <makeArtifact PL="../common"
+                            CT="2"
+                            CN="Debug"
+                            AC="true"
+                            BL="true"
+                            WD="../common"
+                            BC="${MAKE}  -f Makefile.nb CONF=Debug"
+                            CC="${MAKE}  -f Makefile.nb CONF=Debug clean"
+                            OP="dist/Debug/GNU-MacOSX/libcommon.dylib">
+              </makeArtifact>
+            </linkerLibProjectItem>
+          </linkerLibItems>
+        </linkerTool>
+      </compileType>
+    </conf>
+    <conf name="Release" type="2">
+      <toolsSet>
+        <developmentServer>localhost</developmentServer>
+        <compilerSet>GNU|GNU</compilerSet>
+        <platform>4</platform>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <developmentMode>5</developmentMode>
+        </cTool>
+        <ccTool>
+          <developmentMode>5</developmentMode>
+          <incDir>
+            <pElem>/opt/local/include</pElem>
+            <pElem>../../../../sources/common/include</pElem>
+            <pElem>../../../../sources/thelib/include</pElem>
+            <pElem>../../../../sources/applications/#APPNAME_LC#/include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>OSX</Elem>
+            <Elem>NET_KQUEUE</Elem>
+          </preprocessorList>
+        </ccTool>
+        <fortranCompilerTool>
+          <developmentMode>5</developmentMode>
+        </fortranCompilerTool>
+        <linkerTool>
+          <output>../${CND_CONF}/${CND_PLATFORM}/applications/#APPNAME_LC#/lib#APPNAME_LC#.dylib</output>
+          <linkerLibItems>
+            <linkerLibProjectItem>
+              <makeArtifact PL="../common"
+                            CT="2"
+                            CN="Release"
+                            AC="false"
+                            BL="true"
+                            WD="../common"
+                            BC="${MAKE}  -f Makefile.nb CONF=Release"
+                            CC="${MAKE}  -f Makefile.nb CONF=Release clean"
+                            OP="dist/Release/GNU-MacOSX/libcommon.dylib">
+              </makeArtifact>
+            </linkerLibProjectItem>
+            <linkerLibProjectItem>
+              <makeArtifact PL="../thelib"
+                            CT="2"
+                            CN="Release"
+                            AC="false"
+                            BL="true"
+                            WD="../thelib"
+                            BC="${MAKE}  -f Makefile.nb CONF=Release"
+                            CC="${MAKE}  -f Makefile.nb CONF=Release clean"
+                            OP="../Release/GNU-MacOSX/libthelib.dylib">
+              </makeArtifact>
+            </linkerLibProjectItem>
+          </linkerLibItems>
+        </linkerTool>
+      </compileType>
+    </conf>
+  </confs>
+</configurationDescriptor>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" height="100%">
+	<mx:Script>
+		<![CDATA[
+			import mx.utils.ObjectUtil;
+			import mx.controls.Alert;
+			private var _engine:Engine;
+			[Bindable] private var _services:Array;
+			public function Init(engine:Engine):void{
+				_engine=engine;
+				Refresh();
+			}
+			
+			private function Refresh():void{
+				_engine.Call("ListServices",OnListServices);
+			}
+			
+			private function GetStack(item:Object, dc:DataGridColumn):String{
+				var result:String="";
+				var i:Number=0;
+				var stack:Array=item.protocolStack;
+				for(i=0;i<stack.length-1;i++){
+					result+=stack[i]+"->";
+				}
+				
+				if(stack.length>0){
+					result+=stack[stack.length-1];
+				}
+				
+				return result;
+			}
+			
+			private function OnListServices(services:Array):void{
+				_services=services;
+			}
+		]]>
+	</mx:Script>
+	<mx:VBox width="100%" height="100%">
+		<mx:Box width="100%" height="100%">
+			<mx:DataGrid id="grid" width="100%" height="100%" dataProvider="{_services}">
+				<mx:columns>
+					<mx:DataGridColumn dataField="carrier" />
+					<mx:DataGridColumn dataField="protocol" />
+					<mx:DataGridColumn dataField="application" />
+					<mx:DataGridColumn dataField="ip" />
+					<mx:DataGridColumn dataField="port" />
+					<mx:DataGridColumn headerText="Protocol stack" labelFunction="GetStack"/>
+				</mx:columns>
+			</mx:DataGrid>
+		</mx:Box>
+	</mx:VBox>
+</mx:Canvas>

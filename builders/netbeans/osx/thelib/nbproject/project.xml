@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://www.netbeans.org/ns/project/1">
+    <type>org.netbeans.modules.cnd.makeproject</type>
+    <configuration>
+        <data xmlns="http://www.netbeans.org/ns/make-project/1">
+            <name>thelib</name>
+            <make-project-type>0</make-project-type>
+            <c-extensions/>
+            <cpp-extensions>cpp</cpp-extensions>
+            <header-extensions>h</header-extensions>
+            <sourceEncoding>UTF-8</sourceEncoding>
+            <make-dep-projects>
+                <make-dep-project>../common</make-dep-project>
+            </make-dep-projects>
+            <sourceRootList>
+                <sourceRootElem>../../../../sources/thelib/include/application</sourceRootElem>
+                <sourceRootElem>../../../../sources/thelib/include/configuration</sourceRootElem>
+                <sourceRootElem>../../../../sources/thelib/include/netio</sourceRootElem>
+                <sourceRootElem>../../../../sources/thelib/include/protocols</sourceRootElem>
+                <sourceRootElem>../../../../sources/thelib/src/application</sourceRootElem>
+                <sourceRootElem>../../../../sources/thelib/src/configuration</sourceRootElem>
+                <sourceRootElem>../../../../sources/thelib/src/netio</sourceRootElem>
+                <sourceRootElem>../../../../sources/thelib/src/protocols</sourceRootElem>
+                <sourceRootElem>../../../../sources/thelib/include/streaming</sourceRootElem>
+                <sourceRootElem>../../../../sources/thelib/src/streaming</sourceRootElem>
+                <sourceRootElem>../../../../sources/thelib/include/mediaformats</sourceRootElem>
+                <sourceRootElem>../../../../sources/thelib/src/mediaformats</sourceRootElem>
+            </sourceRootList>
+            <confList>
+                <confElem>Debug</confElem>
+                <confElem>Release</confElem>
+            </confList>
+        </data>
+    </configuration>
+</project>

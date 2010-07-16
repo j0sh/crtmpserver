@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute"
+	title="Connection settings">
+	<mx:Script>
+		<![CDATA[
+			import com.rtmpd.generics.Logging;
+			import mx.managers.PopUpManager;
+			private var _output:Object=null;
+			[Bindable] private var _isAuth:Boolean=false;
+			
+			public static function ShowAuth(parent:DisplayObject, protocol:String, server:String, application:String, username:String, password:String, output:Object):void{
+				var cw:ConnectWindow=ConnectWindow.Setup(parent,protocol,server,application,output);
+				cw._isAuth=true;
+				cw.username.text=username;
+				cw.password.text=password;
+			}
+			
+			public static function ShowSimple(parent:DisplayObject, protocol:String, server:String, application:String, output:Object):void{
+				var cw:ConnectWindow=ConnectWindow.Setup(parent,protocol,server,application,output);
+				cw._isAuth=false;
+			}
+			
+			public static function Setup(parent:DisplayObject, protocol:String, server:String, application:String, output:Object):ConnectWindow{
+				var loginWindow:ConnectWindow=ConnectWindow(PopUpManager.createPopUp(parent,ConnectWindow,true));
+				switch(protocol){
+					case "rtmp":
+						loginWindow.protocol.selectedIndex=0;
+						break;
+					case "rtmpe":
+						loginWindow.protocol.selectedIndex=1;
+						break;
+					case "rtmpt":
+						loginWindow.protocol.selectedIndex=2;
+						break;
+					case "rtmps":
+						loginWindow.protocol.selectedIndex=3;
+						break;
+					default:
+						loginWindow.protocol.selectedIndex=0;
+						break;
+				}
+				loginWindow.server.text=server;
+				loginWindow.application.text=application;
+				loginWindow._output=output;
+				PopUpManager.centerPopUp(loginWindow);
+				return loginWindow;
+			}
+			
+			private function Close():void{
+				if(_output!=null){
+					_output.completeUri=completeUri.text;
+					_output.username=username.text;
+					_output.password=password.text;
+					_output.done();
+				}
+				PopUpManager.removePopUp(this);
+			}
+		]]>
+	</mx:Script>
+
+	<mx:Model id="form">
+		<info>
+			<protocol>{protocol.value}</protocol>
+			<server>{server.text}</server>
+			<application>{application.text}</application>
+			<completeUri>{completeUri.text}</completeUri>
+			<username>{username.text}</username>
+			<password>{password.text}</password>
+		</info>
+	</mx:Model>
+
+	<mx:Form id="formControl">
+		<mx:FormItem label="Protocol">
+			<mx:ComboBox id="protocol">
+				<mx:ArrayCollection>
+					<mx:Object label="RTMP" data="rtmp"/>
+					<mx:Object label="RTMP Encrypted" data="rtmpe"/>
+					<mx:Object label="RTMP over HTTP" data="rtmpt"/>
+					<mx:Object label="RTMP over HTTPS" data="rtmps"/>
+				</mx:ArrayCollection>
+			</mx:ComboBox>
+		</mx:FormItem>
+		<mx:FormItem label="Server:">
+			<mx:TextInput id="server" text="localhost"/>
+		</mx:FormItem>
+		<mx:FormItem label="Application:">
+			<mx:TextInput id="application" />
+		</mx:FormItem>
+		<mx:FormItem label="Complete URI:">
+			<mx:TextInput id="completeUri" text="{protocol.selectedItem.data+'://'+server.text+'/'+application.text}"/>
+		</mx:FormItem>
+		<mx:FormItem label="Username:" visible="{_isAuth}">
+			<mx:TextInput id="username" />
+		</mx:FormItem>
+		<mx:FormItem label="Password:" visible="{_isAuth}">
+			<mx:TextInput id="password" />
+		</mx:FormItem>
+		<mx:FormItem>
+			<mx:Button label="Connect" id="connect" click="Close()"/>
+		</mx:FormItem>
+	</mx:Form>
+</mx:TitleWindow>

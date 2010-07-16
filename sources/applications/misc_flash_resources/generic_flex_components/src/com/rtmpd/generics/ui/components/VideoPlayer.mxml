@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="400" height="300" 
+	backgroundColor="black">
+	<mx:Script>
+		<![CDATA[
+//			import mx.controls.TextArea;
+//			import mx.controls.Button;
+			import mx.utils.ObjectUtil;
+			import com.rtmpd.generics.Connection;
+			import com.rtmpd.generics.Logging;
+			
+			private var _stream:NetStream;
+			private var _video:Video;
+//			private var _info:TextArea;
+//			private var _showInfo:Button;
+			
+			public function Initialize():void
+			{
+				try{	
+					_video=new Video(width,height);
+					rawChildren.addChild(_video);
+					
+//					_info=new TextArea();
+//					_info.width=0;
+//					_info.height=0;
+//					_info.x=0;
+//					_info.y=0;
+//					_info.alpha=0.3;
+//					_info.setStyle("backgroundColor","#000000");
+//					_info.setStyle("borderStyle","none");
+//					_info.setStyle("color","white");
+//					_info.editable=false;
+//					rawChildren.addChild(_info);
+//					
+//					_showInfo=new Button();
+//					_showInfo.width=85;
+//					_showInfo.height=15;
+//					_showInfo.x=0;
+//					_showInfo.y=height-_showInfo.height;
+//					_showInfo.alpha=0.6;
+//					_showInfo.setStyle("borderStyle","none");
+//					_showInfo.label="Show info";
+//					_showInfo.addEventListener(MouseEvent.CLICK,ShowHideInfo);
+//					rawChildren.addChild(_showInfo);
+					
+					Logging.Debug("VideoPlayer init done");
+				}catch(e:Error){
+					Logging.Error(ObjectUtil.toString(e));
+				}
+			}
+			
+//			private function ShowHideInfo(evt:Event):void{
+//				_info.width=_info.width==0?width:0;
+//				_info.height=_info.height==0?height-_showInfo.height:0;
+//			}
+			
+			public function Play(connection:Connection, streamName:String):void{
+				Logging.Debug("Play stream "+streamName);
+				if(_stream!=null){
+					_video.attachNetStream(null);
+					_stream.close();
+					_stream=null;
+				}
+				_stream=connection.GetStream();
+				_stream.play(streamName);
+				_stream.bufferTime=1;
+				_video.attachNetStream(_stream);
+			}
+			
+			public function TogglePause():void{
+				if(_stream==null)
+					return;
+				_stream.togglePause();
+			}
+			
+			public function Seek(offset:Number):void{
+				if(_stream==null)
+					return;
+				_stream.seek(offset);
+			}
+		]]>
+	</mx:Script>
+</mx:Canvas>

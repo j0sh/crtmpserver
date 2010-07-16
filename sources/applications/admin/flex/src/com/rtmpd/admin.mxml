@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" 
+	width="100%" height="100%" 
+	horizontalAlign="center" verticalAlign="middle" 
+	paddingBottom="0" paddingLeft="0" paddingRight="0" paddingTop="0"
+	applicationComplete="Init();">
+	<mx:Script>
+		<![CDATA[
+			import com.rtmpd.generics.ui.components.ConnectWindow;
+			
+			import mx.controls.Alert;
+			import mx.utils.ObjectUtil;
+			
+			private var _connectData:Object;
+			[Bindable] private var _engine:Engine;
+			
+			private function Init():void{
+				_engine=new Engine();
+				_engine.Initialize();
+				_connectData=new Object();
+				_connectData.client=this;
+				_connectData.done=function ():void{
+					this.client.Connect(this.completeUri,this.username,this.password);
+				};
+				_engine.addEventListener("IsConnectedEvent",IsConnectedEvent);
+				ConnectDisconnect();
+			}
+			
+			private function IsConnectedEvent(evt:Event):void{
+				if(!_engine.IsConnected){
+					content.removeAllChildren();
+					content.title="";
+				}	
+			}
+			
+			private function ConnectDisconnect():void{
+				if(btnConnect.label=="Connect...") {
+					ConnectWindow.ShowAuth(this,'rtmpe','localhost','admin','gigi','spaima',_connectData);
+					//_connection.Connect("rtmp://localhost/mpegts");
+				} else {
+					_engine.Disconnect();
+				}
+			}
+			
+			public function Connect(uri:String,username:String,password:String):void{
+				_engine.Connect(uri,username,password);
+			}
+			
+			private function Applications():void{
+				var applicationsView:ApplicationsView=new ApplicationsView();
+				content.removeAllChildren();
+				content.addChild(applicationsView);
+				content.title="Applications management";
+				applicationsView.Init(_engine);
+			}
+			
+			private function AvailableServices():void{
+				var servicesView:ServicesView=new ServicesView();
+				content.removeAllChildren();
+				content.addChild(servicesView);
+				content.title="Available services";
+				servicesView.Init(_engine);
+			}
+		]]>
+	</mx:Script>
+	<mx:HBox width="100%" height="100%">
+		<mx:Panel width="100%" height="100%" id="content">	
+		</mx:Panel>
+		<mx:Box width="160" height="100%" paddingBottom="5" paddingLeft="5" paddingRight="5" paddingTop="5">
+			<mx:Box width="100%" height="100%" enabled="{_engine.IsConnected}">
+				<mx:Button width="100%" label="Applications" click="Applications();"/>
+				<mx:Button width="100%" label="Available Services" click="AvailableServices();"/>
+				<mx:Button width="100%" label="Shared objects" click="AvailableServices();"/>
+				<mx:Button width="100%" label="Connections" click="AvailableServices();"/>
+				<mx:Button width="100%" label="Performance" click="AvailableServices();"/>
+				<mx:Button width="100%" label="Logs" click="AvailableServices();"/>
+			</mx:Box>
+			<mx:Box width="100%">
+				<mx:Button width="100%" label="{_engine.IsConnected?'Disconnect':'Connect...'}" id="btnConnect" click="ConnectDisconnect();"/>
+			</mx:Box>		
+		</mx:Box>
+	</mx:HBox>
+</mx:Application>

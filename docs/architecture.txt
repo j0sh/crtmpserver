@@ -1,0 +1,37 @@
+
+The I/O is made as follows:
+
++---+     +----+     +----+     +----+                +----+     +----+
+| T |<--->| P1 |<--->| P2 |<--->| P3 |<--->  **  <--->| Pn |<--->| CS |
+*---+     *----+     *----+     *----+                *----+     *----+
+
+T  - Transport level. At this level we store the inbound data into a buffer
+     or send the data from the output buffer. This layer may or may not
+     have a IOHandler attached. This give us the possibility of having
+     stateless communication like a chain of protocols in which HTTP is
+     the edge protocol with the outside world. Basically, this layer
+     will do I/O whenever a carrier is available.
+
+P1 to Pn - Protocol levels. At this levels we do packing/unpacking of the
+           data provided either by the transport level or by the previous
+           protocol. This way we can stack multiple protocol on top of each
+           other. For example we could have RTMP over HTTP, or RTMP over some
+           kind of compressing protocol over base64 over HTTP
+
+CS - Connection state. At this level we do the business logic of the connection.
+     All the data passed in and out of this level is translated relative to the
+     business logic of the connection. For example in a RTMP connection this
+     layer will receive only RTMP messages.
+
+Below we have some possible chains of protocols:
+
+1. TCP <--> HTTP <--> XMLRPC <--> Application Server State
+2. TCP <--> RTMP <--> RTMP Connection State
+3. TCP <--> HTTP <--> RTMP <--> RTMP Connection State
+4. TCP <--> Encription <--> RTMP <--> RTMP Connection State
+5. TCP <--> HTTP <--> Encription <--> RTMP <--> RTMP Connection State
+...
+
+
+Obviously, not all protocols stacks presented above find usage in reality. They
+where presented only as examples.

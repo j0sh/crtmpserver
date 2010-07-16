@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="62">
+  <logicalFolder name="root" displayName="root" projectFiles="true">
+    <logicalFolder name="HeaderFiles"
+                   displayName="Header Files"
+                   projectFiles="true">
+      <itemPath>../../../../sources/vmtests/include/testvmlua.h</itemPath>
+    </logicalFolder>
+    <logicalFolder name="ResourceFiles"
+                   displayName="Resource Files"
+                   projectFiles="true">
+    </logicalFolder>
+    <logicalFolder name="SourceFiles"
+                   displayName="Source Files"
+                   projectFiles="true">
+      <itemPath>../../../../sources/vmtests/src/main.cpp</itemPath>
+      <itemPath>../../../../sources/vmtests/src/testvmlua.cpp</itemPath>
+    </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false">
+      <itemPath>Makefile.nb</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <sourceRootList>
+    <Elem>../../../../sources/vmtests/include</Elem>
+    <Elem>../../../../sources/vmtests/src</Elem>
+  </sourceRootList>
+  <projectmakefile>Makefile.nb</projectmakefile>
+  <confs>
+    <conf name="Debug" type="1">
+      <toolsSet>
+        <developmentServer>localhost</developmentServer>
+        <compilerSet>GNU|GNU</compilerSet>
+        <platform>4</platform>
+      </toolsSet>
+      <compileType>
+        <ccTool>
+          <incDir>
+            <pElem>../../../../sources/common/include</pElem>
+            <pElem>../../../../sources/vm/include</pElem>
+            <pElem>../../../../sources/vmtests/include</pElem>
+            <pElem>../../../../3rdparty/v8/include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>OSX</Elem>
+            <Elem>VM_LUA</Elem>
+          </preprocessorList>
+        </ccTool>
+        <linkerTool>
+          <linkerLibItems>
+            <linkerLibProjectItem>
+              <makeArtifact PL="../common"
+                            CT="2"
+                            CN="Debug"
+                            AC="true"
+                            BL="true"
+                            WD="../common"
+                            BC="${MAKE}  -f Makefile.nb CONF=Debug"
+                            CC="${MAKE}  -f Makefile.nb CONF=Debug clean"
+                            OP="dist/Debug/GNU-MacOSX/libcommon.dylib">
+              </makeArtifact>
+            </linkerLibProjectItem>
+            <linkerLibProjectItem>
+              <makeArtifact PL="../vm"
+                            CT="2"
+                            CN="Debug"
+                            AC="true"
+                            BL="true"
+                            WD="../vm"
+                            BC="${MAKE}  -f Makefile.nb CONF=Debug"
+                            CC="${MAKE}  -f Makefile.nb CONF=Debug clean"
+                            OP="dist/Debug/GNU-MacOSX/libvm.dylib">
+              </makeArtifact>
+            </linkerLibProjectItem>
+          </linkerLibItems>
+        </linkerTool>
+      </compileType>
+    </conf>
+    <conf name="Release" type="1">
+      <toolsSet>
+        <developmentServer>localhost</developmentServer>
+        <compilerSet>GNU|GNU</compilerSet>
+        <platform>4</platform>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <developmentMode>5</developmentMode>
+        </cTool>
+        <ccTool>
+          <developmentMode>5</developmentMode>
+          <incDir>
+            <pElem>../../../../sources/common/include</pElem>
+            <pElem>../../../../sources/vm/include</pElem>
+            <pElem>../../../../sources/vmtests/include</pElem>
+            <pElem>../../../../3rdparty/v8/include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>OSX</Elem>
+            <Elem>VM_LUA</Elem>
+          </preprocessorList>
+        </ccTool>
+        <fortranCompilerTool>
+          <developmentMode>5</developmentMode>
+        </fortranCompilerTool>
+        <linkerTool>
+          <linkerLibItems>
+            <linkerLibProjectItem>
+              <makeArtifact PL="../common"
+                            CT="2"
+                            CN="Release"
+                            AC="false"
+                            BL="true"
+                            WD="../common"
+                            BC="${MAKE}  -f Makefile.nb CONF=Release"
+                            CC="${MAKE}  -f Makefile.nb CONF=Release clean"
+                            OP="dist/Release/GNU-MacOSX/libcommon.dylib">
+              </makeArtifact>
+            </linkerLibProjectItem>
+            <linkerLibProjectItem>
+              <makeArtifact PL="../vm"
+                            CT="2"
+                            CN="Release"
+                            AC="false"
+                            BL="true"
+                            WD="../vm"
+                            BC="${MAKE}  -f Makefile.nb CONF=Release"
+                            CC="${MAKE}  -f Makefile.nb CONF=Release clean"
+                            OP="dist/Release/GNU-MacOSX/libvm.dylib">
+              </makeArtifact>
+            </linkerLibProjectItem>
+          </linkerLibItems>
+        </linkerTool>
+      </compileType>
+    </conf>
+  </confs>
+</configurationDescriptor>

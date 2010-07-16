@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" 
+	layout="absolute" width="600" height="400"
+	showCloseButton="true" title="Log Messages" close="CloseWindow();">
+	<mx:Script>
+		<![CDATA[
+			import com.rtmpd.generics.Logging;
+			import mx.managers.*;
+			private function CloseWindow():void{
+				PopUpManager.removePopUp(this);
+			}
+			private function ClearLogs():void{
+				Logging.LogMessages=new Array();
+			}
+			
+			public static function Show(parent:DisplayObject):void{
+				var logsWindow:LogsWindow=LogsWindow(PopUpManager.createPopUp(parent,LogsWindow,true));
+				PopUpManager.centerPopUp(logsWindow);
+			}
+		]]>
+	</mx:Script>
+	<mx:VBox x="0" y="0" height="100%" width="100%" horizontalAlign="right"
+		paddingBottom="10" paddingLeft="10" paddingRight="10" paddingTop="10">
+		<mx:DataGrid width="560" height="100%" variableRowHeight="true" wordWrap="true"
+			dataProvider="{Logging.LogMessages}">
+			<mx:columns>
+				<mx:DataGridColumn headerText="Level" dataField="level"/>
+				<mx:DataGridColumn headerText="Message" dataField="message"/>
+			</mx:columns>
+		</mx:DataGrid>
+		<mx:Button label="Clear logs" click="ClearLogs();"/>
+	</mx:VBox>
+	
+</mx:TitleWindow>

@@ -1,0 +1,311 @@
+Index: ../../media/README.txt
+===================================================================
+--- ../../media/README.txt	(revision 822)
++++ ../../media/README.txt	(working copy)
+@@ -1,39 +1 @@
+-This folder contains only media files and their corresponding meta/seek files
+-This folder should have read/write access. 
+-
+-*.seek files are used for fast seek
+-*.meta files are used like a chahe: instead of trying to parse the meta directly from file, it will be read from the meta file.
+-
+-Both *.seek and *.meta files are discardable. Hence, you can delete them anytime.
+-They will be automatically generated when missing
+- 
+-The media files should have read access and this directory must have write access 
+-(for creating the seek/meta files)
+-
+-
+-Supported media files: mp3, mp4, m4a, m4v, mov, flv
+-
+-When a faulty file is discovered at run-time, it will be
+-automatically moved to file_name.type.bad. 
+-
+-PLEASE send me those files whenever possible because I want
+-to improve support for them. You can upload them here:
+-http://www.rtmpd.com/wiki/Bad%20Media%20Files
+-
+-Accessing format:
+-+------+--------------------+----------------+
+-| type | naming             | target file    |
+-+======+====================+================+
+-| mp3  | mp3:file_name      | file_name.mp3  |
+-+------+--------------------+----------------+
+-| mp4  | mp4:file_name.mp4  | file_name.mp4  |
+-+------+--------------------+----------------+
+-| m4a  | mp4:file_name.m4a  | file_name.m4a  |
+-+------+--------------------+----------------+
+-| m4v  | mp4:file_name.m4v  | file_name.m4v  |
+-+------+--------------------+----------------+
+-| mov  | mp4:file_name.mov  | file_name.mov  |
+-+------+--------------------+----------------+
+-| flv  | file_name          | file_name.flv  |
+-+------+--------------------+----------------+
+-
++this folder contains only media files.
+Index: ../../sources/common/include/utils/variantmap.h
+===================================================================
+--- ../../sources/common/include/utils/variantmap.h	(revision 822)
++++ ../../sources/common/include/utils/variantmap.h	(working copy)
+@@ -31,6 +31,7 @@
+ #define	_VARIANTMAP_H
+ 
+ struct VariantMap {
++    DECLARE_MEMORY_POOL(VariantMap)
+     string name;
+     map<string, Variant> children;
+     bool isArray;
+Index: ../../sources/common/include/utils/variant.h
+===================================================================
+--- ../../sources/common/include/utils/variant.h	(revision 822)
++++ ../../sources/common/include/utils/variant.h	(working copy)
+@@ -75,6 +75,7 @@
+ #define Timestamp struct tm
+ 
+ class DLLEXP Variant {
++    DECLARE_MEMORY_POOL(Variant)
+ private:
+     VariantType _type;
+ 
+Index: ../../sources/common/include/utils/core.h
+===================================================================
+--- ../../sources/common/include/utils/core.h	(revision 822)
++++ ../../sources/common/include/utils/core.h	(working copy)
+@@ -39,6 +39,8 @@
+ //3. Detect and include the platform specific things
+ #include "platform/platform.h"
+ 
++#include "mem/memorypool.h"
++
+ //4. Include the generic functionality
+ #include "utils/genericfunctionality.h"
+ #include "utils/timersmanager.h"
+Index: ../../sources/common/include/mem/staticmemorypool.h
+===================================================================
+--- ../../sources/common/include/mem/staticmemorypool.h	(revision 0)
++++ ../../sources/common/include/mem/staticmemorypool.h	(revision 0)
+@@ -0,0 +1,89 @@
++/*
++ * Copyright (c) 2009, Gavriloaie Eugen-Andrei (shiretu@gmail.com)
++ * All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions are met:
++ *
++ *              *Redistributions of source code must retain the above copyright notice,
++ *               this list of conditions and the following disclaimer.
++ *              *Redistributions in binary form must reproduce the above copyright
++ *               notice, this list of conditions and the following disclaimer in the
++ *               documentation and/or other materials provided with the distribution.
++ *              *Neither the name of the DEVSS nor the names of its
++ *               contributors may be used to endorse or promote products derived from
++ *               this software without specific prior written permission.
++ *
++ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
++ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
++ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
++ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
++ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
++ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
++ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
++ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
++ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
++ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
++ * POSSIBILITY OF SUCH DAMAGE.
++ */
++
++#ifndef _STATICMEMORYPOOL_H
++#define	_STATICMEMORYPOOL_H
++
++#define DECLARE_MEMORY_POOL(Cls) \
++public: \
++  static void* operator new(size_t s) throw()\
++  { \
++    assert(s == sizeof(Cls)); \
++    return StaticMemoryPool<sizeof(Cls)>::allocate(); \
++  } \
++  static void operator delete(void* p) \
++  { \
++    if (p != NULL) \
++      StaticMemoryPool<sizeof(Cls)>::deallocate(p); \
++  }
++
++typedef struct _MemoryBlock {
++    struct _MemoryBlock *pNext;
++} MemoryBlock;
++
++template <size_t _chunkSize>
++class StaticMemoryPool {
++private:
++    static uint32_t _allocationsCount;
++    static uint32_t _cacheCount;
++    static MemoryBlock *_pMemoryBlocks;
++public:
++
++    static inline void * allocate() {
++        bool allocated = false;
++        void *pResult = _pMemoryBlocks;
++        if (pResult == NULL) {
++            pResult = ::operator new(_chunkSize >= sizeof (MemoryBlock)
++                    ? _chunkSize : sizeof (MemoryBlock));
++            allocated = true;
++            _allocationsCount++;
++        } else {
++            _pMemoryBlocks = _pMemoryBlocks->pNext;
++            _cacheCount--;
++        }
++        printf("(+) %lu: A: %u; C: %u %c\n",
++                _chunkSize, _allocationsCount, _cacheCount, allocated ? '*' : ' ');
++        return pResult;
++    }
++
++    static inline void deallocate(void *pBuffer) {
++        ((MemoryBlock *) pBuffer)->pNext = _pMemoryBlocks;
++        _pMemoryBlocks = ((MemoryBlock *) pBuffer);
++        _cacheCount++;
++        printf("(-) %lu: A: %u; C: %u\n",
++                _chunkSize, _allocationsCount, _cacheCount);
++    }
++};
++
++template <size_t _chunkSize> uint32_t StaticMemoryPool<_chunkSize>::_allocationsCount = 0;
++template <size_t _chunkSize> uint32_t StaticMemoryPool<_chunkSize>::_cacheCount = 0;
++template <size_t _chunkSize> MemoryBlock *StaticMemoryPool<_chunkSize>::_pMemoryBlocks = NULL;
++
++#endif	/* _STATICMEMORYPOOL_H */
++
+Index: ../../sources/common/include/mem/memorypool.h
+===================================================================
+--- ../../sources/common/include/mem/memorypool.h	(revision 0)
++++ ../../sources/common/include/mem/memorypool.h	(revision 0)
+@@ -0,0 +1,37 @@
++/*
++ * Copyright (c) 2009, Gavriloaie Eugen-Andrei (shiretu@gmail.com)
++ * All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions are met:
++ *
++ *              *Redistributions of source code must retain the above copyright notice,
++ *               this list of conditions and the following disclaimer.
++ *              *Redistributions in binary form must reproduce the above copyright
++ *               notice, this list of conditions and the following disclaimer in the
++ *               documentation and/or other materials provided with the distribution.
++ *              *Neither the name of the DEVSS nor the names of its
++ *               contributors may be used to endorse or promote products derived from
++ *               this software without specific prior written permission.
++ *
++ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
++ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
++ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
++ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
++ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
++ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
++ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
++ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
++ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
++ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
++ * POSSIBILITY OF SUCH DAMAGE.
++ */
++
++#ifndef _MEMORYPOOL_H
++#define	_MEMORYPOOL_H
++
++#include "mem/staticmemorypool.h"
++#include "mem/dynamicmemorypool.h"
++
++#endif	/* _MEMORYPOOL_H */
++
+Index: ../../sources/common/include/mem/dynamicmemorypool.h
+===================================================================
+--- ../../sources/common/include/mem/dynamicmemorypool.h	(revision 0)
++++ ../../sources/common/include/mem/dynamicmemorypool.h	(revision 0)
+@@ -0,0 +1,41 @@
++/*
++ * Copyright (c) 2009, Gavriloaie Eugen-Andrei (shiretu@gmail.com)
++ * All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions are met:
++ *
++ *              *Redistributions of source code must retain the above copyright notice,
++ *               this list of conditions and the following disclaimer.
++ *              *Redistributions in binary form must reproduce the above copyright
++ *               notice, this list of conditions and the following disclaimer in the
++ *               documentation and/or other materials provided with the distribution.
++ *              *Neither the name of the DEVSS nor the names of its
++ *               contributors may be used to endorse or promote products derived from
++ *               this software without specific prior written permission.
++ *
++ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
++ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
++ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
++ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
++ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
++ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
++ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
++ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
++ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
++ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
++ * POSSIBILITY OF SUCH DAMAGE.
++ */
++
++#ifndef _DYNAMICMEMORYPOOL_H
++#define	_DYNAMICMEMORYPOOL_H
++
++class DynamicMemoryPool {
++public:
++    DynamicMemoryPool();
++    virtual ~DynamicMemoryPool();
++};
++
++
++#endif	/* _DYNAMICMEMORYPOOL_H */
++
+Index: ../../sources/common/src/mem/memorypool.cpp
+===================================================================
+--- ../../sources/common/src/mem/memorypool.cpp	(revision 0)
++++ ../../sources/common/src/mem/memorypool.cpp	(revision 0)
+@@ -0,0 +1 @@
++
+Index: ../../sources/common/src/mem/dynamicmemorypool.h
+===================================================================
+--- ../../sources/common/src/mem/dynamicmemorypool.h	(revision 0)
++++ ../../sources/common/src/mem/dynamicmemorypool.h	(revision 0)
+@@ -0,0 +1,36 @@
++/*
++ * Copyright (c) 2009, Gavriloaie Eugen-Andrei (shiretu@gmail.com)
++ * All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions are met:
++ *
++ *              *Redistributions of source code must retain the above copyright notice,
++ *               this list of conditions and the following disclaimer.
++ *              *Redistributions in binary form must reproduce the above copyright
++ *               notice, this list of conditions and the following disclaimer in the
++ *               documentation and/or other materials provided with the distribution.
++ *              *Neither the name of the DEVSS nor the names of its
++ *               contributors may be used to endorse or promote products derived from
++ *               this software without specific prior written permission.
++ *
++ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
++ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
++ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
++ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
++ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
++ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
++ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
++ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
++ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
++ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
++ * POSSIBILITY OF SUCH DAMAGE.
++ */
++
++#ifndef _DYNAMICMEMORYPOOL_H
++#define	_DYNAMICMEMORYPOOL_H
++
++
++
++#endif	/* _DYNAMICMEMORYPOOL_H */
++

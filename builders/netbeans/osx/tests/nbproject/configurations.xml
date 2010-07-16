@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="69">
+  <logicalFolder name="root" displayName="root" projectFiles="true">
+    <logicalFolder name="HeaderFiles"
+                   displayName="Header Files"
+                   projectFiles="true">
+      <itemPath>../../../../sources/tests/include/basetestssuite.h</itemPath>
+      <itemPath>../../../../sources/tests/include/commontestssuite.h</itemPath>
+      <itemPath>../../../../sources/tests/include/thelibtestssuite.h</itemPath>
+      <itemPath>../../../../sources/tests/include/varianttestssuite.h</itemPath>
+    </logicalFolder>
+    <logicalFolder name="ResourceFiles"
+                   displayName="Resource Files"
+                   projectFiles="true">
+    </logicalFolder>
+    <logicalFolder name="SourceFiles"
+                   displayName="Source Files"
+                   projectFiles="true">
+      <itemPath>../../../../sources/tests/src/basetestssuite.cpp</itemPath>
+      <itemPath>../../../../sources/tests/src/commontestssuite.cpp</itemPath>
+      <itemPath>../../../../sources/tests/src/main.cpp</itemPath>
+      <itemPath>../../../../sources/tests/src/thelibtestssuite.cpp</itemPath>
+      <itemPath>../../../../sources/tests/src/varianttestssuite.cpp</itemPath>
+    </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false">
+      <itemPath>Makefile.nb</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <sourceRootList>
+    <Elem>../../../../sources/tests/include</Elem>
+    <Elem>../../../../sources/tests/src</Elem>
+  </sourceRootList>
+  <projectmakefile>Makefile.nb</projectmakefile>
+  <confs>
+    <conf name="Debug" type="3">
+      <toolsSet>
+        <developmentServer>localhost</developmentServer>
+        <compilerSet>GNU|GNU</compilerSet>
+        <platform>4</platform>
+      </toolsSet>
+      <compileType>
+        <ccTool>
+          <incDir>
+            <pElem>../../../../sources/common/include</pElem>
+            <pElem>../../../../sources/thelib/include</pElem>
+            <pElem>../../../../sources/tests/include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>OSX</Elem>
+            <Elem>NET_KQUEUE</Elem>
+            <Elem>HAS_PROTOCOL_RTMP</Elem>
+          </preprocessorList>
+        </ccTool>
+        <archiverTool>
+        </archiverTool>
+      </compileType>
+      <item path="../../../../sources/tests/src/basetestssuite.cpp"
+            ex="false"
+            tool="1">
+      </item>
+      <item path="../../../../sources/tests/src/commontestssuite.cpp"
+            ex="false"
+            tool="1">
+      </item>
+      <item path="../../../../sources/tests/src/main.cpp" ex="false" tool="1">
+      </item>
+      <item path="../../../../sources/tests/src/varianttestssuite.cpp"
+            ex="false"
+            tool="1">
+      </item>
+    </conf>
+    <conf name="Release" type="3">
+      <toolsSet>
+        <developmentServer>localhost</developmentServer>
+        <compilerSet>GNU|GNU</compilerSet>
+        <platform>4</platform>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <developmentMode>5</developmentMode>
+        </cTool>
+        <ccTool>
+          <developmentMode>5</developmentMode>
+          <incDir>
+            <pElem>../../../../sources/common/include</pElem>
+            <pElem>../../../../sources/thelib/include</pElem>
+            <pElem>../../../../sources/tests/include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>OSX</Elem>
+            <Elem>NET_KQUEUE</Elem>
+            <Elem>HAS_PROTOCOL_RTMP</Elem>
+          </preprocessorList>
+        </ccTool>
+        <fortranCompilerTool>
+          <developmentMode>5</developmentMode>
+        </fortranCompilerTool>
+        <archiverTool>
+        </archiverTool>
+      </compileType>
+    </conf>
+  </confs>
+</configurationDescriptor>

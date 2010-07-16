@@ -1,0 +1,14 @@
+		{
+			name="#APPNAME_LC#",
+			description="#APP_DESC#",
+			protocol="dynamiclinklibrary",
+			aliases=
+			{
+				"#APPNAME_LC#_alias1",
+				"#APPNAME_LC#_alias2",
+				"#APPNAME_LC#_alias3",
+			},
+			--validateHandshake=true,
+			--default=true,
+		},
+		--#INSERTION_MARKER# DO NOT REMOVE THIS. USED BY appscaffold SCRIPT.

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
+				layout="absolute" width="100%" height="100%"
+				xmlns:ns1="com.rtmpd.generics.ui.components.*"
+				applicationComplete="Init();">
+	<mx:Script>
+		<![CDATA[
+			import com.rtmpd.Engine;
+			import com.rtmpd.generics.ui.components.ConnectWindow;
+			import com.rtmpd.generics.ui.components.LogsWindow;
+			
+			import mx.controls.Alert;
+			
+			private var _connectData:Object;
+			[Bindable]
+			private var _connection:Engine;
+			
+			private function Init():void{
+				_connection=new Engine();
+				_connection.Initialize();
+				_connection.Client=this;
+				_connectData=new Object();
+				_connectData.client=this;
+				_connectData.done=function ():void{
+					this.client.Connect(this.completeUri);
+				};
+				player.Initialize();
+				ConnectDisconnect();
+			}
+			
+			public function StreamAvailable(streamName:String):void{
+				player.Play(_connection,streamName);
+			}
+			
+			private function ConnectDisconnect():void{
+				if(btnConnect.label=="Connect...") {
+					ConnectWindow.ShowSimple(this,'rtmp','localhost','applestreamingclient',_connectData);
+					//_connection.Connect("rtmp://localhost/mpegts");
+				} else {
+					_connection.Disconnect();
+				}
+			}
+			
+			public function Connect(uri:String):void{
+				_connection.Connect(uri);
+			} 
+			
+			private function Play():void{
+				//				if(dgFlvs.selectedIndex<0){
+				//					Alert.show("Please select a stream first");
+				//					return;
+				//				}
+				//				player.Play(_connection,_connection.TSStreams[dgFlvs.selectedIndex].data);
+				_connection.Call("setupStream",null,txtAppleConnectingString.text);
+			}
+		]]>
+	</mx:Script>
+	<mx:VBox paddingLeft="10" paddingTop="10" paddingRight="10" paddingBottom="10" borderStyle="solid" width="100%" height="100%">
+		<mx:HBox width="100%">
+			<mx:Button label="Show logs..." id="btnLogs" click="LogsWindow.Show(this);"/>
+			<mx:Button label="{_connection.IsConnected?'Disconnect':'Connect...'}" id="btnConnect" click="ConnectDisconnect();"/>
+		</mx:HBox>
+		<mx:HBox width="100%" enabled="{_connection.IsConnected}">
+			<mx:Button label="Play" id="btnPlay" click="Play();"/>
+			<mx:TextInput text="" id="txtAppleConnectingString" width="100%"/>
+		</mx:HBox>
+		<ns1:VideoPlayer width="100%" height="100%" id="player"/>
+	</mx:VBox>
+</mx:Application>

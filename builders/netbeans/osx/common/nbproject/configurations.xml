@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="69">
+  <logicalFolder name="root" displayName="root" projectFiles="true">
+    <logicalFolder name="HeaderFiles"
+                   displayName="Header Files"
+                   projectFiles="true">
+      <logicalFolder name="buffering" displayName="buffering" projectFiles="true">
+        <itemPath>../../../../sources/common/include/buffering/bitarray.h</itemPath>
+        <itemPath>../../../../sources/common/include/buffering/iobuffer.h</itemPath>
+        <itemPath>../../../../sources/common/include/buffering/multiconsumerbuffer.h</itemPath>
+      </logicalFolder>
+      <logicalFolder name="endianness" displayName="endianness" projectFiles="true">
+        <itemPath>../../../../sources/common/include/endianness/big_endian_byte_aligned.h</itemPath>
+        <itemPath>../../../../sources/common/include/endianness/big_endian_short_aligned.h</itemPath>
+        <itemPath>../../../../sources/common/include/endianness/endianness.h</itemPath>
+        <itemPath>../../../../sources/common/include/endianness/little_endian_byte_aligned.h</itemPath>
+        <itemPath>../../../../sources/common/include/endianness/little_endian_short_aligned.h</itemPath>
+      </logicalFolder>
+      <logicalFolder name="logging" displayName="logging" projectFiles="true">
+        <itemPath>../../../../sources/common/include/logging/baseloglocation.h</itemPath>
+        <itemPath>../../../../sources/common/include/logging/consoleloglocation.h</itemPath>
+        <itemPath>../../../../sources/common/include/logging/fileloglocation.h</itemPath>
+        <itemPath>../../../../sources/common/include/logging/logger.h</itemPath>
+      </logicalFolder>
+      <logicalFolder name="luautils" displayName="luautils" projectFiles="true">
+        <itemPath>../../../../sources/common/include/luautils/luautils.h</itemPath>
+      </logicalFolder>
+      <logicalFolder name="mempool" displayName="mempool" projectFiles="true">
+        <itemPath>../../../../sources/common/include/mempool/mempool.h</itemPath>
+      </logicalFolder>
+      <logicalFolder name="platform" displayName="platform" projectFiles="true">
+        <logicalFolder name="android" displayName="android" projectFiles="true">
+          <itemPath>../../../../sources/common/include/platform/android/misc.h</itemPath>
+          <itemPath>../../../../sources/common/include/platform/android/networking.h</itemPath>
+          <itemPath>../../../../sources/common/include/platform/android/stl.h</itemPath>
+          <itemPath>../../../../sources/common/include/platform/android/types.h</itemPath>
+        </logicalFolder>
+        <logicalFolder name="freebsd" displayName="freebsd" projectFiles="true">
+          <itemPath>../../../../sources/common/include/platform/freebsd/misc.h</itemPath>
+          <itemPath>../../../../sources/common/include/platform/freebsd/networking.h</itemPath>
+          <itemPath>../../../../sources/common/include/platform/freebsd/stl.h</itemPath>
+          <itemPath>../../../../sources/common/include/platform/freebsd/types.h</itemPath>
+        </logicalFolder>
+        <logicalFolder name="linux" displayName="linux" projectFiles="true">
+          <itemPath>../../../../sources/common/include/platform/linux/misc.h</itemPath>
+          <itemPath>../../../../sources/common/include/platform/linux/networking.h</itemPath>
+          <itemPath>../../../../sources/common/include/platform/linux/stl.h</itemPath>
+          <itemPath>../../../../sources/common/include/platform/linux/types.h</itemPath>
+        </logicalFolder>
+        <logicalFolder name="osx" displayName="osx" projectFiles="true">
+          <itemPath>../../../../sources/common/include/platform/osx/misc.h</itemPath>
+          <itemPath>../../../../sources/common/include/platform/osx/networking.h</itemPath>
+          <itemPath>../../../../sources/common/include/platform/osx/stl.h</itemPath>
+          <itemPath>../../../../sources/common/include/platform/osx/types.h</itemPath>
+        </logicalFolder>
+        <logicalFolder name="solaris" displayName="solaris" projectFiles="true">
+          <itemPath>../../../../sources/common/include/platform/solaris/misc.h</itemPath>
+          <itemPath>../../../../sources/common/include/platform/solaris/networking.h</itemPath>
+          <itemPath>../../../../sources/common/include/platform/solaris/stl.h</itemPath>
+          <itemPath>../../../../sources/common/include/platform/solaris/types.h</itemPath>
+        </logicalFolder>
+        <logicalFolder name="win32" displayName="win32" projectFiles="true">
+          <itemPath>../../../../sources/common/include/platform/win32/misc.h</itemPath>
+          <itemPath>../../../../sources/common/include/platform/win32/networking.h</itemPath>
+          <itemPath>../../../../sources/common/include/platform/win32/stl.h</itemPath>
+          <itemPath>../../../../sources/common/include/platform/win32/types.h</itemPath>
+        </logicalFolder>
+        <itemPath>../../../../sources/common/include/platform/max.h</itemPath>
+        <itemPath>../../../../sources/common/include/platform/platform.h</itemPath>
+      </logicalFolder>
+      <logicalFolder name="tinyxml" displayName="tinyxml" projectFiles="true">
+        <itemPath>../../../../sources/common/include/tinyxml/tinyxml.h</itemPath>
+      </logicalFolder>
+      <logicalFolder name="utils" displayName="utils" projectFiles="true">
+        <itemPath>../../../../sources/common/include/utils/crypto.h</itemPath>
+        <itemPath>../../../../sources/common/include/utils/dhgroups.h</itemPath>
+        <itemPath>../../../../sources/common/include/utils/file.h</itemPath>
+        <itemPath>../../../../sources/common/include/utils/genericfunctionality.h</itemPath>
+        <itemPath>../../../../sources/common/include/utils/linkedlist.h</itemPath>
+        <itemPath>../../../../sources/common/include/utils/mmapfile.h</itemPath>
+        <itemPath>../../../../sources/common/include/utils/timersmanager.h</itemPath>
+        <itemPath>../../../../sources/common/include/utils/variant.h</itemPath>
+        <itemPath>../../../../sources/common/include/utils/variantmap.h</itemPath>
+      </logicalFolder>
+      <itemPath>../../../../sources/common/include/defines.h</itemPath>
+    </logicalFolder>
+    <logicalFolder name="SourceFiles"
+                   displayName="Source Files"
+                   projectFiles="true">
+      <logicalFolder name="buffering" displayName="buffering" projectFiles="true">
+        <itemPath>../../../../sources/common/src/buffering/iobuffer.cpp</itemPath>
+        <itemPath>../../../../sources/common/src/buffering/multiconsumerbuffer.cpp</itemPath>
+      </logicalFolder>
+      <logicalFolder name="logging" displayName="logging" projectFiles="true">
+        <itemPath>../../../../sources/common/src/logging/baseloglocation.cpp</itemPath>
+        <itemPath>../../../../sources/common/src/logging/consoleloglocation.cpp</itemPath>
+        <itemPath>../../../../sources/common/src/logging/fileloglocation.cpp</itemPath>
+        <itemPath>../../../../sources/common/src/logging/logger.cpp</itemPath>
+      </logicalFolder>
+      <logicalFolder name="luautils" displayName="luautils" projectFiles="true">
+        <itemPath>../../../../sources/common/src/luautils/luautils.cpp</itemPath>
+      </logicalFolder>
+      <logicalFolder name="mempool" displayName="mempool" projectFiles="true">
+        <itemPath>../../../../sources/common/src/mempool/mempool.cpp</itemPath>
+      </logicalFolder>
+      <logicalFolder name="platform" displayName="platform" projectFiles="true">
+        <logicalFolder name="android" displayName="android" projectFiles="true">
+          <itemPath>../../../../sources/common/src/platform/android/misc.cpp</itemPath>
+          <itemPath>../../../../sources/common/src/platform/android/timegm.cpp</itemPath>
+        </logicalFolder>
+        <logicalFolder name="freebsd" displayName="freebsd" projectFiles="true">
+          <itemPath>../../../../sources/common/src/platform/freebsd/misc.cpp</itemPath>
+        </logicalFolder>
+        <logicalFolder name="linux" displayName="linux" projectFiles="true">
+          <itemPath>../../../../sources/common/src/platform/linux/misc.cpp</itemPath>
+        </logicalFolder>
+        <logicalFolder name="osx" displayName="osx" projectFiles="true">
+          <itemPath>../../../../sources/common/src/platform/osx/misc.cpp</itemPath>
+        </logicalFolder>
+        <logicalFolder name="solaris" displayName="solaris" projectFiles="true">
+          <itemPath>../../../../sources/common/src/platform/solaris/misc.cpp</itemPath>
+        </logicalFolder>
+        <logicalFolder name="win32" displayName="win32" projectFiles="true">
+          <itemPath>../../../../sources/common/src/platform/win32/misc.cpp</itemPath>
+        </logicalFolder>
+      </logicalFolder>
+      <logicalFolder name="tinyxml" displayName="tinyxml" projectFiles="true">
+        <itemPath>../../../../sources/common/src/tinyxml/tinyxml.cpp</itemPath>
+        <itemPath>../../../../sources/common/src/tinyxml/tinyxmlerror.cpp</itemPath>
+        <itemPath>../../../../sources/common/src/tinyxml/tinyxmlparser.cpp</itemPath>
+      </logicalFolder>
+      <logicalFolder name="utils" displayName="utils" projectFiles="true">
+        <itemPath>../../../../sources/common/src/utils/crypto.cpp</itemPath>
+        <itemPath>../../../../sources/common/src/utils/file.cpp</itemPath>
+        <itemPath>../../../../sources/common/src/utils/genericfunctionality.cpp</itemPath>
+        <itemPath>../../../../sources/common/src/utils/mmapfile.cpp</itemPath>
+        <itemPath>../../../../sources/common/src/utils/timersmanager.cpp</itemPath>
+        <itemPath>../../../../sources/common/src/utils/variant.cpp</itemPath>
+      </logicalFolder>
+    </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false">
+      <itemPath>Makefile.nb</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <sourceRootList>
+    <Elem>../../../../sources/common/include/logging</Elem>
+    <Elem>../../../../sources/common/include/platform</Elem>
+    <Elem>../../../../sources/common/include/utils</Elem>
+    <Elem>../../../../sources/common/include/buffering</Elem>
+    <Elem>../../../../sources/common/include/lua</Elem>
+    <Elem>../../../../sources/common/src/logging</Elem>
+    <Elem>../../../../sources/common/src/platform</Elem>
+    <Elem>../../../../sources/common/src/utils</Elem>
+    <Elem>../../../../sources/common/src/buffering</Elem>
+    <Elem>../../../../sources/common/src/lua</Elem>
+    <Elem>../../../../sources/common/src/luautils</Elem>
+    <Elem>../../../../sources/common/include/luautils</Elem>
+    <Elem>../../../../sources/common/include/mempool</Elem>
+    <Elem>../../../../sources/common/src/mempool</Elem>
+    <Elem>../../../../sources/common/include/endianess</Elem>
+    <Elem>../../../../sources/common/include/endianness</Elem>
+    <Elem>../../../../sources/common/include/tinyxml</Elem>
+    <Elem>../../../../sources/common/src/tinyxml</Elem>
+  </sourceRootList>
+  <projectmakefile>Makefile.nb</projectmakefile>
+  <confs>
+    <conf name="Debug" type="2">
+      <toolsSet>
+        <developmentServer>localhost</developmentServer>
+        <compilerSet>GNU|GNU</compilerSet>
+        <platform>4</platform>
+      </toolsSet>
+      <compileType>
+        <ccTool>
+          <incDir>
+            <pElem>/opt/local/include</pElem>
+            <pElem>../../../../sources/common/include</pElem>
+            <pElem>/opt/local/include/libxml2</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>OSX</Elem>
+            <Elem>USE_MEM_POOL</Elem>
+            <Elem>DEBUG_MEM_POOL</Elem>
+            <Elem>LITTLE_ENDIAN_SHORT_ALIGNED</Elem>
+          </preprocessorList>
+        </ccTool>
+      </compileType>
+    </conf>
+    <conf name="Release" type="2">
+      <toolsSet>
+        <developmentServer>localhost</developmentServer>
+        <compilerSet>GNU|GNU</compilerSet>
+        <platform>4</platform>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <developmentMode>5</developmentMode>
+        </cTool>
+        <ccTool>
+          <developmentMode>5</developmentMode>
+          <incDir>
+            <pElem>/opt/local/include</pElem>
+            <pElem>../../../../sources/common/include</pElem>
+            <pElem>/opt/local/include/libxml2</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>OSX</Elem>
+            <Elem>USE_MEM_POOL</Elem>
+            <Elem>DEBUG_MEM_POOL</Elem>
+            <Elem>LITTLE_ENDIAN_SHORT_ALIGNED</Elem>
+          </preprocessorList>
+        </ccTool>
+        <fortranCompilerTool>
+          <developmentMode>5</developmentMode>
+        </fortranCompilerTool>
+      </compileType>
+    </conf>
+  </confs>
+</configurationDescriptor>

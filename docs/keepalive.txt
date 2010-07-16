@@ -1,0 +1,91 @@
+Using  TCP keepalive to Detect Network Errors
+To detect network errors and signaling connection problems, you can enable TCP keep alive feature. It will increase signaling bandwidth used, but as bandwidth utilized by signaling channels is low from its nature, the increase should not be significant. Moreover, you can control it using keep alive timeout.
+The problem is that most system use keep alive timeout of 7200 seconds, which means the system is notified about a dead connection after 2 hours. You probably want this time to be shorter, like one minute or so. On each operating system, the adjustment is done in a different way.
+After settings all parameters, it's recommended to check whether the feature works correctly - just make a test call and unplug a network cable at either side of the call. Then see if the call terminates after the configured timeout.
+Here are some hints:
+Linux systems
+Use sysctl -A to get a list of available kernel variables
+and grep this list for net.ipv4 settings (sysctl -A | grep net.ipv4).
+There should exist the following variables:
+- net.ipv4.tcp_keepalive_time - time of connection inactivity after which
+                                the first keep alive request is sent
+- net.ipv4.tcp_keepalive_probes - number of keep alive requests retransmitted
+                                  before the connection is considered broken
+- net.ipv4.tcp_keepalive_intvl - time interval between keep alive probes
+
+You can manipulate with these settings using the following command:
+
+sysctl -w net.ipv4.tcp_keepalive_time=60 net.ipv4.tcp_keepalive_probes=3 net.ipv4.tcp_keepalive_intvl=10
+
+This sample command changes TCP keepalive timeout to 60 seconds with 3 probes,
+10 seconds gap between each. With this, your application will detect dead TCP
+connections after 90 seconds (60 + 10 + 10 + 10).
+FreeBSD and MacOS X
+For the list of available TCP settings (FreeBSD 4.8 an up and 5.4):
+
+sysctl -A | grep net.inet.tcp
+
+net.inet.tcp.keepidle - Amount of time, in milliseconds, that the (TCP) 
+connection must be idle before keepalive probes (if enabled) are sent.
+
+net.inet.tcp.keepintvl - The interval, in milliseconds, between 
+keepalive probes sent to remote machines. After TCPTV_KEEPCNT (default 
+8) probes are sent, with no response, the (TCP)connection is dropped.
+
+net.inet.tcp.always_keepalive - Assume that SO_KEEPALIVE is set on all 
+TCP connections, the kernel will periodically send a packet to the 
+remote host to verify the connection is still up.
+
+therefore formula to calculate maximum TCP inactive connection time is 
+following:
+
+net.inet.tcp.keepidle + (net.inet.tcp.keepintvl x 8)
+
+the result is in milliseconds.
+
+therefore, by setting
+net.inet.tcp.keepidle = 10000
+net.inet.tcp.keepintvl = 5000
+net.inet.tcp.always_keepalive =1 (must be 1 always)
+
+the system will disconnect a call when TCP connection is dead for:
+10000 + (5000 x 8) = 50000 msec (50 sec)
+
+To make system remember these settings at startup, you should add them 
+to /etc/sysctl.conf file
+Solaris
+For the list of available TCP settings:
+
+ndd /dev/tcp \?
+
+Keepalive related variables:
+- tcp_keepalive_interval - idle timeout
+
+Example:
+ndd -set /dev/tcp tcp_keepalive_interval 60000
+Windows
+Search Knowledge Base for article ID 120642:
+http://support.microsoft.com/kb/120642/EN-US
+
+Basically, you need to tweak some registry entries under
+HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters
+
+
+Linux
+
+net.ipv4.tcp_keepalive_time = 300
+net.ipv4.tcp_keepalive_probes = 10
+net.ipv4.tcp_keepalive_intvl = 30
+
+The procedures involving keepalive use three user-driven variables:
+
+tcp_keepalive_time
+the interval between the last data packet sent (simple ACKs are not considered data) and the first keepalive probe; after the connection is marked to need keepalive, this counter is not used any further
+
+tcp_keepalive_intvl
+the interval between subsequential keepalive probes, regardless of what the connection has exchanged in the meantime
+
+tcp_keepalive_probes
+the number of unacknowledged probes to send before considering the connection dead and notifying the application layer
+
+

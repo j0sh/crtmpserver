@@ -1,0 +1,467 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="62">
+  <logicalFolder name="root" displayName="root" projectFiles="true">
+    <logicalFolder name="HeaderFiles"
+                   displayName="Header Files"
+                   projectFiles="true">
+      <logicalFolder name="application" displayName="application" projectFiles="true">
+        <itemPath>../../../../sources/thelib/include/application/baseappprotocolhandler.h</itemPath>
+        <itemPath>../../../../sources/thelib/include/application/baseclientapplication.h</itemPath>
+        <itemPath>../../../../sources/thelib/include/application/clientapplicationmanager.h</itemPath>
+      </logicalFolder>
+      <logicalFolder name="buffering" displayName="buffering" projectFiles="true">
+        <itemPath>../../../../sources/thelib/include/buffering/inputbuffer.h</itemPath>
+        <itemPath>../../../../sources/thelib/include/buffering/multiconsumerbuffer.h</itemPath>
+        <itemPath>../../../../sources/thelib/include/buffering/outputbuffer.h</itemPath>
+      </logicalFolder>
+      <logicalFolder name="configuration"
+                     displayName="configuration"
+                     projectFiles="true">
+        <itemPath>../../../../sources/thelib/include/configuration/configfile.h</itemPath>
+      </logicalFolder>
+      <logicalFolder name="lua" displayName="lua" projectFiles="true">
+        <itemPath>../../../../sources/thelib/include/lua/luautils.h</itemPath>
+      </logicalFolder>
+      <logicalFolder name="netio" displayName="netio" projectFiles="true">
+        <logicalFolder name="epoll" displayName="epoll" projectFiles="true">
+          <itemPath>../../../../sources/thelib/include/netio/epoll/iohandler.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/netio/epoll/iohandlermanager.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/netio/epoll/iohandlermanagertoken.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/netio/epoll/iotimer.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/netio/epoll/tcpacceptor.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/netio/epoll/tcpcarrier.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/netio/epoll/tcpconnector.h</itemPath>
+        </logicalFolder>
+        <itemPath>../../../../sources/thelib/include/netio/netio.h</itemPath>
+      </logicalFolder>
+      <logicalFolder name="protocols" displayName="protocols" projectFiles="true">
+        <logicalFolder name="dns" displayName="dns" projectFiles="true">
+          <itemPath>../../../../sources/thelib/include/protocols/dns/inbounddnsresolverprotocol.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/protocols/dns/outbounddnsresolverprotocol.h</itemPath>
+        </logicalFolder>
+        <logicalFolder name="http" displayName="http" projectFiles="true">
+          <itemPath>../../../../sources/thelib/include/protocols/http/basehttpprotocol.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/protocols/http/inboundhttpprotocol.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/protocols/http/outboundhttpprotocol.h</itemPath>
+        </logicalFolder>
+        <logicalFolder name="rtmp" displayName="rtmp" projectFiles="true">
+          <logicalFolder name="sharedobjects"
+                         displayName="sharedobjects"
+                         projectFiles="true">
+            <itemPath>../../../../sources/thelib/include/protocols/rtmp/sharedobjects/so.h</itemPath>
+            <itemPath>../../../../sources/thelib/include/protocols/rtmp/sharedobjects/somanager.h</itemPath>
+          </logicalFolder>
+          <logicalFolder name="streaming" displayName="streaming" projectFiles="true">
+            <logicalFolder name="mp4" displayName="mp4" projectFiles="true">
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atom____.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atom_alb.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atom_art.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atom_cmt.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atom_cpy.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atom_day.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atom_des.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atom_nam.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atom_too.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atomalis.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atomallf.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atomavc1.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atomavcc.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atombtrt.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atomchan.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atomcolr.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atomcpil.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atomcslg.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atomctts.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atomdinf.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atomdisk.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atomdref.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atomedts.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atomesds.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atomflla.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atomfree.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atomfrma.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atomftyp.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atomgmhd.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atomgnre.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atomhdlr.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atomilst.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atomiods.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atomload.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atommdat.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atommdhd.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atommdia.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atommeta.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atomminf.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atommoov.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atommp3.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atommp4a.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atommvhd.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atomnull.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atomoles.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atompgap.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atomprfl.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atomrmra.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atomsdtp.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atomselo.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atomsmhd.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atomstbl.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atomstco.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atomstps.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atomstsc.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atomstsd.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atomstss.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atomstsz.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atomstts.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atomtapt.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atomtkhd.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atomtmcd.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atomtmpo.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atomtrak.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atomtrkn.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atomudta.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atomurl.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atomuuid.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atomvmhd.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atomwave.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atomwide.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/atomwloc.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/baseatom.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/boxatom.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/mp4document.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/versionedatom.h</itemPath>
+              <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4/versionedboxatom.h</itemPath>
+            </logicalFolder>
+            <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/baseinboundstream.h</itemPath>
+            <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/basemediadocument.h</itemPath>
+            <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/baseoutboundstream.h</itemPath>
+            <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/basestream.h</itemPath>
+            <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/fileinboundstream.h</itemPath>
+            <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/fileinboundstreamtimer.h</itemPath>
+            <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/fileoutboundstream.h</itemPath>
+            <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/flvinboundstream.h</itemPath>
+            <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/mp4fileinboundstream.h</itemPath>
+            <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/networkinboundstream.h</itemPath>
+            <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/networkoutboundstream.h</itemPath>
+            <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/neutralstream.h</itemPath>
+            <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/streammanager.h</itemPath>
+            <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/tsfileinboundstream.h</itemPath>
+          </logicalFolder>
+          <itemPath>../../../../sources/thelib/include/protocols/rtmp/amf0serializer.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/protocols/rtmp/amf3serializer.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/protocols/rtmp/amfserializer.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/protocols/rtmp/amftypes.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/protocols/rtmp/appmessagefactory.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/protocols/rtmp/basertmpappprotocolhandler.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/protocols/rtmp/basertmpprotocol.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/protocols/rtmp/channel.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/protocols/rtmp/header.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/protocols/rtmp/inboundrtmpprotocol.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/protocols/rtmp/outboundrtmpprotocol.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/protocols/rtmp/rtmpeprotocol.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/protocols/rtmp/rtmpprotocolserializer.h</itemPath>
+        </logicalFolder>
+        <logicalFolder name="timer" displayName="timer" projectFiles="true">
+          <itemPath>../../../../sources/thelib/include/protocols/timer/basetimerprotocol.h</itemPath>
+        </logicalFolder>
+        <logicalFolder name="ts" displayName="ts" projectFiles="true">
+          <itemPath>../../../../sources/thelib/include/protocols/ts/basetsappprotocolhandler.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/protocols/ts/inboundtsprotocol.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/protocols/ts/streamdescriptors.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/protocols/ts/tsadaptationfield.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/protocols/ts/tsaudiostream.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/protocols/ts/tsbasestream.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/protocols/ts/tspacketheader.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/protocols/ts/tspacketpat.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/protocols/ts/tspacketpmt.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/protocols/ts/tsprogram.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/protocols/ts/tsstreamsmanager.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/protocols/ts/tssubtitlestream.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/protocols/ts/tsvideostream.h</itemPath>
+        </logicalFolder>
+        <itemPath>../../../../sources/thelib/include/protocols/baseprotocol.h</itemPath>
+        <itemPath>../../../../sources/thelib/include/protocols/protocolchainfactory.h</itemPath>
+        <itemPath>../../../../sources/thelib/include/protocols/protocolmanager.h</itemPath>
+        <itemPath>../../../../sources/thelib/include/protocols/sslprotocol.h</itemPath>
+        <itemPath>../../../../sources/thelib/include/protocols/tcpprotocol.h</itemPath>
+      </logicalFolder>
+    </logicalFolder>
+    <logicalFolder name="SourceFiles"
+                   displayName="Source Files"
+                   projectFiles="true">
+      <logicalFolder name="application" displayName="application" projectFiles="true">
+        <itemPath>../../../../sources/thelib/src/application/baseappprotocolhandler.cpp</itemPath>
+        <itemPath>../../../../sources/thelib/src/application/baseclientapplication.cpp</itemPath>
+        <itemPath>../../../../sources/thelib/src/application/clientapplicationmanager.cpp</itemPath>
+      </logicalFolder>
+      <logicalFolder name="buffering" displayName="buffering" projectFiles="true">
+        <itemPath>../../../../sources/thelib/src/buffering/inputbuffer.cpp</itemPath>
+        <itemPath>../../../../sources/thelib/src/buffering/multiconsumerbuffer.cpp</itemPath>
+        <itemPath>../../../../sources/thelib/src/buffering/outputbuffer.cpp</itemPath>
+      </logicalFolder>
+      <logicalFolder name="configuration"
+                     displayName="configuration"
+                     projectFiles="true">
+        <itemPath>../../../../sources/thelib/src/configuration/configfile.cpp</itemPath>
+      </logicalFolder>
+      <logicalFolder name="lua" displayName="lua" projectFiles="true">
+        <itemPath>../../../../sources/thelib/src/lua/luautils.cpp</itemPath>
+      </logicalFolder>
+      <logicalFolder name="netio" displayName="netio" projectFiles="true">
+        <logicalFolder name="epoll" displayName="epoll" projectFiles="true">
+          <itemPath>../../../../sources/thelib/src/netio/epoll/iohandler.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/netio/epoll/iohandlermanager.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/netio/epoll/iotimer.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/netio/epoll/tcpacceptor.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/netio/epoll/tcpcarrier.cpp</itemPath>
+        </logicalFolder>
+      </logicalFolder>
+      <logicalFolder name="protocols" displayName="protocols" projectFiles="true">
+        <logicalFolder name="dns" displayName="dns" projectFiles="true">
+          <itemPath>../../../../sources/thelib/src/protocols/dns/inbounddnsresolverprotocol.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/protocols/dns/outbounddnsresolverprotocol.cpp</itemPath>
+        </logicalFolder>
+        <logicalFolder name="http" displayName="http" projectFiles="true">
+          <itemPath>../../../../sources/thelib/src/protocols/http/basehttpprotocol.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/protocols/http/inboundhttpprotocol.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/protocols/http/outboundhttpprotocol.cpp</itemPath>
+        </logicalFolder>
+        <logicalFolder name="rtmp" displayName="rtmp" projectFiles="true">
+          <logicalFolder name="sharedobjects"
+                         displayName="sharedobjects"
+                         projectFiles="true">
+            <itemPath>../../../../sources/thelib/src/protocols/rtmp/sharedobjects/so.cpp</itemPath>
+            <itemPath>../../../../sources/thelib/src/protocols/rtmp/sharedobjects/somanager.cpp</itemPath>
+          </logicalFolder>
+          <logicalFolder name="streaming" displayName="streaming" projectFiles="true">
+            <logicalFolder name="mp4" displayName="mp4" projectFiles="true">
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atom____.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atom_alb.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atom_art.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atom_cmt.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atom_cpy.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atom_day.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atom_des.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atom_nam.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atom_too.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atomalis.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atomallf.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atomavc1.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atomavcc.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atombtrt.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atomchan.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atomcolr.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atomcpil.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atomcslg.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atomctts.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atomdinf.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atomdisk.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atomdref.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atomedts.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atomesds.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atomflla.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atomfree.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atomfrma.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atomftyp.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atomgmhd.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atomgnre.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atomhdlr.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atomilst.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atomiods.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atomload.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atommdat.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atommdhd.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atommdia.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atommeta.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atomminf.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atommoov.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atommp3.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atommp4a.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atommvhd.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atomnull.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atomoles.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atompgap.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atomprfl.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atomrmra.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atomsdtp.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atomselo.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atomsmhd.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atomstbl.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atomstco.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atomstps.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atomstsc.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atomstsd.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atomstss.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atomstsz.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atomstts.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atomtapt.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atomtkhd.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atomtmcd.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atomtmpo.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atomtrak.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atomtrkn.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atomudta.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atomurl.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atomuuid.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atomvmhd.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atomwave.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atomwide.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/atomwloc.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/baseatom.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/boxatom.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/mp4document.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/versionedatom.cpp</itemPath>
+              <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4/versionedboxatom.cpp</itemPath>
+            </logicalFolder>
+            <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/baseinboundstream.cpp</itemPath>
+            <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/basemediadocument.cpp</itemPath>
+            <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/baseoutboundstream.cpp</itemPath>
+            <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/basestream.cpp</itemPath>
+            <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/fileinboundstream.cpp</itemPath>
+            <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/fileinboundstreamtimer.cpp</itemPath>
+            <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/fileoutboundstream.cpp</itemPath>
+            <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/flvinboundstream.cpp</itemPath>
+            <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/mp4fileinboundstream.cpp</itemPath>
+            <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/networkinboundstream.cpp</itemPath>
+            <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/networkoutboundstream.cpp</itemPath>
+            <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/neutralstream.cpp</itemPath>
+            <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/streammanager.cpp</itemPath>
+            <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/tsfileinboundstream.cpp</itemPath>
+          </logicalFolder>
+          <itemPath>../../../../sources/thelib/src/protocols/rtmp/amf0serializer.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/protocols/rtmp/amf3serializer.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/protocols/rtmp/appmessagefactory.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/protocols/rtmp/basertmpappprotocolhandler.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/protocols/rtmp/basertmpprotocol.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/protocols/rtmp/channel.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/protocols/rtmp/header.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/protocols/rtmp/inboundrtmpprotocol.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/protocols/rtmp/outboundrtmpprotocol.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/protocols/rtmp/rtmpeprotocol.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/protocols/rtmp/rtmpprotocolserializer.cpp</itemPath>
+        </logicalFolder>
+        <logicalFolder name="timer" displayName="timer" projectFiles="true">
+          <itemPath>../../../../sources/thelib/src/protocols/timer/basetimerprotocol.cpp</itemPath>
+        </logicalFolder>
+        <logicalFolder name="ts" displayName="ts" projectFiles="true">
+          <itemPath>../../../../sources/thelib/src/protocols/ts/basetsappprotocolhandler.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/protocols/ts/inboundtsprotocol.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/protocols/ts/streamdescriptors.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/protocols/ts/tsadaptationfield.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/protocols/ts/tsaudiostream.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/protocols/ts/tsbasestream.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/protocols/ts/tspacketheader.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/protocols/ts/tspacketpat.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/protocols/ts/tspacketpmt.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/protocols/ts/tsprogram.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/protocols/ts/tsstreamsmanager.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/protocols/ts/tssubtitlestream.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/protocols/ts/tsvideostream.cpp</itemPath>
+        </logicalFolder>
+        <itemPath>../../../../sources/thelib/src/protocols/baseprotocol.cpp</itemPath>
+        <itemPath>../../../../sources/thelib/src/protocols/protocolchainfactory.cpp</itemPath>
+        <itemPath>../../../../sources/thelib/src/protocols/protocolmanager.cpp</itemPath>
+        <itemPath>../../../../sources/thelib/src/protocols/sslprotocol.cpp</itemPath>
+        <itemPath>../../../../sources/thelib/src/protocols/tcpprotocol.cpp</itemPath>
+      </logicalFolder>
+    </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false">
+      <itemPath>Makefile.nb</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <sourceRootList>
+    <Elem>../../../../sources/thelib/include/application</Elem>
+    <Elem>../../../../sources/thelib/include/buffering</Elem>
+    <Elem>../../../../sources/thelib/include/configuration</Elem>
+    <Elem>../../../../sources/thelib/include/lua</Elem>
+    <Elem>../../../../sources/thelib/include/netio</Elem>
+    <Elem>../../../../sources/thelib/include/protocols</Elem>
+    <Elem>../../../../sources/thelib/src/application</Elem>
+    <Elem>../../../../sources/thelib/src/buffering</Elem>
+    <Elem>../../../../sources/thelib/src/configuration</Elem>
+    <Elem>../../../../sources/thelib/src/lua</Elem>
+    <Elem>../../../../sources/thelib/src/netio</Elem>
+    <Elem>../../../../sources/thelib/src/protocols</Elem>
+  </sourceRootList>
+  <projectmakefile>Makefile.nb</projectmakefile>
+  <confs>
+    <conf name="Debug" type="2">
+      <toolsSet>
+        <developmentServer>localhost</developmentServer>
+        <compilerSet>GNU|GNU</compilerSet>
+        <platform>2</platform>
+      </toolsSet>
+      <compileType>
+        <ccTool>
+          <incDir>
+            <pElem>../../../../sources/common/include</pElem>
+            <pElem>../../../../sources/thelib/include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>LINUX</Elem>
+            <Elem>NET_EPOLL</Elem>
+          </preprocessorList>
+        </ccTool>
+        <linkerTool>
+          <linkerLibItems>
+            <linkerLibProjectItem>
+              <makeArtifact PL="../common"
+                            CT="2"
+                            CN="Debug"
+                            AC="true"
+                            BL="true"
+                            WD="../common"
+                            BC="${MAKE}  -f Makefile.nb CONF=Debug"
+                            CC="${MAKE}  -f Makefile.nb CONF=Debug clean"
+                            OP="dist/Debug/GNU-Linux-x86/libcommon.so">
+              </makeArtifact>
+            </linkerLibProjectItem>
+          </linkerLibItems>
+        </linkerTool>
+      </compileType>
+    </conf>
+    <conf name="Release" type="2">
+      <toolsSet>
+        <developmentServer>localhost</developmentServer>
+        <compilerSet>GNU|GNU</compilerSet>
+        <platform>2</platform>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <developmentMode>5</developmentMode>
+        </cTool>
+        <ccTool>
+          <developmentMode>5</developmentMode>
+          <incDir>
+            <pElem>../../../../sources/common/include</pElem>
+            <pElem>../../../../sources/thelib/include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>LINUX</Elem>
+            <Elem>NET_EPOLL</Elem>
+          </preprocessorList>
+        </ccTool>
+        <fortranCompilerTool>
+          <developmentMode>5</developmentMode>
+        </fortranCompilerTool>
+        <linkerTool>
+          <linkerLibItems>
+            <linkerLibProjectItem>
+              <makeArtifact PL="../common"
+                            CT="2"
+                            CN="Release"
+                            AC="false"
+                            BL="true"
+                            WD="../common"
+                            BC="${MAKE}  -f Makefile.nb CONF=Release"
+                            CC="${MAKE}  -f Makefile.nb CONF=Release clean"
+                            OP="dist/Release/GNU-Linux-x86/libcommon.so">
+              </makeArtifact>
+            </linkerLibProjectItem>
+          </linkerLibItems>
+        </linkerTool>
+      </compileType>
+    </conf>
+  </confs>
+</configurationDescriptor>

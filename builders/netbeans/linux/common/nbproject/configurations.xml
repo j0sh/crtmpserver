@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="62">
+  <logicalFolder name="root" displayName="root" projectFiles="true">
+    <logicalFolder name="HeaderFiles"
+                   displayName="Header Files"
+                   projectFiles="true">
+      <logicalFolder name="buffering" displayName="buffering" projectFiles="true">
+        <itemPath>../../../../sources/common/include/buffering/bitarray.h</itemPath>
+        <itemPath>../../../../sources/common/include/buffering/iobuffer.h</itemPath>
+        <itemPath>../../../../sources/common/include/buffering/multiconsumerbuffer.h</itemPath>
+      </logicalFolder>
+      <logicalFolder name="endianness" displayName="endianness" projectFiles="true">
+        <itemPath>../../../../sources/common/include/endianness/big_endian_byte_aligned.h</itemPath>
+        <itemPath>../../../../sources/common/include/endianness/big_endian_short_aligned.h</itemPath>
+        <itemPath>../../../../sources/common/include/endianness/endianness.h</itemPath>
+        <itemPath>../../../../sources/common/include/endianness/little_endian_byte_aligned.h</itemPath>
+        <itemPath>../../../../sources/common/include/endianness/little_endian_short_aligned.h</itemPath>
+      </logicalFolder>
+      <logicalFolder name="logging" displayName="logging" projectFiles="true">
+        <itemPath>../../../../sources/common/include/logging/baseloglocation.h</itemPath>
+        <itemPath>../../../../sources/common/include/logging/consoleloglocation.h</itemPath>
+        <itemPath>../../../../sources/common/include/logging/fileloglocation.h</itemPath>
+        <itemPath>../../../../sources/common/include/logging/logger.h</itemPath>
+      </logicalFolder>
+      <logicalFolder name="luautils" displayName="luautils" projectFiles="true">
+        <itemPath>../../../../sources/common/include/luautils/luautils.h</itemPath>
+      </logicalFolder>
+      <logicalFolder name="mempool" displayName="mempool" projectFiles="true">
+        <itemPath>../../../../sources/common/include/mempool/mempool.h</itemPath>
+      </logicalFolder>
+      <logicalFolder name="platform" displayName="platform" projectFiles="true">
+        <logicalFolder name="linux" displayName="linux" projectFiles="true">
+          <itemPath>../../../../sources/common/include/platform/linux/misc.h</itemPath>
+          <itemPath>../../../../sources/common/include/platform/linux/networking.h</itemPath>
+          <itemPath>../../../../sources/common/include/platform/linux/stl.h</itemPath>
+          <itemPath>../../../../sources/common/include/platform/linux/types.h</itemPath>
+        </logicalFolder>
+        <itemPath>../../../../sources/common/include/platform/platform.h</itemPath>
+      </logicalFolder>
+      <logicalFolder name="utils" displayName="utils" projectFiles="true">
+        <itemPath>../../../../sources/common/include/utils/core.h</itemPath>
+        <itemPath>../../../../sources/common/include/utils/dh.h</itemPath>
+        <itemPath>../../../../sources/common/include/utils/dhgroups.h</itemPath>
+        <itemPath>../../../../sources/common/include/utils/genericfunctionality.h</itemPath>
+        <itemPath>../../../../sources/common/include/utils/linkedlist.h</itemPath>
+        <itemPath>../../../../sources/common/include/utils/timersmanager.h</itemPath>
+        <itemPath>../../../../sources/common/include/utils/variant.h</itemPath>
+        <itemPath>../../../../sources/common/include/utils/variantmap.h</itemPath>
+      </logicalFolder>
+      <itemPath>../../../../sources/common/include/defines.h</itemPath>
+    </logicalFolder>
+    <logicalFolder name="ResourceFiles"
+                   displayName="Resource Files"
+                   projectFiles="true">
+    </logicalFolder>
+    <logicalFolder name="SourceFiles"
+                   displayName="Source Files"
+                   projectFiles="true">
+      <logicalFolder name="logging" displayName="logging" projectFiles="true">
+        <itemPath>../../../../sources/common/src/logging/baseloglocation.cpp</itemPath>
+        <itemPath>../../../../sources/common/src/logging/consoleloglocation.cpp</itemPath>
+        <itemPath>../../../../sources/common/src/logging/fileloglocation.cpp</itemPath>
+        <itemPath>../../../../sources/common/src/logging/logger.cpp</itemPath>
+      </logicalFolder>
+      <logicalFolder name="platform" displayName="platform" projectFiles="true">
+        <logicalFolder name="linux" displayName="linux" projectFiles="true">
+          <itemPath>../../../../sources/common/src/platform/linux/misc.cpp</itemPath>
+        </logicalFolder>
+      </logicalFolder>
+      <logicalFolder name="utils" displayName="utils" projectFiles="true">
+        <itemPath>../../../../sources/common/src/utils/dh.cpp</itemPath>
+        <itemPath>../../../../sources/common/src/utils/genericfunctionality.cpp</itemPath>
+        <itemPath>../../../../sources/common/src/utils/timerslocation.cpp</itemPath>
+        <itemPath>../../../../sources/common/src/utils/variant.cpp</itemPath>
+      </logicalFolder>
+    </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false">
+      <itemPath>Makefile.nb</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <sourceRootList>
+    <Elem>../../../../sources/common/include/logging</Elem>
+    <Elem>../../../../sources/common/include/platform</Elem>
+    <Elem>../../../../sources/common/include/utils</Elem>
+    <Elem>../../../../sources/common/src/logging</Elem>
+    <Elem>../../../../sources/common/src/platform</Elem>
+    <Elem>../../../../sources/common/src/utils</Elem>
+    <Elem>../../../../sources/common/include/buffering</Elem>
+    <Elem>../../../../sources/common/include/endianness</Elem>
+    <Elem>../../../../sources/common/include/luautils</Elem>
+    <Elem>../../../../sources/common/include/mempool</Elem>
+  </sourceRootList>
+  <projectmakefile>Makefile.nb</projectmakefile>
+  <confs>
+    <conf name="Debug" type="2">
+      <toolsSet>
+        <developmentServer>localhost</developmentServer>
+        <compilerSet>GNU|GNU</compilerSet>
+        <platform>2</platform>
+      </toolsSet>
+      <compileType>
+        <ccTool>
+          <incDir>
+            <pElem>../../../../sources/common/include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>LINUX</Elem>
+            <Elem>NET_EPOLL</Elem>
+          </preprocessorList>
+        </ccTool>
+        <linkerTool>
+          <linkerLibItems>
+          </linkerLibItems>
+        </linkerTool>
+      </compileType>
+    </conf>
+    <conf name="Release" type="2">
+      <toolsSet>
+        <developmentServer>localhost</developmentServer>
+        <compilerSet>GNU|GNU</compilerSet>
+        <platform>2</platform>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <developmentMode>5</developmentMode>
+        </cTool>
+        <ccTool>
+          <developmentMode>5</developmentMode>
+          <incDir>
+            <pElem>../../../../sources/common/include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>LINUX</Elem>
+            <Elem>NET_EPOLL</Elem>
+          </preprocessorList>
+        </ccTool>
+        <fortranCompilerTool>
+          <developmentMode>5</developmentMode>
+        </fortranCompilerTool>
+        <linkerTool>
+          <linkerLibItems>
+          </linkerLibItems>
+        </linkerTool>
+      </compileType>
+    </conf>
+  </confs>
+</configurationDescriptor>

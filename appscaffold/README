@@ -1,0 +1,45 @@
+Use the init script to create a basic application structure
+This script will do the following for you:
+1. Create a minimal application with necessary sources
+2. Subscribe the newly created app to the cmake build system
+3. Create a NetBeans project for it (only for MacOS X for now)
+4. Create a win32 project for it (Not yet implemented....)
+
+
+TO RUN IT YOU MUST BE IN THE appscaffold DIRECTORY!!!!!
+
+Eg:
+
+$ ./init MyBrandNewApp "The description of my new app"
+
+After that, you can safely go to cmake build dir and start the build 
+process
+
+$ cd ../builders/cmake
+$ sh cleanup.sh
+$ cmake .
+$ make
+
+And finally run the server (stay in the cmake dir)
+
+$ ./rtmpserver/rtmpserver ./rtmpserver/rtmpserver.lua
+
+Notice that I've used CamelCase notation. You can use whatever
+notation you want, but I suggest to use CamelCase because is
+used all over the project
+
+After executing the above init command, your app is created as follows:
+(relative to your checkout dir)
+
+1. The sources: sources/applications/<app_name>/[src|include]/[*.h|*.cpp]
+2. The buildsystems:
+	-- for cmake:	builders/cmake/applications/<app_name>/CMakeLists.txt
+			altered the builders/cmake/applications/CMakeLists.txt 
+			and added a new entry for the new app
+	-- netbeans:	builders/netbeans/osx/<app_name> (Yeah, I know, I will
+			do the other platforms as well...)
+	-- VS2008:	NOT YET ADDED
+
+
+Happy coding!
+

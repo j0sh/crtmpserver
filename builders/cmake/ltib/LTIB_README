@@ -1,0 +1,87 @@
+
+LTIB_README
+
+
+== Overview/Notes ==
+________________________
+
+
+The the ./ltib directory contains files that must be added to your LTIB
+environment to build crtmpserver.  Since your individual LTIB environment may
+be different from mine, some changes to these files may be necessary.
+
+
+For the moment, there are manual steps to go through to build.  I will attempt
+to automate as many of those those steps as possible as time goes on.
+
+Typically, embedded developers will want to incorporate a stable release into
+their system.  When a new stable release is produced, that release can then be
+incorporated into the build and tested.  When crtmpserver enters that phase of
+development, there should be a crtmpserver.spec file and a tarball for each
+release.
+
+
+== Adding the crtmpserver and lua packages to LTIB build environment ==
+_________________________________________________________________________
+
+
+For these instructions, $LTIB_TOP is the top directory for your ltib build
+distribution.  This is the directory where the ltib program lives, and where
+you run the ltib program to build your target image.
+
+
+1) Copy ./ltib/lua.spec to $LTIB_TOP/dist/lfs-5.1/lua/lua.spec
+2) Copy ./ltib/crtmpserver.spec to
+   $LTIB_TOP/dist/lfs-5.1/crtmpserver/crtmpserver.spec
+
+3) Add the following lines to $LTIB_TOP/config/userspace/packages.lkc.  This
+   file retains the package list in alphabetical order, so place each package
+   definition in its proper alphabetical place.
+
+	config PKG_LUA
+	    select PKG_NCURSES
+	    select PKG_READLINE
+	    bool "lua"
+	    help
+	       Libraries for the LUA programming language
+
+	config PKG_CRTMPSERVER
+	   select PKG_LUA
+	   select PKG_OPENSSL
+	   bool "crtmpserver"
+	   help
+	     An RTMP server implemented in C++
+
+4) Add the following lines to $LTIB_TOP/dist/lfs-5.1/common/pkg_map.  This file
+   retains the package list in build order.  Since nothing depends on this 
+   package (yet), you can put this near the end of the file.  DO NOT put it at
+   the very end of the file since PKG_MERGE and PKG_SYSCONFIG should be left at
+   the end.
+
+	PKG_LUA				 = lua
+	PKG_CRTMPSERVER                  = crtmpserver
+
+
+== Building ==
+______________
+
+1) Move the crtmpserver folder to crtmpserver-dev.  Reason: The LTIB expects to
+   be able to append a package version to the directory.  For the moment, the
+   version is "dev".
+2) In the crtmpserver-dev/builders/cmake.ltib folder, create a cmake toolchain
+   file for your target build.  In my case ltib sets $CFGHOST is set to
+   arm-linux, so I created a "toolchain-arm-linux.cmake" file.  You can use
+   this file as a template.
+2) Make a tarball of the entire crtmpserver tree:
+   "tar zcf crtmpserver-dev.tar.gz crtmpserver-dev".
+4) Copy this tarball to your LTIB local repository.  In my case this was at
+   /opt/freescale/pkgs/.
+5) Download the lua5.1 distribution from
+   http://www.lua.org/ftp/lua-5.1.4.tar.gz and copy to your LTIB local
+   repository.
+6) Start ./ltib -c to configure your build.  Find and select the crtmpserver
+   package, exit and save.  When you exit LTIB will build your image.
+
+Currently the crtmpserver files are copied into a tree in the /usr/local/rtmpd
+folder, with the exception of certain libraries which must be in the /lib
+folder.  Store your videos in /usr/local/rtmpd/applications/flvplayback/mediaFolder/

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://www.netbeans.org/ns/project/1">
+    <type>org.netbeans.modules.cnd.makeproject</type>
+    <configuration>
+        <data xmlns="http://www.netbeans.org/ns/make-project/1">
+            <name>common</name>
+            <make-project-type>0</make-project-type>
+            <c-extensions/>
+            <cpp-extensions>cpp</cpp-extensions>
+            <header-extensions>h</header-extensions>
+            <sourceEncoding>UTF-8</sourceEncoding>
+            <make-dep-projects/>
+            <sourceRootList>
+                <sourceRootElem>../../../../sources/common/include/logging</sourceRootElem>
+                <sourceRootElem>../../../../sources/common/include/platform</sourceRootElem>
+                <sourceRootElem>../../../../sources/common/include/utils</sourceRootElem>
+                <sourceRootElem>../../../../sources/common/include/buffering</sourceRootElem>
+                <sourceRootElem>../../../../sources/common/include/lua</sourceRootElem>
+                <sourceRootElem>../../../../sources/common/src/logging</sourceRootElem>
+                <sourceRootElem>../../../../sources/common/src/platform</sourceRootElem>
+                <sourceRootElem>../../../../sources/common/src/utils</sourceRootElem>
+                <sourceRootElem>../../../../sources/common/src/buffering</sourceRootElem>
+                <sourceRootElem>../../../../sources/common/src/lua</sourceRootElem>
+                <sourceRootElem>../../../../sources/common/src/luautils</sourceRootElem>
+                <sourceRootElem>../../../../sources/common/include/luautils</sourceRootElem>
+                <sourceRootElem>../../../../sources/common/include/mempool</sourceRootElem>
+                <sourceRootElem>../../../../sources/common/src/mempool</sourceRootElem>
+                <sourceRootElem>../../../../sources/common/include/endianess</sourceRootElem>
+                <sourceRootElem>../../../../sources/common/include/endianness</sourceRootElem>
+                <sourceRootElem>../../../../sources/common/include/tinyxml</sourceRootElem>
+                <sourceRootElem>../../../../sources/common/src/tinyxml</sourceRootElem>
+            </sourceRootList>
+            <confList>
+                <confElem>Debug</confElem>
+                <confElem>Release</confElem>
+            </confList>
+        </data>
+    </configuration>
+</project>

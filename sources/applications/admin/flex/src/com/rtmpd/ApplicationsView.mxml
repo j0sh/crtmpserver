@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" height="100%">
+	<mx:Script>
+		<![CDATA[
+			import mx.utils.ObjectUtil;
+			import mx.controls.Alert;
+			private var _engine:Engine;
+			[Bindable] private var _applications:Array;
+			public function Init(engine:Engine):void{
+				_engine=engine;
+				Refresh();
+			}
+			
+			private function Refresh():void{
+				_engine.Call("ListApplications",OnListAplications);
+			}
+			
+			private function OnListAplications(applications:Array):void{
+				_applications=applications;	
+			}
+			
+			private function GetAlias(item:Object, dc:DataGridColumn):String{
+				return item.toString();
+			}
+		]]>
+	</mx:Script>
+	<mx:VBox width="100%" height="100%">
+		<mx:Box width="100%" height="100%">
+			<mx:DataGrid id="grid" width="100%" height="100%" dataProvider="{_applications}">
+				<mx:columns>
+					<mx:DataGridColumn dataField="name" />
+					<mx:DataGridColumn dataField="description" />
+					<mx:DataGridColumn dataField="mediaFolder" />
+					<mx:DataGridColumn dataField="default" />
+				</mx:columns>
+			</mx:DataGrid>
+		</mx:Box>
+		<mx:Box width="100%" height="300">
+			<mx:HBox width="100%" height="100%">
+				<mx:Panel title="Acceptors" enabled="{grid.selectedItem.acceptors.length>0}" height="100%">
+					<mx:DataGrid dataProvider="{grid.selectedItem.acceptors}" height="100%">
+						<mx:columns>
+							<mx:DataGridColumn dataField="ip" />
+							<mx:DataGridColumn dataField="port" />
+							<mx:DataGridColumn dataField="protocol" />
+						</mx:columns>
+					</mx:DataGrid>
+				</mx:Panel>
+				<mx:Panel title="Aliases" enabled="{grid.selectedItem.aliases.length>0}" height="100%">
+					<mx:DataGrid dataProvider="{grid.selectedItem.aliases}" height="100%">
+						<mx:columns>
+							<mx:DataGridColumn labelFunction="GetAlias"/>
+						</mx:columns>
+					</mx:DataGrid>
+				</mx:Panel>
+				<mx:Panel title="Info" width="100%" height="100%" enabled="{grid.selectedItem!=null}">
+					<mx:HBox>
+						<mx:Label text="Name: " width="160"/>
+						<mx:Label text="{grid.selectedItem.name}" />	
+					</mx:HBox>
+					<mx:HBox>
+						<mx:Label text="Module: " width="160"/>
+						<mx:Label text="{grid.selectedItem.library}" />	
+					</mx:HBox>
+					<mx:HBox>
+						<mx:Label text="Description: " width="160"/>
+						<mx:Label text="{grid.selectedItem.description}" />	
+					</mx:HBox>
+					<mx:HBox>
+						<mx:Label text="Media folder: " width="160"/>
+						<mx:Label text="{grid.selectedItem.mediaFolder}" />	
+					</mx:HBox>
+					<mx:HBox>
+						<mx:Label text="Validate RTMP handshake: " width="160"/>
+						<mx:Label text="{grid.selectedItem.validateHandshake==null?true:grid.selectedItem.validateHandshake}" />	
+					</mx:HBox>
+					<mx:HBox>
+						<mx:Label text="Application folder: " width="160"/>
+						<mx:Label text="{grid.selectedItem.appDir}" />	
+					</mx:HBox>
+					<mx:HBox>
+						<mx:Label text="Client side buffer: " width="160"/>
+						<mx:Label text="{grid.selectedItem.clientSideBuffer.toString()+' sec'}" />	
+					</mx:HBox>
+					<mx:HBox>
+						<mx:Label text="Is default RTMP app: " width="160"/>
+						<mx:Label text="{grid.selectedItem.default}" />	
+					</mx:HBox>
+					<mx:HBox>
+						<mx:Label text="Seek on key frames: " width="160"/>
+						<mx:Label text="{grid.selectedItem.keyframeSeek}" />	
+					</mx:HBox>
+					<mx:HBox>
+						<mx:Label text="Seek granularity: " width="160"/>
+						<mx:Label text="{grid.selectedItem.seekGranularity.toString()+' sec'}" />	
+					</mx:HBox>
+				</mx:Panel>
+				<mx:Panel title="Operations" height="100%">
+					<mx:Button label="Refresh" click="Refresh();" width="100%"/>
+					<mx:Button label="Deactivate" width="100%" enabled="{grid.selectedItem!=null}"/>
+					<mx:Button label="Edit" width="100%" enabled="{grid.selectedItem!=null}"/>
+				</mx:Panel>
+			</mx:HBox>
+		</mx:Box>
+	</mx:VBox>
+</mx:Canvas>
+

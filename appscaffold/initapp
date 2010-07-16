@@ -1,0 +1,125 @@
+#!/bin/sh
+
+APPNAME=$1
+APP_DESC=$2
+
+if [[ $APPNAME == "" || $APP_DESC == "" ]]
+then
+	echo "Usage:";
+	echo "./initapp <CamelCaseAppName> <app_desc>"
+	echo "Eg:";
+	echo "./initapp MyNewApp \"This is my new app\""
+	exit;
+fi
+
+APPNAME_LC=""
+APPNAME_UC=""
+HEADERS_GUID=""
+SOURCES_GUID=""
+PROJECT_GUID=""
+
+function initVars()
+{
+	APPNAME_LC=`echo $APPNAME|tr "[:upper:]" "[:lower:]"`;
+	APPNAME_UC=`echo $APPNAME|tr "[:lower:]" "[:upper:]"`;
+	HEADERS_GUID=`uuidgen`;
+	SOURCES_GUID=`uuidgen`;
+	PROJECT_GUID=`uuidgen`;
+}
+
+function doStrReplacements()
+{
+	echo `echo $1|sed "s/#PROJECT_GUID#/$PROJECT_GUID/g"|sed "s/#SOURCES_GUID#/$SOURCES_GUID/g"|sed "s/#HEADERS_GUID#/$HEADERS_GUID/g"|sed "s/#APPNAME#/$APPNAME/g"|sed "s/#APPNAME_LC#/$APPNAME_LC/g"|sed "s/#APPNAME_UC#/$APPNAME_UC/g"|sed "s/#APP_DESC#/$APP_DESC/g"`;
+}
+
+function doFileReplacements()
+{
+	cat $1|sed "s/#PROJECT_GUID#/$PROJECT_GUID/g"|sed "s/#SOURCES_GUID#/$SOURCES_GUID/g"|sed "s/#HEADERS_GUID#/$HEADERS_GUID/g"|sed "s/#APPNAME#/$APPNAME/g"|sed "s/#APPNAME_LC#/$APPNAME_LC/g"|sed "s/#APPNAME_UC#/$APPNAME_UC/g"|sed "s/#APP_DESC#/$APP_DESC/g">$2;
+}
+
+function doWildcardReplacements
+{
+	SRCDIR=$1
+	WILDCARD=$2
+	DSTDIR=$3
+
+	mkdir -p $(doStrReplacements $DSTDIR)
+	
+	for fileName in `ls $SRCDIR/$WILDCARD`; do
+		targetFileName=$(doStrReplacements "$DSTDIR/${fileName:${#SRCDIR}+1:${#fileName}}")
+		doFileReplacements $fileName $targetFileName
+	done
+}
+
+function createSources()
+{
+	doWildcardReplacements "templates/sources" "*.h" "../sources/applications/#APPNAME_LC#/include"
+	doWildcardReplacements "templates/sources" "*.cpp" "../sources/applications/#APPNAME_LC#/src"
+}
+
+function createCMakeProj()
+{
+	doWildcardReplacements "templates/builders/cmake" "*.txt" "../builders/cmake/applications/#APPNAME_LC#"
+	echo "ADD_SUBDIRECTORY($APPNAME_LC $APPNAME_LC)">>../builders/cmake/applications/CMakeLists.txt
+}
+
+function createNBOSXProj()
+{
+	doWildcardReplacements "templates/builders/netbeans/osx" "*.nb" "../builders/netbeans/osx/#APPNAME_LC#"
+	doWildcardReplacements "templates/builders/netbeans/osx/nbproject" "*.mk" "../builders/netbeans/osx/#APPNAME_LC#/nbproject"
+	doWildcardReplacements "templates/builders/netbeans/osx/nbproject" "*.bash" "../builders/netbeans/osx/#APPNAME_LC#/nbproject"
+	doWildcardReplacements "templates/builders/netbeans/osx/nbproject" "*.xml" "../builders/netbeans/osx/#APPNAME_LC#/nbproject"
+	doWildcardReplacements "templates/builders/netbeans/osx/nbproject" "*.properties" "../builders/netbeans/osx/#APPNAME_LC#/nbproject"
+	doWildcardReplacements "templates/builders/netbeans/osx/nbproject/private" "*.xml" "../builders/netbeans/osx/#APPNAME_LC#/nbproject/private"
+        doWildcardReplacements "templates/builders/netbeans/osx/nbproject/private" "*.properties" "../builders/netbeans/osx/#APPNAME_LC#/nbproject/private"
+}
+
+function createWin32Proj()
+{
+	doWildcardReplacements "templates/builders/VS2008" "*.vcproj" "../builders/VS2008/#APPNAME_LC#"
+}
+
+function updateServerConfig()
+{
+	OLD_IFS=$IFS;
+	IFS=$'\n';
+
+	doWildcardReplacements "templates" "rtmpserver.lua" "/tmp"
+
+	>/tmp/final
+	
+	for line in `cat ../builders/cmake/rtmpserver/rtmpserver.lua`; do
+		if [[ "$line" =~ .*--#INSERTION_MARKER#.* ]]
+		then
+			cat /tmp/rtmpserver.lua >>/tmp/final
+		else
+			echo $line>>/tmp/final;
+		fi
+	done
+
+	mv /tmp/final ../builders/cmake/rtmpserver/rtmpserver.lua
+	rm /tmp/rtmpserver.lua
+
+	IFS=$OLD_IFS;
+}
+
+echo "Initialize variables..."
+initVars
+
+echo "Create sources..."
+createSources
+
+echo "Create cmake project..."
+createCMakeProj
+
+echo "Create NB project for OSX..."
+createNBOSXProj
+
+echo "Create win32 project..."
+createWin32Proj
+
+echo "Update server's config file..."
+updateServerConfig
+
+echo "Done :)"
+

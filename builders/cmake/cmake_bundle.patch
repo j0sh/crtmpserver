@@ -1,0 +1,127 @@
+Index: ../../builders/cmake/Copyright.txt
+===================================================================
+--- ../../builders/cmake/Copyright.txt	(revision 0)
++++ ../../builders/cmake/Copyright.txt	(revision 0)
+@@ -0,0 +1 @@
++Copyrights...
+Index: ../../builders/cmake/applications/CMakeLists.txt
+===================================================================
+--- ../../builders/cmake/applications/CMakeLists.txt	(revision 858)
++++ ../../builders/cmake/applications/CMakeLists.txt	(working copy)
+@@ -1,12 +1,12 @@
+ cmake_minimum_required(VERSION 2.6)
+ PROJECT(applications)
+ 
+-ADD_SUBDIRECTORY(proxypublishersample proxypublishersample)
+-ADD_SUBDIRECTORY(proxyplayersample proxyplayersample)
+-ADD_SUBDIRECTORY(conference conference)
+-ADD_SUBDIRECTORY(red5ball red5ball)
+-ADD_SUBDIRECTORY(flvplayback flvplayback)
++#ADD_SUBDIRECTORY(proxypublishersample proxypublishersample)
++#ADD_SUBDIRECTORY(proxyplayersample proxyplayersample)
++#ADD_SUBDIRECTORY(conference conference)
++#ADD_SUBDIRECTORY(red5ball red5ball)
++#ADD_SUBDIRECTORY(flvplayback flvplayback)
+ ADD_SUBDIRECTORY(appselector appselector)
+-ADD_SUBDIRECTORY(avchat3 avchat3)
+-ADD_SUBDIRECTORY(mpegtsplayback mpegtsplayback)
+-ADD_SUBDIRECTORY(mpegts2 mpegts2)
++#ADD_SUBDIRECTORY(avchat3 avchat3)
++#ADD_SUBDIRECTORY(mpegtsplayback mpegtsplayback)
++#ADD_SUBDIRECTORY(mpegts2 mpegts2)
+Index: ../../builders/cmake/myico.ico
+===================================================================
+Cannot display: file marked as a binary type.
+svn:mime-type = application/octet-stream
+
+Property changes on: ../../builders/cmake/myico.ico
+___________________________________________________________________
+Added: svn:mime-type
+   + application/octet-stream
+
+Index: ../../builders/cmake/rtmpserver.plist
+===================================================================
+--- ../../builders/cmake/rtmpserver.plist	(revision 0)
++++ ../../builders/cmake/rtmpserver.plist	(revision 0)
+@@ -0,0 +1 @@
++my plist...
+Index: ../../builders/cmake/rtmpserver/CMakeLists.txt
+===================================================================
+--- ../../builders/cmake/rtmpserver/CMakeLists.txt	(revision 858)
++++ ../../builders/cmake/rtmpserver/CMakeLists.txt	(working copy)
+@@ -10,4 +10,5 @@
+ 
+ ADD_EXECUTABLE(rtmpserver ../../../sources/rtmpserver/src/rtmpserver.cpp)
+ TARGET_LINK_LIBRARIES(rtmpserver thelib ${LUA_LIBRARY_PATH} ${OPENSSL_LIBRARY_PATH} ${CRYPTO_LIBRARY_PATH})
++INSTALL(TARGETS rtmpserver DESTINATION path/to/my/dir)
+ 
+Index: ../../builders/cmake/ReadMe.txt
+===================================================================
+--- ../../builders/cmake/ReadMe.txt	(revision 0)
++++ ../../builders/cmake/ReadMe.txt	(revision 0)
+@@ -0,0 +1 @@
++read me....
+Index: ../../builders/cmake/startup.sh
+===================================================================
+--- ../../builders/cmake/startup.sh	(revision 0)
++++ ../../builders/cmake/startup.sh	(revision 0)
+@@ -0,0 +1,4 @@
++#!/bin/sh
++
++echo "Hello world...."
++
+Index: ../../builders/cmake/CMakeLists.txt
+===================================================================
+--- ../../builders/cmake/CMakeLists.txt	(revision 858)
++++ ../../builders/cmake/CMakeLists.txt	(working copy)
+@@ -10,11 +10,9 @@
+ INCLUDE(cmake_find_modules/Find_cxxtest.cmake)
+ INCLUDE(cmake_find_modules/Find_pcap.cmake)
+ INCLUDE(cmake_find_modules/pch_support.cmake)
++INCLUDE(CMakeDetermineSystem)
+ #INCLUDE(cmake_find_modules/Find_scons.cmake)
+ 
+-
+-INCLUDE(CMakeDetermineSystem)
+-
+ MESSAGE(STATUS "We have a ${CMAKE_SYSTEM} system")
+ IF(CMAKE_SYSTEM_NAME MATCHES "FreeBSD")
+ 	SET(GENERIC_FLAGS "${GENERIC_FLAGS} -fPIC")
+@@ -70,14 +68,33 @@
+ ADD_SUBDIRECTORY(common common)
+ ADD_SUBDIRECTORY(thelib thelib)
+ ADD_SUBDIRECTORY(rtmpserver rtmpserver)
+-ADD_SUBDIRECTORY(cppapplicationserver cppapplicationserver)
+-ADD_SUBDIRECTORY(mcbtests mcbtests)
+-ADD_SUBDIRECTORY(trafficdisector trafficdisector)
++#ADD_SUBDIRECTORY(cppapplicationserver cppapplicationserver)
++#ADD_SUBDIRECTORY(mcbtests mcbtests)
++#ADD_SUBDIRECTORY(trafficdisector trafficdisector)
+ #ADD_SUBDIRECTORY(pcapdumper pcapdumper)
+-ADD_SUBDIRECTORY(tssplitter tssplitter)
++#ADD_SUBDIRECTORY(tssplitter tssplitter)
+ ADD_SUBDIRECTORY(applications applications)
+ IF (${V8_FOUND})
+ 	ADD_SUBDIRECTORY(vm vm)
+ 	ADD_SUBDIRECTORY(vmtests vmtests)
+ ENDIF(${V8_FOUND})
+ 
++INCLUDE(InstallRequiredSystemLibraries)
++#SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "My funky project")
++#SET(CPACK_PACKAGE_VENDOR "Me, myself, and I")
++#SET(CPACK_PACKAGE_DESCRIPTION_FILE "ReadMe.txt")
++#SET(CPACK_RESOURCE_FILE_LICENSE "Copyright.txt")
++#SET(CPACK_PACKAGE_VERSION_MAJOR "1")
++#SET(CPACK_PACKAGE_VERSION_MINOR "3")
++#SET(CPACK_PACKAGE_VERSION_PATCH "2")
++#SET(CPACK_BUNDLE_NAME "sdfsdfsd")
++#SET(CPACK_PACKAGE_EXECUTABLES "rtmpserver" "rtmp server")
++SET(CPACK_GENERATOR "Bundle")
++SET(CPACK_PACKAGE_FILE_NAME "gigi")
++SET(CPACK_PACKAGE_ICON "myico.ico")
++SET(CPACK_BUNDLE_NAME "C++ RTMP Server")
++SET(CPACK_BUNDLE_ICON "myico.ico")
++SET(CPACK_BUNDLE_PLIST "rtmpserver.plist")
++SET(CPACK_BUNDLE_STARTUP_COMMAND "startup.sh")
++INCLUDE(CPack)
++
