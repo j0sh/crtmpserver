@@ -33,6 +33,9 @@
         <logicalFolder name="ts" displayName="ts" projectFiles="true">
           <itemPath>../../../../sources/applications/applestreamingclient/include/protocols/ts/tsappprotocolhandler.h</itemPath>
         </logicalFolder>
+        <logicalFolder name="variant" displayName="variant" projectFiles="true">
+          <itemPath>../../../../sources/applications/applestreamingclient/include/protocols/variant/variantappprotocolhandler.h</itemPath>
+        </logicalFolder>
         <itemPath>../../../../sources/applications/applestreamingclient/include/protocols/genericprotocol.h</itemPath>
         <itemPath>../../../../sources/applications/applestreamingclient/include/protocols/protocolfactory.h</itemPath>
       </logicalFolder>
@@ -74,6 +77,9 @@
         </logicalFolder>
         <logicalFolder name="ts" displayName="ts" projectFiles="true">
           <itemPath>../../../../sources/applications/applestreamingclient/src/protocols/ts/tsappprotocolhandler.cpp</itemPath>
+        </logicalFolder>
+        <logicalFolder name="variant" displayName="variant" projectFiles="true">
+          <itemPath>../../../../sources/applications/applestreamingclient/src/protocols/variant/variantappprotocolhandler.cpp</itemPath>
         </logicalFolder>
         <itemPath>../../../../sources/applications/applestreamingclient/src/protocols/genericprotocol.cpp</itemPath>
         <itemPath>../../../../sources/applications/applestreamingclient/src/protocols/protocolfactory.cpp</itemPath>

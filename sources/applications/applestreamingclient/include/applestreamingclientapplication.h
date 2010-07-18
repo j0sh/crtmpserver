@@ -32,6 +32,7 @@ class TSAppProtocolHandler;
 class HTTPBuffAppProtocolHandler;
 class AESAppProtocolHandler;
 class BaseRTSPAppProtocolHandler;
+class VariantAppProtocolHandler;
 class ProtocolFactory;
 
 class AppleStreamingClientApplication
@@ -46,6 +47,7 @@ private:
 	HTTPBuffAppProtocolHandler *_pHTTPBuff;
 	AESAppProtocolHandler *_pAESHandler;
 	BaseRTSPAppProtocolHandler *_pRTSPHandler;
+	VariantAppProtocolHandler *_pVariantHandler;
 	ProtocolFactory *_pFactory;
 public:
 	AppleStreamingClientApplication(Variant &configuration);

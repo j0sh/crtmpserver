@@ -68,6 +68,7 @@
 #define LIBRARY_NAME_PATTERN "lib%s.so"
 #define safe_strerror strerror
 #define CLOCKS_PER_SECOND 1000000L
+#define GETCLOCKS(result) \
 do { \
     struct timeval ___timer___; \
     gettimeofday(&___timer___,NULL); \

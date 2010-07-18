@@ -36,6 +36,7 @@
 #include "eventsink/baseeventsink.h"
 #include "protocols/rtp/basertspappprotocolhandler.h"
 #include "protocols/httpbuff/httpbuffappprotocolhandler.h"
+#include "protocols/variant/variantappprotocolhandler.h"
 
 AppleStreamingClientApplication::AppleStreamingClientApplication(Variant &configuration)
 : BaseClientApplication(configuration) {
@@ -48,6 +49,7 @@ AppleStreamingClientApplication::AppleStreamingClientApplication(Variant &config
 	_pHTTPBuff = NULL;
 	_pAESHandler = NULL;
 	_pRTSPHandler = NULL;
+	_pVariantHandler = NULL;
 	_pFactory = NULL;
 }
 
@@ -98,6 +100,13 @@ AppleStreamingClientApplication::~AppleStreamingClientApplication() {
 		_pRTSPHandler = NULL;
 	}
 
+	UnRegisterAppProtocolHandler(PT_XML_VAR);
+	UnRegisterAppProtocolHandler(PT_BIN_VAR);
+	if (_pVariantHandler != NULL) {
+		delete _pVariantHandler;
+		_pVariantHandler = NULL;
+	}
+
 	if (_pFactory != NULL) {
 		ProtocolFactoryManager::UnRegisterProtocolFactory(_pFactory);
 		delete _pFactory;
@@ -134,6 +143,10 @@ bool AppleStreamingClientApplication::Initialize() {
 
 	_pRTSPHandler = new BaseRTSPAppProtocolHandler(_configuration);
 	RegisterAppProtocolHandler(PT_RTSP, _pRTSPHandler);
+
+	_pVariantHandler = new VariantAppProtocolHandler(_configuration);
+	RegisterAppProtocolHandler(PT_XML_VAR, _pVariantHandler);
+	RegisterAppProtocolHandler(PT_BIN_VAR, _pVariantHandler);
 
 	//2. Initialize our protocol factory
 	_pFactory = new ProtocolFactory();

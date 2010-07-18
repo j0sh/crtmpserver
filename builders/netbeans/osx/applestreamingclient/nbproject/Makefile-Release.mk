@@ -33,6 +33,7 @@ OBJECTDIR=build/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
+	${OBJECTDIR}/_ext/1728068287/variantappprotocolhandler.o \
 	${OBJECTDIR}/_ext/441423101/rtmpappprotocolhandler.o \
 	${OBJECTDIR}/_ext/441423101/playlist.o \
 	${OBJECTDIR}/_ext/1147538975/httpbufferprotocol.o \
@@ -83,6 +84,11 @@ LDLIBSOPTIONS=-L../common/dist/Release/GNU-MacOSX -lcommon -L../thelib/../Releas
 ../Release/GNU-MacOSX/applications/applestreamingclient/libapplestreamingclient.dylib: ${OBJECTFILES}
 	${MKDIR} -p ../Release/GNU-MacOSX/applications/applestreamingclient
 	${LINK.cc} -dynamiclib -install_name libapplestreamingclient.dylib -o ../${CND_CONF}/${CND_PLATFORM}/applications/applestreamingclient/libapplestreamingclient.dylib -fPIC ${OBJECTFILES} ${LDLIBSOPTIONS} 
+
+${OBJECTDIR}/_ext/1728068287/variantappprotocolhandler.o: ../../../../sources/applications/applestreamingclient/src/protocols/variant/variantappprotocolhandler.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1728068287
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/applestreamingclient/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1728068287/variantappprotocolhandler.o ../../../../sources/applications/applestreamingclient/src/protocols/variant/variantappprotocolhandler.cpp
 
 ${OBJECTDIR}/_ext/441423101/rtmpappprotocolhandler.o: ../../../../sources/applications/applestreamingclient/src/rtmpappprotocolhandler.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/441423101

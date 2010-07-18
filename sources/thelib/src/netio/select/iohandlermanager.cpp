@@ -159,6 +159,8 @@ void IOHandlerManager::DeleteDeadHandlers() {
 }
 
 bool IOHandlerManager::Pulse() {
+	if(_isShuttingDown)
+		return false;
     //1. Create a copy of all fd sets
     FD_ZERO(&_readFdsCopy);
     FD_ZERO(&_writeFdsCopy);
