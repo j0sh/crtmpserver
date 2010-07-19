@@ -8,6 +8,8 @@
       <itemPath>../../../../sources/applications/proxypublish/include/proxypublish.h</itemPath>
       <itemPath>../../../../sources/applications/proxypublish/include/proxypublishapplication.h</itemPath>
       <itemPath>../../../../sources/applications/proxypublish/include/rtmpappprotocolhandler.h</itemPath>
+      <itemPath>../../../../sources/applications/proxypublish/include/rtpappprotocolhandler.h</itemPath>
+      <itemPath>../../../../sources/applications/proxypublish/include/rtspappprotocolhandler.h</itemPath>
     </logicalFolder>
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
@@ -16,6 +18,8 @@
       <itemPath>../../../../sources/applications/proxypublish/src/proxypublish.cpp</itemPath>
       <itemPath>../../../../sources/applications/proxypublish/src/proxypublishapplication.cpp</itemPath>
       <itemPath>../../../../sources/applications/proxypublish/src/rtmpappprotocolhandler.cpp</itemPath>
+      <itemPath>../../../../sources/applications/proxypublish/src/rtpappprotocolhandler.cpp</itemPath>
+      <itemPath>../../../../sources/applications/proxypublish/src/rtspappprotocolhandler.cpp</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -47,6 +51,7 @@
             <Elem>OSX</Elem>
             <Elem>NET_KQUEUE</Elem>
             <Elem>HAS_PROTOCOL_RTMP</Elem>
+            <Elem>HAS_PROTOCOL_RTP</Elem>
           </preprocessorList>
         </ccTool>
         <linkerTool>
@@ -102,6 +107,7 @@
             <Elem>OSX</Elem>
             <Elem>NET_KQUEUE</Elem>
             <Elem>HAS_PROTOCOL_RTMP</Elem>
+            <Elem>HAS_PROTOCOL_RTP</Elem>
           </preprocessorList>
         </ccTool>
         <fortranCompilerTool>

@@ -33,8 +33,10 @@ OBJECTDIR=build/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
+	${OBJECTDIR}/_ext/1106680373/rtpappprotocolhandler.o \
 	${OBJECTDIR}/_ext/1106680373/proxypublishapplication.o \
 	${OBJECTDIR}/_ext/1106680373/liveflvappprotocolhandler.o \
+	${OBJECTDIR}/_ext/1106680373/rtspappprotocolhandler.o \
 	${OBJECTDIR}/_ext/1106680373/proxypublish.o \
 	${OBJECTDIR}/_ext/1106680373/rtmpappprotocolhandler.o
 
@@ -67,25 +69,35 @@ LDLIBSOPTIONS=-L../common/dist/Release/GNU-MacOSX -lcommon -L../thelib/../Releas
 	${MKDIR} -p ../Release/GNU-MacOSX/applications/proxypublish
 	${LINK.cc} -dynamiclib -install_name libproxypublish.dylib -o ../${CND_CONF}/${CND_PLATFORM}/applications/proxypublish/libproxypublish.dylib -fPIC ${OBJECTFILES} ${LDLIBSOPTIONS} 
 
+${OBJECTDIR}/_ext/1106680373/rtpappprotocolhandler.o: ../../../../sources/applications/proxypublish/src/rtpappprotocolhandler.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1106680373
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_RTP -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/proxypublish/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1106680373/rtpappprotocolhandler.o ../../../../sources/applications/proxypublish/src/rtpappprotocolhandler.cpp
+
 ${OBJECTDIR}/_ext/1106680373/proxypublishapplication.o: ../../../../sources/applications/proxypublish/src/proxypublishapplication.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1106680373
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTMP -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/proxypublish/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1106680373/proxypublishapplication.o ../../../../sources/applications/proxypublish/src/proxypublishapplication.cpp
+	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_RTP -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/proxypublish/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1106680373/proxypublishapplication.o ../../../../sources/applications/proxypublish/src/proxypublishapplication.cpp
 
 ${OBJECTDIR}/_ext/1106680373/liveflvappprotocolhandler.o: ../../../../sources/applications/proxypublish/src/liveflvappprotocolhandler.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1106680373
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTMP -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/proxypublish/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1106680373/liveflvappprotocolhandler.o ../../../../sources/applications/proxypublish/src/liveflvappprotocolhandler.cpp
+	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_RTP -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/proxypublish/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1106680373/liveflvappprotocolhandler.o ../../../../sources/applications/proxypublish/src/liveflvappprotocolhandler.cpp
+
+${OBJECTDIR}/_ext/1106680373/rtspappprotocolhandler.o: ../../../../sources/applications/proxypublish/src/rtspappprotocolhandler.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1106680373
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_RTP -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/proxypublish/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1106680373/rtspappprotocolhandler.o ../../../../sources/applications/proxypublish/src/rtspappprotocolhandler.cpp
 
 ${OBJECTDIR}/_ext/1106680373/proxypublish.o: ../../../../sources/applications/proxypublish/src/proxypublish.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1106680373
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTMP -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/proxypublish/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1106680373/proxypublish.o ../../../../sources/applications/proxypublish/src/proxypublish.cpp
+	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_RTP -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/proxypublish/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1106680373/proxypublish.o ../../../../sources/applications/proxypublish/src/proxypublish.cpp
 
 ${OBJECTDIR}/_ext/1106680373/rtmpappprotocolhandler.o: ../../../../sources/applications/proxypublish/src/rtmpappprotocolhandler.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1106680373
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTMP -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/proxypublish/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1106680373/rtmpappprotocolhandler.o ../../../../sources/applications/proxypublish/src/rtmpappprotocolhandler.cpp
+	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_RTP -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/proxypublish/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1106680373/rtmpappprotocolhandler.o ../../../../sources/applications/proxypublish/src/rtmpappprotocolhandler.cpp
 
 # Subprojects
 .build-subprojects:

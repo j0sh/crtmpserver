@@ -246,7 +246,21 @@ configuration=
 					localStreamName="gigi",
 					emulateUserAgent="FMLE/3.0 (compatible; FMSc/1.0 http://www.rtmpd.com)"
 				}]]--,
-			}
+				{
+					targetUri="rtmp://localhost/vod"
+				},
+			},
+			rtspStreams = 
+			{
+                --[[{
+                    --url="rtsp://82.177.67.58/channel1",
+                    --url="rtsp://217.153.33.206/axis-media/media.amp",
+                    url="rtsp://82.177.67.61/axis-media/media.amp",
+                    --url="rtsp://media-us-2.soundreach.net/slcn_lifestyle.sdp",
+                    --url="rtsp://0.0.0.0:8080/test.sdp",
+                    forceTcp=true
+                },]]--
+            },
 			--validateHandshake=true,
 			--default=true,
 		},

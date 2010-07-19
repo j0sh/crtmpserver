@@ -25,7 +25,6 @@
 #include "protocols/rtp/sdp.h"
 #include "protocols/protocolfactorymanager.h"
 #include "netio/netio.h"
-#include "flvplaybackapplication.h"
 #include "protocols/protocolmanager.h"
 
 RTSPAppProtocolHandler::RTSPAppProtocolHandler(Variant& configuration)

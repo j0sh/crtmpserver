@@ -50,6 +50,8 @@ void InNetRTPStream::ReadyForSend() {
 }
 
 void InNetRTPStream::SignalOutStreamAttached(BaseOutStream *pOutStream) {
+	if (_lastTs == 0)
+		return;
 	if (!pOutStream->FeedData(GETIBPOINTER(_SPS), GETAVAILABLEBYTESCOUNT(_SPS),
 			0, GETAVAILABLEBYTESCOUNT(_SPS),
 			_lastTs, false)) {
@@ -102,8 +104,18 @@ bool InNetRTPStream::FeedData(uint8_t *pData, uint32_t dataLength,
 				absoluteTimestamp - _lastTs);
 		return true;
 	}
-	_lastTs = absoluteTimestamp;
 	LinkedListNode<BaseOutStream *> *pTemp = _pOutStreams;
+	if (_lastTs == 0) {
+		_lastTs = absoluteTimestamp;
+		while (pTemp != NULL) {
+			if (!pTemp->info->IsEnqueueForDelete()) {
+				SignalOutStreamAttached(pTemp->info);
+			}
+			pTemp = pTemp->pPrev;
+		}
+	}
+	_lastTs = absoluteTimestamp;
+	pTemp = _pOutStreams;
 	while (pTemp != NULL) {
 		if (!pTemp->info->IsEnqueueForDelete()) {
 			if (!pTemp->info->FeedData(pData, dataLength, processedLength, totalLength,
