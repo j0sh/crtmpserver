@@ -130,6 +130,6 @@ public class VideoViewDemo extends Activity {
 
     public native String  stringFromJNI();
     static {
-        System.loadLibrary("crtmpserver");
+        System.loadLibrary("crtmpserver_dynamic");
     }
 }
