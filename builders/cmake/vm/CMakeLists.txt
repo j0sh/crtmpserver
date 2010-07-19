@@ -21,5 +21,4 @@ ENDIF(${V8_FOUND})
 #create THE library
 ADD_LIBRARY(vm SHARED ${SOURCES})
 TARGET_LINK_LIBRARIES(vm lua common pthread ${EXECINFO_LIBRARY_PATH} ${OPENSSL_LIBRARY_PATH} ${CRYPTO_LIBRARY_PATH} ${V8_LIBRARY_PATH})
-ADD_PRECOMPILED_HEADER(vm ../../../sources/common/include/utils/core.h)
 

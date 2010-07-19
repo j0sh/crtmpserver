@@ -1,23 +1,23 @@
 /* 
-*  Copyright (c) 2010,
-*  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
-*  
-*  This file is part of crtmpserver.
-*  crtmpserver is free software: you can redistribute it and/or modify
-*  it under the terms of the GNU General Public License as published by
-*  the Free Software Foundation, either version 3 of the License, or
-*  (at your option) any later version.
-*  
-*  crtmpserver is distributed in the hope that it will be useful,
-*  but WITHOUT ANY WARRANTY; without even the implied warranty of
-*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*  GNU General Public License for more details.
-*  
-*  You should have received a copy of the GNU General Public License
-*  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ *  Copyright (c) 2010,
+ *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
+ *
+ *  This file is part of crtmpserver.
+ *  crtmpserver is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  crtmpserver is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
-
+#ifdef HAS_MEDIA_MP4
 #ifndef _MP4DOCUMENT_H
 #define	_MP4DOCUMENT_H
 
@@ -109,31 +109,32 @@ class AtomESDS;
 class MP4Document
 : public BaseMediaDocument {
 private:
-    vector<BaseAtom *> _allAtoms;
-    vector<BaseAtom *> _topAtoms;
-    AtomFTYP *_pFTYP;
-    AtomMOOV *_pMOOV;
+	vector<BaseAtom *> _allAtoms;
+	vector<BaseAtom *> _topAtoms;
+	AtomFTYP *_pFTYP;
+	AtomMOOV *_pMOOV;
 public:
-    MP4Document(Variant &metadata);
-    virtual ~MP4Document();
+	MP4Document(Variant &metadata);
+	virtual ~MP4Document();
 
 #ifdef HAS_MMAP
-    MmapFile &GetMediaFile();
+	MmapFile &GetMediaFile();
 #else
-    File &GetMediaFile();
+	File &GetMediaFile();
 #endif /* HAS_MMAP */
-    void AddAtom(BaseAtom *pAtom);
-    BaseAtom * ReadAtom(BaseAtom *pParentAtom);
+	void AddAtom(BaseAtom *pAtom);
+	BaseAtom * ReadAtom(BaseAtom *pParentAtom);
 protected:
-    virtual bool ParseDocument();
-    virtual bool BuildFrames();
-    virtual Variant GetRTMPMeta();
+	virtual bool ParseDocument();
+	virtual bool BuildFrames();
+	virtual Variant GetRTMPMeta();
 private:
-    string Hierarchy();
-    AtomTRAK * GetTRAK(bool audio);
-    bool BuildFrames(bool audio);
+	string Hierarchy();
+	AtomTRAK * GetTRAK(bool audio);
+	bool BuildFrames(bool audio);
 };
 
 #endif	/* _MP4DOCUMENT_H */
 
 
+#endif /* HAS_MEDIA_MP4 */

@@ -1,23 +1,23 @@
 /* 
-*  Copyright (c) 2010,
-*  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
-*  
-*  This file is part of crtmpserver.
-*  crtmpserver is free software: you can redistribute it and/or modify
-*  it under the terms of the GNU General Public License as published by
-*  the Free Software Foundation, either version 3 of the License, or
-*  (at your option) any later version.
-*  
-*  crtmpserver is distributed in the hope that it will be useful,
-*  but WITHOUT ANY WARRANTY; without even the implied warranty of
-*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*  GNU General Public License for more details.
-*  
-*  You should have received a copy of the GNU General Public License
-*  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ *  Copyright (c) 2010,
+ *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
+ *
+ *  This file is part of crtmpserver.
+ *  crtmpserver is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  crtmpserver is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
-
+#ifdef HAS_MEDIA_MP4
 #include "mediaformats/mp4/atomesds.h"
 #include "buffering/bitarray.h"
 
@@ -28,22 +28,22 @@
 
 AtomESDS::AtomESDS(MP4Document *pDocument, uint32_t type, uint64_t size, uint64_t start)
 : VersionedAtom(pDocument, type, size, start) {
-    _MP4ESDescrTag_ID = 0;
-    _MP4ESDescrTag_Priority = 0;
-    _MP4DecConfigDescrTag_ObjectTypeID = 0;
-    _MP4DecConfigDescrTag_StreamType = 0;
-    _MP4DecConfigDescrTag_BufferSizeDB = 0;
-    _MP4DecConfigDescrTag_MaxBitRate = 0;
-    _MP4DecConfigDescrTag_AvgBitRate = 0;
-    _extraDataStart = 0;
-    _extraDataLength = 0;
+	_MP4ESDescrTag_ID = 0;
+	_MP4ESDescrTag_Priority = 0;
+	_MP4DecConfigDescrTag_ObjectTypeID = 0;
+	_MP4DecConfigDescrTag_StreamType = 0;
+	_MP4DecConfigDescrTag_BufferSizeDB = 0;
+	_MP4DecConfigDescrTag_MaxBitRate = 0;
+	_MP4DecConfigDescrTag_AvgBitRate = 0;
+	_extraDataStart = 0;
+	_extraDataLength = 0;
 #ifdef DEBUG_ESDS_ATOM
-    _objectType = 0;
-    _sampleRate = 0;
-    _channels = 0;
-    _extObjectType = 0;
-    _sbr = 0;
-    _extSampleRate = 0;
+	_objectType = 0;
+	_sampleRate = 0;
+	_channels = 0;
+	_extObjectType = 0;
+	_sbr = 0;
+	_extSampleRate = 0;
 #endif /* DEBUG_ESDS_ATOM */
 }
 
@@ -51,199 +51,200 @@ AtomESDS::~AtomESDS() {
 }
 
 uint64_t AtomESDS::GetExtraDataStart() {
-    return _extraDataStart;
+	return _extraDataStart;
 }
 
 uint64_t AtomESDS::GetExtraDataLength() {
-    return _extraDataLength;
+	return _extraDataLength;
 }
 
 bool AtomESDS::ReadTagLength(uint32_t &length) {
-    length = 0;
-    uint32_t count = 4;
-    while (count--) {
-        uint8_t c = 0;
-        if (!ReadUInt8(c))
-            return false;
+	length = 0;
+	uint32_t count = 4;
+	while (count--) {
+		uint8_t c = 0;
+		if (!ReadUInt8(c))
+			return false;
 
-        length = (length << 7) | (c & 0x7f);
-        if (!(c & 0x80))
-            break;
-    }
-    return true;
+		length = (length << 7) | (c & 0x7f);
+		if (!(c & 0x80))
+			break;
+	}
+	return true;
 }
 
 bool AtomESDS::ReadTagAndLength(uint8_t &tagType, uint32_t &length) {
-    if (!ReadUInt8(tagType))
-        return false;
-    if (!ReadTagLength(length))
-        return false;
-    FINEST_ESDS_ATOM("tagType: %d; length: %x; currentPos: %llx",
-            tagType, length, CurrentPosition());
-    return true;
+	if (!ReadUInt8(tagType))
+		return false;
+	if (!ReadTagLength(length))
+		return false;
+	FINEST_ESDS_ATOM("tagType: %d; length: %x; currentPos: %llx",
+			tagType, length, CurrentPosition());
+	return true;
 }
 
 bool AtomESDS::ReadData() {
-    uint8_t tagType = 0;
-    uint32_t length = 0;
+	uint8_t tagType = 0;
+	uint32_t length = 0;
 
-    FINEST_ESDS_ATOM("Position: %llx", CurrentPosition());
-    if (!ReadTagAndLength(tagType, length)) {
-        FATAL("Unable to read tag type and length");
-        return false;
-    }
+	FINEST_ESDS_ATOM("Position: %llx", CurrentPosition());
+	if (!ReadTagAndLength(tagType, length)) {
+		FATAL("Unable to read tag type and length");
+		return false;
+	}
 
-    if (tagType == MP4ESDescrTag) {
-        if (!ReadUInt16(_MP4ESDescrTag_ID)) {
-            FATAL("Unable to read _MP4ESDescrTag_ID");
-            return false;
-        }
-        FINEST_ESDS_ATOM("_MP4ESDescrTag_ID: %u", _MP4ESDescrTag_ID);
+	if (tagType == MP4ESDescrTag) {
+		if (!ReadUInt16(_MP4ESDescrTag_ID)) {
+			FATAL("Unable to read _MP4ESDescrTag_ID");
+			return false;
+		}
+		FINEST_ESDS_ATOM("_MP4ESDescrTag_ID: %u", _MP4ESDescrTag_ID);
 
-        if (!ReadUInt8(_MP4ESDescrTag_Priority)) {
-            FATAL("Unable to read _MP4ESDescrTag_Priority");
-            return false;
-        }
-        FINEST_ESDS_ATOM("_MP4ESDescrTag_Priority: %u", _MP4ESDescrTag_Priority);
-    } else {
-        if (!ReadUInt16(_MP4ESDescrTag_ID)) {
-            FATAL("Unable to read _MP4ESDescrTag_ID");
-            return false;
-        }
-        FINEST_ESDS_ATOM("_MP4ESDescrTag_ID: %u", _MP4ESDescrTag_ID);
-    }
+		if (!ReadUInt8(_MP4ESDescrTag_Priority)) {
+			FATAL("Unable to read _MP4ESDescrTag_Priority");
+			return false;
+		}
+		FINEST_ESDS_ATOM("_MP4ESDescrTag_Priority: %u", _MP4ESDescrTag_Priority);
+	} else {
+		if (!ReadUInt16(_MP4ESDescrTag_ID)) {
+			FATAL("Unable to read _MP4ESDescrTag_ID");
+			return false;
+		}
+		FINEST_ESDS_ATOM("_MP4ESDescrTag_ID: %u", _MP4ESDescrTag_ID);
+	}
 
-    FINEST_ESDS_ATOM("Position: %llx", CurrentPosition());
-    if (!ReadTagAndLength(tagType, length)) {
-        FATAL("Unable to read tag type and length");
-        return false;
-    }
+	FINEST_ESDS_ATOM("Position: %llx", CurrentPosition());
+	if (!ReadTagAndLength(tagType, length)) {
+		FATAL("Unable to read tag type and length");
+		return false;
+	}
 
-    if (tagType == MP4DecConfigDescrTag) {
-        if (!ReadUInt8(_MP4DecConfigDescrTag_ObjectTypeID)) {
-            FATAL("Unable to read _MP4DecConfigDescrTag_ObjectTypeID");
-            return false;
-        }
-        FINEST_ESDS_ATOM("_MP4DecConfigDescrTag_ObjectTypeID: %u",
-                _MP4DecConfigDescrTag_ObjectTypeID);
+	if (tagType == MP4DecConfigDescrTag) {
+		if (!ReadUInt8(_MP4DecConfigDescrTag_ObjectTypeID)) {
+			FATAL("Unable to read _MP4DecConfigDescrTag_ObjectTypeID");
+			return false;
+		}
+		FINEST_ESDS_ATOM("_MP4DecConfigDescrTag_ObjectTypeID: %u",
+				_MP4DecConfigDescrTag_ObjectTypeID);
 
-        if (!ReadUInt8(_MP4DecConfigDescrTag_StreamType)) {
-            FATAL("Unable to read _MP4DecConfigDescrTag_StreamType");
-            return false;
-        }
-        FINEST_ESDS_ATOM("_MP4DecConfigDescrTag_StreamType: %u",
-                _MP4DecConfigDescrTag_StreamType);
+		if (!ReadUInt8(_MP4DecConfigDescrTag_StreamType)) {
+			FATAL("Unable to read _MP4DecConfigDescrTag_StreamType");
+			return false;
+		}
+		FINEST_ESDS_ATOM("_MP4DecConfigDescrTag_StreamType: %u",
+				_MP4DecConfigDescrTag_StreamType);
 
-        if (!ReadUInt24(_MP4DecConfigDescrTag_BufferSizeDB)) {
-            FATAL("Unable to read _MP4DecConfigDescrTag_BufferSizeDB");
-            return false;
-        }
-        FINEST_ESDS_ATOM("_MP4DecConfigDescrTag_BufferSizeDB: %u",
-                _MP4DecConfigDescrTag_BufferSizeDB);
+		if (!ReadUInt24(_MP4DecConfigDescrTag_BufferSizeDB)) {
+			FATAL("Unable to read _MP4DecConfigDescrTag_BufferSizeDB");
+			return false;
+		}
+		FINEST_ESDS_ATOM("_MP4DecConfigDescrTag_BufferSizeDB: %u",
+				_MP4DecConfigDescrTag_BufferSizeDB);
 
-        if (!ReadUInt32(_MP4DecConfigDescrTag_MaxBitRate)) {
-            FATAL("Unable to read _MP4DecConfigDescrTag_MaxBitRate");
-            return false;
-        }
-        FINEST_ESDS_ATOM("_MP4DecConfigDescrTag_MaxBitRate: %u",
-                _MP4DecConfigDescrTag_MaxBitRate);
+		if (!ReadUInt32(_MP4DecConfigDescrTag_MaxBitRate)) {
+			FATAL("Unable to read _MP4DecConfigDescrTag_MaxBitRate");
+			return false;
+		}
+		FINEST_ESDS_ATOM("_MP4DecConfigDescrTag_MaxBitRate: %u",
+				_MP4DecConfigDescrTag_MaxBitRate);
 
-        if (!ReadUInt32(_MP4DecConfigDescrTag_AvgBitRate)) {
-            FATAL("Unable to read _MP4DecConfigDescrTag_AvgBitRate");
-            return false;
-        }
-        FINEST_ESDS_ATOM("_MP4DecConfigDescrTag_AvgBitRate: %u",
-                _MP4DecConfigDescrTag_AvgBitRate);
+		if (!ReadUInt32(_MP4DecConfigDescrTag_AvgBitRate)) {
+			FATAL("Unable to read _MP4DecConfigDescrTag_AvgBitRate");
+			return false;
+		}
+		FINEST_ESDS_ATOM("_MP4DecConfigDescrTag_AvgBitRate: %u",
+				_MP4DecConfigDescrTag_AvgBitRate);
 
-        FINEST_ESDS_ATOM("Position: %llx", CurrentPosition());
-        if (!ReadTagAndLength(tagType, length)) {
-            FATAL("Unable to read tag type and length");
-            return false;
-        }
+		FINEST_ESDS_ATOM("Position: %llx", CurrentPosition());
+		if (!ReadTagAndLength(tagType, length)) {
+			FATAL("Unable to read tag type and length");
+			return false;
+		}
 
-        if (tagType == MP4UnknownTag) {
-            uint8_t unknownValue;
-            if (!ReadUInt8(unknownValue)) {
-                FATAL("Unable to read unknownValue");
-                return false;
-            }
-            FINEST_ESDS_ATOM("unknownValue: %u", unknownValue);
+		if (tagType == MP4UnknownTag) {
+			uint8_t unknownValue;
+			if (!ReadUInt8(unknownValue)) {
+				FATAL("Unable to read unknownValue");
+				return false;
+			}
+			FINEST_ESDS_ATOM("unknownValue: %u", unknownValue);
 
-            FINEST_ESDS_ATOM("Position: %llx", CurrentPosition());
-            if (!ReadTagAndLength(tagType, length)) {
-                FATAL("Unable to read tag type and length");
-                return false;
-            }
-        }
+			FINEST_ESDS_ATOM("Position: %llx", CurrentPosition());
+			if (!ReadTagAndLength(tagType, length)) {
+				FATAL("Unable to read tag type and length");
+				return false;
+			}
+		}
 
-        if (tagType == MP4DecSpecificDescrTag) {
-            //iso14496-3
-            //http://wiki.multimedia.cx/index.php?title=MPEG-4_Audio
-            _extraDataStart = CurrentPosition();
-            _extraDataLength = length;
+		if (tagType == MP4DecSpecificDescrTag) {
+			//iso14496-3
+			//http://wiki.multimedia.cx/index.php?title=MPEG-4_Audio
+			_extraDataStart = CurrentPosition();
+			_extraDataLength = length;
 #ifdef DEBUG_ESDS_ATOM
-            vector<string> sampleRates;
-            ADD_VECTOR_END(sampleRates, "96000");
-            ADD_VECTOR_END(sampleRates, "88200");
-            ADD_VECTOR_END(sampleRates, "64000");
-            ADD_VECTOR_END(sampleRates, "48000");
-            ADD_VECTOR_END(sampleRates, "44100");
-            ADD_VECTOR_END(sampleRates, "32000");
-            ADD_VECTOR_END(sampleRates, "24000");
-            ADD_VECTOR_END(sampleRates, "22050");
-            ADD_VECTOR_END(sampleRates, "16000");
-            ADD_VECTOR_END(sampleRates, "12000");
-            ADD_VECTOR_END(sampleRates, "11025");
-            ADD_VECTOR_END(sampleRates, "8000");
-            ADD_VECTOR_END(sampleRates, "7350");
+			vector<string> sampleRates;
+			ADD_VECTOR_END(sampleRates, "96000");
+			ADD_VECTOR_END(sampleRates, "88200");
+			ADD_VECTOR_END(sampleRates, "64000");
+			ADD_VECTOR_END(sampleRates, "48000");
+			ADD_VECTOR_END(sampleRates, "44100");
+			ADD_VECTOR_END(sampleRates, "32000");
+			ADD_VECTOR_END(sampleRates, "24000");
+			ADD_VECTOR_END(sampleRates, "22050");
+			ADD_VECTOR_END(sampleRates, "16000");
+			ADD_VECTOR_END(sampleRates, "12000");
+			ADD_VECTOR_END(sampleRates, "11025");
+			ADD_VECTOR_END(sampleRates, "8000");
+			ADD_VECTOR_END(sampleRates, "7350");
 
-            uint8_t *pBuffer = new uint8_t[length];
-            if (!ReadArray(pBuffer, length)) {
-                FATAL("Unable to read the extra data buffer");
-                return false;
-            }
+			uint8_t *pBuffer = new uint8_t[length];
+			if (!ReadArray(pBuffer, length)) {
+				FATAL("Unable to read the extra data buffer");
+				return false;
+			}
 
-            BitArray ba;
-            ba.Put(pBuffer, length);
-            FINEST_ESDS_ATOM("ba:\n%s", STR(ba));
-            delete [] pBuffer;
+			BitArray ba;
+			ba.Put(pBuffer, length);
+			FINEST_ESDS_ATOM("ba:\n%s", STR(ba));
+			delete [] pBuffer;
 
-            _objectType = ba.ReadBits<uint8_t > (5);
-            FINEST_ESDS_ATOM("_objectType: %d", _objectType);
+			_objectType = ba.ReadBits<uint8_t > (5);
+			FINEST_ESDS_ATOM("_objectType: %d", _objectType);
 
-            _sampleRate = ba.ReadBits<uint8_t > (4);
-            FINEST_ESDS_ATOM("_sampleRate: %d; %s", _sampleRate, STR(sampleRates[_sampleRate]));
+			_sampleRate = ba.ReadBits<uint8_t > (4);
+			FINEST_ESDS_ATOM("_sampleRate: %d; %s", _sampleRate, STR(sampleRates[_sampleRate]));
 
-            _channels = ba.ReadBits<uint8_t > (4);
-            FINEST_ESDS_ATOM("_channels: %d", _channels);
+			_channels = ba.ReadBits<uint8_t > (4);
+			FINEST_ESDS_ATOM("_channels: %d", _channels);
 
-            while (ba.AvailableBits() >= 11) {
-                if (ba.PeekBits<uint16_t > (11) == 0x2b7) {
-                    ba.IgnoreBits(11);
+			while (ba.AvailableBits() >= 11) {
+				if (ba.PeekBits<uint16_t > (11) == 0x2b7) {
+					ba.IgnoreBits(11);
 
-                    _extObjectType = ba.ReadBits<uint8_t > (5);
-                    FINEST_ESDS_ATOM("_extObjectType: %d", _extObjectType);
+					_extObjectType = ba.ReadBits<uint8_t > (5);
+					FINEST_ESDS_ATOM("_extObjectType: %d", _extObjectType);
 
-                    _sbr = ba.ReadBits<uint8_t > (1);
-                    FINEST_ESDS_ATOM("_sbr: %d", _sbr);
+					_sbr = ba.ReadBits<uint8_t > (1);
+					FINEST_ESDS_ATOM("_sbr: %d", _sbr);
 
-                    _extSampleRate = ba.ReadBits<uint8_t > (4);
-                    FINEST_ESDS_ATOM("_extSampleRate: %d; %s", _extSampleRate, STR(sampleRates[_extSampleRate]));
+					_extSampleRate = ba.ReadBits<uint8_t > (4);
+					FINEST_ESDS_ATOM("_extSampleRate: %d; %s", _extSampleRate, STR(sampleRates[_extSampleRate]));
 
-                    FINEST_ESDS_ATOM("leftovers bits count: %d", ba.AvailableBits());
+					FINEST_ESDS_ATOM("leftovers bits count: %d", ba.AvailableBits());
 
-                    break;
-                } else {
-                    ba.IgnoreBits(1);
-                }
-            }
+					break;
+				} else {
+					ba.IgnoreBits(1);
+				}
+			}
 #endif /* DEBUG_ESDS_ATOM */
 
-            //NYIA;
-            return SkipRead(false);
-        }
-    }
-    FATAL("No MP4DecSpecificDescrTag found");
-    return false;
+			//NYIA;
+			return SkipRead(false);
+		}
+	}
+	FATAL("No MP4DecSpecificDescrTag found");
+	return false;
 }
 
+#endif /* HAS_MEDIA_MP4 */

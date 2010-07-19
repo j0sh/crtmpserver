@@ -126,3 +126,32 @@ void EnvRun(string ip, uint16_t port) {
 void EnvStop() {
 	IOHandlerManager::SignalShutdown();
 }
+
+Variant ContextCreate() {
+	return Variant();
+}
+
+Variant ContextList() {
+	return Variant();
+}
+
+Variant ContextClose(uint32_t contextId) {
+	return Variant();
+}
+
+Variant ContextCloseAll() {
+	return Variant();
+}
+
+Variant CommandPlay(uint32_t contextId, string m3u8Uri, string httpSessionId,
+		string keyPassword) {
+	return Variant();
+}
+
+Variant CommandPause(uint32_t contextId) {
+	return Variant();
+}
+
+Variant CommandResume(uint32_t contextId) {
+	return Variant();
+}
