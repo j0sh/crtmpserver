@@ -192,7 +192,7 @@ bool InboundConnectivity::SendRTP(sockaddr_in &address, uint32_t rtpId,
 
 	//FINEST("%s:%d length: %d", inet_ntoa(address.sin_addr), ntohs(address.sin_port), length);
 	return sendto(pRTCP->GetIOHandler()->GetOutboundFd(),
-			pBuffer, length, 0, (sockaddr *) & address, sizeof (address)) == length;
+			pBuffer, length, 0, (sockaddr *) & address, sizeof (address)) == (int32_t) length;
 }
 
 void InboundConnectivity::Cleanup() {
