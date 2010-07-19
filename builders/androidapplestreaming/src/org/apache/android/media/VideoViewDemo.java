@@ -54,7 +54,9 @@ public class VideoViewDemo extends Activity {
 		mVideoView = (VideoView) findViewById(R.id.surface_view);
 
 		mPath = (EditText) findViewById(R.id.path);
-		mPath.setText("file:///sdcard/foo.3gp");//stringFromJNI());//"rtsp://192.168.1.14:5554/test.sdp");
+		//mPath.setText("file:///sdcard/foo.3gp");
+		mPath.setText(stringFromJNI());
+		//mpath.setText("rtsp://192.168.1.14:5554/test.sdp");
 		//rtsp://video2.multicasttech.com/AFTVSciFiH264250.sdp");
 
 		mPlay = (ImageButton) findViewById(R.id.play);

@@ -16,42 +16,50 @@
 LOCAL_PATH :=
 PROJDIR := $(PWD)/../..
 
-include $(CLEAR_VARS)
-LOCAL_CPP_EXTENSION := cpp
-LOCAL_MODULE := crtmpserver_static
-LOCAL_C_INCLUDES += $(PROJDIR)/sources/common/include $(PROJDIR)/sources/thelib/include $(PROJDIR)/sources/applications/applestreamingclient/include \
-	$(PROJDIR)/sources/androidapplestreaming/include
-LOCAL_CFLAGS += -DLITTLE_ENDIAN_BYTE_ALIGNED -DNET_SELECT -DANDROID -DHAS_PROTOCOL_HTTP \
-	-DHAS_PROTOCOL_RTMP \
-	-DHAS_PROTOCOL_LIVEFLV \
-	-DHAS_PROTOCOL_RTP \
-	-DHAS_PROTOCOL_TS \
-	-DHAS_PROTOCOL_VAR
-LOCAL_LDLIBS := -lssl -lcrypto -ldl
-LOCAL_SRC_FILES := $(shell find $(PROJDIR)/sources/common -type f -name *.cpp)
-LOCAL_SRC_FILES += $(shell find $(PROJDIR)/sources/thelib -type f -name *.cpp)
-LOCAL_SRC_FILES += $(shell find $(PROJDIR)/sources/applications/applestreamingclient -type f -name *.cpp)
-LOCAL_SRC_FILES += $(PROJDIR)/sources/androidapplestreaming/src/api.cpp $(PROJDIR)/sources/androidapplestreaming/src/jniwrapper.cpp
-include $(BUILD_STATIC_LIBRARY)
+PLATFORM_DEFINES := -DLITTLE_ENDIAN_BYTE_ALIGNED -DNET_SELECT -DANDROID -DHAS_PROTOCOL_HTTP
 
-include $(CLEAR_VARS)
-LOCAL_MODULE := crtmpserver_dynamic
-LOCAL_STATIC_LIBRARIES := crtmpserver_static
-include $(BUILD_SHARED_LIBRARY)
-
-include $(CLEAR_VARS)
-LOCAL_CPP_EXTENSION := cpp
-LOCAL_MODULE := testapp
-LOCAL_C_INCLUDES += $(PROJDIR)/sources/common/include $(PROJDIR)/sources/thelib/include $(PROJDIR)/sources/applications/applestreamingclient/include \
-    $(PROJDIR)/sources/androidapplestreaming/include
-LOCAL_CFLAGS += -DLITTLE_ENDIAN_BYTE_ALIGNED -DNET_SELECT -DANDROID -DHAS_PROTOCOL_HTTP \
-    -DHAS_PROTOCOL_RTMP \
+MODULES_DEFINES := -DHAS_PROTOCOL_RTMP \
     -DHAS_PROTOCOL_LIVEFLV \
     -DHAS_PROTOCOL_RTP \
     -DHAS_PROTOCOL_TS \
     -DHAS_PROTOCOL_VAR
-LOCAL_LDLIBS := -lssl -lcrypto -ldl
-LOCAL_SRC_FILES += $(PROJDIR)/sources/androidapplestreaming/src/main.cpp
+
+GLOBAL_DEFINES := $(PLATFORM_DEFINES) $(MODULES_DEFINES)
+
+INCLUDE_DIRECTORIES := $(PROJDIR)/sources/common/include $(PROJDIR)/sources/thelib/include $(PROJDIR)/sources/applications/applestreamingclient/include \
+    $(PROJDIR)/sources/androidapplestreaming/include
+
+NEEDED_LIBRARIES := -lssl -lcrypto -ldl
+
+SOURCES := $(shell find $(PROJDIR)/sources/common -type f -name *.cpp)
+SOURCES += $(shell find $(PROJDIR)/sources/thelib -type f -name *.cpp)
+SOURCES += $(shell find $(PROJDIR)/sources/applications/applestreamingclient -type f -name *.cpp)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := crtmpserver_static
+LOCAL_CPP_EXTENSION := cpp
+LOCAL_C_INCLUDES += $(INCLUDE_DIRECTORIES) 
+LOCAL_CFLAGS += $(GLOBAL_DEFINES) 
+LOCAL_SRC_FILES := $(SOURCES) $(PROJDIR)/sources/androidapplestreaming/src/api.cpp 
+include $(BUILD_STATIC_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := crtmpserver_dynamic
+LOCAL_CPP_EXTENSION := cpp
+LOCAL_C_INCLUDES += $(INCLUDE_DIRECTORIES)
+LOCAL_CFLAGS += $(GLOBAL_DEFINES)
+LOCAL_LDLIBS := $(NEEDED_LIBRARIES)
 LOCAL_STATIC_LIBRARIES := crtmpserver_static
+LOCAL_SRC_FILES := $(PROJDIR)/sources/androidapplestreaming/src/jniwrapper.cpp
+include $(BUILD_SHARED_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := testapp
+LOCAL_CPP_EXTENSION := cpp
+LOCAL_C_INCLUDES += $(INCLUDE_DIRECTORIES)
+LOCAL_CFLAGS += $(GLOBAL_DEFINES)
+LOCAL_LDLIBS := $(NEEDED_LIBRARIES)
+LOCAL_STATIC_LIBRARIES := crtmpserver_static
+LOCAL_SRC_FILES += $(PROJDIR)/sources/androidapplestreaming/src/main.cpp
 include $(BUILD_EXECUTABLE)
 
