@@ -294,7 +294,7 @@ bool OutboundConnectivity::InitializePorts(int32_t &dataFd, uint16_t &dataPort,
 	return false;
 }
 #define COMPUTE_BYTES_COUNT(m,c) \
-	for(uint32_t i=0;i<m.msg_iovlen;i++){ \
+	for(uint32_t i=0;i<(uint32_t)m.msg_iovlen;i++){ \
 		c+=m.msg_iov[i].iov_len-12; \
 	}
 
