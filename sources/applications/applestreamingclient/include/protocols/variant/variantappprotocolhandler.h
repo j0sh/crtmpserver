@@ -22,6 +22,8 @@
 
 #include "protocols/variant/basevariantappprotocolhandler.h"
 
+class ClientContext;
+
 class VariantAppProtocolHandler
 : public BaseVariantAppProtocolHandler {
 public:
@@ -30,6 +32,15 @@ public:
 
 	virtual bool ProcessMessage(BaseVariantProtocol *pProtocol,
 			Variant &lastSent, Variant &lastReceived);
+private:
+	ClientContext *GetContext(uint32_t contextId, uint64_t protocolType);
+	void ProcessContextCreate(BaseVariantProtocol *pProtocol, Variant &request);
+	void ProcessContextList(BaseVariantProtocol *pProtocol, Variant &request);
+	void ProcessContextClose(BaseVariantProtocol *pProtocol, Variant &request);
+	void ProcessContextCloseAll(BaseVariantProtocol *pProtocol, Variant &request);
+	void ProcessCommandPlay(BaseVariantProtocol *pProtocol, Variant &request);
+	void ProcessCommandPause(BaseVariantProtocol *pProtocol, Variant &request);
+	void ProcessCommandResume(BaseVariantProtocol *pProtocol, Variant &request);
 };
 
 #endif	/* _VARIANTAPPPROTOCOLHANDLER_H */

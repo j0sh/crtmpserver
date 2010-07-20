@@ -1,21 +1,21 @@
 /* 
-*  Copyright (c) 2010,
-*  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
-*  
-*  This file is part of crtmpserver.
-*  crtmpserver is free software: you can redistribute it and/or modify
-*  it under the terms of the GNU General Public License as published by
-*  the Free Software Foundation, either version 3 of the License, or
-*  (at your option) any later version.
-*  
-*  crtmpserver is distributed in the hope that it will be useful,
-*  but WITHOUT ANY WARRANTY; without even the implied warranty of
-*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*  GNU General Public License for more details.
-*  
-*  You should have received a copy of the GNU General Public License
-*  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ *  Copyright (c) 2010,
+ *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
+ *
+ *  This file is part of crtmpserver.
+ *  crtmpserver is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  crtmpserver is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 
 #ifdef HAS_PROTOCOL_VAR
@@ -78,26 +78,54 @@ bool BaseVariantProtocol::SignalInputData(IOBuffer &buffer) {
 #ifdef HAS_PROTOCOL_HTTP
 		//1. This is a HTTP based transfer. We only start doing stuff
 		//after a complete request is made.
-		if (!((BaseHTTPProtocol *) _pFarProtocol)->TransferCompleted())
+		BaseHTTPProtocol *pHTTPProtocol = (BaseHTTPProtocol *) _pFarProtocol;
+		if (!pHTTPProtocol->TransferCompleted())
 			return true;
 
-		string rawData = string((char *) GETIBPOINTER(buffer), GETAVAILABLEBYTESCOUNT(buffer));
-		buffer.IgnoreAll();
-		if (!Deserialize(rawData, _lastReceived)) {
+		if (!Deserialize(GETIBPOINTER(buffer), pHTTPProtocol->GetContentLength(),
+				_lastReceived)) {
 			FATAL("Unable to deserialize content");
 			return false;
 		}
+		buffer.Ignore(pHTTPProtocol->GetContentLength());
+
+		_lastReceived.Compact();
+
+		return _pProtocolHandler->ProcessMessage(this, _lastSent, _lastReceived);
 #else
 		FATAL("HTTP protocol not supported");
 		return false;
 #endif /* HAS_PROTOCOL_HTTP */
+	} else if (_pFarProtocol->GetType() == PT_TCP) {
+		while (GETAVAILABLEBYTESCOUNT(buffer) > 4) {
+			uint32_t size = ntohlp(GETIBPOINTER(buffer));
+			if (size > 1024 * 128) {
+				FATAL("Size too big: %u", size);
+				return false;
+			}
+			if (GETAVAILABLEBYTESCOUNT(buffer) < size + 4) {
+				FINEST("Need more data");
+				return true;
+			}
+
+			if (!Deserialize(GETIBPOINTER(buffer) + 4, size, _lastReceived)) {
+				FATAL("Unable to deserialize variant");
+				return false;
+			}
+			buffer.Ignore(size + 4);
+
+			_lastReceived.Compact();
+
+			if (!_pProtocolHandler->ProcessMessage(this, _lastSent, _lastReceived)) {
+				FATAL("Unable to process message");
+				return false;
+			}
+		}
+		return true;
 	} else {
-		NYIR;
+		FATAL("Invalid protocol stack");
+		return false;
 	}
-
-	_lastReceived.Compact();
-
-	return _pProtocolHandler->ProcessMessage(this, _lastSent, _lastReceived);
 }
 
 bool BaseVariantProtocol::Send(Variant &variant) {
@@ -121,6 +149,9 @@ bool BaseVariantProtocol::Send(Variant &variant) {
 				return false;
 			}
 
+			_outputBuffer.ReadFromRepeat(0, 4);
+			uint32_t rawContentSize = rawContent.size();
+			put_htonl(GETIBPOINTER(_outputBuffer), rawContentSize);
 			_outputBuffer.ReadFromString(rawContent);
 
 			//6. enqueue for outbound

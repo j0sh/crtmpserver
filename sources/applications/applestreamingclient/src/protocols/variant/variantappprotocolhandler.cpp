@@ -19,6 +19,12 @@
 
 
 #include "protocols/variant/variantappprotocolhandler.h"
+#include "protocols/variant/basevariantprotocol.h"
+#include "protocols/variant/messagestructure.h"
+#include "clientcontext.h"
+#include "application/baseclientapplication.h"
+#include "eventsink/varianteventsink.h"
+#include "applestreamingclientapplication.h"
 
 VariantAppProtocolHandler::VariantAppProtocolHandler(Variant &configuration)
 : BaseVariantAppProtocolHandler(configuration) {
@@ -28,7 +34,114 @@ VariantAppProtocolHandler::VariantAppProtocolHandler(Variant &configuration)
 VariantAppProtocolHandler::~VariantAppProtocolHandler() {
 }
 
+ClientContext * VariantAppProtocolHandler::GetContext(uint32_t contextId,
+		uint64_t protocolType) {
+	ClientContext *pContext = ClientContext::GetContext(contextId,
+			GetApplication()->GetId(), protocolType);
+	if (pContext == NULL) {
+		FATAL("Unable to get context");
+		return NULL;
+	}
+	return pContext;
+}
+
 bool VariantAppProtocolHandler::ProcessMessage(BaseVariantProtocol *pProtocol,
 		Variant &lastSent, Variant &lastReceived) {
-	NYIR;
+	string type = ASC_REQ_TYPE(lastReceived);
+	if (type == ASC_REQ_TYPE_CONTEXT_CREATE) {
+		ProcessContextCreate(pProtocol, lastReceived);
+	} else if (type == ASC_REQ_TYPE_CONTEXT_LIST) {
+		ProcessContextList(pProtocol, lastReceived);
+	} else if (type == ASC_REQ_TYPE_CONTEXT_CLOSE) {
+		ProcessContextClose(pProtocol, lastReceived);
+	} else if (type == ASC_REQ_TYPE_CONTEXT_CLOSE_ALL) {
+		ProcessContextCloseAll(pProtocol, lastReceived);
+	} else if (type == ASC_REQ_TYPE_COMMAND_PLAY) {
+		ProcessCommandPlay(pProtocol, lastReceived);
+	} else if (type == ASC_REQ_TYPE_COMMAND_PAUSE) {
+		ProcessCommandPause(pProtocol, lastReceived);
+	} else if (type == ASC_REQ_TYPE_COMMAND_RESUME) {
+		ProcessCommandResume(pProtocol, lastReceived);
+	} else {
+		WARN("Processing type `%s` not yet implemented", STR(type));
+		ASC_RES_BUILD_UNKNOWN_REQUEST_TYPE(lastReceived);
+	}
+	return pProtocol->Send(lastReceived);
+}
+
+void VariantAppProtocolHandler::ProcessContextCreate(
+		BaseVariantProtocol *pProtocol, Variant &request) {
+	ClientContext *pContext = GetContext(0, pProtocol->GetType());
+	if (pContext == NULL) {
+		ASC_RES_BUILD_CONTEXT_CREATE_FAILED(request);
+		return;
+	} else {
+		ASC_RES_BUILD_OK_CONTEXT_CREATE(request, pContext->Id());
+	}
+}
+
+void VariantAppProtocolHandler::ProcessContextList(BaseVariantProtocol *pProtocol,
+		Variant &request) {
+	vector<uint32_t> contextIds = ClientContext::GetContextIds();
+	ASC_RES_BUILD_OK_CONTEXT_LIST(request, contextIds);
+}
+
+void VariantAppProtocolHandler::ProcessContextClose(BaseVariantProtocol *pProtocol,
+		Variant &request) {
+	uint32_t contextId = ASC_REQ_CONTEXT_ID(request);
+	if (contextId == 0) {
+		ASC_RES_BUILD_CONTEXT_NOT_FOUND(request);
+		return;
+	}
+	ClientContext *pContext = GetContext(contextId, pProtocol->GetType());
+	if (pContext == NULL) {
+		ASC_RES_BUILD_CONTEXT_NOT_FOUND(request);
+		return;
+	}
+	ClientContext::ReleaseContext(contextId);
+	ASC_RES_BUILD_OK(request, Variant());
+}
+
+void VariantAppProtocolHandler::ProcessContextCloseAll(
+		BaseVariantProtocol *pProtocol, Variant &request) {
+	((AppleStreamingClientApplication *) GetApplication())->CloseAllContexts();
+	ASC_RES_BUILD_OK(request, Variant());
+}
+
+void VariantAppProtocolHandler::ProcessCommandPlay(
+		BaseVariantProtocol *pProtocol, Variant &request) {
+	uint32_t contextId = ASC_REQ_CONTEXT_ID(request);
+	if (contextId == 0) {
+		ASC_RES_BUILD_CONTEXT_NOT_FOUND(request);
+		return;
+	}
+	ClientContext *pContext = GetContext(contextId, pProtocol->GetType());
+	if (pContext == NULL) {
+		ASC_RES_BUILD_CONTEXT_NOT_FOUND(request);
+		return;
+	}
+
+	string connectingString = ASC_REQ_COMMAND_PLAY_URI(request);
+	if (ASC_REQ_COMMAND_PLAY_PASSWORD(request) != "") {
+		connectingString += "|" + (string) ASC_REQ_COMMAND_PLAY_PASSWORD(request);
+		connectingString += "|" + (string) ASC_REQ_COMMAND_PLAY_SESSION_ID(request);
+	}
+
+	pContext->RawConnectingString(connectingString);
+
+	if (!pContext->StartProcessing()) {
+		ASC_RES_BUILD_COMMAND_PLAY_FAILED(request);
+		return;
+	}
+	ASC_RES_BUILD_OK(request, Variant());
+}
+
+void VariantAppProtocolHandler::ProcessCommandPause(
+		BaseVariantProtocol *pProtocol, Variant &request) {
+	ASC_RES_BUILD_NYI(request);
+}
+
+void VariantAppProtocolHandler::ProcessCommandResume(
+		BaseVariantProtocol *pProtocol, Variant &request) {
+	ASC_RES_BUILD_NYI(request);
 }

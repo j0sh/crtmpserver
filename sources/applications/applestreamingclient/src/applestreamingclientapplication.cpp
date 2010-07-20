@@ -54,6 +54,7 @@ AppleStreamingClientApplication::AppleStreamingClientApplication(Variant &config
 }
 
 AppleStreamingClientApplication::~AppleStreamingClientApplication() {
+	CloseAllContexts();
 #ifdef HAS_PROTOCOL_RTMP
 	UnRegisterAppProtocolHandler(PT_INBOUND_RTMP);
 	UnRegisterAppProtocolHandler(PT_OUTBOUND_RTMP);
@@ -110,6 +111,13 @@ AppleStreamingClientApplication::~AppleStreamingClientApplication() {
 	if (_pFactory != NULL) {
 		ProtocolFactoryManager::UnRegisterProtocolFactory(_pFactory);
 		delete _pFactory;
+	}
+}
+
+void AppleStreamingClientApplication::CloseAllContexts() {
+	vector<uint32_t> contextIds = ClientContext::GetContextIds();
+	for (uint32_t i = 0; i < contextIds.size(); i++) {
+		ClientContext::ReleaseContext(contextIds[i]);
 	}
 }
 

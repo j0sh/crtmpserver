@@ -53,6 +53,8 @@ public:
 	AppleStreamingClientApplication(Variant &configuration);
 	virtual ~AppleStreamingClientApplication();
 
+	void CloseAllContexts();
+
 	virtual bool Initialize();
 
 	virtual void SignalStreamRegistered(BaseStream *pStream);

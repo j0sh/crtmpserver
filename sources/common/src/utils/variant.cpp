@@ -1,21 +1,21 @@
 /* 
-*  Copyright (c) 2010,
-*  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
-*  
-*  This file is part of crtmpserver.
-*  crtmpserver is free software: you can redistribute it and/or modify
-*  it under the terms of the GNU General Public License as published by
-*  the Free Software Foundation, either version 3 of the License, or
-*  (at your option) any later version.
-*  
-*  crtmpserver is distributed in the hope that it will be useful,
-*  but WITHOUT ANY WARRANTY; without even the implied warranty of
-*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*  GNU General Public License for more details.
-*  
-*  You should have received a copy of the GNU General Public License
-*  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ *  Copyright (c) 2010,
+ *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
+ *
+ *  This file is part of crtmpserver.
+ *  crtmpserver is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  crtmpserver is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 
 #include "utils/variant.h"
@@ -23,6 +23,7 @@
 #include "utils/file.h"
 #include "tinyxml/tinyxml.h"
 #include "utils/crypto.h"
+#include "buffering/iobuffer.h"
 
 #ifdef LOG_VARIANT_MEMORY_MANAGEMENT
 int Variant::_constructorCount = 0;
@@ -1178,9 +1179,14 @@ void Variant::Compact() {
 	}
 }
 
-bool Variant::DeserializeFromBin(string &data, Variant &variant) {
+bool Variant::DeserializeFromBin(uint8_t *pBuffer, uint32_t bufferLength,
+		Variant &variant) {
 	uint32_t cursor = 0;
-	return DeserializeFromBin(data, variant, cursor);
+	return DeserializeFromBin(pBuffer, bufferLength, variant, cursor);
+}
+
+bool Variant::DeserializeFromBin(string &data, Variant &variant) {
+	return DeserializeFromBin((uint8_t *) data.c_str(), data.size(), variant);
 }
 
 bool Variant::SerializeToBin(string &result) {
@@ -1305,11 +1311,12 @@ bool Variant::SerializeToBin(string &result) {
 	return true;
 }
 
-bool Variant::DeserializeFromXml(string &data, Variant &variant) {
+bool Variant::DeserializeFromXml(const uint8_t *pBuffer, uint32_t bufferLength,
+		Variant &variant) {
 	variant.Reset();
 
 	TiXmlDocument document;
-	document.Parse(STR(data));
+	document.Parse((char *) pBuffer);
 	if (document.Error()) {
 		FATAL("Invalid XML file: Error id: %d; Error desc: %s; Row: %d; Col: %d",
 				document.ErrorId(),
@@ -1325,6 +1332,10 @@ bool Variant::DeserializeFromXml(string &data, Variant &variant) {
 	}
 
 	return true;
+}
+
+bool Variant::DeserializeFromXml(string data, Variant &result) {
+	return DeserializeFromXml((const uint8_t *) data.c_str(), data.size(), result);
 }
 
 bool Variant::SerializeToXml(string &result, bool prettyPrint) {
@@ -1412,24 +1423,34 @@ bool Variant::DeserializeFromXmlFile(string path, Variant &variant) {
 		return false;
 	}
 
-	//2. Allocate memory
+	//2. Check his size
+	if (file.Size() == 0) {
+		variant.Reset();
+		return true;
+	}
+
+	if (file.Size() > 1024 * 1024 * 4) {
+		FATAL("File too large");
+		return false;
+	}
+
+	//3. Allocate memory
 	uint8_t *pBuffer = new uint8_t[file.Size()];
 
-	//3. Read the content
+	//4. Read the content
 	if (!file.ReadBuffer((uint8_t *) pBuffer, file.Size())) {
 		FATAL("Unable to read the file");
 		return false;
 	}
 
-	//4. Prepare the string
-	string raw = string((char *) pBuffer, file.Size());
+	//5. read the variant from the buffer
+	variant.Reset();
+	bool result = DeserializeFromXml(pBuffer, (uint32_t) file.Size(), variant);
 
 	//8. Dispose the buffer
 	delete[] pBuffer;
 
-	//9. read the variant from the buffer
-	variant.Reset();
-	return DeserializeFromXml(raw, variant);
+	return result;
 }
 
 bool Variant::SerializeToXmlFile(string fileName) {
@@ -1592,16 +1613,21 @@ TiXmlElement *Variant::SerializeToXmlElement(string &name) {
 	return pResult;
 }
 
-bool Variant::DeserializeFromBin(string &data, Variant &variant, uint32_t &cursor) {
-	if (data.size()<sizeof (variant._type)) {
-		FATAL("Not enough data");
-		return false;
-	}
+#define VARIANT_CHECK_BOUNDS(s) \
+do {\
+	if(s>bufferSize-cursor) \
+	{ \
+		FATAL("Not enough data. Wanted: %u; Got: %u",s,bufferSize-cursor);\
+		return false; \
+	} \
+}\
+while(0)
 
-	const char *pData = data.data();
+#define PTR (pBuffer+cursor)
 
-#define PTR (pData+cursor)
-
+bool Variant::DeserializeFromBin(uint8_t *pBuffer, uint32_t bufferSize,
+		Variant &variant, uint32_t &cursor) {
+	VARIANT_CHECK_BOUNDS(1);
 	VariantType type = (VariantType) PTR[0];
 	cursor += 1;
 
@@ -1618,66 +1644,76 @@ bool Variant::DeserializeFromBin(string &data, Variant &variant, uint32_t &curso
 		}
 		case V_BOOL:
 		{
+			VARIANT_CHECK_BOUNDS(1);
 			variant = (bool)(PTR[0] != 0);
 			cursor += 1;
 			return true;
 		}
 		case V_INT8:
 		{
+			VARIANT_CHECK_BOUNDS(1);
 			variant = *((int8_t *) PTR);
 			cursor += 1;
 			return true;
 		}
 		case V_INT16:
 		{
+			VARIANT_CHECK_BOUNDS(2);
 			uint16_t val = ntohsp(PTR); //----MARKED-SHORT----
-			cursor += sizeof (int16_t);
+			cursor += 2;
 			variant = *((int16_t *) & val);
 			return true;
 			break;
 		}
 		case V_INT32:
 		{
+			VARIANT_CHECK_BOUNDS(4);
 			uint32_t val = ntohlp(PTR); //----MARKED-LONG---
-			cursor += sizeof (int32_t);
+			cursor += 4;
 			variant = *((int32_t *) & val);
 			return true;
 		}
 		case V_INT64:
 		{
+			VARIANT_CHECK_BOUNDS(8);
 			uint64_t val = ntohlp(PTR); //----MARKED-LONG---
-			cursor += sizeof (int64_t);
+			cursor += 8;
 			variant = *((int64_t *) & val);
 			return true;
 		}
 		case V_UINT8:
 		{
+			VARIANT_CHECK_BOUNDS(1);
 			variant = *((uint8_t *) PTR);
-			cursor += sizeof (uint8_t);
+			cursor += 1;
 			return true;
 		}
 		case V_UINT16:
 		{
+			VARIANT_CHECK_BOUNDS(2);
 			variant = ntohsp(PTR); //----MARKED-SHORT----
-			cursor += sizeof (uint16_t);
+			cursor += 2;
 			return true;
 		}
 		case V_UINT32:
 		{
+			VARIANT_CHECK_BOUNDS(4);
 			variant = ntohlp(PTR); //----MARKED-LONG---
-			cursor += sizeof (uint32_t);
+			cursor += 4;
 			return true;
 		}
 		case V_UINT64:
 		{
+			VARIANT_CHECK_BOUNDS(8);
 			variant = (uint64_t) ntohllp(PTR); //----MARKED-LONG---
-			cursor += sizeof (uint64_t);
+			cursor += 8;
 			return true;
 		}
 		case V_DOUBLE:
 		{
+			VARIANT_CHECK_BOUNDS(8);
 			uint64_t val = ntohllp(PTR); //----MARKED-LONG---
-			cursor += sizeof (uint64_t);
+			cursor += 8;
 			variant = *((double *) & val);
 			return true;
 		}
@@ -1685,8 +1721,9 @@ bool Variant::DeserializeFromBin(string &data, Variant &variant, uint32_t &curso
 		case V_DATE:
 		case V_TIME:
 		{
+			VARIANT_CHECK_BOUNDS(8);
 			time_t val = ntohllp(PTR); //----MARKED-LONG---
-			cursor += sizeof (uint64_t);
+			cursor += 8;
 			variant = *((Timestamp *) gmtime(&val));
 			variant._type = type;
 			return true;
@@ -1694,9 +1731,15 @@ bool Variant::DeserializeFromBin(string &data, Variant &variant, uint32_t &curso
 		case V_BYTEARRAY:
 		case V_STRING:
 		{
+			VARIANT_CHECK_BOUNDS(4);
 			uint32_t length = ntohlp(PTR); //----MARKED-LONG---
-			cursor += sizeof (uint32_t);
-			variant = string(PTR, length);
+			cursor += 4;
+			VARIANT_CHECK_BOUNDS(length);
+			if (length > 1024 * 128) {
+				FATAL("string too large");
+				return false;
+			}
+			variant = string((char *) PTR, length);
 			cursor += length;
 			variant.IsByteArray(type == V_BYTEARRAY);
 			return true;
@@ -1704,32 +1747,50 @@ bool Variant::DeserializeFromBin(string &data, Variant &variant, uint32_t &curso
 		case V_MAP:
 		case V_TYPED_MAP:
 		{
+			VARIANT_CHECK_BOUNDS(1);
 			bool isArray = (PTR[0] != 0);
 			cursor += 1;
 			variant.IsArray(isArray);
 
 			uint32_t length = 0;
 			if (type == V_TYPED_MAP) {
+				VARIANT_CHECK_BOUNDS(4);
 				length = ntohlp(PTR); //----MARKED-LONG---
-				cursor += sizeof (uint32_t);
-				string name = string(PTR, length);
+				cursor += 4;
+				VARIANT_CHECK_BOUNDS(length);
+				if (length > 1024 * 128) {
+					FATAL("string too large");
+					return false;
+				}
+				string name = string((char *) PTR, length);
 				cursor += length;
 				variant.SetTypeName(name);
 			}
 
+			VARIANT_CHECK_BOUNDS(4);
 			length = ntohlp(PTR); //----MARKED-LONG---
-			cursor += sizeof (uint32_t);
+			if (length > 1024) {
+				FATAL("Length too large");
+				return false;
+			}
+			cursor += 4;
 
 			for (uint32_t i = 0; i < length; i++) {
 				string key;
 				uint32_t keyLength;
 
+				VARIANT_CHECK_BOUNDS(4);
 				keyLength = ntohlp(PTR); //----MARKED-LONG---
-				cursor += sizeof (uint32_t);
-				key = string(PTR, keyLength);
+				cursor += 4;
+				VARIANT_CHECK_BOUNDS(keyLength);
+				if (keyLength > 1024 * 128) {
+					FATAL("string too large");
+					return false;
+				}
+				key = string((char *) PTR, keyLength);
 				cursor += keyLength;
 
-				if (!DeserializeFromBin(data, variant[key], cursor)) {
+				if (!DeserializeFromBin(pBuffer, bufferSize, variant[key], cursor)) {
 					FATAL("Unable to deserialize variant");
 					return false;
 				}

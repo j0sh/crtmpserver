@@ -65,6 +65,7 @@ public:
 	virtual ~ClientContext();
 
 	//Context spawn/tear down
+	static vector<uint32_t> GetContextIds();
 	static ClientContext *GetContext(uint32_t &contextId, uint32_t applicationId,
 			uint64_t masterProtocolType);
 	static void ReleaseContext(uint32_t contextId);

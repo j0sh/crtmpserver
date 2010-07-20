@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -17,27 +17,25 @@
  *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef _VARIANTCONNECTION_H
+#define	_VARIANTCONNECTION_H
 
-#ifdef HAS_PROTOCOL_RTP
-#ifndef _RTSPAPPPROTOCOLHANDLER_H
-#define	_RTSPAPPPROTOCOLHANDLER_H
+#include "utils/core.h"
+#include "buffering/iobuffer.h"
 
-#include "protocols/rtp/basertspappprotocolhandler.h"
-
-class RTSPAppProtocolHandler
-: public BaseRTSPAppProtocolHandler {
+class VariantConnection {
+private:
+	int _fd;
+	IOBuffer _buffer;
 public:
-	RTSPAppProtocolHandler(Variant &configuration);
-	virtual ~RTSPAppProtocolHandler();
+	VariantConnection();
+	virtual ~VariantConnection();
 
-	virtual void RegisterProtocol(BaseProtocol *pProtocol);
-
-	virtual bool HandleRTSPResponse200Setup(RTSPProtocol *pFrom, Variant &requestHeaders,
-			string &requestContent, Variant &responseHeaders,
-			string &responseContent);
+	bool Connect(sockaddr_in &address);
+	bool SendMessage(Variant &message, Variant &response);
+private:
+	void Close();
 };
 
-
-#endif	/* _RTSPAPPPROTOCOLHANDLER_H */
-#endif /* HAS_PROTOCOL_RTP */
+#endif	/* _VARIANTCONNECTION_H */
 

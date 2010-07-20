@@ -17,7 +17,6 @@
  *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 #include "api.h"
 #include "protocols/protocolfactorymanager.h"
 #include "protocols/defaultprotocolfactory.h"
@@ -26,6 +25,22 @@
 #include "applestreamingclientapplication.h"
 #include "application/clientapplicationmanager.h"
 #include "logging/consoleloglocation.h"
+#include "variantconnection.h"
+#include "protocols/variant/messagestructure.h"
+
+static sockaddr_in gAddress = {0};
+
+#define SEND_VARIANT_REQUEST(request,response) \
+do { \
+	VariantConnection vc; \
+	if (!vc.Connect(gAddress)) { \
+		response.Reset(); \
+	} else { \
+		if (!vc.SendMessage(request, response)) { \
+			response.Reset(); \
+		} \
+	} \
+}while(0)
 
 void EnvRun(string ip, uint16_t port) {
 	//1. Initialize the logger
@@ -96,6 +111,10 @@ void EnvRun(string ip, uint16_t port) {
 		ASSERT("Unable to fire up acceptor");
 	}
 
+	inet_aton("127.0.0.1", &gAddress.sin_addr);
+	gAddress.sin_family = AF_INET;
+	gAddress.sin_port = htons(port + 1);
+
 	//10. Run
 	while (IOHandlerManager::Pulse()) {
 		IOHandlerManager::DeleteDeadHandlers();
@@ -128,30 +147,58 @@ void EnvStop() {
 }
 
 Variant ContextCreate() {
-	return Variant();
+	Variant request;
+	ASC_REQ_BUILD_CONTEXT_CREATE(request);
+	Variant response;
+	SEND_VARIANT_REQUEST(request, response);
+	return response;
 }
 
 Variant ContextList() {
-	return Variant();
+	Variant request;
+	ASC_REQ_BUILD_CONTEXT_LIST(request);
+	Variant response;
+	SEND_VARIANT_REQUEST(request, response);
+	return response;
 }
 
 Variant ContextClose(uint32_t contextId) {
-	return Variant();
+	Variant request;
+	ASC_REQ_BUILD_CONTEXT_CLOSE(request, contextId);
+	Variant response;
+	SEND_VARIANT_REQUEST(request, response);
+	return response;
 }
 
 Variant ContextCloseAll() {
-	return Variant();
+	Variant request;
+	ASC_REQ_BUILD_CONTEXT_CLOSE_ALL(request);
+	Variant response;
+	SEND_VARIANT_REQUEST(request, response);
+	return response;
 }
 
 Variant CommandPlay(uint32_t contextId, string m3u8Uri, string httpSessionId,
 		string keyPassword) {
-	return Variant();
+	Variant request;
+	ASC_REQ_BUILD_COMMAND_PLAY(request, contextId, m3u8Uri, httpSessionId, keyPassword);
+	Variant response;
+	SEND_VARIANT_REQUEST(request, response);
+	return response;
 }
 
 Variant CommandPause(uint32_t contextId) {
-	return Variant();
+	Variant request;
+	ASC_REQ_BUILD_COMMAND_PAUSE(request, contextId);
+	Variant response;
+	SEND_VARIANT_REQUEST(request, response);
+	return response;
 }
 
 Variant CommandResume(uint32_t contextId) {
-	return Variant();
+	Variant request;
+	ASC_REQ_BUILD_COMMAND_RESUME(request, contextId);
+	Variant response;
+	SEND_VARIANT_REQUEST(request, response);
+	return response;
 }

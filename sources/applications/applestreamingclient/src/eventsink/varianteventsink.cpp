@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -18,26 +18,19 @@
  */
 
 
-#ifdef HAS_PROTOCOL_RTP
-#ifndef _RTSPAPPPROTOCOLHANDLER_H
-#define	_RTSPAPPPROTOCOLHANDLER_H
+#ifdef HAS_PROTOCOL_VAR
+#include "eventsink/varianteventsink.h"
 
-#include "protocols/rtp/basertspappprotocolhandler.h"
+VariantEventSink::VariantEventSink()
+: BaseEventSink() {
+}
 
-class RTSPAppProtocolHandler
-: public BaseRTSPAppProtocolHandler {
-public:
-	RTSPAppProtocolHandler(Variant &configuration);
-	virtual ~RTSPAppProtocolHandler();
+VariantEventSink::~VariantEventSink() {
+}
 
-	virtual void RegisterProtocol(BaseProtocol *pProtocol);
+bool VariantEventSink::SignalStreamAvailable(string streamName) {
+	NYI;
+	return true;
+}
 
-	virtual bool HandleRTSPResponse200Setup(RTSPProtocol *pFrom, Variant &requestHeaders,
-			string &requestContent, Variant &responseHeaders,
-			string &responseContent);
-};
-
-
-#endif	/* _RTSPAPPPROTOCOLHANDLER_H */
-#endif /* HAS_PROTOCOL_RTP */
-
+#endif /* HAS_PROTOCOL_VAR */

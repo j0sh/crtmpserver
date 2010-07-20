@@ -20,6 +20,7 @@
 #include "eventsink/baseeventsink.h"
 #include "eventsink/rtmpeventsink.h"
 #include "protocols/protocoltypes.h"
+#include "eventsink/varianteventsink.h"
 
 BaseEventSink::BaseEventSink() {
 
@@ -36,6 +37,13 @@ BaseEventSink * BaseEventSink::GetInstance(uint64_t type) {
 			return new RTMPEventSink();
 		}
 #endif /* HAS_PROTOCOL_RTMP */
+#ifdef HAS_PROTOCOL_VAR
+		case PT_XML_VAR:
+		case PT_BIN_VAR:
+		{
+			return new VariantEventSink();
+		}
+#endif /* HAS_PROTOCOL_VAR */
 		default:
 		{
 			ASSERT("Invalid event sync type %s", STR(tagToString(type)));

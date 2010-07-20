@@ -1,21 +1,21 @@
 /* 
-*  Copyright (c) 2010,
-*  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
-*  
-*  This file is part of crtmpserver.
-*  crtmpserver is free software: you can redistribute it and/or modify
-*  it under the terms of the GNU General Public License as published by
-*  the Free Software Foundation, either version 3 of the License, or
-*  (at your option) any later version.
-*  
-*  crtmpserver is distributed in the hope that it will be useful,
-*  but WITHOUT ANY WARRANTY; without even the implied warranty of
-*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*  GNU General Public License for more details.
-*  
-*  You should have received a copy of the GNU General Public License
-*  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ *  Copyright (c) 2010,
+ *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
+ *
+ *  This file is part of crtmpserver.
+ *  crtmpserver is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  crtmpserver is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 
 #ifndef _VARIANT_H
@@ -187,10 +187,14 @@ public:
 	bool ConvertToTimestamp();
 	void Compact();
 
+	static bool DeserializeFromBin(uint8_t *pBuffer, uint32_t bufferLength,
+			Variant &variant);
 	static bool DeserializeFromBin(string &data, Variant &variant);
 	bool SerializeToBin(string &result);
 
-	static bool DeserializeFromXml(string &data, Variant &variant);
+	static bool DeserializeFromXml(const uint8_t *pBuffer, uint32_t bufferLength,
+			Variant &result);
+	static bool DeserializeFromXml(string data, Variant &result);
 	bool SerializeToXml(string &result, bool prettyPrint = true);
 
 	static bool DeserializeFromBinFile(string path, Variant &variant);
@@ -200,7 +204,8 @@ public:
 	bool SerializeToXmlFile(string fileName);
 private:
 	TiXmlElement *SerializeToXmlElement(string &name);
-	static bool DeserializeFromBin(string &data, Variant &variant, uint32_t &cursor);
+	static bool DeserializeFromBin(uint8_t *pBuffer, uint32_t bufferSize,
+			Variant &variant, uint32_t &cursor);
 	static bool DeserializeFromXml(TiXmlElement *pNode, Variant &variant);
 	void InternalCopy(const Variant &val);
 	void NormalizeTs();

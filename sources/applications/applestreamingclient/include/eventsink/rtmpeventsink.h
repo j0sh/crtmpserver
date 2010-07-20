@@ -36,6 +36,5 @@ public:
 	virtual bool SignalStreamAvailable(string streamName);
 };
 
-
 #endif	/* _RTMPEVENTSINK_H */
 #endif /* HAS_PROTOCOL_RTMP */

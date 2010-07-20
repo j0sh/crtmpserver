@@ -33,6 +33,7 @@ OBJECTDIR=build/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
+	${OBJECTDIR}/_ext/2044958859/variantconnection.o \
 	${OBJECTDIR}/_ext/2044958859/main.o \
 	${OBJECTDIR}/_ext/2044958859/jniwrapper.o \
 	${OBJECTDIR}/_ext/2044958859/api.o
@@ -61,6 +62,11 @@ LDLIBSOPTIONS=
 dist/Release/GNU-MacOSX/libandroidapplestreaming.dylib: ${OBJECTFILES}
 	${MKDIR} -p dist/Release/GNU-MacOSX
 	${LINK.cc} -dynamiclib -install_name libandroidapplestreaming.dylib -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libandroidapplestreaming.dylib -fPIC ${OBJECTFILES} ${LDLIBSOPTIONS} 
+
+${OBJECTDIR}/_ext/2044958859/variantconnection.o: ../../../../sources/androidapplestreaming/src/variantconnection.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/2044958859
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/androidapplestreaming/include -I../../../../sources/applications/applestreamingclient/include -I../../../../../android/workbench/android-ndk-r4-crystax/build/platforms/android-4/arch-arm/usr/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/2044958859/variantconnection.o ../../../../sources/androidapplestreaming/src/variantconnection.cpp
 
 ${OBJECTDIR}/_ext/2044958859/main.o: ../../../../sources/androidapplestreaming/src/main.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/2044958859

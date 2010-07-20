@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -17,27 +17,22 @@
  *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifdef HAS_PROTOCOL_VAR
+#ifndef _VARIANTEVENTSINK_H
+#define	_VARIANTEVENTSINK_H
 
-#ifdef HAS_PROTOCOL_RTP
-#ifndef _RTSPAPPPROTOCOLHANDLER_H
-#define	_RTSPAPPPROTOCOLHANDLER_H
+#include "eventsink/baseeventsink.h"
 
-#include "protocols/rtp/basertspappprotocolhandler.h"
-
-class RTSPAppProtocolHandler
-: public BaseRTSPAppProtocolHandler {
+class VariantEventSink
+: public BaseEventSink {
 public:
-	RTSPAppProtocolHandler(Variant &configuration);
-	virtual ~RTSPAppProtocolHandler();
+	VariantEventSink();
+	virtual ~VariantEventSink();
 
-	virtual void RegisterProtocol(BaseProtocol *pProtocol);
-
-	virtual bool HandleRTSPResponse200Setup(RTSPProtocol *pFrom, Variant &requestHeaders,
-			string &requestContent, Variant &responseHeaders,
-			string &responseContent);
+	virtual bool SignalStreamAvailable(string streamName);
 };
 
 
-#endif	/* _RTSPAPPPROTOCOLHANDLER_H */
-#endif /* HAS_PROTOCOL_RTP */
+#endif	/* _VARIANTEVENTSINK_H */
+#endif /* HAS_PROTOCOL_VAR */
 

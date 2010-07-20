@@ -22,15 +22,6 @@
 
 #include "utils/core.h"
 
-#define AS_REQUEST_PARAMS(v)				(v)["request"]
-#define AS_REQUEST_PARAM(v,key)				AS_REQUEST_PARAMS(v)[(key)]
-#define AS_RESPONSE(v)						(v)["response"]
-#define AS_RESPONSE_ERROR_CODE(v)			AS_RESPONSE(v)["errorCode"]
-#define AS_RESPONSE_ERROR_DESC(v)			AS_RESPONSE(v)["errorCodeDesc"]
-#define AS_RESPONSE_PAYLOAD(v)				AS_RESPONSE(v)["payload"]
-#define AS_RESPONSE_PAYLOAD_VALUE(v,key)	AS_RESPONSE_PAYLOAD(v)[(key)]
-#define AS_RESPONSE_IS_OK(v)				((bool)(AS_RESPONSE_ERROR_CODE(v)==((uint32_t)0)))
-
 void EnvRun(string ip, uint16_t port);
 void EnvStop();
 

@@ -41,11 +41,11 @@ ClientContext::ClientContext() {
 	_optimalBw = 0;
 	_pSpeedComputer = NULL;
 	_tsId = 0;
-	//FINEST("Context created: %d (%p)", _id, this);
+	INFO("Context created: %d (%p)", _id, this);
 }
 
 ClientContext::~ClientContext() {
-	//FINEST("Context deleted: %d (%p)", _id, this);
+	INFO("Context destroyed: %d (%p)", _id, this);
 	if (_pMasterPlaylist != NULL) {
 		delete _pMasterPlaylist;
 		_pMasterPlaylist = NULL;
@@ -69,6 +69,15 @@ ClientContext::~ClientContext() {
 		delete _pEventSink;
 		_pEventSink = NULL;
 	}
+}
+
+vector<uint32_t> ClientContext::GetContextIds() {
+	vector<uint32_t> result;
+
+	FOR_MAP(_contexts, uint32_t, ClientContext *, i) {
+		ADD_VECTOR_END(result, MAP_KEY(i));
+	}
+	return result;
 }
 
 ClientContext *ClientContext::GetContext(uint32_t &contextId,
@@ -197,9 +206,9 @@ bool ClientContext::ParseConnectingString() {
 		FATAL("Invalid master m3u8 URL: %s", STR(_rawConnectingString));
 		return false;
 	}
-	for (uint32_t i = 0; i < parts.size(); i++) {
-		FINEST("%d: %s", i, STR(parts[i]));
-	}
+	//	for (uint32_t i = 0; i < parts.size(); i++) {
+	//		FINEST("%d: %s", i, STR(parts[i]));
+	//	}
 
 	if (parts[0] == "") {
 		FATAL("Invalid master m3u8 URL: %s", STR(_rawConnectingString));
@@ -423,6 +432,7 @@ bool ClientContext::FetchURI(string uri, string requestType, Variant &customPara
 
 	ip = GetHostByName(host);
 	if (ip == "") {
+		FATAL("Unable to resolve host `%s`", STR(host));
 		return false;
 	}
 

@@ -7,6 +7,7 @@
       <logicalFolder name="eventsink" displayName="eventsink" projectFiles="true">
         <itemPath>../../../../sources/applications/applestreamingclient/include/eventsink/baseeventsink.h</itemPath>
         <itemPath>../../../../sources/applications/applestreamingclient/include/eventsink/rtmpeventsink.h</itemPath>
+        <itemPath>../../../../sources/applications/applestreamingclient/include/eventsink/varianteventsink.h</itemPath>
       </logicalFolder>
       <logicalFolder name="protocols" displayName="protocols" projectFiles="true">
         <logicalFolder name="aes" displayName="aes" projectFiles="true">
@@ -34,6 +35,7 @@
           <itemPath>../../../../sources/applications/applestreamingclient/include/protocols/ts/tsappprotocolhandler.h</itemPath>
         </logicalFolder>
         <logicalFolder name="variant" displayName="variant" projectFiles="true">
+          <itemPath>../../../../sources/applications/applestreamingclient/include/protocols/variant/messagestructure.h</itemPath>
           <itemPath>../../../../sources/applications/applestreamingclient/include/protocols/variant/variantappprotocolhandler.h</itemPath>
         </logicalFolder>
         <itemPath>../../../../sources/applications/applestreamingclient/include/protocols/genericprotocol.h</itemPath>
@@ -52,6 +54,7 @@
       <logicalFolder name="eventsink" displayName="eventsink" projectFiles="true">
         <itemPath>../../../../sources/applications/applestreamingclient/src/eventsink/baseeventsink.cpp</itemPath>
         <itemPath>../../../../sources/applications/applestreamingclient/src/eventsink/rtmpeventsink.cpp</itemPath>
+        <itemPath>../../../../sources/applications/applestreamingclient/src/eventsink/varianteventsink.cpp</itemPath>
       </logicalFolder>
       <logicalFolder name="protocols" displayName="protocols" projectFiles="true">
         <logicalFolder name="aes" displayName="aes" projectFiles="true">
@@ -128,6 +131,7 @@
             <Elem>HAS_PROTOCOL_RTMP</Elem>
             <Elem>HAS_PROTOCOL_HTTP</Elem>
             <Elem>HAS_PROTOCOL_TS</Elem>
+            <Elem>HAS_PROTOCOL_VAR</Elem>
           </preprocessorList>
         </ccTool>
         <linkerTool>
@@ -186,6 +190,7 @@
             <Elem>HAS_PROTOCOL_RTMP</Elem>
             <Elem>HAS_PROTOCOL_HTTP</Elem>
             <Elem>HAS_PROTOCOL_TS</Elem>
+            <Elem>HAS_PROTOCOL_VAR</Elem>
           </preprocessorList>
         </ccTool>
         <fortranCompilerTool>
