@@ -179,7 +179,7 @@ UDPCarrier* UDPCarrier::Create(string bindIp, uint16_t bindPort, BaseProtocol *p
 		return NULL;
 	}
 
-	pResult->SetProtocol(pProtocol);
+	pResult->SetProtocol(pProtocol->GetFarEndpoint());
 	pProtocol->GetFarEndpoint()->SetIOHandler(pResult);
 
 	return pResult;
