@@ -11,7 +11,7 @@ all:
 	ndk-build
 	ant debug
 
-install: 
+install: all
 	ant install
 
 uninstall: 
