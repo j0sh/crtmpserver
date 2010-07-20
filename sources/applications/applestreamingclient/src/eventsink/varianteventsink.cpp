@@ -34,3 +34,4 @@ bool VariantEventSink::SignalStreamAvailable(string streamName) {
 }
 
 #endif /* HAS_PROTOCOL_VAR */
+
