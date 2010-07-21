@@ -81,32 +81,40 @@ void EnvRun(string ip, uint16_t port) {
 	}
 
 	//7. Create the RTSP acceptor
+	Variant acceptorConfig;
+	acceptorConfig[CONF_IP] = "127.0.0.1";
+	acceptorConfig[CONF_PORT] = (uint16_t) port;
+	acceptorConfig[CONF_PROTOCOL] = CONF_PROTOCOL_INBOUND_RTSP;
 	vector<uint64_t> chain;
 	chain = ProtocolFactoryManager::ResolveProtocolChain(CONF_PROTOCOL_INBOUND_RTSP);
 	if (chain.size() == 0) {
 		ASSERT("Invalid protocol chain: %s", CONF_PROTOCOL_INBOUND_RTSP);
 	}
-	TCPAcceptor *pAcceptor = new TCPAcceptor(ip, port, Variant(), chain);
+	TCPAcceptor *pAcceptor = new TCPAcceptor(ip, port, acceptorConfig, chain);
 	if (!pAcceptor->StartAccept(pApp)) {
 		ASSERT("Unable to fire up acceptor");
 	}
 
 	//8. Create the bin variant acceptor
+	acceptorConfig[CONF_PORT] = (uint16_t) (port + 1);
+	acceptorConfig[CONF_PROTOCOL] = CONF_PROTOCOL_INBOUND_BIN_VARIANT;
 	chain = ProtocolFactoryManager::ResolveProtocolChain(CONF_PROTOCOL_INBOUND_BIN_VARIANT);
 	if (chain.size() == 0) {
 		ASSERT("Invalid protocol chain: %s", CONF_PROTOCOL_INBOUND_BIN_VARIANT);
 	}
-	pAcceptor = new TCPAcceptor(ip, port + 1, Variant(), chain);
+	pAcceptor = new TCPAcceptor(ip, port + 1, acceptorConfig, chain);
 	if (!pAcceptor->StartAccept(pApp)) {
 		ASSERT("Unable to fire up acceptor");
 	}
 
 	//9. Create the xml variant acceptor
+	acceptorConfig[CONF_PORT] = (uint16_t) (port + 2);
+	acceptorConfig[CONF_PROTOCOL] = CONF_PROTOCOL_INBOUND_XML_VARIANT;
 	chain = ProtocolFactoryManager::ResolveProtocolChain(CONF_PROTOCOL_INBOUND_XML_VARIANT);
 	if (chain.size() == 0) {
 		ASSERT("Invalid protocol chain: %s", CONF_PROTOCOL_INBOUND_XML_VARIANT);
 	}
-	pAcceptor = new TCPAcceptor(ip, port + 2, Variant(), chain);
+	pAcceptor = new TCPAcceptor(ip, port + 2, acceptorConfig, chain);
 	if (!pAcceptor->StartAccept(pApp)) {
 		ASSERT("Unable to fire up acceptor");
 	}

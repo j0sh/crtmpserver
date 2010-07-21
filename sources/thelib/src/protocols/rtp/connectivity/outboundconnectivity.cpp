@@ -73,16 +73,16 @@ do { \
 
 OutboundConnectivity::OutboundConnectivity()
 : BaseConnectivity() {
-	_videoDataFd = 0;
+	_videoDataFd = -1;
 	_videoDataPort = 0;
-	_videoRTCPFd = 0;
+	_videoRTCPFd = -1;
 	_videoRTCPPort = 0;
 	_videoPacketsCount = 0;
 	_videoBytesCount = 0;
 
-	_audioDataFd = 0;
+	_audioDataFd = -1;
 	_audioDataPort = 0;
-	_audioRTCPFd = 0;
+	_audioRTCPFd = -1;
 	_audioRTCPPort = 0;
 	_audioPacketsCount = 0;
 	_audioBytesCount = 0;
@@ -340,7 +340,7 @@ bool OutboundConnectivity::FeedVideoDataUDP(msghdr &message) {
 		GETCLOCKS(rtpDouble);
 		//		ASSERT("_pOutStream->GetCapabilities()->audioCodecInfo.aac.sampleRate: %d",
 		//				_pOutStream->GetCapabilities()->audioCodecInfo.aac.sampleRate);
-		put_htonl(buff + 16, (uint32_t)(rtpDouble / CLOCKS_PER_SEC)
+		put_htonl(buff + 16, (uint32_t) (rtpDouble / CLOCKS_PER_SEC)
 				* _pOutStream->GetCapabilities()->audioCodecInfo.aac.sampleRate); //RTP ts
 		put_htonl(buff + 20, _videoPacketsCount); //sender's packet count
 		put_htonl(buff + 24, _videoBytesCount); //sender's octet count
@@ -398,7 +398,7 @@ bool OutboundConnectivity::FeedAudioDataUDP(msghdr &message) {
 		put_htonll(buff + 8, ntp); //NTP
 		double rtpDouble;
 		GETCLOCKS(rtpDouble);
-		put_htonl(buff + 16, (uint32_t)(rtpDouble / CLOCKS_PER_SEC)*1000 * 90); //RTP ts
+		put_htonl(buff + 16, (uint32_t) (rtpDouble / CLOCKS_PER_SEC)*1000 * 90); //RTP ts
 		put_htonl(buff + 20, _audioPacketsCount); //sender's packet count
 		put_htonl(buff + 24, _audioBytesCount); //sender's octet count
 

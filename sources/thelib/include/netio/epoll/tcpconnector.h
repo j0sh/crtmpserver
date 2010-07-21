@@ -97,10 +97,11 @@ public:
             vector<uint64_t>& protocolChain, Variant customParameters) {
 
         int32_t fd = (int32_t) socket(PF_INET, SOCK_STREAM, 0);
-        if (fd <= 0) {
-            FATAL("Unable to create fd: %s(%d)", strerror(errno),errno);
-            return false;
-        }
+		if (fd < 0) {
+			int err = errno;
+			FATAL("Unable to create fd: %s(%d)", strerror(err), err);
+			return 0;
+		}
 
         if (!SetFdNonBlock(fd)) {
             FATAL("Unable to put socket in non-blocking mode");

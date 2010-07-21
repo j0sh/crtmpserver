@@ -121,7 +121,7 @@ UDPCarrier* UDPCarrier::Create(string bindIp, uint16_t bindPort) {
 
 	//1. Create the socket
 	int sock = socket(AF_INET, SOCK_DGRAM, 0);
-	if (sock <= 0) {
+	if (sock < 0) {
 		FATAL("Unable to create socket: %s(%d)", strerror(errno), errno);
 		return NULL;
 	}

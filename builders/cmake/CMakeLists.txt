@@ -116,6 +116,7 @@ ADD_SUBDIRECTORY(common common)
 ADD_SUBDIRECTORY(thelib thelib)
 ADD_SUBDIRECTORY(rtmpserver rtmpserver)
 ADD_SUBDIRECTORY(applications applications)
+ADD_SUBDIRECTORY(androidapplestreaming androidapplestreaming)
 
 ADD_DEFINITIONS(-DVM_LUA)
 ADD_SUBDIRECTORY(vm vm)

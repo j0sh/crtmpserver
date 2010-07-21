@@ -20,8 +20,12 @@
 
 #include "api.h"
 #include <pthread.h>
+#include "protocols/variant/messagestructure.h"
 
 void* worker(void *);
+
+void testContexts();
+void testCommands();
 
 int main(void) {
 	//4. Start the worker thread
@@ -31,52 +35,9 @@ int main(void) {
 		return -1;
 	}
 	sleep(2);
-	Variant result;
 
-	result = ContextCreate();
-	FINEST("result:\n%s", STR(result.ToString()));
-	//sleep(1);
-	result = ContextList();
-	FINEST("result:\n%s", STR(result.ToString()));
-	//sleep(1);
-	result = ContextClose(1444);
-	FINEST("result:\n%s", STR(result.ToString()));
-	//sleep(1);
-	result = ContextClose(1);
-	FINEST("result:\n%s", STR(result.ToString()));
-	//sleep(1);
-	result = ContextCreate();
-	FINEST("result:\n%s", STR(result.ToString()));
-	result = ContextCreate();
-	FINEST("result:\n%s", STR(result.ToString()));
-	result = ContextCreate();
-	FINEST("result:\n%s", STR(result.ToString()));
-	result = ContextCreate();
-	FINEST("result:\n%s", STR(result.ToString()));
-	//sleep(1);
-	result = ContextList();
-	FINEST("result:\n%s", STR(result.ToString()));
-	//sleep(1);
-	result = ContextCloseAll();
-	FINEST("result:\n%s", STR(result.ToString()));
-	//sleep(1);
-	result = ContextList();
-	FINEST("result:\n%s", STR(result.ToString()));
-	//sleep(1);
-	result = ContextCreate();
-	FINEST("result:\n%s", STR(result.ToString()));
-	//sleep(1);
-	result = CommandPlay(6,
-			"http://mlbvod-akc.mlb.com/mlbam/2010/04/08/MLB_GAME_VIDEO_LANPIT_HOME_20100408/master_wired.m3u8",
-			"playback=HTTP_CLOUD_WIRED&contentId=7320085&appAccountName=mlb&eventId=14-263849-2010-04-08&ipid=11627706&sessionKey=Jbptc%2BZDsFBHf4cgNotFuJV0WLc%3D",
-			"AJ2yhe6d0gdlosKJLLITvziVFsY=");
-	FINEST("result:\n%s", STR(result.ToString()));
-	//sleep(1);
-	result = CommandPause(9101);
-	FINEST("result:\n%s", STR(result.ToString()));
-	//sleep(1);
-	result = CommandResume(1213);
-	FINEST("result:\n%s", STR(result.ToString()));
+	//testContexts();
+	testCommands();
 
 	sleep(2000);
 
@@ -88,4 +49,46 @@ int main(void) {
 void* worker(void *) {
 	EnvRun("0.0.0.0", 5544);
 	return NULL;
+}
+
+void testContexts() {
+	Variant result;
+	result = ContextCreate();
+	FINEST("result:\n%s", STR(result.ToString()));
+	result = ContextList();
+	FINEST("result:\n%s", STR(result.ToString()));
+	result = ContextClose(1444);
+	FINEST("result:\n%s", STR(result.ToString()));
+	result = ContextClose(1);
+	FINEST("result:\n%s", STR(result.ToString()));
+	result = ContextCreate();
+	FINEST("result:\n%s", STR(result.ToString()));
+	result = ContextCreate();
+	FINEST("result:\n%s", STR(result.ToString()));
+	result = ContextCreate();
+	FINEST("result:\n%s", STR(result.ToString()));
+	result = ContextCreate();
+	FINEST("result:\n%s", STR(result.ToString()));
+	result = ContextList();
+	FINEST("result:\n%s", STR(result.ToString()));
+	result = ContextCloseAll();
+	FINEST("result:\n%s", STR(result.ToString()));
+	result = ContextList();
+	FINEST("result:\n%s", STR(result.ToString()));
+}
+
+void testCommands() {
+	Variant result = ContextCreate();
+	FINEST("result:\n%s", STR(result.ToString()));
+	result = CommandPlay((uint32_t) ASC_RES_PARAM(result, "contextId"),
+			"http://mlbvod-akc.mlb.com/mlbam/2010/04/08/MLB_GAME_VIDEO_LANPIT_HOME_20100408/master_wired.m3u8",
+			"playback=HTTP_CLOUD_WIRED&contentId=7320085&appAccountName=mlb&eventId=14-263849-2010-04-08&ipid=11627706&sessionKey=i8gCFd%2BuoRz2gT%2F3n%2BIr9PWj0qg%3D",
+			"fAqk1qSM6COyhR/crFTqfhVm0Dg=");
+	FINEST("result:\n%s", STR(result.ToString()));
+	//sleep(1);
+	result = CommandPause(9101);
+	FINEST("result:\n%s", STR(result.ToString()));
+	//sleep(1);
+	result = CommandResume(1213);
+	FINEST("result:\n%s", STR(result.ToString()));
 }

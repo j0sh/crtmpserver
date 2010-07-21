@@ -21,7 +21,7 @@
 #include "variantconnection.h"
 
 VariantConnection::VariantConnection() {
-	_fd = 0;
+	_fd = -1;
 }
 
 VariantConnection::~VariantConnection() {
@@ -31,7 +31,7 @@ VariantConnection::~VariantConnection() {
 bool VariantConnection::Connect(sockaddr_in &address) {
 	Close();
 	_fd = socket(PF_INET, SOCK_STREAM, 0);
-	if (_fd <= 0) {
+	if (_fd < 0) {
 		FATAL("Unable to create fd: (%d)%s", errno, strerror(errno));
 		return false;
 	}
@@ -56,7 +56,7 @@ bool VariantConnection::SendMessage(Variant &message, Variant &response) {
 	int32_t totalSentAmount = 0;
 	int32_t sentAmount = 0;
 
-	while (totalSentAmount < size) {
+	while (totalSentAmount < (int32_t) size) {
 		sentAmount = send(_fd, pBuffer + totalSentAmount, size - totalSentAmount, 0);
 		if (sentAmount <= 0) {
 			return false;
