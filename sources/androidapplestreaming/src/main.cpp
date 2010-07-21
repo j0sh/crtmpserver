@@ -77,13 +77,17 @@ void testContexts() {
 	FINEST("result:\n%s", STR(result.ToString()));
 }
 
+#define MY_URL "http://mediadownloads.mlb.com/mlbam/2010/06/29/9505835_m3u8/128/dropf_9505835_100m_128K.m3u8"
+#define MY_SESSION_ID ""
+#define MY_KEY ""
+
 void testCommands() {
 	Variant result = ContextCreate();
 	FINEST("result:\n%s", STR(result.ToString()));
 	result = CommandPlay((uint32_t) ASC_RES_PARAM(result, "contextId"),
-			"http://mlbvod-akc.mlb.com/mlbam/2010/04/08/MLB_GAME_VIDEO_LANPIT_HOME_20100408/master_wired.m3u8",
-			"playback=HTTP_CLOUD_WIRED&contentId=7320085&appAccountName=mlb&eventId=14-263849-2010-04-08&ipid=11627706&sessionKey=i8gCFd%2BuoRz2gT%2F3n%2BIr9PWj0qg%3D",
-			"fAqk1qSM6COyhR/crFTqfhVm0Dg=");
+			MY_URL,
+			MY_SESSION_ID,
+			MY_KEY);
 	FINEST("result:\n%s", STR(result.ToString()));
 	//sleep(1);
 	result = CommandPause(9101);
