@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
-
+import java.util.HashMap;
 import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
@@ -46,6 +46,7 @@ public class VideoViewDemo extends Activity {
 	private ImageButton mReset;
 	private ImageButton mStop;
 	private String current;
+	private Thread _thread;
 
 	@Override
 	public void onCreate(Bundle icicle) {
@@ -59,16 +60,16 @@ public class VideoViewDemo extends Activity {
 		final String host = "rtsp://localhost";
 		final int port = 4321;
 
-		mPath.setText(stringFromJNI( host, port ));
+		//mPath.setText(stringFromJNI( host, port ));
 		//mpath.setText("rtsp://192.168.1.14:5554/test.sdp");
 		//rtsp://video2.multicasttech.com/AFTVSciFiH264250.sdp");
 
-		Thread t = new Thread() {
+		_thread = new Thread() {
 			public void run() {
-			    jniEnvRun("0.0.0.0", 5544);
+			    EnvRun("0.0.0.0", 5544);
 			}
 		    };
-		t.start();
+		_thread.start();
 
 
 		mPlay = (ImageButton) findViewById(R.id.play);
@@ -142,9 +143,17 @@ public class VideoViewDemo extends Activity {
 		}
 	}
 
-    public native String  stringFromJNI(String foo, int boo);
-    public native String  jniEnvRun(String host, int port);
-    static {
+	private native void EnvRun(String ip, int port);
+	private native void EnvStop();
+	private native HashMap<Object,Object> ContextCreate();
+	private native HashMap<Object,Object> ContextList();
+	private native HashMap<Object,Object> ContextClose(int contextId);
+	private native HashMap<Object,Object> ContextCloseAll();
+	private native HashMap<Object,Object> CommandPlay(int contextId, String m3u8Uri, String httpSessionId, String keyPassword);
+    private native HashMap<Object,Object> CommandPause(int contextId);
+	private native HashMap<Object,Object> CommandResume(int contextId);
+	static {
         System.loadLibrary("crtmpserver_dynamic");
     }
 }
+

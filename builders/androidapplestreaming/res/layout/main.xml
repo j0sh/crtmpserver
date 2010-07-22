@@ -32,7 +32,7 @@
      android:id="@+id/path"
      android:layout_width="fill_parent"
      android:layout_height="wrap_content"
-     android:text="100"
+     android:text="rtsp://localhost:5544"
      android:textSize="18sp"
      >
   </EditText>
@@ -42,3 +42,4 @@
 	     >
   </VideoView>
 </LinearLayout>
+

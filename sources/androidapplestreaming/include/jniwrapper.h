@@ -23,8 +23,26 @@
 #include <jni.h>
 #include "utils/core.h"
 
+extern "C" void Java_org_apache_android_media_VideoViewDemo_EnvRun(
+		JNIEnv* pEnv, jobject thiz, jstring host, jint port);
+extern "C" void Java_org_apache_android_media_VideoViewDemo_EnvStop(
+		JNIEnv* pEnv, jobject thiz);
+extern "C" jobject Java_org_apache_android_media_VideoViewDemo_ContextCreate(
+		JNIEnv* pEnv, jobject thiz);
+extern "C" jobject Java_org_apache_android_media_VideoViewDemo_ContextList(
+		JNIEnv* pEnv, jobject thiz);
+extern "C" jobject Java_org_apache_android_media_VideoViewDemo_ContextClose(
+		JNIEnv* pEnv, jobject thiz, jint contextId);
+extern "C" jobject Java_org_apache_android_media_VideoViewDemo_ContextCloseAll(
+		JNIEnv* pEnv, jobject thiz);
+extern "C" jobject Java_org_apache_android_media_VideoViewDemo_CommandPlay(
+		JNIEnv* pEnv, jobject thiz, jint contextId, jstring m3u8Uri,
+		jstring httpSessionId, jstring keyPassword);
+extern "C" jobject Java_org_apache_android_media_VideoViewDemo_CommandPause(
+		JNIEnv* pEnv, jobject thiz, jint contextId);
+extern "C" jobject Java_org_apache_android_media_VideoViewDemo_CommandResume(
+		JNIEnv* pEnv, jobject thiz, jint contextId);
 jobject VariantToJObject(Variant &value, JNIEnv* pEnv);
-Variant VariantFromJObject(jobject value, JNIEnv* pEnv);
 
 #endif	/* _JNIWRAPPER_H */
 
