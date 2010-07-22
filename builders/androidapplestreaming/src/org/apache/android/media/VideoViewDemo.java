@@ -63,6 +63,14 @@ public class VideoViewDemo extends Activity {
 		//mpath.setText("rtsp://192.168.1.14:5554/test.sdp");
 		//rtsp://video2.multicasttech.com/AFTVSciFiH264250.sdp");
 
+		Thread t = new Thread() {
+			public void run() {
+			    jniEnvRun("0.0.0.0", 5544);
+			}
+		    };
+		t.start();
+
+
 		mPlay = (ImageButton) findViewById(R.id.play);
 		mPause = (ImageButton) findViewById(R.id.pause);
 		mReset = (ImageButton) findViewById(R.id.reset);
@@ -135,6 +143,7 @@ public class VideoViewDemo extends Activity {
 	}
 
     public native String  stringFromJNI(String foo, int boo);
+    public native String  jniEnvRun(String host, int port);
     static {
         System.loadLibrary("crtmpserver_dynamic");
     }

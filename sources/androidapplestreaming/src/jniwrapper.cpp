@@ -3,6 +3,8 @@
 #include <stdexcept>
 #include <string>
 
+#include "api.h"
+
 // extern "C" JNIEXPORT jint JNICALL
 // JNI_OnLoad (JavaVM * vm, void * reserved)
 // {
@@ -25,10 +27,18 @@ extern "C" jstring Java_org_apache_android_media_VideoViewDemo_stringFromJNI(JNI
     return env->NewStringUTF(s.c_str());
 }
 
+extern "C" void Java_org_apache_android_media_VideoViewDemo_jniEnvRun(JNIEnv* env, jobject thiz, jstring _host, jint _port)
+{
+    const char* hostStr = env->GetStringUTFChars( _host, NULL );
+
+    EnvRun( hostStr, _port );
+}
+
 static JNINativeMethod sMethods[] = {
      /* name, signature, funcPtr */
 
     {"stringFromJNI", "(Ljava/lang/String;I)Ljava/lang/String;", (void*)Java_org_apache_android_media_VideoViewDemo_stringFromJNI},
+    {"jniEnvRun", "(Ljava/lang/String;I)V;", (void*)Java_org_apache_android_media_VideoViewDemo_jniEnvRun}
 };
 
 extern "C" jint JNI_OnLoad(JavaVM* vm, void* reserved)
@@ -47,7 +57,7 @@ extern "C" jint JNI_OnLoad(JavaVM* vm, void* reserved)
         return JNI_FALSE;
     }
 
-    env->RegisterNatives(clazz, sMethods, 1);
+    env->RegisterNatives(clazz, sMethods, 2);
     return JNI_VERSION_1_4;
 }
 
