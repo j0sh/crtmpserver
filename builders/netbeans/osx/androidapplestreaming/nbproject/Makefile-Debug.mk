@@ -36,6 +36,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/2044958859/variantconnection.o \
 	${OBJECTDIR}/_ext/2044958859/main.o \
 	${OBJECTDIR}/_ext/2044958859/jniwrapper.o \
+	${OBJECTDIR}/_ext/2044958859/logcatloglocation.o \
 	${OBJECTDIR}/_ext/2044958859/api.o
 
 
@@ -77,6 +78,11 @@ ${OBJECTDIR}/_ext/2044958859/jniwrapper.o: ../../../../sources/androidapplestrea
 	${MKDIR} -p ${OBJECTDIR}/_ext/2044958859
 	${RM} $@.d
 	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/androidapplestreaming/include -I../../../../sources/applications/applestreamingclient/include -I../../../../../android/workbench/android-ndk-r4-crystax/build/platforms/android-4/arch-arm/usr/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/2044958859/jniwrapper.o ../../../../sources/androidapplestreaming/src/jniwrapper.cpp
+
+${OBJECTDIR}/_ext/2044958859/logcatloglocation.o: ../../../../sources/androidapplestreaming/src/logcatloglocation.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/2044958859
+	${RM} $@.d
+	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/androidapplestreaming/include -I../../../../sources/applications/applestreamingclient/include -I../../../../../android/workbench/android-ndk-r4-crystax/build/platforms/android-4/arch-arm/usr/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/2044958859/logcatloglocation.o ../../../../sources/androidapplestreaming/src/logcatloglocation.cpp
 
 ${OBJECTDIR}/_ext/2044958859/api.o: ../../../../sources/androidapplestreaming/src/api.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/2044958859

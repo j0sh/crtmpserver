@@ -33,20 +33,21 @@ OBJECTDIR=build/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
+	${OBJECTDIR}/_ext/207925497/logcatloglocation.o \
 	${OBJECTDIR}/_ext/406006454/multiconsumerbuffer.o \
-	${OBJECTDIR}/_ext/1145168487/misc.o \
 	${OBJECTDIR}/_ext/888692313/timersmanager.o \
+	${OBJECTDIR}/_ext/1145168487/misc.o \
 	${OBJECTDIR}/_ext/1980509653/timegm.o \
-	${OBJECTDIR}/_ext/207925497/logger.o \
 	${OBJECTDIR}/_ext/1406839728/misc.o \
+	${OBJECTDIR}/_ext/207925497/logger.o \
 	${OBJECTDIR}/_ext/1862590273/tinyxmlparser.o \
 	${OBJECTDIR}/_ext/1722917885/misc.o \
 	${OBJECTDIR}/_ext/207925497/consoleloglocation.o \
 	${OBJECTDIR}/_ext/888692313/crypto.o \
 	${OBJECTDIR}/_ext/406006454/iobuffer.o \
+	${OBJECTDIR}/_ext/872974544/misc.o \
 	${OBJECTDIR}/_ext/888692313/file.o \
 	${OBJECTDIR}/_ext/1416996343/misc.o \
-	${OBJECTDIR}/_ext/872974544/misc.o \
 	${OBJECTDIR}/_ext/207925497/fileloglocation.o \
 	${OBJECTDIR}/_ext/888692313/genericfunctionality.o \
 	${OBJECTDIR}/_ext/888692313/variant.o \
@@ -83,35 +84,40 @@ dist/Release/GNU-MacOSX/libcommon.dylib: ${OBJECTFILES}
 	${MKDIR} -p dist/Release/GNU-MacOSX
 	${LINK.cc} -dynamiclib -install_name libcommon.dylib -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libcommon.dylib -fPIC ${OBJECTFILES} ${LDLIBSOPTIONS} 
 
+${OBJECTDIR}/_ext/207925497/logcatloglocation.o: ../../../../sources/common/src/logging/logcatloglocation.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/207925497
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -DOSX -DUSE_MEM_POOL -DDEBUG_MEM_POOL -DLITTLE_ENDIAN_SHORT_ALIGNED -I/opt/local/include -I../../../../sources/common/include -I/opt/local/include/libxml2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/207925497/logcatloglocation.o ../../../../sources/common/src/logging/logcatloglocation.cpp
+
 ${OBJECTDIR}/_ext/406006454/multiconsumerbuffer.o: ../../../../sources/common/src/buffering/multiconsumerbuffer.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/406006454
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -DOSX -DUSE_MEM_POOL -DDEBUG_MEM_POOL -DLITTLE_ENDIAN_SHORT_ALIGNED -I/opt/local/include -I../../../../sources/common/include -I/opt/local/include/libxml2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/406006454/multiconsumerbuffer.o ../../../../sources/common/src/buffering/multiconsumerbuffer.cpp
-
-${OBJECTDIR}/_ext/1145168487/misc.o: ../../../../sources/common/src/platform/solaris/misc.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/1145168487
-	${RM} $@.d
-	$(COMPILE.cc) -O2 -DOSX -DUSE_MEM_POOL -DDEBUG_MEM_POOL -DLITTLE_ENDIAN_SHORT_ALIGNED -I/opt/local/include -I../../../../sources/common/include -I/opt/local/include/libxml2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1145168487/misc.o ../../../../sources/common/src/platform/solaris/misc.cpp
 
 ${OBJECTDIR}/_ext/888692313/timersmanager.o: ../../../../sources/common/src/utils/timersmanager.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/888692313
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -DOSX -DUSE_MEM_POOL -DDEBUG_MEM_POOL -DLITTLE_ENDIAN_SHORT_ALIGNED -I/opt/local/include -I../../../../sources/common/include -I/opt/local/include/libxml2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/888692313/timersmanager.o ../../../../sources/common/src/utils/timersmanager.cpp
 
+${OBJECTDIR}/_ext/1145168487/misc.o: ../../../../sources/common/src/platform/solaris/misc.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1145168487
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -DOSX -DUSE_MEM_POOL -DDEBUG_MEM_POOL -DLITTLE_ENDIAN_SHORT_ALIGNED -I/opt/local/include -I../../../../sources/common/include -I/opt/local/include/libxml2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1145168487/misc.o ../../../../sources/common/src/platform/solaris/misc.cpp
+
 ${OBJECTDIR}/_ext/1980509653/timegm.o: ../../../../sources/common/src/platform/android/timegm.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1980509653
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -DOSX -DUSE_MEM_POOL -DDEBUG_MEM_POOL -DLITTLE_ENDIAN_SHORT_ALIGNED -I/opt/local/include -I../../../../sources/common/include -I/opt/local/include/libxml2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1980509653/timegm.o ../../../../sources/common/src/platform/android/timegm.cpp
 
-${OBJECTDIR}/_ext/207925497/logger.o: ../../../../sources/common/src/logging/logger.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/207925497
-	${RM} $@.d
-	$(COMPILE.cc) -O2 -DOSX -DUSE_MEM_POOL -DDEBUG_MEM_POOL -DLITTLE_ENDIAN_SHORT_ALIGNED -I/opt/local/include -I../../../../sources/common/include -I/opt/local/include/libxml2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/207925497/logger.o ../../../../sources/common/src/logging/logger.cpp
-
 ${OBJECTDIR}/_ext/1406839728/misc.o: ../../../../sources/common/src/platform/linux/misc.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1406839728
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -DOSX -DUSE_MEM_POOL -DDEBUG_MEM_POOL -DLITTLE_ENDIAN_SHORT_ALIGNED -I/opt/local/include -I../../../../sources/common/include -I/opt/local/include/libxml2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1406839728/misc.o ../../../../sources/common/src/platform/linux/misc.cpp
+
+${OBJECTDIR}/_ext/207925497/logger.o: ../../../../sources/common/src/logging/logger.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/207925497
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -DOSX -DUSE_MEM_POOL -DDEBUG_MEM_POOL -DLITTLE_ENDIAN_SHORT_ALIGNED -I/opt/local/include -I../../../../sources/common/include -I/opt/local/include/libxml2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/207925497/logger.o ../../../../sources/common/src/logging/logger.cpp
 
 ${OBJECTDIR}/_ext/1862590273/tinyxmlparser.o: ../../../../sources/common/src/tinyxml/tinyxmlparser.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1862590273
@@ -138,6 +144,11 @@ ${OBJECTDIR}/_ext/406006454/iobuffer.o: ../../../../sources/common/src/buffering
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -DOSX -DUSE_MEM_POOL -DDEBUG_MEM_POOL -DLITTLE_ENDIAN_SHORT_ALIGNED -I/opt/local/include -I../../../../sources/common/include -I/opt/local/include/libxml2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/406006454/iobuffer.o ../../../../sources/common/src/buffering/iobuffer.cpp
 
+${OBJECTDIR}/_ext/872974544/misc.o: ../../../../sources/common/src/platform/osx/misc.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/872974544
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -DOSX -DUSE_MEM_POOL -DDEBUG_MEM_POOL -DLITTLE_ENDIAN_SHORT_ALIGNED -I/opt/local/include -I../../../../sources/common/include -I/opt/local/include/libxml2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/872974544/misc.o ../../../../sources/common/src/platform/osx/misc.cpp
+
 ${OBJECTDIR}/_ext/888692313/file.o: ../../../../sources/common/src/utils/file.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/888692313
 	${RM} $@.d
@@ -147,11 +158,6 @@ ${OBJECTDIR}/_ext/1416996343/misc.o: ../../../../sources/common/src/platform/win
 	${MKDIR} -p ${OBJECTDIR}/_ext/1416996343
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -DOSX -DUSE_MEM_POOL -DDEBUG_MEM_POOL -DLITTLE_ENDIAN_SHORT_ALIGNED -I/opt/local/include -I../../../../sources/common/include -I/opt/local/include/libxml2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1416996343/misc.o ../../../../sources/common/src/platform/win32/misc.cpp
-
-${OBJECTDIR}/_ext/872974544/misc.o: ../../../../sources/common/src/platform/osx/misc.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/872974544
-	${RM} $@.d
-	$(COMPILE.cc) -O2 -DOSX -DUSE_MEM_POOL -DDEBUG_MEM_POOL -DLITTLE_ENDIAN_SHORT_ALIGNED -I/opt/local/include -I../../../../sources/common/include -I/opt/local/include/libxml2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/872974544/misc.o ../../../../sources/common/src/platform/osx/misc.cpp
 
 ${OBJECTDIR}/_ext/207925497/fileloglocation.o: ../../../../sources/common/src/logging/fileloglocation.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/207925497

@@ -34,7 +34,7 @@ GLOBAL_DEFINES := $(PLATFORM_DEFINES) $(MODULES_DEFINES)
 INCLUDE_DIRECTORIES := $(PROJDIR)/sources/common/include $(PROJDIR)/sources/thelib/include $(PROJDIR)/sources/applications/applestreamingclient/include \
     $(PROJDIR)/sources/androidapplestreaming/include
 
-NEEDED_LIBRARIES := -lssl -lcrypto -ldl
+NEEDED_LIBRARIES := -llog -lssl -lcrypto -ldl
 
 SOURCES := $(shell find $(PROJDIR)/sources/common -type f -name *.cpp)
 SOURCES += $(shell find $(PROJDIR)/sources/thelib -type f -name *.cpp)
@@ -45,7 +45,9 @@ LOCAL_MODULE := crtmpserver_static
 LOCAL_CPP_EXTENSION := cpp
 LOCAL_C_INCLUDES += $(INCLUDE_DIRECTORIES) 
 LOCAL_CFLAGS += $(GLOBAL_DEFINES) 
-LOCAL_SRC_FILES := $(SOURCES) $(PROJDIR)/sources/androidapplestreaming/src/api.cpp $(PROJDIR)/sources/androidapplestreaming/src/variantconnection.cpp 
+LOCAL_SRC_FILES := $(SOURCES) \
+	$(PROJDIR)/sources/androidapplestreaming/src/api.cpp \
+	$(PROJDIR)/sources/androidapplestreaming/src/variantconnection.cpp
 include $(BUILD_STATIC_LIBRARY)
 
 include $(CLEAR_VARS)

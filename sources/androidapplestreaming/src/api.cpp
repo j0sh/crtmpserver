@@ -27,6 +27,7 @@
 #include "logging/consoleloglocation.h"
 #include "variantconnection.h"
 #include "protocols/variant/messagestructure.h"
+#include "logging/logcatloglocation.h"
 
 static sockaddr_in gAddress = {0};
 
@@ -46,6 +47,10 @@ void EnvRun(string ip, uint16_t port) {
 	//1. Initialize the logger
 	Logger::Init();
 	BaseLogLocation *pLogLocation = new ConsoleLogLocation(true);
+	pLogLocation->SetLevel(_FINEST_);
+	Logger::AddLogLocation(pLogLocation);
+
+	pLogLocation = new LogCatLogLocation();
 	pLogLocation->SetLevel(_FINEST_);
 	Logger::AddLogLocation(pLogLocation);
 

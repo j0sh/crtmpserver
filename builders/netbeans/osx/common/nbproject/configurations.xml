@@ -20,6 +20,7 @@
         <itemPath>../../../../sources/common/include/logging/baseloglocation.h</itemPath>
         <itemPath>../../../../sources/common/include/logging/consoleloglocation.h</itemPath>
         <itemPath>../../../../sources/common/include/logging/fileloglocation.h</itemPath>
+        <itemPath>../../../../sources/common/include/logging/logcatloglocation.h</itemPath>
         <itemPath>../../../../sources/common/include/logging/logger.h</itemPath>
       </logicalFolder>
       <logicalFolder name="luautils" displayName="luautils" projectFiles="true">
@@ -95,6 +96,7 @@
         <itemPath>../../../../sources/common/src/logging/baseloglocation.cpp</itemPath>
         <itemPath>../../../../sources/common/src/logging/consoleloglocation.cpp</itemPath>
         <itemPath>../../../../sources/common/src/logging/fileloglocation.cpp</itemPath>
+        <itemPath>../../../../sources/common/src/logging/logcatloglocation.cpp</itemPath>
         <itemPath>../../../../sources/common/src/logging/logger.cpp</itemPath>
       </logicalFolder>
       <logicalFolder name="luautils" displayName="luautils" projectFiles="true">
