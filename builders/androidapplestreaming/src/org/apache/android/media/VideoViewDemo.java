@@ -55,7 +55,11 @@ public class VideoViewDemo extends Activity {
 
 		mPath = (EditText) findViewById(R.id.path);
 		//mPath.setText("file:///sdcard/foo.3gp");
-		mPath.setText(stringFromJNI());
+
+		final String host = "rtsp://localhost";
+		final int port = 4321;
+
+		mPath.setText(stringFromJNI( host, port ));
 		//mpath.setText("rtsp://192.168.1.14:5554/test.sdp");
 		//rtsp://video2.multicasttech.com/AFTVSciFiH264250.sdp");
 
@@ -130,7 +134,7 @@ public class VideoViewDemo extends Activity {
 		}
 	}
 
-    public native String  stringFromJNI();
+    public native String  stringFromJNI(String foo, int boo);
     static {
         System.loadLibrary("crtmpserver_dynamic");
     }

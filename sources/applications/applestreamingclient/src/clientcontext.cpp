@@ -407,6 +407,7 @@ bool ClientContext::FetchTS(string uri, uint32_t bw, string key, uint64_t iv) {
 
 bool ClientContext::FetchURI(string uri, string requestType, Variant &customParameters) {
 	INFO("Fetch: %s", STR(uri));
+	sleep(1);
 	customParameters["httpRequestType"] = requestType;
 	customParameters["contextId"] = _id;
 
