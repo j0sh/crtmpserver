@@ -13,8 +13,11 @@ extern "C" void Java_org_apache_android_media_VideoViewDemo_EnvStop(
 
 extern "C" jobject Java_org_apache_android_media_VideoViewDemo_ContextCreate(
 		JNIEnv* pEnv, jobject thiz) {
-	Variant result = ContextCreate();
+ 	Variant result = ContextCreate();
 	return VariantToJObject(result, pEnv);
+//    Variant test;
+//    test["something"]="here";
+//    return VariantToJObject(test, pEnv);
 }
 
 extern "C" jobject Java_org_apache_android_media_VideoViewDemo_ContextList(

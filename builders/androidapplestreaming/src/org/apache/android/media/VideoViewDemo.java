@@ -84,9 +84,10 @@ public class VideoViewDemo extends Activity {
 		});
 		mPause.setOnClickListener(new OnClickListener() {
 			public void onClick(View view) {
-				if (mVideoView != null) {
-					mVideoView.pause();
-				}
+// 				if (mVideoView != null) {
+// 					mVideoView.pause();
+// 				}
+			    startVideo();
 			}
 		});
 		mReset.setOnClickListener(new OnClickListener() {
@@ -106,12 +107,25 @@ public class VideoViewDemo extends Activity {
 		});
 		runOnUiThread(new Runnable(){
 			public void run() {
-			    playVideo();
+			    //playVideo();
 				
 			}
 			
 		});
 	}
+
+    private void startVideo() {
+	HashMap<Object,Object> contextHandle = ContextCreate();
+	Log.v(TAG, "contextcreate: " + contextHandle.toString());
+	HashMap<Object,Object> result;
+	result = (HashMap<Object,Object>)contextHandle.get("response");
+	result = (HashMap<Object,Object>)result.get("parameters");
+	int contextId = ((Long)result.get("contextId")).intValue();
+	Log.v(TAG, "contextId: " + contextId);
+
+	HashMap<Object,Object> playResult = CommandPlay(contextId, "http://mediadownloads.mlb.com/mlbam/2010/06/29/9505835_m3u8/128/dropf_9505835_100m_128K.m3u8", "", "");
+	Log.v(TAG, "playResult: " + playResult.toString());
+    }
 
 	private void playVideo() {
 		try {
