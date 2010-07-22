@@ -54,6 +54,11 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPRequest(RTSPProtocol *pFrom,
 	string method = requestHeaders[RTSP_FIRST_LINE][RTSP_METHOD];
 	string requestSessionId = "";
 	string connectionSessionId = "";
+	if (!requestHeaders[RTSP_HEADERS].HasKey(RTSP_HEADERS_CSEQ, false)) {
+		FATAL("Request doesn't have %s:\n%s", RTSP_HEADERS_CSEQ,
+				STR(requestHeaders.ToString()));
+		return false;
+	}
 	if (requestHeaders[RTSP_HEADERS].HasKey(RTSP_HEADERS_SESSION, false)) {
 		requestSessionId = (string) requestHeaders[RTSP_HEADERS].GetValue(
 				RTSP_HEADERS_SESSION, false);
