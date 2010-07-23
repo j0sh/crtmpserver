@@ -84,12 +84,20 @@ void testContexts() {
 void testCommands() {
 	Variant result = ContextCreate();
 	FINEST("result:\n%s", STR(result.ToString()));
-	result = CommandPlay((uint32_t) ASC_RES_PARAM(result, "contextId"),
-			MY_URL,
-			MY_SESSION_ID,
-			MY_KEY);
+
+	uint32_t contextId = (uint32_t) ASC_RES_PARAM(result, "contextId");
+	result = CommandPlay(contextId, MY_URL, MY_SESSION_ID, MY_KEY);
 	FINEST("result:\n%s", STR(result.ToString()));
 	//sleep(1);
+
+	sleep(5);
+	result = InfoListStreams(contextId);
+	FINEST("result:\n%s", STR(result.ToString()));
+
+	sleep(5);
+	result = InfoListAllStreams();
+	FINEST("result:\n%s", STR(result.ToString()));
+
 	result = CommandPause(9101);
 	FINEST("result:\n%s", STR(result.ToString()));
 	//sleep(1);

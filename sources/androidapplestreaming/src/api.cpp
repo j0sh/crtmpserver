@@ -35,12 +35,14 @@ static sockaddr_in gAddress = {0};
 do { \
 	VariantConnection vc; \
 	if (!vc.Connect(gAddress)) { \
+		FATAL("Unable to connect to worker thread"); \
 		response.Reset(); \
 	} else { \
 		if (!vc.SendMessage(request, response)) { \
 			response.Reset(); \
 		} \
 	} \
+	/*FINEST("request:\n%s\nresponse:\n%s",STR(request.ToString()),STR(response.ToString()));*/ \
 }while(0)
 
 void EnvRun(string ip, uint16_t port) {
@@ -49,10 +51,11 @@ void EnvRun(string ip, uint16_t port) {
 	BaseLogLocation *pLogLocation = new ConsoleLogLocation(true);
 	pLogLocation->SetLevel(_FINEST_);
 	Logger::AddLogLocation(pLogLocation);
-
+#ifdef ANDROID
 	pLogLocation = new LogCatLogLocation();
 	pLogLocation->SetLevel(_FINEST_);
 	Logger::AddLogLocation(pLogLocation);
+#endif /* ANDROID */
 
 	//2. Create the default protocol factory
 	DefaultProtocolFactory *pFactory = new DefaultProtocolFactory();
@@ -211,6 +214,22 @@ Variant CommandPause(uint32_t contextId) {
 Variant CommandResume(uint32_t contextId) {
 	Variant request;
 	ASC_REQ_BUILD_COMMAND_RESUME(request, contextId);
+	Variant response;
+	SEND_VARIANT_REQUEST(request, response);
+	return response;
+}
+
+Variant InfoListStreams(uint32_t contextId) {
+	Variant request;
+	ASC_REQ_BUILD_INFO_LIST_STREAMS(request, contextId);
+	Variant response;
+	SEND_VARIANT_REQUEST(request, response);
+	return response;
+}
+
+Variant InfoListAllStreams() {
+	Variant request;
+	ASC_REQ_BUILD_INFO_LIST_ALL_STREAMS(request);
 	Variant response;
 	SEND_VARIANT_REQUEST(request, response);
 	return response;

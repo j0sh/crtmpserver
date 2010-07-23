@@ -35,6 +35,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 import android.widget.VideoView;
+import com.rtmpd.*;
 
 public class VideoViewDemo extends Activity {
 	private static final String TAG = "VideoViewDemo";
@@ -47,26 +48,20 @@ public class VideoViewDemo extends Activity {
 	private ImageButton mStop;
 	private String current;
 	private Thread _thread;
+	private CommandsInterface _ci;
 
 	@Override
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
 		setContentView(R.layout.main);
 		mVideoView = (VideoView) findViewById(R.id.surface_view);
-
 		mPath = (EditText) findViewById(R.id.path);
-		//mPath.setText("file:///sdcard/foo.3gp");
 
-		final String host = "rtsp://localhost";
-		final int port = 4321;
-
-		//mPath.setText(stringFromJNI( host, port ));
-		//mpath.setText("rtsp://192.168.1.14:5554/test.sdp");
-		//rtsp://video2.multicasttech.com/AFTVSciFiH264250.sdp");
-
+		_ci=new CommandsInterface();
+		
 		_thread = new Thread() {
 			public void run() {
-			    EnvRun("0.0.0.0", 5544);
+			    _ci.EnvRun("0.0.0.0", 5544);
 			}
 		    };
 		_thread.start();
@@ -115,16 +110,12 @@ public class VideoViewDemo extends Activity {
 	}
 
     private void startVideo() {
-	HashMap<Object,Object> contextHandle = ContextCreate();
-	Log.v(TAG, "contextcreate: " + contextHandle.toString());
-	HashMap<Object,Object> result;
-	result = (HashMap<Object,Object>)contextHandle.get("response");
-	result = (HashMap<Object,Object>)result.get("parameters");
-	int contextId = ((Long)result.get("contextId")).intValue();
-	Log.v(TAG, "contextId: " + contextId);
-
-	HashMap<Object,Object> playResult = CommandPlay(contextId, "http://mediadownloads.mlb.com/mlbam/2010/06/29/9505835_m3u8/128/dropf_9505835_100m_128K.m3u8", "", "");
-	Log.v(TAG, "playResult: " + playResult.toString());
+		MessageContextCreate msgContextCreate=new MessageContextCreate(_ci.ContextCreate());
+		Log.v(TAG, "msgContextCreate: " + msgContextCreate.toString());
+		MessageBase msgCommandPlay=new MessageBase(_ci.CommandPlay(
+			msgContextCreate.getCreatedContextId(), 
+			"http://mediadownloads.mlb.com/mlbam/2010/06/29/9505835_m3u8/128/dropf_9505835_100m_128K.m3u8", "", ""));
+		Log.v(TAG, "msgCommandPlay: " + msgCommandPlay.toString());
     }
 
 	private void playVideo() {
@@ -157,15 +148,6 @@ public class VideoViewDemo extends Activity {
 		}
 	}
 
-	private native void EnvRun(String ip, int port);
-	private native void EnvStop();
-	private native HashMap<Object,Object> ContextCreate();
-	private native HashMap<Object,Object> ContextList();
-	private native HashMap<Object,Object> ContextClose(int contextId);
-	private native HashMap<Object,Object> ContextCloseAll();
-	private native HashMap<Object,Object> CommandPlay(int contextId, String m3u8Uri, String httpSessionId, String keyPassword);
-    private native HashMap<Object,Object> CommandPause(int contextId);
-	private native HashMap<Object,Object> CommandResume(int contextId);
 	static {
         System.loadLibrary("crtmpserver_dynamic");
     }

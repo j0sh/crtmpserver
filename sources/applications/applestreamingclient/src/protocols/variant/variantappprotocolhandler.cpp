@@ -62,6 +62,10 @@ bool VariantAppProtocolHandler::ProcessMessage(BaseVariantProtocol *pProtocol,
 		ProcessCommandPause(pProtocol, lastReceived);
 	} else if (type == ASC_REQ_TYPE_COMMAND_RESUME) {
 		ProcessCommandResume(pProtocol, lastReceived);
+	} else if (type == ASC_REQ_TYPE_INFO_LIST_STREAMS) {
+		ProcessInfoListStreams(pProtocol, lastReceived);
+	} else if (type == ASC_REQ_TYPE_INFO_LIST_ALL_STREAMS) {
+		ProcessInfoListAllStreams(pProtocol, lastReceived);
 	} else {
 		WARN("Processing type `%s` not yet implemented", STR(type));
 		ASC_RES_BUILD_UNKNOWN_REQUEST_TYPE(lastReceived);
@@ -144,4 +148,51 @@ void VariantAppProtocolHandler::ProcessCommandPause(
 void VariantAppProtocolHandler::ProcessCommandResume(
 		BaseVariantProtocol *pProtocol, Variant &request) {
 	ASC_RES_BUILD_NYI(request);
+}
+
+void VariantAppProtocolHandler::ProcessInfoListStreams(
+		BaseVariantProtocol *pProtocol, Variant &request) {
+	uint32_t contextId = ASC_REQ_CONTEXT_ID(request);
+	if (contextId == 0) {
+		ASC_RES_BUILD_CONTEXT_NOT_FOUND(request);
+		return;
+	}
+	ClientContext *pContext = GetContext(contextId, pProtocol->GetType());
+	if (pContext == NULL) {
+		ASC_RES_BUILD_CONTEXT_NOT_FOUND(request);
+		return;
+	}
+	if (pContext->EventSink()->GetType() == EVENT_SYNC_VARIANT) {
+		VariantEventSink *pSink = (VariantEventSink *) pContext->EventSink();
+		vector<string> streams = pSink->GetStreamNames();
+		ASC_RES_BUILD_OK_INFO_LIST_STREAMS(request, streams);
+	} else {
+		ASC_RES_BUILD_CONTEXT_NOT_FOUND(request);
+	}
+}
+
+void VariantAppProtocolHandler::ProcessInfoListAllStreams(
+		BaseVariantProtocol *pProtocol, Variant &request) {
+	vector<uint32_t> contextIds = ClientContext::GetContextIds();
+	vector<string> allStreams;
+	for (uint32_t i = 0; i < contextIds.size(); i++) {
+		FINEST("Inspecting context id: %d", contextIds[i]);
+		ClientContext *pContext = GetContext(contextIds[i],
+				pProtocol->GetType());
+		if (pContext == NULL) {
+			WARN("Context id %d is NULL", contextIds[i]);
+			continue;
+		}
+		if (pContext->EventSink()->GetType() != EVENT_SYNC_VARIANT) {
+			WARN("Context id %d is not Variant friendly", contextIds[i]);
+			continue;
+		}
+		VariantEventSink *pSink = (VariantEventSink *) pContext->EventSink();
+		vector<string> streams = pSink->GetStreamNames();
+		for (uint32_t j = 0; j < streams.size(); j++) {
+			FINEST("Adding stream %s", STR(streams[j]));
+			ADD_VECTOR_END(allStreams, streams[j]);
+		}
+	}
+	ASC_RES_BUILD_OK_INFO_LIST_ALL_STREAMS(request, allStreams);
 }

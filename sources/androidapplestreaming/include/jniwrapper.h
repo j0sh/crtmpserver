@@ -23,25 +23,29 @@
 #include <jni.h>
 #include "utils/core.h"
 
-extern "C" void Java_org_apache_android_media_VideoViewDemo_EnvRun(
+extern "C" void Java_com_rtmpd_CommandsInterface_EnvRun(
 		JNIEnv* pEnv, jobject thiz, jstring host, jint port);
-extern "C" void Java_org_apache_android_media_VideoViewDemo_EnvStop(
+extern "C" void Java_com_rtmpd_CommandsInterface_EnvStop(
 		JNIEnv* pEnv, jobject thiz);
-extern "C" jobject Java_org_apache_android_media_VideoViewDemo_ContextCreate(
+extern "C" jobject Java_com_rtmpd_CommandsInterface_ContextCreate(
 		JNIEnv* pEnv, jobject thiz);
-extern "C" jobject Java_org_apache_android_media_VideoViewDemo_ContextList(
+extern "C" jobject Java_com_rtmpd_CommandsInterface_ContextList(
 		JNIEnv* pEnv, jobject thiz);
-extern "C" jobject Java_org_apache_android_media_VideoViewDemo_ContextClose(
+extern "C" jobject Java_com_rtmpd_CommandsInterface_ContextClose(
 		JNIEnv* pEnv, jobject thiz, jint contextId);
-extern "C" jobject Java_org_apache_android_media_VideoViewDemo_ContextCloseAll(
+extern "C" jobject Java_com_rtmpd_CommandsInterface_ContextCloseAll(
 		JNIEnv* pEnv, jobject thiz);
-extern "C" jobject Java_org_apache_android_media_VideoViewDemo_CommandPlay(
+extern "C" jobject Java_com_rtmpd_CommandsInterface_CommandPlay(
 		JNIEnv* pEnv, jobject thiz, jint contextId, jstring m3u8Uri,
 		jstring httpSessionId, jstring keyPassword);
-extern "C" jobject Java_org_apache_android_media_VideoViewDemo_CommandPause(
+extern "C" jobject Java_com_rtmpd_CommandsInterface_CommandPause(
 		JNIEnv* pEnv, jobject thiz, jint contextId);
-extern "C" jobject Java_org_apache_android_media_VideoViewDemo_CommandResume(
+extern "C" jobject Java_com_rtmpd_CommandsInterface_CommandResume(
 		JNIEnv* pEnv, jobject thiz, jint contextId);
+extern "C" jobject Java_com_rtmpd_CommandsInterface_InfoListStreams(
+		JNIEnv* pEnv, jobject thiz, jint contextId);
+extern "C" jobject Java_com_rtmpd_CommandsInterface_InfoListAllStreams(
+		JNIEnv* pEnv, jobject thiz);
 jobject VariantToJObject(Variant &value, JNIEnv* pEnv);
 
 #endif	/* _JNIWRAPPER_H */

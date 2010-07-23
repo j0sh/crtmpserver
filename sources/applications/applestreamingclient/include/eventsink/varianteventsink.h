@@ -25,11 +25,16 @@
 
 class VariantEventSink
 : public BaseEventSink {
+private:
+	map<string,string> _streamNames;
 public:
 	VariantEventSink();
 	virtual ~VariantEventSink();
 
-	virtual bool SignalStreamAvailable(string streamName);
+	virtual bool SignalStreamRegistered(string streamName);
+	virtual bool SignalStreamUnRegistered(string streamName);
+
+	vector<string> GetStreamNames();
 };
 
 

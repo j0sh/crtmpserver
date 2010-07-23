@@ -24,7 +24,7 @@
 #include "protocols/rtmp/messagefactories/messagefactories.h"
 
 RTMPEventSink::RTMPEventSink()
-: BaseEventSink() {
+: BaseEventSink(EVENT_SYNC_RTMP) {
 	_protocolId = 0;
 }
 
@@ -35,7 +35,7 @@ void RTMPEventSink::SetProtocolId(uint32_t protocolId) {
 	_protocolId = protocolId;
 }
 
-bool RTMPEventSink::SignalStreamAvailable(string streamName) {
+bool RTMPEventSink::SignalStreamRegistered(string streamName) {
 	//1. Get the RTMP protocol
 	BaseRTMPProtocol *pProtocol = (BaseRTMPProtocol *) ProtocolManager::GetProtocol(_protocolId);
 	if (pProtocol == NULL) {
@@ -58,6 +58,10 @@ bool RTMPEventSink::SignalStreamAvailable(string streamName) {
 	}
 
 	//4. Done
+	return true;
+}
+
+bool RTMPEventSink::SignalStreamUnRegistered(string streamName) {
 	return true;
 }
 #endif /* HAS_PROTOCOL_RTMP */

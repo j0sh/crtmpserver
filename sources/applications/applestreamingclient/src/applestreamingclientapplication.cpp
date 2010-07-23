@@ -179,6 +179,24 @@ void AppleStreamingClientApplication::SignalStreamRegistered(BaseStream *pStream
 		return;
 	}
 
-	pContext->EventSink()->SignalStreamAvailable(pStream->GetName());
+	pContext->EventSink()->SignalStreamRegistered(pStream->GetName());
 }
 
+void AppleStreamingClientApplication::SignalStreamUnRegistered(BaseStream *pStream) {
+	if (pStream->GetType() != ST_IN_NET_TS)
+		return;
+
+	BaseProtocol *pProtocol = pStream->GetProtocol();
+	if (pProtocol == NULL) {
+		ASSERT("Protocol is NULL!!!");
+	}
+	uint32_t contextId = pProtocol->GetCustomParameters()["contextId"];
+	ClientContext *pContext = ClientContext::GetContext(contextId, 0, 0);
+	if (pContext == NULL) {
+		WARN("Context not available anymore");
+		pProtocol->EnqueueForDelete();
+		return;
+	}
+
+	pContext->EventSink()->SignalStreamUnRegistered(pStream->GetName());
+}

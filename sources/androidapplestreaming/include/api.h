@@ -35,5 +35,8 @@ Variant CommandPlay(uint32_t contextId, string m3u8Uri, string httpSessionId,
 Variant CommandPause(uint32_t contextId);
 Variant CommandResume(uint32_t contextId);
 
+Variant InfoListStreams(uint32_t contextId);
+Variant InfoListAllStreams();
+
 #endif	/* _API_H */
 

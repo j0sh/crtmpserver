@@ -33,7 +33,8 @@ public:
 
 	void SetProtocolId(uint32_t protocolId);
 
-	virtual bool SignalStreamAvailable(string streamName);
+	virtual bool SignalStreamRegistered(string streamName);
+	virtual bool SignalStreamUnRegistered(string streamName);
 };
 
 #endif	/* _RTMPEVENTSINK_H */

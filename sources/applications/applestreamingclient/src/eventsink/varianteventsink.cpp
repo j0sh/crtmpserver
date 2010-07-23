@@ -22,15 +22,30 @@
 #include "eventsink/varianteventsink.h"
 
 VariantEventSink::VariantEventSink()
-: BaseEventSink() {
+: BaseEventSink(EVENT_SYNC_VARIANT) {
 }
 
 VariantEventSink::~VariantEventSink() {
 }
 
-bool VariantEventSink::SignalStreamAvailable(string streamName) {
-	NYI;
+bool VariantEventSink::SignalStreamRegistered(string streamName) {
+	_streamNames[streamName] = streamName;
 	return true;
+}
+
+bool VariantEventSink::SignalStreamUnRegistered(string streamName) {
+	_streamNames.erase(streamName);
+	return true;
+}
+
+vector<string> VariantEventSink::GetStreamNames() {
+	vector<string> result;
+
+	FOR_MAP(_streamNames, string, string, i) {
+		ADD_VECTOR_END(result, MAP_KEY(i));
+	}
+
+	return result;
 }
 
 #endif /* HAS_PROTOCOL_VAR */

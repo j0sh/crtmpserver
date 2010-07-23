@@ -22,13 +22,15 @@
 
 #define INCLUDE_DEBUG_LOCATIONS
 
-#define ASC_REQ_TYPE_CONTEXT_CREATE		"contextCreate"
-#define ASC_REQ_TYPE_CONTEXT_LIST		"contextList"
-#define ASC_REQ_TYPE_CONTEXT_CLOSE		"contextClose"
-#define ASC_REQ_TYPE_CONTEXT_CLOSE_ALL	"contextCloseAll"
-#define ASC_REQ_TYPE_COMMAND_PLAY		"commandPlay"
-#define ASC_REQ_TYPE_COMMAND_PAUSE		"commandPause"
-#define ASC_REQ_TYPE_COMMAND_RESUME		"commandResume"
+#define ASC_REQ_TYPE_CONTEXT_CREATE			"contextCreate"
+#define ASC_REQ_TYPE_CONTEXT_LIST			"contextList"
+#define ASC_REQ_TYPE_CONTEXT_CLOSE			"contextClose"
+#define ASC_REQ_TYPE_CONTEXT_CLOSE_ALL		"contextCloseAll"
+#define ASC_REQ_TYPE_COMMAND_PLAY			"commandPlay"
+#define ASC_REQ_TYPE_COMMAND_PAUSE			"commandPause"
+#define ASC_REQ_TYPE_COMMAND_RESUME			"commandResume"
+#define ASC_REQ_TYPE_INFO_LIST_STREAMS		"listStreams"
+#define ASC_REQ_TYPE_INFO_LIST_ALL_STREAMS	"listAllStreams"
 
 #define ASC_REQ_COMMAND_PLAY_URI_KEY			"uri"
 #define ASC_REQ_COMMAND_PLAY_SESSION_ID_KEY		"sessionId"
@@ -116,6 +118,13 @@ do { \
 #define ASC_REQ_BUILD_COMMAND_RESUME(v,contextId) \
 	ASC_REQ_BUILD(v,ASC_REQ_TYPE_COMMAND_RESUME,contextId,Variant())
 
+#define ASC_REQ_BUILD_INFO_LIST_STREAMS(v,contextId) \
+	ASC_REQ_BUILD(v,ASC_REQ_TYPE_INFO_LIST_STREAMS,contextId,Variant())
+
+#define ASC_REQ_BUILD_INFO_LIST_ALL_STREAMS(v) \
+	ASC_REQ_BUILD(v,ASC_REQ_TYPE_INFO_LIST_ALL_STREAMS,0,Variant())
+
+
 #define ASC_RES_BUILD(r,status,params) \
 do {\
 	ASC_RES_DEBUG_FILE(r); \
@@ -195,6 +204,18 @@ do { \
 
 #define ASC_RES_BUILD_COMMAND_PLAY_FAILED(r) \
 	ASC_RES_BUILD(r,ASC_RES_STATUS_COMMAND_PLAY_FAILED,Variant())
+
+#define ASC_RES_BUILD_OK_INFO_LIST_STREAMS(r,streamNames) \
+do { \
+	Variant responseParameters; \
+	responseParameters.IsArray(true); \
+	for(uint32_t streamNamesIndex;streamNamesIndex<(streamNames).size();streamNamesIndex++) \
+		responseParameters.PushToArray((streamNames)[streamNamesIndex]); \
+	ASC_RES_BUILD(r,ASC_RES_STATUS_OK,responseParameters); \
+} while(0)
+
+#define ASC_RES_BUILD_OK_INFO_LIST_ALL_STREAMS(r,streamNames) \
+	ASC_RES_BUILD_OK_INFO_LIST_STREAMS(r,streamNames)
 
 #endif	/* _MESSAGESTRUCTURE_H */
 

@@ -111,6 +111,8 @@ ELSE (EXISTS ../../sources/common/include/defines.h)
 	EXECUTE_PROCESS(COMMAND lua ../../constants/constants.lua cpp ../../sources/common/include/defines.h)
 ENDIF(EXISTS ../../sources/common/include/defines.h)
 
+
+#ADD_DEFINITIONS(-DHAS_SAFE_LOGGER)
 ADD_SUBDIRECTORY(lua lua)
 ADD_SUBDIRECTORY(common common)
 ADD_SUBDIRECTORY(thelib thelib)

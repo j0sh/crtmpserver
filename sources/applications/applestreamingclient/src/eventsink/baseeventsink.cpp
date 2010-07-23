@@ -22,11 +22,15 @@
 #include "protocols/protocoltypes.h"
 #include "eventsink/varianteventsink.h"
 
-BaseEventSink::BaseEventSink() {
-
+BaseEventSink::BaseEventSink(uint64_t type) {
+	_type = type;
 }
 
 BaseEventSink::~BaseEventSink() {
+}
+
+uint64_t BaseEventSink::GetType() {
+	return _type;
 }
 
 BaseEventSink * BaseEventSink::GetInstance(uint64_t type) {

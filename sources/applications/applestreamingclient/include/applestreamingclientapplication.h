@@ -58,6 +58,7 @@ public:
 	virtual bool Initialize();
 
 	virtual void SignalStreamRegistered(BaseStream *pStream);
+	virtual void SignalStreamUnRegistered(BaseStream *pStream);
 };
 
 

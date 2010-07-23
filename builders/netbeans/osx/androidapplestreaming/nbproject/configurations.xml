@@ -7,17 +7,17 @@
                    kind="SOURCE_LOGICAL_FOLDER">
       <itemPath>../../../../sources/androidapplestreaming/include/api.h</itemPath>
       <itemPath>../../../../sources/androidapplestreaming/include/jniwrapper.h</itemPath>
-      <itemPath>../../../../sources/androidapplestreaming/include/logcatloglocation.h</itemPath>
       <itemPath>../../../../sources/androidapplestreaming/include/variantconnection.h</itemPath>
     </logicalFolder>
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true"
                    kind="SOURCE_LOGICAL_FOLDER">
+      <itemPath>1</itemPath>
       <itemPath>../../../../sources/androidapplestreaming/src/api.cpp</itemPath>
       <itemPath>../../../../sources/androidapplestreaming/src/jniwrapper.cpp</itemPath>
-      <itemPath>../../../../sources/androidapplestreaming/src/logcatloglocation.cpp</itemPath>
       <itemPath>../../../../sources/androidapplestreaming/src/main.cpp</itemPath>
+      <itemPath>newfile</itemPath>
       <itemPath>../../../../sources/androidapplestreaming/src/variantconnection.cpp</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"

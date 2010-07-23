@@ -41,6 +41,8 @@ private:
 	void ProcessCommandPlay(BaseVariantProtocol *pProtocol, Variant &request);
 	void ProcessCommandPause(BaseVariantProtocol *pProtocol, Variant &request);
 	void ProcessCommandResume(BaseVariantProtocol *pProtocol, Variant &request);
+	void ProcessInfoListStreams(BaseVariantProtocol *pProtocol, Variant &request);
+	void ProcessInfoListAllStreams(BaseVariantProtocol *pProtocol, Variant &request);
 };
 
 #endif	/* _VARIANTAPPPROTOCOLHANDLER_H */
