@@ -17,6 +17,6 @@ public class MessageInfoListStreams extends MessageBase {
 	}
 
 	public String getStreamName(int index) {
-		return (String) getStreamNames().get(new Integer(index));
+		return (String) getStreamNames().get(new Long(index));
 	}
 }
