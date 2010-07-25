@@ -33,8 +33,8 @@
      android:layout_width="fill_parent"
      >
     <VideoView android:id="@+id/surface_view"
-	       android:layout_width="300px"
-	       android:layout_height="200px"
+	       android:layout_width="fill_parent"
+	       android:layout_height="wrap_content"
 	       >
     </VideoView>
     <EditText

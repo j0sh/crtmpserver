@@ -19,7 +19,8 @@
 	package="org.apache.android.media">
 	<uses-permission android:name="android.permission.INTERNET" />
 	<application android:name="VideoViewApplication" android:label="VideoViewApplication">
-		<activity android:name=".VideoViewDemo" android:label="VideoView2">
+		<activity android:name=".VideoViewDemo" android:label="VideoView2"
+			  android:configChanges="keyboardHidden|orientation">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.DEFAULT" />

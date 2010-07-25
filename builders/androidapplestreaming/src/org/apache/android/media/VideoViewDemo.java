@@ -35,6 +35,8 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 import android.widget.VideoView;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import com.rtmpd.*;
 
 public class VideoViewDemo extends Activity {
@@ -46,7 +48,7 @@ public class VideoViewDemo extends Activity {
     private ImageButton mPause;
     private ImageButton mReset;
     private ImageButton mStop;
-    private String current;
+//    private String mCurrentPath;
     private Thread _thread;
     private int mContextId;
     private CommandsInterface _ci;
@@ -54,9 +56,8 @@ public class VideoViewDemo extends Activity {
     @Override
     public void onCreate(Bundle icicle) {
 	super.onCreate(icicle);
-	setContentView(R.layout.main);
-	mVideoView = (VideoView) findViewById(R.id.surface_view);
-	mPath = (EditText) findViewById(R.id.path);
+
+	mContextId = -1;
 
 	_ci = new CommandsInterface();
 		
@@ -67,11 +68,38 @@ public class VideoViewDemo extends Activity {
 	    };
 	_thread.start();
 
+	setupUI();
+
+// 	runOnUiThread(new Runnable(){
+// 		public void run() {
+// 		    //playVideo();
+		
+// 		}
+// 	    });
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+	Toast.makeText(getApplicationContext(), "Configuration changed", Toast.LENGTH_SHORT).show();
+
+        super.onConfigurationChanged(newConfig);
+	stopPlayback();
+
+	setupUI();
+
+	startPlayback();
+    }
+
+    private void setupUI() {
+	setContentView(R.layout.main);
+	mVideoView = (VideoView) findViewById(R.id.surface_view);
+	mPath = (EditText) findViewById(R.id.path);
 
 	mPlay = (ImageButton) findViewById(R.id.play);
 	mPause = (ImageButton) findViewById(R.id.pause);
 	mReset = (ImageButton) findViewById(R.id.reset);
 	mStop = (ImageButton) findViewById(R.id.stop);
+
 
 	mPlay.setOnClickListener(new OnClickListener() {
 		public void onClick(View view) {
@@ -80,53 +108,94 @@ public class VideoViewDemo extends Activity {
 	    });
 	mPause.setOnClickListener(new OnClickListener() {
 		public void onClick(View view) {
-// 				if (mVideoView != null) {
-// 					mVideoView.pause();
-// 				}
-		    startVideo();
+		    stopPlayback();
+
+		    pauseVideo();
 		}
 	    });
 	mReset.setOnClickListener(new OnClickListener() {
 		public void onClick(View view) {
-		    if (mVideoView != null) {
-			mVideoView.seekTo(0);
-		    }
+// 		    if (mVideoView != null) {
+// 			mVideoView.seekTo(0);
+// 		    }
 		}
 	    });
 	mStop.setOnClickListener(new OnClickListener() {
 		public void onClick(View view) {
-		    if (mVideoView != null) {
-			current = null;
-			mVideoView.stopPlayback();
-		    }
+		    stopVideo();
 		}
-	    });
-	runOnUiThread(new Runnable(){
-		public void run() {
-		    //playVideo();
-				
-		}
-			
 	    });
     }
 
-    private void startVideo() {
-	MessageContextCreate msgContextCreate=new MessageContextCreate(_ci.ContextCreate());
-	Log.v(TAG, "msgContextCreate: " + msgContextCreate.toString());
+    private void pauseVideo() {
+	//NYI
+	
+// 	if (mContextId == -1)
+// 	    return;
+// 	MessageBase result = new MessageBase(_ci.CommandPause( mContextId ));
+// 	Log.v(TAG, "CommandPause: " + result.toString());
+    }
 
-	mContextId = msgContextCreate.getCreatedContextId();
-	MessageBase msgCommandPlay=new MessageBase(_ci.CommandPlay( mContextId, 
-						       "http://mediadownloads.mlb.com/mlbam/2010/06/29/9505835_m3u8/128/dropf_9505835_100m_128K.m3u8", "", ""));
-	Log.v(TAG, "msgCommandPlay: " + msgCommandPlay.toString());
+    private void stopVideo() { 
+	stopPlayback();
+
+	if (mContextId == -1)
+	    return;
+	MessageBase result=new MessageBase(_ci.ContextClose( mContextId ));
+	Log.v(TAG, "ContextClose: " + result.toString());
+	mContextId = -1;
+    }
+
+    private void stopPlayback() {
+	if (mVideoView != null) {
+	    //mCurrentPath = null;
+	    mVideoView.stopPlayback();
+	}
+    }
+
+    private void cmdPlayVideo() {
+	if (mContextId == -1)
+	    return;
+	MessageBase result;
+	result=new MessageBase(_ci.CommandPlay( mContextId, 
+						"http://mediadownloads.mlb.com/mlbam/2010/06/29/9505835_m3u8/128/dropf_9505835_100m_128K.m3u8", "", ""));
+	Log.v(TAG, "CommandPlay: " + result.toString());
     }
 
     private void playVideo() {
+	if (mContextId == -1)
+	{
+	    MessageContextCreate msgContextCreate=new MessageContextCreate(_ci.ContextCreate());
+	    Log.v(TAG, "ContextCreate: " + msgContextCreate.toString());
+	    mContextId = msgContextCreate.getCreatedContextId();
+
+	    if (mContextId == -1)
+		return;
+
+	    cmdPlayVideo();
+
+	    pauseVideo();
+	}
+	else
+	    startPlayback();
+    }
+
+    private void resumeVideo()	{
+	//NYI
+	MessageBase result=new MessageBase(_ci.CommandResume( mContextId ));
+	Log.v(TAG, "CommandResume: " + result.toString());
+    }
+
+    private void startPlayback() {
 	try {
 	    MessageInfoListStreams msgInfoListStreams = new MessageInfoListStreams( _ci.InfoListStreams(mContextId) );
-	    Log.v(TAG, "msgInfoListStreams: " + msgInfoListStreams.toString());
+	    Log.v(TAG, "InfoListStreams: " + msgInfoListStreams.toString());
 	    if (msgInfoListStreams.getStreamNamesLength() == 0)
 	    {
 		Log.v(TAG, "video not ready");
+		Toast.makeText(getApplicationContext(), "Video not ready", Toast.LENGTH_SHORT).show();
+
+		
 		return;
 	    }
 
@@ -138,18 +207,9 @@ public class VideoViewDemo extends Activity {
 			       Toast.LENGTH_LONG).show();
 
 	    } else {
-		// If the path has not changed, just start the media player
-		if (path.equals(current) && mVideoView != null) {
-		    mVideoView.start();
-		    mVideoView.requestFocus();
-		    return;
-		}
-		current = path;
-
 		mVideoView.setVideoURI(Uri.parse( path ));
 		mVideoView.start();
 		mVideoView.requestFocus();
-
 	    }
 	} catch (Exception e) {
 	    Log.e(TAG, "error: " + e.getMessage(), e);
