@@ -76,6 +76,7 @@ BaseInFileStream::BaseInFileStream(BaseProtocol *pProtocol,
 
 	//current state info
 	_paused = true;
+	_audioVideoCodecsSent = false;
 }
 
 BaseInFileStream::~BaseInFileStream() {
@@ -353,6 +354,14 @@ bool BaseInFileStream::Feed() {
 	if (_paused)
 		return true;
 
+	//2. First, send audio and video codecs
+	if (!_audioVideoCodecsSent) {
+		if (!SendCodecs()) {
+			FATAL("Unable to send audio codec");
+			return false;
+		}
+	}
+
 	//2. Determine if the client has enough data on the buffer and continue
 	//or stay put
 	uint32_t elapsedTime = (uint32_t) (time(NULL) - _startFeedingTime);
@@ -477,3 +486,103 @@ void BaseInFileStream::ReleaseFile(File *pFile) {
 }
 #endif /* HAS_MMAP */
 
+bool BaseInFileStream::SendCodecs() {
+	//1. Read the first frame
+	MediaFrame frame1;
+	if (!_pSeekFile->SeekTo(4 + 0 * sizeof (MediaFrame))) {
+		FATAL("Unablt to seek inside seek file");
+		return false;
+	}
+	if (!_pSeekFile->ReadBuffer((uint8_t *) & frame1, sizeof (MediaFrame))) {
+		FATAL("Unable to read frame from seeking file");
+		return false;
+	}
+	//FINEST("frame1: %s", STR(frame1));
+
+	//2. Read the second frame
+	MediaFrame frame2;
+	if (!_pSeekFile->SeekTo(4 + 1 * sizeof (MediaFrame))) {
+		FATAL("Unablt to seek inside seek file");
+		return false;
+	}
+	if (!_pSeekFile->ReadBuffer((uint8_t *) & frame2, sizeof (MediaFrame))) {
+		FATAL("Unable to read frame from seeking file");
+		return false;
+	}
+	//FINEST("frame2: %s", STR(frame2));
+
+	//3. Read the current frame to pickup the timestamp from it
+	MediaFrame currentFrame;
+	if (!_pSeekFile->SeekTo(4 + _currentFrameIndex * sizeof (MediaFrame))) {
+		FATAL("Unablt to seek inside seek file");
+		return false;
+	}
+	if (!_pSeekFile->ReadBuffer((uint8_t *) & currentFrame, sizeof (MediaFrame))) {
+		FATAL("Unable to read frame from seeking file");
+		return false;
+	}
+	//FINEST("currentFrame: %s", STR(currentFrame));
+
+	//4. Is the first frame a codec setup?
+	//If not, the second is not a codec setup for sure
+	if (!frame1.isBinaryHeader) {
+		//FINEST("frame1 is not binary header");
+		_audioVideoCodecsSent = true;
+		return true;
+	}
+
+	//5. Build the buffer for the first frame
+	IOBuffer buffer;
+	if (!BuildFrame(_pFile, frame1, buffer)) {
+		FATAL("Unable to build the frame");
+		return false;
+	}
+	//FINEST("frame1 buffer:\n%s", STR(buffer));
+
+	//6. Do the feedeng with the first frame
+	if (!_pOutStreams->info->FeedData(
+			GETIBPOINTER(buffer), //pData
+			GETAVAILABLEBYTESCOUNT(buffer), //dataLength
+			0, //processedLength
+			GETAVAILABLEBYTESCOUNT(buffer), //totalLength
+			(uint32_t) currentFrame.absoluteTime, //absoluteTimestamp
+			frame1.type == MEDIAFRAME_TYPE_AUDIO //isAudio
+			)) {
+		FATAL("Unable to feed audio data");
+		return false;
+	}
+	//FINEST("frame1 was fed");
+
+	//7. Is the second frame a codec setup?
+	if (!frame2.isBinaryHeader) {
+		//FINEST("frame2 is not binary header");
+		_audioVideoCodecsSent = true;
+		return true;
+	}
+
+	//8. Build the buffer for the second frame
+	buffer.IgnoreAll();
+	if (!BuildFrame(_pFile, frame2, buffer)) {
+		FATAL("Unable to build the frame");
+		return false;
+	}
+	//FINEST("frame2 buffer:\n%s", STR(buffer));
+
+	//9. Do the feedeng with the second frame
+	if (!_pOutStreams->info->FeedData(
+			GETIBPOINTER(buffer), //pData
+			GETAVAILABLEBYTESCOUNT(buffer), //dataLength
+			0, //processedLength
+			GETAVAILABLEBYTESCOUNT(buffer), //totalLength
+			(uint32_t) currentFrame.absoluteTime, //absoluteTimestamp
+			frame2.type == MEDIAFRAME_TYPE_AUDIO //isAudio
+			)) {
+		FATAL("Unable to feed audio data");
+		return false;
+	}
+	//FINEST("frame2 was fed");
+
+	//10. Done
+	_audioVideoCodecsSent = true;
+	return true;
+}

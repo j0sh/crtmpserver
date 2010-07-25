@@ -497,6 +497,9 @@
             <Elem>HAS_PROTOCOL_RTP</Elem>
             <Elem>HAS_PROTOCOL_VAR</Elem>
             <Elem>HAS_PROTOCOL_LIVEFLV</Elem>
+            <Elem>HAS_MEDIA_MP4</Elem>
+            <Elem>HAS_MEDIA_MP3</Elem>
+            <Elem>HAS_MEDIA_FLV</Elem>
           </preprocessorList>
         </ccTool>
         <linkerTool>
@@ -546,6 +549,9 @@
             <Elem>HAS_PROTOCOL_RTP</Elem>
             <Elem>HAS_PROTOCOL_VAR</Elem>
             <Elem>HAS_PROTOCOL_LIVEFLV</Elem>
+            <Elem>HAS_MEDIA_MP4</Elem>
+            <Elem>HAS_MEDIA_MP3</Elem>
+            <Elem>HAS_MEDIA_FLV</Elem>
           </preprocessorList>
         </ccTool>
         <fortranCompilerTool>

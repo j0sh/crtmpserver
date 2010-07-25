@@ -75,6 +75,7 @@ private:
 
 	//current state info
 	bool _paused;
+	bool _audioVideoCodecsSent;
 public:
 	BaseInFileStream(BaseProtocol *pProtocol, StreamsManager *pStreamsManager,
 			uint64_t type, string name);
@@ -162,6 +163,12 @@ private:
 	static File* GetFile(string filePath, uint32_t windowSize);
 	static void ReleaseFile(File *pFile);
 #endif /* HAS_MMAP */
+
+	/*
+	 * This function will ensure that the codec packets are sent.
+	 * Also it preserves the current timings and frame index
+	 */
+	bool SendCodecs();
 };
 
 #endif	/* _BASEINFILESTREAM_H */

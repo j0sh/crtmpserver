@@ -398,25 +398,13 @@ bool MP4Document::BuildFrames() {
 	}
 
 	if (pESDS != NULL) {
-
-		FOR_VECTOR_ITERATOR(MediaFrame, _frames, i) {
-			if (VECTOR_VAL(i).type == MEDIAFRAME_TYPE_AUDIO) {
-				_frames.insert(i, audioHeader);
-				break;
-			}
-		}
+		ADD_VECTOR_BEGIN(_frames, audioHeader);
 	} else {
 		WARN("No sound track found");
 	}
 
 	if (pAVCC != NULL) {
-
-		FOR_VECTOR_ITERATOR(MediaFrame, _frames, i) {
-			if (VECTOR_VAL(i).type == MEDIAFRAME_TYPE_VIDEO) {
-				_frames.insert(i, videoHeader);
-				break;
-			}
-		}
+		ADD_VECTOR_BEGIN(_frames, videoHeader);
 	} else {
 		WARN("No video track found");
 	}

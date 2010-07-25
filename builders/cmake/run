@@ -1,6 +1,6 @@
 rm -rf ../../media/*.seek
 rm -rf ../../media/*.meta
-./renamebadfiles.sh
+#./renamebadfiles.sh
 
 cmake .
 if [ "$?" -ne "0" ]; then
@@ -24,8 +24,8 @@ fi
 
 #./tssplitter/tssplitter ./tssplitter/tssplitter.lua 
 #./vmtests/vmtests ./vmtests/vmtests.lua ./vmtests/utils.lua
-#./rtmpserver/rtmpserver ./rtmpserver/rtmpserver.lua
-./androidapplestreaming/androidapplestreaming
+./rtmpserver/rtmpserver ./rtmpserver/rtmpserver.lua
+#./androidapplestreaming/androidapplestreaming
 #./tests/tests
 #./vmtests/vmtests
 #./trafficdisector/trafficdisector ~/Desktop/fms.pcap

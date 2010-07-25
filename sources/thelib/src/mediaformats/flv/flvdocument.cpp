@@ -37,7 +37,7 @@ bool FLVDocument::ParseDocument() {
 }
 
 bool FLVDocument::BuildFrames() {
-
+	vector<MediaFrame> binaryHeaders;
 	//1. Go to the beginning of the file
 	if (!_mediaFile.SeekBegin()) {
 		FATAL("Unable to seek in file");
@@ -112,7 +112,7 @@ bool FLVDocument::BuildFrames() {
 		//10. Save the start of the data
 		frame.start = _mediaFile.Cursor();
 
-		//11. Set the isKeyFrame flag
+		//11. Set the isKeyFrame flag and the isBinary flag
 		if (frame.type == MEDIAFRAME_TYPE_VIDEO) {
 			uint8_t byte = 0;
 			if (!_mediaFile.PeekUI8(&byte)) {
@@ -120,9 +120,38 @@ bool FLVDocument::BuildFrames() {
 				return false;
 			}
 			frame.isKeyFrame = ((byte >> 4) == 1);
+			if (frame.isKeyFrame) {
+				frame.isBinaryHeader = ((byte & 0x0f) == 7);
+				if (frame.isBinaryHeader) {
+					uint64_t dword;
+					if (!_mediaFile.PeekUI64(&dword)) {
+						FATAL("Unable to peek byte");
+						return false;
+					}
+					frame.isBinaryHeader = (((dword >> 48)&0xff) == 0);
+				}
+			} else {
+				frame.isBinaryHeader = false;
+			}
 		} else {
 			frame.isKeyFrame = true;
+			uint8_t byte = 0;
+			if (!_mediaFile.PeekUI8(&byte)) {
+				FATAL("Unable to peek byte");
+				return false;
+			}
+			frame.isBinaryHeader = ((byte >> 4) == 10);
+			if (frame.isBinaryHeader) {
+				uint16_t word;
+				if (!_mediaFile.PeekUI16(&word)) {
+					FATAL("Unable to peek byte");
+					return false;
+				}
+				frame.isBinaryHeader = ((word & 0x00ff) == 0);
+			}
 		}
+		if (frame.isBinaryHeader)
+			WARN("frame: %s", STR(frame));
 
 		//12. Read the metadata or ignore the data payload
 		if (frame.type == MEDIAFRAME_TYPE_DATA) {
@@ -173,11 +202,13 @@ bool FLVDocument::BuildFrames() {
 			break;
 		}
 
-		//14. This is not a binary frame
-		frame.isBinaryHeader = false;
-
-		//15. Save the frame to the frame list
-		ADD_VECTOR_END(_frames, frame);
+		//14. Store it in the proper location and adjust the timestamp accordingly
+		if (frame.isBinaryHeader) {
+			frame.absoluteTime = 0;
+			ADD_VECTOR_END(binaryHeaders, frame);
+		} else {
+			ADD_VECTOR_END(_frames, frame);
+		}
 	}
 
 	//    for (uint32_t i = 0; i < 50; i++) {
@@ -188,6 +219,11 @@ bool FLVDocument::BuildFrames() {
 	//        FINEST("After:%s", STR(_frames[i]));
 	//    }
 	//    NYIR;
+
+	//15. Add the binary headers
+	for (uint32_t i = 0; i < binaryHeaders.size(); i++) {
+		ADD_VECTOR_BEGIN(_frames, binaryHeaders[i]);
+	}
 
 	return true;
 }
