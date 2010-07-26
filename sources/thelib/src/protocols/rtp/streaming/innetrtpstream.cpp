@@ -191,6 +191,7 @@ bool InNetRTPStream::FeedVideoData(uint8_t *pData, uint32_t dataLength,
 	} else if (naluType == NALU_TYPE_STAPA) {
 		uint32_t index = 1;
 		double ts = (double) rtpHeader._timestamp / 90.00;
+		//FINEST("ts: %.2f; delta: %.2f", ts, ts - _lastTs);
 		while (index + 3 < dataLength) {
 			uint16_t length = ntohsp(pData + index);
 			index += 2;
@@ -200,12 +201,16 @@ bool InNetRTPStream::FeedVideoData(uint8_t *pData, uint32_t dataLength,
 				_counter = 0;
 				return true;
 			}
-			if (!FeedData(pData + index,
-					length, 0,
-					length,
-					ts, false)) {
-				FATAL("Unable to feed NALU");
-				return false;
+			//FINEST("length: %d; %s", length, STR(NALUToString(pData[index])));
+			if ((NALU_TYPE(pData[index]) == NALU_TYPE_IDR)
+					|| (NALU_TYPE(pData[index]) == NALU_TYPE_SLICE)) {
+				if (!FeedData(pData + index,
+						length, 0,
+						length,
+						ts, false)) {
+					FATAL("Unable to feed NALU");
+					return false;
+				}
 			}
 			index += length;
 		}
