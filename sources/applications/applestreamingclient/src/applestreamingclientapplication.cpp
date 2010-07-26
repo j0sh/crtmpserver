@@ -21,7 +21,7 @@
 
 #include "utils/core.h"
 #include "applestreamingclientapplication.h"
-#include "rtmpappprotocolhandler.h"
+#include "protocols/rtmp/rtmpappprotocolhandler.h"
 #include "protocols/baseprotocol.h"
 #include "protocols/protocolfactorymanager.h"
 #include "protocols/protocolfactory.h"
@@ -34,7 +34,7 @@
 #include "protocols/baseprotocol.h"
 #include "clientcontext.h"
 #include "eventsink/baseeventsink.h"
-#include "protocols/rtp/basertspappprotocolhandler.h"
+#include "protocols/rtp/rtspappprotocolhandler.h"
 #include "protocols/httpbuff/httpbuffappprotocolhandler.h"
 #include "protocols/variant/variantappprotocolhandler.h"
 
@@ -149,7 +149,7 @@ bool AppleStreamingClientApplication::Initialize() {
 	_pAESHandler = new AESAppProtocolHandler(_configuration);
 	RegisterAppProtocolHandler(PT_INBOUND_AES, _pAESHandler);
 
-	_pRTSPHandler = new BaseRTSPAppProtocolHandler(_configuration);
+	_pRTSPHandler = new RTSPAppProtocolHandler(_configuration);
 	RegisterAppProtocolHandler(PT_RTSP, _pRTSPHandler);
 
 	_pVariantHandler = new VariantAppProtocolHandler(_configuration);

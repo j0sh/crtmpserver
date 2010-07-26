@@ -19,7 +19,7 @@
 
 #ifdef HAS_PROTOCOL_RTMP
 #include "utils/core.h"
-#include "rtmpappprotocolhandler.h"
+#include "protocols/rtmp/rtmpappprotocolhandler.h"
 #include "protocols/rtmp/basertmpappprotocolhandler.h"
 #include "protocols/rtmp/messagefactories/messagefactories.h"
 #include "protocols/rtmp/basertmpprotocol.h"

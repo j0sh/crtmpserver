@@ -34,8 +34,9 @@ OBJECTDIR=build/${CND_CONF}/${CND_PLATFORM}
 # Object Files
 OBJECTFILES= \
 	${OBJECTDIR}/_ext/1728068287/variantappprotocolhandler.o \
+	${OBJECTDIR}/_ext/1372122712/rtspappprotocolhandler.o \
 	${OBJECTDIR}/_ext/61573733/varianteventsink.o \
-	${OBJECTDIR}/_ext/441423101/rtmpappprotocolhandler.o \
+	${OBJECTDIR}/_ext/413868907/rtmpappprotocolhandler.o \
 	${OBJECTDIR}/_ext/441423101/playlist.o \
 	${OBJECTDIR}/_ext/1147538975/httpbufferprotocol.o \
 	${OBJECTDIR}/_ext/413657679/m3u8appprotocolhandler.o \
@@ -91,15 +92,20 @@ ${OBJECTDIR}/_ext/1728068287/variantappprotocolhandler.o: ../../../../sources/ap
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_VAR -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/applestreamingclient/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1728068287/variantappprotocolhandler.o ../../../../sources/applications/applestreamingclient/src/protocols/variant/variantappprotocolhandler.cpp
 
+${OBJECTDIR}/_ext/1372122712/rtspappprotocolhandler.o: ../../../../sources/applications/applestreamingclient/src/protocols/rtp/rtspappprotocolhandler.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1372122712
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_VAR -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/applestreamingclient/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1372122712/rtspappprotocolhandler.o ../../../../sources/applications/applestreamingclient/src/protocols/rtp/rtspappprotocolhandler.cpp
+
 ${OBJECTDIR}/_ext/61573733/varianteventsink.o: ../../../../sources/applications/applestreamingclient/src/eventsink/varianteventsink.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/61573733
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_VAR -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/applestreamingclient/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/61573733/varianteventsink.o ../../../../sources/applications/applestreamingclient/src/eventsink/varianteventsink.cpp
 
-${OBJECTDIR}/_ext/441423101/rtmpappprotocolhandler.o: ../../../../sources/applications/applestreamingclient/src/rtmpappprotocolhandler.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/441423101
+${OBJECTDIR}/_ext/413868907/rtmpappprotocolhandler.o: ../../../../sources/applications/applestreamingclient/src/protocols/rtmp/rtmpappprotocolhandler.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/413868907
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_VAR -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/applestreamingclient/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/441423101/rtmpappprotocolhandler.o ../../../../sources/applications/applestreamingclient/src/rtmpappprotocolhandler.cpp
+	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_VAR -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/applestreamingclient/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/413868907/rtmpappprotocolhandler.o ../../../../sources/applications/applestreamingclient/src/protocols/rtmp/rtmpappprotocolhandler.cpp
 
 ${OBJECTDIR}/_ext/441423101/playlist.o: ../../../../sources/applications/applestreamingclient/src/playlist.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/441423101

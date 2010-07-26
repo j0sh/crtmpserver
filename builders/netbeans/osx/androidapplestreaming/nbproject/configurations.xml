@@ -13,11 +13,9 @@
                    displayName="Source Files"
                    projectFiles="true"
                    kind="SOURCE_LOGICAL_FOLDER">
-      <itemPath>1</itemPath>
       <itemPath>../../../../sources/androidapplestreaming/src/api.cpp</itemPath>
       <itemPath>../../../../sources/androidapplestreaming/src/jniwrapper.cpp</itemPath>
       <itemPath>../../../../sources/androidapplestreaming/src/main.cpp</itemPath>
-      <itemPath>newfile</itemPath>
       <itemPath>../../../../sources/androidapplestreaming/src/variantconnection.cpp</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"

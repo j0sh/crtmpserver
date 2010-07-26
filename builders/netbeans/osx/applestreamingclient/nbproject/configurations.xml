@@ -31,6 +31,12 @@
           <itemPath>../../../../sources/applications/applestreamingclient/include/protocols/m3u8/m3u8appprotocolhandler.h</itemPath>
           <itemPath>../../../../sources/applications/applestreamingclient/include/protocols/m3u8/masterm3u8protocol.h</itemPath>
         </logicalFolder>
+        <logicalFolder name="rtmp" displayName="rtmp" projectFiles="true">
+          <itemPath>../../../../sources/applications/applestreamingclient/include/protocols/rtmp/rtmpappprotocolhandler.h</itemPath>
+        </logicalFolder>
+        <logicalFolder name="rtp" displayName="rtp" projectFiles="true">
+          <itemPath>../../../../sources/applications/applestreamingclient/include/protocols/rtp/rtspappprotocolhandler.h</itemPath>
+        </logicalFolder>
         <logicalFolder name="ts" displayName="ts" projectFiles="true">
           <itemPath>../../../../sources/applications/applestreamingclient/include/protocols/ts/tsappprotocolhandler.h</itemPath>
         </logicalFolder>
@@ -45,7 +51,6 @@
       <itemPath>../../../../sources/applications/applestreamingclient/include/applestreamingclientapplication.h</itemPath>
       <itemPath>../../../../sources/applications/applestreamingclient/include/clientcontext.h</itemPath>
       <itemPath>../../../../sources/applications/applestreamingclient/include/playlist.h</itemPath>
-      <itemPath>../../../../sources/applications/applestreamingclient/include/rtmpappprotocolhandler.h</itemPath>
       <itemPath>../../../../sources/applications/applestreamingclient/include/speedcomputer.h</itemPath>
     </logicalFolder>
     <logicalFolder name="SourceFiles"
@@ -78,6 +83,12 @@
           <itemPath>../../../../sources/applications/applestreamingclient/src/protocols/m3u8/m3u8appprotocolhandler.cpp</itemPath>
           <itemPath>../../../../sources/applications/applestreamingclient/src/protocols/m3u8/masterm3u8protocol.cpp</itemPath>
         </logicalFolder>
+        <logicalFolder name="rtmp" displayName="rtmp" projectFiles="true">
+          <itemPath>../../../../sources/applications/applestreamingclient/src/protocols/rtmp/rtmpappprotocolhandler.cpp</itemPath>
+        </logicalFolder>
+        <logicalFolder name="rtp" displayName="rtp" projectFiles="true">
+          <itemPath>../../../../sources/applications/applestreamingclient/src/protocols/rtp/rtspappprotocolhandler.cpp</itemPath>
+        </logicalFolder>
         <logicalFolder name="ts" displayName="ts" projectFiles="true">
           <itemPath>../../../../sources/applications/applestreamingclient/src/protocols/ts/tsappprotocolhandler.cpp</itemPath>
         </logicalFolder>
@@ -91,7 +102,6 @@
       <itemPath>../../../../sources/applications/applestreamingclient/src/applestreamingclientapplication.cpp</itemPath>
       <itemPath>../../../../sources/applications/applestreamingclient/src/clientcontext.cpp</itemPath>
       <itemPath>../../../../sources/applications/applestreamingclient/src/playlist.cpp</itemPath>
-      <itemPath>../../../../sources/applications/applestreamingclient/src/rtmpappprotocolhandler.cpp</itemPath>
       <itemPath>../../../../sources/applications/applestreamingclient/src/speedcomputer.cpp</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"

@@ -60,5 +60,5 @@ void HTTPBuffAppProtocolHandler::RegisterProtocol(BaseProtocol *pProtocol) {
 }
 
 void HTTPBuffAppProtocolHandler::UnRegisterProtocol(BaseProtocol *pProtocol) {
-	NYI;
+
 }

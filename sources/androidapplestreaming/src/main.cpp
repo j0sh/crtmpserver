@@ -90,17 +90,17 @@ void testCommands() {
 	FINEST("result:\n%s", STR(result.ToString()));
 	//sleep(1);
 
-	sleep(5);
-	result = InfoListStreams(contextId);
-	FINEST("result:\n%s", STR(result.ToString()));
-
-	sleep(5);
-	result = InfoListAllStreams();
-	FINEST("result:\n%s", STR(result.ToString()));
-
-	result = CommandPause(9101);
-	FINEST("result:\n%s", STR(result.ToString()));
-	//sleep(1);
-	result = CommandResume(1213);
-	FINEST("result:\n%s", STR(result.ToString()));
+	//	sleep(5);
+	//	result = InfoListStreams(contextId);
+	//	FINEST("result:\n%s", STR(result.ToString()));
+	//
+	//	sleep(5);
+	//	result = InfoListAllStreams();
+	//	FINEST("result:\n%s", STR(result.ToString()));
+	//
+	//	result = CommandPause(9101);
+	//	FINEST("result:\n%s", STR(result.ToString()));
+	//	//sleep(1);
+	//	result = CommandResume(1213);
+	//	FINEST("result:\n%s", STR(result.ToString()));
 }

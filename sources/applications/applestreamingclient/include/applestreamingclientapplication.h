@@ -31,7 +31,7 @@ class KeyAppProtocolHandler;
 class TSAppProtocolHandler;
 class HTTPBuffAppProtocolHandler;
 class AESAppProtocolHandler;
-class BaseRTSPAppProtocolHandler;
+class RTSPAppProtocolHandler;
 class VariantAppProtocolHandler;
 class ProtocolFactory;
 
@@ -46,7 +46,7 @@ private:
 	TSAppProtocolHandler *_pTSHandler;
 	HTTPBuffAppProtocolHandler *_pHTTPBuff;
 	AESAppProtocolHandler *_pAESHandler;
-	BaseRTSPAppProtocolHandler *_pRTSPHandler;
+	RTSPAppProtocolHandler *_pRTSPHandler;
 	VariantAppProtocolHandler *_pVariantHandler;
 	ProtocolFactory *_pFactory;
 public:
