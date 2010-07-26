@@ -27,6 +27,8 @@ import java.util.HashMap;
 import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -52,6 +54,8 @@ public class VideoViewDemo extends Activity {
     private Thread _thread;
     private int mContextId;
     private CommandsInterface _ci;
+
+    private RetryHandler mRetryHandler = new RetryHandler();
 
     @Override
     public void onCreate(Bundle icicle) {
@@ -174,7 +178,9 @@ public class VideoViewDemo extends Activity {
 
 	    cmdPlayVideo();
 
-	    pauseVideo();
+//	    pauseVideo();
+
+	    mRetryHandler.retryInMsec( 1000 );
 	}
 	else
 	    startPlayback();
@@ -186,6 +192,18 @@ public class VideoViewDemo extends Activity {
 	Log.v(TAG, "CommandResume: " + result.toString());
     }
 
+    class RetryHandler extends Handler {
+	@Override
+	public void handleMessage(Message msg) {
+	    VideoViewDemo.this.playVideo();
+	}
+
+	public void retryInMsec(long delayMillis) {
+	    this.removeMessages(0);
+	    sendMessageDelayed(obtainMessage(0), delayMillis);
+	}
+    }
+
     private void startPlayback() {
 	try {
 	    MessageInfoListStreams msgInfoListStreams = new MessageInfoListStreams( _ci.InfoListStreams(mContextId) );
@@ -195,6 +213,7 @@ public class VideoViewDemo extends Activity {
 		Log.v(TAG, "video not ready");
 		Toast.makeText(getApplicationContext(), "Video not ready", Toast.LENGTH_SHORT).show();
 
+		mRetryHandler.retryInMsec( 500 );
 		
 		return;
 	    }
