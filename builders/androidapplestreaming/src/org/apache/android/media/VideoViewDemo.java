@@ -74,6 +74,8 @@ public class VideoViewDemo extends Activity {
 
 	setupUI();
 
+	playVideo();
+
 // 	runOnUiThread(new Runnable(){
 // 		public void run() {
 // 		    //playVideo();
