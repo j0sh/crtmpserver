@@ -122,7 +122,6 @@ bool RTSPProtocol::SignalInputData(IOBuffer &buffer) {
 						return false;
 					}
 				}
-				_state = RTSP_STATE_HEADERS;
 				break;
 			}
 			default:
@@ -297,86 +296,6 @@ string RTSPProtocol::GetTransportHeaderLine(bool isAudio) {
 			isAudio ? STR(_pInboundConnectivity->GetAudioClientPorts())
 			: STR(_pInboundConnectivity->GetVideoClientPorts()));
 }
-
-//bool RTSPProtocol::CreateUDPInboundProtocols(Variant &parameters) {
-//	//1. cleanup first
-//	CloseInProtocols();
-//
-//	//2. create the inbound video protocol
-//	_pInboundVideoRTPProtocol =
-//			(InboundRTPProtocol *) ProtocolFactoryManager::CreateProtocolChain(
-//			CONF_PROTOCOL_INBOUND_UDP_RTP, parameters);
-//	if (_pInboundVideoRTPProtocol == NULL) {
-//		FATAL("Unable to create the protocol chain");
-//		CloseInProtocols();
-//		return false;
-//	}
-//	_pInboundVideoRTPProtocol->SetApplication(GetApplication());
-//
-//	//3. create the inbound audio protocol
-//	_pInboundAudioRTPProtocol =
-//			(InboundRTPProtocol *) ProtocolFactoryManager::CreateProtocolChain(
-//			CONF_PROTOCOL_INBOUND_UDP_RTP, parameters);
-//	if (_pInboundAudioRTPProtocol == NULL) {
-//		FATAL("Unable to create the protocol chain");
-//		CloseInProtocols();
-//		return false;
-//	}
-//	_pInboundAudioRTPProtocol->SetApplication(GetApplication());
-//
-//	//4. create the inbound video carrier and link it to the protocol
-//	if (UDPCarrier::Create("0.0.0.0", 0, _pInboundVideoRTPProtocol) == NULL) {
-//		FATAL("Unable to create UDP carrier");
-//		return false;
-//	}
-//
-//	//5. create the inbound audio carrier and link it to the protocol
-//	if (UDPCarrier::Create("0.0.0.0", 0, _pInboundAudioRTPProtocol) == NULL) {
-//		FATAL("Unable to create UDP carrier");
-//		return false;
-//	}
-//
-//	//6. Create the inbound stream
-//	_pInStream = new InNetRTPStream(this, GetApplication()->GetStreamsManager(),
-//			"__gigica",
-//			unb64((string) SDP_VIDEO_CODEC_H264_SPS(parameters)),
-//			unb64((string) SDP_VIDEO_CODEC_H264_PPS(parameters)));
-//
-//	//ASSERT("%s", STR(parameters.ToString()));
-//
-//	//7. make the stream known to inbound RTP protocols
-//	_pInboundVideoRTPProtocol->SetStream(_pInStream);
-//	_pInboundAudioRTPProtocol->SetStream(_pInStream);
-//
-//	//8. Make the RTSP protocol known to RTP protocols
-//	_pInboundVideoRTPProtocol->SetRTSPProtocol(this);
-//	_pInboundAudioRTPProtocol->SetRTSPProtocol(this);
-//
-//	//8. Done
-//	return true;
-//}
-
-//bool RTSPProtocol::CreateRTSPInboundProtocols() {
-//	CloseInProtocols();
-//	NYIR;
-//}
-
-//void RTSPProtocol::CloseInProtocols() {
-//	if (_pInboundVideoRTPProtocol != NULL) {
-//		_pInboundVideoRTPProtocol->EnqueueForDelete();
-//		_pInboundVideoRTPProtocol = NULL;
-//	}
-//
-//	if (_pInboundAudioRTPProtocol != NULL) {
-//		_pInboundAudioRTPProtocol->EnqueueForDelete();
-//		_pInboundAudioRTPProtocol = NULL;
-//	}
-//
-//	if (_pInStream != NULL) {
-//		delete _pInStream;
-//		_pInStream = NULL;
-//	}
-//}
 
 bool RTSPProtocol::SendMessage(Variant &headers, string &content) {
 	//1. Add info about us
@@ -584,12 +503,17 @@ bool RTSPProtocol::HandleRTSPMessage(IOBuffer &buffer) {
 		buffer.Ignore(_contentLength);
 	}
 
+	bool result;
+
 	//2. Call the protocol handler
 	if ((bool)_inboundHeaders["isRequest"]) {
-		return _pProtocolHandler->HandleRTSPRequest(this, _inboundHeaders, _inboundContent);
+		result = _pProtocolHandler->HandleRTSPRequest(this, _inboundHeaders, _inboundContent);
 	} else {
-		return _pProtocolHandler->HandleRTSPResponse(this, _inboundHeaders, _inboundContent);
+		result = _pProtocolHandler->HandleRTSPResponse(this, _inboundHeaders, _inboundContent);
 	}
+
+	_state = RTSP_STATE_HEADERS;
+	return result;
 }
 
 #endif /* HAS_PROTOCOL_RTP */

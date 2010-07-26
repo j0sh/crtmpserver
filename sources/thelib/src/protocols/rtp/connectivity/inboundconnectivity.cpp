@@ -110,7 +110,7 @@ bool InboundConnectivity::Initialize(Variant &videoTrack, Variant &audioTrack) {
 
 	//6. Create the in stream
 	_pInStream = new InNetRTPStream(_pRTSP, pApplication->GetStreamsManager(),
-			"__gigica",
+			format("rtsp_%d", _pRTSP->GetId()),
 			unb64((string) SDP_VIDEO_CODEC_H264_SPS(videoTrack)),
 			unb64((string) SDP_VIDEO_CODEC_H264_PPS(videoTrack)));
 
@@ -188,6 +188,12 @@ bool InboundConnectivity::SendRTP(sockaddr_in &address, uint32_t rtpId,
 	if (pRTCP == NULL) {
 		FATAL("Unable to find the protocol");
 		return false;
+	}
+
+	if (ntohs(address.sin_port) == 0) {
+		WARN("Invalid address: %s:%d",
+				inet_ntoa(address.sin_addr), ntohs(address.sin_port));
+		return true;
 	}
 
 	//FINEST("%s:%d length: %d", inet_ntoa(address.sin_addr), ntohs(address.sin_port), length);

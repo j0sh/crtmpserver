@@ -78,7 +78,7 @@ bool RTSPAppProtocolHandler::HandleRTSPResponse200Setup(RTSPProtocol *pFrom,
 	}
 
 	//2. Do the play command
-	string url = (string) pFrom->GetCustomParameters()["url"] + "/";
+	string url = (string) pFrom->GetCustomParameters()["url"];
 
 	//3. prepare the play command
 	pFrom->ClearRequestMessage();
