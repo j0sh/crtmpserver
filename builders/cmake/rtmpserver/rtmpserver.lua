@@ -145,16 +145,20 @@ configuration=
 					protocol="inboundRtsp"
 				},]]--
 			},
-			rtspStreams = {
-				--[[{
-					--url="rtsp://82.177.67.58/channel1",
-					--url="rtsp://217.153.33.206/axis-media/media.amp",
+			--[[rtspStreams = {
+				{
 					url="rtsp://82.177.67.61/axis-media/media.amp",
-					--url="rtsp://media-us-2.soundreach.net/slcn_lifestyle.sdp",
-					--url="rtsp://0.0.0.0:8080/test.sdp",
 					forceTcp=true
-                },]]--
-			},
+				},
+				{
+					url="rtsp://217.153.33.206/axis-media/media.amp",
+					forceTcp=true
+				},
+				{
+					url="rtsp://media-us-2.soundreach.net/slcn_lifestyle.sdp",
+					forceTcp=true
+				}
+			}]]--,
 			validateHandshake=true,
 			keyframeSeek=true,
 			seekGranularity=1.5, --in seconds, between 0.1 and 600
