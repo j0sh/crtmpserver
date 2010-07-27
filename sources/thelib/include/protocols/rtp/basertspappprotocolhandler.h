@@ -82,7 +82,7 @@ protected:
 			string &responseContent);
 
 	//operations
-	virtual bool Play(RTSPProtocol *pFrom, string url);
+	virtual bool Play(RTSPProtocol *pFrom);
 private:
 	OutboundConnectivity *GetOutboundConnectivity(RTSPProtocol *pFrom);
 	string GetStreamName(string url);

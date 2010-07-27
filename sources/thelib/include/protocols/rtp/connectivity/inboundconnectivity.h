@@ -21,27 +21,41 @@
 #define	_INBOUNDCONNECTIVITY_H
 
 #include "protocols/rtp/connectivity/baseconnectivity.h"
+#include "buffering/iobuffer.h"
 
 class InboundRTPProtocol;
 class RTCPProtocol;
 class InNetRTPStream;
 class RTSPProtocol;
+class BaseProtocol;
 
 class InboundConnectivity
 : public BaseConnectivity {
 private:
 	RTSPProtocol *_pRTSP;
+
 	InboundRTPProtocol *_pRTPVideo;
 	RTCPProtocol *_pRTCPVideo;
 	InboundRTPProtocol *_pRTPAudio;
 	RTCPProtocol *_pRTCPAudio;
+
 	InNetRTPStream *_pInStream;
+
+	BaseProtocol *_pProtocols[4];
+	IOBuffer _inputBuffer;
+	sockaddr_in _dummyAddress;
+
+	bool _forceTcp;
 public:
 	InboundConnectivity(RTSPProtocol *pRTSP);
 	virtual ~InboundConnectivity();
 	void EnqueueForDelete();
 
-	bool Initialize(Variant &videoTrack, Variant &audioTrack);
+	bool Initialize(Variant &videoTrack, Variant &audioTrack, bool forceTcp);
+
+	string GetTransportHeaderLine(bool isAudio);
+
+	bool FeedData(uint32_t channelId, uint8_t *pBuffer, uint32_t bufferLength);
 
 	string GetAudioClientPorts();
 	string GetVideoClientPorts();
@@ -49,6 +63,8 @@ public:
 	bool SendRTP(sockaddr_in &address, uint32_t rtpId,
 			uint8_t *pBuffer, uint32_t length);
 private:
+	bool InitializeUDP(Variant &videoTrack, Variant &audioTrack);
+	bool InitializeTCP(Variant &videoTrack, Variant &audioTrack);
 	void Cleanup();
 	bool CreateCarriers(InboundRTPProtocol *pRTP, RTCPProtocol *pRTCP);
 };

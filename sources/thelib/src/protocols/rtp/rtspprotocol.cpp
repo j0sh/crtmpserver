@@ -43,6 +43,9 @@
 RTSPProtocol::RTSPProtocol()
 : BaseProtocol(PT_RTSP) {
 	_state = RTSP_STATE_HEADERS;
+	_rtpData = false;
+	_rtpDataLength = 0;
+	_rtpDataChanel = 0;
 	_contentLength = 0;
 	_requestSequence = 0;
 	_pOutboundConnectivity = NULL;
@@ -107,15 +110,18 @@ bool RTSPProtocol::SignalInputData(IOBuffer &buffer) {
 			}
 			case RTSP_STATE_PAYLOAD:
 			{
-				if ((bool)_inboundHeaders["rtpData"]) {
-					if (_pNearProtocol == NULL) {
-						FATAL("This is the near most protocol");
+				if (_rtpData) {
+					if (_pInboundConnectivity == NULL) {
+						FATAL("No inbound connectivity available");
 						return false;
 					}
-					if (!_pNearProtocol->SignalInputData(buffer)) {
-						FATAL("Unable to signal upper protocols");
+					if (!_pInboundConnectivity->FeedData(
+							_rtpDataChanel, GETIBPOINTER(buffer), _rtpDataLength)) {
+						FATAL("Unable to handle raw RTP packet");
 						return false;
 					}
+					buffer.Ignore(_rtpDataLength);
+					_state = RTSP_STATE_HEADERS;
 				} else {
 					if (!HandleRTSPMessage(buffer)) {
 						FATAL("Unable to handle content");
@@ -274,7 +280,8 @@ InboundConnectivity *RTSPProtocol::GetInboundConnectivity(Variant &videoTrack,
 		Variant &audioTrack) {
 	CloseInboundConnectivity();
 	_pInboundConnectivity = new InboundConnectivity(this);
-	if (!_pInboundConnectivity->Initialize(videoTrack, audioTrack)) {
+	if (!_pInboundConnectivity->Initialize(videoTrack, audioTrack,
+			(bool)GetCustomParameters()["forceTcp"])) {
 		FATAL("Unable to initialize inbound connectivity");
 		CloseInboundConnectivity();
 		return false;
@@ -292,9 +299,7 @@ void RTSPProtocol::CloseInboundConnectivity() {
 string RTSPProtocol::GetTransportHeaderLine(bool isAudio) {
 	if (_pInboundConnectivity == NULL)
 		return "";
-	return format("RTP/AVP;unicast;client_port=%s",
-			isAudio ? STR(_pInboundConnectivity->GetAudioClientPorts())
-			: STR(_pInboundConnectivity->GetVideoClientPorts()));
+	return _pInboundConnectivity->GetTransportHeaderLine(isAudio);
 }
 
 bool RTSPProtocol::SendMessage(Variant &headers, string &content) {
@@ -339,8 +344,43 @@ bool RTSPProtocol::ParseHeaders(IOBuffer& buffer) {
 }
 
 bool RTSPProtocol::ParseInterleavedHeaders(IOBuffer &buffer) {
-	_inboundHeaders["rtpData"] = true;
-	NYIR;
+	//1. Marl this as a interleaved content
+	//FINEST("buffer:\n%s", STR(buffer));
+	_rtpData = true;
+
+	//2. Do we have at least 4 bytes ($ sign, channel byte an 2-bytes length)?
+	uint32_t bufferLength = GETAVAILABLEBYTESCOUNT(buffer);
+	if (bufferLength < 4) {
+		WARN("Not enough data");
+		return true;
+	}
+
+	//3. Get the buffer
+	uint8_t *pBuffer = GETIBPOINTER(buffer);
+
+	//4. Get the channel id
+	_rtpDataChanel = pBuffer[1];
+
+	//5. Get the packet length
+	_rtpDataLength = ntohsp(pBuffer + 2);
+	if (_rtpDataLength > 8192) {
+		FATAL("RTP data length too big");
+		return false;
+	}
+
+	//6. Do we have enough data?
+	if (_rtpDataLength + 4 > bufferLength) {
+		//WARN("Not enough data. _rtpDataLength: %d; bufferLength: %d", _rtpDataLength, bufferLength);
+		return true;
+	}
+
+	//7. Advance the state and and ignore the RTP header
+	buffer.Ignore(4);
+	_state = RTSP_STATE_PAYLOAD;
+
+	//8. Done
+
+	return true;
 }
 
 bool RTSPProtocol::ParseNormalHeaders(IOBuffer &buffer) {
@@ -434,7 +474,7 @@ bool RTSPProtocol::ParseNormalHeaders(IOBuffer &buffer) {
 	_state = RTSP_STATE_PAYLOAD;
 	buffer.Ignore(headersSize + 4);
 
-	_inboundHeaders["rtpData"] = false;
+	_rtpData = false;
 
 	return true;
 }
@@ -488,6 +528,7 @@ bool RTSPProtocol::ParseFirstLine(string &line) {
 		return true;
 	} else {
 		FATAL("Incorrect first line: %s", STR(line));
+
 		return false;
 	}
 }

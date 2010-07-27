@@ -38,6 +38,9 @@ class RTSPProtocol
 : public BaseProtocol {
 protected:
 	uint32_t _state;
+	bool _rtpData;
+	uint32_t _rtpDataLength;
+	uint32_t _rtpDataChanel;
 	Variant _inboundHeaders;
 	string _inboundContent;
 	uint32_t _contentLength;

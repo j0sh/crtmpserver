@@ -37,6 +37,9 @@ InboundConnectivity::InboundConnectivity(RTSPProtocol *pRTSP)
 	_pRTPAudio = NULL;
 	_pRTCPAudio = NULL;
 	_pInStream = NULL;
+	_forceTcp = false;
+	memset(_pProtocols, 0, sizeof (_pProtocols));
+	memset(&_dummyAddress, 0, sizeof (_dummyAddress));
 }
 
 InboundConnectivity::~InboundConnectivity() {
@@ -48,7 +51,10 @@ void InboundConnectivity::EnqueueForDelete() {
 	_pRTSP->EnqueueForDelete();
 }
 
-bool InboundConnectivity::Initialize(Variant &videoTrack, Variant &audioTrack) {
+bool InboundConnectivity::Initialize(Variant &videoTrack, Variant &audioTrack,
+		bool forceTcp) {
+	_forceTcp = forceTcp;
+
 	//1. get the application
 	BaseClientApplication *pApplication = _pRTSP->GetApplication();
 	if (pApplication == NULL) {
@@ -59,73 +65,79 @@ bool InboundConnectivity::Initialize(Variant &videoTrack, Variant &audioTrack) {
 	//2. Close existing protocols
 	Cleanup();
 
-	//3. Create all protocols
-	Variant dummy;
-	_pRTPVideo = (InboundRTPProtocol *) ProtocolFactoryManager::CreateProtocolChain(
-			CONF_PROTOCOL_INBOUND_UDP_RTP, dummy);
-	if (_pRTPVideo == NULL) {
-		FATAL("Unable to create the protocol chain");
-		Cleanup();
-		return false;
-	}
-	_pRTCPVideo = (RTCPProtocol *) ProtocolFactoryManager::CreateProtocolChain(
-			CONF_PROTOCOL_UDP_RTCP, dummy);
-	if (_pRTCPVideo == NULL) {
-		FATAL("Unable to create the protocol chain");
-		Cleanup();
-		return false;
-	}
-	_pRTPAudio = (InboundRTPProtocol *) ProtocolFactoryManager::CreateProtocolChain(
-			CONF_PROTOCOL_INBOUND_UDP_RTP, dummy);
-	if (_pRTPAudio == NULL) {
-		FATAL("Unable to create the protocol chain");
-		Cleanup();
-		return false;
-	}
-	_pRTCPAudio = (RTCPProtocol *) ProtocolFactoryManager::CreateProtocolChain(
-			CONF_PROTOCOL_UDP_RTCP, dummy);
-	if (_pRTCPAudio == NULL) {
-		FATAL("Unable to create the protocol chain");
-		Cleanup();
-		return false;
+	//3. create the stacks of protocols
+	if (forceTcp) {
+		if (!InitializeTCP(videoTrack, audioTrack)) {
+			FATAL("Unable to initialize TCP based protocols");
+			return false;
+		}
+	} else {
+		if (!InitializeUDP(videoTrack, audioTrack)) {
+			FATAL("Unable to initialize UDP based protocols");
+			return false;
+		}
 	}
 
-	//4. Create the carriers
-	if (!CreateCarriers(_pRTPVideo, _pRTCPVideo)) {
-		FATAL("Unable to create video carriers");
-		Cleanup();
-		return false;
-	}
-	if (!CreateCarriers(_pRTPAudio, _pRTCPAudio)) {
-		FATAL("Unable to create audio carriers");
-		Cleanup();
-		return false;
-	}
-
-	//5. Set the application on protocols
+	//4. Set the application on protocols
 	_pRTPVideo->SetApplication(pApplication);
 	_pRTCPVideo->SetApplication(pApplication);
 	_pRTPAudio->SetApplication(pApplication);
 	_pRTCPAudio->SetApplication(pApplication);
 
-	//6. Create the in stream
+	//5. Create the in stream
 	_pInStream = new InNetRTPStream(_pRTSP, pApplication->GetStreamsManager(),
 			format("rtsp_%d", _pRTSP->GetId()),
 			unb64((string) SDP_VIDEO_CODEC_H264_SPS(videoTrack)),
 			unb64((string) SDP_VIDEO_CODEC_H264_PPS(videoTrack)));
 
-	//7. make the stream known to inbound RTP protocols
+	//6. make the stream known to inbound RTP protocols
 	_pRTPVideo->SetStream(_pInStream);
 	_pRTPAudio->SetStream(_pInStream);
 
-	//8. Make the this Connectivity known to all protocols
+	//7. Make the this Connectivity known to all protocols
 	_pRTPVideo->SetInbboundConnectivity(this);
 	_pRTCPVideo->SetInbboundConnectivity(this);
 	_pRTPAudio->SetInbboundConnectivity(this);
 	_pRTCPAudio->SetInbboundConnectivity(this);
 
-	//9. Done
+	//8. Done
 	return true;
+}
+
+string InboundConnectivity::GetTransportHeaderLine(bool isAudio) {
+	if (_forceTcp) {
+		if (isAudio)
+			return "RTP/AVP/TCP;interleaved=0-1";
+		else
+			return "RTP/AVP/TCP;interleaved=2-3";
+	} else {
+		return format("RTP/AVP;unicast;client_port=%s",
+				isAudio ? STR(GetAudioClientPorts())
+				: STR(GetVideoClientPorts()));
+	}
+}
+
+bool InboundConnectivity::FeedData(uint32_t channelId, uint8_t *pBuffer,
+		uint32_t bufferLength) {
+	//1. Is the chanel number a valid chanel?
+	if (channelId >= 4) {
+		FATAL("Invalid chanel number: %d", channelId);
+		return false;
+	}
+
+	//2. Get the protocol
+	BaseProtocol *pProtocol = _pProtocols[channelId];
+	if (pProtocol == NULL) {
+		FATAL("Invalid chanel number: %d", channelId);
+		return false;
+	}
+
+	//3. prepare the buffer
+	_inputBuffer.IgnoreAll();
+	_inputBuffer.ReadFromBuffer(pBuffer, bufferLength);
+
+	//4. feed the data
+	return pProtocol->SignalInputData(_inputBuffer, &_dummyAddress);
 }
 
 string InboundConnectivity::GetAudioClientPorts() {
@@ -191,14 +203,80 @@ bool InboundConnectivity::SendRTP(sockaddr_in &address, uint32_t rtpId,
 	}
 
 	if (ntohs(address.sin_port) == 0) {
-		WARN("Invalid address: %s:%d",
-				inet_ntoa(address.sin_addr), ntohs(address.sin_port));
+		if (!_forceTcp) {
+			WARN("Invalid address: %s:%d",
+					inet_ntoa(address.sin_addr), ntohs(address.sin_port));
+		}
 		return true;
 	}
 
 	//FINEST("%s:%d length: %d", inet_ntoa(address.sin_addr), ntohs(address.sin_port), length);
 	return sendto(pRTCP->GetIOHandler()->GetOutboundFd(),
 			pBuffer, length, 0, (sockaddr *) & address, sizeof (address)) == (int32_t) length;
+}
+
+bool InboundConnectivity::InitializeUDP(Variant &videoTrack, Variant &audioTrack) {
+	//3. Create all protocols
+	Variant dummy;
+	_pRTPVideo = (InboundRTPProtocol *) ProtocolFactoryManager::CreateProtocolChain(
+			CONF_PROTOCOL_INBOUND_UDP_RTP, dummy);
+	if (_pRTPVideo == NULL) {
+		FATAL("Unable to create the protocol chain");
+		Cleanup();
+		return false;
+	}
+	_pRTCPVideo = (RTCPProtocol *) ProtocolFactoryManager::CreateProtocolChain(
+			CONF_PROTOCOL_UDP_RTCP, dummy);
+	if (_pRTCPVideo == NULL) {
+		FATAL("Unable to create the protocol chain");
+		Cleanup();
+		return false;
+	}
+	_pRTPAudio = (InboundRTPProtocol *) ProtocolFactoryManager::CreateProtocolChain(
+			CONF_PROTOCOL_INBOUND_UDP_RTP, dummy);
+	if (_pRTPAudio == NULL) {
+		FATAL("Unable to create the protocol chain");
+		Cleanup();
+		return false;
+	}
+	_pRTCPAudio = (RTCPProtocol *) ProtocolFactoryManager::CreateProtocolChain(
+			CONF_PROTOCOL_UDP_RTCP, dummy);
+	if (_pRTCPAudio == NULL) {
+		FATAL("Unable to create the protocol chain");
+		Cleanup();
+		return false;
+	}
+
+	//4. Create the carriers
+	if (!CreateCarriers(_pRTPVideo, _pRTCPVideo)) {
+		FATAL("Unable to create video carriers");
+		Cleanup();
+		return false;
+	}
+	if (!CreateCarriers(_pRTPAudio, _pRTCPAudio)) {
+		FATAL("Unable to create audio carriers");
+		Cleanup();
+		return false;
+	}
+
+	return true;
+}
+
+bool InboundConnectivity::InitializeTCP(Variant &videoTrack, Variant &audioTrack) {
+	//1. create the protocols
+	_pRTPVideo = new InboundRTPProtocol();
+	_pRTCPVideo = new RTCPProtocol();
+	_pRTPAudio = new InboundRTPProtocol();
+	_pRTCPAudio = new RTCPProtocol();
+
+	//2. Add them in the fast-pickup array
+	_pProtocols[0] = _pRTPVideo;
+	_pProtocols[1] = _pRTCPVideo;
+	_pProtocols[2] = _pRTPAudio;
+	_pProtocols[3] = _pRTCPAudio;
+
+	//3. Done
+	return true;
 }
 
 void InboundConnectivity::Cleanup() {

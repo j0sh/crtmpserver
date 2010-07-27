@@ -51,17 +51,28 @@ void RTSPAppProtocolHandler::RegisterProtocol(BaseProtocol *pProtocol) {
 	//2. Get the protocol
 	RTSPProtocol *pRTSPProtocol = (RTSPProtocol *) pProtocol;
 
-	//3. Get the URI
+	//3. validate the uri
 	if (pRTSPProtocol->GetCustomParameters()["url"] != V_STRING) {
 		FATAL("No URL specified");
 		pRTSPProtocol->EnqueueForDelete();
 		return;
 	}
-	string url = (string) pRTSPProtocol->GetCustomParameters()["url"];
 
-	//4. Start play
-	if (!Play(pRTSPProtocol, url)) {
-		FATAL("Unable to initiate play on uri %s", STR(url));
+	//4. validate the networking mode
+	if (pProtocol->GetCustomParameters().HasKey("forceTcp")) {
+		if (pProtocol->GetCustomParameters()["forceTcp"] != V_BOOL) {
+			FATAL("Invalid forceTcp flag detected");
+			pRTSPProtocol->EnqueueForDelete();
+			return;
+		}
+	} else {
+		pProtocol->GetCustomParameters()["forceTcp"] = (bool)false;
+	}
+
+	//5. Start play
+	if (!Play(pRTSPProtocol)) {
+		FATAL("Unable to initiate play on uri %s",
+				STR(pProtocol->GetCustomParameters()["url"]));
 		pRTSPProtocol->EnqueueForDelete();
 		return;
 	}

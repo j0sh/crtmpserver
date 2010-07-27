@@ -540,9 +540,9 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPResponse404Play(RTSPProtocol *pFrom, 
 	return false;
 }
 
-bool BaseRTSPAppProtocolHandler::Play(RTSPProtocol *pFrom, string url) {
+bool BaseRTSPAppProtocolHandler::Play(RTSPProtocol *pFrom) {
 	//1. Save the URL in the custom parameters
-	pFrom->GetCustomParameters()["url"] = url;
+	string url = (string) pFrom->GetCustomParameters()["url"];
 
 	//2. prepare the options command
 	pFrom->ClearRequestMessage();
