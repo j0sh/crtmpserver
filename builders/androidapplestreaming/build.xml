@@ -21,7 +21,7 @@
 
     <target name="clean" description="Delete all generated files">
         <delete dir="bin"/>
-        <delete dir="libs"/>
+        <!-- delete dir="libs"/ -->
         <delete dir="gen"/>
     </target>
 

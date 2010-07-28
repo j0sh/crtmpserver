@@ -18,5 +18,6 @@ uninstall:
 	ant uninstall
 
 clean:
-# ../../ndk-build clean
 	ant clean
+        # remove ndk libs
+	rm -rf libs
