@@ -159,7 +159,8 @@ public class VideoViewDemo extends Activity {
 	    if (mContextId == -1)
 		return;
 
-	    cmdPlayVideo("http://mediadownloads.mlb.com/mlbam/2010/06/29/9505835_m3u8/128/dropf_9505835_100m_128K.m3u8");
+	    cmdPlayVideo("http://mediadownloads.mlb.com/mlbam/2010/07/26/10292767_m3u8/master_mobile.m3u8");
+//"http://mediadownloads.mlb.com/mlbam/2010/06/29/9505835_m3u8/128/dropf_9505835_100m_128K.m3u8");
 
 	    mRetryHandler.retryInMsec( 1000 );
 	}
