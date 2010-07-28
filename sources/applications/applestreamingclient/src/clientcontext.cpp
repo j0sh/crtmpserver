@@ -174,8 +174,8 @@ bool ClientContext::StartFeeding() {
 	//3. Get the corresponding playlist
 	Playlist *pPlaylist = _childPlaylists[optimalBw];
 
-	if (_currentItemIndex == 0)
-		_currentItemIndex = pPlaylist->GetItemsCount() / 2 + 10;
+	//if (_currentItemIndex == 0)
+	//	_currentItemIndex = pPlaylist->GetItemsCount() / 2 + 10;
 
 	//4. Is this the last item in the playlis?
 	if (_currentItemIndex >= pPlaylist->GetItemsCount()) {
