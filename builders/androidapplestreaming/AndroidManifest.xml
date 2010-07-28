@@ -18,8 +18,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	package="org.apache.android.media">
 	<uses-permission android:name="android.permission.INTERNET" />
-	<application android:name="VideoViewApplication" android:label="VideoViewApplication">
-		<activity android:name=".VideoViewDemo" android:label="VideoView2"
+	<application android:name="VideoViewApplication" android:label="MLB HTTP Live Streaming Video Demo">
+		<activity android:name=".VideoViewDemo" android:label="MLB HTTP Live Streaming Video Demo"
 			  android:configChanges="keyboardHidden|orientation">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />

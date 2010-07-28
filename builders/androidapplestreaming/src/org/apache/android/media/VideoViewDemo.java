@@ -45,11 +45,9 @@ public class VideoViewDemo extends Activity {
     private static final String TAG = "VideoViewDemo";
 
     private VideoView mVideoView;
-    private EditText mPath;
     private ImageButton mPlay;
-    private ImageButton mPause;
-    private ImageButton mReset;
     private ImageButton mStop;
+    private ImageButton mQuit;
 //    private String mCurrentPath;
     private Thread _thread;
     private int mContextId;
@@ -99,31 +97,14 @@ public class VideoViewDemo extends Activity {
     private void setupUI() {
 	setContentView(R.layout.main);
 	mVideoView = (VideoView) findViewById(R.id.surface_view);
-	mPath = (EditText) findViewById(R.id.path);
 
 	mPlay = (ImageButton) findViewById(R.id.play);
-	mPause = (ImageButton) findViewById(R.id.pause);
-	mReset = (ImageButton) findViewById(R.id.reset);
 	mStop = (ImageButton) findViewById(R.id.stop);
-
+	mQuit = (ImageButton) findViewById(R.id.quit);
 
 	mPlay.setOnClickListener(new OnClickListener() {
 		public void onClick(View view) {
 		    playVideo();
-		}
-	    });
-	mPause.setOnClickListener(new OnClickListener() {
-		public void onClick(View view) {
-		    stopPlayback();
-
-		    pauseVideo();
-		}
-	    });
-	mReset.setOnClickListener(new OnClickListener() {
-		public void onClick(View view) {
-// 		    if (mVideoView != null) {
-// 			mVideoView.seekTo(0);
-// 		    }
 		}
 	    });
 	mStop.setOnClickListener(new OnClickListener() {
@@ -131,15 +112,12 @@ public class VideoViewDemo extends Activity {
 		    stopVideo();
 		}
 	    });
-    }
-
-    private void pauseVideo() {
-	//NYI
-	
-// 	if (mContextId == -1)
-// 	    return;
-// 	MessageBase result = new MessageBase(_ci.CommandPause( mContextId ));
-// 	Log.v(TAG, "CommandPause: " + result.toString());
+	mQuit.setOnClickListener(new OnClickListener() {
+		public void onClick(View view) {
+		    _ci.EnvStop();
+		    System.exit(0);
+		}
+	    });
     }
 
     private void stopVideo() { 
@@ -159,12 +137,15 @@ public class VideoViewDemo extends Activity {
 	}
     }
 
-    private void cmdPlayVideo() {
+    private void cmdPlayVideo(String url) {
 	if (mContextId == -1)
 	    return;
+
+	Toast.makeText(getApplicationContext(), "Opening: " + url, Toast.LENGTH_LONG).show();
+
 	MessageBase result;
 	result=new MessageBase(_ci.CommandPlay( mContextId, 
-						"http://mediadownloads.mlb.com/mlbam/2010/06/29/9505835_m3u8/128/dropf_9505835_100m_128K.m3u8", "", ""));
+						url, "", ""));
 	Log.v(TAG, "CommandPlay: " + result.toString());
     }
 
@@ -178,20 +159,12 @@ public class VideoViewDemo extends Activity {
 	    if (mContextId == -1)
 		return;
 
-	    cmdPlayVideo();
-
-//	    pauseVideo();
+	    cmdPlayVideo("http://mediadownloads.mlb.com/mlbam/2010/06/29/9505835_m3u8/128/dropf_9505835_100m_128K.m3u8");
 
 	    mRetryHandler.retryInMsec( 1000 );
 	}
 	else
 	    startPlayback();
-    }
-
-    private void resumeVideo()	{
-	//NYI
-	MessageBase result=new MessageBase(_ci.CommandResume( mContextId ));
-	Log.v(TAG, "CommandResume: " + result.toString());
     }
 
     class RetryHandler extends Handler {
@@ -212,16 +185,15 @@ public class VideoViewDemo extends Activity {
 	    Log.v(TAG, "InfoListStreams: " + msgInfoListStreams.toString());
 	    if (msgInfoListStreams.getStreamNamesLength() == 0)
 	    {
-		Log.v(TAG, "video not ready");
-		Toast.makeText(getApplicationContext(), "Video not ready", Toast.LENGTH_SHORT).show();
+		Log.v(TAG, "Waiting for video...");
+		Toast.makeText(getApplicationContext(), "Waiting for video...", Toast.LENGTH_SHORT).show();
 
 		mRetryHandler.retryInMsec( 500 );
 		
 		return;
 	    }
 
-	    final String path = "rtsp://localhost:5544/" + msgInfoListStreams.getStreamName(0);//mPath.getText().toString();
-	    mPath.setText(path);
+	    final String path = "rtsp://localhost:5544/" + msgInfoListStreams.getStreamName(0);
 	    Log.v(TAG, "path: " + path);
 	    if (path == null || path.length() == 0) {
 		Toast.makeText(VideoViewDemo.this, "File URL/path is empty",
@@ -229,6 +201,8 @@ public class VideoViewDemo extends Activity {
 
 	    } else {
 		mVideoView.setVideoURI(Uri.parse( path ));
+		Toast.makeText(VideoViewDemo.this, "Local URL: " + path,
+			       Toast.LENGTH_LONG).show();
 		mVideoView.start();
 		mVideoView.requestFocus();
 	    }

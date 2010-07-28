@@ -15,7 +15,7 @@
  	See the License for the specific language governing permissions and
  	limitations under the License.
 --> 
-<project name="VideoView2" default="help">
+<project name="MLB_HTTP_Live_Streaming_Video_Demo" default="help">
 
     <property environment="env"/>
 

@@ -14,18 +14,14 @@
                  android:layout_height="wrap_content"
                  android:layout_width="wrap_content"
                  android:src="@drawable/play"/>
-    <ImageButton android:id="@+id/pause"
-                 android:layout_height="wrap_content"
-                 android:layout_width="wrap_content"
-                 android:src="@drawable/pause"/>
-    <ImageButton android:id="@+id/reset"
-                 android:layout_height="wrap_content"
-                 android:layout_width="wrap_content"
-                 android:src="@drawable/reset"/>
     <ImageButton android:id="@+id/stop"
                  android:layout_height="wrap_content"
                  android:layout_width="wrap_content"
                  android:src="@drawable/stop"/>
+    <ImageButton android:id="@+id/quit"
+                 android:layout_height="wrap_content"
+                 android:layout_width="wrap_content"
+                 android:src="@drawable/quit"/>
   </LinearLayout>
   <LinearLayout
      android:orientation="vertical"
@@ -37,13 +33,5 @@
 	       android:layout_height="wrap_content"
 	       >
     </VideoView>
-    <EditText
-       android:id="@+id/path"
-       android:layout_width="fill_parent"
-       android:layout_height="wrap_content"
-       android:text="100"
-       android:textSize="18sp"
-       >
-    </EditText>
   </LinearLayout>
 </LinearLayout>
