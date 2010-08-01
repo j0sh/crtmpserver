@@ -294,6 +294,9 @@ void BaseInFileStream::ReadyForSend() {
 }
 
 bool BaseInFileStream::InternalSeek(double &absoluteTimestamp) {
+	//0. We have to send codecs again
+	_audioVideoCodecsSent = false;
+
 	//1. Switch to millisecond->FrameIndex table
 	if (!_pSeekFile->SeekTo(4 + _totalFrames * sizeof (MediaFrame))) {
 		FATAL("Failed to seek to ms->FrameIndex table");
