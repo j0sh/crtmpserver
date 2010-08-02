@@ -1,0 +1,240 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\protocols">
+      <UniqueIdentifier>{c862c1c2-68f6-4cd0-a7f2-a10f85cbaa87}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\eventsink">
+      <UniqueIdentifier>{20ac21c8-318a-455d-ab7c-a7cd232b7c7e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\protocols\aes">
+      <UniqueIdentifier>{319a37d5-8160-471f-b388-b9fb9108bb20}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\protocols\httpbuff">
+      <UniqueIdentifier>{a54b78ee-5fc3-4af0-8a70-2181c8df7a2a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\protocols\key">
+      <UniqueIdentifier>{bf925e4c-1331-4609-954d-abb118cf5113}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\protocols\m3u8">
+      <UniqueIdentifier>{19a7d914-913b-4d44-8de5-aa80df8a3014}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\protocols\rtmp">
+      <UniqueIdentifier>{5a08e0b4-c481-4d94-8c57-674835ea96dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\protocols\rtp">
+      <UniqueIdentifier>{f960e0e7-00fd-4024-b494-da09a6c34d0f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\protocols\timer">
+      <UniqueIdentifier>{9f6a05e5-e88b-460f-aef6-616696dd1268}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\protocols\ts">
+      <UniqueIdentifier>{6c218ca1-2ef4-4394-b26b-4db77f42ff9a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\protocols\variant">
+      <UniqueIdentifier>{59b21520-c145-4681-8e18-8965a0ee341c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\eventsink">
+      <UniqueIdentifier>{45174c06-5b0c-4a8b-8355-a37091045fe6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\protocols">
+      <UniqueIdentifier>{7cb7b92d-9018-468a-a8ba-91ef597ddc91}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\protocols\aes">
+      <UniqueIdentifier>{ea6e39c2-67e9-44e5-a122-00d8e32ab6f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\protocols\httpbuff">
+      <UniqueIdentifier>{73803814-8dd6-48f3-b55f-758f0f837113}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\protocols\key">
+      <UniqueIdentifier>{226cbaad-39c7-4d45-b7ba-178d13dd3db9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\protocols\m3u8">
+      <UniqueIdentifier>{24342657-f097-4be7-862f-740154e46ed4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\protocols\rtmp">
+      <UniqueIdentifier>{224008e6-fbb5-4973-8ddd-dce1ae845b91}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\protocols\rtp">
+      <UniqueIdentifier>{afbb823a-7e68-46cd-9ad3-569aca881566}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\protocols\timer">
+      <UniqueIdentifier>{5b11e82c-0354-403e-a255-3dbbc20ceee4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\protocols\ts">
+      <UniqueIdentifier>{d1652597-f860-4ed7-a391-804cd78e03ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\protocols\variant">
+      <UniqueIdentifier>{ae24552e-a33e-442e-a1fb-984a8765034d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\sources\applications\applestreamingclient\include\applestreamingclient.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\applications\applestreamingclient\include\applestreamingclientapplication.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\applications\applestreamingclient\include\clientcontext.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\applications\applestreamingclient\include\playlist.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\applications\applestreamingclient\include\speedcomputer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\applications\applestreamingclient\include\eventsink\baseeventsink.h">
+      <Filter>Header Files\eventsink</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\applications\applestreamingclient\include\eventsink\rtmpeventsink.h">
+      <Filter>Header Files\eventsink</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\applications\applestreamingclient\include\eventsink\varianteventsink.h">
+      <Filter>Header Files\eventsink</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\applications\applestreamingclient\include\protocols\genericprotocol.h">
+      <Filter>Header Files\protocols</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\applications\applestreamingclient\include\protocols\protocolfactory.h">
+      <Filter>Header Files\protocols</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\applications\applestreamingclient\include\protocols\aes\aesappprotocolhandler.h">
+      <Filter>Header Files\protocols\aes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\applications\applestreamingclient\include\protocols\aes\inboundaesprotocol.h">
+      <Filter>Header Files\protocols\aes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\applications\applestreamingclient\include\protocols\httpbuff\httpbuffappprotocolhandler.h">
+      <Filter>Header Files\protocols\httpbuff</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\applications\applestreamingclient\include\protocols\httpbuff\httpbufferprotocol.h">
+      <Filter>Header Files\protocols\httpbuff</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\applications\applestreamingclient\include\protocols\key\inboundkeyprotocol.h">
+      <Filter>Header Files\protocols\key</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\applications\applestreamingclient\include\protocols\key\keyappprotocolhandler.h">
+      <Filter>Header Files\protocols\key</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\applications\applestreamingclient\include\protocols\m3u8\basem3u8protocol.h">
+      <Filter>Header Files\protocols\m3u8</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\applications\applestreamingclient\include\protocols\m3u8\childm3u8protocol.h">
+      <Filter>Header Files\protocols\m3u8</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\applications\applestreamingclient\include\protocols\m3u8\m3u8appprotocolhandler.h">
+      <Filter>Header Files\protocols\m3u8</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\applications\applestreamingclient\include\protocols\m3u8\masterm3u8protocol.h">
+      <Filter>Header Files\protocols\m3u8</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\applications\applestreamingclient\include\protocols\variant\messagestructure.h">
+      <Filter>Header Files\protocols\variant</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\applications\applestreamingclient\include\protocols\variant\variantappprotocolhandler.h">
+      <Filter>Header Files\protocols\variant</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\applications\applestreamingclient\include\protocols\ts\tsappprotocolhandler.h">
+      <Filter>Header Files\protocols\ts</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\applications\applestreamingclient\include\protocols\timer\scheduletimerprotocol.h">
+      <Filter>Header Files\protocols\timer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\applications\applestreamingclient\include\protocols\rtp\rtspappprotocolhandler.h">
+      <Filter>Header Files\protocols\rtp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\applications\applestreamingclient\include\protocols\rtmp\rtmpappprotocolhandler.h">
+      <Filter>Header Files\protocols\rtmp</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\sources\applications\applestreamingclient\src\eventsink\baseeventsink.cpp">
+      <Filter>Source Files\eventsink</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\applications\applestreamingclient\src\eventsink\rtmpeventsink.cpp">
+      <Filter>Source Files\eventsink</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\applications\applestreamingclient\src\eventsink\varianteventsink.cpp">
+      <Filter>Source Files\eventsink</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\applications\applestreamingclient\src\protocols\genericprotocol.cpp">
+      <Filter>Source Files\protocols</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\applications\applestreamingclient\src\protocols\protocolfactory.cpp">
+      <Filter>Source Files\protocols</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\applications\applestreamingclient\src\applestreamingclient.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\applications\applestreamingclient\src\applestreamingclientapplication.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\applications\applestreamingclient\src\clientcontext.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\applications\applestreamingclient\src\playlist.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\applications\applestreamingclient\src\speedcomputer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\applications\applestreamingclient\src\protocols\aes\aesappprotocolhandler.cpp">
+      <Filter>Source Files\protocols\aes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\applications\applestreamingclient\src\protocols\aes\inboundaesprotocol.cpp">
+      <Filter>Source Files\protocols\aes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\applications\applestreamingclient\src\protocols\httpbuff\httpbuffappprotocolhandler.cpp">
+      <Filter>Source Files\protocols\httpbuff</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\applications\applestreamingclient\src\protocols\httpbuff\httpbufferprotocol.cpp">
+      <Filter>Source Files\protocols\httpbuff</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\applications\applestreamingclient\src\protocols\key\inboundkeyprotocol.cpp">
+      <Filter>Source Files\protocols\key</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\applications\applestreamingclient\src\protocols\key\keyappprotocolhandler.cpp">
+      <Filter>Source Files\protocols\key</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\applications\applestreamingclient\src\protocols\m3u8\basem3u8protocol.cpp">
+      <Filter>Source Files\protocols\m3u8</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\applications\applestreamingclient\src\protocols\m3u8\childm3u8protocol.cpp">
+      <Filter>Source Files\protocols\m3u8</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\applications\applestreamingclient\src\protocols\m3u8\m3u8appprotocolhandler.cpp">
+      <Filter>Source Files\protocols\m3u8</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\applications\applestreamingclient\src\protocols\m3u8\masterm3u8protocol.cpp">
+      <Filter>Source Files\protocols\m3u8</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\applications\applestreamingclient\src\protocols\variant\variantappprotocolhandler.cpp">
+      <Filter>Source Files\protocols\variant</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\applications\applestreamingclient\src\protocols\ts\tsappprotocolhandler.cpp">
+      <Filter>Source Files\protocols\ts</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\applications\applestreamingclient\src\protocols\timer\scheduletimerprotocol.cpp">
+      <Filter>Source Files\protocols\timer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\applications\applestreamingclient\src\protocols\rtp\rtspappprotocolhandler.cpp">
+      <Filter>Source Files\protocols\rtp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\applications\applestreamingclient\src\protocols\rtmp\rtmpappprotocolhandler.cpp">
+      <Filter>Source Files\protocols\rtmp</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

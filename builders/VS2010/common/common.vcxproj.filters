@@ -1,0 +1,245 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Source Files\logging">
+      <UniqueIdentifier>{9c0ecd6e-8f2f-4087-9603-9a195a246bc3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\platform">
+      <UniqueIdentifier>{0592b179-0b76-49eb-94e5-0ee973e29957}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\platform\win32">
+      <UniqueIdentifier>{928af4c6-a05a-44e4-ad0e-19044fd155c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\utils">
+      <UniqueIdentifier>{d1434a30-5a4d-40f1-ba09-9871dd1a61ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\buffering">
+      <UniqueIdentifier>{bf642ff5-bc68-497d-9c7c-2940060141a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\luautils">
+      <UniqueIdentifier>{672ac8db-6444-4a0c-9f3b-da835e94a539}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\tinyxml">
+      <UniqueIdentifier>{57436a64-db41-484c-8026-ad168373ce3b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Header Files\utils">
+      <UniqueIdentifier>{2a768385-33b0-4596-90d8-4221a05e11e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\platform">
+      <UniqueIdentifier>{a88446f0-0ce0-40c7-87dd-2c71c727e14d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\platform\win32">
+      <UniqueIdentifier>{a3ce53ca-7f54-4ef0-af6d-e8c21c6bb008}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\logging">
+      <UniqueIdentifier>{78a4ef9f-eb11-4fe3-a04f-875308c7694a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\buffering">
+      <UniqueIdentifier>{1b5125a0-5b75-4309-a149-476a6726875c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\luautils">
+      <UniqueIdentifier>{60c3c2d1-6ab5-4451-9d11-84d4f99d0498}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\mempool">
+      <UniqueIdentifier>{4d4e6e61-88ee-478a-bdb2-56f7ca676535}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\endianness">
+      <UniqueIdentifier>{c537325d-3e67-48d8-83e0-94ea6bad6c13}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\tinyxml">
+      <UniqueIdentifier>{06e91b9f-5f52-4e41-8a3e-01416ca13051}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\platform\osx">
+      <UniqueIdentifier>{02b3cddf-51e8-4252-a889-3e8f92ee66a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\platform\osx">
+      <UniqueIdentifier>{d8025340-0359-4296-b0e6-fc90e8df697b}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\sources\common\src\logging\baseloglocation.cpp">
+      <Filter>Source Files\logging</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\common\src\logging\consoleloglocation.cpp">
+      <Filter>Source Files\logging</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\common\src\logging\fileloglocation.cpp">
+      <Filter>Source Files\logging</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\common\src\logging\logger.cpp">
+      <Filter>Source Files\logging</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\common\src\platform\win32\misc.cpp">
+      <Filter>Source Files\platform\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\common\src\platform\win32\strncasecmp.cpp">
+      <Filter>Source Files\platform\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\common\src\platform\win32\strptime.cpp">
+      <Filter>Source Files\platform\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\common\src\platform\win32\timegm.cpp">
+      <Filter>Source Files\platform\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\common\src\utils\crypto.cpp">
+      <Filter>Source Files\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\common\src\utils\file.cpp">
+      <Filter>Source Files\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\common\src\utils\genericfunctionality.cpp">
+      <Filter>Source Files\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\common\src\utils\mmapfile.cpp">
+      <Filter>Source Files\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\common\src\utils\timersmanager.cpp">
+      <Filter>Source Files\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\common\src\utils\variant.cpp">
+      <Filter>Source Files\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\common\src\buffering\iobuffer.cpp">
+      <Filter>Source Files\buffering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\common\src\buffering\multiconsumerbuffer.cpp">
+      <Filter>Source Files\buffering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\common\src\luautils\luautils.cpp">
+      <Filter>Source Files\luautils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\common\src\tinyxml\tinyxml.cpp">
+      <Filter>Source Files\tinyxml</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\common\src\tinyxml\tinyxmlerror.cpp">
+      <Filter>Source Files\tinyxml</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\common\src\tinyxml\tinyxmlparser.cpp">
+      <Filter>Source Files\tinyxml</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\common\src\platform\osx\misc.cpp">
+      <Filter>Source Files\platform\osx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\common\src\platform\win32\networking.cpp">
+      <Filter>Source Files\platform\win32</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\sources\common\include\utils\core.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\common\include\utils\crypto.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\common\include\utils\dhgroups.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\common\include\utils\file.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\common\include\utils\genericfunctionality.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\common\include\utils\linkedlist.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\common\include\utils\mmapfile.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\common\include\utils\timersmanager.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\common\include\utils\variant.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\common\include\utils\variantmap.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\common\include\platform\max.h">
+      <Filter>Header Files\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\common\include\platform\platform.h">
+      <Filter>Header Files\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\common\include\platform\win32\endianess.h">
+      <Filter>Header Files\platform\win32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\common\include\platform\win32\misc.h">
+      <Filter>Header Files\platform\win32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\common\include\platform\win32\networking.h">
+      <Filter>Header Files\platform\win32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\common\include\platform\win32\stl.h">
+      <Filter>Header Files\platform\win32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\common\include\platform\win32\types.h">
+      <Filter>Header Files\platform\win32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\common\include\logging\baseloglocation.h">
+      <Filter>Header Files\logging</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\common\include\logging\consoleloglocation.h">
+      <Filter>Header Files\logging</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\common\include\logging\fileloglocation.h">
+      <Filter>Header Files\logging</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\common\include\logging\logger.h">
+      <Filter>Header Files\logging</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\common\include\buffering\bitarray.h">
+      <Filter>Header Files\buffering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\common\include\buffering\iobuffer.h">
+      <Filter>Header Files\buffering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\common\include\buffering\multiconsumerbuffer.h">
+      <Filter>Header Files\buffering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\common\include\luautils\luautils.h">
+      <Filter>Header Files\luautils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\common\include\mempool\mempool.h">
+      <Filter>Header Files\mempool</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\common\include\endianness\big_endian_byte_aligned.h">
+      <Filter>Header Files\endianness</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\common\include\endianness\big_endian_short_aligned.h">
+      <Filter>Header Files\endianness</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\common\include\endianness\endianness.h">
+      <Filter>Header Files\endianness</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\common\include\endianness\little_endian_byte_aligned.h">
+      <Filter>Header Files\endianness</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\common\include\endianness\little_endian_short_aligned.h">
+      <Filter>Header Files\endianness</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\common\include\tinyxml\tinyxml.h">
+      <Filter>Header Files\tinyxml</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\common\include\platform\osx\misc.h">
+      <Filter>Header Files\platform\osx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\common\include\platform\osx\networking.h">
+      <Filter>Header Files\platform\osx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\common\include\platform\osx\stl.h">
+      <Filter>Header Files\platform\osx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\common\include\platform\osx\types.h">
+      <Filter>Header Files\platform\osx</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

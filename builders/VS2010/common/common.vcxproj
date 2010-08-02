@@ -1,0 +1,188 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{0527601C-06C4-4AF6-BC87-48FC042C1437}</ProjectGuid>
+    <RootNamespace>common</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>NotSet</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>NotSet</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Configuration)\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Configuration)\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\OpenSSL-Win32\include;$(IncludePath)</IncludePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\OpenSSL-Win32\include;$(IncludePath)</IncludePath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\OpenSSL-Win32\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\OpenSSL-Win32\lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>..\..\..\sources\common\include;..\..\..\3rdparty\lua-dev;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>LITTLE_ENDIAN_BYTE_ALIGNED;NET_SELECT;HAS_LUA;HAS_PROTOCOL_HTTP;HAS_PROTOCOL_RTMP;HAS_PROTOCOL_RTP;HAS_PROTOCOL_LIVEFLV;HAS_PROTOCOL_TS;HAS_PROTOCOL_VAR;HAS_MEDIA_MP3;HAS_MEDIA_MP4;HAS_MEDIA_FLV;WIN32;_DEBUG;_WINDOWS;_USRDLL;COMMON_EXPORTS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <PrecompiledHeaderFile>
+      </PrecompiledHeaderFile>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <DisableSpecificWarnings>4251;4995;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <ForcedIncludeFiles>%(ForcedIncludeFiles)</ForcedIncludeFiles>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>libeay32.lib;ssleay32.lib;ws2_32.lib;shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <AdditionalIncludeDirectories>..\..\..\sources\common\include;..\..\..\3rdparty\lua-dev;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>LITTLE_ENDIAN_BYTE_ALIGNED;NET_SELECT;HAS_LUA;HAS_PROTOCOL_HTTP;HAS_PROTOCOL_RTMP;HAS_PROTOCOL_RTP;HAS_PROTOCOL_LIVEFLV;HAS_PROTOCOL_TS;HAS_PROTOCOL_VAR;HAS_MEDIA_MP3;HAS_MEDIA_MP4;HAS_MEDIA_FLV;WIN32;NDEBUG;_WINDOWS;_USRDLL;COMMON_EXPORTS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DisableSpecificWarnings>4251;4995;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>libeay32.lib;ssleay32.lib;ws2_32.lib;shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\sources\common\src\logging\baseloglocation.cpp" />
+    <ClCompile Include="..\..\..\sources\common\src\logging\consoleloglocation.cpp" />
+    <ClCompile Include="..\..\..\sources\common\src\logging\fileloglocation.cpp" />
+    <ClCompile Include="..\..\..\sources\common\src\logging\logger.cpp" />
+    <ClCompile Include="..\..\..\sources\common\src\platform\osx\misc.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\common\src\platform\win32\misc.cpp" />
+    <ClCompile Include="..\..\..\sources\common\src\platform\win32\networking.cpp" />
+    <ClCompile Include="..\..\..\sources\common\src\platform\win32\strncasecmp.cpp" />
+    <ClCompile Include="..\..\..\sources\common\src\platform\win32\strptime.cpp" />
+    <ClCompile Include="..\..\..\sources\common\src\platform\win32\timegm.cpp" />
+    <ClCompile Include="..\..\..\sources\common\src\utils\crypto.cpp" />
+    <ClCompile Include="..\..\..\sources\common\src\utils\file.cpp" />
+    <ClCompile Include="..\..\..\sources\common\src\utils\genericfunctionality.cpp" />
+    <ClCompile Include="..\..\..\sources\common\src\utils\mmapfile.cpp" />
+    <ClCompile Include="..\..\..\sources\common\src\utils\timersmanager.cpp" />
+    <ClCompile Include="..\..\..\sources\common\src\utils\variant.cpp" />
+    <ClCompile Include="..\..\..\sources\common\src\buffering\iobuffer.cpp" />
+    <ClCompile Include="..\..\..\sources\common\src\buffering\multiconsumerbuffer.cpp" />
+    <ClCompile Include="..\..\..\sources\common\src\luautils\luautils.cpp" />
+    <ClCompile Include="..\..\..\sources\common\src\tinyxml\tinyxml.cpp" />
+    <ClCompile Include="..\..\..\sources\common\src\tinyxml\tinyxmlerror.cpp" />
+    <ClCompile Include="..\..\..\sources\common\src\tinyxml\tinyxmlparser.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\sources\common\include\platform\osx\misc.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\common\include\platform\osx\networking.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\common\include\platform\osx\stl.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\common\include\platform\osx\types.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\common\include\utils\core.h" />
+    <ClInclude Include="..\..\..\sources\common\include\utils\crypto.h" />
+    <ClInclude Include="..\..\..\sources\common\include\utils\dhgroups.h" />
+    <ClInclude Include="..\..\..\sources\common\include\utils\file.h" />
+    <ClInclude Include="..\..\..\sources\common\include\utils\genericfunctionality.h" />
+    <ClInclude Include="..\..\..\sources\common\include\utils\linkedlist.h" />
+    <ClInclude Include="..\..\..\sources\common\include\utils\mmapfile.h" />
+    <ClInclude Include="..\..\..\sources\common\include\utils\timersmanager.h" />
+    <ClInclude Include="..\..\..\sources\common\include\utils\variant.h" />
+    <ClInclude Include="..\..\..\sources\common\include\utils\variantmap.h" />
+    <ClInclude Include="..\..\..\sources\common\include\platform\max.h" />
+    <ClInclude Include="..\..\..\sources\common\include\platform\platform.h" />
+    <ClInclude Include="..\..\..\sources\common\include\platform\win32\endianess.h" />
+    <ClInclude Include="..\..\..\sources\common\include\platform\win32\misc.h" />
+    <ClInclude Include="..\..\..\sources\common\include\platform\win32\networking.h" />
+    <ClInclude Include="..\..\..\sources\common\include\platform\win32\stl.h" />
+    <ClInclude Include="..\..\..\sources\common\include\platform\win32\types.h" />
+    <ClInclude Include="..\..\..\sources\common\include\logging\baseloglocation.h" />
+    <ClInclude Include="..\..\..\sources\common\include\logging\consoleloglocation.h" />
+    <ClInclude Include="..\..\..\sources\common\include\logging\fileloglocation.h" />
+    <ClInclude Include="..\..\..\sources\common\include\logging\logger.h" />
+    <ClInclude Include="..\..\..\sources\common\include\buffering\bitarray.h" />
+    <ClInclude Include="..\..\..\sources\common\include\buffering\iobuffer.h" />
+    <ClInclude Include="..\..\..\sources\common\include\buffering\multiconsumerbuffer.h" />
+    <ClInclude Include="..\..\..\sources\common\include\luautils\luautils.h" />
+    <ClInclude Include="..\..\..\sources\common\include\mempool\mempool.h" />
+    <ClInclude Include="..\..\..\sources\common\include\endianness\big_endian_byte_aligned.h" />
+    <ClInclude Include="..\..\..\sources\common\include\endianness\big_endian_short_aligned.h" />
+    <ClInclude Include="..\..\..\sources\common\include\endianness\endianness.h" />
+    <ClInclude Include="..\..\..\sources\common\include\endianness\little_endian_byte_aligned.h" />
+    <ClInclude Include="..\..\..\sources\common\include\endianness\little_endian_short_aligned.h" />
+    <ClInclude Include="..\..\..\sources\common\include\tinyxml\tinyxml.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\lua\lua.vcxproj">
+      <Project>{cde78b1a-767a-42f1-bd3e-cd4805302434}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

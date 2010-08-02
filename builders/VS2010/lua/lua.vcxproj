@@ -1,0 +1,145 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{CDE78B1A-767A-42F1-BD3E-CD4805302434}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>lua</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>C:\OpenSSL-Win32\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\OpenSSL-Win32\lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <IncludePath>C:\OpenSSL-Win32\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\OpenSSL-Win32\lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>LITTLE_ENDIAN_BYTE_ALIGNED;NET_SELECT;HAS_LUA;HAS_PROTOCOL_HTTP;HAS_PROTOCOL_RTMP;HAS_PROTOCOL_RTP;HAS_PROTOCOL_LIVEFLV;HAS_PROTOCOL_TS;HAS_PROTOCOL_VAR;HAS_MEDIA_MP3;HAS_MEDIA_MP4;HAS_MEDIA_FLV;WIN32;_DEBUG;_WINDOWS;_USRDLL;LUA_EXPORTS;LUA_BUILD_AS_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>
+      </AdditionalIncludeDirectories>
+      <DisableSpecificWarnings>4996</DisableSpecificWarnings>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>LITTLE_ENDIAN_BYTE_ALIGNED;NET_SELECT;HAS_LUA;HAS_PROTOCOL_HTTP;HAS_PROTOCOL_RTMP;HAS_PROTOCOL_RTP;HAS_PROTOCOL_LIVEFLV;HAS_PROTOCOL_TS;HAS_PROTOCOL_VAR;HAS_MEDIA_MP3;HAS_MEDIA_MP4;HAS_MEDIA_FLV;WIN32;NDEBUG;_WINDOWS;_USRDLL;LUA_EXPORTS;LUA_BUILD_AS_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>
+      </AdditionalIncludeDirectories>
+      <DisableSpecificWarnings>4996</DisableSpecificWarnings>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\3rdparty\lua-dev\lapi.h" />
+    <ClInclude Include="..\..\..\3rdparty\lua-dev\lauxlib.h" />
+    <ClInclude Include="..\..\..\3rdparty\lua-dev\lcode.h" />
+    <ClInclude Include="..\..\..\3rdparty\lua-dev\ldebug.h" />
+    <ClInclude Include="..\..\..\3rdparty\lua-dev\ldo.h" />
+    <ClInclude Include="..\..\..\3rdparty\lua-dev\lfunc.h" />
+    <ClInclude Include="..\..\..\3rdparty\lua-dev\lgc.h" />
+    <ClInclude Include="..\..\..\3rdparty\lua-dev\llex.h" />
+    <ClInclude Include="..\..\..\3rdparty\lua-dev\llimits.h" />
+    <ClInclude Include="..\..\..\3rdparty\lua-dev\lmem.h" />
+    <ClInclude Include="..\..\..\3rdparty\lua-dev\lobject.h" />
+    <ClInclude Include="..\..\..\3rdparty\lua-dev\lopcodes.h" />
+    <ClInclude Include="..\..\..\3rdparty\lua-dev\lparser.h" />
+    <ClInclude Include="..\..\..\3rdparty\lua-dev\lstate.h" />
+    <ClInclude Include="..\..\..\3rdparty\lua-dev\lstring.h" />
+    <ClInclude Include="..\..\..\3rdparty\lua-dev\ltable.h" />
+    <ClInclude Include="..\..\..\3rdparty\lua-dev\ltm.h" />
+    <ClInclude Include="..\..\..\3rdparty\lua-dev\lua.h" />
+    <ClInclude Include="..\..\..\3rdparty\lua-dev\luaconf.h" />
+    <ClInclude Include="..\..\..\3rdparty\lua-dev\lualib.h" />
+    <ClInclude Include="..\..\..\3rdparty\lua-dev\lundump.h" />
+    <ClInclude Include="..\..\..\3rdparty\lua-dev\lvm.h" />
+    <ClInclude Include="..\..\..\3rdparty\lua-dev\lzio.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\3rdparty\lua-dev\lapi.c" />
+    <ClCompile Include="..\..\..\3rdparty\lua-dev\lauxlib.c" />
+    <ClCompile Include="..\..\..\3rdparty\lua-dev\lbaselib.c" />
+    <ClCompile Include="..\..\..\3rdparty\lua-dev\lcode.c" />
+    <ClCompile Include="..\..\..\3rdparty\lua-dev\ldblib.c" />
+    <ClCompile Include="..\..\..\3rdparty\lua-dev\ldebug.c" />
+    <ClCompile Include="..\..\..\3rdparty\lua-dev\ldo.c" />
+    <ClCompile Include="..\..\..\3rdparty\lua-dev\ldump.c" />
+    <ClCompile Include="..\..\..\3rdparty\lua-dev\lfunc.c" />
+    <ClCompile Include="..\..\..\3rdparty\lua-dev\lgc.c" />
+    <ClCompile Include="..\..\..\3rdparty\lua-dev\linit.c" />
+    <ClCompile Include="..\..\..\3rdparty\lua-dev\liolib.c" />
+    <ClCompile Include="..\..\..\3rdparty\lua-dev\llex.c" />
+    <ClCompile Include="..\..\..\3rdparty\lua-dev\lmathlib.c" />
+    <ClCompile Include="..\..\..\3rdparty\lua-dev\lmem.c" />
+    <ClCompile Include="..\..\..\3rdparty\lua-dev\loadlib.c" />
+    <ClCompile Include="..\..\..\3rdparty\lua-dev\lobject.c" />
+    <ClCompile Include="..\..\..\3rdparty\lua-dev\lopcodes.c" />
+    <ClCompile Include="..\..\..\3rdparty\lua-dev\loslib.c" />
+    <ClCompile Include="..\..\..\3rdparty\lua-dev\lparser.c" />
+    <ClCompile Include="..\..\..\3rdparty\lua-dev\lstate.c" />
+    <ClCompile Include="..\..\..\3rdparty\lua-dev\lstring.c" />
+    <ClCompile Include="..\..\..\3rdparty\lua-dev\lstrlib.c" />
+    <ClCompile Include="..\..\..\3rdparty\lua-dev\ltable.c" />
+    <ClCompile Include="..\..\..\3rdparty\lua-dev\ltablib.c" />
+    <ClCompile Include="..\..\..\3rdparty\lua-dev\ltm.c" />
+    <ClCompile Include="..\..\..\3rdparty\lua-dev\lundump.c" />
+    <ClCompile Include="..\..\..\3rdparty\lua-dev\lvm.c" />
+    <ClCompile Include="..\..\..\3rdparty\lua-dev\lzio.c" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

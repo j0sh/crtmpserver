@@ -1,0 +1,1067 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Source Files\application">
+      <UniqueIdentifier>{06929b83-ae9a-44e2-b8ee-6bdf4e665a96}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\configuration">
+      <UniqueIdentifier>{661928aa-8f46-4021-a9a3-1703acd40ece}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\netio">
+      <UniqueIdentifier>{ab168c97-6073-4d82-9fa3-291fc927ba60}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\netio\iocp2">
+      <UniqueIdentifier>{42f34c3e-1d11-44ec-90c9-95f00312cce6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\protocols">
+      <UniqueIdentifier>{e38e2255-be37-4a76-9036-03603b69bc64}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\protocols\dns">
+      <UniqueIdentifier>{e87b07aa-5dc4-4571-adc3-55d86d02215f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\protocols\http">
+      <UniqueIdentifier>{c8536c5a-23a4-4c2e-bd38-2b71e8ff4534}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\protocols\rtmp">
+      <UniqueIdentifier>{9fe6da52-7c6a-4f6b-bce3-759c23bd8348}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\protocols\rtmp\sharedobjects">
+      <UniqueIdentifier>{101ab3b4-7643-4d1a-b31a-ff106594b1e0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\protocols\rtmp\streaming">
+      <UniqueIdentifier>{0d4bec76-e0d3-41d7-8643-d0c81bb8f4ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\protocols\rtmp\messagefactories">
+      <UniqueIdentifier>{7b0a8c0a-7135-4f1b-9034-65758820dabf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\protocols\timer">
+      <UniqueIdentifier>{ba029909-fea5-43b2-a648-8acdf8287b12}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\protocols\ts">
+      <UniqueIdentifier>{e21c72e2-169f-4169-9840-7640a874f30e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\protocols\liveflv">
+      <UniqueIdentifier>{9866dcaf-0a48-4e94-a1a4-9513f1b0f599}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\protocols\variant">
+      <UniqueIdentifier>{36e3eb1d-7330-4a0a-abcb-160cfa0316b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\mediaformats">
+      <UniqueIdentifier>{f42919c5-7ecb-4727-8330-519b027db749}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\mediaformats\flv">
+      <UniqueIdentifier>{4a1ef68c-ff1d-42db-85b7-733debb1946e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\mediaformats\mp3">
+      <UniqueIdentifier>{ff4daf5d-6215-4900-939c-dd36e01098e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\mediaformats\mp4">
+      <UniqueIdentifier>{e5774de6-8c43-4a1b-abf0-8ed6c72b89be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\streaming">
+      <UniqueIdentifier>{13c08bb1-c1f1-41cc-a175-32635523a7fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Header Files\application">
+      <UniqueIdentifier>{9c8ae5c0-0ed8-4814-b461-e03823b32c47}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\configuration">
+      <UniqueIdentifier>{21b48eb1-5b8d-4945-981b-a123061c229a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\netio">
+      <UniqueIdentifier>{f7d8807d-32dd-4ee3-9f01-99ba9e6f7bc2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\netio\iocp2">
+      <UniqueIdentifier>{06e38a8b-1b92-480a-a401-6765e0bbe336}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\protocols">
+      <UniqueIdentifier>{3dc4b24a-370f-4334-93b5-147932dcf546}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\protocols\dns">
+      <UniqueIdentifier>{04fbe96d-6c6c-4cdb-9015-de3b5fbe60b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\protocols\http">
+      <UniqueIdentifier>{aa6f803c-43e7-44f9-a386-0c9379731770}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\protocols\rtmp">
+      <UniqueIdentifier>{69b854e9-0fd6-42c0-a7aa-a4d4a74529da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\protocols\rtmp\sharedobjects">
+      <UniqueIdentifier>{e0beabb8-6ecc-4292-9ae9-d1af392eb03d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\protocols\rtmp\streaming">
+      <UniqueIdentifier>{de0f8e5d-fda2-4ee4-a2c3-bd19875cd8c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\protocols\rtmp\messagefactories">
+      <UniqueIdentifier>{cd5c42b9-10a4-4224-881a-8216b9e7cb8f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\protocols\timer">
+      <UniqueIdentifier>{66436a97-dd85-4f25-80e5-ef5642511461}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\protocols\ts">
+      <UniqueIdentifier>{d05ce584-f099-4c38-89ed-90e75b9ad0aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\protocols\liveflv">
+      <UniqueIdentifier>{157c19e2-c308-4647-918b-62f8a9752866}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\protocols\variant">
+      <UniqueIdentifier>{a591753b-3263-4846-bb96-36b65f1bc005}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\mediaformats">
+      <UniqueIdentifier>{1bf4be63-1c31-41cb-9ce2-f162a144f063}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\mediaformats\flv">
+      <UniqueIdentifier>{83467c31-bfe7-48fb-bf3c-6812c0635318}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\mediaformats\mp3">
+      <UniqueIdentifier>{6c8ab64e-1c79-4758-bb84-6fef4a3600d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\mediaformats\mp4">
+      <UniqueIdentifier>{bdd9090d-8733-4f5d-83b1-1a98fdcdfdeb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\streaming">
+      <UniqueIdentifier>{448b279f-cf22-40a3-b078-c2353dada226}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\protocols\rtp">
+      <UniqueIdentifier>{ae02c58c-8854-49de-87ea-ffeca79ab940}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\protocols\rtp\connectivity">
+      <UniqueIdentifier>{2a2a74c1-c83d-43af-9157-f390cd265002}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\protocols\rtp\streaming">
+      <UniqueIdentifier>{7cba7d10-2b16-42ad-8b97-6fd0dbe0746d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\protocols\rtp">
+      <UniqueIdentifier>{d51d8bd7-d64c-44e8-a574-05a2fd5ad7c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\protocols\rtp\streaming">
+      <UniqueIdentifier>{7303ed4c-cb79-43d3-92b5-06b004e1a857}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\protocols\rtp\connectivity">
+      <UniqueIdentifier>{7c92f3dc-081d-4aa9-9238-ba162b98f6d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\netio\select">
+      <UniqueIdentifier>{5ac12313-314e-4427-a082-1a028547a90d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\netio\select">
+      <UniqueIdentifier>{f2eb28e4-33f8-4cfe-b9c7-e83bd7c45df7}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\sources\thelib\src\application\baseappprotocolhandler.cpp">
+      <Filter>Source Files\application</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\application\baseclientapplication.cpp">
+      <Filter>Source Files\application</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\application\clientapplicationmanager.cpp">
+      <Filter>Source Files\application</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\configuration\configfile.cpp">
+      <Filter>Source Files\configuration</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\netio\iocp2\iohandler.cpp">
+      <Filter>Source Files\netio\iocp2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\netio\iocp2\iohandlermanager.cpp">
+      <Filter>Source Files\netio\iocp2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\netio\iocp2\iotimer.cpp">
+      <Filter>Source Files\netio\iocp2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\netio\iocp2\stdiocarrier.cpp">
+      <Filter>Source Files\netio\iocp2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\netio\iocp2\tcpacceptor.cpp">
+      <Filter>Source Files\netio\iocp2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\netio\iocp2\tcpcarrier.cpp">
+      <Filter>Source Files\netio\iocp2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\netio\iocp2\udpcarrier.cpp">
+      <Filter>Source Files\netio\iocp2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\baseprotocol.cpp">
+      <Filter>Source Files\protocols</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\baseprotocolfactory.cpp">
+      <Filter>Source Files\protocols</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\defaultprotocolfactory.cpp">
+      <Filter>Source Files\protocols</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\protocolfactorymanager.cpp">
+      <Filter>Source Files\protocols</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\protocolmanager.cpp">
+      <Filter>Source Files\protocols</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\sslprotocol.cpp">
+      <Filter>Source Files\protocols</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\tcpprotocol.cpp">
+      <Filter>Source Files\protocols</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\udpprotocol.cpp">
+      <Filter>Source Files\protocols</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\dns\inbounddnsresolverprotocol.cpp">
+      <Filter>Source Files\protocols\dns</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\dns\outbounddnsresolverprotocol.cpp">
+      <Filter>Source Files\protocols\dns</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\http\basehttpappprotocolhandler.cpp">
+      <Filter>Source Files\protocols\http</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\http\basehttpprotocol.cpp">
+      <Filter>Source Files\protocols\http</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\http\inboundhttpprotocol.cpp">
+      <Filter>Source Files\protocols\http</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\http\outboundhttpprotocol.cpp">
+      <Filter>Source Files\protocols\http</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\amf0serializer.cpp">
+      <Filter>Source Files\protocols\rtmp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\amf3serializer.cpp">
+      <Filter>Source Files\protocols\rtmp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\basertmpappprotocolhandler.cpp">
+      <Filter>Source Files\protocols\rtmp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\basertmpprotocol.cpp">
+      <Filter>Source Files\protocols\rtmp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\channel.cpp">
+      <Filter>Source Files\protocols\rtmp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\header_be_ba.cpp">
+      <Filter>Source Files\protocols\rtmp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\header_le_ba.cpp">
+      <Filter>Source Files\protocols\rtmp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\header_le_sa.cpp">
+      <Filter>Source Files\protocols\rtmp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\inboundhttp4rtmp.cpp">
+      <Filter>Source Files\protocols\rtmp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\inboundrtmpprotocol.cpp">
+      <Filter>Source Files\protocols\rtmp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\outboundrtmpprotocol.cpp">
+      <Filter>Source Files\protocols\rtmp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\rtmpeprotocol.cpp">
+      <Filter>Source Files\protocols\rtmp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\rtmpprotocolserializer.cpp">
+      <Filter>Source Files\protocols\rtmp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\sharedobjects\so.cpp">
+      <Filter>Source Files\protocols\rtmp\sharedobjects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\sharedobjects\somanager.cpp">
+      <Filter>Source Files\protocols\rtmp\sharedobjects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\streaming\baseoutnetrtmpstream.cpp">
+      <Filter>Source Files\protocols\rtmp\streaming</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\streaming\infilertmpflvstream.cpp">
+      <Filter>Source Files\protocols\rtmp\streaming</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\streaming\infilertmpmp3stream.cpp">
+      <Filter>Source Files\protocols\rtmp\streaming</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\streaming\infilertmpmp4stream.cpp">
+      <Filter>Source Files\protocols\rtmp\streaming</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\streaming\infilertmpstream.cpp">
+      <Filter>Source Files\protocols\rtmp\streaming</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\streaming\innetrtmpstream.cpp">
+      <Filter>Source Files\protocols\rtmp\streaming</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\streaming\outnetrtmp4rtmpstream.cpp">
+      <Filter>Source Files\protocols\rtmp\streaming</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\streaming\outnetrtmp4tsstream.cpp">
+      <Filter>Source Files\protocols\rtmp\streaming</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\streaming\rtmpstream.cpp">
+      <Filter>Source Files\protocols\rtmp\streaming</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\messagefactories\connectionmessagefactory.cpp">
+      <Filter>Source Files\protocols\rtmp\messagefactories</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\messagefactories\genericmessagefactory.cpp">
+      <Filter>Source Files\protocols\rtmp\messagefactories</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\messagefactories\somessagefactory.cpp">
+      <Filter>Source Files\protocols\rtmp\messagefactories</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\messagefactories\streammessagefactory.cpp">
+      <Filter>Source Files\protocols\rtmp\messagefactories</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\timer\basetimerprotocol.cpp">
+      <Filter>Source Files\protocols\timer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\ts\basetsappprotocolhandler.cpp">
+      <Filter>Source Files\protocols\ts</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\ts\inboundtsprotocol.cpp">
+      <Filter>Source Files\protocols\ts</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\ts\innettsstream.cpp">
+      <Filter>Source Files\protocols\ts</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\ts\pidtypes.cpp">
+      <Filter>Source Files\protocols\ts</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\ts\streamdescriptors.cpp">
+      <Filter>Source Files\protocols\ts</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\ts\tsadaptationfield.cpp">
+      <Filter>Source Files\protocols\ts</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\ts\tspacketheader.cpp">
+      <Filter>Source Files\protocols\ts</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\ts\tspacketpat.cpp">
+      <Filter>Source Files\protocols\ts</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\ts\tspacketpmt.cpp">
+      <Filter>Source Files\protocols\ts</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\liveflv\baseliveflvappprotocolhandler.cpp">
+      <Filter>Source Files\protocols\liveflv</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\liveflv\inboundliveflvprotocol.cpp">
+      <Filter>Source Files\protocols\liveflv</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\liveflv\innetliveflvstream.cpp">
+      <Filter>Source Files\protocols\liveflv</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\variant\basevariantappprotocolhandler.cpp">
+      <Filter>Source Files\protocols\variant</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\variant\basevariantprotocol.cpp">
+      <Filter>Source Files\protocols\variant</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\variant\binvariantprotocol.cpp">
+      <Filter>Source Files\protocols\variant</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\variant\xmlvariantprotocol.cpp">
+      <Filter>Source Files\protocols\variant</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\basemediadocument.cpp">
+      <Filter>Source Files\mediaformats</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\flv\flvdocument.cpp">
+      <Filter>Source Files\mediaformats\flv</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp3\id3parser.cpp">
+      <Filter>Source Files\mediaformats\mp3</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp3\mp3document.cpp">
+      <Filter>Source Files\mediaformats\mp3</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomavc1.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomavcc.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomco64.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomctts.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomdata.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomdinf.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomdref.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomesds.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomftyp.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomhdlr.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomilst.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atommdhd.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atommdia.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atommeta.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atommetafield.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomminf.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atommoov.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atommp4a.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atommvhd.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomnull.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomsmhd.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomstbl.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomstco.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomstsc.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomstsd.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomstss.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomstsz.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomstts.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomtkhd.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomtrak.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomudta.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomurl.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomvmhd.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomwave.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\baseatom.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\boxatom.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\ignoredatom.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\mp4document.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\versionedatom.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\versionedboxatom.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\streaming\baseinfilestream.cpp">
+      <Filter>Source Files\streaming</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\streaming\baseinnetstream.cpp">
+      <Filter>Source Files\streaming</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\streaming\baseinstream.cpp">
+      <Filter>Source Files\streaming</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\streaming\baseoutfilestream.cpp">
+      <Filter>Source Files\streaming</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\streaming\baseoutnetstream.cpp">
+      <Filter>Source Files\streaming</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\streaming\baseoutstream.cpp">
+      <Filter>Source Files\streaming</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\streaming\basestream.cpp">
+      <Filter>Source Files\streaming</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\streaming\streamsmanager.cpp">
+      <Filter>Source Files\streaming</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtp\connectivity\baseconnectivity.cpp">
+      <Filter>Source Files\protocols\rtp\connectivity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtp\connectivity\inboundconnectivity.cpp">
+      <Filter>Source Files\protocols\rtp\connectivity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtp\connectivity\outboundconnectivity.cpp">
+      <Filter>Source Files\protocols\rtp\connectivity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtp\streaming\baseoutnetrtpudpstream.cpp">
+      <Filter>Source Files\protocols\rtp\streaming</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtp\streaming\innetrtpstream.cpp">
+      <Filter>Source Files\protocols\rtp\streaming</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtp\streaming\outnetrtpudph264stream.cpp">
+      <Filter>Source Files\protocols\rtp\streaming</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtp\basertpappprotocolhandler.cpp">
+      <Filter>Source Files\protocols\rtp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtp\basertspappprotocolhandler.cpp">
+      <Filter>Source Files\protocols\rtp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtp\inboundrtpprotocol.cpp">
+      <Filter>Source Files\protocols\rtp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtp\rtcpprotocol.cpp">
+      <Filter>Source Files\protocols\rtp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtp\rtspprotocol.cpp">
+      <Filter>Source Files\protocols\rtp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtp\sdp.cpp">
+      <Filter>Source Files\protocols\rtp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\netio\select\iohandler.cpp">
+      <Filter>Source Files\netio\select</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\netio\select\iohandlermanager.cpp">
+      <Filter>Source Files\netio\select</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\netio\select\iotimer.cpp">
+      <Filter>Source Files\netio\select</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\netio\select\stdiocarrier.cpp">
+      <Filter>Source Files\netio\select</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\netio\select\tcpacceptor.cpp">
+      <Filter>Source Files\netio\select</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\netio\select\tcpcarrier.cpp">
+      <Filter>Source Files\netio\select</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\netio\select\udpcarrier.cpp">
+      <Filter>Source Files\netio\select</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\streaming\nalutypes.cpp">
+      <Filter>Source Files\streaming</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\streaming\outfilertmpflvstream.cpp">
+      <Filter>Source Files\protocols\rtmp\streaming</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\sources\thelib\include\application\baseappprotocolhandler.h">
+      <Filter>Header Files\application</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\application\baseclientapplication.h">
+      <Filter>Header Files\application</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\application\clientapplicationmanager.h">
+      <Filter>Header Files\application</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\configuration\configfile.h">
+      <Filter>Header Files\configuration</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\netio\netio.h">
+      <Filter>Header Files\netio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\netio\iocp2\iohandler.h">
+      <Filter>Header Files\netio\iocp2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\netio\iocp2\iohandlermanager.h">
+      <Filter>Header Files\netio\iocp2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\netio\iocp2\iohandlermanagertoken.h">
+      <Filter>Header Files\netio\iocp2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\netio\iocp2\iotimer.h">
+      <Filter>Header Files\netio\iocp2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\netio\iocp2\stdiocarrier.h">
+      <Filter>Header Files\netio\iocp2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\netio\iocp2\tcpacceptor.h">
+      <Filter>Header Files\netio\iocp2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\netio\iocp2\tcpcarrier.h">
+      <Filter>Header Files\netio\iocp2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\netio\iocp2\tcpconnector.h">
+      <Filter>Header Files\netio\iocp2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\netio\iocp2\udpcarrier.h">
+      <Filter>Header Files\netio\iocp2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\baseprotocol.h">
+      <Filter>Header Files\protocols</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\baseprotocolfactory.h">
+      <Filter>Header Files\protocols</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\defaultprotocolfactory.h">
+      <Filter>Header Files\protocols</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\protocolfactorymanager.h">
+      <Filter>Header Files\protocols</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\protocolmanager.h">
+      <Filter>Header Files\protocols</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\protocoltypes.h">
+      <Filter>Header Files\protocols</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\sslprotocol.h">
+      <Filter>Header Files\protocols</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\tcpprotocol.h">
+      <Filter>Header Files\protocols</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\udpprotocol.h">
+      <Filter>Header Files\protocols</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\dns\inbounddnsresolverprotocol.h">
+      <Filter>Header Files\protocols\dns</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\dns\outbounddnsresolverprotocol.h">
+      <Filter>Header Files\protocols\dns</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\http\basehttpprotocol.h">
+      <Filter>Header Files\protocols\http</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\http\basehttpprotocolhandler.h">
+      <Filter>Header Files\protocols\http</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\http\inboundhttpprotocol.h">
+      <Filter>Header Files\protocols\http</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\http\outboundhttpprotocol.h">
+      <Filter>Header Files\protocols\http</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\amf0serializer.h">
+      <Filter>Header Files\protocols\rtmp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\amf3serializer.h">
+      <Filter>Header Files\protocols\rtmp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\amfserializer.h">
+      <Filter>Header Files\protocols\rtmp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\amftypes.h">
+      <Filter>Header Files\protocols\rtmp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\basertmpappprotocolhandler.h">
+      <Filter>Header Files\protocols\rtmp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\basertmpprotocol.h">
+      <Filter>Header Files\protocols\rtmp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\channel.h">
+      <Filter>Header Files\protocols\rtmp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\header.h">
+      <Filter>Header Files\protocols\rtmp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\header_be_ba.h">
+      <Filter>Header Files\protocols\rtmp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\header_le_ba.h">
+      <Filter>Header Files\protocols\rtmp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\header_le_sa.h">
+      <Filter>Header Files\protocols\rtmp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\inboundhttp4rtmp.h">
+      <Filter>Header Files\protocols\rtmp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\inboundrtmpprotocol.h">
+      <Filter>Header Files\protocols\rtmp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\outboundrtmpprotocol.h">
+      <Filter>Header Files\protocols\rtmp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\rtmpeprotocol.h">
+      <Filter>Header Files\protocols\rtmp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\rtmpprotocolserializer.h">
+      <Filter>Header Files\protocols\rtmp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\sharedobjects\so.h">
+      <Filter>Header Files\protocols\rtmp\sharedobjects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\sharedobjects\somanager.h">
+      <Filter>Header Files\protocols\rtmp\sharedobjects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\streaming\baseoutnetrtmpstream.h">
+      <Filter>Header Files\protocols\rtmp\streaming</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\streaming\infilertmpflvstream.h">
+      <Filter>Header Files\protocols\rtmp\streaming</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\streaming\infilertmpmp3stream.h">
+      <Filter>Header Files\protocols\rtmp\streaming</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\streaming\infilertmpmp4stream.h">
+      <Filter>Header Files\protocols\rtmp\streaming</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\streaming\infilertmpstream.h">
+      <Filter>Header Files\protocols\rtmp\streaming</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\streaming\innetrtmpstream.h">
+      <Filter>Header Files\protocols\rtmp\streaming</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\streaming\outnetrtmp4rtmpstream.h">
+      <Filter>Header Files\protocols\rtmp\streaming</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\streaming\outnetrtmp4tsstream.h">
+      <Filter>Header Files\protocols\rtmp\streaming</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\streaming\rtmpstream.h">
+      <Filter>Header Files\protocols\rtmp\streaming</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\messagefactories\connectionmessagefactory.h">
+      <Filter>Header Files\protocols\rtmp\messagefactories</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\messagefactories\genericmessagefactory.h">
+      <Filter>Header Files\protocols\rtmp\messagefactories</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\messagefactories\messagefactories.h">
+      <Filter>Header Files\protocols\rtmp\messagefactories</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\messagefactories\somessagefactory.h">
+      <Filter>Header Files\protocols\rtmp\messagefactories</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\messagefactories\streammessagefactory.h">
+      <Filter>Header Files\protocols\rtmp\messagefactories</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\timer\basetimerprotocol.h">
+      <Filter>Header Files\protocols\timer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\ts\basetsappprotocolhandler.h">
+      <Filter>Header Files\protocols\ts</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\ts\inboundtsprotocol.h">
+      <Filter>Header Files\protocols\ts</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\ts\innettsstream.h">
+      <Filter>Header Files\protocols\ts</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\ts\pidtypes.h">
+      <Filter>Header Files\protocols\ts</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\ts\streamdescriptors.h">
+      <Filter>Header Files\protocols\ts</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\ts\tsadaptationfield.h">
+      <Filter>Header Files\protocols\ts</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\ts\tsboundscheck.h">
+      <Filter>Header Files\protocols\ts</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\ts\tspacketheader.h">
+      <Filter>Header Files\protocols\ts</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\ts\tspacketpat.h">
+      <Filter>Header Files\protocols\ts</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\ts\tspacketpmt.h">
+      <Filter>Header Files\protocols\ts</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\liveflv\baseliveflvappprotocolhandler.h">
+      <Filter>Header Files\protocols\liveflv</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\liveflv\inboundliveflvprotocol.h">
+      <Filter>Header Files\protocols\liveflv</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\liveflv\innetliveflvstream.h">
+      <Filter>Header Files\protocols\liveflv</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\variant\basevariantappprotocolhandler.h">
+      <Filter>Header Files\protocols\variant</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\variant\basevariantprotocol.h">
+      <Filter>Header Files\protocols\variant</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\variant\binvariantprotocol.h">
+      <Filter>Header Files\protocols\variant</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\variant\xmlvariantprotocol.h">
+      <Filter>Header Files\protocols\variant</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\basemediadocument.h">
+      <Filter>Header Files\mediaformats</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mediaframe.h">
+      <Filter>Header Files\mediaformats</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\flv\flvdocument.h">
+      <Filter>Header Files\mediaformats\flv</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp3\id3parser.h">
+      <Filter>Header Files\mediaformats\mp3</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp3\mp3document.h">
+      <Filter>Header Files\mediaformats\mp3</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomavc1.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomavcc.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomco64.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomctts.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomdata.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomdinf.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomdref.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomesds.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomftyp.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomhdlr.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomilst.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atommdhd.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atommdia.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atommeta.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atommetafield.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomminf.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atommoov.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atommp4a.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atommvhd.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomnull.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomsmhd.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomstbl.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomstco.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomstsc.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomstsd.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomstss.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomstsz.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomstts.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomtkhd.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomtrak.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomudta.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomurl.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomvmhd.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomwave.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\baseatom.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\boxatom.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\ignoredatom.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\mp4document.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\versionedatom.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\versionedboxatom.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\streaming\baseinfilestream.h">
+      <Filter>Header Files\streaming</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\streaming\baseinnetstream.h">
+      <Filter>Header Files\streaming</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\streaming\baseinstream.h">
+      <Filter>Header Files\streaming</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\streaming\baseoutfilestream.h">
+      <Filter>Header Files\streaming</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\streaming\baseoutnetstream.h">
+      <Filter>Header Files\streaming</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\streaming\baseoutstream.h">
+      <Filter>Header Files\streaming</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\streaming\basestream.h">
+      <Filter>Header Files\streaming</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\streaming\streamsmanager.h">
+      <Filter>Header Files\streaming</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\streaming\streamstypes.h">
+      <Filter>Header Files\streaming</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtp\basertpappprotocolhandler.h">
+      <Filter>Header Files\protocols\rtp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtp\basertspappprotocolhandler.h">
+      <Filter>Header Files\protocols\rtp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtp\inboundrtpprotocol.h">
+      <Filter>Header Files\protocols\rtp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtp\rtcpprotocol.h">
+      <Filter>Header Files\protocols\rtp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtp\rtpheader.h">
+      <Filter>Header Files\protocols\rtp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtp\rtspprotocol.h">
+      <Filter>Header Files\protocols\rtp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtp\sdp.h">
+      <Filter>Header Files\protocols\rtp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtp\connectivity\baseconnectivity.h">
+      <Filter>Header Files\protocols\rtp\connectivity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtp\connectivity\inboundconnectivity.h">
+      <Filter>Header Files\protocols\rtp\connectivity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtp\connectivity\outboundconnectivity.h">
+      <Filter>Header Files\protocols\rtp\connectivity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtp\streaming\baseoutnetrtpudpstream.h">
+      <Filter>Header Files\protocols\rtp\streaming</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtp\streaming\innetrtpstream.h">
+      <Filter>Header Files\protocols\rtp\streaming</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtp\streaming\outnetrtpudph264stream.h">
+      <Filter>Header Files\protocols\rtp\streaming</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\netio\select\iohandler.h">
+      <Filter>Header Files\netio\select</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\netio\select\iohandlermanager.h">
+      <Filter>Header Files\netio\select</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\netio\select\iotimer.h">
+      <Filter>Header Files\netio\select</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\netio\select\stdiocarrier.h">
+      <Filter>Header Files\netio\select</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\netio\select\tcpacceptor.h">
+      <Filter>Header Files\netio\select</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\netio\select\tcpcarrier.h">
+      <Filter>Header Files\netio\select</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\netio\select\tcpconnector.h">
+      <Filter>Header Files\netio\select</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\netio\select\udpcarrier.h">
+      <Filter>Header Files\netio\select</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\streaming\codectypes.h">
+      <Filter>Header Files\streaming</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\streaming\nalutypes.h">
+      <Filter>Header Files\streaming</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\streaming\streamcapabilities.h">
+      <Filter>Header Files\streaming</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\streaming\outfilertmpflvstream.h">
+      <Filter>Header Files\protocols\rtmp\streaming</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\cmake\rtmpserver\rtmpserver.lua" />
+  </ItemGroup>
+</Project>
