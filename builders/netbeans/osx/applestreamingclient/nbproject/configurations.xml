@@ -37,6 +37,9 @@
         <logicalFolder name="rtp" displayName="rtp" projectFiles="true">
           <itemPath>../../../../sources/applications/applestreamingclient/include/protocols/rtp/rtspappprotocolhandler.h</itemPath>
         </logicalFolder>
+        <logicalFolder name="timer" displayName="timer" projectFiles="true">
+          <itemPath>../../../../sources/applications/applestreamingclient/include/protocols/timer/scheduletimerprotocol.h</itemPath>
+        </logicalFolder>
         <logicalFolder name="ts" displayName="ts" projectFiles="true">
           <itemPath>../../../../sources/applications/applestreamingclient/include/protocols/ts/tsappprotocolhandler.h</itemPath>
         </logicalFolder>
@@ -88,6 +91,9 @@
         </logicalFolder>
         <logicalFolder name="rtp" displayName="rtp" projectFiles="true">
           <itemPath>../../../../sources/applications/applestreamingclient/src/protocols/rtp/rtspappprotocolhandler.cpp</itemPath>
+        </logicalFolder>
+        <logicalFolder name="timer" displayName="timer" projectFiles="true">
+          <itemPath>../../../../sources/applications/applestreamingclient/src/protocols/timer/scheduletimerprotocol.cpp</itemPath>
         </logicalFolder>
         <logicalFolder name="ts" displayName="ts" projectFiles="true">
           <itemPath>../../../../sources/applications/applestreamingclient/src/protocols/ts/tsappprotocolhandler.cpp</itemPath>

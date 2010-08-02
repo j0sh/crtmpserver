@@ -46,7 +46,6 @@ void HTTPBuffAppProtocolHandler::RegisterProtocol(BaseProtocol *pProtocol) {
 	//3. Link them
 	pProtocol->SetNearProtocol(pTSProtocol);
 	pTSProtocol->SetFarProtocol(pProtocol);
-	FINEST("Chain: %s", STR(*pProtocol));
 
 	//4. make sure that upper protocols survive AES protocol death
 	pProtocol->DeleteNearProtocol(false);

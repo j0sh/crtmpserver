@@ -27,6 +27,7 @@ class RTMPEventSink
 : public BaseEventSink {
 private:
 	uint32_t _protocolId;
+	string _streamName;
 public:
 	RTMPEventSink();
 	virtual ~RTMPEventSink();

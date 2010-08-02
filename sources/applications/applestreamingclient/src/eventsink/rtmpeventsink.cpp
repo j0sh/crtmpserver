@@ -26,6 +26,7 @@
 RTMPEventSink::RTMPEventSink()
 : BaseEventSink(EVENT_SYNC_RTMP) {
 	_protocolId = 0;
+	_streamName = "";
 }
 
 RTMPEventSink::~RTMPEventSink() {
@@ -36,32 +37,40 @@ void RTMPEventSink::SetProtocolId(uint32_t protocolId) {
 }
 
 bool RTMPEventSink::SignalStreamRegistered(string streamName) {
-	//1. Get the RTMP protocol
+	//1. Save the stream name
+	if (_streamName == streamName)
+		return true;
+	else
+		_streamName = streamName;
+
+
+	//2. Get the RTMP protocol
 	BaseRTMPProtocol *pProtocol = (BaseRTMPProtocol *) ProtocolManager::GetProtocol(_protocolId);
 	if (pProtocol == NULL) {
 		FATAL("Unable to get the RTMP protocol");
 		return false;
 	}
 
-	//2. Prepare the invoke
+	//3. Prepare the invoke
 	Variant parameters;
 	parameters.PushToArray(Variant());
 	parameters.PushToArray(streamName);
 	Variant request = GenericMessageFactory::GetInvoke(3, 0, 0, false, 0,
 			"streamAvailable", parameters);
 
-	//3. Send it
+	//4. Send it
 	if (!pProtocol->SendMessage(request)) {
 		FATAL("Unable to send RTMP message");
 		pProtocol->EnqueueForDelete();
 		return false;
 	}
 
-	//4. Done
+	//5. Done
 	return true;
 }
 
 bool RTMPEventSink::SignalStreamUnRegistered(string streamName) {
+	_streamName = "";
 	return true;
 }
 #endif /* HAS_PROTOCOL_RTMP */

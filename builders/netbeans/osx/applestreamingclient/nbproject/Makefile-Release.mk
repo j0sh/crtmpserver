@@ -33,8 +33,9 @@ OBJECTDIR=build/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
-	${OBJECTDIR}/_ext/1728068287/variantappprotocolhandler.o \
+	${OBJECTDIR}/_ext/53446657/scheduletimerprotocol.o \
 	${OBJECTDIR}/_ext/1372122712/rtspappprotocolhandler.o \
+	${OBJECTDIR}/_ext/1728068287/variantappprotocolhandler.o \
 	${OBJECTDIR}/_ext/61573733/varianteventsink.o \
 	${OBJECTDIR}/_ext/413868907/rtmpappprotocolhandler.o \
 	${OBJECTDIR}/_ext/441423101/playlist.o \
@@ -87,15 +88,20 @@ LDLIBSOPTIONS=-L../common/dist/Release/GNU-MacOSX -lcommon -L../thelib/../Releas
 	${MKDIR} -p ../Release/GNU-MacOSX/applications/applestreamingclient
 	${LINK.cc} -dynamiclib -install_name libapplestreamingclient.dylib -o ../${CND_CONF}/${CND_PLATFORM}/applications/applestreamingclient/libapplestreamingclient.dylib -fPIC ${OBJECTFILES} ${LDLIBSOPTIONS} 
 
-${OBJECTDIR}/_ext/1728068287/variantappprotocolhandler.o: ../../../../sources/applications/applestreamingclient/src/protocols/variant/variantappprotocolhandler.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/1728068287
+${OBJECTDIR}/_ext/53446657/scheduletimerprotocol.o: ../../../../sources/applications/applestreamingclient/src/protocols/timer/scheduletimerprotocol.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/53446657
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_VAR -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/applestreamingclient/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1728068287/variantappprotocolhandler.o ../../../../sources/applications/applestreamingclient/src/protocols/variant/variantappprotocolhandler.cpp
+	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_VAR -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/applestreamingclient/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/53446657/scheduletimerprotocol.o ../../../../sources/applications/applestreamingclient/src/protocols/timer/scheduletimerprotocol.cpp
 
 ${OBJECTDIR}/_ext/1372122712/rtspappprotocolhandler.o: ../../../../sources/applications/applestreamingclient/src/protocols/rtp/rtspappprotocolhandler.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1372122712
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_VAR -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/applestreamingclient/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1372122712/rtspappprotocolhandler.o ../../../../sources/applications/applestreamingclient/src/protocols/rtp/rtspappprotocolhandler.cpp
+
+${OBJECTDIR}/_ext/1728068287/variantappprotocolhandler.o: ../../../../sources/applications/applestreamingclient/src/protocols/variant/variantappprotocolhandler.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1728068287
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_VAR -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/applestreamingclient/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1728068287/variantappprotocolhandler.o ../../../../sources/applications/applestreamingclient/src/protocols/variant/variantappprotocolhandler.cpp
 
 ${OBJECTDIR}/_ext/61573733/varianteventsink.o: ../../../../sources/applications/applestreamingclient/src/eventsink/varianteventsink.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/61573733

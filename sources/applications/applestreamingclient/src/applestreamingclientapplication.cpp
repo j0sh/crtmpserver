@@ -179,7 +179,7 @@ void AppleStreamingClientApplication::SignalStreamRegistered(BaseStream *pStream
 		return;
 	}
 
-	pContext->EventSink()->SignalStreamRegistered(pStream->GetName());
+	pContext->SignalStreamRegistered(pStream);
 }
 
 void AppleStreamingClientApplication::SignalStreamUnRegistered(BaseStream *pStream) {
@@ -198,5 +198,5 @@ void AppleStreamingClientApplication::SignalStreamUnRegistered(BaseStream *pStre
 		return;
 	}
 
-	pContext->EventSink()->SignalStreamUnRegistered(pStream->GetName());
+	pContext->SignalStreamUnRegistered(pStream);
 }

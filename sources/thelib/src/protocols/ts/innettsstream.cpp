@@ -36,7 +36,6 @@ InNetTSStream::InNetTSStream(BaseProtocol *pProtocol,
 	_dtsTimeAudio = 0;
 #endif
 	_deltaTimeAudio = -1;
-	_lastAudioTimestamp = 0;
 
 	//video section
 	_pVideoPidDescriptor = NULL;
@@ -45,7 +44,8 @@ InNetTSStream::InNetTSStream(BaseProtocol *pProtocol,
 	_dtsTimeVideo = 0;
 #endif
 	_deltaTimeVideo = -1;
-	_lastVideoTimestamp = 0;
+
+	_feedTime = 0;
 	_cursor = 0;
 }
 
@@ -68,6 +68,10 @@ void InNetTSStream::SetAudioVideoPidDescriptors(PIDDescriptor *pAudioPidDescript
 	_pVideoPidDescriptor = pVideoPidDescriptor;
 }
 
+double InNetTSStream::GetFeedTime() {
+	return _feedTime;
+}
+
 bool InNetTSStream::FeedData(uint8_t *pData, uint32_t length, bool packetStart,
 		bool isAudio) {
 	double &ptsTime = isAudio ? _ptsTimeAudio : _ptsTimeVideo;
@@ -75,6 +79,7 @@ bool InNetTSStream::FeedData(uint8_t *pData, uint32_t length, bool packetStart,
 	double &dtsTime = isAudio ? _dtsTimeAudio : _dtsTimeVideo;
 #endif
 	double &deltaTime = isAudio ? _deltaTimeAudio : _deltaTimeVideo;
+	double absoluteTime = 0;
 	if (packetStart) {
 		if (length >= 8) {
 			uint32_t pesHeaderLength = pData[8];
@@ -102,12 +107,12 @@ bool InNetTSStream::FeedData(uint8_t *pData, uint32_t length, bool packetStart,
 			}
 
 			if (pPTS != NULL) {
-				uint32_t value = (pPTS[0]&0x0f) >> 1;
+				uint64_t value = (pPTS[0]&0x0f) >> 1;
 				value = (value << 8) | pPTS[1];
 				value = (value << 7) | (pPTS[2] >> 1);
 				value = (value << 8) | pPTS[3];
-				value = (value << 6) | (pPTS[4] >> 2);
-				double tempPtsTime = ((double) value * 2.00 + (double) (((pPTS[4]&0x02) >> 1))) / 90.00;
+				value = (value << 7) | (pPTS[4] >> 1);
+				double tempPtsTime = (double) value / 90.00;
 				if (ptsTime > tempPtsTime) {
 					WARN("Back time");
 					return true;
@@ -117,12 +122,12 @@ bool InNetTSStream::FeedData(uint8_t *pData, uint32_t length, bool packetStart,
 
 #ifdef COMPUTE_DTS_TIME
 			if (pDTS != NULL) {
-				uint32_t value = (pDTS[0]&0x0f) >> 1;
+				uint64_t value = (pDTS[0]&0x0f) >> 1;
 				value = (value << 8) | pDTS[1];
 				value = (value << 7) | (pDTS[2] >> 1);
 				value = (value << 8) | pDTS[3];
-				value = (value << 6) | (pDTS[4] >> 2);
-				dtsTime = ((double) value * 2.00 + (double) (((pDTS[4]&0x02) >> 1))) / 90.00;
+				value = (value << 7) | (pDTS[4] >> 1);
+				dtsTime = (double) value / 90.00;
 			}
 #endif
 			if (pPTS == NULL) {
@@ -133,6 +138,10 @@ bool InNetTSStream::FeedData(uint8_t *pData, uint32_t length, bool packetStart,
 			if (deltaTime < 0)
 				deltaTime = ptsTime;
 
+			absoluteTime = (ptsTime - deltaTime);
+			_feedTime = _feedTime < absoluteTime ? absoluteTime : _feedTime;
+			//FINEST("%c: absoluteTime: %.2f;", isAudio ? 'A' : 'V', absoluteTime);
+
 			pData += 9 + pesHeaderLength;
 			length -= (9 + pesHeaderLength);
 
@@ -140,9 +149,6 @@ bool InNetTSStream::FeedData(uint8_t *pData, uint32_t length, bool packetStart,
 			FATAL("Not enoght data");
 			return false;
 		}
-
-		//        FINEST("%c: time: %.2f ptsTime: %.2f; deltaTime: %.2f",
-		//                isAudio ? 'A' : 'V', ptsTime - deltaTime, ptsTime, deltaTime);
 	}
 
 	if (isAudio)
@@ -259,21 +265,14 @@ bool InNetTSStream::HandleAudioData(uint8_t *pRawBuffer, uint32_t rawBufferLengt
 		}
 
 		//5. Feed
-		if (_lastAudioTimestamp != 0) {
-			if (!FeedData(pBuffer, frameLength, 0, frameLength, _lastAudioTimestamp, true)) {
-				FATAL("Unable to feed audio data");
-				return false;
-			}
+		if (!FeedData(pBuffer, frameLength, 0, frameLength, timestamp, true)) {
+			FATAL("Unable to feed audio data");
+			return false;
 		}
 
 		//6. Ignore frameLength bytes
 		_audioBuffer.Ignore(frameLength);
 	}
-
-	//FINEST("After GETAVAILABLEBYTESCOUNT(_audioBuffer): %d", GETAVAILABLEBYTESCOUNT(_audioBuffer));
-
-	//FINEST("Done eating this chunk of data");
-	_lastAudioTimestamp = timestamp;
 
 	return true;
 }
@@ -299,14 +298,11 @@ bool InNetTSStream::HandleVideoData(uint8_t *pBuffer, uint32_t length,
 			//6. This is the beginning of a new NALU. Process it
 			//if it has some data inside it
 			if (_cursor > 0) {
-				if (!ProcessNal()) {
+				if (!ProcessNal(timestamp)) {
 					FATAL("Unable to process NALU");
 					return false;
 				}
 			}
-
-			//7. Store the last video timestamp
-			_lastVideoTimestamp = timestamp;
 
 			//8. Ignore what we've just processed
 			_currentNal.Ignore(_cursor + 4);
@@ -331,16 +327,15 @@ bool InNetTSStream::HandleVideoData(uint8_t *pBuffer, uint32_t length,
 	return true;
 }
 
-bool InNetTSStream::ProcessNal() {
+bool InNetTSStream::ProcessNal(double timestamp) {
 	InitializeVideoCapabilities(GETIBPOINTER(_currentNal), _cursor);
 	//5. Feed
-	if (_lastVideoTimestamp != 0)
-		return FeedData(
+	return FeedData(
 			GETIBPOINTER(_currentNal),
 			_cursor,
 			0,
 			_cursor,
-			_lastVideoTimestamp,
+			timestamp,
 			false);
 	return true;
 }

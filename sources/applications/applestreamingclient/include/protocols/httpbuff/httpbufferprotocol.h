@@ -28,6 +28,7 @@ class HTTPBufferProtocol
 private:
 	double _lastTimestamp;
 	double _lastAmount;
+	bool _isEncrypted;
 public:
 	HTTPBufferProtocol();
 	virtual ~HTTPBufferProtocol();

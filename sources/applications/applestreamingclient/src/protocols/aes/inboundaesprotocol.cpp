@@ -1,21 +1,21 @@
 /* 
-*  Copyright (c) 2010,
-*  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
-*  
-*  This file is part of crtmpserver.
-*  crtmpserver is free software: you can redistribute it and/or modify
-*  it under the terms of the GNU General Public License as published by
-*  the Free Software Foundation, either version 3 of the License, or
-*  (at your option) any later version.
-*  
-*  crtmpserver is distributed in the hope that it will be useful,
-*  but WITHOUT ANY WARRANTY; without even the implied warranty of
-*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*  GNU General Public License for more details.
-*  
-*  You should have received a copy of the GNU General Public License
-*  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ *  Copyright (c) 2010,
+ *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
+ *
+ *  This file is part of crtmpserver.
+ *  crtmpserver is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  crtmpserver is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 
 
@@ -59,13 +59,13 @@ bool InboundAESProtocol::Initialize(Variant &parameters) {
 	put_htonll(_pIV + 8, (uint64_t) parameters["payload"]["iv"]);
 	memcpy(_pKey, STR(parameters["payload"]["key"]), 16);
 
-	FINEST(" IV: %02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x",
-			_pIV[0], _pIV[1], _pIV[2], _pIV[3], _pIV[4], _pIV[5], _pIV[6], _pIV[7],
-			_pIV[8], _pIV[9], _pIV[10], _pIV[11], _pIV[12], _pIV[13], _pIV[14], _pIV[15]);
-
-	FINEST("KEY: %02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x",
-			_pKey[0], _pKey[1], _pKey[2], _pKey[3], _pKey[4], _pKey[5], _pKey[6], _pKey[7],
-			_pKey[8], _pKey[9], _pKey[10], _pKey[11], _pKey[12], _pKey[13], _pKey[14], _pKey[15]);
+	//	FINEST(" IV: %02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x",
+	//			_pIV[0], _pIV[1], _pIV[2], _pIV[3], _pIV[4], _pIV[5], _pIV[6], _pIV[7],
+	//			_pIV[8], _pIV[9], _pIV[10], _pIV[11], _pIV[12], _pIV[13], _pIV[14], _pIV[15]);
+	//
+	//	FINEST("KEY: %02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x",
+	//			_pKey[0], _pKey[1], _pKey[2], _pKey[3], _pKey[4], _pKey[5], _pKey[6], _pKey[7],
+	//			_pKey[8], _pKey[9], _pKey[10], _pKey[11], _pKey[12], _pKey[13], _pKey[14], _pKey[15]);
 
 	_lastChunk = false;
 	_inputBuffer.IgnoreAll();
@@ -127,11 +127,13 @@ bool InboundAESProtocol::SignalInputData(IOBuffer &buffer) {
 				pTempData + decryptedSize,
 				&decryptedFinalSize);
 		_totalDecrypted += decryptedFinalSize;
-		uint32_t chunkSize = ((InboundTSProtocol *) GetNearProtocol())->GetChunkSize();
-		if (chunkSize == 0) {
-			FATAL("Invalid TS chunk size");
-			return false;
-		}
+		//		uint32_t chunkSize = ((InboundTSProtocol *) GetNearProtocol())->GetChunkSize();
+		//		if (chunkSize == 0) {
+		//			FATAL("Invalid TS chunk size");
+		//			return false;
+		//		}
+		WARN("chunkSize hardcoded to 188 bytes");
+		uint32_t chunkSize = 188;
 		padding = _totalDecrypted - (((uint32_t) (_totalDecrypted / chunkSize)) * chunkSize);
 		//		ASSERT("_totalDecrypted: %d; padding: %d; got: %d; wanted: %d",
 		//				_totalDecrypted, padding,
@@ -155,9 +157,22 @@ bool InboundAESProtocol::SignalInputData(IOBuffer &buffer) {
 	//8. Prepare the buffer for the next protocol in the stack
 	_inputBuffer.ReadFromBuffer(pTempData, decryptedSize + decryptedFinalSize - padding);
 
-	//9. Continue processing with the next protocol in the stack
-	if (!_pNearProtocol->SignalInputData(_inputBuffer)) {
-		FATAL("Unable to signal upper protocols");
+	//	//9. Continue processing with the next protocol in the stack
+	//	if (!_pNearProtocol->SignalInputData(_inputBuffer)) {
+	//		FATAL("Unable to signal upper protocols");
+	//		return false;
+	//	}
+
+	//9. Get the context
+	ClientContext *pContext = GetContext();
+	if (pContext == NULL) {
+		FATAL("Unable to get context");
+		return false;
+	}
+
+	//10. Feed the data
+	if (!pContext->SignalAVDataAvailable(_inputBuffer)) {
+		FATAL("Unable to signal ts A/V data available");
 		return false;
 	}
 

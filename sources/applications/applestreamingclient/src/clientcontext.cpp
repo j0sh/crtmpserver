@@ -28,6 +28,12 @@
 #include "protocols/protocolmanager.h"
 #include "speedcomputer.h"
 #include "eventsink/baseeventsink.h"
+#include "applestreamingclient.h"
+#include "protocols/timer/scheduletimerprotocol.h"
+#include "protocols/ts/inboundtsprotocol.h"
+#include "streaming/basestream.h"
+#include "streaming/streamsmanager.h"
+#include "protocols/ts/innettsstream.h"
 
 uint32_t ClientContext::_idGenerator = 0;
 map<uint32_t, ClientContext *> ClientContext::_contexts;
@@ -41,6 +47,13 @@ ClientContext::ClientContext() {
 	_optimalBw = 0;
 	_pSpeedComputer = NULL;
 	_tsId = 0;
+	_scheduleTimerId = 0;
+	_maxAVBufferSize = 4 * 1024 * 1024;
+	_streamName = "";
+	_streamId = 0;
+	_pStreamsManager = NULL;
+	_lastWallClock = 0;
+	_lastStreamClock = 0;
 	INFO("Context created: %d (%p)", _id, this);
 }
 
@@ -57,6 +70,10 @@ ClientContext::~ClientContext() {
 	_childPlaylists.clear();
 
 	BaseProtocol *pProtocol = ProtocolManager::GetProtocol(_tsId);
+	if (pProtocol != NULL)
+		pProtocol->EnqueueForDelete();
+
+	pProtocol = ProtocolManager::GetProtocol(_scheduleTimerId);
 	if (pProtocol != NULL)
 		pProtocol->EnqueueForDelete();
 
@@ -148,40 +165,47 @@ bool ClientContext::StartProcessing() {
 	//3. Create the speed computer
 	_pSpeedComputer = new SpeedComputer();
 
-	//4. Start the master M3U8 fetching
+	//4. Create the schedule
+	ScheduleTimerProtocol *pScheduleTimer = new ScheduleTimerProtocol(_id);
+	_scheduleTimerId = pScheduleTimer->GetId();
+	pScheduleTimer->EnqueueForTimeEvent(1);
+
+	//5. Add the recurring job for consuming the A/V data buffer
+	Variant job;
+	job["type"] = "consumeAVBuffer";
+	pScheduleTimer->AddJob(job, true);
+
+	//6. Start the master M3U8 fetching
 	return FetchMasterPlaylist();
 }
 
-uint32_t ClientContext::GetOptimalBw() {
-	if (_optimalBw == 0) {
-		_optimalBw = MAP_KEY(_childPlaylists.begin());
-	}
-	return _optimalBw;
-}
-
 bool ClientContext::StartFeeding() {
+	if (GETAVAILABLEBYTESCOUNT(_avData) > _maxAVBufferSize) {
+		//		WARN("Plenty of data available: wanted at most %d bytes. Have %d bytes",
+		//				_maxAVBufferSize, GETAVAILABLEBYTESCOUNT(_avData));
+		return EnqueueStartFeeding();
+	}
 	//1. Wait for all playlists
 	if (_parsedChildPlaylistsCount < _childPlaylists.size()) {
-		FINEST("Waiting for the rest of the playlists. Got: %d; Wanted: %d",
-				_parsedChildPlaylistsCount, _childPlaylists.size());
+		//		FINEST("Waiting for the rest of the playlists. Got: %d; Wanted: %d",
+		//				_parsedChildPlaylistsCount, _childPlaylists.size());
 		return true;
 	}
 
 	//2. Get the optimal bandwidth
 	uint32_t optimalBw = GetOptimalBw();
-	FINEST("optimalBw: %d", optimalBw);
+	//FINEST("optimalBw: %d", optimalBw);
 
 	//3. Get the corresponding playlist
 	Playlist *pPlaylist = _childPlaylists[optimalBw];
 
-	//if (_currentItemIndex == 0)
-	//	_currentItemIndex = pPlaylist->GetItemsCount() / 2 + 10;
+	//	if (_currentItemIndex == 0)
+	//		_currentItemIndex = pPlaylist->GetItemsCount() / 2 + 10;
 
 	//4. Is this the last item in the playlis?
 	if (_currentItemIndex >= pPlaylist->GetItemsCount()) {
 		FINEST("End of list. Wait one sec and try again");
-		sleep(1);
-		return FetchChildPlaylist(_childPlaylists[optimalBw]->GetPlaylistUri(), optimalBw);
+		return EnqueueFetchChildPlaylist(_childPlaylists[optimalBw]->GetPlaylistUri(), optimalBw);
 	}
 
 	//4. Get the item URI and the key URI if available
@@ -197,6 +221,88 @@ bool ClientContext::StartFeeding() {
 		//6. not encrypted
 		return FetchTS(uri, optimalBw, "", 0);
 	}
+}
+
+bool ClientContext::FetchChildPlaylist(string uri, uint32_t bw) {
+	Variant customParameters;
+	customParameters["protocolChain"] = PC_CHILD_PLAYLIST;
+	customParameters["bw"] = bw;
+	return FetchURI(uri, "childPlaylist", customParameters);
+}
+
+bool ClientContext::ConsumeAVBuffer() {
+	//1. initialize _lastFeedTime
+	if (_lastWallClock == 0) {
+		_lastWallClock = time(NULL)*1000.0;
+		return true;
+	}
+
+	//2. Get the TS protocol
+	InboundTSProtocol *pTS = (InboundTSProtocol *) ProtocolManager::GetProtocol(_tsId);
+	if (pTS == NULL) {
+		WARN("No TS protocol");
+		return true;
+	}
+
+	//3. First, feed up until the stream name is registered
+	if (_streamId == 0) {
+		while ((_streamId == 0) && (GETAVAILABLEBYTESCOUNT(_avData) > 8192)) {
+			if (!pTS->SignalInputData(_avData)) {
+				FATAL("Unable to feed TS protocol");
+				return false;
+			}
+		}
+	}
+
+
+	//4. Get the inbound TS stream
+	InNetTSStream *pStream = (InNetTSStream *) _pStreamsManager->FindByUniqueId(
+			_streamId);
+	if (pStream == NULL) {
+		FATAL("Unable to get the inbound stream");
+		return false;
+	}
+
+	//5. Continue feeding until we have stream capabilities
+	while (GETAVAILABLEBYTESCOUNT(_avData) > 8192) {
+		if ((pStream->GetCapabilities()->videoCodecId == CODEC_VIDEO_AVC)
+				&& (pStream->GetCapabilities()->audioCodecId == CODEC_AUDIO_AAC)) {
+			_pEventSink->SignalStreamRegistered(_streamName);
+			break;
+		}
+		if (!pTS->SignalInputData(_avData)) {
+			FATAL("Unable to feed TS protocol");
+			return false;
+		}
+	}
+
+	//5. Does it have any registered consumers AND sps/pps? Return if not
+	if (pStream->GetOutStreams().size() <= 0) {
+		WARN("No registered consumers or stream capabilities not yet known. Take a break...");
+		return true;
+	}
+
+	//5. How much seconds do we have to feed?
+	double wallClockDelta = time(NULL)*1000.00 - _lastWallClock;
+
+	//6. Feed
+	while ((wallClockDelta + 2000 > pStream->GetFeedTime()) &&
+			(GETAVAILABLEBYTESCOUNT(_avData) > 8192)) {
+		if (!pTS->SignalInputData(_avData)) {
+			FATAL("Unable to feed TS protocol");
+			return false;
+		}
+	}
+
+	//7. Done
+	return true;
+}
+
+uint32_t ClientContext::GetOptimalBw() {
+	if (_optimalBw == 0) {
+		_optimalBw = MAP_KEY(_childPlaylists.begin());
+	}
+	return _optimalBw;
 }
 
 bool ClientContext::ParseConnectingString() {
@@ -236,13 +342,11 @@ bool ClientContext::ParseConnectingString() {
 
 bool ClientContext::SignalProtocolCreated(BaseProtocol *pProtocol, Variant &parameters) {
 	//1. Get the context
-	FINEST("PC: %s", STR(*pProtocol));
 	uint32_t contextId = parameters["contextId"];
 	assert(contextId != 0);
 	ClientContext *pContext = GetContext(contextId, 0, 0);
 	if (pContext == NULL) {
 		FATAL("Unable to get the context");
-		sleep(5);
 		return false;
 	}
 
@@ -339,7 +443,7 @@ bool ClientContext::SignalSpeedDetected(double instantAmount, double instantTime
 			ms = ms / 1024.00;
 			um = "MB/s";
 		}
-		FINEST("Speed: %.2f %s", ms, STR(um));
+		//FINEST("Speed: %.2f %s", ms, STR(um));
 	}
 
 	_optimalBw = MAP_KEY(_childPlaylists.begin());
@@ -360,18 +464,46 @@ bool ClientContext::SignalSpeedDetected(double instantAmount, double instantTime
 	return true;
 }
 
+bool ClientContext::SignalAVDataAvailable(IOBuffer &buffer) {
+	_avData.ReadFromBuffer(GETIBPOINTER(buffer), GETAVAILABLEBYTESCOUNT(buffer));
+	buffer.IgnoreAll();
+	//FINEST("%d bytes available", GETAVAILABLEBYTESCOUNT(_avData));
+	return true;
+}
+
+bool ClientContext::SignalStreamRegistered(BaseStream *pStream) {
+	if (_pEventSink != NULL) {
+		_streamName = pStream->GetName();
+		_streamId = pStream->GetUniqueId();
+		_pStreamsManager = pStream->GetStreamsManager();
+		return true;
+		//return _pEventSink->SignalStreamRegistered(pStream->GetName());
+	} else {
+		_streamName = "";
+		_streamId = 0;
+		_pStreamsManager = NULL;
+		FATAL("No event sync available");
+		return false;
+	}
+}
+
+bool ClientContext::SignalStreamUnRegistered(BaseStream *pStream) {
+	_streamName = "";
+	_streamId = 0;
+	_pStreamsManager = NULL;
+	if (_pEventSink != NULL) {
+		return _pEventSink->SignalStreamUnRegistered(pStream->GetName());
+	} else {
+		FATAL("No event sync available");
+		return false;
+	}
+}
+
 bool ClientContext::FetchMasterPlaylist() {
 	Variant customParameters;
 	customParameters["protocolChain"] = PC_MASTER_PLAYLIST;
 	return FetchURI(_connectingString.masterM3U8Url,
 			"masterPlaylist", customParameters);
-}
-
-bool ClientContext::FetchChildPlaylist(string uri, uint32_t bw) {
-	Variant customParameters;
-	customParameters["protocolChain"] = PC_CHILD_PLAYLIST;
-	customParameters["bw"] = bw;
-	return FetchURI(uri, "childPlaylist", customParameters);
 }
 
 bool ClientContext::FetchKey(string keyUri, string itemUri, uint32_t bw) {
@@ -407,7 +539,6 @@ bool ClientContext::FetchTS(string uri, uint32_t bw, string key, uint64_t iv) {
 
 bool ClientContext::FetchURI(string uri, string requestType, Variant &customParameters) {
 	INFO("Fetch: %s", STR(uri));
-	sleep(1);
 	customParameters["httpRequestType"] = requestType;
 	customParameters["contextId"] = _id;
 
@@ -455,6 +586,38 @@ bool ClientContext::FetchURI(string uri, string requestType, Variant &customPara
 		FATAL("Unable to open connection to origin");
 		return false;
 	}
+
+	return true;
+}
+
+bool ClientContext::EnqueueStartFeeding() {
+	ScheduleTimerProtocol *pSchedule = (ScheduleTimerProtocol *) ProtocolManager::GetProtocol(_scheduleTimerId);
+	if (pSchedule == NULL) {
+		FATAL("Unable to obtain job scheduler");
+		return false;
+	}
+
+	Variant job;
+	job["type"] = "startFeeding";
+
+	pSchedule->AddJob(job, false);
+
+	return true;
+}
+
+bool ClientContext::EnqueueFetchChildPlaylist(string uri, uint32_t bw) {
+	ScheduleTimerProtocol *pSchedule = (ScheduleTimerProtocol *) ProtocolManager::GetProtocol(_scheduleTimerId);
+	if (pSchedule == NULL) {
+		FATAL("Unable to obtain job scheduler");
+		return false;
+	}
+
+	Variant job;
+	job["type"] = "fetchChildPlaylist";
+	job["uri"] = uri;
+	job["bw"] = bw;
+
+	pSchedule->AddJob(job, false);
 
 	return true;
 }

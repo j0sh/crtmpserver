@@ -1,21 +1,21 @@
 /* 
-*  Copyright (c) 2010,
-*  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
-*  
-*  This file is part of crtmpserver.
-*  crtmpserver is free software: you can redistribute it and/or modify
-*  it under the terms of the GNU General Public License as published by
-*  the Free Software Foundation, either version 3 of the License, or
-*  (at your option) any later version.
-*  
-*  crtmpserver is distributed in the hope that it will be useful,
-*  but WITHOUT ANY WARRANTY; without even the implied warranty of
-*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*  GNU General Public License for more details.
-*  
-*  You should have received a copy of the GNU General Public License
-*  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ *  Copyright (c) 2010,
+ *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
+ *
+ *  This file is part of crtmpserver.
+ *  crtmpserver is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  crtmpserver is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 
 
@@ -24,6 +24,7 @@
 #include "protocols/baseprotocol.h"
 #include "protocols/http/outboundhttpprotocol.h"
 #include "clientcontext.h"
+#include "protocols/ts/inboundtsprotocol.h"
 
 TSAppProtocolHandler::TSAppProtocolHandler(Variant &configuration)
 : BaseTSAppProtocolHandler(configuration) {
@@ -50,7 +51,10 @@ void TSAppProtocolHandler::RegisterProtocol(BaseProtocol *pProtocol) {
 	//3. Mark this protocol as a survivor upont chain tear-down
 	pProtocol->GetFarProtocol()->DeleteNearProtocol(false);
 
-	//4. Tell the context about this new TS protocol
+	//4. This is a step-by-step feed process
+	((InboundTSProtocol *) pProtocol)->SetStepByStep(true);
+
+	//5. Tell the context about this new TS protocol
 	uint32_t bw = pProtocol->GetCustomParameters()["payload"]["bw"];
 	if (!pContext->SignalTSProtocolAvailable(pProtocol->GetId(), bw)) {
 		FATAL("Unable to signal the context about new TS protocol");
@@ -58,13 +62,13 @@ void TSAppProtocolHandler::RegisterProtocol(BaseProtocol *pProtocol) {
 		return;
 	}
 
-	//5. Do the HTTP request
+	//6. Do the HTTP request
 	if (!DoHTTPRequest(pProtocol)) {
 		FATAL("Unable to do the HTTP request");
 		pProtocol->EnqueueForDelete();
 	}
 
-	//5. Done
+	//7. Done
 	FINEST("%s", STR(*pProtocol));
 }
 

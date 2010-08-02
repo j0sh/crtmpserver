@@ -57,6 +57,7 @@ private:
     map<uint16_t, PIDDescriptor *> _pidMapping;
     TSAdaptationField _tsAdaptationField;
     BaseTSAppProtocolHandler *_pProtocolHandler;
+	bool _stepByStep;
 public:
     InboundTSProtocol();
     virtual ~InboundTSProtocol();
@@ -71,6 +72,7 @@ public:
     virtual void ResetApplication();
     BaseTSAppProtocolHandler *GetProtocolHandler();
 	uint32_t GetChunkSize();
+	void SetStepByStep(bool stepByStep);
 private:
     void FreePidDescriptor(PIDDescriptor *pPIDDescriptor);
     bool DetermineChunkSize(IOBuffer &buffer);

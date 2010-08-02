@@ -64,7 +64,7 @@
 				_stream=new NetStream(nc);
 				_stream.client=this;
 				_stream.bufferTime=1;
-				_stream.play(streamName);
+				_stream.play(streamName,30);
 				_streamName=streamName;
 				
 				_video.attachNetStream(_stream);

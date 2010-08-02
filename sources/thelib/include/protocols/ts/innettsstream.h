@@ -41,7 +41,6 @@ private:
 #endif
 	double _deltaTimeAudio;
 	IOBuffer _audioBuffer;
-	double _lastAudioTimestamp;
 
 	//video section
 	_PIDDescriptor *_pVideoPidDescriptor;
@@ -51,7 +50,9 @@ private:
 #endif
 	double _deltaTimeVideo;
 	IOBuffer _currentNal;
-	double _lastVideoTimestamp;
+
+	double _feedTime;
+
 	uint32_t _cursor;
 	StreamCapabilities _streamCapabilities;
 public:
@@ -62,6 +63,8 @@ public:
 
 	void SetAudioVideoPidDescriptors(_PIDDescriptor *pAudioPidDescriptor,
 			_PIDDescriptor *pVideoPidDescriptor);
+
+	double GetFeedTime();
 
 	bool FeedData(uint8_t *pData, uint32_t length, bool packetStart,
 			bool isAudio);
@@ -82,7 +85,7 @@ private:
 			double timestamp, bool packetStart);
 	bool HandleVideoData(uint8_t *pRawBuffer, uint32_t rawBufferLength,
 			double timestamp, bool packetStart);
-	bool ProcessNal();
+	bool ProcessNal(double timestamp);
 	void InitializeVideoCapabilities(uint8_t *pData, uint32_t length);
 	void InitializeAudioCapabilities(uint8_t *pData, uint32_t length);
 };

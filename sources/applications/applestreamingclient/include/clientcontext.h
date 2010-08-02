@@ -1,21 +1,21 @@
 /* 
-*  Copyright (c) 2010,
-*  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
-*  
-*  This file is part of crtmpserver.
-*  crtmpserver is free software: you can redistribute it and/or modify
-*  it under the terms of the GNU General Public License as published by
-*  the Free Software Foundation, either version 3 of the License, or
-*  (at your option) any later version.
-*  
-*  crtmpserver is distributed in the hope that it will be useful,
-*  but WITHOUT ANY WARRANTY; without even the implied warranty of
-*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*  GNU General Public License for more details.
-*  
-*  You should have received a copy of the GNU General Public License
-*  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ *  Copyright (c) 2010,
+ *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
+ *
+ *  This file is part of crtmpserver.
+ *  crtmpserver is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  crtmpserver is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 
 #ifndef _CLIENTCONTEXT_H
@@ -29,6 +29,8 @@ class BaseEventSink;
 class BaseProtocol;
 class Playlist;
 class SpeedComputer;
+class BaseStream;
+class StreamsManager;
 
 typedef struct _ConnectingString {
 	string masterM3U8Url;
@@ -59,6 +61,14 @@ private:
 	uint32_t _currentItemIndex;
 	uint32_t _optimalBw;
 	SpeedComputer *_pSpeedComputer;
+	uint32_t _scheduleTimerId;
+	IOBuffer _avData;
+	uint32_t _maxAVBufferSize;
+	string _streamName;
+	uint32_t _streamId;
+	StreamsManager *_pStreamsManager;
+	double _lastWallClock;
+	double _lastStreamClock;
 private:
 	ClientContext();
 public:
@@ -90,15 +100,23 @@ public:
 	bool SignalTSProtocolAvailable(uint32_t protocolId, uint32_t bw);
 	bool SignalTSChunkComplete(uint32_t bw);
 	bool SignalSpeedDetected(double instantAmount, double instantTime);
+	bool SignalAVDataAvailable(IOBuffer &buffer);
+	bool SignalStreamRegistered(BaseStream *pStream);
+	bool SignalStreamUnRegistered(BaseStream *pStream);
+
+	bool StartFeeding();
+	bool FetchChildPlaylist(string uri, uint32_t bw);
+	bool ConsumeAVBuffer();
 private:
 	uint32_t GetOptimalBw();
-	bool StartFeeding();
 	bool ParseConnectingString();
 	bool FetchMasterPlaylist();
-	bool FetchChildPlaylist(string uri, uint32_t bw);
 	bool FetchKey(string keyUri, string itemUri, uint32_t bw);
 	bool FetchTS(string uri, uint32_t bw, string key, uint64_t iv);
 	bool FetchURI(string uri, string requestType, Variant &customParameters);
+
+	bool EnqueueStartFeeding();
+	bool EnqueueFetchChildPlaylist(string uri, uint32_t bw);
 };
 
 #endif	/* _CLIENTCONTEXT_H */

@@ -30,6 +30,7 @@ HTTPBufferProtocol::HTTPBufferProtocol()
 : GenericProtocol(PT_HTTP_BUFF) {
 	_lastTimestamp = 0;
 	_lastAmount = 0;
+	_isEncrypted = false;
 }
 
 HTTPBufferProtocol::~HTTPBufferProtocol() {
@@ -40,6 +41,7 @@ bool HTTPBufferProtocol::AllowFarProtocol(uint64_t type) {
 }
 
 bool HTTPBufferProtocol::AllowNearProtocol(uint64_t type) {
+	_isEncrypted = (type == PT_INBOUND_AES);
 	return true;
 }
 
@@ -69,9 +71,22 @@ bool HTTPBufferProtocol::SignalInputData(IOBuffer &buffer) {
 	_lastAmount = ((TCPProtocol *) GetFarEndpoint())->GetDecodedBytesCount();
 	GETCLOCKS(_lastTimestamp);
 
-	if (!GetNearProtocol()->SignalInputData(buffer)) {
-		FATAL("Unable to signal upper protocols");
-		return false;
+	if (_isEncrypted) {
+		if (!GetNearProtocol()->SignalInputData(buffer)) {
+			FATAL("Unable to signal upper protocols");
+			return false;
+		}
+	} else {
+		ClientContext *pContext = GetContext();
+		if (pContext == NULL) {
+			FATAL("Unable to get context");
+			return false;
+		}
+
+		if (!pContext->SignalAVDataAvailable(buffer)) {
+			FATAL("Unable to signal ts A/V data available");
+			return false;
+		}
 	}
 
 	//10. Signal the context about this finished chunk
