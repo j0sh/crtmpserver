@@ -17,7 +17,7 @@
  *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
+#ifdef HAS_PROTOCOL_RTP
 #include "protocols/rtp/connectivity/outboundconnectivity.h"
 #include "protocols/rtp/streaming/baseoutnetrtpudpstream.h"
 #include "protocols/protocolmanager.h"
@@ -100,8 +100,8 @@ OutboundConnectivity::~OutboundConnectivity() {
 	if (_pOutStream != NULL) {
 		delete _pOutStream;
 	}
-	close(_videoDataFd);
-	close(_audioDataFd);
+	CLOSE_SOCKET(_videoDataFd);
+	CLOSE_SOCKET(_audioDataFd);
 	WARN("OC deleted: %p", this);
 }
 
@@ -245,8 +245,8 @@ bool OutboundConnectivity::FeedAudioData(msghdr &message) {
 bool OutboundConnectivity::InitializePorts(int32_t &dataFd, uint16_t &dataPort,
 		int32_t &RTCPFd, uint16_t &RTCPPort) {
 	for (int i = 0; i < 10; i++) {
-		close(dataFd);
-		close(RTCPFd);
+		CLOSE_SOCKET(dataFd);
+		CLOSE_SOCKET(RTCPFd);
 
 		dataFd = socket(AF_INET, SOCK_DGRAM, 0);
 		RTCPFd = socket(AF_INET, SOCK_DGRAM, 0);
@@ -414,3 +414,4 @@ bool OutboundConnectivity::FeedAudioDataTCP(msghdr &message) {
 	//NYIR;
 	return true;
 }
+#endif /* HAS_PROTOCOL_RTP */

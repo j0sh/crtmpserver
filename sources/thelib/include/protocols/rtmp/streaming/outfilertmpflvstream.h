@@ -25,7 +25,7 @@
 #include "buffering/iobuffer.h"
 #include "utils/file.h"
 
-class OutFileRTMPFLVStream
+class DLLEXP OutFileRTMPFLVStream
 : public BaseOutFileStream {
 private:
     File _file;

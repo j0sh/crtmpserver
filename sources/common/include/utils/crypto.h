@@ -59,6 +59,7 @@ DLLEXP string md5(string source, bool textResult);
 DLLEXP string b64(string source);
 DLLEXP string b64(uint8_t *pBuffer, uint32_t length);
 DLLEXP string unb64(string source);
+DLLEXP string unb64(uint8_t *pBuffer, uint32_t length);
 
 #endif /* _CRYPTO_H */
 

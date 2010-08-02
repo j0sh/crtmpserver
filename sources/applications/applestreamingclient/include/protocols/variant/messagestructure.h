@@ -129,7 +129,7 @@ do { \
 do {\
 	ASC_RES_DEBUG_FILE(r); \
 	ASC_RES_DEBUG_LINE_NUMBER(r); \
-	ASC_RES_STATUS(r)=(status); \
+	ASC_RES_STATUS(r)=(uint32_t) (status); \
 	switch ((status)) { \
 		case ASC_RES_STATUS_OK: \
 		{ \

@@ -264,8 +264,13 @@ string b64(uint8_t *pBuffer, uint32_t length) {
 }
 
 string unb64(string source) {
-    // create a memory buffer containing base64 encoded data
-    BIO* bmem = BIO_new_mem_buf((void*) STR(source), source.length());
+	return unb64((uint8_t *)STR(source),source.length());
+}
+
+string unb64(uint8_t *pBuffer, uint32_t length){
+	// create a memory buffer containing base64 encoded data
+    //BIO* bmem = BIO_new_mem_buf((void*) STR(source), source.length());
+	BIO* bmem = BIO_new_mem_buf((void *)pBuffer, length);
 
     // push a Base64 filter so that reading from buffer decodes it
     BIO *bioCmd = BIO_new(BIO_f_base64());
@@ -273,9 +278,9 @@ string unb64(string source) {
     BIO_set_flags(bioCmd, BIO_FLAGS_BASE64_NO_NL);
     bmem = BIO_push(bioCmd, bmem);
 
-    char *pOut = new char[source.length()];
+    char *pOut = new char[length];
 
-    int finalLen = BIO_read(bmem, (void*) pOut, source.length());
+    int finalLen = BIO_read(bmem, (void*) pOut, length);
     BIO_free_all(bmem);
     string result(pOut, finalLen);
     delete[] pOut;

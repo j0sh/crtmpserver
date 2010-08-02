@@ -26,7 +26,7 @@
 
 class BaseProtocol;
 
-class StdioCarrier
+class DLLEXP StdioCarrier
 : public IOHandler {
 private:
     static StdioCarrier *_pInstance;

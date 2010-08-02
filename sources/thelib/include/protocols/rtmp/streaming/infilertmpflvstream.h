@@ -24,7 +24,7 @@
 
 #include "protocols/rtmp/streaming/infilertmpstream.h"
 
-class InFileRTMPFLVStream
+class DLLEXP InFileRTMPFLVStream
 : public InFileRTMPStream {
 public:
     InFileRTMPFLVStream(BaseProtocol *pProtocol,

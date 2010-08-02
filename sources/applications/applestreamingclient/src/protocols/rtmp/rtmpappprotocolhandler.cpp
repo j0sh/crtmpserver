@@ -67,7 +67,7 @@ ClientContext * RTMPAppProtocolHandler::GetContext(BaseProtocol *pFrom) {
 void RTMPAppProtocolHandler::ReleaseContext(BaseProtocol *pFrom) {
 	uint32_t contextId = pFrom->GetCustomParameters()["contextId"];
 	ClientContext::ReleaseContext(contextId);
-	pFrom->GetCustomParameters()["contextId"] = 0;
+	pFrom->GetCustomParameters()["contextId"] = (uint32_t)0;
 }
 
 bool RTMPAppProtocolHandler::ProcessSetupStream(BaseRTMPProtocol *pFrom,

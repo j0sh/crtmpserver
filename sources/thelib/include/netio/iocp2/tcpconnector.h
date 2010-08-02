@@ -55,7 +55,7 @@ public:
 
     virtual ~TCPConnector() {
         if (_closeSocket)
-            closesocket(_inboundFd);
+            CLOSE_SOCKET(_inboundFd);
         FreeGenericOV(_pConnectOV);
     }
 

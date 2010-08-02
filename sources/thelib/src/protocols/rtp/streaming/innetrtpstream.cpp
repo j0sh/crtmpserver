@@ -17,7 +17,7 @@
  *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
+#ifdef HAS_PROTOCOL_RTP
 #include "protocols/rtp/streaming/innetrtpstream.h"
 #include "streaming/streamstypes.h"
 #include "streaming/nalutypes.h"
@@ -222,3 +222,4 @@ bool InNetRTPStream::FeedVideoData(uint8_t *pData, uint32_t dataLength,
 		return true;
 	}
 }
+#endif /* HAS_PROTOCOL_RTP */

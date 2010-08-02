@@ -29,7 +29,7 @@
 
 class BaseRTMPProtocol;
 
-class BaseOutNetRTMPStream
+class DLLEXP BaseOutNetRTMPStream
 : public BaseOutNetStream {
 private:
     uint32_t _rtmpStreamId;

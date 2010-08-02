@@ -24,6 +24,9 @@
 
 static map<int, SignalFnc> _signalHandlers;
 
+void InitNetworking(){
+}
+
 string changecase(string &value, bool lowerCase) {
     string result = "";
     //std::locale locE("english");

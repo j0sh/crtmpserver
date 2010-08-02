@@ -152,7 +152,6 @@ bool OutNetRTMP4TSStream::FeedAudioData(uint8_t *pData, uint32_t dataLength,
 
 bool OutNetRTMP4TSStream::FeedVideoData(uint8_t *pData, uint32_t dataLength,
 		double absoluteTimestamp) {
-
 	switch (NALU_TYPE(pData[0])) {
 		case NALU_TYPE_SPS:
 		{

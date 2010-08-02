@@ -24,7 +24,7 @@
 
 #include "streaming/basestream.h"
 
-class RTMPStream
+class DLLEXP RTMPStream
 : public BaseStream {
 private:
     uint32_t _rtmpStreamId;

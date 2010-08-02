@@ -17,6 +17,7 @@
  *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifdef HAS_PROTOCOL_RTP
 #ifndef _OUTBOUNDCONNECTIVITY_H
 #define	_OUTBOUNDCONNECTIVITY_H
 
@@ -24,7 +25,7 @@
 
 class BaseOutNetRTPUDPStream;
 
-class OutboundConnectivity
+class DLLEXP OutboundConnectivity
 : public BaseConnectivity {
 private:
 	int32_t _videoDataFd;
@@ -86,4 +87,5 @@ private:
 
 
 #endif	/* _OUTBOUNDCONNECTIVITY_H */
+#endif /* HAS_PROTOCOL_RTP */
 

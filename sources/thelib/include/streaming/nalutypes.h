@@ -65,7 +65,7 @@
 #define NALU_NRI(x) ((uint8_t)(((x)>>5)&0x03))
 #define NALU_TYPE(x) ((uint8_t)((x)&0x1f))
 
-string NALUToString(uint8_t naluType);
+DLLEXP string NALUToString(uint8_t naluType);
 
 #endif	/* _NALUTYPES_H */
 

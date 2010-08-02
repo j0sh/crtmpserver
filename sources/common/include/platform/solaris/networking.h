@@ -49,6 +49,10 @@ typedef struct _select_event {
 
 #define FD_READ_CHUNK 32768
 #define FD_WRITE_CHUNK FD_READ_CHUNK
+#define CLOSE_SOCKET(fd) close(fd)
+#define LASTSOCKETERROR errno
+#define SOCKERROR_CONNECT_IN_PROGRESS	EINPROGRESS
+#define SOCKERROR_SEND_IN_PROGRESS		EAGAIN
 
 #endif	/* _NETWORKING_H */
 #endif	/* SOLARIS */

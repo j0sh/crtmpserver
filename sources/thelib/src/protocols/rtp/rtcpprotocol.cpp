@@ -17,6 +17,7 @@
  *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifdef HAS_PROTOCOL_RTP
 #include "protocols/rtp/rtcpprotocol.h"
 #include "protocols/rtp/connectivity/inboundconnectivity.h"
 #include "buffering/iobuffer.h"
@@ -125,3 +126,4 @@ bool RTCPProtocol::SendRR(sockaddr_in &address) {
 void RTCPProtocol::SetInbboundConnectivity(InboundConnectivity *pConnectivity) {
 	_pConnectivity = pConnectivity;
 }
+#endif /* HAS_PROTOCOL_RTP */

@@ -57,11 +57,11 @@ TCPCarrier::TCPCarrier(int32_t fd, BaseProtocol *pProtocol)
     _nearPort = 0;
 	socklen_t sz=sizeof(int);
 	_sendBufferSize = 0;
-	if (getsockopt(fd, SOL_SOCKET, SO_SNDBUF, &_sendBufferSize, &sz) != 0) {
+	if (getsockopt(fd, SOL_SOCKET, SO_SNDBUF, (char *)&_sendBufferSize, &sz) != 0) {
 		ASSERT("Unable to determine the send buffer size");
 	}
 	_recvBufferSize = 0;
-	if (getsockopt(fd, SOL_SOCKET, SO_RCVBUF, &_recvBufferSize, &sz) != 0) {
+	if (getsockopt(fd, SOL_SOCKET, SO_RCVBUF, (char *)&_recvBufferSize, &sz) != 0) {
 		ASSERT("Unable to determine the recv buffer size");
 	}
 	GetEndpointsInfo();
@@ -69,7 +69,7 @@ TCPCarrier::TCPCarrier(int32_t fd, BaseProtocol *pProtocol)
 
 TCPCarrier::~TCPCarrier() {
     //FINEST("Delete tcp carrier %p", this);
-    close(_inboundFd);
+    CLOSE_SOCKET(_inboundFd);
     if (_pProtocol != NULL) {
         _pProtocol->SetIOHandler(NULL);
         delete _pProtocol;

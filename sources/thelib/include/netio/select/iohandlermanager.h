@@ -26,7 +26,7 @@
 
 class IOHandler;
 
-class IOHandlerManager {
+class DLLEXP IOHandlerManager {
     static map<uint32_t, IOHandler *> _activeIOHandlers;
     static map<uint32_t, IOHandler *> _deadIOHandlers;
     static fd_set _readFds;

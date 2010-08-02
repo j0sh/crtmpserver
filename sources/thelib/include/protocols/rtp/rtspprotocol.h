@@ -34,7 +34,7 @@ class InNetRTPStream;
 class OutboundConnectivity;
 class InboundConnectivity;
 
-class RTSPProtocol
+class DLLEXP RTSPProtocol
 : public BaseProtocol {
 protected:
 	uint32_t _state;

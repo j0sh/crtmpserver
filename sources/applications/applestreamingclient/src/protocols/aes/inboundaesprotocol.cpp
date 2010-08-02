@@ -112,8 +112,8 @@ bool InboundAESProtocol::SignalInputData(IOBuffer &buffer) {
 
 	//5. Decrypt
 	uint8_t *pTempData = GETIBPOINTER(_tempBuffer);
-	int32_t decryptedSize = 0;
-	int32_t decryptedFinalSize = 0;
+	int decryptedSize = 0;
+	int decryptedFinalSize = 0;
 	uint32_t padding = 0;
 
 	EVP_DecryptUpdate(&_decContex, pTempData, &decryptedSize, GETIBPOINTER(buffer), safeSize);

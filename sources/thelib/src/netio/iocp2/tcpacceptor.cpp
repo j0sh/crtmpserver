@@ -42,7 +42,7 @@ TCPAcceptor::TCPAcceptor(string ipAddress, uint16_t port, Variant parameters, ve
 }
 
 TCPAcceptor::~TCPAcceptor() {
-    closesocket(_inboundFd);
+    CLOSE_SOCKET(_inboundFd);
     FreeGenericOV(_pAcceptOV);
 }
 
@@ -75,7 +75,7 @@ bool TCPAcceptor::StartAccept(BaseClientApplication *pApplication) {
 
     //5. bind
     if (bind(_inboundFd, (sockaddr *) & _address, sizeof (sockaddr)) != 0) {
-        int error = errno;
+        int error = LASTSOCKETERROR;
         FATAL("Unable to bind on address: \"PLEASE_FIX_THIS\"; Error was: %s (%d)",
                 strerror(error),
                 error);
@@ -129,7 +129,7 @@ bool TCPAcceptor::OnConnectionAvailable(GenericOV *pGenericOV) {
     if (setsockopt(accepted, IPPROTO_TCP, TCP_NODELAY,
             (const char*) & one, sizeof (one)) != 0) {
         FATAL("Unable to set TCP_NODELAY");
-        closesocket(accepted);
+        CLOSE_SOCKET(accepted);
         return false;
 	}
 
@@ -138,7 +138,7 @@ bool TCPAcceptor::OnConnectionAvailable(GenericOV *pGenericOV) {
     BaseProtocol *pProtocol = ProtocolFactoryManager::CreateProtocolChain(_protocolChain, _parameters);
     if (pProtocol == NULL) {
         FATAL("Unable to create protocol chain");
-        closesocket(accepted);
+        CLOSE_SOCKET(accepted);
         return false;
     }
 

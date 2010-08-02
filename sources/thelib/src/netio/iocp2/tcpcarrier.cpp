@@ -37,7 +37,7 @@ TCPCarrier::TCPCarrier(int32_t fd, BaseProtocol *pProtocol)
 }
 
 TCPCarrier::~TCPCarrier() {
-    closesocket(_inboundFd);
+    CLOSE_SOCKET(_inboundFd);
     FreeGenericOV(_pReadOV);
     FreeGenericOV(_pWriteOV);
     if (_pProtocol != NULL) {

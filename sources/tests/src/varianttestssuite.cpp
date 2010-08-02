@@ -636,7 +636,9 @@ void VariantTestsSuite::test_OperatorCast() {
     TS_ASSERT(test.tm_sec == 0);
     TS_ASSERT(test.tm_isdst == 0);
 #ifndef SOLARIS
+#ifndef WIN32
     TS_ASSERT(test.tm_gmtoff == 0);
+#endif
 #endif
 
     test = (Timestamp) _timeVar;
@@ -650,7 +652,9 @@ void VariantTestsSuite::test_OperatorCast() {
     TS_ASSERT(test.tm_sec == 14);
     TS_ASSERT(test.tm_isdst == 0);
 #ifndef SOLARIS
+#ifndef WIN32
     TS_ASSERT(test.tm_gmtoff == 0);
+#endif
 #endif
 
     test = (Timestamp) _timestampVar1;
@@ -664,7 +668,9 @@ void VariantTestsSuite::test_OperatorCast() {
     TS_ASSERT(test.tm_sec == 0);
     TS_ASSERT(test.tm_isdst == 0);
 #ifndef SOLARIS
+#ifndef WIN32
     TS_ASSERT(test.tm_gmtoff == 0);
+#endif
 #endif
 
     test = (Timestamp) _timestampVar2;
@@ -678,7 +684,9 @@ void VariantTestsSuite::test_OperatorCast() {
     TS_ASSERT(test.tm_sec == 14);
     TS_ASSERT(test.tm_isdst == 0);
 #ifndef SOLARIS
+#ifndef WIN32
     TS_ASSERT(test.tm_gmtoff == 0);
+#endif
 #endif
 }
 

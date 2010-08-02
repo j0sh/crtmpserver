@@ -43,7 +43,7 @@ TCPAcceptor::TCPAcceptor(string ipAddress, uint16_t port, Variant parameters,
 }
 
 TCPAcceptor::~TCPAcceptor() {
-	close(_inboundFd);
+	CLOSE_SOCKET(_inboundFd);
 }
 
 bool TCPAcceptor::StartAccept(BaseClientApplication *pApplication) {
@@ -51,7 +51,8 @@ bool TCPAcceptor::StartAccept(BaseClientApplication *pApplication) {
 
 	_inboundFd = _outboundFd = (int) socket(PF_INET, SOCK_STREAM, 0);
 	if (_inboundFd < 0) {
-		FATAL("Unable to create socket: %s(%d)", strerror(errno), errno);
+		int err=LASTSOCKETERROR;
+		FATAL("Unable to create socket: %s(%d)", strerror(err), err);
 		return false;
 	}
 
@@ -74,7 +75,7 @@ bool TCPAcceptor::StartAccept(BaseClientApplication *pApplication) {
 	}
 
 	if (bind(_inboundFd, (sockaddr *) & _address, sizeof (sockaddr)) != 0) {
-		int error = errno;
+		int error = LASTSOCKETERROR;
 		FATAL("Unable to bind on address: tcp://%s:%d; Error was: %s (%d)",
 				inet_ntoa(((sockaddr_in *) & _address)->sin_addr),
 				ntohs(((sockaddr_in *) & _address)->sin_port),
@@ -112,7 +113,7 @@ bool TCPAcceptor::OnConnectionAvailable(select_event &event) {
 
 	//1. Accept the connection
 	fd = accept(_inboundFd, &address, &len);
-	error = errno;
+	error = LASTSOCKETERROR;
 	if (fd < 0) {
 		FATAL("Unable to accept client connection: %s (%d)", strerror(error), error);
 		return false;
@@ -138,12 +139,7 @@ bool TCPAcceptor::OnConnectionAvailable(select_event &event) {
 	}
 
 	//3. Put the socket in non-blocking mode
-	int flags;
-	if ((flags = fcntl(fd, F_GETFL, 0)) < 0) {
-		FATAL("Unable to get current flags");
-		return false;
-	}
-	if (fcntl(fd, F_SETFL, flags | O_NONBLOCK) < 0) {
+	if(!SetFdNonBlock(fd)){
 		FATAL("Unable to set O_NONBLOCK");
 		return false;
 	}
@@ -153,7 +149,7 @@ bool TCPAcceptor::OnConnectionAvailable(select_event &event) {
 			_protocolChain, _parameters);
 	if (pProtocol == NULL) {
 		FATAL("Unable to create protocol chain");
-		close(fd);
+		CLOSE_SOCKET(fd);
 		return false;
 	}
 

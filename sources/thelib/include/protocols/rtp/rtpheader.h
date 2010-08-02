@@ -18,7 +18,6 @@
 */
 
 
-
 #ifdef HAS_PROTOCOL_RTP
 #ifndef _RTPHEADER_H
 #define _RTPHEADER_H
@@ -33,7 +32,7 @@
 #define GET_RTP_PT(x)  ((uint8_t )((((x)._flags)>>16)&0x7f))
 #define GET_RTP_SEQ(x) ((uint16_t)(((x)._flags)&0xffff))
 
-typedef struct _RTPHeader {
+typedef struct DLLEXP _RTPHeader {
 	uint32_t _flags;
 	uint32_t _timestamp;
 	uint32_t _ssrc;

@@ -346,7 +346,7 @@ void InNetTSStream::InitializeVideoCapabilities(uint8_t *pData, uint32_t length)
 		{
 			_streamCapabilities.ClearVideo();
 			_streamCapabilities.videoCodecId = CODEC_VIDEO_AVC;
-			_streamCapabilities.videoCodecInfo.avc.SPSLength = length;
+			_streamCapabilities.videoCodecInfo.avc.SPSLength = (uint16_t)length;
 			_streamCapabilities.videoCodecInfo.avc.pSPS = new uint8_t[length];
 			memcpy(_streamCapabilities.videoCodecInfo.avc.pSPS, pData, length);
 			break;
@@ -357,7 +357,7 @@ void InNetTSStream::InitializeVideoCapabilities(uint8_t *pData, uint32_t length)
 				_streamCapabilities.ClearVideo();
 				break;
 			}
-			_streamCapabilities.videoCodecInfo.avc.PPSLength = length;
+			_streamCapabilities.videoCodecInfo.avc.PPSLength = (uint16_t)length;
 			_streamCapabilities.videoCodecInfo.avc.pPPS = new uint8_t[length];
 			memcpy(_streamCapabilities.videoCodecInfo.avc.pPPS, pData, length);
 			break;

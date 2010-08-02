@@ -26,7 +26,7 @@
 #include "protocols/rtp/rtpheader.h"
 #include "buffering/iobuffer.h"
 
-class InNetRTPStream
+class DLLEXP InNetRTPStream
 : public BaseInNetStream {
 private:
 	uint16_t _counter;

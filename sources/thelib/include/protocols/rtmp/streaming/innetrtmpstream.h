@@ -29,7 +29,7 @@
 class BaseRTMPProtocol;
 class OutFileRTMPFLVStream;
 
-class InNetRTMPStream
+class DLLEXP InNetRTMPStream
 : public BaseInNetStream {
 private:
     uint32_t _rtmpStreamId;

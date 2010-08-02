@@ -33,7 +33,7 @@ typedef enum _IOHandlerType {
     IOHT_STDIO
 } IOHandlerType;
 
-class IOHandler {
+class DLLEXP IOHandler {
 protected:
     static uint32_t _idGenerator;
     uint32_t _id;

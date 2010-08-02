@@ -17,11 +17,8 @@
  *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-#include "streaming/basestream.h"
-
-
 #ifdef HAS_PROTOCOL_RTP
+#include "streaming/basestream.h"
 #include "protocols/rtp/basertspappprotocolhandler.h"
 #include "protocols/rtp/rtspprotocol.h"
 #include "streaming/streamstypes.h"
@@ -490,7 +487,7 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPResponse200Describe(
 	Variant videoTrack = sdp.GetVideoTrack(30,
 			requestHeaders[RTSP_FIRST_LINE][RTSP_URL]);
 	Variant audioTrack;
-	//FINEST("videoTrack:\n%s", STR(videoTrack.ToString()));
+	FINEST("videoTrack:\n%s", STR(videoTrack.ToString()));
 
 
 	//5. Create the inbound connectivity

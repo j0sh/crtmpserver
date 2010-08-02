@@ -36,7 +36,29 @@ typedef struct _select_event {
 
 #define RESET_TIMER(timer,sec,usec)
 #define FD_READ_CHUNK 32768
-#define FD_WRITE_CHUNK FD_READ_CHUNK 
+#define FD_WRITE_CHUNK FD_READ_CHUNK
+#define CLOSE_SOCKET(fd) closesocket(fd)
+#define LASTSOCKETERROR WSAGetLastError()
+#define SOCKERROR_CONNECT_IN_PROGRESS	WSAEWOULDBLOCK
+#define SOCKERROR_SEND_IN_PROGRESS		WSAEWOULDBLOCK
+
+ struct iovec {
+	 void	*iov_base;	/* Base address. */
+	 size_t	iov_len;	/* Length. */
+ };
+
+struct msghdr {
+	void			*msg_name;		/* optional address */
+	int				msg_namelen;	/* size of address */
+	struct iovec	*msg_iov;		/* scatter/gather array */
+	int				msg_iovlen;		/* # elements in msg_iov */
+	void			*msg_control;	/* ancillary data, see below */
+	int				msg_controllen;	/* ancillary data buffer len */
+	int				msg_flags;		/* flags on received message */
+};
+
+#define FD_COPY(f, t)   (void)(*(t) = *(f))
+DLLEXP int sendmsg(int s, const struct msghdr *msg, int flags);
 
 #endif	/* _NETWORKING_H */
 #endif	/* WIN32 */

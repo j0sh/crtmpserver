@@ -29,7 +29,7 @@
 #include "netio/select/tcpcarrier.h"
 
 template<class T>
-class TCPConnector
+class DLLEXP TCPConnector
 : public IOHandler {
 private:
 	string _ip;
@@ -52,7 +52,7 @@ public:
 	virtual ~TCPConnector() {
 		//FINEST("Close socket: %d", _closeSocket);
 		if (_closeSocket) {
-			close(_inboundFd);
+			CLOSE_SOCKET(_inboundFd);
 			//FINEST("Socket closed!");
 		}
 	}
@@ -100,7 +100,7 @@ public:
 
 		int32_t fd = (int32_t) socket(PF_INET, SOCK_STREAM, 0);
 		if (fd < 0) {
-			int err = errno;
+			int err = LASTSOCKETERROR;
 			FATAL("Unable to create fd: %s(%d)", strerror(err), err);
 			return 0;
 		}
@@ -139,8 +139,8 @@ public:
 		}
 
 		if (connect(_inboundFd, (sockaddr *) & address, sizeof (address)) != 0) {
-			int err = errno;
-			if (err != EINPROGRESS) {
+			int err = LASTSOCKETERROR;
+			if (err != SOCKERROR_CONNECT_IN_PROGRESS) {
 				FATAL("Unable to connect to %s:%d (%d) (%s)", STR(_ip), _port, err,
 						strerror(err));
 				return false;

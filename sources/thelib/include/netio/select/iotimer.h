@@ -25,7 +25,7 @@
 
 class BaseProtocol;
 
-class IOTimer
+class DLLEXP IOTimer
 : public IOHandler {
 private:
     static int32_t _idGenerator;

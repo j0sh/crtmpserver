@@ -534,7 +534,7 @@ bool MP4Document::BuildFrames(bool audio) {
 
 			if (currentChunck == nextChunck) {
 				//not changing the chunk
-				localOffset += sampleSize[i];
+				localOffset += (uint32_t)sampleSize[i];
 			} else {
 				//changing the chunck
 				localOffset = 0;
@@ -542,7 +542,7 @@ bool MP4Document::BuildFrames(bool audio) {
 
 		} else {
 			// we are near end, so we are on the same chunck
-			localOffset += sampleSize[i];
+			localOffset += (uint32_t)sampleSize[i];
 		}
 
 		frame.length = sampleSize[i];

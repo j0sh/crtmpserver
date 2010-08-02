@@ -17,7 +17,7 @@
 *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
+#ifdef HAS_PROTOCOL_RTP
 #include "protocols/rtp/sdp.h"
 #include "streaming/codectypes.h"
 #include "utils/crypto.h"
@@ -553,3 +553,4 @@ Variant &SDP::GetTrack(uint32_t index, string type) {
 	}
 	return _dummyTrack;
 }
+#endif /* HAS_PROTOCOL_RTP */

@@ -26,7 +26,7 @@
 
 class BaseProtocol;
 
-class TCPCarrier
+class DLLEXP TCPCarrier
 : public IOHandler {
 private:
 	BaseProtocol *_pProtocol;

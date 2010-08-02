@@ -199,6 +199,7 @@ string Playlist::GetItemUri(uint32_t index) {
 	if (result[0] != '/')
 		return _partialUri + result;
 	NYIA;
+	return "";
 }
 
 string Playlist::GetItemKeyUri(uint32_t index) {

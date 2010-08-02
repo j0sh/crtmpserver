@@ -17,7 +17,7 @@
  *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
+#ifdef HAS_PROTOCOL_RTP
 #ifndef _INBOUNDRTPPROTOCOL_H
 #define	_INBOUNDRTPPROTOCOL_H
 
@@ -28,7 +28,7 @@
 class InNetRTPStream;
 class InboundConnectivity;
 
-class InboundRTPProtocol
+class DLLEXP InboundRTPProtocol
 : public BaseProtocol {
 private:
 	RTPHeader _rtpHeader;
@@ -57,4 +57,4 @@ public:
 
 
 #endif	/* _INBOUNDRTPPROTOCOL_H */
-
+#endif /* HAS_PROTOCOL_RTP */

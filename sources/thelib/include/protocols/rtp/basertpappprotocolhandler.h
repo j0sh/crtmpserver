@@ -24,7 +24,7 @@
 
 #include "application/baseappprotocolhandler.h"
 
-class BaseRTPAppProtocolHandler
+class DLLEXP BaseRTPAppProtocolHandler
 : public BaseAppProtocolHandler {
 public:
 	BaseRTPAppProtocolHandler(Variant &configuration);

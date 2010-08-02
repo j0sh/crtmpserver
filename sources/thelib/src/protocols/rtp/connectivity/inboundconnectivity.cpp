@@ -17,6 +17,7 @@
  *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifdef HAS_PROTOCOL_RTP
 #include "protocols/rtp/connectivity/inboundconnectivity.h"
 #include "protocols/baseprotocol.h"
 #include "protocols/protocolfactorymanager.h"
@@ -212,7 +213,7 @@ bool InboundConnectivity::SendRTP(sockaddr_in &address, uint32_t rtpId,
 
 	//FINEST("%s:%d length: %d", inet_ntoa(address.sin_addr), ntohs(address.sin_port), length);
 	return sendto(pRTCP->GetIOHandler()->GetOutboundFd(),
-			pBuffer, length, 0, (sockaddr *) & address, sizeof (address)) == (int32_t) length;
+			(char *)pBuffer, length, 0, (sockaddr *) & address, sizeof (address)) == (int32_t) length;
 }
 
 bool InboundConnectivity::InitializeUDP(Variant &videoTrack, Variant &audioTrack) {
@@ -365,3 +366,4 @@ bool InboundConnectivity::CreateCarriers(InboundRTPProtocol *pRTP, RTCPProtocol 
 
 	return false;
 }
+#endif /* HAS_PROTOCOL_RTP */

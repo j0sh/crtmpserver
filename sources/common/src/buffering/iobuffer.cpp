@@ -38,6 +38,7 @@ IOBuffer::IOBuffer() {
     _published = 0;
     _consumed = 0;
     _minChunkSize = 4096;
+	_dummy=sizeof(sockaddr_in);
     SANITY_INPUT_BUFFER;
 }
 
@@ -295,11 +296,10 @@ bool IOBuffer::WriteToTCPFd(int32_t fd, uint32_t size) {
     int32_t sent = send(fd, (char *) (_pBuffer + _consumed),
             _published - _consumed, MSG_NOSIGNAL);
     //size > _published - _consumed ? _published - _consumed : size,
-    int err = errno;
+    int err = LASTSOCKETERROR;
 
     if (sent < 0) {
-        DECLARE_EXTERROR
-        if (!PUTTOFD_SENDAGAIN) {
+		if (err!=SOCKERROR_SEND_IN_PROGRESS) {
             FATAL("Unable to send %d bytes of data data. Size advertised by network layer was %d [%d: %s]",
                     _published - _consumed, size, err, strerror(err));
             FATAL("Permanent error!");
@@ -321,16 +321,13 @@ bool IOBuffer::WriteToStdio(int32_t fd, uint32_t size) {
     int32_t sent = WRITE_FD(fd, (char *) (_pBuffer + _consumed),
             _published - _consumed);
     //size > _published - _consumed ? _published - _consumed : size,
-    int err = errno;
+	int err = LASTSOCKETERROR;
 
     if (sent < 0) {
-        DECLARE_EXTERROR
-        if (!PUTTOFD_SENDAGAIN) {
-            FATAL("Unable to send %d bytes of data data. Size advertised by network layer was %d [%d: %s]",
-                    _published - _consumed, size, err, strerror(err));
-            FATAL("Permanent error!");
-            result = false;
-        }
+		FATAL("Unable to send %d bytes of data data. Size advertised by network layer was %d [%d: %s]",
+			_published - _consumed, size, err, strerror(err));
+		FATAL("Permanent error!");
+		result = false;
     } else {
         //FINEST("Sent: %d", sent);
         _consumed += sent;

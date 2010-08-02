@@ -18,7 +18,7 @@
  */
 
 
-
+#ifdef HAS_PROTOCOL_RTP
 #include "protocols/rtp/inboundrtpprotocol.h"
 #include "protocols/rtp/rtspprotocol.h"
 #include "protocols/rtp/streaming/innetrtpstream.h"
@@ -153,3 +153,4 @@ void InboundRTPProtocol::SetStream(InNetRTPStream *pInStream) {
 void InboundRTPProtocol::SetInbboundConnectivity(InboundConnectivity *pConnectivity) {
 	_pConnectivity = pConnectivity;
 }
+#endif /* HAS_PROTOCOL_RTP */

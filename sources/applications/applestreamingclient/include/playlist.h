@@ -24,7 +24,7 @@
 #include "utils/core.h"
 #include "buffering/iobuffer.h"
 
-struct Playlist {
+class Playlist {
 private:
 	string _playlistUri;
 	string _partialUri;

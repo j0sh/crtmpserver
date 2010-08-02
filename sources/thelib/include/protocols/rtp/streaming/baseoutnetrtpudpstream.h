@@ -27,7 +27,7 @@
 
 class OutboundConnectivity;
 
-class BaseOutNetRTPUDPStream
+class DLLEXP BaseOutNetRTPUDPStream
 : public BaseOutNetStream {
 protected:
 	uint32_t _ssrc;

@@ -24,7 +24,7 @@
 
 #include "protocols/rtmp/streaming/baseoutnetrtmpstream.h"
 
-class OutNetRTMP4TSStream
+class DLLEXP OutNetRTMP4TSStream
 : public BaseOutNetRTMPStream {
 private:
 	bool _audioCodecSent;

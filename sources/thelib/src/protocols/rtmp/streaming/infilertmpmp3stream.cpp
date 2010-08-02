@@ -42,7 +42,7 @@ bool InFileRTMPMP3Stream::BuildFrame(FileClass *pFile, MediaFrame &mediaFrame,
     buffer.ReadFromRepeat(0x2f, 1);
 
     //3. Read the data
-    if (!buffer.ReadFromFs(*pFile, mediaFrame.length)) {
+    if (!buffer.ReadFromFs(*pFile,(uint32_t)mediaFrame.length)) {
         FATAL("Unable to read %llu bytes from offset %llu", mediaFrame.length, mediaFrame.start);
         return false;
     }

@@ -24,7 +24,7 @@
 
 #include "protocols/rtmp/streaming/infilertmpstream.h"
 
-class InFileRTMPMP4Stream
+class DLLEXP InFileRTMPMP4Stream
 : public InFileRTMPStream {
 private:
     uint8_t _videoCodecHeaderInit[5];

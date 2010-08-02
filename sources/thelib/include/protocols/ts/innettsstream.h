@@ -30,7 +30,7 @@
 
 struct _PIDDescriptor;
 
-class InNetTSStream
+class DLLEXP InNetTSStream
 : public BaseInNetStream {
 private:
 	//audio section

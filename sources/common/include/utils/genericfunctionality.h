@@ -115,6 +115,7 @@ DLLEXP void InstallConfRereadSignal(SignalFnc pConfRereadSignalFnc);
 DLLEXP bool MoveFile(string src, string dst);
 DLLEXP bool DeleteFile(string path);
 DLLEXP double GetFileModificationDate(string path);
+DLLEXP void InitNetworking();
 
 
 #endif	/* _GENERICFUNCTIONALITY_H */

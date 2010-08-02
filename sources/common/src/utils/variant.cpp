@@ -1373,8 +1373,13 @@ bool Variant::DeserializeFromBinFile(string path, Variant &variant) {
 		return false;
 	}
 
+	if(file.Size()>=0x100000000LL){
+		FATAL("File too big");
+		return false;
+	}
+
 	//2. Allocate memory
-	uint8_t *pBuffer = new uint8_t[file.Size()];
+	uint8_t *pBuffer = new uint8_t[(uint32_t)file.Size()];
 
 	//3. Read the content
 	if (!file.ReadBuffer((uint8_t *) pBuffer, file.Size())) {
@@ -1383,7 +1388,7 @@ bool Variant::DeserializeFromBinFile(string path, Variant &variant) {
 	}
 
 	//4. Prepare the string
-	string raw = string((char *) pBuffer, file.Size());
+	string raw = string((char *) pBuffer, (uint32_t)file.Size());
 
 	//8. Dispose the buffer
 	delete[] pBuffer;
@@ -1435,7 +1440,7 @@ bool Variant::DeserializeFromXmlFile(string path, Variant &variant) {
 	}
 
 	//3. Allocate memory
-	uint8_t *pBuffer = new uint8_t[file.Size()];
+	uint8_t *pBuffer = new uint8_t[(uint32_t)file.Size()];
 
 	//4. Read the content
 	if (!file.ReadBuffer((uint8_t *) pBuffer, file.Size())) {

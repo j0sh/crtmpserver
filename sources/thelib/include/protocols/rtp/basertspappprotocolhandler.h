@@ -29,7 +29,7 @@ class RTSPProtocol;
 class BaseInNetStream;
 class OutboundConnectivity;
 
-class BaseRTSPAppProtocolHandler
+class DLLEXP BaseRTSPAppProtocolHandler
 : public BaseAppProtocolHandler {
 public:
 	BaseRTSPAppProtocolHandler(Variant &configuration);

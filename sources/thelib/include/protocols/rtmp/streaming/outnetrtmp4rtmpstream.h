@@ -24,7 +24,7 @@
 
 #include "protocols/rtmp/streaming/baseoutnetrtmpstream.h"
 
-class OutNetRTMP4RTMPStream
+class DLLEXP OutNetRTMP4RTMPStream
 : public BaseOutNetRTMPStream {
 public:
     OutNetRTMP4RTMPStream(BaseProtocol *pProtocol, StreamsManager *pStreamsManager,

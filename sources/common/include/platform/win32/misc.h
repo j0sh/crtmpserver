@@ -49,6 +49,7 @@
 #define DEBUG_COLOR 7
 #define FINE_COLOR 8
 #define FINEST_COLOR 8
+#define NORMAL_COLOR 8
 #define SET_CONSOLE_TEXT_COLOR(color) SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color)
 
 #define MAXHOSTNAMELEN 256
@@ -62,10 +63,6 @@
 #define FREE_LIBRARY(libHandler) FreeLibrary((libHandler))
 #define READ_FD _read
 #define WRITE_FD _write
-
-
-#define DECLARE_EXTERROR int lastError = WSAGetLastError();
-#define PUTTOFD_SENDAGAIN (lastError == ERROR_IO_PENDING || lastError == WSAEWOULDBLOCK || err == EAGAIN)
 
 #define gmtime_r(_p_time_t, _p_struct_tm) *(_p_struct_tm) = *gmtime(_p_time_t);
 
@@ -83,10 +80,22 @@ DLLEXP time_t timegm(struct tm *tm);
 DLLEXP int strcasecmp(const char *s1, const char *s2);
 DLLEXP int strncasecmp(const char *s1, const char *s2, size_t n);
 DLLEXP char *strptime (const char *buf, const char *format, struct tm *timeptr);
+DLLEXP int gettimeofday (struct timeval *tv, void* tz);
 
+#define CLOCKS_PER_SECOND 1000000L
+#define GETCLOCKS(result) \
+do { \
+    struct timeval ___timer___; \
+    gettimeofday(&___timer___,NULL); \
+    result=(double)___timer___.tv_sec*(double)CLOCKS_PER_SECOND+(double) ___timer___.tv_usec; \
+}while(0);
 
-#define GETCLOCKS(result) result=GetTickCount()
-#define CLOCKS_PER_SECOND 1000
+#define GETNTP(result) \
+do { \
+	struct timeval tv; \
+	gettimeofday(&tv,NULL); \
+	result=(((uint64_t)tv.tv_sec + 2208988800U)<<32)|((((uint32_t)tv.tv_usec) << 12) + (((uint32_t)tv.tv_usec) << 8) - ((((uint32_t)tv.tv_usec) * 1825) >> 5)); \
+}while (0);
 
 
 #endif	/* _MISC_H */

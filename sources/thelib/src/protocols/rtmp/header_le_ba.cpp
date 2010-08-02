@@ -230,12 +230,12 @@ bool Header::Write(Channel &channel, IOBuffer &buffer) {
 bool Header::Write(IOBuffer &buffer) {
     //FINEST("header: %s", STR(*this));
     if (ci < 64) {
-        buffer.ReadFromByte((ht << 6) | ci);
+        buffer.ReadFromByte((ht << 6) | ((uint8_t)ci));
     } else if (ci < 319) {
         buffer.ReadFromByte(ht << 6);
-        buffer.ReadFromByte(ci - 64);
+        buffer.ReadFromByte((uint8_t)(ci - 64));
     } else if (ci < 65599) {
-        uint16_t temp = htons(ci - 64);
+        uint16_t temp = htons((uint16_t)(ci - 64));
         buffer.ReadFromByte((ht << 6) | 0x01);
         buffer.ReadFromBuffer((uint8_t *) & temp, 2);
     } else {

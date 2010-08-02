@@ -29,7 +29,7 @@
 class BaseRTMPProtocol;
 class StreamsManager;
 
-class InFileRTMPStream
+class DLLEXP InFileRTMPStream
 : public BaseInFileStream {
 protected:
     Variant _completeMetadata;

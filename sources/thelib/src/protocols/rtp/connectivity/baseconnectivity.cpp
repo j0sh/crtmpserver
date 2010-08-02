@@ -17,6 +17,7 @@
  *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifdef HAS_PROTOCOL_RTP
 #include "protocols/rtp/connectivity/baseconnectivity.h"
 
 BaseConnectivity::BaseConnectivity() {
@@ -25,3 +26,4 @@ BaseConnectivity::BaseConnectivity() {
 
 BaseConnectivity::~BaseConnectivity() {
 }
+#endif /* HAS_PROTOCOL_RTP */

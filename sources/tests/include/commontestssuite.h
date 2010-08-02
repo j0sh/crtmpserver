@@ -49,6 +49,7 @@ private:
     void test_GetHostByName();
     void test_md5();
     void test_b64();
+	void test_unb64();
     void test_ParseURL();
 };
 

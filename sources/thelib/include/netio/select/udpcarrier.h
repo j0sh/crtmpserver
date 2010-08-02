@@ -26,7 +26,7 @@
 
 class BaseProtocol;
 
-class UDPCarrier
+class DLLEXP UDPCarrier
 : public IOHandler {
 private:
 	BaseProtocol *_pProtocol;

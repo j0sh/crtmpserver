@@ -166,11 +166,11 @@ bool BaseAtom::SkipBytes(uint64_t count) {
 bool BaseAtom::ReadString(string &val, uint64_t size) {
 	if (!CheckBounds(size))
 		return false;
-	char *pTemp = new char[size + 1];
-	memset(pTemp, 0, size + 1);
+	char *pTemp = new char[(uint32_t)size + 1];
+	memset(pTemp, 0, (uint32_t)size + 1);
 	bool result = _pDoc->GetMediaFile().ReadBuffer((uint8_t *) pTemp, size);
 	if (result)
-		val = string(pTemp, size);
+		val = string(pTemp, (uint32_t)size);
 	else
 		val = "";
 	delete[] pTemp;

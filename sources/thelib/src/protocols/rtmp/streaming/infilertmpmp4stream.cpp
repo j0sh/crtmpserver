@@ -97,7 +97,7 @@ bool InFileRTMPMP4Stream::BuildFrame(FileClass *pFile, MediaFrame &mediaFrame,
     }
 
     //3. Read the data
-    if (!buffer.ReadFromFs(*pFile, mediaFrame.length)) {
+    if (!buffer.ReadFromFs(*pFile, (uint32_t)mediaFrame.length)) {
         FATAL("Unable to read %llu bytes from offset %llu", mediaFrame.length, mediaFrame.start);
         return false;
     }

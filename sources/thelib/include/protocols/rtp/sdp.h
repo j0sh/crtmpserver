@@ -17,7 +17,7 @@
 *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
+#ifdef HAS_PROTOCOL_RTP
 #ifndef _SDP_H
 #define	_SDP_H
 
@@ -47,7 +47,7 @@
 #define SDP_VIDEO_CODEC_H264_SPS(x)	((x)["h264SPS"])
 #define SDP_VIDEO_CODEC_H264_PPS(x)	((x)["h264PPS"])
 
-class SDP
+class DLLEXP SDP
 : public Variant {
 private:
 	Variant _dummyTrack;
@@ -82,4 +82,6 @@ private:
 
 
 #endif	/* _SDP_H */
+#endif /* HAS_PROTOCOL_RTP */
+
 

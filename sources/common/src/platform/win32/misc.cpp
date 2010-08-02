@@ -20,10 +20,20 @@
 
 #ifdef WIN32
 
-#include "platform/win32/misc.h"
 #include "utils/core.h"
+#include "platform/win32/misc.h"
+#include <sys/stat.h>
 
 static map<uint32_t, SignalFnc> _signalHandlers;
+
+int gettimeofday (struct timeval *tv, void* tz){
+	FILETIME ft;
+	GetSystemTimeAsFileTime (&ft);
+	uint64_t value=((uint64_t)ft.dwHighDateTime<<32)|ft.dwLowDateTime;
+	tv->tv_usec = (long) ((value / 10LL) % 1000000LL);
+	tv->tv_sec = (long) ((value - 116444736000000000LL) / 10000000LL);
+	return (0);
+}
 
 string changecase(string &value, bool lowerCase) {
     int32_t len = value.length();
@@ -183,6 +193,21 @@ void InstallConfRereadSignal(SignalFnc pConfRereadSignalFnc) {
 void InstallQuitSignal(SignalFnc pQuitSignalFnc) {
     _signalHandlers[CTRL_C_EVENT]=pQuitSignalFnc;
     SetConsoleCtrlHandler((PHANDLER_ROUTINE) HandlerRoutine, TRUE);
+}
+
+double GetFileModificationDate(string path){
+	struct _stat64 s;
+    if (_stat64(STR(path), &s) != 0) {
+        FATAL("Unable to stat file %s", STR(path));
+        return 0;
+    }
+	return (double) s.st_mtime;
+}
+
+void InitNetworking(){
+	WSADATA wsa={0};
+	WSAStartup(0,&wsa);
+	WSAStartup(wsa.wHighVersion,&wsa);
 }
 
 #endif /* WIN32 */

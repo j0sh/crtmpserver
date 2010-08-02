@@ -17,13 +17,13 @@
  *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
+#ifdef HAS_PROTOCOL_RTP
 #ifndef _OUTNETRTPUDPH264STREAM_H
 #define	_OUTNETRTPUDPH264STREAM_H
 
 #include "protocols/rtp/streaming/baseoutnetrtpudpstream.h"
 
-class OutNetRTPUDPH264Stream
+class DLLEXP OutNetRTPUDPH264Stream
 : public BaseOutNetRTPUDPStream {
 private:
 	IOBuffer _videoBuffer;
@@ -66,4 +66,5 @@ private:
 
 
 #endif	/* _OUTNETRTPUDPH264STREAM_H */
+#endif /* HAS_PROTOCOL_RTP */
 

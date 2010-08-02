@@ -93,8 +93,6 @@ do { \
 #define MAP_NOEXTEND 0
 
 #define DECLARE_EXTERROR
-#define PUTTOFD_SENDAGAIN (errno == EAGAIN)
-#define PUTTOFD_SENDSIZE(s, left) (left)
 #define READ_FD read
 #define WRITE_FD write
 

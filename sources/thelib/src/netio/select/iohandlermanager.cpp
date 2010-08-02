@@ -176,7 +176,7 @@ bool IOHandlerManager::Pulse() {
     RESET_TIMER(_timeout, 1, 0);
     int32_t count = select(MAP_KEY(--_fdState.end()) + 1, &_readFdsCopy, &_writeFdsCopy, NULL, &_timeout);
     if (count < 0) {
-        FATAL("Unable to do select: %d", errno);
+        FATAL("Unable to do select: %d", LASTSOCKETERROR);
         return false;
     }
 

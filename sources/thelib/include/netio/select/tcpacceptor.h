@@ -27,7 +27,7 @@
 
 class BaseClientApplication;
 
-class TCPAcceptor
+class DLLEXP TCPAcceptor
 : public IOHandler {
 private:
     sockaddr_in _address;

@@ -48,6 +48,7 @@ void CommonTestsSuite::Run() {
 	test_GetHostByName();
 	test_md5();
 	test_b64();
+	test_unb64();
 	test_ParseURL();
 }
 
@@ -694,6 +695,13 @@ void CommonTestsSuite::test_b64() {
 	TS_ASSERT(b64("this is a test") == "dGhpcyBpcyBhIHRlc3Q=");
 	TS_ASSERT(b64("this is a tes") == "dGhpcyBpcyBhIHRlcw==");
 	TS_ASSERT(b64("") == "");
+}
+
+void CommonTestsSuite::test_unb64() {
+	TS_ASSERT(unb64("dGhpcyBpcyBhIHRlc3Qx") == "this is a test1");
+	TS_ASSERT(unb64("dGhpcyBpcyBhIHRlc3Q=") == "this is a test");
+	TS_ASSERT(unb64("dGhpcyBpcyBhIHRlcw==") == "this is a tes");
+	TS_ASSERT(unb64("") == "");
 }
 
 void CommonTestsSuite::test_ParseURL() {

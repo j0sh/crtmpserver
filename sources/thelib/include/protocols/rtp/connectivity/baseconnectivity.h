@@ -17,12 +17,13 @@
  *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifdef HAS_PROTOCOL_RTP
 #ifndef _BASECONNECTIVITY_H
 #define	_BASECONNECTIVITY_H
 
 #include "utils/core.h"
 
-class BaseConnectivity {
+class DLLEXP BaseConnectivity {
 public:
 	BaseConnectivity();
 	virtual ~BaseConnectivity();
@@ -30,4 +31,5 @@ public:
 
 
 #endif	/* _BASECONNECTIVITY_H */
+#endif /* HAS_PROTOCOL_RTP */
 

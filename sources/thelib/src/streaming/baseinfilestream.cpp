@@ -181,7 +181,7 @@ bool BaseInFileStream::Initialize(int32_t clientSideBufferLength) {
 	}
 
 	//3. Open the media file
-	uint32_t windowSize = maxFrameSize * 16;
+	uint32_t windowSize = (uint32_t) maxFrameSize * 16;
 	windowSize = windowSize < 65536 ? 65536 : windowSize;
 	windowSize = (windowSize > (1024 * 1024)) ? (windowSize / 2) : windowSize;
 	_pFile = GetFile(GetName(), windowSize);

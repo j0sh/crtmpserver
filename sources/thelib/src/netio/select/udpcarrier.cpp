@@ -37,7 +37,7 @@ UDPCarrier::UDPCarrier(int32_t fd, BaseProtocol *pProtocol)
 }
 
 UDPCarrier::~UDPCarrier() {
-	close(_inboundFd);
+	CLOSE_SOCKET(_inboundFd);
 	if (_pProtocol != NULL) {
 		_pProtocol->SetIOHandler(NULL);
 		delete _pProtocol;
@@ -122,14 +122,15 @@ UDPCarrier* UDPCarrier::Create(string bindIp, uint16_t bindPort) {
 	//1. Create the socket
 	int sock = socket(AF_INET, SOCK_DGRAM, 0);
 	if (sock < 0) {
-		FATAL("Unable to create socket: %s(%d)", strerror(errno), errno);
+		int err=LASTSOCKETERROR;
+		FATAL("Unable to create socket: %s(%d)", strerror(err), err);
 		return NULL;
 	}
 
 	//2. No SIGPIPE
 	if (!SetFdNoSIGPIPE(sock)) {
 		FATAL("Unable to set SO_NOSIGPIPE");
-		close(sock);
+		CLOSE_SOCKET(sock);
 		return NULL;
 	}
 
@@ -141,14 +142,14 @@ UDPCarrier* UDPCarrier::Create(string bindIp, uint16_t bindPort) {
 		bindAddress.sin_port = htons(bindPort); //----MARKED-SHORT----
 		if (bindAddress.sin_addr.s_addr == INADDR_NONE) {
 			FATAL("Unable to bind on address %s:%d", STR(bindIp), bindPort);
-			close(sock);
+			CLOSE_SOCKET(sock);
 			return NULL;
 		}
 		if (bind(sock, (sockaddr *) & bindAddress, sizeof (sockaddr)) != 0) {
-			int error = errno;
+			int error = LASTSOCKETERROR;
 			FATAL("Unable to bind on address: udp://%s:%d; Error was: %s (%d)",
 					STR(bindIp), bindPort, strerror(error), error);
-			close(sock);
+			CLOSE_SOCKET(sock);
 			return NULL;
 		}
 	}

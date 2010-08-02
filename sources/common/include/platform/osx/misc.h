@@ -96,8 +96,6 @@ do { \
 //9. Define the time scale. For mac os x is microseconds
 
 #define DECLARE_EXTERROR
-#define PUTTOFD_SENDAGAIN (errno == EAGAIN)
-#define PUTTOFD_SENDSIZE(s, left) (left)
 #define READ_FD read
 #define WRITE_FD write
 

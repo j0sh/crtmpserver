@@ -271,19 +271,24 @@ bool File::ReadLine(uint8_t *pBuffer, uint64_t &maxSize) {
 
 bool File::ReadAll(string &str) {
     str = "";
-    if (Size() == 0)
+	if (Size() >= 0xffffffff){
+        FATAL("ReadAll can only be done on files smaller than 2^32 bytes (4GB)");
+        return false;
+	}
+    if (Size() == 0){
         return true;
+	}
     if (!SeekBegin()) {
         FATAL("Unable to seek to begin");
         return false;
     }
-    uint8_t *pBuffer = new uint8_t[Size()];
+    uint8_t *pBuffer = new uint8_t[(uint32_t)Size()];
     if (!ReadBuffer(pBuffer, Size())) {
         FATAL("Unable to read data");
         delete[] pBuffer;
         return false;
     }
-    str = string((char *) pBuffer, Size());
+    str = string((char *) pBuffer, (uint32_t)Size());
     delete[] pBuffer;
     return true;
 }
