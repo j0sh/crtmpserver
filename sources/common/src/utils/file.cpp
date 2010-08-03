@@ -324,8 +324,9 @@ bool File::PeekSI32(int32_t *pValue) {
 }
 
 bool File::PeekI64(int64_t *pValue, bool networkOrder) {
-    NYIA;
-    return false;
+	if (!ReadI64(pValue,networkOrder))
+        return false;
+    return SeekBehind(8);
 }
 
 bool File::PeekUI8(uint8_t *pValue) {
