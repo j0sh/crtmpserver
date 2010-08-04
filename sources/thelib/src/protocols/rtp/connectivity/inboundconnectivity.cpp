@@ -53,7 +53,7 @@ void InboundConnectivity::EnqueueForDelete() {
 }
 
 bool InboundConnectivity::Initialize(Variant &videoTrack, Variant &audioTrack,
-		bool forceTcp) {
+		string streamName, bool forceTcp) {
 	_forceTcp = forceTcp;
 
 	//1. get the application
@@ -86,8 +86,10 @@ bool InboundConnectivity::Initialize(Variant &videoTrack, Variant &audioTrack,
 	_pRTCPAudio->SetApplication(pApplication);
 
 	//5. Create the in stream
+	if (streamName == "")
+		streamName = format("rtsp_%d", _pRTSP->GetId());
 	_pInStream = new InNetRTPStream(_pRTSP, pApplication->GetStreamsManager(),
-			format("rtsp_%d", _pRTSP->GetId()),
+			streamName,
 			unb64((string) SDP_VIDEO_CODEC_H264_SPS(videoTrack)),
 			unb64((string) SDP_VIDEO_CODEC_H264_PPS(videoTrack)));
 
@@ -213,7 +215,7 @@ bool InboundConnectivity::SendRTP(sockaddr_in &address, uint32_t rtpId,
 
 	//FINEST("%s:%d length: %d", inet_ntoa(address.sin_addr), ntohs(address.sin_port), length);
 	return sendto(pRTCP->GetIOHandler()->GetOutboundFd(),
-			(char *)pBuffer, length, 0, (sockaddr *) & address, sizeof (address)) == (int32_t) length;
+			(char *) pBuffer, length, 0, (sockaddr *) & address, sizeof (address)) == (int32_t) length;
 }
 
 bool InboundConnectivity::InitializeUDP(Variant &videoTrack, Variant &audioTrack) {

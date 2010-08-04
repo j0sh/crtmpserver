@@ -90,7 +90,7 @@ public:
 	void CloseOutboundConnectivity();
 
 	InboundConnectivity *GetInboundConnectivity(Variant &videoTrack,
-			Variant &audioTrack);
+			Variant &audioTrack, string sdpStreamName);
 	void CloseInboundConnectivity();
 
 	string GetTransportHeaderLine(bool isAudio);

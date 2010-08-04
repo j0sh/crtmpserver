@@ -52,7 +52,8 @@ public:
 	virtual ~InboundConnectivity();
 	void EnqueueForDelete();
 
-	bool Initialize(Variant &videoTrack, Variant &audioTrack, bool forceTcp);
+	bool Initialize(Variant &videoTrack, Variant &audioTrack,
+			string streamName, bool forceTcp);
 
 	string GetTransportHeaderLine(bool isAudio);
 

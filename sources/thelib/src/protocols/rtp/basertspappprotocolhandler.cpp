@@ -487,11 +487,12 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPResponse200Describe(
 	Variant videoTrack = sdp.GetVideoTrack(30,
 			requestHeaders[RTSP_FIRST_LINE][RTSP_URL]);
 	Variant audioTrack;
-	FINEST("videoTrack:\n%s", STR(videoTrack.ToString()));
+	//FINEST("videoTrack:\n%s", STR(videoTrack.ToString()));
 
 
 	//5. Create the inbound connectivity
-	if (pFrom->GetInboundConnectivity(videoTrack, audioTrack) == NULL) {
+	if (pFrom->GetInboundConnectivity(videoTrack, audioTrack,
+			sdp.GetStreamName()) == NULL) {
 		FATAL("Unable to get the inbound connectivity");
 		return false;
 	}

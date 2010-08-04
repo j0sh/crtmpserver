@@ -57,6 +57,7 @@ public:
 
 	static bool ParseSDP(SDP &sdp, string &raw);
 	Variant GetVideoTrack(uint32_t index, string uri);
+	string GetStreamName();
 private:
 	static bool ParseSection(Variant &result, vector<string> &lines,
 			uint32_t start, uint32_t length);

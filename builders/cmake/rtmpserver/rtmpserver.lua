@@ -148,11 +148,8 @@ configuration=
 			rtspStreams = {
 				--[[{
 					url="rtsp://82.177.67.61/axis-media/media.amp",
+					streamName="stream1",
 					forceTcp=false
-				},
-				{
-					url="rtsp://217.153.33.206/axis-media/media.amp",
-					forceTcp=true
 				},
 				{
 					url="rtsp://media-us-2.soundreach.net/slcn_lifestyle.sdp",
