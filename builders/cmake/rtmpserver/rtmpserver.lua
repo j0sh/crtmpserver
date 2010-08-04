@@ -132,7 +132,8 @@ configuration=
 				{
 					ip="0.0.0.0",
 					port=6666,
-					protocol="inboundLiveFlv"
+					protocol="inboundLiveFlv",
+					waitForMetadata=true,
 				},
 				{
 					ip="0.0.0.0",

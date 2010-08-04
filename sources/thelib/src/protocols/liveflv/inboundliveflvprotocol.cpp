@@ -1,21 +1,21 @@
 /* 
-*  Copyright (c) 2010,
-*  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
-*  
-*  This file is part of crtmpserver.
-*  crtmpserver is free software: you can redistribute it and/or modify
-*  it under the terms of the GNU General Public License as published by
-*  the Free Software Foundation, either version 3 of the License, or
-*  (at your option) any later version.
-*  
-*  crtmpserver is distributed in the hope that it will be useful,
-*  but WITHOUT ANY WARRANTY; without even the implied warranty of
-*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*  GNU General Public License for more details.
-*  
-*  You should have received a copy of the GNU General Public License
-*  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ *  Copyright (c) 2010,
+ *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
+ *
+ *  This file is part of crtmpserver.
+ *  crtmpserver is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  crtmpserver is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #ifdef HAS_PROTOCOL_LIVEFLV
 
@@ -31,6 +31,7 @@ InboundLiveFLVProtocol::InboundLiveFLVProtocol()
 : BaseProtocol(PT_INBOUND_LIVE_FLV) {
 	_pStream = NULL;
 	_headerParsed = false;
+	_waitForMetadata = false;
 }
 
 InboundLiveFLVProtocol::~InboundLiveFLVProtocol() {
@@ -41,6 +42,13 @@ InboundLiveFLVProtocol::~InboundLiveFLVProtocol() {
 }
 
 bool InboundLiveFLVProtocol::Initialize(Variant &parameters) {
+	GetCustomParameters() = parameters;
+	FINEST("parameters:\n%s", STR(parameters.ToString()));
+	if (parameters.HasKey("waitForMetadata"))
+		_waitForMetadata = (bool)parameters["waitForMetadata"];
+	else
+		_waitForMetadata = false;
+	FINEST("_waitForMetadata: %d", _waitForMetadata);
 	return true;
 }
 
@@ -62,9 +70,11 @@ bool InboundLiveFLVProtocol::SignalInputData(int32_t recvAmount) {
 bool InboundLiveFLVProtocol::SignalInputData(IOBuffer &buffer) {
 	//1. Initialize the stream
 	if (_pStream == NULL) {
-		if (!InitializeStream()) {
-			FATAL("Unable to initialize the stream");
-			return false;
+		if (!_waitForMetadata) {
+			if (!InitializeStream("")) {
+				FATAL("Unable to initialize the stream");
+				return false;
+			}
 		}
 	}
 	for (;;) {
@@ -112,20 +122,24 @@ bool InboundLiveFLVProtocol::SignalInputData(IOBuffer &buffer) {
 			case 8:
 			{
 				//audio data
-				if (!_pStream->FeedData(GETIBPOINTER(buffer), length, 0,
-						length, timestamp, true)) {
-					FATAL("Unable to feed audio");
-					return false;
+				if (_pStream != NULL) {
+					if (!_pStream->FeedData(GETIBPOINTER(buffer), length, 0,
+							length, timestamp, true)) {
+						FATAL("Unable to feed audio");
+						return false;
+					}
 				}
 				break;
 			}
 			case 9:
 			{
 				//video data
-				if (!_pStream->FeedData(GETIBPOINTER(buffer), length, 0,
-						length, timestamp, false)) {
-					FATAL("Unable to feed audio");
-					return false;
+				if (_pStream != NULL) {
+					if (!_pStream->FeedData(GETIBPOINTER(buffer), length, 0,
+							length, timestamp, false)) {
+						FATAL("Unable to feed audio");
+						return false;
+					}
 				}
 				break;
 			}
@@ -150,19 +164,36 @@ bool InboundLiveFLVProtocol::SignalInputData(IOBuffer &buffer) {
 
 				//3. Read the rest of the parameters
 				Variant parameters;
+				string streamName = "";
 				while (GETAVAILABLEBYTESCOUNT(metaBuffer) > 0) {
 					Variant v;
 					if (!amf0.Read(metaBuffer, v)) {
 						FATAL("Unable to read metadata item");
 						return false;
 					}
+					if (v.HasKey("streamName")) {
+						if (v["streamName"] == V_STRING) {
+							streamName = (string) v["streamName"];
+						}
+					}
 					parameters.PushToArray(v);
 				}
 
+				if (_pStream == NULL) {
+					if (!InitializeStream(streamName)) {
+						FATAL("Unable to initialize the stream");
+						return false;
+					}
+				}
+
+				INFO("Stream metadata:\n%s", STR(parameters.ToString()));
+
 				//4. Send the notify
-				if (!_pStream->SendStreamMessage(notifyFunction, parameters, true)) {
-					FATAL("Unable to send the notify");
-					return false;
+				if (_pStream != NULL) {
+					if (!_pStream->SendStreamMessage(notifyFunction, parameters, true)) {
+						FATAL("Unable to send the notify");
+						return false;
+					}
 				}
 
 				break;
@@ -182,23 +213,24 @@ bool InboundLiveFLVProtocol::SignalInputData(IOBuffer &buffer) {
 	return true;
 }
 
-bool InboundLiveFLVProtocol::InitializeStream() {
-	//1. Compute a stream name based on the nature of the carrier (if any...)
-	string streamName = "";
-	if (GetIOHandler() != NULL) {
-		//we have a carrier
-		if (GetIOHandler()->GetType() == IOHT_TCP_CARRIER) {
-			//this is a tcp carrier
-			streamName = format("%s_%d",
-					STR(((TCPCarrier *) GetIOHandler())->GetFarEndpointAddressIp()),
-					((TCPCarrier *) GetIOHandler())->GetFarEndpointPort());
+bool InboundLiveFLVProtocol::InitializeStream(string streamName) {
+	if (streamName == "") {
+		//1. Compute a stream name based on the nature of the carrier (if any...)
+		if (GetIOHandler() != NULL) {
+			//we have a carrier
+			if (GetIOHandler()->GetType() == IOHT_TCP_CARRIER) {
+				//this is a tcp carrier
+				streamName = format("%s_%d",
+						STR(((TCPCarrier *) GetIOHandler())->GetFarEndpointAddressIp()),
+						((TCPCarrier *) GetIOHandler())->GetFarEndpointPort());
+			} else {
+				//this is not a TCP carrier
+				streamName = format("flv_%d", GetId());
+			}
 		} else {
-			//this is not a TCP carrier
+			//we don't have a carrier. This protocl might be artificially fed
 			streamName = format("flv_%d", GetId());
 		}
-	} else {
-		//we don't have a carrier. This protocl might be artificially fed
-		streamName = format("flv_%d", GetId());
 	}
 	FINEST("Stream name: %s", STR(streamName));
 

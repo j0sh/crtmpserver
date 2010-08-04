@@ -30,6 +30,7 @@ class DLLEXP InboundLiveFLVProtocol
 private:
 	InNetLiveFLVStream *_pStream;
 	bool _headerParsed;
+	bool _waitForMetadata;
 public:
 	InboundLiveFLVProtocol();
 	virtual ~InboundLiveFLVProtocol();
@@ -40,7 +41,7 @@ public:
 	virtual bool SignalInputData(int32_t recvAmount);
 	virtual bool SignalInputData(IOBuffer &buffer);
 private:
-	bool InitializeStream();
+	bool InitializeStream(string streamName);
 };
 
 
