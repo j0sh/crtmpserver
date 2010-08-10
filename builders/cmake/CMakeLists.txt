@@ -104,12 +104,12 @@ SET(CMAKE_BUILD_TYPE Debug)
 #SET(CMAKE_VERBOSE_MAKEFILE TRUE)
 
 #generate defines.h
-IF (EXISTS ../../sources/common/include/new/defines.h)
+IF (EXISTS ../../sources/common/include/defines.h)
 	MESSAGE(STATUS "Defines are in place")
-ELSE (EXISTS ../../sources/common/include/new/defines.h)
+ELSE (EXISTS ../../sources/common/include/defines.h)
 	MESSAGE(STATUS "We need to rebuild the defines")
-	EXECUTE_PROCESS(COMMAND lua ../../constants/constants.lua cpp ../../sources/common/include/new/defines.h)
-ENDIF(EXISTS ../../sources/common/include/new/defines.h)
+	EXECUTE_PROCESS(COMMAND lua ../../constants/constants.lua cpp ../../sources/common/include/defines.h)
+ENDIF(EXISTS ../../sources/common/include/defines.h)
 
 
 #ADD_DEFINITIONS(-DHAS_SAFE_LOGGER)
