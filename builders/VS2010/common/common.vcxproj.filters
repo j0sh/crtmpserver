@@ -65,160 +65,160 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\sources\common\include\new\common.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\common\include\new\defines.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\common\include\new\platform\baseplatform.h">
-      <Filter>Header Files\platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\common\include\new\platform\platform.h">
-      <Filter>Header Files\platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\common\include\new\platform\windows\win32platform.h">
+    <ClInclude Include="..\..\..\sources\common\include\platform\windows\max.h">
       <Filter>Header Files\platform\windows</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\sources\common\include\new\utils\utils.h">
+    <ClInclude Include="..\..\..\sources\common\include\platform\windows\win32platform.h">
+      <Filter>Header Files\platform\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\common\include\platform\baseplatform.h">
+      <Filter>Header Files\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\common\include\platform\platform.h">
+      <Filter>Header Files\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\common\include\utils\utils.h">
       <Filter>Header Files\utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\sources\common\include\new\utils\buffering\bitarray.h">
+    <ClInclude Include="..\..\..\sources\common\include\utils\buffering\bitarray.h">
       <Filter>Header Files\utils\buffering</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\sources\common\include\new\utils\buffering\buffering.h">
+    <ClInclude Include="..\..\..\sources\common\include\utils\buffering\buffering.h">
       <Filter>Header Files\utils\buffering</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\sources\common\include\new\utils\buffering\iobuffer.h">
+    <ClInclude Include="..\..\..\sources\common\include\utils\buffering\iobuffer.h">
       <Filter>Header Files\utils\buffering</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\sources\common\include\new\utils\buffering\multiconsumerbuffer.h">
+    <ClInclude Include="..\..\..\sources\common\include\utils\buffering\multiconsumerbuffer.h">
       <Filter>Header Files\utils\buffering</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\sources\common\include\new\utils\logging\baseloglocation.h">
+    <ClInclude Include="..\..\..\sources\common\include\utils\logging\baseloglocation.h">
       <Filter>Header Files\utils\logging</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\sources\common\include\new\utils\logging\consoleloglocation.h">
+    <ClInclude Include="..\..\..\sources\common\include\utils\logging\consoleloglocation.h">
       <Filter>Header Files\utils\logging</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\sources\common\include\new\utils\logging\fileloglocation.h">
+    <ClInclude Include="..\..\..\sources\common\include\utils\logging\fileloglocation.h">
       <Filter>Header Files\utils\logging</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\sources\common\include\new\utils\logging\logcatloglocation.h">
+    <ClInclude Include="..\..\..\sources\common\include\utils\logging\logcatloglocation.h">
       <Filter>Header Files\utils\logging</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\sources\common\include\new\utils\logging\logger.h">
+    <ClInclude Include="..\..\..\sources\common\include\utils\logging\logger.h">
       <Filter>Header Files\utils\logging</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\sources\common\include\new\utils\logging\logging.h">
+    <ClInclude Include="..\..\..\sources\common\include\utils\logging\logging.h">
       <Filter>Header Files\utils\logging</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\sources\common\include\new\utils\lua\luautils.h">
+    <ClInclude Include="..\..\..\sources\common\include\utils\lua\luautils.h">
       <Filter>Header Files\utils\lua</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\sources\common\include\new\utils\mempool\mempool.h">
+    <ClInclude Include="..\..\..\sources\common\include\utils\mempool\mempool.h">
       <Filter>Header Files\utils\mempool</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\sources\common\include\new\utils\tinyxml\tinyxml.h">
+    <ClInclude Include="..\..\..\sources\common\include\utils\misc\crypto.h">
+      <Filter>Header Files\utils\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\common\include\utils\misc\dhgroups.h">
+      <Filter>Header Files\utils\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\common\include\utils\misc\file.h">
+      <Filter>Header Files\utils\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\common\include\utils\misc\linkedlist.h">
+      <Filter>Header Files\utils\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\common\include\utils\misc\misc.h">
+      <Filter>Header Files\utils\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\common\include\utils\misc\mmapfile.h">
+      <Filter>Header Files\utils\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\common\include\utils\misc\timersmanager.h">
+      <Filter>Header Files\utils\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\common\include\utils\misc\variant.h">
+      <Filter>Header Files\utils\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\common\include\utils\misc\variantmap.h">
+      <Filter>Header Files\utils\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\common\include\utils\tinyxml\tinyxml.h">
       <Filter>Header Files\utils\tinyxml</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\sources\common\include\new\utils\misc\crypto.h">
-      <Filter>Header Files\utils\misc</Filter>
+    <ClInclude Include="..\..\..\sources\common\include\common.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\sources\common\include\new\utils\misc\dhgroups.h">
-      <Filter>Header Files\utils\misc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\common\include\new\utils\misc\file.h">
-      <Filter>Header Files\utils\misc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\common\include\new\utils\misc\linkedlist.h">
-      <Filter>Header Files\utils\misc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\common\include\new\utils\misc\misc.h">
-      <Filter>Header Files\utils\misc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\common\include\new\utils\misc\mmapfile.h">
-      <Filter>Header Files\utils\misc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\common\include\new\utils\misc\timersmanager.h">
-      <Filter>Header Files\utils\misc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\common\include\new\utils\misc\variant.h">
-      <Filter>Header Files\utils\misc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\common\include\new\utils\misc\variantmap.h">
-      <Filter>Header Files\utils\misc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\common\include\new\platform\windows\max.h">
-      <Filter>Header Files\platform\windows</Filter>
+    <ClInclude Include="..\..\..\sources\common\include\defines.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\sources\common\src\new\platform\windows\win32platform.cpp">
-      <Filter>Source Files\platform\windows</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\common\src\new\platform\baseplatform.cpp">
+    <ClCompile Include="..\..\..\sources\common\src\platform\baseplatform.cpp">
       <Filter>Source Files\platform</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\sources\common\src\new\utils\buffering\iobuffer.cpp">
+    <ClCompile Include="..\..\..\sources\common\src\platform\windows\strncasecmp.cpp">
+      <Filter>Source Files\platform\windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\common\src\platform\windows\strptime.cpp">
+      <Filter>Source Files\platform\windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\common\src\platform\windows\timegm.cpp">
+      <Filter>Source Files\platform\windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\common\src\platform\windows\win32platform.cpp">
+      <Filter>Source Files\platform\windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\common\src\utils\buffering\iobuffer.cpp">
       <Filter>Source Files\utils\buffering</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\sources\common\src\new\utils\buffering\multiconsumerbuffer.cpp">
+    <ClCompile Include="..\..\..\sources\common\src\utils\buffering\multiconsumerbuffer.cpp">
       <Filter>Source Files\utils\buffering</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\sources\common\src\new\utils\logging\baseloglocation.cpp">
+    <ClCompile Include="..\..\..\sources\common\src\utils\logging\baseloglocation.cpp">
       <Filter>Source Files\utils\logging</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\sources\common\src\new\utils\logging\consoleloglocation.cpp">
+    <ClCompile Include="..\..\..\sources\common\src\utils\logging\consoleloglocation.cpp">
       <Filter>Source Files\utils\logging</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\sources\common\src\new\utils\logging\fileloglocation.cpp">
+    <ClCompile Include="..\..\..\sources\common\src\utils\logging\fileloglocation.cpp">
       <Filter>Source Files\utils\logging</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\sources\common\src\new\utils\logging\logcatloglocation.cpp">
+    <ClCompile Include="..\..\..\sources\common\src\utils\logging\logcatloglocation.cpp">
       <Filter>Source Files\utils\logging</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\sources\common\src\new\utils\logging\logger.cpp">
+    <ClCompile Include="..\..\..\sources\common\src\utils\logging\logger.cpp">
       <Filter>Source Files\utils\logging</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\sources\common\src\new\utils\lua\luautils.cpp">
+    <ClCompile Include="..\..\..\sources\common\src\utils\lua\luautils.cpp">
       <Filter>Source Files\utils\lua</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\sources\common\src\new\utils\mempool\mempool.cpp">
+    <ClCompile Include="..\..\..\sources\common\src\utils\mempool\mempool.cpp">
       <Filter>Source Files\utils\mempool</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\sources\common\src\new\utils\misc\crypto.cpp">
+    <ClCompile Include="..\..\..\sources\common\src\utils\misc\crypto.cpp">
       <Filter>Source Files\utils\misc</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\sources\common\src\new\utils\misc\file.cpp">
+    <ClCompile Include="..\..\..\sources\common\src\utils\misc\file.cpp">
       <Filter>Source Files\utils\misc</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\sources\common\src\new\utils\misc\mmapfile.cpp">
+    <ClCompile Include="..\..\..\sources\common\src\utils\misc\mmapfile.cpp">
       <Filter>Source Files\utils\misc</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\sources\common\src\new\utils\misc\timersmanager.cpp">
+    <ClCompile Include="..\..\..\sources\common\src\utils\misc\timersmanager.cpp">
       <Filter>Source Files\utils\misc</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\sources\common\src\new\utils\misc\variant.cpp">
+    <ClCompile Include="..\..\..\sources\common\src\utils\misc\variant.cpp">
       <Filter>Source Files\utils\misc</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\sources\common\src\new\utils\tinyxml\tinyxml.cpp">
+    <ClCompile Include="..\..\..\sources\common\src\utils\tinyxml\tinyxml.cpp">
       <Filter>Source Files\utils\tinyxml</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\sources\common\src\new\utils\tinyxml\tinyxmlerror.cpp">
+    <ClCompile Include="..\..\..\sources\common\src\utils\tinyxml\tinyxmlerror.cpp">
       <Filter>Source Files\utils\tinyxml</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\sources\common\src\new\utils\tinyxml\tinyxmlparser.cpp">
+    <ClCompile Include="..\..\..\sources\common\src\utils\tinyxml\tinyxmlparser.cpp">
       <Filter>Source Files\utils\tinyxml</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\common\src\new\platform\windows\strncasecmp.cpp">
-      <Filter>Source Files\platform\windows</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\common\src\new\platform\windows\strptime.cpp">
-      <Filter>Source Files\platform\windows</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\common\src\new\platform\windows\timegm.cpp">
-      <Filter>Source Files\platform\windows</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
