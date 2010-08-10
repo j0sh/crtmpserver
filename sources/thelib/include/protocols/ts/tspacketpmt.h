@@ -22,7 +22,7 @@
 #ifndef _TSPACKETPMT_H
 #define	_TSPACKETPMT_H
 
-#include "new/common.h"
+#include "common.h"
 #include "protocols/ts/streamdescriptors.h"
 
 

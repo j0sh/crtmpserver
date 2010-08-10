@@ -21,7 +21,7 @@
 #ifndef _PROTOCOLMANAGER_H
 #define	_PROTOCOLMANAGER_H
 
-#include "new/common.h"
+#include "common.h"
 
 class BaseProtocol;
 

@@ -22,7 +22,7 @@
 #ifndef _AMF0SERIALIZER_H
 #define	_AMF0SERIALIZER_H
 
-#include "new/common.h"
+#include "common.h"
 
 class DLLEXP AMF0Serializer {
 private:

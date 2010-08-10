@@ -22,7 +22,7 @@
 #ifndef _TSPACKETPAT_H
 #define	_TSPACKETPAT_H
 
-#include "new/common.h"
+#include "common.h"
 
 //iso13818-1.pdf page 61/174
 //2.4.4.3	Program association Table

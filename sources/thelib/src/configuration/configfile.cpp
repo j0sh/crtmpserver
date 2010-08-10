@@ -18,7 +18,7 @@
  */
 
 
-#include "new/common.h"
+#include "common.h"
 #include "configuration/configfile.h"
 #include "application/baseclientapplication.h"
 #include "application/clientapplicationmanager.h"

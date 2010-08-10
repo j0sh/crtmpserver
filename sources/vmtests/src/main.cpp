@@ -18,7 +18,7 @@
  */
 
 
-#include "new/common.h"
+#include "common.h"
 #include "testvmlua.h"
 
 #define VM_TEST_DESCRIPTION "description"

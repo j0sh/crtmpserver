@@ -22,7 +22,7 @@
 #ifndef _TSPACKETHEADER_H
 #define	_TSPACKETHEADER_H
 
-#include "new/common.h"
+#include "common.h"
 
 class TSPacketHeader {
 public:

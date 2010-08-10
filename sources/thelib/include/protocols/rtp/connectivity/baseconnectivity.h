@@ -21,7 +21,7 @@
 #ifndef _BASECONNECTIVITY_H
 #define	_BASECONNECTIVITY_H
 
-#include "new/common.h"
+#include "common.h"
 
 class DLLEXP BaseConnectivity {
 public:

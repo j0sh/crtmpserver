@@ -21,7 +21,7 @@
 #ifndef _IOHANDLERMANAGER_H
 #define	_IOHANDLERMANAGER_H
 
-#include "new/common.h"
+#include "common.h"
 #include "netio/kqueue/iohandlermanagertoken.h"
 
 class IOHandler;

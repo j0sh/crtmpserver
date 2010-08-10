@@ -21,7 +21,7 @@
 #ifndef _IOHANDLER_H
 #define	_IOHANDLER_H
 
-#include "new/common.h"
+#include "common.h"
 #include "netio/epoll/iohandlermanagertoken.h"
 
 typedef enum _IOHandlerType {

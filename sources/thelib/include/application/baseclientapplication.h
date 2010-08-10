@@ -21,7 +21,7 @@
 #ifndef _BASECLIENTAPPLICATION_H
 #define	_BASECLIENTAPPLICATION_H
 
-#include "new/common.h"
+#include "common.h"
 #include "streaming/streamsmanager.h"
 
 class BaseProtocol;

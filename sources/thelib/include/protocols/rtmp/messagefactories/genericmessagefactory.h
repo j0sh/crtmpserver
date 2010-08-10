@@ -22,7 +22,7 @@
 #ifndef _GENERICMESSAGEFACTORY_H
 #define	_GENERICMESSAGEFACTORY_H
 
-#include "new/common.h"
+#include "common.h"
 
 #define VH_HT(x)    ((x)[RM_HEADER][RM_HEADER_HEADERTYPE])
 #define VH_CI(x)     ((x)[RM_HEADER][RM_HEADER_CHANNELID])

@@ -21,7 +21,7 @@
 #ifndef _VPTESTS_H
 #define	_VPTESTS_H
 
-#include "new/common.h"
+#include "common.h"
 
 extern "C" DLLEXP BaseClientApplication *GetApplication(Variant configuration);
 extern "C" DLLEXP void ReleaseApplication(BaseClientApplication *pApplication);

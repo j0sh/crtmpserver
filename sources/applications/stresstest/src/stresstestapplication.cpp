@@ -19,7 +19,7 @@
 
 
 
-#include "new/common.h"
+#include "common.h"
 #include "stresstestapplication.h"
 #include "rtmpappprotocolhandler.h"
 #include "protocols/baseprotocol.h"

@@ -21,7 +21,7 @@
 #ifndef _BASEPROTOCOLFACTORY_H
 #define	_BASEPROTOCOLFACTORY_H
 
-#include "new/common.h"
+#include "common.h"
 
 class BaseProtocol;
 

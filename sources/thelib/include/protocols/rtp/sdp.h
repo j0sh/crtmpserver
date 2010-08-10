@@ -21,7 +21,7 @@
 #ifndef _SDP_H
 #define	_SDP_H
 
-#include "new/common.h"
+#include "common.h"
 
 #define SDP_SESSION		"session"
 #define SDP_MEDIATRACKS	"mediaTracks"

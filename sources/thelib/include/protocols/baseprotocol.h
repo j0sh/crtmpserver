@@ -22,7 +22,7 @@
 #define	_BASEPROTOCOL_H
 
 
-#include "new/common.h"
+#include "common.h"
 #include "protocols/protocoltypes.h"
 
 

@@ -21,7 +21,7 @@
 #ifndef _BASEVM_H
 #define	_BASEVM_H
 
-#include "new/common.h"
+#include "common.h"
 
 class BaseVM {
 public:

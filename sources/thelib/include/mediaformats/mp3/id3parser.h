@@ -21,7 +21,7 @@
 #ifndef _ID3PARSER_H
 #define	_ID3PARSER_H
 
-#include "new/common.h"
+#include "common.h"
 
 class ID3Parser {
 protected:

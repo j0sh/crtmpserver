@@ -21,7 +21,7 @@
 #ifndef _BASESTREAM_H
 #define	_BASESTREAM_H
 
-#include "new/common.h"
+#include "common.h"
 #include "streaming/streamcapabilities.h"
 
 class StreamsManager;

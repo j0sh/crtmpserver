@@ -19,7 +19,7 @@
 
 
 #ifdef NET_KQUEUE
-#include "new/common.h"
+#include "common.h"
 #include "netio/kqueue/stdiocarrier.h"
 #include "netio/kqueue/iohandlermanager.h"
 #include "protocols/baseprotocol.h"

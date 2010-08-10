@@ -21,7 +21,7 @@
 #ifndef _CONFIGFILE_H
 #define	_CONFIGFILE_H
 
-#include "new/common.h"
+#include "common.h"
 
 class Logger;
 class BaseClientApplication;

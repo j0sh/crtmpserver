@@ -14,5 +14,5 @@ INCLUDE_DIRECTORIES(
 #create THE library
 ADD_LIBRARY(common SHARED ${SOURCES})
 TARGET_LINK_LIBRARIES(common lua ${OPENSSL_LIBRARY_PATH} ${CRYPTO_LIBRARY_PATH})
-ADD_PRECOMPILED_HEADER(common ../../../sources/common/include/new/common.h) 
+ADD_PRECOMPILED_HEADER(common ../../../sources/common/include/common.h) 
 

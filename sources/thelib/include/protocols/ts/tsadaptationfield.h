@@ -22,7 +22,7 @@
 #ifndef _TSADAPTATIONFIELD_H
 #define	_TSADAPTATIONFIELD_H
 
-#include "new/common.h"
+#include "common.h"
 
 class DLLEXP TSAdaptationField {
 private:

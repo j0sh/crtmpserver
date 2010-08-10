@@ -23,7 +23,7 @@
 #ifndef _HEADER_BE_BA_H
 #define	_HEADER_BE_BA_H
 
-#include "new/common.h"
+#include "common.h"
 
 class IOBuffer;
 struct _Channel;

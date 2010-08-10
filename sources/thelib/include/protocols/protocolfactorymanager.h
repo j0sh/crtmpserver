@@ -21,7 +21,7 @@
 #ifndef _PROTOCOLFACTORYMANAGER_H
 #define	_PROTOCOLFACTORYMANAGER_H
 
-#include "new/common.h"
+#include "common.h"
 
 class BaseProtocolFactory;
 class BaseProtocol;

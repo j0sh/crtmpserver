@@ -22,7 +22,7 @@
 #ifndef _SO_H
 #define	_SO_H
 
-#include "new/common.h"
+#include "common.h"
 
 typedef struct _DirtyInfo {
 	string propertyName;

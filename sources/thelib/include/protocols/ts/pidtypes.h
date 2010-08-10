@@ -22,7 +22,7 @@
 #ifndef _PIDTYPES_H
 #define	_PIDTYPES_H
 
-#include "new/common.h"
+#include "common.h"
 
 typedef enum _PIDType {
 	PID_TYPE_UNKNOWN = 0x00,

@@ -21,7 +21,7 @@
 #ifndef _THELIBTESTSSUITE_H
 #define	_THELIBTESTSSUITE_H
 
-#include "new/common.h"
+#include "common.h"
 #include "basetestssuite.h"
 
 class TheLibTestsSuite

@@ -21,7 +21,7 @@
 #ifndef _BASEEVENTSINK_H
 #define	_BASEEVENTSINK_H
 
-#include "new/common.h"
+#include "common.h"
 
 #define EVENT_SYNC_RTMP		MAKE_TAG4('R','T','M','P')
 #define EVENT_SYNC_VARIANT	MAKE_TAG3('V','A','R')

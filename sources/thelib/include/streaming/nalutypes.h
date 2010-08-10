@@ -21,7 +21,7 @@
 #ifndef _NALUTYPES_H
 #define	_NALUTYPES_H
 
-#include "new/common.h"
+#include "common.h"
 
 //iso14496-10.pdf Page 60/280
 //Table 7-1 – NAL unit type codes

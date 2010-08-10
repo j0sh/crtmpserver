@@ -21,7 +21,7 @@
 #ifndef _CODECTYPES_H
 #define	_CODECTYPES_H
 
-#include "new/common.h"
+#include "common.h"
 
 #define CODEC_VIDEO_UNKNOWN         MAKE_TAG4('V','U','N','K')
 #define CODEC_VIDEO_JPEG            MAKE_TAG5('V','J','P','E','G')

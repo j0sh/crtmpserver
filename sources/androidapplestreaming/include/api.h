@@ -20,7 +20,7 @@
 #ifndef _API_H
 #define	_API_H
 
-#include "new/common.h"
+#include "common.h"
 
 void EnvRun(string ip, uint16_t port);
 void EnvStop();

@@ -22,7 +22,7 @@
 #ifndef _RTPHEADER_H
 #define _RTPHEADER_H
 
-#include "new/common.h"
+#include "common.h"
 
 #define GET_RTP_V(x)   ((uint8_t )((((x)._flags)>>30)))
 #define GET_RTP_P(x)   ((bool    )((((x)._flags)>>29)&0x01))

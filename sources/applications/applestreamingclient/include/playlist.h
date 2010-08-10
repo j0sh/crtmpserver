@@ -21,7 +21,7 @@
 #ifndef _PLAYLIST_H
 #define	_PLAYLIST_H
 
-#include "new/common.h"
+#include "common.h"
 
 class Playlist {
 private:

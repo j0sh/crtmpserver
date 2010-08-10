@@ -21,7 +21,7 @@
 #define	_BASEMEDIADOCUMENT_H
 
 
-#include "new/common.h"
+#include "common.h"
 #include "mediaformats/mediaframe.h"
 
 class BaseMediaDocument {

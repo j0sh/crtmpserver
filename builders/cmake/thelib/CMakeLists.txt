@@ -15,5 +15,5 @@ INCLUDE_DIRECTORIES(
 #create THE library
 ADD_LIBRARY(thelib SHARED ${SOURCES})
 TARGET_LINK_LIBRARIES(thelib common ${DL_LIBRARY_PATH} ${OPENSSL_LIBRARY_PATH} ${CRYPTO_LIBRARY_PATH})
-ADD_PRECOMPILED_HEADER(thelib ../../../sources/common/include/new/common.h)
+ADD_PRECOMPILED_HEADER(thelib ../../../sources/common/include/common.h)
 

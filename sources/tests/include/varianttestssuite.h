@@ -22,7 +22,7 @@
 #ifndef __VARIANTTESTSSUITE_H
 #define __VARIANTTESTSSUITE_H
 
-#include "new/common.h"
+#include "common.h"
 #include "basetestssuite.h"
 
 class VariantTestsSuite

@@ -22,7 +22,7 @@
 #define	_CLIENTAPPLICATIONMANAGER_H
 
 
-#include "new/common.h"
+#include "common.h"
 #include "application/baseclientapplication.h"
 
 class BaseClientApplication;

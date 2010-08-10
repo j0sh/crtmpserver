@@ -21,7 +21,7 @@
 #ifndef _CONTROLLER_H
 #define	_CONTROLLER_H
 
-#include "new/common.h"
+#include "common.h"
 
 class BaseProtocol;
 

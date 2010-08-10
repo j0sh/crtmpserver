@@ -21,7 +21,7 @@
 #ifndef __COMMONTESTSSUITE_H
 #define __COMMONTESTSSUITE_H
 
-#include "new/common.h"
+#include "common.h"
 #include "basetestssuite.h"
 
 class CommonTestsSuite

@@ -20,7 +20,7 @@
 #ifndef _VARIANTCONNECTION_H
 #define	_VARIANTCONNECTION_H
 
-#include "new/common.h"
+#include "common.h"
 
 class VariantConnection {
 private:

@@ -23,7 +23,7 @@
 #ifndef _SOMANAGER_H
 #define	_SOMANAGER_H
 
-#include "new/common.h"
+#include "common.h"
 
 class BaseRTMPProtocol;
 class SO;

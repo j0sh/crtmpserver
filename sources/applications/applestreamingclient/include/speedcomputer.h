@@ -21,7 +21,7 @@
 #ifndef _SPEEDCOMPUTER_H
 #define	_SPEEDCOMPUTER_H
 
-#include "new/common.h"
+#include "common.h"
 
 #define HLU_COUNT 1
 #define HLU_TIME 2

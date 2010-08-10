@@ -22,7 +22,7 @@
 #ifndef _STREAMDESCRIPTORS_H
 #define	_STREAMDESCRIPTORS_H
 
-#include "new/common.h"
+#include "common.h"
 
 //frame rates
 //ISO13818-2 table 6-4  (61/255)

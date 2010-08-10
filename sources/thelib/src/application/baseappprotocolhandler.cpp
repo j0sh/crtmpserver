@@ -18,7 +18,7 @@
  */
 
 
-#include "new/common.h"
+#include "common.h"
 #include "application/baseappprotocolhandler.h"
 #include "application/baseclientapplication.h"
 

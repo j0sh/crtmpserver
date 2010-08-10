@@ -21,7 +21,7 @@
 #ifndef _FLVDOCUMENT
 #define _FLVDOCUMENT
 
-#include "new/common.h"
+#include "common.h"
 #include "mediaformats/basemediadocument.h"
 
 class FLVDocument

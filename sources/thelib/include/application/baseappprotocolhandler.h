@@ -21,7 +21,7 @@
 #ifndef _BASEAPPPROTOCOLHANDLER_H
 #define	_BASEAPPPROTOCOLHANDLER_H
 
-#include "new/common.h"
+#include "common.h"
 
 class BaseClientApplication;
 class BaseProtocol;

@@ -19,7 +19,7 @@
 
 
 #include "varianttestssuite.h"
-#include "new/common.h"
+#include "common.h"
 
 #define di64_1 ((int64_t) (0x8000000000000000LL))
 #define di32_1 ((int32_t) (0x80000000L))
