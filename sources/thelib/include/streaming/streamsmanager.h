@@ -21,7 +21,7 @@
 #ifndef _STREAMSMANAGER_H
 #define	_STREAMSMANAGER_H
 
-#include "utils/core.h"
+#include "new/common.h"
 
 class BaseStream;
 class BaseClientApplication;

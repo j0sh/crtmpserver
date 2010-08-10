@@ -20,8 +20,7 @@
 #ifndef _VARIANTCONNECTION_H
 #define	_VARIANTCONNECTION_H
 
-#include "utils/core.h"
-#include "buffering/iobuffer.h"
+#include "new/common.h"
 
 class VariantConnection {
 private:

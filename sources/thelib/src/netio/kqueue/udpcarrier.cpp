@@ -20,8 +20,6 @@
 
 #ifdef NET_KQUEUE
 
-#include "utils/core.h"
-#include "buffering/iobuffer.h"
 #include "netio/kqueue/udpcarrier.h"
 #include "netio/kqueue/iohandlermanager.h"
 #include "protocols/baseprotocol.h"

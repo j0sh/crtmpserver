@@ -1,28 +1,28 @@
 /* 
-*  Copyright (c) 2010,
-*  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
-*  
-*  This file is part of crtmpserver.
-*  crtmpserver is free software: you can redistribute it and/or modify
-*  it under the terms of the GNU General Public License as published by
-*  the Free Software Foundation, either version 3 of the License, or
-*  (at your option) any later version.
-*  
-*  crtmpserver is distributed in the hope that it will be useful,
-*  but WITHOUT ANY WARRANTY; without even the implied warranty of
-*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*  GNU General Public License for more details.
-*  
-*  You should have received a copy of the GNU General Public License
-*  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ *  Copyright (c) 2010,
+ *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
+ *
+ *  This file is part of crtmpserver.
+ *  crtmpserver is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  crtmpserver is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 
 #ifdef HAS_PROTOCOL_RTMP
 #ifndef _GENERICMESSAGEFACTORY_H
 #define	_GENERICMESSAGEFACTORY_H
 
-#include "utils/core.h"
+#include "new/common.h"
 
 #define VH_HT(x)    ((x)[RM_HEADER][RM_HEADER_HEADERTYPE])
 #define VH_CI(x)     ((x)[RM_HEADER][RM_HEADER_CHANNELID])
@@ -75,33 +75,33 @@
 
 class DLLEXP GenericMessageFactory {
 public:
-    //channel specific
-    static Variant GetChunkSize(uint32_t chunkSize);
-    static Variant GetAck(uint32_t amount);
-    static Variant GetWinAckSize(uint32_t value);
-    static Variant GetPeerBW(uint32_t value, uint8_t type);
-    static Variant GetAbortMessage(uint32_t channelId);
+	//channel specific
+	static Variant GetChunkSize(uint32_t chunkSize);
+	static Variant GetAck(uint32_t amount);
+	static Variant GetWinAckSize(uint32_t value);
+	static Variant GetPeerBW(uint32_t value, uint8_t type);
+	static Variant GetAbortMessage(uint32_t channelId);
 
-    //invokes and notify
-    static Variant GetInvoke(uint32_t channelId, uint32_t streamId,
-            double timeStamp, bool isAbsolute, double requestId,
-            string functionName, Variant &parameters);
-    static Variant GetNotify(uint32_t channelId,
-            uint32_t streamId, double timeStamp, bool isAbsolute,
-            string handlerName, Variant params);
+	//invokes and notify
+	static Variant GetInvoke(uint32_t channelId, uint32_t streamId,
+			double timeStamp, bool isAbsolute, double requestId,
+			string functionName, Variant &parameters);
+	static Variant GetNotify(uint32_t channelId,
+			uint32_t streamId, double timeStamp, bool isAbsolute,
+			string handlerName, Variant params);
 
-    static Variant GetInvokeOnBWDone();
+	static Variant GetInvokeOnBWDone();
 
-    static Variant GetInvokeOnStatus(uint32_t channelId, uint32_t streamId,
-            double timeStamp, bool isAbsolute, double requestId, Variant &message);
+	static Variant GetInvokeOnStatus(uint32_t channelId, uint32_t streamId,
+			double timeStamp, bool isAbsolute, double requestId, Variant &message);
 
-    static Variant GetInvokeResult(uint32_t channelId, uint32_t streamId,
-            double requestId, Variant firstParam, Variant &secondParam);
-    static Variant GetInvokeResult(Variant &request, Variant &parameters);
+	static Variant GetInvokeResult(uint32_t channelId, uint32_t streamId,
+			double requestId, Variant firstParam, Variant &secondParam);
+	static Variant GetInvokeResult(Variant &request, Variant &parameters);
 
-    static Variant GetInvokeError(uint32_t channelId, uint32_t streamId,
-            double requestId, Variant firstParam, Variant &secondParam);
-    static Variant GetInvokeError(Variant &request, Variant &parameters);
+	static Variant GetInvokeError(uint32_t channelId, uint32_t streamId,
+			double requestId, Variant firstParam, Variant &secondParam);
+	static Variant GetInvokeError(Variant &request, Variant &parameters);
 };
 
 

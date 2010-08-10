@@ -21,7 +21,6 @@
 #include "protocols/rtmp/streaming/outnetrtmp4tsstream.h"
 #include "streaming/streamstypes.h"
 #include "streaming/nalutypes.h"
-#include "buffering/bitarray.h"
 
 #define SPSPPS_MAX_LENGTH 1024
 

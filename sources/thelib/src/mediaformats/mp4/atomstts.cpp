@@ -19,7 +19,6 @@
 
 #ifdef HAS_MEDIA_MP4
 #include "mediaformats/mp4/atomstts.h"
-#include "utils/core.h"
 
 AtomSTTS::AtomSTTS(MP4Document *pDocument, uint32_t type, uint64_t size, uint64_t start)
 : VersionedAtom(pDocument, type, size, start) {

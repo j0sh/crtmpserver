@@ -11,24 +11,8 @@
             <sourceEncoding>UTF-8</sourceEncoding>
             <make-dep-projects/>
             <sourceRootList>
-                <sourceRootElem>../../../../sources/common/include/logging</sourceRootElem>
-                <sourceRootElem>../../../../sources/common/include/platform</sourceRootElem>
-                <sourceRootElem>../../../../sources/common/include/utils</sourceRootElem>
-                <sourceRootElem>../../../../sources/common/include/buffering</sourceRootElem>
-                <sourceRootElem>../../../../sources/common/include/lua</sourceRootElem>
-                <sourceRootElem>../../../../sources/common/src/logging</sourceRootElem>
-                <sourceRootElem>../../../../sources/common/src/platform</sourceRootElem>
-                <sourceRootElem>../../../../sources/common/src/utils</sourceRootElem>
-                <sourceRootElem>../../../../sources/common/src/buffering</sourceRootElem>
-                <sourceRootElem>../../../../sources/common/src/lua</sourceRootElem>
-                <sourceRootElem>../../../../sources/common/src/luautils</sourceRootElem>
-                <sourceRootElem>../../../../sources/common/include/luautils</sourceRootElem>
-                <sourceRootElem>../../../../sources/common/include/mempool</sourceRootElem>
-                <sourceRootElem>../../../../sources/common/src/mempool</sourceRootElem>
-                <sourceRootElem>../../../../sources/common/include/endianess</sourceRootElem>
-                <sourceRootElem>../../../../sources/common/include/endianness</sourceRootElem>
-                <sourceRootElem>../../../../sources/common/include/tinyxml</sourceRootElem>
-                <sourceRootElem>../../../../sources/common/src/tinyxml</sourceRootElem>
+                <sourceRootElem>../../../../sources/common/src/new</sourceRootElem>
+                <sourceRootElem>../../../../sources/common/include/new</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>Debug</confElem>

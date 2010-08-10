@@ -23,7 +23,6 @@
 #define	_BASEOUTNETRTPUDPSTREAM_H
 
 #include "streaming/baseoutnetstream.h"
-#include "buffering/iobuffer.h"
 
 class OutboundConnectivity;
 

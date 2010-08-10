@@ -56,13 +56,14 @@
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
-      <PrecompiledHeaderFile>utils/core.h</PrecompiledHeaderFile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>
+      </PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <DisableSpecificWarnings>4996;4251;4800;4503;%(DisableSpecificWarnings)</DisableSpecificWarnings>
-      <ForcedIncludeFiles>utils/core.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <ForcedIncludeFiles>
+      </ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <AdditionalDependencies>libeay32.lib;ssleay32.lib;ws2_32.lib;Mswsock.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -80,13 +81,14 @@
       <PreprocessorDefinitions>LITTLE_ENDIAN_BYTE_ALIGNED;NET_SELECT;HAS_LUA;HAS_PROTOCOL_HTTP;HAS_PROTOCOL_RTMP;HAS_PROTOCOL_RTP;HAS_PROTOCOL_LIVEFLV;HAS_PROTOCOL_TS;HAS_PROTOCOL_VAR;HAS_MEDIA_MP3;HAS_MEDIA_MP4;HAS_MEDIA_FLV;WIN32;NDEBUG;_WINDOWS;_USRDLL;THELIB_EXPORTS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
-      <PrecompiledHeaderFile>utils/core.h</PrecompiledHeaderFile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>
+      </PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <DisableSpecificWarnings>4996;4251;4800;4503;%(DisableSpecificWarnings)</DisableSpecificWarnings>
-      <ForcedIncludeFiles>utils/core.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <ForcedIncludeFiles>
+      </ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <AdditionalDependencies>libeay32.lib;ssleay32.lib;ws2_32.lib;Mswsock.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -110,34 +112,6 @@
     <ClCompile Include="..\..\..\sources\thelib\src\application\baseclientapplication.cpp" />
     <ClCompile Include="..\..\..\sources\thelib\src\application\clientapplicationmanager.cpp" />
     <ClCompile Include="..\..\..\sources\thelib\src\configuration\configfile.cpp" />
-    <ClCompile Include="..\..\..\sources\thelib\src\netio\iocp2\iohandler.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\netio\iocp2\iohandlermanager.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\netio\iocp2\iotimer.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\netio\iocp2\stdiocarrier.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\netio\iocp2\tcpacceptor.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\netio\iocp2\tcpcarrier.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\netio\iocp2\udpcarrier.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="..\..\..\sources\thelib\src\netio\select\iohandler.cpp" />
     <ClCompile Include="..\..\..\sources\thelib\src\netio\select\iohandlermanager.cpp" />
     <ClCompile Include="..\..\..\sources\thelib\src\netio\select\iotimer.cpp" />
@@ -277,42 +251,6 @@
     <ClInclude Include="..\..\..\sources\thelib\include\application\clientapplicationmanager.h" />
     <ClInclude Include="..\..\..\sources\thelib\include\configuration\configfile.h" />
     <ClInclude Include="..\..\..\sources\thelib\include\netio\netio.h" />
-    <ClInclude Include="..\..\..\sources\thelib\include\netio\iocp2\iohandler.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\netio\iocp2\iohandlermanager.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\netio\iocp2\iohandlermanagertoken.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\netio\iocp2\iotimer.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\netio\iocp2\stdiocarrier.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\netio\iocp2\tcpacceptor.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\netio\iocp2\tcpcarrier.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\netio\iocp2\tcpconnector.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\netio\iocp2\udpcarrier.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClInclude>
     <ClInclude Include="..\..\..\sources\thelib\include\netio\select\iohandler.h" />
     <ClInclude Include="..\..\..\sources\thelib\include\netio\select\iohandlermanager.h" />
     <ClInclude Include="..\..\..\sources\thelib\include\netio\select\iotimer.h" />

@@ -20,7 +20,6 @@
 #ifdef HAS_PROTOCOL_RTP
 #include "protocols/rtp/sdp.h"
 #include "streaming/codectypes.h"
-#include "utils/crypto.h"
 
 SDP::SDP()
 : Variant() {

@@ -18,9 +18,7 @@
  */
 
 #ifdef HAS_MEDIA_FLV
-#include "utils/file.h"
 #include "mediaformats/flv/flvdocument.h"
-#include "buffering/iobuffer.h"
 #include "protocols/rtmp/amf0serializer.h"
 
 FLVDocument::FLVDocument(Variant &metadata)
@@ -156,7 +154,7 @@ bool FLVDocument::BuildFrames() {
 		//12. Read the metadata or ignore the data payload
 		if (frame.type == MEDIAFRAME_TYPE_DATA) {
 			IOBuffer tempBuffer;
-			tempBuffer.ReadFromFs(_mediaFile, (uint32_t)frame.length);
+			tempBuffer.ReadFromFs(_mediaFile, (uint32_t) frame.length);
 			//tempBuffer.PutInputBuffer(&buffer, 0, length);
 #ifdef HAS_PROTOCOL_RTMP
 			AMF0Serializer amfSerializer;

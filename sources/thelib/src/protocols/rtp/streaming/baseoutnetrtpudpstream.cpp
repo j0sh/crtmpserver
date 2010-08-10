@@ -29,7 +29,7 @@ BaseOutNetRTPUDPStream::BaseOutNetRTPUDPStream(BaseProtocol *pProtocol,
 		StreamsManager *pStreamsManager, string name)
 : BaseOutNetStream(NULL /*FIXME pProtocol*/, pStreamsManager, ST_OUT_NET_RTP, name) {
 	_ssrc = 12;
-	srand((uint32_t)time(NULL));
+	srand((uint32_t) time(NULL));
 	_pConnectivity = NULL;
 }
 

@@ -21,7 +21,7 @@
 #ifndef _PROTOCOLTYPES_H
 #define	_PROTOCOLTYPES_H
 
-#include "utils/core.h"
+#include "new/common.h"
 
 //carrier protocols
 #define PT_TCP					MAKE_TAG3('T','C','P')

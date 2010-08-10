@@ -19,9 +19,6 @@
 
 
 #ifdef NET_EPOLL
-
-#include "utils/core.h"
-#include "buffering/iobuffer.h"
 #include "netio/epoll/udpcarrier.h"
 #include "netio/epoll/iohandlermanager.h"
 #include "protocols/baseprotocol.h"

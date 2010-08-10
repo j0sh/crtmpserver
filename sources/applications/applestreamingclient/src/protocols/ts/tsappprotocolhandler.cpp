@@ -17,9 +17,6 @@
  *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
 #include "protocols/ts/tsappprotocolhandler.h"
 #include "protocols/baseprotocol.h"
 #include "protocols/http/outboundhttpprotocol.h"

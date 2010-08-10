@@ -1,29 +1,28 @@
 /* 
-*  Copyright (c) 2010,
-*  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
-*  
-*  This file is part of crtmpserver.
-*  crtmpserver is free software: you can redistribute it and/or modify
-*  it under the terms of the GNU General Public License as published by
-*  the Free Software Foundation, either version 3 of the License, or
-*  (at your option) any later version.
-*  
-*  crtmpserver is distributed in the hope that it will be useful,
-*  but WITHOUT ANY WARRANTY; without even the implied warranty of
-*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*  GNU General Public License for more details.
-*  
-*  You should have received a copy of the GNU General Public License
-*  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ *  Copyright (c) 2010,
+ *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
+ *
+ *  This file is part of crtmpserver.
+ *  crtmpserver is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  crtmpserver is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 
 #ifdef HAS_PROTOCOL_TS
 #ifndef _STREAMDESCRIPTORS_H
 #define	_STREAMDESCRIPTORS_H
 
-#include "utils/core.h"
-
+#include "new/common.h"
 
 //frame rates
 //ISO13818-2 table 6-4  (61/255)
@@ -66,56 +65,56 @@
 #define DESCRIPTOR_TYPE_FMC_DESCRIPTOR 31
 
 typedef struct _StreamDescriptor {
-    uint8_t type;
-    uint8_t length;
+	uint8_t type;
+	uint8_t length;
 
-    union {
+	union {
 
-        struct {
-            uint8_t data[188];
-        } userPrivate;
+		struct {
+			uint8_t data[188];
+		} userPrivate;
 
-        struct {
-            //ISO13818-1 Table 2-40 : Video stream descriptor (82/174)
-            //DESCRIPTOR_TYPE_VIDEO
-            bool multipleFrameFate;
-            uint8_t frameRateCode;
-            bool MPEG1Only;
-            bool constrainedParameter;
-            bool stillPicture;
-            uint8_t profileAndLevelIndication;
-            uint8_t chromaFormat;
-            bool frameRateExtension;
-        } video;
+		struct {
+			//ISO13818-1 Table 2-40 : Video stream descriptor (82/174)
+			//DESCRIPTOR_TYPE_VIDEO
+			bool multipleFrameFate;
+			uint8_t frameRateCode;
+			bool MPEG1Only;
+			bool constrainedParameter;
+			bool stillPicture;
+			uint8_t profileAndLevelIndication;
+			uint8_t chromaFormat;
+			bool frameRateExtension;
+		} video;
 
-        struct {
-            //ISO13818-1 Table 2-45 : Registration descriptor (84/174)
-            //DESCRIPTOR_TYPE_REGISTRATION
-            uint32_t formatIdentifier;
-            uint8_t additionalInfoLength;
-            uint8_t additionalInfo[188];
-        } registration;
+		struct {
+			//ISO13818-1 Table 2-45 : Registration descriptor (84/174)
+			//DESCRIPTOR_TYPE_REGISTRATION
+			uint32_t formatIdentifier;
+			uint8_t additionalInfoLength;
+			uint8_t additionalInfo[188];
+		} registration;
 
-        struct {
-            //ISO13818-1 Table 2-46 : Registration descriptor (85/174)
-            //DESCRIPTOR_TYPE_DATA_STREAM_ALIGNMENT
-            uint8_t alignmentType;
-        } dataStreamAlignment;
+		struct {
+			//ISO13818-1 Table 2-46 : Registration descriptor (85/174)
+			//DESCRIPTOR_TYPE_DATA_STREAM_ALIGNMENT
+			uint8_t alignmentType;
+		} dataStreamAlignment;
 
-        struct {
-            //ISO13818-1 Table 2-52 : ISO 639 language descriptor (88/174)
-            //DESCRIPTOR_TYPE_ISO_639_LANGUAGE
+		struct {
+			//ISO13818-1 Table 2-52 : ISO 639 language descriptor (88/174)
+			//DESCRIPTOR_TYPE_ISO_639_LANGUAGE
 
-            struct {
-                uint8_t languageCode[3];
-                uint8_t audioType;
-            } definition[47];
-        } iso639Language;
-    } info;
+			struct {
+				uint8_t languageCode[3];
+				uint8_t audioType;
+			} definition[47];
+		} iso639Language;
+	} info;
 } StreamDescriptor;
 
 bool ReadStreamDescriptor(StreamDescriptor &descriptor,
-        uint8_t *pBuffer, uint32_t &cursor, uint32_t maxCursor);
+		uint8_t *pBuffer, uint32_t &cursor, uint32_t maxCursor);
 
 
 #endif	/* _STREAMDESCRIPTORS_H */

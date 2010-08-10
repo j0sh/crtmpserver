@@ -24,7 +24,6 @@
 #include "protocols/protocoltypes.h"
 #include "netio/netio.h"
 #include "protocols/liveflv/innetliveflvstream.h"
-#include "buffering/iobuffer.h"
 #include "protocols/rtmp/amf0serializer.h"
 
 InboundLiveFLVProtocol::InboundLiveFLVProtocol()

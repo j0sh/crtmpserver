@@ -329,7 +329,7 @@ bool OutNetRTPUDPH264Stream::FeedDataAudioMPEG4Generic(uint8_t *pData,
 	}
 
 	//3. AU-Header
-	uint16_t auHeader = (uint16_t)((dataLength - 7) << 3);
+	uint16_t auHeader = (uint16_t) ((dataLength - 7) << 3);
 	auHeader = auHeader | ((uint8_t) (_audioData.msg_iov[1].iov_len / 2));
 	//FINEST("auHeader: %04x", auHeader);
 	put_htons(((uint8_t *) _audioData.msg_iov[1].iov_base) + _audioData.msg_iov[1].iov_len, auHeader);

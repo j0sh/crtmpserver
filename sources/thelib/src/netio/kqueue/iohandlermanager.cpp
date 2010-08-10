@@ -203,7 +203,7 @@ bool IOHandlerManager::EnableTimer(IOHandler *pIOHandler, uint32_t seconds) {
     //FINEST("Enable timer: %d", seconds);
     return RegisterEvent(pIOHandler->GetId(), EVFILT_TIMER,
             EV_ADD | EV_ENABLE, NOTE_USECONDS,
-            seconds*1000000, pIOHandler->GetIOHandlerManagerToken());
+            seconds*KQUEUE_TIMER_MULTIPLIER, pIOHandler->GetIOHandlerManagerToken());
 #else
     TimerEvent event = {0};
     event.id = pIOHandler->GetId();

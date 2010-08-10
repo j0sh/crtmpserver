@@ -17,7 +17,6 @@
  *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 #include "protocols/variant/variantappprotocolhandler.h"
 #include "protocols/variant/basevariantprotocol.h"
 #include "protocols/variant/messagestructure.h"

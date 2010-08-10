@@ -21,7 +21,6 @@
 #ifndef _CLIENTCONTEXT_H
 #define	_CLIENTCONTEXT_H
 
-#include "utils/core.h"
 #include "protocols/m3u8/basem3u8protocol.h"
 #include "playlist.h"
 

@@ -7,6 +7,7 @@ FILE(GLOB_RECURSE SOURCES "../../../sources/tests/src/*.cpp" )
 
 INCLUDE_DIRECTORIES(
 	${OPENSSL_INCLUDE_PATH}
+	../../../3rdparty/lua-dev
 	../../../sources/common/include
 	../../../sources/thelib/include
 	../../../sources/tests/include

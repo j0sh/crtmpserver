@@ -21,8 +21,7 @@
 #ifndef _MP4DOCUMENT_H
 #define	_MP4DOCUMENT_H
 
-#include "utils/core.h"
-
+#include "new/common.h"
 #include "mediaformats/basemediadocument.h"
 
 #define A_NULL (0x00000000)

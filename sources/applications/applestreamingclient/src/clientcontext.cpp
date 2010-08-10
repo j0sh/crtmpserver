@@ -17,8 +17,6 @@
  *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
 #include "clientcontext.h"
 #include "protocols/protocolfactory.h"
 #include "protocols/protocolfactorymanager.h"

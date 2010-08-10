@@ -7,7 +7,7 @@ FILE(GLOB_RECURSE SOURCES "../../../../sources/applications/samplefactory/src/*.
 #prepare the include directories
 INCLUDE_DIRECTORIES(
 	${OPENSSL_INCLUDE_PATH}
-	../../../3rdparty/lua-dev
+	../../../../3rdparty/lua-dev
 	../../../../sources/common/include
 	../../../../sources/thelib/include
 	../../../../sources/applications/samplefactory/include

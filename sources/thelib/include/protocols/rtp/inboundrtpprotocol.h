@@ -23,7 +23,6 @@
 
 #include "protocols/baseprotocol.h"
 #include "protocols/rtp/rtpheader.h"
-#include "buffering/iobuffer.h"
 
 class InNetRTPStream;
 class InboundConnectivity;

@@ -234,6 +234,7 @@
         <itemPath>../../../../sources/thelib/include/streaming/streamsmanager.h</itemPath>
         <itemPath>../../../../sources/thelib/include/streaming/streamstypes.h</itemPath>
       </logicalFolder>
+      <itemPath>../../../../sources/thelib/include/thelibglobalcontext.h</itemPath>
     </logicalFolder>
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
@@ -451,6 +452,7 @@
         <itemPath>../../../../sources/thelib/src/streaming/nalutypes.cpp</itemPath>
         <itemPath>../../../../sources/thelib/src/streaming/streamsmanager.cpp</itemPath>
       </logicalFolder>
+      <itemPath>../../../../sources/thelib/src/thelibglobalcontext.cpp</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"

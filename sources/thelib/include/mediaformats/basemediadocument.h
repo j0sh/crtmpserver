@@ -21,12 +21,7 @@
 #define	_BASEMEDIADOCUMENT_H
 
 
-#include "utils/core.h"
-#include "utils/file.h"
-#ifdef HAS_MMAP
-#include "utils/mmapfile.h"
-#endif /* HAS_MMAP */
-
+#include "new/common.h"
 #include "mediaformats/mediaframe.h"
 
 class BaseMediaDocument {

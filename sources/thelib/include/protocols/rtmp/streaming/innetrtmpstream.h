@@ -1,21 +1,21 @@
 /* 
-*  Copyright (c) 2010,
-*  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
-*  
-*  This file is part of crtmpserver.
-*  crtmpserver is free software: you can redistribute it and/or modify
-*  it under the terms of the GNU General Public License as published by
-*  the Free Software Foundation, either version 3 of the License, or
-*  (at your option) any later version.
-*  
-*  crtmpserver is distributed in the hope that it will be useful,
-*  but WITHOUT ANY WARRANTY; without even the implied warranty of
-*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*  GNU General Public License for more details.
-*  
-*  You should have received a copy of the GNU General Public License
-*  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ *  Copyright (c) 2010,
+ *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
+ *
+ *  This file is part of crtmpserver.
+ *  crtmpserver is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  crtmpserver is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 
 #ifdef HAS_PROTOCOL_RTMP
@@ -24,7 +24,6 @@
 
 #include "streaming/baseinnetstream.h"
 #include "streaming/streamcapabilities.h"
-#include "buffering/iobuffer.h"
 
 class BaseRTMPProtocol;
 class OutFileRTMPFLVStream;
@@ -32,52 +31,52 @@ class OutFileRTMPFLVStream;
 class DLLEXP InNetRTMPStream
 : public BaseInNetStream {
 private:
-    uint32_t _rtmpStreamId;
-    uint32_t _chunkSize;
-    uint32_t _channelId;
-    string _clientId;
-    IOBuffer _videoCodecInit;
-    double _lastVideoTime;
-    IOBuffer _audioCodecInit;
-    double _lastAudioTime;
-    Variant _lastStreamMessage;
-    OutFileRTMPFLVStream *_pOutFileRTMPFLVStream;
-    StreamCapabilities _streamCapabilities;
+	uint32_t _rtmpStreamId;
+	uint32_t _chunkSize;
+	uint32_t _channelId;
+	string _clientId;
+	IOBuffer _videoCodecInit;
+	double _lastVideoTime;
+	IOBuffer _audioCodecInit;
+	double _lastAudioTime;
+	Variant _lastStreamMessage;
+	OutFileRTMPFLVStream *_pOutFileRTMPFLVStream;
+	StreamCapabilities _streamCapabilities;
 public:
-    InNetRTMPStream(BaseProtocol *pProtocol, StreamsManager *pStreamsManager,
-            string name, uint32_t rtmpStreamId, uint32_t chunkSize,
-            uint32_t channelId);
-    virtual ~InNetRTMPStream();
-    virtual StreamCapabilities * GetCapabilities();
+	InNetRTMPStream(BaseProtocol *pProtocol, StreamsManager *pStreamsManager,
+			string name, uint32_t rtmpStreamId, uint32_t chunkSize,
+			uint32_t channelId);
+	virtual ~InNetRTMPStream();
+	virtual StreamCapabilities * GetCapabilities();
 
-    virtual void ReadyForSend();
-    virtual bool IsCompatibleWithType(uint64_t type);
+	virtual void ReadyForSend();
+	virtual bool IsCompatibleWithType(uint64_t type);
 
-    uint32_t GetRTMPStreamId();
-    uint32_t GetChunkSize();
-    void SetChunkSize(uint32_t chunkSize);
+	uint32_t GetRTMPStreamId();
+	uint32_t GetChunkSize();
+	void SetChunkSize(uint32_t chunkSize);
 
-    bool SendStreamMessage(Variant &message, bool persistent = true);
-    virtual bool SendStreamMessage(string functionName, Variant &parameters,
-            bool persistent = true);
-    bool SendOnStatusStreamPublished();
-    bool RecordFLV(Variant &meta, bool append);
-    bool RecordMP4(Variant &meta);
+	bool SendStreamMessage(Variant &message, bool persistent = true);
+	virtual bool SendStreamMessage(string functionName, Variant &parameters,
+			bool persistent = true);
+	bool SendOnStatusStreamPublished();
+	bool RecordFLV(Variant &meta, bool append);
+	bool RecordMP4(Variant &meta);
 
-    virtual void SignalOutStreamAttached(BaseOutStream *pOutStream);
-    virtual void SignalOutStreamDetached(BaseOutStream *pOutStream);
-    virtual bool SignalPlay(double &absoluteTimestamp, double &length);
-    virtual bool SignalPause();
-    virtual bool SignalResume();
-    virtual bool SignalSeek(double &absoluteTimestamp);
-    virtual bool SignalStop();
+	virtual void SignalOutStreamAttached(BaseOutStream *pOutStream);
+	virtual void SignalOutStreamDetached(BaseOutStream *pOutStream);
+	virtual bool SignalPlay(double &absoluteTimestamp, double &length);
+	virtual bool SignalPause();
+	virtual bool SignalResume();
+	virtual bool SignalSeek(double &absoluteTimestamp);
+	virtual bool SignalStop();
 
-    virtual bool FeedData(uint8_t *pData, uint32_t dataLength,
-            uint32_t processedLength, uint32_t totalLength,
-            double absoluteTimestamp, bool isAudio);
+	virtual bool FeedData(uint8_t *pData, uint32_t dataLength,
+			uint32_t processedLength, uint32_t totalLength,
+			double absoluteTimestamp, bool isAudio);
 private:
-    BaseRTMPProtocol *GetRTMPProtocol();
-    void InitializeVideoCapabilities(uint8_t *pData, uint32_t length);
+	BaseRTMPProtocol *GetRTMPProtocol();
+	void InitializeVideoCapabilities(uint8_t *pData, uint32_t length);
 };
 
 

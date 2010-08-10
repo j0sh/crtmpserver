@@ -22,7 +22,6 @@
 #define	_RTSPPROTOCOL_H
 
 #include "protocols/baseprotocol.h"
-#include "buffering/iobuffer.h"
 #include "protocols/rtp/sdp.h"
 #include "streaming/baseoutnetrtpudpstream.h"
 

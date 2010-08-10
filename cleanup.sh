@@ -67,4 +67,5 @@ for i in `find  ./ -type f -name "*.cxx"|grep  "/tests/"`;do  rm -rf $i;done
 for i in `find  ./ -type f -name "*.bin"`;do  rm -rf  $i;done
 for i in `find  ./ -type f -name "*.ii"`;do  rm -rf  $i;done
 for i in `find  ./ -type f -name "*.s"`;do  rm -rf  $i;done
+for i in `find  ./ -type f -name "*.o"`;do  rm -rf  $i;done
 

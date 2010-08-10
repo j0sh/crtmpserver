@@ -20,7 +20,7 @@
 #ifndef _MEDIAFRAME_H
 #define	_MEDIAFRAME_H
 
-#include "utils/core.h"
+#include "new/common.h"
 
 #define MEDIAFRAME_TYPE_AUDIO 0
 #define MEDIAFRAME_TYPE_VIDEO 1

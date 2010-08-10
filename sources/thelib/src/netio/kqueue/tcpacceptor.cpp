@@ -21,7 +21,6 @@
 #ifdef NET_KQUEUE
 #include "netio/kqueue/tcpacceptor.h"
 #include "netio/kqueue/iohandlermanager.h"
-#include "utils/core.h"
 #include "protocols/protocolfactorymanager.h"
 #include "protocols/tcpprotocol.h"
 #include "netio/kqueue/tcpcarrier.h"

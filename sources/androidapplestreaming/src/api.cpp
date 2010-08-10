@@ -24,10 +24,8 @@
 #include "netio/netio.h"
 #include "applestreamingclientapplication.h"
 #include "application/clientapplicationmanager.h"
-#include "logging/consoleloglocation.h"
 #include "variantconnection.h"
 #include "protocols/variant/messagestructure.h"
-#include "logging/logcatloglocation.h"
 
 static sockaddr_in gAddress = {0};
 

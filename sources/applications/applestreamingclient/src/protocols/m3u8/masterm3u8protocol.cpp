@@ -17,8 +17,6 @@
  *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
 #include "protocols/m3u8/masterm3u8protocol.h"
 #include "protocols/protocolfactory.h"
 #include "clientcontext.h"

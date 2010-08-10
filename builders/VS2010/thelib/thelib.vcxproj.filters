@@ -14,9 +14,6 @@
     <Filter Include="Source Files\netio">
       <UniqueIdentifier>{ab168c97-6073-4d82-9fa3-291fc927ba60}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\netio\iocp2">
-      <UniqueIdentifier>{42f34c3e-1d11-44ec-90c9-95f00312cce6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\protocols">
       <UniqueIdentifier>{e38e2255-be37-4a76-9036-03603b69bc64}</UniqueIdentifier>
     </Filter>
@@ -77,9 +74,6 @@
     </Filter>
     <Filter Include="Header Files\netio">
       <UniqueIdentifier>{f7d8807d-32dd-4ee3-9f01-99ba9e6f7bc2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\netio\iocp2">
-      <UniqueIdentifier>{06e38a8b-1b92-480a-a401-6765e0bbe336}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\protocols">
       <UniqueIdentifier>{3dc4b24a-370f-4334-93b5-147932dcf546}</UniqueIdentifier>
@@ -166,27 +160,6 @@
     </ClCompile>
     <ClCompile Include="..\..\..\sources\thelib\src\configuration\configfile.cpp">
       <Filter>Source Files\configuration</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\netio\iocp2\iohandler.cpp">
-      <Filter>Source Files\netio\iocp2</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\netio\iocp2\iohandlermanager.cpp">
-      <Filter>Source Files\netio\iocp2</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\netio\iocp2\iotimer.cpp">
-      <Filter>Source Files\netio\iocp2</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\netio\iocp2\stdiocarrier.cpp">
-      <Filter>Source Files\netio\iocp2</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\netio\iocp2\tcpacceptor.cpp">
-      <Filter>Source Files\netio\iocp2</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\netio\iocp2\tcpcarrier.cpp">
-      <Filter>Source Files\netio\iocp2</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\netio\iocp2\udpcarrier.cpp">
-      <Filter>Source Files\netio\iocp2</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\sources\thelib\src\protocols\baseprotocol.cpp">
       <Filter>Source Files\protocols</Filter>
@@ -600,33 +573,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\sources\thelib\include\netio\netio.h">
       <Filter>Header Files\netio</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\netio\iocp2\iohandler.h">
-      <Filter>Header Files\netio\iocp2</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\netio\iocp2\iohandlermanager.h">
-      <Filter>Header Files\netio\iocp2</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\netio\iocp2\iohandlermanagertoken.h">
-      <Filter>Header Files\netio\iocp2</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\netio\iocp2\iotimer.h">
-      <Filter>Header Files\netio\iocp2</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\netio\iocp2\stdiocarrier.h">
-      <Filter>Header Files\netio\iocp2</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\netio\iocp2\tcpacceptor.h">
-      <Filter>Header Files\netio\iocp2</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\netio\iocp2\tcpcarrier.h">
-      <Filter>Header Files\netio\iocp2</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\netio\iocp2\tcpconnector.h">
-      <Filter>Header Files\netio\iocp2</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\netio\iocp2\udpcarrier.h">
-      <Filter>Header Files\netio\iocp2</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\sources\thelib\include\protocols\baseprotocol.h">
       <Filter>Header Files\protocols</Filter>

@@ -17,9 +17,6 @@
  *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-#include "utils/core.h"
 #include "applestreamingclientapplication.h"
 #include "protocols/rtmp/rtmpappprotocolhandler.h"
 #include "protocols/baseprotocol.h"

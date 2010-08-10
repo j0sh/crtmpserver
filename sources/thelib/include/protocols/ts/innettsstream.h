@@ -23,7 +23,6 @@
 #define	_INNETTSSTREAM_H
 
 #include "streaming/baseinnetstream.h"
-#include "buffering/iobuffer.h"
 #include "streaming/streamcapabilities.h"
 
 #define COMPUTE_DTS_TIME

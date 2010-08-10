@@ -22,7 +22,6 @@
 #define	_INBOUNDCONNECTIVITY_H
 
 #include "protocols/rtp/connectivity/baseconnectivity.h"
-#include "buffering/iobuffer.h"
 
 class InboundRTPProtocol;
 class RTCPProtocol;

@@ -20,7 +20,6 @@
 
 #ifdef HAS_PROTOCOL_TS
 #include "streaming/basestream.h"
-#include "buffering/iobuffer.h"
 #include "application/clientapplicationmanager.h"
 #include "protocols/ts/inboundtsprotocol.h"
 #include "protocols/ts/tspacketpat.h"

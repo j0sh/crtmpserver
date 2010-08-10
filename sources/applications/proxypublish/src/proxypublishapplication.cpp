@@ -17,9 +17,6 @@
  *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-#include "utils/core.h"
 #include "proxypublishapplication.h"
 #include "rtmpappprotocolhandler.h"
 #include "protocols/baseprotocol.h"

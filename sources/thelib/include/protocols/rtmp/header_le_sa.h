@@ -23,7 +23,7 @@
 #ifndef _HEADER_LE_SA_H
 #define	_HEADER_LE_SA_H
 
-#include "utils/core.h"
+#include "new/common.h"
 
 class IOBuffer;
 struct _Channel;

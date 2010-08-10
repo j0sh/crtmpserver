@@ -17,9 +17,6 @@
  *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
 #include "flvplaybackapplication.h"
 #include "protocols/protocoltypes.h"
 #include "protocols/rtmp/basertmpprotocol.h"

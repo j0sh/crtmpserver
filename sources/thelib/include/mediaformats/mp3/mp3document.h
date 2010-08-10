@@ -22,7 +22,6 @@
 #define	_MP3DOCUMENT_H
 
 #include "mediaformats/basemediadocument.h"
-#include "buffering/iobuffer.h"
 
 class MP3Document
 : public BaseMediaDocument {

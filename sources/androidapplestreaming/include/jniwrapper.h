@@ -21,7 +21,7 @@
 #define	_JNIWRAPPER_H
 
 #include <jni.h>
-#include "utils/core.h"
+#include "new/common.h"
 
 extern "C" void Java_com_rtmpd_CommandsInterface_EnvRun(
 		JNIEnv* pEnv, jobject thiz, jstring host, jint port);

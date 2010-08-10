@@ -22,15 +22,12 @@
 #define	_BASEINFILESTREAM_H
 
 #include "streaming/baseinstream.h"
-#include "buffering/iobuffer.h"
 #include "mediaformats/mediaframe.h"
 #include "protocols/timer/basetimerprotocol.h"
 
 #ifdef HAS_MMAP
-#include "utils/mmapfile.h"
 #define FileClass MmapFile
 #else
-#include "utils/file.h"
 #define FileClass File
 #endif
 

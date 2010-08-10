@@ -21,13 +21,7 @@
 #ifndef _ID3PARSER_H
 #define	_ID3PARSER_H
 
-#include "utils/core.h"
-#include "buffering/iobuffer.h"
-#ifdef HAS_MMAP
-#include "utils/mmapfile.h"
-#else
-#include "utils/file.h"
-#endif /* HAS_MMAP */
+#include "new/common.h"
 
 class ID3Parser {
 protected:

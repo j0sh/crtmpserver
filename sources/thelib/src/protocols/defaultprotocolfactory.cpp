@@ -17,8 +17,6 @@
  *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
 #include "protocols/defaultprotocolfactory.h"
 #include "protocols/protocoltypes.h"
 #include "protocols/tcpprotocol.h"

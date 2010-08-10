@@ -20,8 +20,6 @@
 
 #ifdef NET_SELECT
 
-#include "utils/core.h"
-#include "buffering/iobuffer.h"
 #include "netio/select/udpcarrier.h"
 #include "netio/select/iohandlermanager.h"
 #include "protocols/baseprotocol.h"
@@ -122,7 +120,7 @@ UDPCarrier* UDPCarrier::Create(string bindIp, uint16_t bindPort) {
 	//1. Create the socket
 	int sock = socket(AF_INET, SOCK_DGRAM, 0);
 	if (sock < 0) {
-		int err=LASTSOCKETERROR;
+		int err = LASTSOCKETERROR;
 		FATAL("Unable to create socket: %s(%d)", strerror(err), err);
 		return NULL;
 	}

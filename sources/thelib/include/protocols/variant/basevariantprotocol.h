@@ -23,7 +23,6 @@
 #define	_BASEVARIANTPROTOCOL_H
 
 #include "protocols/baseprotocol.h"
-#include "buffering/iobuffer.h"
 
 class BaseClientApplication;
 class BaseVariantAppProtocolHandler;

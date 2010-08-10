@@ -18,7 +18,6 @@
  */
 
 #ifdef HAS_MEDIA_MP4
-#include "utils/file.h"
 #include "mediaformats/mp4/mp4document.h"
 #include "mediaformats/mp4/baseatom.h"
 #include "mediaformats/mp4/atomudta.h"
@@ -534,7 +533,7 @@ bool MP4Document::BuildFrames(bool audio) {
 
 			if (currentChunck == nextChunck) {
 				//not changing the chunk
-				localOffset += (uint32_t)sampleSize[i];
+				localOffset += (uint32_t) sampleSize[i];
 			} else {
 				//changing the chunck
 				localOffset = 0;
@@ -542,7 +541,7 @@ bool MP4Document::BuildFrames(bool audio) {
 
 		} else {
 			// we are near end, so we are on the same chunck
-			localOffset += (uint32_t)sampleSize[i];
+			localOffset += (uint32_t) sampleSize[i];
 		}
 
 		frame.length = sampleSize[i];

@@ -26,7 +26,7 @@
 class VariantEventSink
 : public BaseEventSink {
 private:
-	map<string,string> _streamNames;
+	map<string, string> _streamNames;
 public:
 	VariantEventSink();
 	virtual ~VariantEventSink();

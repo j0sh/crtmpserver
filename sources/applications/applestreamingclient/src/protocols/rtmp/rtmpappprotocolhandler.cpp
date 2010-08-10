@@ -18,7 +18,6 @@
  */
 
 #ifdef HAS_PROTOCOL_RTMP
-#include "utils/core.h"
 #include "protocols/rtmp/rtmpappprotocolhandler.h"
 #include "protocols/rtmp/basertmpappprotocolhandler.h"
 #include "protocols/rtmp/messagefactories/messagefactories.h"
@@ -67,7 +66,7 @@ ClientContext * RTMPAppProtocolHandler::GetContext(BaseProtocol *pFrom) {
 void RTMPAppProtocolHandler::ReleaseContext(BaseProtocol *pFrom) {
 	uint32_t contextId = pFrom->GetCustomParameters()["contextId"];
 	ClientContext::ReleaseContext(contextId);
-	pFrom->GetCustomParameters()["contextId"] = (uint32_t)0;
+	pFrom->GetCustomParameters()["contextId"] = (uint32_t) 0;
 }
 
 bool RTMPAppProtocolHandler::ProcessSetupStream(BaseRTMPProtocol *pFrom,

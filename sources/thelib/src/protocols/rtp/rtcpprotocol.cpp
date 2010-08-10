@@ -20,7 +20,6 @@
 #ifdef HAS_PROTOCOL_RTP
 #include "protocols/rtp/rtcpprotocol.h"
 #include "protocols/rtp/connectivity/inboundconnectivity.h"
-#include "buffering/iobuffer.h"
 
 RTCPProtocol::RTCPProtocol()
 : BaseProtocol(PT_RTCP) {

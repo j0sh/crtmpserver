@@ -21,7 +21,6 @@
 #ifdef NET_SELECT
 #include "netio/select/tcpacceptor.h"
 #include "netio/select/iohandlermanager.h"
-#include "utils/core.h"
 #include "protocols/protocolfactorymanager.h"
 #include "protocols/tcpprotocol.h"
 #include "netio/select/tcpcarrier.h"
@@ -51,7 +50,7 @@ bool TCPAcceptor::StartAccept(BaseClientApplication *pApplication) {
 
 	_inboundFd = _outboundFd = (int) socket(PF_INET, SOCK_STREAM, 0);
 	if (_inboundFd < 0) {
-		int err=LASTSOCKETERROR;
+		int err = LASTSOCKETERROR;
 		FATAL("Unable to create socket: %s(%d)", strerror(err), err);
 		return false;
 	}
@@ -139,7 +138,7 @@ bool TCPAcceptor::OnConnectionAvailable(select_event &event) {
 	}
 
 	//3. Put the socket in non-blocking mode
-	if(!SetFdNonBlock(fd)){
+	if (!SetFdNonBlock(fd)) {
 		FATAL("Unable to set O_NONBLOCK");
 		return false;
 	}

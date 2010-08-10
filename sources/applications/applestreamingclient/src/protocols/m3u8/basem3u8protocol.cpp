@@ -17,7 +17,6 @@
  *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 #include "protocols/m3u8/basem3u8protocol.h"
 #include "protocols/http/outboundhttpprotocol.h"
 #include "clientcontext.h"

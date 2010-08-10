@@ -21,7 +21,7 @@
 #ifndef _BASEATOM_H
 #define	_BASEATOM_H
 
-#include "utils/core.h"
+#include "new/common.h"
 
 string U32TOS(uint32_t type);
 

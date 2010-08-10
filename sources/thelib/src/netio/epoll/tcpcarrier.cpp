@@ -1,28 +1,27 @@
 /* 
-*  Copyright (c) 2010,
-*  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
-*  
-*  This file is part of crtmpserver.
-*  crtmpserver is free software: you can redistribute it and/or modify
-*  it under the terms of the GNU General Public License as published by
-*  the Free Software Foundation, either version 3 of the License, or
-*  (at your option) any later version.
-*  
-*  crtmpserver is distributed in the hope that it will be useful,
-*  but WITHOUT ANY WARRANTY; without even the implied warranty of
-*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*  GNU General Public License for more details.
-*  
-*  You should have received a copy of the GNU General Public License
-*  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ *  Copyright (c) 2010,
+ *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
+ *
+ *  This file is part of crtmpserver.
+ *  crtmpserver is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  crtmpserver is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 
 #ifdef NET_EPOLL
 #include "netio/epoll/tcpcarrier.h"
 #include "netio/epoll/iohandlermanager.h"
 #include "protocols/baseprotocol.h"
-#include "buffering/iobuffer.h"
 
 #define ENABLE_WRITE_DATA \
 if (!_writeDataEnabled) { \
@@ -49,7 +48,7 @@ TCPCarrier::TCPCarrier(int32_t fd, BaseProtocol *pProtocol)
 	memset(&_nearAddress, 0, sizeof (sockaddr_in));
 	_nearIp = "";
 	_nearPort = 0;
-	socklen_t sz=sizeof(int);
+	socklen_t sz = sizeof (int);
 	_sendBufferSize = 0;
 	if (getsockopt(fd, SOL_SOCKET, SO_SNDBUF, &_sendBufferSize, &sz) != 0) {
 		ASSERT("Unable to determine the send buffer size");
@@ -83,8 +82,8 @@ bool TCPCarrier::OnEvent(struct epoll_event &event) {
 		int32_t recvBytes = 0;
 		if (!pInputBuffer->ReadFromTCPFd(_inboundFd, _recvBufferSize, recvBytes)) {
 			FATAL("Unable to read data. %s:%d -> %s:%d",
-					STR(_farIp),_farPort,
-					STR(_nearIp),_nearPort);
+					STR(_farIp), _farPort,
+					STR(_nearIp), _nearPort);
 			return false;
 		}
 		//FINEST("recvBytes: %d; _totalRecveivedBytes: %d", recvBytes, _totalRecveivedBytes);
@@ -106,8 +105,8 @@ bool TCPCarrier::OnEvent(struct epoll_event &event) {
 		while ((pOutputBuffer = _pProtocol->GetOutputBuffer()) != NULL) {
 			if (!pOutputBuffer->WriteToTCPFd(_inboundFd, _sendBufferSize)) {
 				FATAL("Unable to send data. %s:%d -> %s:%d",
-					STR(_farIp),_farPort,
-					STR(_nearIp),_nearPort);
+						STR(_farIp), _farPort,
+						STR(_nearIp), _nearPort);
 				IOHandlerManager::EnqueueForDelete(this);
 				return false;
 			}

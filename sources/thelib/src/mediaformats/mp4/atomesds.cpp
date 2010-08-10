@@ -19,7 +19,6 @@
 
 #ifdef HAS_MEDIA_MP4
 #include "mediaformats/mp4/atomesds.h"
-#include "buffering/bitarray.h"
 
 #define MP4ESDescrTag                   0x03
 #define MP4DecConfigDescrTag            0x04

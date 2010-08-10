@@ -18,12 +18,10 @@
  */
 
 
-#include "utils/core.h"
+#include "new/common.h"
 #include "configuration/configfile.h"
-#include "luautils/luautils.h"
 #include "application/baseclientapplication.h"
 #include "application/clientapplicationmanager.h"
-#include "logging/fileloglocation.h"
 #include "protocols/dns/outbounddnsresolverprotocol.h"
 #include "netio/netio.h"
 #include "protocols/protocolfactorymanager.h"

@@ -18,13 +18,10 @@
  */
 
 
-#include "utils/core.h"
 #include "protocols/baseprotocol.h"
 #include "netio/netio.h"
 #include "protocols/protocolmanager.h"
 #include "application/baseclientapplication.h"
-
-
 
 //#define LOG_CONSTRUCTOR_DESTRUCTOR
 
