@@ -78,6 +78,26 @@ extern "C" jobject Java_com_rtmpd_CommandsInterface_CommandResume(
 	return VariantToJObject(result, pEnv);
 }
 
+extern "C" jobject Java_com_rtmpd_CommandsInterface_CommandSelectBandwidth(
+		JNIEnv* pEnv, jobject thiz, jint contextId, jint bandwidth) {
+	Variant result = CommandSelectBandwidth((uint32_t) contextId,
+			(uint32_t) bandwidth);
+	return VariantToJObject(result, pEnv);
+}
+
+extern "C" jobject Java_com_rtmpd_CommandsInterface_CommandSeek(
+		JNIEnv* pEnv, jobject thiz, jint contextId, jdouble value) {
+	Variant result = CommandSeek((uint32_t) contextId, (double) value);
+	return VariantToJObject(result, pEnv);
+}
+
+extern "C" jobject Java_com_rtmpd_CommandsInterface_CommandSelectAVChannels(
+		JNIEnv* pEnv, jobject thiz, jint contextId, jint audio, jint video) {
+	Variant result = CommandSelectAVChannels((uint32_t) contextId,
+			(uint32_t) audio, (uint32_t) video);
+	return VariantToJObject(result, pEnv);
+}
+
 extern "C" jobject Java_com_rtmpd_CommandsInterface_InfoListStreams(
 		JNIEnv* pEnv, jobject thiz, jint contextId) {
 	Variant result = InfoListStreams((uint32_t) contextId);
@@ -87,6 +107,30 @@ extern "C" jobject Java_com_rtmpd_CommandsInterface_InfoListStreams(
 extern "C" jobject Java_com_rtmpd_CommandsInterface_InfoListAllStreams(
 		JNIEnv* pEnv, jobject thiz) {
 	Variant result = InfoListAllStreams();
+	return VariantToJObject(result, pEnv);
+}
+
+extern "C" jobject Java_com_rtmpd_CommandsInterface_InfoBandwidth(
+		JNIEnv* pEnv, jobject thiz, jint contextId) {
+	Variant result = InfoBandwidth((uint32_t) contextId);
+	return VariantToJObject(result, pEnv);
+}
+
+extern "C" jobject Java_com_rtmpd_CommandsInterface_InfoAllBandwidth(
+		JNIEnv* pEnv, jobject thiz) {
+	Variant result = InfoAllBandwidth();
+	return VariantToJObject(result, pEnv);
+}
+
+extern "C" jobject Java_com_rtmpd_CommandsInterface_InfoPlayback(
+		JNIEnv* pEnv, jobject thiz, jint contextId) {
+	Variant result = InfoPlayback((uint32_t) contextId);
+	return VariantToJObject(result, pEnv);
+}
+
+extern "C" jobject Java_com_rtmpd_CommandsInterface_InfoAllPlayback(
+		JNIEnv* pEnv, jobject thiz) {
+	Variant result = InfoAllPlayback();
 	return VariantToJObject(result, pEnv);
 }
 

@@ -217,6 +217,31 @@ Variant CommandResume(uint32_t contextId) {
 	return response;
 }
 
+Variant CommandSelectBandwidth(uint32_t contextId, uint32_t bandwidth) {
+	Variant request;
+	ASC_REQ_BUILD_COMMAND_SELECT_BANDWIDTH(request, contextId, bandwidth);
+	Variant response;
+	SEND_VARIANT_REQUEST(request, response);
+	return response;
+}
+
+Variant CommandSeek(uint32_t contextId, double value) {
+	Variant request;
+	ASC_REQ_BUILD_COMMAND_SEEK(request, contextId, value);
+	Variant response;
+	SEND_VARIANT_REQUEST(request, response);
+	return response;
+}
+
+Variant CommandSelectAVChannels(uint32_t contextId, uint32_t audioChannel,
+		uint32_t videoChannel) {
+	Variant request;
+	ASC_REQ_BUILD_COMMAND_SELECT_AV_CHANNELS(request, contextId, audioChannel, videoChannel);
+	Variant response;
+	SEND_VARIANT_REQUEST(request, response);
+	return response;
+}
+
 Variant InfoListStreams(uint32_t contextId) {
 	Variant request;
 	ASC_REQ_BUILD_INFO_LIST_STREAMS(request, contextId);
@@ -228,6 +253,48 @@ Variant InfoListStreams(uint32_t contextId) {
 Variant InfoListAllStreams() {
 	Variant request;
 	ASC_REQ_BUILD_INFO_LIST_ALL_STREAMS(request);
+	Variant response;
+	SEND_VARIANT_REQUEST(request, response);
+	return response;
+}
+
+Variant InfoBandwidth(uint32_t contextId) {
+	/*
+	 * Variant CLIGetAvailableBandwidths();
+	 * Variant CLIGetMeasuredBandwidth();
+	 * Variant CLIGetSelectedBandwidth();
+	 */
+	Variant request;
+	ASC_REQ_BUILD_INFO_BANDWIDTH(request, contextId);
+	Variant response;
+	SEND_VARIANT_REQUEST(request, response);
+	return response;
+}
+
+Variant InfoAllBandwidth() {
+	Variant request;
+	ASC_REQ_BUILD_INFO_ALL_BANDWIDTH(request);
+	Variant response;
+	SEND_VARIANT_REQUEST(request, response);
+	return response;
+}
+
+Variant InfoPlayback(uint32_t contextId) {
+	Variant request;
+	ASC_REQ_BUILD_INFO_PLAYBACK(request, contextId);
+	Variant response;
+	SEND_VARIANT_REQUEST(request, response);
+	return response;
+}
+
+Variant InfoAllPlayback() {
+	/*
+	 * Variant CLIGetSeekRange();
+	 * Variant CLIGetVideoChannels();
+	 * Variant CLIGetAudioChannels();
+	 */
+	Variant request;
+	ASC_REQ_BUILD_INFO_ALL_PLAYBACK(request);
 	Variant response;
 	SEND_VARIANT_REQUEST(request, response);
 	return response;

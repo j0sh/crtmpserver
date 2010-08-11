@@ -34,9 +34,17 @@ Variant CommandPlay(uint32_t contextId, string m3u8Uri, string httpSessionId,
 		string keyPassword);
 Variant CommandPause(uint32_t contextId);
 Variant CommandResume(uint32_t contextId);
+Variant CommandSelectBandwidth(uint32_t contextId, uint32_t bandwidth);
+Variant CommandSeek(uint32_t contextId, double value);
+Variant CommandSelectAVChannels(uint32_t contextId, uint32_t audioChannel,
+		uint32_t videoChannel);
 
 Variant InfoListStreams(uint32_t contextId);
 Variant InfoListAllStreams();
+Variant InfoBandwidth(uint32_t contextId);
+Variant InfoAllBandwidth();
+Variant InfoPlayback(uint32_t contextId);
+Variant InfoAllPlayback();
 
 #endif	/* _API_H */
 
