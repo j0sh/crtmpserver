@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Source Files\svc">
+      <UniqueIdentifier>{5b9f4aa4-3855-4214-be2e-a2215b1a85d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\rtmpserver">
+      <UniqueIdentifier>{c75b42b4-16e4-4c37-8688-5ab541d031fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\svc">
+      <UniqueIdentifier>{fbf006fe-14f6-42c3-9c58-cc8d78af69df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\rtmpserver">
+      <UniqueIdentifier>{922b945e-f407-4be0-bc3f-85180ffdce03}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\sources\applications\win32service\src\svc\Svc.cpp">
+      <Filter>Source Files\svc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\applications\win32service\src\rtmpserver\rtmpserver.cpp">
+      <Filter>Source Files\rtmpserver</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\sources\applications\win32service\include\rtmpserver\rtmpserver.h">
+      <Filter>Header Files\rtmpserver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\applications\win32service\include\svc\Svc.h">
+      <Filter>Header Files\svc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\applications\win32service\include\svc\sample.h">
+      <Filter>Header Files\svc</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
