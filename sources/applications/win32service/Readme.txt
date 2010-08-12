@@ -28,9 +28,6 @@ rtmpserver should start when evo service starts. To make sure that it starts suc
 - Assign a "mediaFolder" parameter in rtmpserver.lua
 Stop the evo service to stop rtmpserver.
 
-CRITICAL BUGS:
-- Media is not playing.
-
 NOTES:
 - Currently, the rtmpserver logs is saved to C:\\RTMPServerlogs.txt.
 - There are limited sample applications in the net that implements this model. 
