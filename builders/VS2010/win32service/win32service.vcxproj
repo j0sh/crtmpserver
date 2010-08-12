@@ -77,6 +77,9 @@
       <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\sources\applications\win32service\Readme.txt" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{F7940524-EDAB-40AC-B0FC-C0289E08C61C}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>

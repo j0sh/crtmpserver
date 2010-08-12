@@ -41,4 +41,7 @@
       <Filter>Header Files\svc</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\sources\applications\win32service\Readme.txt" />
+  </ItemGroup>
 </Project>
