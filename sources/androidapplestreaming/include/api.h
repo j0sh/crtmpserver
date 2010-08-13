@@ -42,9 +42,7 @@ Variant CommandSelectAVChannels(uint32_t contextId, uint32_t audioChannel,
 Variant InfoListStreams(uint32_t contextId);
 Variant InfoListAllStreams();
 Variant InfoBandwidth(uint32_t contextId);
-Variant InfoAllBandwidth();
 Variant InfoPlayback(uint32_t contextId);
-Variant InfoAllPlayback();
 
 #endif	/* _API_H */
 

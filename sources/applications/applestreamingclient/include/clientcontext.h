@@ -87,6 +87,12 @@ public:
 	ConnectingString &GetConnectingString();
 	Playlist *MasterPlaylist();
 	Playlist *ChildPlaylist(uint32_t bw);
+	vector<double> GetAvailableBandwidths();
+	double GetDetectedBandwidth();
+	double GetSelectedBandwidth();
+	uint32_t GetBufferLevel();
+	uint32_t GetMaxBufferLevel();
+	double GetBufferLevelPercent();
 
 	//processing
 	bool StartProcessing();

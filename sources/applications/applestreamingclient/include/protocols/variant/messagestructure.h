@@ -37,9 +37,7 @@
 #define ASC_REQ_TYPE_INFO_LIST_STREAMS			"infoListStreams"
 #define ASC_REQ_TYPE_INFO_LIST_ALL_STREAMS		"infoListAllStreams"
 #define	ASC_REQ_TYPE_INFO_BANDWIDTH				"infoBandwidth"
-#define	ASC_REQ_TYPE_INFO_ALL_BANDWIDTH			"infoAllBandwidth"
 #define	ASC_REQ_TYPE_INFO_PLAYBACK				"infoPlayback"
-#define	ASC_REQ_TYPE_INFO_ALL_PLAYBACK			"infoAllPlayback"
 
 #define ASC_REQ_COMMAND_PLAY_URI_KEY				"uri"
 #define ASC_REQ_COMMAND_PLAY_SESSION_ID_KEY			"sessionId"
@@ -49,7 +47,13 @@
 #define	ASC_REQ_COMMAND_SELECT_AV_CHANNELS_AUDIO	"audio"
 #define	ASC_REQ_COMMAND_SELECT_AV_CHANNELS_VIDEO	"video"
 
-#define ASC_RES_CONTEXT_CREATE_CONTEXT_ID_KEY	"contextId"
+#define ASC_RES_CONTEXT_CREATE_CONTEXT_ID_KEY			"contextId"
+#define ASC_RES_INFO_BANDWIDTH_AVAILABLE_BWS			"availableBws"
+#define ASC_RES_INFO_BANDWIDTH_DETECTED_BW				"detectedBw"
+#define ASC_RES_INFO_BANDWIDTH_SELECTED_BW				"selectedBw"
+#define ASC_RES_INFO_BANDWIDTH_BUFFER_LEVEL				"bufferLevel"
+#define ASC_RES_INFO_BANDWIDTH_MAX_BUFFER_LEVEL			"bufferMaxLevel"
+#define ASC_RES_INFO_BANDWIDTH_MAX_BUFFER_LEVEL_PERCENT	"bufferLevelPercent"
 
 #define ASC_RES_STATUS_OK							0
 #define ASC_RES_STATUS_OK_DESC						"OK"
@@ -162,14 +166,8 @@ do { \
 #define ASC_REQ_BUILD_INFO_BANDWIDTH(v,contextId) \
 	ASC_REQ_BUILD(v,ASC_REQ_TYPE_INFO_BANDWIDTH,contextId,Variant())
 
-#define ASC_REQ_BUILD_INFO_ALL_BANDWIDTH(v) \
-	ASC_REQ_BUILD(v,ASC_REQ_TYPE_INFO_ALL_BANDWIDTH,0,Variant())
-
 #define ASC_REQ_BUILD_INFO_PLAYBACK(v,contextId) \
 	ASC_REQ_BUILD(v,ASC_REQ_TYPE_INFO_PLAYBACK,contextId,Variant())
-
-#define ASC_REQ_BUILD_INFO_ALL_PLAYBACK(v) \
-	ASC_REQ_BUILD(v,ASC_REQ_TYPE_INFO_ALL_PLAYBACK,0,Variant())
 
 #define ASC_RES_BUILD(r,status,params) \
 do {\
@@ -262,6 +260,20 @@ do { \
 
 #define ASC_RES_BUILD_OK_INFO_LIST_ALL_STREAMS(r,streamNames) \
 	ASC_RES_BUILD_OK_INFO_LIST_STREAMS(r,streamNames)
+
+#define ASC_RES_BUILD_OK_INFO_BANDWIDTH(r,available, detected, selected, bufferLevel, maxBufferLevel, bufferLevelPercent) \
+do { \
+	Variant params; \
+	params[ASC_RES_INFO_BANDWIDTH_AVAILABLE_BWS].IsArray(true); \
+	for(uint32_t i=0;i<available.size();i++) \
+		params[ASC_RES_INFO_BANDWIDTH_AVAILABLE_BWS].PushToArray((double)available[i]); \
+	params[ASC_RES_INFO_BANDWIDTH_DETECTED_BW]=(double)(detected); \
+	params[ASC_RES_INFO_BANDWIDTH_SELECTED_BW]=(double)(selected); \
+	params[ASC_RES_INFO_BANDWIDTH_BUFFER_LEVEL]=(uint32_t)(bufferLevel); \
+	params[ASC_RES_INFO_BANDWIDTH_MAX_BUFFER_LEVEL]=(uint32_t)(maxBufferLevel); \
+	params[ASC_RES_INFO_BANDWIDTH_MAX_BUFFER_LEVEL_PERCENT]=(double)(bufferLevelPercent); \
+	ASC_RES_BUILD(r,ASC_RES_STATUS_OK,params); \
+} while(0)
 
 #endif	/* _MESSAGESTRUCTURE_H */
 

@@ -25,6 +25,18 @@
 #include "eventsink/varianteventsink.h"
 #include "applestreamingclientapplication.h"
 
+#define GET_CONTEXT(pProtocol, request) \
+uint32_t contextId = ASC_REQ_CONTEXT_ID(request); \
+if (contextId == 0) {\
+	ASC_RES_BUILD_CONTEXT_NOT_FOUND(request); \
+	return; \
+} \
+ClientContext *pContext = GetContext(contextId, pProtocol->GetType()); \
+if (pContext == NULL) { \
+	ASC_RES_BUILD_CONTEXT_NOT_FOUND(request); \
+	return; \
+}
+
 VariantAppProtocolHandler::VariantAppProtocolHandler(Variant &configuration)
 : BaseVariantAppProtocolHandler(configuration) {
 
@@ -65,6 +77,10 @@ bool VariantAppProtocolHandler::ProcessMessage(BaseVariantProtocol *pProtocol,
 		ProcessInfoListStreams(pProtocol, lastReceived);
 	} else if (type == ASC_REQ_TYPE_INFO_LIST_ALL_STREAMS) {
 		ProcessInfoListAllStreams(pProtocol, lastReceived);
+	} else if (type == ASC_REQ_TYPE_INFO_BANDWIDTH) {
+		ProcessInfoBandwidth(pProtocol, lastReceived);
+	} else if (type == ASC_REQ_TYPE_INFO_PLAYBACK) {
+		ProcessInfoPlayback(pProtocol, lastReceived);
 	} else {
 		WARN("Processing type `%s` not yet implemented", STR(type));
 		ASC_RES_BUILD_UNKNOWN_REQUEST_TYPE(lastReceived);
@@ -91,16 +107,7 @@ void VariantAppProtocolHandler::ProcessContextList(BaseVariantProtocol *pProtoco
 
 void VariantAppProtocolHandler::ProcessContextClose(BaseVariantProtocol *pProtocol,
 		Variant &request) {
-	uint32_t contextId = ASC_REQ_CONTEXT_ID(request);
-	if (contextId == 0) {
-		ASC_RES_BUILD_CONTEXT_NOT_FOUND(request);
-		return;
-	}
-	ClientContext *pContext = GetContext(contextId, pProtocol->GetType());
-	if (pContext == NULL) {
-		ASC_RES_BUILD_CONTEXT_NOT_FOUND(request);
-		return;
-	}
+	GET_CONTEXT(pProtocol, request);
 	ClientContext::ReleaseContext(contextId);
 	ASC_RES_BUILD_OK(request, Variant());
 }
@@ -113,17 +120,7 @@ void VariantAppProtocolHandler::ProcessContextCloseAll(
 
 void VariantAppProtocolHandler::ProcessCommandPlay(
 		BaseVariantProtocol *pProtocol, Variant &request) {
-	uint32_t contextId = ASC_REQ_CONTEXT_ID(request);
-	if (contextId == 0) {
-		ASC_RES_BUILD_CONTEXT_NOT_FOUND(request);
-		return;
-	}
-	ClientContext *pContext = GetContext(contextId, pProtocol->GetType());
-	if (pContext == NULL) {
-		ASC_RES_BUILD_CONTEXT_NOT_FOUND(request);
-		return;
-	}
-
+	GET_CONTEXT(pProtocol, request);
 	string connectingString = ASC_REQ_COMMAND_PLAY_URI(request);
 	if (ASC_REQ_COMMAND_PLAY_PASSWORD(request) != "") {
 		connectingString += "|" + (string) ASC_REQ_COMMAND_PLAY_PASSWORD(request);
@@ -151,16 +148,7 @@ void VariantAppProtocolHandler::ProcessCommandResume(
 
 void VariantAppProtocolHandler::ProcessInfoListStreams(
 		BaseVariantProtocol *pProtocol, Variant &request) {
-	uint32_t contextId = ASC_REQ_CONTEXT_ID(request);
-	if (contextId == 0) {
-		ASC_RES_BUILD_CONTEXT_NOT_FOUND(request);
-		return;
-	}
-	ClientContext *pContext = GetContext(contextId, pProtocol->GetType());
-	if (pContext == NULL) {
-		ASC_RES_BUILD_CONTEXT_NOT_FOUND(request);
-		return;
-	}
+	GET_CONTEXT(pProtocol, request);
 	if (pContext->EventSink()->GetType() == EVENT_SYNC_VARIANT) {
 		VariantEventSink *pSink = (VariantEventSink *) pContext->EventSink();
 		vector<string> streams = pSink->GetStreamNames();
@@ -194,4 +182,32 @@ void VariantAppProtocolHandler::ProcessInfoListAllStreams(
 		}
 	}
 	ASC_RES_BUILD_OK_INFO_LIST_ALL_STREAMS(request, allStreams);
+}
+
+void VariantAppProtocolHandler::ProcessInfoBandwidth(
+		BaseVariantProtocol *pProtocol, Variant &request) {
+	GET_CONTEXT(pProtocol, request);
+	ASC_RES_BUILD_OK_INFO_BANDWIDTH(request,
+			pContext->GetAvailableBandwidths(),
+			pContext->GetDetectedBandwidth(),
+			pContext->GetSelectedBandwidth(),
+			pContext->GetBufferLevel(),
+			pContext->GetMaxBufferLevel(),
+			pContext->GetBufferLevelPercent());
+}
+
+void VariantAppProtocolHandler::ProcessInfoPlayback(
+		BaseVariantProtocol *pProtocol, Variant &request) {
+	GET_CONTEXT(pProtocol, request);
+	/*
+	 * seek range
+	 * current position
+	 */
+	//	ASC_RES_BUILD_OK_INFO_PLAYBACK(request,
+	//			pContext->GetMinTimestamp(),
+	//			pContext->GetMaxTimestamp(),
+	//			pContext->GetChunksCount(),
+	//			pContext->GetCurrentTimestamp(),
+	//			pContext->GetCurrentChunkIndex());
+	ASC_RES_BUILD_NYI(request);
 }

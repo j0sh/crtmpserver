@@ -77,9 +77,14 @@ void testContexts() {
 	FINEST("result:\n%s", STR(result.ToString()));
 }
 
-#define MY_URL "http://mediadownloads.mlb.com/mlbam/2010/06/29/9505835_m3u8/128/dropf_9505835_100m_128K.m3u8"
-#define MY_SESSION_ID ""
-#define MY_KEY ""
+//#define MY_URL "http://mediadownloads.mlb.com/mlbam/2010/06/29/9505835_m3u8/128/dropf_9505835_100m_128K.m3u8"
+//#define MY_SESSION_ID ""
+//#define MY_KEY ""
+
+
+#define MY_URL "http://mlbvod-akc.mlb.com/mlbam/2010/04/08/MLB_GAME_VIDEO_LANPIT_HOME_20100408/master_wired.m3u8"
+#define MY_SESSION_ID "playback=HTTP_CLOUD_WIRED&contentId=7320085&appAccountName=mlb&eventId=14-263849-2010-04-08&ipid=11627706&sessionKey=3HJ3abDj%2BPBkmIn8cprQTgkYIa8%3D"
+#define MY_KEY "ugkuOk9Qy4HNS5uRxQcQXHfLuAI="
 
 void testCommands() {
 	Variant result = ContextCreate();
@@ -88,7 +93,14 @@ void testCommands() {
 	uint32_t contextId = (uint32_t) ASC_RES_PARAM(result, "contextId");
 	result = CommandPlay(contextId, MY_URL, MY_SESSION_ID, MY_KEY);
 	FINEST("result:\n%s", STR(result.ToString()));
-	//sleep(1);
+
+	for (;;) {
+		result = InfoBandwidth(contextId);
+		FINEST("InfoBandwidth:\n%s", STR(result.ToString()));
+		//		result = InfoPlayback(contextId);
+		//		FINEST("InfoBandwidth:\n%s", STR(result.ToString()));
+		sleep(1);
+	}
 
 	//	sleep(5);
 	//	result = InfoListStreams(contextId);

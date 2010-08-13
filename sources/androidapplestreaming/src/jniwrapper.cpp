@@ -116,21 +116,9 @@ extern "C" jobject Java_com_rtmpd_CommandsInterface_InfoBandwidth(
 	return VariantToJObject(result, pEnv);
 }
 
-extern "C" jobject Java_com_rtmpd_CommandsInterface_InfoAllBandwidth(
-		JNIEnv* pEnv, jobject thiz) {
-	Variant result = InfoAllBandwidth();
-	return VariantToJObject(result, pEnv);
-}
-
 extern "C" jobject Java_com_rtmpd_CommandsInterface_InfoPlayback(
 		JNIEnv* pEnv, jobject thiz, jint contextId) {
 	Variant result = InfoPlayback((uint32_t) contextId);
-	return VariantToJObject(result, pEnv);
-}
-
-extern "C" jobject Java_com_rtmpd_CommandsInterface_InfoAllPlayback(
-		JNIEnv* pEnv, jobject thiz) {
-	Variant result = InfoAllPlayback();
 	return VariantToJObject(result, pEnv);
 }
 

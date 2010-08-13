@@ -259,21 +259,8 @@ Variant InfoListAllStreams() {
 }
 
 Variant InfoBandwidth(uint32_t contextId) {
-	/*
-	 * Variant CLIGetAvailableBandwidths();
-	 * Variant CLIGetMeasuredBandwidth();
-	 * Variant CLIGetSelectedBandwidth();
-	 */
 	Variant request;
 	ASC_REQ_BUILD_INFO_BANDWIDTH(request, contextId);
-	Variant response;
-	SEND_VARIANT_REQUEST(request, response);
-	return response;
-}
-
-Variant InfoAllBandwidth() {
-	Variant request;
-	ASC_REQ_BUILD_INFO_ALL_BANDWIDTH(request);
 	Variant response;
 	SEND_VARIANT_REQUEST(request, response);
 	return response;
@@ -282,19 +269,6 @@ Variant InfoAllBandwidth() {
 Variant InfoPlayback(uint32_t contextId) {
 	Variant request;
 	ASC_REQ_BUILD_INFO_PLAYBACK(request, contextId);
-	Variant response;
-	SEND_VARIANT_REQUEST(request, response);
-	return response;
-}
-
-Variant InfoAllPlayback() {
-	/*
-	 * Variant CLIGetSeekRange();
-	 * Variant CLIGetVideoChannels();
-	 * Variant CLIGetAudioChannels();
-	 */
-	Variant request;
-	ASC_REQ_BUILD_INFO_ALL_PLAYBACK(request);
 	Variant response;
 	SEND_VARIANT_REQUEST(request, response);
 	return response;

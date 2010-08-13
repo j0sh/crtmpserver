@@ -3,6 +3,7 @@ PROJECT(androidapplestreaming)
 
 #prepare the include directories
 INCLUDE_DIRECTORIES(
+		../../../3rdparty/lua-dev
         ../../../sources/common/include
 		../../../sources/thelib/include
 		../../../sources/applications/applestreamingclient/include

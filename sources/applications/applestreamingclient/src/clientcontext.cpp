@@ -150,6 +150,35 @@ Playlist *ClientContext::ChildPlaylist(uint32_t bw) {
 	return _childPlaylists[bw];
 }
 
+vector<double> ClientContext::GetAvailableBandwidths() {
+	vector<double> result;
+
+	FOR_MAP(_childPlaylists, uint32_t, Playlist *, i) {
+		ADD_VECTOR_END(result, MAP_KEY(i));
+	}
+	return result;
+}
+
+double ClientContext::GetDetectedBandwidth() {
+	return (uint32_t) _pSpeedComputer->GetMeanSpeed()*8.0;
+}
+
+double ClientContext::GetSelectedBandwidth() {
+	return _optimalBw;
+}
+
+uint32_t ClientContext::GetBufferLevel() {
+	return GETAVAILABLEBYTESCOUNT(_avData);
+}
+
+uint32_t ClientContext::GetMaxBufferLevel() {
+	return _maxAVBufferSize;
+}
+
+double ClientContext::GetBufferLevelPercent() {
+	return ((double) GetBufferLevel() / (double) GetMaxBufferLevel())*100.00;
+}
+
 bool ClientContext::StartProcessing() {
 	//1. Parse the connecting string and split it into usable pieces
 	if (!ParseConnectingString()) {
@@ -254,6 +283,10 @@ bool ClientContext::ConsumeAVBuffer() {
 
 
 	//4. Get the inbound TS stream
+	if (_pStreamsManager == NULL) {
+		WARN("No stream manager yet");
+		return true;
+	}
 	InNetTSStream *pStream = (InNetTSStream *) _pStreamsManager->FindByUniqueId(
 			_streamId);
 	if (pStream == NULL) {
@@ -424,8 +457,6 @@ bool ClientContext::SignalTSChunkComplete(uint32_t bw) {
 	return StartFeeding();
 }
 
-static int aaa = 0;
-
 bool ClientContext::SignalSpeedDetected(double instantAmount, double instantTime) {
 	//	FINEST("instantAmount: %.2f; instantTime: %.8f; Speed: %.2f KB/s",
 	//			instantAmount, instantTime, instantAmount / instantTime / 1024);
@@ -434,15 +465,15 @@ bool ClientContext::SignalSpeedDetected(double instantAmount, double instantTime
 
 	uint32_t before = _optimalBw;
 	meanSpeed *= 8.0;
-	if (((aaa++) % 200) == 0) {
-		double ms = meanSpeed / 1024.00 / 8;
-		string um = "KB/s";
-		if (ms > 1024) {
-			ms = ms / 1024.00;
-			um = "MB/s";
-		}
-		//FINEST("Speed: %.2f %s", ms, STR(um));
-	}
+	//	if (((aaa++) % 200) == 0) {
+	//		double ms = meanSpeed / 1024.00 / 8;
+	//		string um = "KB/s";
+	//		if (ms > 1024) {
+	//			ms = ms / 1024.00;
+	//			um = "MB/s";
+	//		}
+	//		//FINEST("Speed: %.2f %s", ms, STR(um));
+	//	}
 
 	_optimalBw = MAP_KEY(_childPlaylists.begin());
 
