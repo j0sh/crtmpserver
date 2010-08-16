@@ -168,7 +168,6 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/1826042562/basevariantprotocol.o \
 	${OBJECTDIR}/_ext/1210522057/boxatom.o \
 	${OBJECTDIR}/_ext/1124577818/inbounddnsresolverprotocol.o \
-	${OBJECTDIR}/_ext/794466240/thelibglobalcontext.o \
 	${OBJECTDIR}/_ext/1210522057/atomstsd.o \
 	${OBJECTDIR}/_ext/517913122/streamdescriptors.o \
 	${OBJECTDIR}/_ext/1210522057/atomtrak.o \
@@ -889,11 +888,6 @@ ${OBJECTDIR}/_ext/1124577818/inbounddnsresolverprotocol.o: ../../../../sources/t
 	${MKDIR} -p ${OBJECTDIR}/_ext/1124577818
 	${RM} $@.d
 	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_VAR -DHAS_PROTOCOL_LIVEFLV -DHAS_MEDIA_MP4 -DHAS_MEDIA_MP3 -DHAS_MEDIA_FLV -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1124577818/inbounddnsresolverprotocol.o ../../../../sources/thelib/src/protocols/dns/inbounddnsresolverprotocol.cpp
-
-${OBJECTDIR}/_ext/794466240/thelibglobalcontext.o: ../../../../sources/thelib/src/thelibglobalcontext.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/794466240
-	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_VAR -DHAS_PROTOCOL_LIVEFLV -DHAS_MEDIA_MP4 -DHAS_MEDIA_MP3 -DHAS_MEDIA_FLV -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/794466240/thelibglobalcontext.o ../../../../sources/thelib/src/thelibglobalcontext.cpp
 
 ${OBJECTDIR}/_ext/1210522057/atomstsd.o: ../../../../sources/thelib/src/mediaformats/mp4/atomstsd.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1210522057

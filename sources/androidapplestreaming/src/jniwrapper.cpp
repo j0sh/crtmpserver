@@ -55,7 +55,7 @@ extern "C" jobject Java_com_rtmpd_CommandsInterface_ContextCloseAll(
 	return VariantToJObject(result, pEnv);
 }
 
-extern "C" jobject Java_com_rtmpd_CommandsInterface_CommandPlay(
+extern "C" jobject Java_com_rtmpd_CommandsInterface_CommandPlayCondensed(
 		JNIEnv* pEnv, jobject thiz, jint contextId, jstring connectingString) {
 	Variant result = CommandPlay(
 			(uint32_t) contextId,

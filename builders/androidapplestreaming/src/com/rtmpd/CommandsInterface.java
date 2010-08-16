@@ -34,7 +34,7 @@ public class CommandsInterface {
 
 	public native HashMap<Object, Object> ContextCloseAll();
 
-	public native HashMap<Object, Object> CommandPlay(int contextId, String connectingString);
+	public native HashMap<Object, Object> CommandPlayCondensed(int contextId, String connectingString);
 
 	public native HashMap<Object, Object> CommandPlay(int contextId, String m3u8Uri, String httpSessionId, String keyPassword);
 
