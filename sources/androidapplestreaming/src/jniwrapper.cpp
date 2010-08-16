@@ -56,6 +56,14 @@ extern "C" jobject Java_com_rtmpd_CommandsInterface_ContextCloseAll(
 }
 
 extern "C" jobject Java_com_rtmpd_CommandsInterface_CommandPlay(
+		JNIEnv* pEnv, jobject thiz, jint contextId, jstring connectingString) {
+	Variant result = CommandPlay(
+			(uint32_t) contextId,
+			pEnv->GetStringUTFChars(connectingString, NULL));
+	return VariantToJObject(result, pEnv);
+}
+
+extern "C" jobject Java_com_rtmpd_CommandsInterface_CommandPlay(
 		JNIEnv* pEnv, jobject thiz, jint contextId, jstring m3u8Uri,
 		jstring httpSessionId, jstring keyPassword) {
 	Variant result = CommandPlay(
