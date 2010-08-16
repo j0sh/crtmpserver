@@ -30,6 +30,7 @@ Variant ContextList();
 Variant ContextClose(uint32_t contextId);
 Variant ContextCloseAll();
 
+Variant CommandPlay(uint32_t contextId, string connectingString);
 Variant CommandPlay(uint32_t contextId, string m3u8Uri, string httpSessionId,
 		string keyPassword);
 Variant CommandPause(uint32_t contextId);

@@ -192,6 +192,37 @@ Variant ContextCloseAll() {
 	return response;
 }
 
+Variant CommandPlay(uint32_t contextId, string connectingString) {
+	vector<string> parts;
+	split(connectingString, ":", parts);
+	if ((parts.size() != 1) && (parts.size() != 2)) {
+		ASSERT("Invalid connecting string %s", STR(connectingString));
+	}
+	string b64encoded;
+	if (parts.size() == 1)
+		b64encoded = parts[0];
+	else
+		b64encoded = parts[1];
+	string all = unb64(b64encoded);
+	split(all, "|", parts);
+	if ((parts.size() != 1) && (parts.size() != 3)) {
+		ASSERT("Invalid connecting string %s", STR(all));
+	}
+	string uri = parts[0];
+	string keyPassword = "";
+	string httpSessionId = "";
+	if (parts.size() == 3) {
+		keyPassword = parts[1];
+		httpSessionId = parts[2];
+	}
+	FINEST("uri: `%s`\nkeyPassword: `%s`\nhttpSessionId: `%s`", STR(uri),
+			STR(keyPassword), STR(httpSessionId));
+	if (uri == "") {
+		ASSERT("Invalid connecting string: %s", STR(connectingString));
+	}
+	return CommandPlay(contextId, uri, httpSessionId, keyPassword);
+}
+
 Variant CommandPlay(uint32_t contextId, string m3u8Uri, string httpSessionId,
 		string keyPassword) {
 	Variant request;

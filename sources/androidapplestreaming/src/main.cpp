@@ -82,16 +82,20 @@ void testContexts() {
 //#define MY_KEY ""
 
 
-#define MY_URL "http://mlbvod-akc.mlb.com/mlbam/2010/04/08/MLB_GAME_VIDEO_LANPIT_HOME_20100408/master_wired.m3u8"
-#define MY_SESSION_ID "playback=HTTP_CLOUD_WIRED&contentId=7320085&appAccountName=mlb&eventId=14-263849-2010-04-08&ipid=11627706&sessionKey=3HJ3abDj%2BPBkmIn8cprQTgkYIa8%3D"
-#define MY_KEY "ugkuOk9Qy4HNS5uRxQcQXHfLuAI="
+//#define MY_URL "http://mlbvod-akc.mlb.com/mlbam/2010/04/08/MLB_GAME_VIDEO_LANPIT_HOME_20100408/master_wired.m3u8"
+//#define MY_SESSION_ID "playback=HTTP_CLOUD_WIRED&contentId=7320085&appAccountName=mlb&eventId=14-263849-2010-04-08&ipid=11627706&sessionKey=3HJ3abDj%2BPBkmIn8cprQTgkYIa8%3D"
+//#define MY_KEY "ugkuOk9Qy4HNS5uRxQcQXHfLuAI="
+
+#define CONDENSED_CONN_STRING "base64:aHR0cDovL21sYnZvZC1ha2MubWxiLmNvbS9tbGJhbS8yMDEwLzA0LzA4L01MQl9HQU1FX1ZJREVPX0xBTlBJVF9IT01FXzIwMTAwNDA4L21hc3Rlcl93aXJlZC5tM3U4fHlNQmVFcEl6OEJEaUFYV0k0dUdIUm1UaHdIRT18cGxheWJhY2s9SFRUUF9DTE9VRF9XSVJFRCZjb250ZW50SWQ9NzMyMDA4NSZhcHBBY2NvdW50TmFtZT1tbGImZXZlbnRJZD0xNC0yNjM4NDktMjAxMC0wNC0wOCZpcGlkPTExNjI3NzA2JnNlc3Npb25LZXk9cUNveGRIaUlOY3FDbHlEcEZoU2dma3dJSWc0JTNE"
 
 void testCommands() {
 	Variant result = ContextCreate();
 	FINEST("result:\n%s", STR(result.ToString()));
 
 	uint32_t contextId = (uint32_t) ASC_RES_PARAM(result, "contextId");
-	result = CommandPlay(contextId, MY_URL, MY_SESSION_ID, MY_KEY);
+	//	result = CommandPlay(contextId, MY_URL, MY_SESSION_ID, MY_KEY);
+	//	FINEST("result:\n%s", STR(result.ToString()));
+	result = CommandPlay(contextId, CONDENSED_CONN_STRING);
 	FINEST("result:\n%s", STR(result.ToString()));
 
 	for (;;) {
