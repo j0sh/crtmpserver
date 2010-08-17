@@ -93,6 +93,11 @@ public:
 	uint32_t GetBufferLevel();
 	uint32_t GetMaxBufferLevel();
 	double GetBufferLevelPercent();
+	double GetMinTimestamp();
+	double GetMaxTimestamp();
+	uint32_t GetChunksCount();
+	double GetCurrentTimestamp();
+	uint32_t GetCurrentChunkIndex();
 
 	//processing
 	bool StartProcessing();

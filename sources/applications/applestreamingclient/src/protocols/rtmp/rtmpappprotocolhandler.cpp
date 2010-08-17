@@ -25,6 +25,8 @@
 #include "clientcontext.h"
 #include "application/baseclientapplication.h"
 #include "eventsink/rtmpeventsink.h"
+#include "protocols/variant/messagestructure.h"
+#include "protocols/rtmp/messagefactories/genericmessagefactory.h"
 
 RTMPAppProtocolHandler::RTMPAppProtocolHandler(Variant &configuration)
 : BaseRTMPAppProtocolHandler(configuration) {
@@ -44,6 +46,8 @@ bool RTMPAppProtocolHandler::ProcessInvokeGeneric(BaseRTMPProtocol *pFrom,
 	string functionName = M_INVOKE_FUNCTION(request);
 	if (functionName == "setupStream") {
 		return ProcessSetupStream(pFrom, request);
+	} else if (functionName == "getBWInfo") {
+		return ProcessGetBWInfo(pFrom, request);
 	} else {
 		WARN("Invalid function name");
 		return BaseRTMPAppProtocolHandler::ProcessInvokeGeneric(pFrom, request);
@@ -87,4 +91,36 @@ bool RTMPAppProtocolHandler::ProcessSetupStream(BaseRTMPProtocol *pFrom,
 	//4. StartProcessing
 	return pContext->StartProcessing();
 }
+
+bool RTMPAppProtocolHandler::ProcessGetBWInfo(BaseRTMPProtocol *pFrom,
+		Variant &request) {
+	uint32_t contextId = pFrom->GetCustomParameters()["contextId"];
+	Variant response;
+	Variant parameters;
+	parameters.PushToArray(Variant());
+	parameters.PushToArray(Variant());
+	if (contextId == 0) {
+		WARN("No context available yet");
+		response = GenericMessageFactory::GetInvokeResult(request, parameters);
+		return SendRTMPMessage(pFrom, response);
+	}
+	ClientContext *pContext = ClientContext::GetContext(contextId,
+			GetApplication()->GetId(), pFrom->GetType());
+	if (pContext == NULL) {
+		FATAL("Unable to get context");
+		return false;
+	}
+
+
+	ASC_RES_BUILD_OK_INFO_BANDWIDTH(parameters[(uint32_t) 1],
+			pContext->GetAvailableBandwidths(),
+			pContext->GetDetectedBandwidth(),
+			pContext->GetSelectedBandwidth(),
+			pContext->GetBufferLevel(),
+			pContext->GetMaxBufferLevel(),
+			pContext->GetBufferLevelPercent());
+	response = GenericMessageFactory::GetInvokeResult(request, parameters);
+	return SendRTMPMessage(pFrom, response);
+}
+
 #endif /* HAS_PROTOCOL_RTMP */

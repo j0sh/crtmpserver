@@ -54,6 +54,11 @@
 #define ASC_RES_INFO_BANDWIDTH_BUFFER_LEVEL				"bufferLevel"
 #define ASC_RES_INFO_BANDWIDTH_MAX_BUFFER_LEVEL			"bufferMaxLevel"
 #define ASC_RES_INFO_BANDWIDTH_MAX_BUFFER_LEVEL_PERCENT	"bufferLevelPercent"
+#define ASC_RES_INFO_PLAYBACK_MIN_TS					"minTs"
+#define ASC_RES_INFO_PLAYBACK_MAX_TS					"maxTs"
+#define ASC_RES_INFO_PLAYBACK_CHUNKS_COUNT				"chunksCount"
+#define ASC_RES_INFO_PLAYBACK_CURRENT_CHUNK				"currentChunk"
+#define ASC_RES_INFO_PLAYBACK_CURRENT_TS				"currentTs"
 
 #define ASC_RES_STATUS_OK							0
 #define ASC_RES_STATUS_OK_DESC						"OK"
@@ -272,6 +277,17 @@ do { \
 	params[ASC_RES_INFO_BANDWIDTH_BUFFER_LEVEL]=(uint32_t)(bufferLevel); \
 	params[ASC_RES_INFO_BANDWIDTH_MAX_BUFFER_LEVEL]=(uint32_t)(maxBufferLevel); \
 	params[ASC_RES_INFO_BANDWIDTH_MAX_BUFFER_LEVEL_PERCENT]=(double)(bufferLevelPercent); \
+	ASC_RES_BUILD(r,ASC_RES_STATUS_OK,params); \
+} while(0)
+
+#define ASC_RES_BUILD_OK_INFO_PLAYBACK(r,minTs, maxTs, chunksCount, currentTs, currentChunk) \
+do { \
+	Variant params; \
+	params[ASC_RES_INFO_PLAYBACK_MIN_TS]=(double)(minTs); \
+	params[ASC_RES_INFO_PLAYBACK_MAX_TS]=(double)(maxTs); \
+	params[ASC_RES_INFO_PLAYBACK_CHUNKS_COUNT]=(uint32_t)(chunksCount); \
+	params[ASC_RES_INFO_PLAYBACK_CURRENT_CHUNK]=(uint32_t)(currentChunk); \
+	params[ASC_RES_INFO_PLAYBACK_CURRENT_TS]=(double)(currentTs); \
 	ASC_RES_BUILD(r,ASC_RES_STATUS_OK,params); \
 } while(0)
 

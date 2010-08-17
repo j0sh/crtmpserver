@@ -40,6 +40,8 @@ private:
 	void ReleaseContext(BaseProtocol *pFrom);
 	bool ProcessSetupStream(BaseRTMPProtocol *pFrom,
 			Variant &request);
+	bool ProcessGetBWInfo(BaseRTMPProtocol *pFrom,
+			Variant &request);
 };
 
 #endif	/* _RTMPAPPPROTOCOLHANDLER_H */

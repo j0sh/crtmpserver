@@ -52,6 +52,7 @@ ClientContext::ClientContext() {
 	_pStreamsManager = NULL;
 	_lastWallClock = 0;
 	_lastStreamClock = 0;
+	_avData.EnsureSize(_maxAVBufferSize * 3);
 	INFO("Context created: %d (%p)", _id, this);
 }
 
@@ -177,6 +178,26 @@ uint32_t ClientContext::GetMaxBufferLevel() {
 
 double ClientContext::GetBufferLevelPercent() {
 	return ((double) GetBufferLevel() / (double) GetMaxBufferLevel())*100.00;
+}
+
+double ClientContext::GetMinTimestamp() {
+	return 0;
+}
+
+double ClientContext::GetMaxTimestamp() {
+	return 0;
+}
+
+uint32_t ClientContext::GetChunksCount() {
+	return 0;
+}
+
+double ClientContext::GetCurrentTimestamp() {
+	return 0;
+}
+
+uint32_t ClientContext::GetCurrentChunkIndex() {
+	return 0;
 }
 
 bool ClientContext::StartProcessing() {
@@ -485,9 +506,17 @@ bool ClientContext::SignalSpeedDetected(double instantAmount, double instantTime
 		}
 	}
 	if (before != _optimalBw) {
-		INFO("BW changed: before: %d; after: %d; speed: %.3f",
-				before, _optimalBw, meanSpeed);
-		//, STR(Bandwidths().ToString()))
+		if (before < _optimalBw) {
+			if (GETAVAILABLEBYTESCOUNT(_avData) < _maxAVBufferSize / 3) {
+				_optimalBw = before;
+			} else {
+				INFO("BW changed: before: %d; after: %d; speed: %.3f",
+						before, _optimalBw, meanSpeed);
+			}
+		} else {
+			INFO("BW changed: before: %d; after: %d; speed: %.3f",
+					before, _optimalBw, meanSpeed);
+		}
 	}
 
 	return true;

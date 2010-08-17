@@ -199,15 +199,10 @@ void VariantAppProtocolHandler::ProcessInfoBandwidth(
 void VariantAppProtocolHandler::ProcessInfoPlayback(
 		BaseVariantProtocol *pProtocol, Variant &request) {
 	GET_CONTEXT(pProtocol, request);
-	/*
-	 * seek range
-	 * current position
-	 */
-	//	ASC_RES_BUILD_OK_INFO_PLAYBACK(request,
-	//			pContext->GetMinTimestamp(),
-	//			pContext->GetMaxTimestamp(),
-	//			pContext->GetChunksCount(),
-	//			pContext->GetCurrentTimestamp(),
-	//			pContext->GetCurrentChunkIndex());
-	ASC_RES_BUILD_NYI(request);
+	ASC_RES_BUILD_OK_INFO_PLAYBACK(request,
+			pContext->GetMinTimestamp(),
+			pContext->GetMaxTimestamp(),
+			pContext->GetChunksCount(),
+			pContext->GetCurrentTimestamp(),
+			pContext->GetCurrentChunkIndex());
 }

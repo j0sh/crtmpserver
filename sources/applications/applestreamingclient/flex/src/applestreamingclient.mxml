@@ -10,10 +10,14 @@
 			import com.rtmpd.generics.ui.components.LogsWindow;
 			
 			import mx.controls.Alert;
+			import mx.utils.ObjectUtil;
+			
+			import org.osmf.net.dynamicstreaming.SufficientBandwidthRule;
 			
 			private var _connectData:Object;
 			[Bindable]
 			private var _connection:Engine;
+			private var _bwInfoTimer:Timer;
 			
 			private function Init():void{
 				_connection=new Engine();
@@ -26,6 +30,45 @@
 				};
 				player.Initialize();
 				ConnectDisconnect();
+				pnlInfo.x=player.x;
+				pnlInfo.y=player.y+player.height-pnlInfo.height;
+				_bwInfoTimer = new Timer(1000);
+				_bwInfoTimer.addEventListener(TimerEvent.TIMER,ShowBwInfo);
+				txtAppleConnectingString.text="http://mlbvod-akc.mlb.com/mlbam/2010/04/08/MLB_GAME_VIDEO_LANPIT_HOME_20100408/master_wired.m3u8|bl8D2EASEF8WUrzZ+y3o0NiQyAk=|playback=HTTP_CLOUD_WIRED&contentId=7320085&appAccountName=mlb&eventId=14-263849-2010-04-08&ipid=11627706&sessionKey=GBncPsxRBV02IC9n80RP1Sdr9ew%3D";
+			}
+			
+			private function ShowBwInfo(event:TimerEvent):void {
+				_connection.Call("getBWInfo",BWInfoAvaliable);
+			}
+			
+			private function BWInfoAvaliable(info:Object):void{
+				if(info==null)
+					return;
+				lblAvalivaleBws.text="";
+				for(var i:int=0;i<info.response.parameters.availableBws.length;i++){
+					lblAvalivaleBws.text+=prettyPrint(info.response.parameters.availableBws[i]/8,"/s")+", ";
+				}
+				lblDetectedBw.text=prettyPrint(info.response.parameters.detectedBw/8,"/s");
+				lblSelectedBw.text=prettyPrint(info.response.parameters.selectedBw/8,"/s");;
+				lblBufferLevel.text=prettyPrint(info.response.parameters.bufferLevel);
+				lblMaxBufferLevel.text=prettyPrint(info.response.parameters.bufferMaxLevel);
+				lblBufferLevelPercent.text=info.response.parameters.bufferLevelPercent.toPrecision(3)+"%";
+				lblBufferLevelSeconds.text=(info.response.parameters.bufferLevel/info.response.parameters.selectedBw*8).toPrecision(3)+" s";
+			}
+			
+			private function prettyPrint(val:Number, suffix:String=""):String{
+				var result:String="";
+				var um:String="B"+suffix;
+				if(val>1024){
+					val=val/1024;
+					um="KB"+suffix;
+				}
+				if(val>1024){
+					val=val/1024;
+					um="MB"+suffix;
+				}
+				result=val.toPrecision(4)+" "+um;
+				return result;
 			}
 			
 			public function StreamAvailable(streamName:String):void{
@@ -38,6 +81,8 @@
 					//_connection.Connect("rtmp://localhost/mpegts");
 				} else {
 					_connection.Disconnect();
+					if(_bwInfoTimer!=null)
+						_bwInfoTimer.stop();
 				}
 			}
 			
@@ -52,10 +97,11 @@
 				//				}
 				//				player.Play(_connection,_connection.TSStreams[dgFlvs.selectedIndex].data);
 				_connection.Call("setupStream",null,txtAppleConnectingString.text);
+				_bwInfoTimer.start();
 			}
 		]]>
 	</mx:Script>
-	<mx:VBox paddingLeft="10" paddingTop="10" paddingRight="10" paddingBottom="10" borderStyle="solid" width="100%" height="100%">
+	<mx:VBox id="vBox" paddingLeft="10" paddingTop="10" paddingRight="10" paddingBottom="10" borderStyle="solid" width="100%" height="100%">
 		<mx:HBox width="100%">
 			<mx:Button label="Show logs..." id="btnLogs" click="LogsWindow.Show(this);"/>
 			<mx:Button label="{_connection.IsConnected?'Disconnect':'Connect...'}" id="btnConnect" click="ConnectDisconnect();"/>
@@ -64,6 +110,38 @@
 			<mx:Button label="Play" id="btnPlay" click="Play();"/>
 			<mx:TextInput text="" id="txtAppleConnectingString" width="100%"/>
 		</mx:HBox>
-		<ns1:VideoPlayer width="100%" height="100%" id="player"/>
+		<ns1:VideoPlayer width="100%" height="100%" id="player" enabled="{_connection.IsConnected}" />
 	</mx:VBox>
+	<mx:Panel id="pnlInfo" width="500" x="10" y="267" title="Bandwidth info">
+		<mx:VBox width="100%" height="100%">
+			<mx:HBox width="100%" borderStyle="solid">
+				<mx:Label text="Available bws:" width="50%"/>
+				<mx:Label id="lblAvalivaleBws" width="50%"/>
+			</mx:HBox>
+			<mx:HBox width="100%" borderStyle="solid">
+				<mx:Label text="Detected bw:" width="50%"/>
+				<mx:Label id="lblDetectedBw" width="50%"/>
+			</mx:HBox>
+			<mx:HBox width="100%" borderStyle="solid">
+				<mx:Label text="Selected bw:" width="50%"/>
+				<mx:Label id="lblSelectedBw" width="50%"/>
+			</mx:HBox>
+			<mx:HBox width="100%" borderStyle="solid">
+				<mx:Label text="Buffer level:" width="50%"/>
+				<mx:Label id="lblBufferLevel" width="50%"/>
+			</mx:HBox>
+			<mx:HBox width="100%" borderStyle="solid">
+				<mx:Label text="Max buffer level:" width="50%"/>
+				<mx:Label id="lblMaxBufferLevel" width="50%"/>
+			</mx:HBox>
+			<mx:HBox width="100%" borderStyle="solid">
+				<mx:Label text="Buffer level percent:" width="50%"/>
+				<mx:Label id="lblBufferLevelPercent" width="50%"/>
+			</mx:HBox>
+			<mx:HBox width="100%" borderStyle="solid">
+				<mx:Label text="Buffer level seconds:" width="50%"/>
+				<mx:Label id="lblBufferLevelSeconds" width="50%"/>
+			</mx:HBox>
+		</mx:VBox>
+	</mx:Panel>
 </mx:Application>
