@@ -2,19 +2,13 @@
 #include <tchar.h>
 #include <strsafe.h>
 #include <stdio.h>
+#include "svcconfig.h"
 
 #pragma comment(lib, "advapi32.lib")
 
-TCHAR szCommand[10];
-TCHAR szSvcName[80];
+TCHAR szConfigCommand[TEXT_SIZE];
+TCHAR szConfigSvcName[TEXT_SIZE];
 
-VOID __stdcall DisplayUsage(void);
-
-VOID __stdcall DoQuerySvc(void);
-VOID __stdcall DoUpdateSvcDesc(void);
-VOID __stdcall DoDisableSvc(void);
-VOID __stdcall DoEnableSvc(void);
-VOID __stdcall DoDeleteSvc(void);
 
 //
 // Purpose: 
@@ -26,36 +20,41 @@ VOID __stdcall DoDeleteSvc(void);
 // Return value:
 //   None
 //
-void __cdecl _tmain(int argc, TCHAR *argv[])
+//void __cdecl _tmain(int argc, TCHAR *argv[])
+bool svcconfig (TCHAR * argv[])
 {
+	bool result = true;
     printf("\n");
+	/*
     if( argc != 3 )
     {
         printf("ERROR:\tIncorrect number of arguments\n\n");
         DisplayUsage();
         return;
     }
+	*/
+    StringCchCopy(szConfigCommand, TEXT_SIZE, argv[1]);
+    StringCchCopy(szConfigSvcName, TEXT_SIZE, argv[2]);
 
-    StringCchCopy(szCommand, 10, argv[1]);
-    StringCchCopy(szSvcName, 80, argv[2]);
-
-    if (lstrcmpi( szCommand, TEXT("query")) == 0 )
-        DoQuerySvc();
-    else if (lstrcmpi( szCommand, TEXT("describe")) == 0 )
+    if (lstrcmpi( szConfigCommand, TEXT("query")) == 0 )
+        result = DoQuerySvc();
+    else if (lstrcmpi( szConfigCommand, TEXT("describe")) == 0 )
         DoUpdateSvcDesc();
-    else if (lstrcmpi( szCommand, TEXT("disable")) == 0 )
+    else if (lstrcmpi( szConfigCommand, TEXT("disable")) == 0 )
         DoDisableSvc();
-    else if (lstrcmpi( szCommand, TEXT("enable")) == 0 )
+    else if (lstrcmpi( szConfigCommand, TEXT("enable")) == 0 )
         DoEnableSvc();
-    else if (lstrcmpi( szCommand, TEXT("delete")) == 0 )
+    else if (lstrcmpi( szConfigCommand, TEXT("uninstallService")) == 0 )
         DoDeleteSvc();
     else 
     {
-        _tprintf(TEXT("Unknown command (%s)\n\n"), szCommand);
-        DisplayUsage();
+        _tprintf(TEXT("Unknown command (%s)\n\n"), szConfigCommand);
+        //DisplayUsage();
     }
-}
 
+	return result;
+}
+/*
 VOID __stdcall DisplayUsage()
 {
     printf("Description:\n");
@@ -69,7 +68,7 @@ VOID __stdcall DisplayUsage()
     printf("\t  enable\n");
     printf("\t  delete\n");
 }
-
+*/
 //
 // Purpose: 
 //   Retrieves and displays the current service configuration.
@@ -80,7 +79,7 @@ VOID __stdcall DisplayUsage()
 // Return value:
 //   None
 //
-VOID __stdcall DoQuerySvc()
+bool __stdcall DoQuerySvc()
 {
     SC_HANDLE schSCManager;
     SC_HANDLE schService;
@@ -98,21 +97,21 @@ VOID __stdcall DoQuerySvc()
     if (NULL == schSCManager) 
     {
         printf("OpenSCManager failed (%d)\n", GetLastError());
-        return;
+        return false;
     }
 
     // Get a handle to the service.
 
     schService = OpenService( 
         schSCManager,          // SCM database 
-        szSvcName,             // name of service 
+        szConfigSvcName,             // name of service 
         SERVICE_QUERY_CONFIG); // need query config access 
  
     if (schService == NULL)
     { 
         printf("OpenService failed (%d)\n", GetLastError()); 
         CloseServiceHandle(schSCManager);
-        return;
+        return false;
     }
 
     // Get the configuration information.
@@ -132,6 +131,7 @@ VOID __stdcall DoQuerySvc()
         else
         {
             printf("QueryServiceConfig failed (%d)", dwError);
+			return false;
             goto cleanup; 
         }
     }
@@ -143,6 +143,7 @@ VOID __stdcall DoQuerySvc()
         &dwBytesNeeded) ) 
     {
         printf("QueryServiceConfig failed (%d)", GetLastError());
+		return false;
         goto cleanup;
     }
 
@@ -162,6 +163,7 @@ VOID __stdcall DoQuerySvc()
         else
         {
             printf("QueryServiceConfig2 failed (%d)", dwError);
+			return false;
             goto cleanup; 
         }
     }
@@ -174,12 +176,13 @@ VOID __stdcall DoQuerySvc()
         &dwBytesNeeded) ) 
     {
         printf("QueryServiceConfig2 failed (%d)", GetLastError());
+		return false;
         goto cleanup;
     }
  
     // Print the configuration information.
  
-    _tprintf(TEXT("%s configuration: \n"), szSvcName);
+    _tprintf(TEXT("%s configuration: \n"), szConfigSvcName);
     _tprintf(TEXT("  Type: 0x%x\n"), lpsc->dwServiceType);
     _tprintf(TEXT("  Start Type: 0x%x\n"), lpsc->dwStartType);
     _tprintf(TEXT("  Error Control: 0x%x\n"), lpsc->dwErrorControl);
@@ -197,7 +200,7 @@ VOID __stdcall DoQuerySvc()
  
     LocalFree(lpsc); 
     LocalFree(lpsd);
-
+	return true;
 cleanup:
     CloseServiceHandle(schService); 
     CloseServiceHandle(schSCManager);
@@ -235,7 +238,7 @@ VOID __stdcall DoDisableSvc()
 
     schService = OpenService( 
         schSCManager,            // SCM database 
-        szSvcName,               // name of service 
+        szConfigSvcName,               // name of service 
         SERVICE_CHANGE_CONFIG);  // need change config access 
  
     if (schService == NULL)
@@ -300,7 +303,7 @@ VOID __stdcall DoEnableSvc()
 
     schService = OpenService( 
         schSCManager,            // SCM database 
-        szSvcName,               // name of service 
+        szConfigSvcName,               // name of service 
         SERVICE_CHANGE_CONFIG);  // need change config access 
  
     if (schService == NULL)
@@ -367,7 +370,7 @@ VOID __stdcall DoUpdateSvcDesc()
 
     schService = OpenService( 
         schSCManager,            // SCM database 
-        szSvcName,               // name of service 
+        szConfigSvcName,               // name of service 
         SERVICE_CHANGE_CONFIG);  // need change config access 
  
     if (schService == NULL)
@@ -427,7 +430,7 @@ VOID __stdcall DoDeleteSvc()
 
     schService = OpenService( 
         schSCManager,       // SCM database 
-        szSvcName,          // name of service 
+        szConfigSvcName,          // name of service 
         DELETE);            // need delete access 
  
     if (schService == NULL)

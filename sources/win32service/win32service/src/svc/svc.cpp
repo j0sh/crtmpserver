@@ -4,6 +4,8 @@
 #include <strsafe.h>
 #include "svc/Svc.h"
 #include "rtmpserver/rtmpserver.h"
+#include "svccontrol.h"
+#include "svcconfig.h"
 
 #pragma comment(lib, "advapi32.lib")
 
@@ -22,16 +24,19 @@
 //
 void __cdecl _tmain(int argc, TCHAR *argv[]) 
 { 
-    // If command-line parameter is "install", install the service. 
-    // Otherwise, the service is probably being started by the SCM.
-
-    if( lstrcmpi( argv[1], TEXT("install")) == 0 )
+	
+	// Install/uninstall the service. 
+    if( lstrcmpi( argv[1], TEXT("installService")) == 0 )
     {
-        SvcInstall();
+		SvcInstall();
         return;
-    }
-
-    // TO_DO: Add any additional services for the process to this table.
+    }else if( lstrcmpi( argv[1], TEXT("uninstallService")) == 0)
+    {
+		AddSvcCommand(argv[1]);
+		bool result = svcconfig(svcCommand);//Delete service
+        return;
+    } 
+	 // TO_DO: Add any additional services for the process to this table.
     SERVICE_TABLE_ENTRY DispatchTable[] = 
     { 
         { SVCNAME, (LPSERVICE_MAIN_FUNCTION) SvcMain }, 
@@ -45,8 +50,60 @@ void __cdecl _tmain(int argc, TCHAR *argv[])
     { 
         SvcReportEvent(TEXT("StartServiceCtrlDispatcher")); 
     } 
-} 
 
+	// Control the service
+	if( lstrcmpi( argv[1], TEXT("startService")) == 0 || lstrcmpi( argv[1], TEXT("stopService")) == 0)
+    {
+        AddSvcCommand(argv[1]);
+		svccontrol(svcCommand);//Start/Stop service
+        return;
+    } else {
+		if ( argc == 1 ) //if no argument, assume that rtmpserver is started normally
+		{
+			AddSvcCommand(TEXT("query"));
+			if (!svcconfig(svcCommand)){
+				printf("Server will start normally.\n\n");
+				rtmpserver();
+				return;
+			}else{
+				printf("\nERROR: Server cannot be started normally.\n\n");
+				printf("Service described above is already installed.\n");
+				printf("Start/Stop the server by starting/stopping the service.\n\n");
+				printf("To start server normally, enter 'uninstallService' command to delete the service.\n\n");
+				return;
+			}
+		}
+	}
+
+}
+
+//Populates the svcCommand array
+VOID AddSvcCommand(TCHAR * command)
+{
+	svcCommand[0] = TEXT("");
+	svcCommand[1] = command;
+	svcCommand[2] = SVCNAME;
+}
+
+//Displays usage
+VOID __stdcall DisplayUsage()
+{
+    printf("Description:\n");
+    printf("\tRun Evostream server as stand-alone or as a service.\n\n");
+    printf("Usage:\n");
+	printf("Install Service:\n");
+	printf("\twin32service installService\n\n");
+	printf("Uninstall Service:\n");
+	printf("\twin32service uninstallService\n\n");
+	printf("Start/Stop Service:\n");
+    printf("\twin32service [command]\n");
+    printf("\t[command]\n");
+    printf("\t  startService\n");
+    printf("\t  stopService\n");
+	printf("Run as stand-alone:\n");
+	printf("\twin32service <configfile path>\n");
+	printf("\twin32service --use-implicit-console-appender\n");
+}
 //
 // Purpose: 
 //   Installs a service in the SCM database
@@ -109,7 +166,6 @@ VOID SvcInstall()
 	
     CloseServiceHandle(schService); 
     CloseServiceHandle(schSCManager);
-
 /* The lines below works fine. Uncomment them to run rtmpserver upon installing of the service */
 //	if(Initialize())
 //		Run();

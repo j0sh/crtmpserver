@@ -3,22 +3,16 @@
 #include <strsafe.h>
 #include <aclapi.h>
 #include <stdio.h>
+#include "svccontrol.h"
 
-#pragma comment(lib, "advapi32.lib")
-
-TCHAR szCommand[10];
-TCHAR szSvcName[80];
+TCHAR szControlCommand[TEXT_SIZE];
+TCHAR szControlSvcName[TEXT_SIZE];
 
 SC_HANDLE schSCManager;
 SC_HANDLE schService;
 
-VOID __stdcall DisplayUsage(void);
+#pragma comment(lib, "advapi32.lib")
 
-VOID __stdcall DoStartSvc(void);
-VOID __stdcall DoUpdateSvcDacl(void);
-VOID __stdcall DoStopSvc(void);
-
-BOOL __stdcall StopDependentServices(void);
 
 //
 // Purpose: 
@@ -30,32 +24,34 @@ BOOL __stdcall StopDependentServices(void);
 // Return value:
 //   None
 //
-void _tmain(int argc, TCHAR *argv[])
+//void _tmain(int argc, TCHAR *argv[])
+void svccontrol(TCHAR * argv[])
 {
-    printf("\n");
+    /*printf("\n");
+	
     if( argc != 3 )
     {
         printf("ERROR: Incorrect number of arguments\n\n");
         DisplayUsage();
         return;
     }
+	*/
+    StringCchCopy(szControlCommand, TEXT_SIZE, argv[1]);
+    StringCchCopy(szControlSvcName, TEXT_SIZE, argv[2]);
 
-    StringCchCopy(szCommand, 10, argv[1]);
-    StringCchCopy(szSvcName, 80, argv[2]);
-
-    if (lstrcmpi( szCommand, TEXT("start")) == 0 )
+    if (lstrcmpi( szControlCommand, TEXT("startService")) == 0 )
         DoStartSvc();
-    else if (lstrcmpi( szCommand, TEXT("dacl")) == 0 )
+    else if (lstrcmpi( szControlCommand, TEXT("dacl")) == 0 )
         DoUpdateSvcDacl();
-    else if (lstrcmpi( szCommand, TEXT("stop")) == 0 )
+    else if (lstrcmpi( szControlCommand, TEXT("stopService")) == 0 )
         DoStopSvc();
     else 
     {
-        _tprintf(TEXT("Unknown command (%s)\n\n"), szCommand);
-        DisplayUsage();
+        _tprintf(TEXT("Unknown command (%s)\n\n"), szControlCommand);
+       // DisplayUsage();
     }
 }
-
+/*
 VOID __stdcall DisplayUsage()
 {
     printf("Description:\n");
@@ -67,7 +63,7 @@ VOID __stdcall DisplayUsage()
     printf("\t  dacl\n");
     printf("\t  stop\n");
 }
-
+*/
 //
 // Purpose: 
 //   Starts the service if possible.
@@ -103,7 +99,7 @@ VOID __stdcall DoStartSvc()
 
     schService = OpenService( 
         schSCManager,         // SCM database 
-        szSvcName,            // name of service 
+        szControlSvcName,            // name of service 
         SERVICE_ALL_ACCESS);  // full access 
  
     if (schService == NULL)
@@ -335,7 +331,7 @@ VOID __stdcall DoUpdateSvcDacl()
 
     schService = OpenService( 
         schSCManager,              // SCManager database 
-        szSvcName,                 // name of service 
+        szControlSvcName,                 // name of service 
         READ_CONTROL | WRITE_DAC); // access
  
     if (schService == NULL)
@@ -473,7 +469,7 @@ VOID __stdcall DoStopSvc()
 
     schService = OpenService( 
         schSCManager,         // SCM database 
-        szSvcName,            // name of service 
+        szControlSvcName,            // name of service 
         SERVICE_STOP | 
         SERVICE_QUERY_STATUS | 
         SERVICE_ENUMERATE_DEPENDENTS);  
