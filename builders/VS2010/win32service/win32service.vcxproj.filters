@@ -9,39 +9,66 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
-    <Filter Include="Source Files\svc">
-      <UniqueIdentifier>{5b9f4aa4-3855-4214-be2e-a2215b1a85d0}</UniqueIdentifier>
+    <Filter Include="Header Files\svcconfig">
+      <UniqueIdentifier>{41103c8d-cad8-40f6-83ef-373c0d2a8920}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\rtmpserver">
-      <UniqueIdentifier>{c75b42b4-16e4-4c37-8688-5ab541d031fe}</UniqueIdentifier>
+    <Filter Include="Header Files\svccontrol">
+      <UniqueIdentifier>{3ba17e12-aa0f-4686-a773-7113e2392d59}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\svc">
-      <UniqueIdentifier>{fbf006fe-14f6-42c3-9c58-cc8d78af69df}</UniqueIdentifier>
+    <Filter Include="Header Files\win32service">
+      <UniqueIdentifier>{3328891b-7ba0-408d-b77b-c15e8bb928aa}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\rtmpserver">
+    <Filter Include="Header Files\win32service\rtmpserver">
       <UniqueIdentifier>{922b945e-f407-4be0-bc3f-85180ffdce03}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\win32service\svc">
+      <UniqueIdentifier>{fbf006fe-14f6-42c3-9c58-cc8d78af69df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\svccontrol">
+      <UniqueIdentifier>{281cca0b-d181-4e94-948c-002a053b91ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\svcconfig">
+      <UniqueIdentifier>{d340c3ec-9cde-4842-9609-e1074c31bf08}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\win32service">
+      <UniqueIdentifier>{f0ba02d8-db69-4981-8850-826b74deb4a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\win32service\rtmpserver">
+      <UniqueIdentifier>{c75b42b4-16e4-4c37-8688-5ab541d031fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\win32service\svc">
+      <UniqueIdentifier>{5b9f4aa4-3855-4214-be2e-a2215b1a85d0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\sources\applications\win32service\src\svc\Svc.cpp">
-      <Filter>Source Files\svc</Filter>
+    <ClInclude Include="..\..\..\sources\win32service\win32service\include\rtmpserver\rtmpserver.h">
+      <Filter>Header Files\win32service\rtmpserver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\win32service\win32service\include\svc\svc.h">
+      <Filter>Header Files\win32service\svc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\win32service\svccontrol\include\svccontrol.h">
+      <Filter>Header Files\svccontrol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\win32service\svcconfig\include\svcconfig.h">
+      <Filter>Header Files\svcconfig</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\sources\win32service\win32service\src\rtmpserver\rtmpserver.cpp">
+      <Filter>Source Files\win32service\rtmpserver</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\sources\applications\win32service\src\rtmpserver\rtmpserver.cpp">
-      <Filter>Source Files\rtmpserver</Filter>
+    <ClCompile Include="..\..\..\sources\win32service\win32service\src\svc\svc.cpp">
+      <Filter>Source Files\win32service\svc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\win32service\svcconfig\src\svcconfig.cpp">
+      <Filter>Source Files\svcconfig</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\win32service\svccontrol\src\svccontrol.cpp">
+      <Filter>Source Files\svccontrol</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\sources\applications\win32service\include\rtmpserver\rtmpserver.h">
-      <Filter>Header Files\rtmpserver</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\applications\win32service\include\svc\Svc.h">
-      <Filter>Header Files\svc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\applications\win32service\include\svc\sample.h">
-      <Filter>Header Files\svc</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\..\sources\applications\win32service\Readme.txt" />
+    <None Include="..\..\..\sources\win32service\win32service\readme.txt" />
   </ItemGroup>
 </Project>
