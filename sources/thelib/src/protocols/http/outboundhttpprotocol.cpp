@@ -74,7 +74,8 @@ bool OutboundHTTPProtocol::ParseFirstLine(string &line, Variant &firstLineHeader
 		return false;
 	}
 
-	if (parts[0] != HTTP_VERSION_1_1) {
+	if ((parts[0] != HTTP_VERSION_1_1)
+		&&(parts[0] != HTTP_VERSION_1_0)) {
 		FATAL("Http version not supported: %s", STR(parts[0]));
 		return false;
 	}

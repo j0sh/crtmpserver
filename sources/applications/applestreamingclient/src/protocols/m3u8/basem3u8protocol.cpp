@@ -56,6 +56,7 @@ bool BaseM3U8Protocol::SignalInputData(IOBuffer &buffer) {
 	if (!pHttpProtocol->Is200OK()) {
 		FATAL("The HTTP request failed. Response headers\n%s",
 				STR(pHttpProtocol->GetHeaders().ToString()));
+		FATAL("Additional data:\n%s", STR(GetCustomParameters().ToString()));
 		return false;
 	}
 

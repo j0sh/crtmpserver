@@ -356,6 +356,8 @@
 #define HTTP_URL_LEN 3
 #define HTTP_VERSION "version"
 #define HTTP_VERSION_LEN 7
+#define HTTP_VERSION_1_0 "HTTP/1.0"
+#define HTTP_VERSION_1_0_LEN 8
 #define HTTP_VERSION_1_1 "HTTP/1.1"
 #define HTTP_VERSION_1_1_LEN 8
 #define KEYFRAMES_PER_SECOND 2

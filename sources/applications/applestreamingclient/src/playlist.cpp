@@ -112,9 +112,12 @@ void Playlist::Parse(uint32_t skipCount) {
 					//now the offort of strstr is motivated
 					if (strstr(pLine, "#EXT-X-KEY:") == pLine) {
 						//10. We have it
-						//printf("pLine: %s; ", pLine);
-						_pLastKeyUri = strstr(pLine, "URI=\"") + 5;
-						strstr(_pLastKeyUri, "\"")[0] = 0;
+						//printf("\n\n\npLine: %s; \n", pLine);
+						_pLastKeyUri = strstr(pLine, "URI=\"");
+						if (_pLastKeyUri != NULL) {
+							_pLastKeyUri += 5;
+							strstr(_pLastKeyUri, "\"")[0] = 0;
+						}
 						//printf("_pKeyUri: %s\n", _pKeyUri);
 					}
 				}

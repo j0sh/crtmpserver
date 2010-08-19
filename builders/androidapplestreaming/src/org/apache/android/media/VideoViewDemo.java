@@ -141,11 +141,20 @@ public class VideoViewDemo extends Activity {
 	if (mContextId == -1)
 	    return;
 
+	url="http://10.0.2.7/~shiretu/jwp/m.m3u8";
+	String key="HdnAtffj8TSZvtTRryG5xcI78w8=";
+	String sessId="playback=HTTP_CLOUD_WIRED&contentId=10804941&appAccountName=mlb&eventId=14-265607-2010-08-18&ipid=24061847&sessionKey=jhNOkzFU%2FvMTvsyP4b5l16a47W8%3D&country=us&postalCode=10292&platform=WEB_MEDIAPLAYER";
+
+	//url="http://mlbvod-akc.mlb.com/mlbam/2010/04/08/MLB_GAME_VIDEO_LANPIT_HOME_20100408/master_mobile.m3u8";
+	//String key="bl8D2EASEF8WUrzZ+y3o0NiQyAk=";
+	//String sessId="playback=HTTP_CLOUD_WIRED&contentId=7320085&appAccountName=mlb&eventId=14-263849-2010-04-08&ipid=11627706&sessionKey=GBncPsxRBV02IC9n80RP1Sdr9ew%3D";
+ 
+
 	Toast.makeText(getApplicationContext(), "Opening: " + url, Toast.LENGTH_LONG).show();
 
 	MessageBase result;
 	result=new MessageBase(_ci.CommandPlay( mContextId, 
-						url, "", ""));
+						url, sessId, key));
 	Log.v(TAG, "CommandPlay: " + result.toString());
     }
 
