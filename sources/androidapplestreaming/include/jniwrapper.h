@@ -20,11 +20,11 @@
 #ifndef _JNIWRAPPER_H
 #define	_JNIWRAPPER_H
 
-#include <jni.h>
-#include "common.h"
+#include "jnihelpers.h"
 
 extern "C" void Java_com_rtmpd_CommandsInterface_EnvRun(
-		JNIEnv* pEnv, jobject thiz, jstring host, jint port);
+		JNIEnv* pEnv, jobject thiz, jobject pCallbackInterface, jstring host,
+		jint port);
 extern "C" void Java_com_rtmpd_CommandsInterface_EnvStop(
 		JNIEnv* pEnv, jobject thiz);
 extern "C" jobject Java_com_rtmpd_CommandsInterface_ContextCreate(
@@ -46,7 +46,6 @@ extern "C" jobject Java_com_rtmpd_CommandsInterface_InfoListStreams(
 		JNIEnv* pEnv, jobject thiz, jint contextId);
 extern "C" jobject Java_com_rtmpd_CommandsInterface_InfoListAllStreams(
 		JNIEnv* pEnv, jobject thiz);
-jobject VariantToJObject(Variant &value, JNIEnv* pEnv);
 
 #endif	/* _JNIWRAPPER_H */
 

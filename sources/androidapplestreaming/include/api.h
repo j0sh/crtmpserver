@@ -21,8 +21,9 @@
 #define	_API_H
 
 #include "common.h"
+#include "jniwrapper.h"
 
-void EnvRun(string ip, uint16_t port);
+void EnvRun(string ip, uint16_t port, CallBackInfo ci);
 void EnvStop();
 
 Variant ContextCreate();

@@ -30,6 +30,7 @@ class Playlist;
 class SpeedComputer;
 class BaseStream;
 class StreamsManager;
+class AppleStreamingClientApplication;
 
 typedef struct _ConnectingString {
 	string masterM3U8Url;
@@ -98,6 +99,7 @@ public:
 	uint32_t GetChunksCount();
 	double GetCurrentTimestamp();
 	uint32_t GetCurrentChunkIndex();
+	AppleStreamingClientApplication *GetApplication();
 
 	//processing
 	bool StartProcessing();

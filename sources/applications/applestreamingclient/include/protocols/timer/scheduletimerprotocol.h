@@ -44,6 +44,7 @@ private:
 	bool ProcessJobStartFeeding(ClientContext *pContext, Variant &job);
 	bool ProcessJobFetchChildPlaylist(ClientContext *pContext, Variant &job);
 	bool ProcessJobConsumeAVBuffer(ClientContext *pContext, Variant &job);
+	bool ProcessJobTestJNICallback(ClientContext *pContext, Variant &job);
 };
 
 

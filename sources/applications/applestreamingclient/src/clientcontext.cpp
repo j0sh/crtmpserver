@@ -200,6 +200,12 @@ uint32_t ClientContext::GetCurrentChunkIndex() {
 	return 0;
 }
 
+AppleStreamingClientApplication *ClientContext::GetApplication() {
+	BaseClientApplication *pApplication = ClientApplicationManager::FindAppById(
+			_applicationId);
+	return (AppleStreamingClientApplication *) pApplication;
+}
+
 bool ClientContext::StartProcessing() {
 	//1. Parse the connecting string and split it into usable pieces
 	if (!ParseConnectingString()) {
@@ -221,6 +227,9 @@ bool ClientContext::StartProcessing() {
 	//5. Add the recurring job for consuming the A/V data buffer
 	Variant job;
 	job["type"] = "consumeAVBuffer";
+	pScheduleTimer->AddJob(job, true);
+
+	job["type"] = "testJNICallback";
 	pScheduleTimer->AddJob(job, true);
 
 	//6. Start the master M3U8 fetching

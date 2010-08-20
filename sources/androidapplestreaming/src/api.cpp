@@ -43,7 +43,7 @@ do { \
 	/*FINEST("request:\n%s\nresponse:\n%s",STR(request.ToString()),STR(response.ToString()));*/ \
 }while(0)
 
-void EnvRun(string ip, uint16_t port) {
+void EnvRun(string ip, uint16_t port, CallBackInfo ci) {
 	//1. Initialize the logger
 	Logger::Init();
 	BaseLogLocation *pLogLocation = new ConsoleLogLocation(true);
@@ -77,6 +77,7 @@ void EnvRun(string ip, uint16_t port) {
 	configuration[CONF_APPLICATION_GENERATE_META_FILES] = (bool)false;
 	AppleStreamingClientApplication *pApp = new AppleStreamingClientApplication(
 			configuration);
+	pApp->SetJavaCallBackInterface(ci);
 	if (!pApp->Initialize()) {
 		ASSERT("Unable to initialize the application");
 	}

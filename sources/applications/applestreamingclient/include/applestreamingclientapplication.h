@@ -22,6 +22,7 @@
 #define _APPLESTREAMINGCLIENTAPPLICATION_H
 
 #include "application/baseclientapplication.h"
+#include "jnihelpers.h"
 
 #ifdef HAS_PROTOCOL_RTMP
 class RTMPAppProtocolHandler;
@@ -49,6 +50,9 @@ private:
 	RTSPAppProtocolHandler *_pRTSPHandler;
 	VariantAppProtocolHandler *_pVariantHandler;
 	ProtocolFactory *_pFactory;
+#ifdef ANDROID
+	CallBackInfo _ci;
+#endif /* ANDROID */
 public:
 	AppleStreamingClientApplication(Variant &configuration);
 	virtual ~AppleStreamingClientApplication();
@@ -56,6 +60,11 @@ public:
 	void CloseAllContexts();
 
 	virtual bool Initialize();
+
+#ifdef ANDROID
+	void SetJavaCallBackInterface(CallBackInfo ci);
+	CallBackInfo &GetJavaCallBackInterface();
+#endif /* ANDROID */
 
 	virtual void SignalStreamRegistered(BaseStream *pStream);
 	virtual void SignalStreamUnRegistered(BaseStream *pStream);

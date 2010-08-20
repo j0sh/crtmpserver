@@ -19,6 +19,9 @@
 
 #include "protocols/timer/scheduletimerprotocol.h"
 #include "clientcontext.h"
+#include "applestreamingclient.h"
+#include "applestreamingclientapplication.h"
+#include "jnihelpers.h"
 
 ScheduleTimerProtocol::ScheduleTimerProtocol(uint32_t contextId) {
 	_contextId = contextId;
@@ -75,6 +78,8 @@ bool ScheduleTimerProtocol::ProcessJob(ClientContext *pContext, Variant &job) {
 		return ProcessJobFetchChildPlaylist(pContext, job);
 	} else if (job["type"] == "consumeAVBuffer") {
 		return ProcessJobConsumeAVBuffer(pContext, job);
+	} else if (job["type"] == "testJNICallback") {
+		return ProcessJobTestJNICallback(pContext, job);
 	} else {
 		ASSERT("Invalid job:\n%s", STR(job.ToString()));
 		return false;
@@ -92,4 +97,22 @@ bool ScheduleTimerProtocol::ProcessJobFetchChildPlaylist(ClientContext *pContext
 
 bool ScheduleTimerProtocol::ProcessJobConsumeAVBuffer(ClientContext *pContext, Variant &job) {
 	return pContext->ConsumeAVBuffer();
+}
+
+bool ScheduleTimerProtocol::ProcessJobTestJNICallback(ClientContext *pContext, Variant &job) {
+#ifdef ANDROID
+	AppleStreamingClientApplication *pApp = pContext->GetApplication();
+	if (pApp == NULL) {
+		FATAL("Unable to get the application");
+		return false;
+	}
+	CallBackInfo &ci = pApp->GetJavaCallBackInterface();
+
+	Variant parameters;
+	parameters["gigi"] = "spaima";
+	parameters["fane"]["brici"] = 123.456;
+	return CallJava(ci, parameters);
+#else
+	NYIR;
+#endif
 }

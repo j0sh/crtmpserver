@@ -48,6 +48,10 @@ AppleStreamingClientApplication::AppleStreamingClientApplication(Variant &config
 	_pRTSPHandler = NULL;
 	_pVariantHandler = NULL;
 	_pFactory = NULL;
+#ifdef ANDROID
+	_ci.pEnv = NULL;
+	_ci.pInterface = NULL;
+#endif /* ANDROID */
 }
 
 AppleStreamingClientApplication::~AppleStreamingClientApplication() {
@@ -158,6 +162,17 @@ bool AppleStreamingClientApplication::Initialize() {
 	ProtocolFactoryManager::RegisterProtocolFactory(_pFactory);
 
 	return true;
+}
+
+void AppleStreamingClientApplication::SetJavaCallBackInterface(CallBackInfo ci) {
+	_ci.pEnv = ci.pEnv;
+	_ci.pInterface = ci.pInterface;
+	_ci.clazz = ci.clazz;
+	_ci.method = ci.method;
+}
+
+CallBackInfo &AppleStreamingClientApplication::GetJavaCallBackInterface() {
+	return _ci;
 }
 
 void AppleStreamingClientApplication::SignalStreamRegistered(BaseStream *pStream) {

@@ -230,9 +230,10 @@ public class VideoViewDemo extends Activity implements VideoCallbacks {
     }
 
     public void EventAvailable(Object eventHashMap) {
-	HashMap<Object, Object> event = (HashMap<Object, Object>)eventHashMap;
+		HashMap<Object, Object> event = (HashMap<Object, Object>)eventHashMap;
+		Log.e(TAG,"##################: "+event.toString());
 
-	Toast.makeText(getApplicationContext(), "got event!", Toast.LENGTH_SHORT).show();
+		//Toast.makeText(getApplicationContext(), "got event!", Toast.LENGTH_SHORT).show();
     }
 
     static {
