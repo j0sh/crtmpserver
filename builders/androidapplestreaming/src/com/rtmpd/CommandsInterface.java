@@ -22,7 +22,8 @@ package com.rtmpd;
 import java.util.HashMap;
 
 public class CommandsInterface {
-	public native void EnvRun(String ip, int port);
+ 
+        public native void EnvRun(VideoCallbacks callbackHandler, String ip, int port);
 
 	public native void EnvStop();
 

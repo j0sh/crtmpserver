@@ -41,7 +41,7 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import com.rtmpd.*;
 
-public class VideoViewDemo extends Activity {
+public class VideoViewDemo extends Activity implements VideoCallbacks {
     private static final String TAG = "VideoViewDemo";
 
     private VideoView mVideoView;
@@ -54,6 +54,7 @@ public class VideoViewDemo extends Activity {
     private CommandsInterface _ci;
 
     private RetryHandler mRetryHandler = new RetryHandler();
+    private VideoCallbacks callbackObj;
 
     @Override
     public void onCreate(Bundle icicle) {
@@ -62,10 +63,11 @@ public class VideoViewDemo extends Activity {
 	mContextId = -1;
 
 	_ci = new CommandsInterface();
+	callbackObj = this;
 		
 	_thread = new Thread() {
 		public void run() {
-		    _ci.EnvRun("68.246.67.43", 5544);
+		    _ci.EnvRun(callbackObj, "0.0.0.0", 55544);
 		}
 	    };
 	_thread.start();
@@ -206,7 +208,7 @@ public class VideoViewDemo extends Activity {
 		return;
 	    }
 
-	    final String path = "rtsp://68.246.67.43:5544/" + msgInfoListStreams.getStreamName(0);
+	    final String path = "rtsp://127.0.0.1:55544/" + msgInfoListStreams.getStreamName(0);
 	    Log.v(TAG, "path: " + path);
 	    if (path == null || path.length() == 0) {
 		Toast.makeText(VideoViewDemo.this, "File URL/path is empty",
@@ -225,6 +227,10 @@ public class VideoViewDemo extends Activity {
 		mVideoView.stopPlayback();
 	    }
 	}
+    }
+
+    public void EventAvailable(HashMap<Object, Object> event) {
+	Toast.makeText(getApplicationContext(), "got event!", Toast.LENGTH_SHORT).show();
     }
 
     static {
