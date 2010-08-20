@@ -1,4 +1,9 @@
- // The following are message definitions.
+// For Evostream windows service 
+#define LOGFILE "C:\\ServiceLogs.txt"
+#define SVCNAME TEXT("evo") //name of the service
+
+
+// The following are message definitions.
 //
 //  Values are 32 bit values laid out as follows:
 //

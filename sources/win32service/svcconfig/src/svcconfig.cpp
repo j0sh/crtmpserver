@@ -3,11 +3,12 @@
 #include <strsafe.h>
 #include <stdio.h>
 #include "svcconfig.h"
+#include "svc/svcdefines.h"
 
 #pragma comment(lib, "advapi32.lib")
 
-TCHAR szConfigCommand[TEXT_SIZE];
-TCHAR szConfigSvcName[TEXT_SIZE];
+//TCHAR szConfigCommand[TEXT_SIZE];
+//TCHAR ConfigSvcName[TEXT_SIZE];
 
 
 //
@@ -20,8 +21,7 @@ TCHAR szConfigSvcName[TEXT_SIZE];
 // Return value:
 //   None
 //
-//void __cdecl _tmain(int argc, TCHAR *argv[])
-bool svcconfig (TCHAR * argv[])
+/*void __cdecl _tmain(int argc, TCHAR *argv[])
 {
 	bool result = true;
     printf("\n");
@@ -32,7 +32,7 @@ bool svcconfig (TCHAR * argv[])
         DisplayUsage();
         return;
     }
-	*/
+	
     StringCchCopy(szConfigCommand, TEXT_SIZE, argv[1]);
     StringCchCopy(szConfigSvcName, TEXT_SIZE, argv[2]);
 
@@ -54,7 +54,7 @@ bool svcconfig (TCHAR * argv[])
 
 	return result;
 }
-/*
+
 VOID __stdcall DisplayUsage()
 {
     printf("Description:\n");
@@ -104,7 +104,7 @@ bool __stdcall DoQuerySvc()
 
     schService = OpenService( 
         schSCManager,          // SCM database 
-        szConfigSvcName,             // name of service 
+        /*szConfigSvcName*/SVCNAME,             // name of service 
         SERVICE_QUERY_CONFIG); // need query config access 
  
     if (schService == NULL)
@@ -182,7 +182,7 @@ bool __stdcall DoQuerySvc()
  
     // Print the configuration information.
  
-    _tprintf(TEXT("%s configuration: \n"), szConfigSvcName);
+    _tprintf(TEXT("%s configuration: \n"), /*szConfigSvcName*/SVCNAME);
     _tprintf(TEXT("  Type: 0x%x\n"), lpsc->dwServiceType);
     _tprintf(TEXT("  Start Type: 0x%x\n"), lpsc->dwStartType);
     _tprintf(TEXT("  Error Control: 0x%x\n"), lpsc->dwErrorControl);
@@ -238,7 +238,7 @@ VOID __stdcall DoDisableSvc()
 
     schService = OpenService( 
         schSCManager,            // SCM database 
-        szConfigSvcName,               // name of service 
+        /*szConfigSvcName*/SVCNAME,               // name of service 
         SERVICE_CHANGE_CONFIG);  // need change config access 
  
     if (schService == NULL)
@@ -303,7 +303,7 @@ VOID __stdcall DoEnableSvc()
 
     schService = OpenService( 
         schSCManager,            // SCM database 
-        szConfigSvcName,               // name of service 
+        /*szConfigSvcName*/SVCNAME,               // name of service 
         SERVICE_CHANGE_CONFIG);  // need change config access 
  
     if (schService == NULL)
@@ -370,7 +370,7 @@ VOID __stdcall DoUpdateSvcDesc()
 
     schService = OpenService( 
         schSCManager,            // SCM database 
-        szConfigSvcName,               // name of service 
+        /*szConfigSvcName*/SVCNAME,               // name of service 
         SERVICE_CHANGE_CONFIG);  // need change config access 
  
     if (schService == NULL)
@@ -430,7 +430,7 @@ VOID __stdcall DoDeleteSvc()
 
     schService = OpenService( 
         schSCManager,       // SCM database 
-        szConfigSvcName,          // name of service 
+        /*szConfigSvcName*/SVCNAME,          // name of service 
         DELETE);            // need delete access 
  
     if (schService == NULL)

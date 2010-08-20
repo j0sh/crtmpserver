@@ -4,9 +4,10 @@
 #include <aclapi.h>
 #include <stdio.h>
 #include "svccontrol.h"
+#include "svc/svcdefines.h"
 
-TCHAR szControlCommand[TEXT_SIZE];
-TCHAR szControlSvcName[TEXT_SIZE];
+//TCHAR szControlCommand[TEXT_SIZE];
+//TCHAR szControlSvcName[TEXT_SIZE];
 
 SC_HANDLE schSCManager;
 SC_HANDLE schService;
@@ -24,8 +25,8 @@ SC_HANDLE schService;
 // Return value:
 //   None
 //
-//void _tmain(int argc, TCHAR *argv[])
-void svccontrol(TCHAR * argv[])
+/*void _tmain(int argc, TCHAR *argv[])
+
 {
     /*printf("\n");
 	
@@ -35,7 +36,6 @@ void svccontrol(TCHAR * argv[])
         DisplayUsage();
         return;
     }
-	*/
     StringCchCopy(szControlCommand, TEXT_SIZE, argv[1]);
     StringCchCopy(szControlSvcName, TEXT_SIZE, argv[2]);
 
@@ -51,7 +51,7 @@ void svccontrol(TCHAR * argv[])
        // DisplayUsage();
     }
 }
-/*
+
 VOID __stdcall DisplayUsage()
 {
     printf("Description:\n");
@@ -99,7 +99,7 @@ VOID __stdcall DoStartSvc()
 
     schService = OpenService( 
         schSCManager,         // SCM database 
-        szControlSvcName,            // name of service 
+        /*szControlSvcName*/SVCNAME,            // name of service 
         SERVICE_ALL_ACCESS);  // full access 
  
     if (schService == NULL)
@@ -331,7 +331,7 @@ VOID __stdcall DoUpdateSvcDacl()
 
     schService = OpenService( 
         schSCManager,              // SCManager database 
-        szControlSvcName,                 // name of service 
+        /*szControlSvcName*/SVCNAME,                 // name of service 
         READ_CONTROL | WRITE_DAC); // access
  
     if (schService == NULL)
@@ -469,7 +469,7 @@ VOID __stdcall DoStopSvc()
 
     schService = OpenService( 
         schSCManager,         // SCM database 
-        szControlSvcName,            // name of service 
+        /*szControlSvcName*/SVCNAME,            // name of service 
         SERVICE_STOP | 
         SERVICE_QUERY_STATUS | 
         SERVICE_ENUMERATE_DEPENDENTS);  

@@ -2,15 +2,14 @@
 #include <process.h>
 #include <tchar.h>
 #include <strsafe.h>
-#include "svc/Svc.h"
+#include "svc/svc.h"
+#include "svc/svcdefines.h"
+#include "svc/serviceregistry.h"
 #include "rtmpserver/rtmpserver.h"
 #include "svccontrol.h"
 #include "svcconfig.h"
 
 #pragma comment(lib, "advapi32.lib")
-
-#define SVCNAME TEXT("evo") //name of the service
-
 
 //
 // Purpose: 
@@ -29,11 +28,11 @@ void __cdecl _tmain(int argc, TCHAR *argv[])
     if( lstrcmpi( argv[1], TEXT("installService")) == 0 )
     {
 		SvcInstall();
+		//OpenRegistry();
         return;
     }else if( lstrcmpi( argv[1], TEXT("uninstallService")) == 0)
     {
-		AddSvcCommand(argv[1]);
-		bool result = svcconfig(svcCommand);//Delete service
+		DoDeleteSvc();
         return;
     } 
 	 // TO_DO: Add any additional services for the process to this table.
@@ -51,17 +50,19 @@ void __cdecl _tmain(int argc, TCHAR *argv[])
         SvcReportEvent(TEXT("StartServiceCtrlDispatcher")); 
     } 
 
-	// Control the service
-	if( lstrcmpi( argv[1], TEXT("startService")) == 0 || lstrcmpi( argv[1], TEXT("stopService")) == 0)
+	// Control the service and start the server normally
+	if( lstrcmpi( argv[1], TEXT("startService")) == 0)
     {
-        AddSvcCommand(argv[1]);
-		svccontrol(svcCommand);//Start/Stop service
+		DoStartSvc();
         return;
-    } else {
+    } else if( lstrcmpi( argv[1], TEXT("stopService")) == 0)
+    {
+		DoStopSvc();
+        return;
+    }else {
 		if ( argc == 1 ) //if no argument, assume that rtmpserver is started normally
 		{
-			AddSvcCommand(TEXT("query"));
-			if (!svcconfig(svcCommand)){
+			if (!DoQuerySvc){
 				printf("Server will start normally.\n\n");
 				rtmpserver();
 				return;
@@ -75,14 +76,6 @@ void __cdecl _tmain(int argc, TCHAR *argv[])
 		}
 	}
 
-}
-
-//Populates the svcCommand array
-VOID AddSvcCommand(TCHAR * command)
-{
-	svcCommand[0] = TEXT("");
-	svcCommand[1] = command;
-	svcCommand[2] = SVCNAME;
 }
 
 //Displays usage
