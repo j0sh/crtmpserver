@@ -57,7 +57,8 @@ IOBuffer * BaseHTTPProtocol::GetInputBuffer() {
 
 bool BaseHTTPProtocol::AllowFarProtocol(uint64_t type) {
 	return type == PT_TCP
-			|| type == PT_SSL;
+			|| type == PT_INBOUND_SSL
+			|| type == PT_OUTBOUND_SSL;
 }
 
 bool BaseHTTPProtocol::AllowNearProtocol(uint64_t type) {

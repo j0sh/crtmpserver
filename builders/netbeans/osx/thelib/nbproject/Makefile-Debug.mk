@@ -42,7 +42,6 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/31226533/infilertmpstream.o \
 	${OBJECTDIR}/_ext/772217591/inboundnamedpipecarrier.o \
 	${OBJECTDIR}/_ext/1215912322/innetrtpstream.o \
-	${OBJECTDIR}/_ext/1919749812/sslprotocol.o \
 	${OBJECTDIR}/_ext/517913122/pidtypes.o \
 	${OBJECTDIR}/_ext/1210522057/atomctts.o \
 	${OBJECTDIR}/_ext/1636055853/baseoutnetstream.o \
@@ -76,6 +75,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/1210522057/atommp4a.o \
 	${OBJECTDIR}/_ext/501751224/inboundrtmpprotocol.o \
 	${OBJECTDIR}/_ext/2021747320/somanager.o \
+	${OBJECTDIR}/_ext/1124563255/outboundsslprotocol.o \
 	${OBJECTDIR}/_ext/501751224/basertmpappprotocolhandler.o \
 	${OBJECTDIR}/_ext/501751224/inboundhttp4rtmp.o \
 	${OBJECTDIR}/_ext/517913122/tspacketpat.o \
@@ -90,6 +90,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/1210522057/ignoredatom.o \
 	${OBJECTDIR}/_ext/1054419429/inboundconnectivity.o \
 	${OBJECTDIR}/_ext/1210522057/atommoov.o \
+	${OBJECTDIR}/_ext/1124563255/basesslprotocol.o \
 	${OBJECTDIR}/_ext/31226533/innetrtmpstream.o \
 	${OBJECTDIR}/_ext/373925503/baseclientapplication.o \
 	${OBJECTDIR}/_ext/501751224/amf3serializer.o \
@@ -178,6 +179,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/1636055853/baseinstream.o \
 	${OBJECTDIR}/_ext/501751224/channel.o \
 	${OBJECTDIR}/_ext/554535297/tcpacceptor.o \
+	${OBJECTDIR}/_ext/1124563255/inboundsslprotocol.o \
 	${OBJECTDIR}/_ext/1636055853/streamsmanager.o \
 	${OBJECTDIR}/_ext/1215912322/outnetrtpudph264stream.o \
 	${OBJECTDIR}/_ext/502048917/inboundhttpprotocol.o \
@@ -258,11 +260,6 @@ ${OBJECTDIR}/_ext/1215912322/innetrtpstream.o: ../../../../sources/thelib/src/pr
 	${MKDIR} -p ${OBJECTDIR}/_ext/1215912322
 	${RM} $@.d
 	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_VAR -DHAS_PROTOCOL_LIVEFLV -DHAS_MEDIA_MP4 -DHAS_MEDIA_MP3 -DHAS_MEDIA_FLV -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1215912322/innetrtpstream.o ../../../../sources/thelib/src/protocols/rtp/streaming/innetrtpstream.cpp
-
-${OBJECTDIR}/_ext/1919749812/sslprotocol.o: ../../../../sources/thelib/src/protocols/sslprotocol.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/1919749812
-	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_VAR -DHAS_PROTOCOL_LIVEFLV -DHAS_MEDIA_MP4 -DHAS_MEDIA_MP3 -DHAS_MEDIA_FLV -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1919749812/sslprotocol.o ../../../../sources/thelib/src/protocols/sslprotocol.cpp
 
 ${OBJECTDIR}/_ext/517913122/pidtypes.o: ../../../../sources/thelib/src/protocols/ts/pidtypes.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/517913122
@@ -429,6 +426,11 @@ ${OBJECTDIR}/_ext/2021747320/somanager.o: ../../../../sources/thelib/src/protoco
 	${RM} $@.d
 	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_VAR -DHAS_PROTOCOL_LIVEFLV -DHAS_MEDIA_MP4 -DHAS_MEDIA_MP3 -DHAS_MEDIA_FLV -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/2021747320/somanager.o ../../../../sources/thelib/src/protocols/rtmp/sharedobjects/somanager.cpp
 
+${OBJECTDIR}/_ext/1124563255/outboundsslprotocol.o: ../../../../sources/thelib/src/protocols/ssl/outboundsslprotocol.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1124563255
+	${RM} $@.d
+	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_VAR -DHAS_PROTOCOL_LIVEFLV -DHAS_MEDIA_MP4 -DHAS_MEDIA_MP3 -DHAS_MEDIA_FLV -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1124563255/outboundsslprotocol.o ../../../../sources/thelib/src/protocols/ssl/outboundsslprotocol.cpp
+
 ${OBJECTDIR}/_ext/501751224/basertmpappprotocolhandler.o: ../../../../sources/thelib/src/protocols/rtmp/basertmpappprotocolhandler.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/501751224
 	${RM} $@.d
@@ -498,6 +500,11 @@ ${OBJECTDIR}/_ext/1210522057/atommoov.o: ../../../../sources/thelib/src/mediafor
 	${MKDIR} -p ${OBJECTDIR}/_ext/1210522057
 	${RM} $@.d
 	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_VAR -DHAS_PROTOCOL_LIVEFLV -DHAS_MEDIA_MP4 -DHAS_MEDIA_MP3 -DHAS_MEDIA_FLV -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1210522057/atommoov.o ../../../../sources/thelib/src/mediaformats/mp4/atommoov.cpp
+
+${OBJECTDIR}/_ext/1124563255/basesslprotocol.o: ../../../../sources/thelib/src/protocols/ssl/basesslprotocol.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1124563255
+	${RM} $@.d
+	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_VAR -DHAS_PROTOCOL_LIVEFLV -DHAS_MEDIA_MP4 -DHAS_MEDIA_MP3 -DHAS_MEDIA_FLV -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1124563255/basesslprotocol.o ../../../../sources/thelib/src/protocols/ssl/basesslprotocol.cpp
 
 ${OBJECTDIR}/_ext/31226533/innetrtmpstream.o: ../../../../sources/thelib/src/protocols/rtmp/streaming/innetrtmpstream.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/31226533
@@ -938,6 +945,11 @@ ${OBJECTDIR}/_ext/554535297/tcpacceptor.o: ../../../../sources/thelib/src/netio/
 	${MKDIR} -p ${OBJECTDIR}/_ext/554535297
 	${RM} $@.d
 	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_VAR -DHAS_PROTOCOL_LIVEFLV -DHAS_MEDIA_MP4 -DHAS_MEDIA_MP3 -DHAS_MEDIA_FLV -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/554535297/tcpacceptor.o ../../../../sources/thelib/src/netio/kqueue/tcpacceptor.cpp
+
+${OBJECTDIR}/_ext/1124563255/inboundsslprotocol.o: ../../../../sources/thelib/src/protocols/ssl/inboundsslprotocol.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1124563255
+	${RM} $@.d
+	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_VAR -DHAS_PROTOCOL_LIVEFLV -DHAS_MEDIA_MP4 -DHAS_MEDIA_MP3 -DHAS_MEDIA_FLV -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1124563255/inboundsslprotocol.o ../../../../sources/thelib/src/protocols/ssl/inboundsslprotocol.cpp
 
 ${OBJECTDIR}/_ext/1636055853/streamsmanager.o: ../../../../sources/thelib/src/streaming/streamsmanager.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1636055853

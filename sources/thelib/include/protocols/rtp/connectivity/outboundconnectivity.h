@@ -83,6 +83,9 @@ private:
 	bool FeedVideoDataTCP(msghdr &message);
 	bool FeedAudioDataUDP(msghdr &message);
 	bool FeedAudioDataTCP(msghdr &message);
+	bool CreateRTCPPacket(uint8_t *pDest, uint8_t *pSrc,
+			uint32_t ssrc, uint32_t rate, uint32_t packetsCount,
+			uint32_t bytesCount, bool isAudio);
 };
 
 

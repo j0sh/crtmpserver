@@ -189,6 +189,11 @@
           <itemPath>../../../../sources/thelib/include/protocols/rtp/rtspprotocol.h</itemPath>
           <itemPath>../../../../sources/thelib/include/protocols/rtp/sdp.h</itemPath>
         </logicalFolder>
+        <logicalFolder name="ssl" displayName="ssl" projectFiles="true">
+          <itemPath>../../../../sources/thelib/include/protocols/ssl/basesslprotocol.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/protocols/ssl/inboundsslprotocol.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/protocols/ssl/outboundsslprotocol.h</itemPath>
+        </logicalFolder>
         <logicalFolder name="timer" displayName="timer" projectFiles="true">
           <itemPath>../../../../sources/thelib/include/protocols/timer/basetimerprotocol.h</itemPath>
         </logicalFolder>
@@ -216,7 +221,6 @@
         <itemPath>../../../../sources/thelib/include/protocols/protocolfactorymanager.h</itemPath>
         <itemPath>../../../../sources/thelib/include/protocols/protocolmanager.h</itemPath>
         <itemPath>../../../../sources/thelib/include/protocols/protocoltypes.h</itemPath>
-        <itemPath>../../../../sources/thelib/include/protocols/sslprotocol.h</itemPath>
         <itemPath>../../../../sources/thelib/include/protocols/tcpprotocol.h</itemPath>
         <itemPath>../../../../sources/thelib/include/protocols/udpprotocol.h</itemPath>
       </logicalFolder>
@@ -234,7 +238,6 @@
         <itemPath>../../../../sources/thelib/include/streaming/streamsmanager.h</itemPath>
         <itemPath>../../../../sources/thelib/include/streaming/streamstypes.h</itemPath>
       </logicalFolder>
-      <itemPath>../../../../sources/thelib/include/thelibglobalcontext.h</itemPath>
     </logicalFolder>
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
@@ -412,6 +415,11 @@
           <itemPath>../../../../sources/thelib/src/protocols/rtp/rtspprotocol.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/protocols/rtp/sdp.cpp</itemPath>
         </logicalFolder>
+        <logicalFolder name="ssl" displayName="ssl" projectFiles="true">
+          <itemPath>../../../../sources/thelib/src/protocols/ssl/basesslprotocol.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/protocols/ssl/inboundsslprotocol.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/protocols/ssl/outboundsslprotocol.cpp</itemPath>
+        </logicalFolder>
         <logicalFolder name="timer" displayName="timer" projectFiles="true">
           <itemPath>../../../../sources/thelib/src/protocols/timer/basetimerprotocol.cpp</itemPath>
         </logicalFolder>
@@ -437,7 +445,6 @@
         <itemPath>../../../../sources/thelib/src/protocols/defaultprotocolfactory.cpp</itemPath>
         <itemPath>../../../../sources/thelib/src/protocols/protocolfactorymanager.cpp</itemPath>
         <itemPath>../../../../sources/thelib/src/protocols/protocolmanager.cpp</itemPath>
-        <itemPath>../../../../sources/thelib/src/protocols/sslprotocol.cpp</itemPath>
         <itemPath>../../../../sources/thelib/src/protocols/tcpprotocol.cpp</itemPath>
         <itemPath>../../../../sources/thelib/src/protocols/udpprotocol.cpp</itemPath>
       </logicalFolder>

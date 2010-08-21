@@ -22,7 +22,8 @@
 #include "protocols/tcpprotocol.h"
 #include "protocols/rtmp/inboundrtmpprotocol.h"
 #include "protocols/rtmp/outboundrtmpprotocol.h"
-#include "protocols/sslprotocol.h"
+#include "protocols/ssl/inboundsslprotocol.h"
+#include "protocols/ssl/outboundsslprotocol.h"
 #include "protocols/dns/inbounddnsresolverprotocol.h"
 #include "protocols/dns/outbounddnsresolverprotocol.h"
 #include "protocols/ts/inboundtsprotocol.h"
@@ -50,7 +51,8 @@ vector<uint64_t> DefaultProtocolFactory::HandledProtocols() {
 
 	ADD_VECTOR_END(result, PT_TCP);
 	ADD_VECTOR_END(result, PT_UDP);
-	ADD_VECTOR_END(result, PT_SSL);
+	ADD_VECTOR_END(result, PT_INBOUND_SSL);
+	ADD_VECTOR_END(result, PT_OUTBOUND_SSL);
 	ADD_VECTOR_END(result, PT_INBOUND_DNS);
 	ADD_VECTOR_END(result, PT_OUTBOUND_DNS);
 	ADD_VECTOR_END(result, PT_TIMER);
@@ -155,7 +157,7 @@ vector<uint64_t> DefaultProtocolFactory::ResolveProtocolChain(string name) {
 #ifdef HAS_PROTOCOL_HTTP
 	else if (name == CONF_PROTOCOL_INBOUND_RTMPS) {
 		ADD_VECTOR_END(result, PT_TCP);
-		ADD_VECTOR_END(result, PT_SSL);
+		ADD_VECTOR_END(result, PT_INBOUND_SSL);
 		ADD_VECTOR_END(result, PT_INBOUND_HTTP);
 		ADD_VECTOR_END(result, PT_INBOUND_HTTP_FOR_RTMP);
 	} else if (name == CONF_PROTOCOL_INBOUND_RTMPT) {
@@ -255,8 +257,11 @@ BaseProtocol *DefaultProtocolFactory::SpawnProtocol(uint64_t type, Variant &para
 		case PT_UDP:
 			pResult = new UDPProtocol();
 			break;
-		case PT_SSL:
-			pResult = new SSLProtocol();
+		case PT_INBOUND_SSL:
+			pResult = new InboundSSLProtocol();
+			break;
+		case PT_OUTBOUND_SSL:
+			pResult = new OutboundSSLProtocol();
 			break;
 		case PT_INBOUND_DNS:
 			pResult = new InboundDNSResolverProtocol();

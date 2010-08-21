@@ -23,7 +23,11 @@
 #include "common.h"
 #include "jniwrapper.h"
 
+#ifdef ANDROID
 void EnvRun(string ip, uint16_t port, CallBackInfo ci);
+#else
+void EnvRun(string ip, uint16_t port);
+#endif /* ANDROID */
 void EnvStop();
 
 Variant ContextCreate();

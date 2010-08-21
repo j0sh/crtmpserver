@@ -53,11 +53,11 @@ BaseVariantAppProtocolHandler::~BaseVariantAppProtocolHandler() {
 }
 
 void BaseVariantAppProtocolHandler::RegisterProtocol(BaseProtocol *pProtocol) {
-	FINEST("BaseVariantAppProtocolHandler::RegisterProtocol");
+	//FINEST("BaseVariantAppProtocolHandler::RegisterProtocol");
 }
 
 void BaseVariantAppProtocolHandler::UnRegisterProtocol(BaseProtocol *pProtocol) {
-	FINEST("BaseVariantAppProtocolHandler::UnRegisterProtocol");
+	//FINEST("BaseVariantAppProtocolHandler::UnRegisterProtocol");
 }
 
 bool BaseVariantAppProtocolHandler::Send(string ip, uint16_t port, Variant &variant, bool xml) {

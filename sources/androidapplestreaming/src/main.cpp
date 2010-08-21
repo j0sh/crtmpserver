@@ -47,8 +47,12 @@ int main(void) {
 }
 
 void* worker(void *) {
+#ifdef ANDROID
 	CallBackInfo ci;
-	EnvRun("0.0.0.0", 5544, ci);
+	EnvRun("0.0.0.0", 554, ci);
+#else
+	EnvRun("0.0.0.0", 554);
+#endif /* ANDROID */
 	return NULL;
 }
 
@@ -87,26 +91,30 @@ void testContexts() {
 //#define MY_SESSION_ID "playback=HTTP_CLOUD_WIRED&contentId=7320085&appAccountName=mlb&eventId=14-263849-2010-04-08&ipid=11627706&sessionKey=3HJ3abDj%2BPBkmIn8cprQTgkYIa8%3D"
 //#define MY_KEY "ugkuOk9Qy4HNS5uRxQcQXHfLuAI="
 
+#define MY_URL "http://mlbsegqa.mlb.com/mlbam/2010/08/17/MLB_GAME_VIDEO_DETNYA_HOME_20100817/master_mobile.m3u8"
+#define MY_SESSION_ID "playback=HTTP_CLOUD_WIRED&contentId=7320085&appAccountName=mlb&eventId=14-263849-2010-04-08&ipid=11627706&sessionKey=vlPZfM8Rj1TaGDmMrtDSQh1MIWc%3D"
+#define MY_KEY "Q8TZUMmOkyVgVSMotTCRMQ=="
+
 //#define CONDENSED_CONN_STRING "base64:aHR0cDovL21sYnZvZC1ha2MubWxiLmNvbS9tbGJhbS8yMDEwLzA0LzA4L01MQl9HQU1FX1ZJREVPX0xBTlBJVF9IT01FXzIwMTAwNDA4L21hc3Rlcl93aXJlZC5tM3U4fHlNQmVFcEl6OEJEaUFYV0k0dUdIUm1UaHdIRT18cGxheWJhY2s9SFRUUF9DTE9VRF9XSVJFRCZjb250ZW50SWQ9NzMyMDA4NSZhcHBBY2NvdW50TmFtZT1tbGImZXZlbnRJZD0xNC0yNjM4NDktMjAxMC0wNC0wOCZpcGlkPTExNjI3NzA2JnNlc3Npb25LZXk9cUNveGRIaUlOY3FDbHlEcEZoU2dma3dJSWc0JTNE"
-#define CONDENSED_CONN_STRING "aHR0cDovL21sYnZvZC1ha2MubWxiLmNvbS9tbGJhbS8yMDEwLzA0LzA4L01MQl9HQU1FX1ZJREVPX0xBTlBJVF9IT01FXzIwMTAwNDA4L21hc3Rlcl93aXJlZC5tM3U4fGJsOEQyRUFTRUY4V1VyeloreTNvME5pUXlBaz18cGxheWJhY2s9SFRUUF9DTE9VRF9XSVJFRCZjb250ZW50SWQ9NzMyMDA4NSZhcHBBY2NvdW50TmFtZT1tbGImZXZlbnRJZD0xNC0yNjM4NDktMjAxMC0wNC0wOCZpcGlkPTExNjI3NzA2JnNlc3Npb25LZXk9R0JuY1BzeFJCVjAySUM5bjgwUlAxU2RyOWV3JTNE"
+//#define CONDENSED_CONN_STRING "aHR0cDovL21sYnZvZC1ha2MubWxiLmNvbS9tbGJhbS8yMDEwLzA0LzA4L01MQl9HQU1FX1ZJREVPX0xBTlBJVF9IT01FXzIwMTAwNDA4L21hc3Rlcl93aXJlZC5tM3U4fGJsOEQyRUFTRUY4V1VyeloreTNvME5pUXlBaz18cGxheWJhY2s9SFRUUF9DTE9VRF9XSVJFRCZjb250ZW50SWQ9NzMyMDA4NSZhcHBBY2NvdW50TmFtZT1tbGImZXZlbnRJZD0xNC0yNjM4NDktMjAxMC0wNC0wOCZpcGlkPTExNjI3NzA2JnNlc3Npb25LZXk9R0JuY1BzeFJCVjAySUM5bjgwUlAxU2RyOWV3JTNE"
 
 void testCommands() {
 	Variant result = ContextCreate();
 	FINEST("result:\n%s", STR(result.ToString()));
 
 	uint32_t contextId = (uint32_t) ASC_RES_PARAM(result, "contextId");
-	//	result = CommandPlay(contextId, MY_URL, MY_SESSION_ID, MY_KEY);
-	//	FINEST("result:\n%s", STR(result.ToString()));
-	result = CommandPlay(contextId, CONDENSED_CONN_STRING);
+	result = CommandPlay(contextId, MY_URL, MY_SESSION_ID, MY_KEY);
 	FINEST("result:\n%s", STR(result.ToString()));
+	//	result = CommandPlay(contextId, CONDENSED_CONN_STRING);
+	//	FINEST("result:\n%s", STR(result.ToString()));
 
-	for (;;) {
-		result = InfoBandwidth(contextId);
-		FINEST("InfoBandwidth:\n%s", STR(result.ToString()));
-		//		result = InfoPlayback(contextId);
-		//		FINEST("InfoBandwidth:\n%s", STR(result.ToString()));
-		sleep(1);
-	}
+	//	for (;;) {
+	//		result = InfoBandwidth(contextId);
+	//		FINEST("InfoBandwidth:\n%s", STR(result.ToString()));
+	//		//		result = InfoPlayback(contextId);
+	//		//		FINEST("InfoBandwidth:\n%s", STR(result.ToString()));
+	//		sleep(1);
+	//	}
 
 	//	sleep(5);
 	//	result = InfoListStreams(contextId);

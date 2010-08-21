@@ -304,47 +304,15 @@ bool OutboundConnectivity::FeedVideoDataUDP(msghdr &message) {
 	COMPUTE_BYTES_COUNT(message, _videoBytesCount);
 	//uint16_t seq = ntohsp(((uint8_t *) message.msg_iov[0].iov_base) + 2);
 	//FINEST("seq: %d", seq);
-	if ((_videoPacketsCount % 300) == 0) {
-		/*
-		 0                   1                   2                   3
-		 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-		+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-		|V=2|P|    RC   |   PT=SR=200   |             length            | header
-		+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-		|                         SSRC of sender                        |
-		+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
-		|              NTP timestamp, most significant word             | sender
-		+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+ info
-		|             NTP timestamp, least significant word             |
-		+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-		|                         RTP timestamp                         |
-		+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-		|                     sender's packet count                     |
-		+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-		|                      sender's octet count                     |
-		+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
-		 */
-
-		WARN("Video: MUST send SR to %d clients", _udpVideoRTCPClients.size());
+	if (((_videoPacketsCount % 300) == 0) || _videoPacketsCount == 1) {
 		uint8_t buff[28];
-		buff[0] = 0x80; //V,P,RC
-		buff[1] = 0xc8; //PT
-		buff[2] = 0x00; //length
-		buff[3] = 0x06; //length
-		uint32_t ssrc = _pOutStream->SSRC();
-		put_htonl(buff + 4, ssrc); //SSRC
-		uint64_t ntp;
-		GETNTP(ntp);
-		put_htonll(buff + 8, ntp); //NTP
-		double rtpDouble;
-		GETCLOCKS(rtpDouble);
-		//		ASSERT("_pOutStream->GetCapabilities()->audioCodecInfo.aac.sampleRate: %d",
-		//				_pOutStream->GetCapabilities()->audioCodecInfo.aac.sampleRate);
-		put_htonl(buff + 16, (uint32_t) (rtpDouble / CLOCKS_PER_SEC)
-				* _pOutStream->GetCapabilities()->audioCodecInfo.aac.sampleRate); //RTP ts
-		put_htonl(buff + 20, _videoPacketsCount); //sender's packet count
-		put_htonl(buff + 24, _videoBytesCount); //sender's octet count
-
+		CreateRTCPPacket(buff,
+				(uint8_t *) message.msg_iov[0].iov_base,
+				_pOutStream->SSRC(),
+				90000,
+				_videoPacketsCount,
+				_videoBytesCount,
+				false);
 		_message.msg_iov[0].iov_base = buff;
 		_message.msg_iov[0].iov_len = 28;
 
@@ -364,44 +332,15 @@ bool OutboundConnectivity::FeedAudioDataUDP(msghdr &message) {
 	COMPUTE_BYTES_COUNT(message, _audioBytesCount);
 	//uint16_t seq = ntohsp(((uint8_t *) message.msg_iov[0].iov_base) + 2);
 	//FINEST("seq: %d", seq);
-	if ((_audioPacketsCount % 300) == 0) {
-		/*
-		 0                   1                   2                   3
-		 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-		+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-		|V=2|P|    RC   |   PT=SR=200   |             length            | header
-		+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-		|                         SSRC of sender                        |
-		+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
-		|              NTP timestamp, most significant word             | sender
-		+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+ info
-		|             NTP timestamp, least significant word             |
-		+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-		|                         RTP timestamp                         |
-		+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-		|                     sender's packet count                     |
-		+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-		|                      sender's octet count                     |
-		+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
-		 */
-
-		WARN("Audio: MUST send SR to %d clients", _udpAudioRTCPClients.size());
+	if (((_audioPacketsCount % 300) == 0) || (_audioPacketsCount == 1)) {
 		uint8_t buff[28];
-		buff[0] = 0x80; //V,P,RC
-		buff[1] = 0xc8; //PT
-		buff[2] = 0x00; //length
-		buff[3] = 0x06; //length
-		uint32_t ssrc = _pOutStream->SSRC();
-		put_htonl(buff + 4, ssrc); //SSRC
-		uint64_t ntp;
-		GETNTP(ntp);
-		put_htonll(buff + 8, ntp); //NTP
-		double rtpDouble;
-		GETCLOCKS(rtpDouble);
-		put_htonl(buff + 16, (uint32_t) (rtpDouble / CLOCKS_PER_SEC)*1000 * 90); //RTP ts
-		put_htonl(buff + 20, _audioPacketsCount); //sender's packet count
-		put_htonl(buff + 24, _audioBytesCount); //sender's octet count
-
+		CreateRTCPPacket(buff,
+				(uint8_t *) message.msg_iov[0].iov_base,
+				_pOutStream->SSRC(),
+				_pOutStream->GetCapabilities()->audioCodecInfo.aac.sampleRate,
+				_audioPacketsCount,
+				_audioBytesCount,
+				true);
 		_message.msg_iov[0].iov_base = buff;
 		_message.msg_iov[0].iov_len = 28;
 
@@ -414,4 +353,64 @@ bool OutboundConnectivity::FeedAudioDataTCP(msghdr &message) {
 	//NYIR;
 	return true;
 }
+
+bool OutboundConnectivity::CreateRTCPPacket(uint8_t *pDest, uint8_t *pSrc,
+		uint32_t ssrc, uint32_t rate, uint32_t packetsCount, uint32_t bytesCount,
+		bool isAudio) {
+
+	/*
+	 0                   1                   2                   3
+	 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+	+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+	|V=2|P|    RC   |   PT=SR=200   |             length            | header
+	+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+	|                         SSRC of sender                        |
+	+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
+	|              NTP timestamp, most significant word             | sender
+	+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+ info
+	|             NTP timestamp, least significant word             |
+	+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+	|                         RTP timestamp                         |
+	+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+	|                     sender's packet count                     |
+	+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+	|                      sender's octet count                     |
+	+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
+	 */
+
+	//	WARN("%s: MUST send SR to %d clients",
+	//			isAudio ? "Audio" : "Video",
+	//			_udpVideoRTCPClients.size());
+
+	//1. V,P,RC
+	pDest[0] = 0x80;
+
+	//2. PT
+	pDest[1] = 0xc8;
+
+	//3. Length
+	pDest[2] = 0x00;
+	pDest[3] = 0x06;
+
+	//4. ssrc
+	put_htonl(pDest + 4, ssrc); //SSRC
+
+	//5. NTP
+	uint64_t ntp;
+	//GETCUSTOMNTP(ntp, (ntohlp(pSrc + 4) / rate)*1000);
+	GETNTP(ntp);
+	put_htonll(pDest + 8, ntp);
+
+	//6. RTP
+	memcpy(pDest + 16, pSrc + 4, 4);
+
+	//7. sender's packet count
+	put_htonl(pDest + 20, packetsCount);
+
+	//8. sender's octet count
+	put_htonl(pDest + 24, bytesCount);
+
+	return true;
+}
+
 #endif /* HAS_PROTOCOL_RTP */

@@ -17,6 +17,7 @@
  *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifdef ANDROID
 #ifndef _JNIWRAPPER_H
 #define	_JNIWRAPPER_H
 
@@ -48,4 +49,4 @@ extern "C" jobject Java_com_rtmpd_CommandsInterface_InfoListAllStreams(
 		JNIEnv* pEnv, jobject thiz);
 
 #endif	/* _JNIWRAPPER_H */
-
+#endif /* ANDROID */

@@ -229,8 +229,8 @@ bool ClientContext::StartProcessing() {
 	job["type"] = "consumeAVBuffer";
 	pScheduleTimer->AddJob(job, true);
 
-	job["type"] = "testJNICallback";
-	pScheduleTimer->AddJob(job, true);
+	//	job["type"] = "testJNICallback";
+	//	pScheduleTimer->AddJob(job, true);
 
 	//6. Start the master M3U8 fetching
 	return FetchMasterPlaylist();
@@ -637,6 +637,19 @@ bool ClientContext::FetchURI(string uri, string requestType, Variant &customPara
 
 	if (document == "") {
 		document = "/";
+	}
+
+	if ((uri[4] == 'S') || (uri[4] == 's')) {
+
+		FOR_VECTOR_ITERATOR(uint64_t, protocolStackTypes, i) {
+			if (VECTOR_VAL(i) == PT_INBOUND_HTTP) {
+				protocolStackTypes.insert(i, PT_INBOUND_SSL);
+				break;
+			} else if (VECTOR_VAL(i) == PT_OUTBOUND_HTTP) {
+				protocolStackTypes.insert(i, PT_OUTBOUND_SSL);
+				break;
+			}
+		}
 	}
 
 	//3. Prepare the HTTP info

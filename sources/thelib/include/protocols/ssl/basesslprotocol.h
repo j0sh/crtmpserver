@@ -23,19 +23,21 @@
 
 #include "protocols/baseprotocol.h"
 
-class SSLProtocol
+class BaseSSLProtocol
 : public BaseProtocol {
 private:
-	static map<string, SSL_CTX *> _pGlobalContexts;
-	static bool _libraryInitialized;
-	SSL_CTX *_pGlobalSSLContext1;
-	SSL *_pSSL;
 	IOBuffer _inputBuffer;
 	IOBuffer _outputBuffer;
+protected:
+	static map<string, SSL_CTX *> _pGlobalContexts;
+	static bool _libraryInitialized;
+	SSL_CTX *_pGlobalSSLContext;
+	SSL *_pSSL;
+	bool _sslHandshakeCompleted;
 	uint8_t *_pReadBuffer;
 public:
-	SSLProtocol();
-	virtual ~SSLProtocol();
+	BaseSSLProtocol(uint64_t type);
+	virtual ~BaseSSLProtocol();
 	virtual bool Initialize(Variant &parameters);
 	virtual bool AllowFarProtocol(uint64_t type);
 	virtual bool AllowNearProtocol(uint64_t type);
@@ -44,11 +46,14 @@ public:
 	virtual IOBuffer * GetInputBuffer();
 	virtual bool SignalInputData(int32_t recvAmount);
 	virtual bool SignalInputData(IOBuffer &buffer);
+protected:
+	virtual bool DoHandshake() = 0;
+	virtual bool InitGlobalContext(Variant &parameters) = 0;
+	bool PerformIO();
+	string GetSSLErrors();
 private:
 	string DumpBIO(BIO *pBIO);
-	string GetSSLErrors();
 	void InitRandGenerator();
-	bool PerformIO();
 };
 
 

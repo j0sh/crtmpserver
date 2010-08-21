@@ -43,6 +43,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/413657679/m3u8appprotocolhandler.o \
 	${OBJECTDIR}/_ext/441423101/speedcomputer.o \
 	${OBJECTDIR}/_ext/441423101/applestreamingclient.o \
+	${OBJECTDIR}/_ext/1568284858/jnihelpers.o \
 	${OBJECTDIR}/_ext/413657679/masterm3u8protocol.o \
 	${OBJECTDIR}/_ext/1372129895/keyappprotocolhandler.o \
 	${OBJECTDIR}/_ext/61573733/baseeventsink.o \
@@ -137,6 +138,11 @@ ${OBJECTDIR}/_ext/441423101/applestreamingclient.o: ../../../../sources/applicat
 	${MKDIR} -p ${OBJECTDIR}/_ext/441423101
 	${RM} $@.d
 	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_VAR -DANDROID -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/applestreamingclient/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/441423101/applestreamingclient.o ../../../../sources/applications/applestreamingclient/src/applestreamingclient.cpp
+
+${OBJECTDIR}/_ext/1568284858/jnihelpers.o: ../../../../sources/applications/applestreamingclient/src/protocols/../jnihelpers.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1568284858
+	${RM} $@.d
+	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_VAR -DANDROID -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/applestreamingclient/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1568284858/jnihelpers.o ../../../../sources/applications/applestreamingclient/src/protocols/../jnihelpers.cpp
 
 ${OBJECTDIR}/_ext/413657679/masterm3u8protocol.o: ../../../../sources/applications/applestreamingclient/src/protocols/m3u8/masterm3u8protocol.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/413657679

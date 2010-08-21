@@ -164,6 +164,7 @@ bool AppleStreamingClientApplication::Initialize() {
 	return true;
 }
 
+#ifdef ANDROID
 void AppleStreamingClientApplication::SetJavaCallBackInterface(CallBackInfo ci) {
 	_ci.pEnv = ci.pEnv;
 	_ci.pInterface = ci.pInterface;
@@ -174,6 +175,7 @@ void AppleStreamingClientApplication::SetJavaCallBackInterface(CallBackInfo ci) 
 CallBackInfo &AppleStreamingClientApplication::GetJavaCallBackInterface() {
 	return _ci;
 }
+#endif /* ANDROID */
 
 void AppleStreamingClientApplication::SignalStreamRegistered(BaseStream *pStream) {
 	if (pStream->GetType() != ST_IN_NET_TS)

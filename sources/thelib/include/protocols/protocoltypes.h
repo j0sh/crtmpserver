@@ -1,21 +1,21 @@
 /* 
-*  Copyright (c) 2010,
-*  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
-*  
-*  This file is part of crtmpserver.
-*  crtmpserver is free software: you can redistribute it and/or modify
-*  it under the terms of the GNU General Public License as published by
-*  the Free Software Foundation, either version 3 of the License, or
-*  (at your option) any later version.
-*  
-*  crtmpserver is distributed in the hope that it will be useful,
-*  but WITHOUT ANY WARRANTY; without even the implied warranty of
-*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*  GNU General Public License for more details.
-*  
-*  You should have received a copy of the GNU General Public License
-*  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ *  Copyright (c) 2010,
+ *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
+ *
+ *  This file is part of crtmpserver.
+ *  crtmpserver is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  crtmpserver is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 
 #ifndef _PROTOCOLTYPES_H
@@ -33,12 +33,13 @@
 
 //RTMP protocols
 #define PT_INBOUND_RTMP			MAKE_TAG2('I','R')
-#define PT_OUTBOUND_RTMP			MAKE_TAG2('O','R')
+#define PT_OUTBOUND_RTMP		MAKE_TAG2('O','R')
 #define PT_MONITOR_RTMP			MAKE_TAG2('M','R')
 
 //encryption protocols
 #define PT_RTMPE				MAKE_TAG2('R','E')
-#define PT_SSL					MAKE_TAG3('S','S','L')
+#define PT_INBOUND_SSL			MAKE_TAG4('I','S','S','L')
+#define PT_OUTBOUND_SSL			MAKE_TAG4('O','S','S','L')
 
 //Async DNS protocols
 #define PT_INBOUND_DNS			MAKE_TAG4('I','D','N','S')
@@ -48,8 +49,8 @@
 #define PT_INBOUND_TS			MAKE_TAG3('I','T','S')
 
 //HTTP protocols
-#define PT_INBOUND_HTTP			MAKE_TAG4('I','H','T','T')
-#define PT_INBOUND_HTTP_FOR_RTMP		MAKE_TAG4('I','H','4','R')
+#define PT_INBOUND_HTTP				MAKE_TAG4('I','H','T','T')
+#define PT_INBOUND_HTTP_FOR_RTMP	MAKE_TAG4('I','H','4','R')
 #define PT_OUTBOUND_HTTP			MAKE_TAG4('O','H','T','T')
 #define PT_OUTBOUND_HTTP_FOR_RTMP	MAKE_TAG4('O','H','4','R')
 

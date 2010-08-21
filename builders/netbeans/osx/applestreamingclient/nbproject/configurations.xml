@@ -108,6 +108,7 @@
       <itemPath>../../../../sources/applications/applestreamingclient/src/applestreamingclient.cpp</itemPath>
       <itemPath>../../../../sources/applications/applestreamingclient/src/applestreamingclientapplication.cpp</itemPath>
       <itemPath>../../../../sources/applications/applestreamingclient/src/clientcontext.cpp</itemPath>
+      <itemPath>../../../../sources/applications/applestreamingclient/src/protocols/../jnihelpers.cpp</itemPath>
       <itemPath>../../../../sources/applications/applestreamingclient/src/playlist.cpp</itemPath>
       <itemPath>../../../../sources/applications/applestreamingclient/src/speedcomputer.cpp</itemPath>
     </logicalFolder>

@@ -43,7 +43,13 @@ do { \
 	/*FINEST("request:\n%s\nresponse:\n%s",STR(request.ToString()),STR(response.ToString()));*/ \
 }while(0)
 
-void EnvRun(string ip, uint16_t port, CallBackInfo ci) {
+#ifdef ANDROID
+void EnvRun(string ip, uint16_t port, CallBackInfo ci)
+#else
+
+void EnvRun(string ip, uint16_t port)
+#endif /* ANDROID */
+{
 	//1. Initialize the logger
 	Logger::Init();
 	BaseLogLocation *pLogLocation = new ConsoleLogLocation(true);
@@ -77,7 +83,9 @@ void EnvRun(string ip, uint16_t port, CallBackInfo ci) {
 	configuration[CONF_APPLICATION_GENERATE_META_FILES] = (bool)false;
 	AppleStreamingClientApplication *pApp = new AppleStreamingClientApplication(
 			configuration);
+#ifdef ANDROID
 	pApp->SetJavaCallBackInterface(ci);
+#endif /* ANDROID */
 	if (!pApp->Initialize()) {
 		ASSERT("Unable to initialize the application");
 	}

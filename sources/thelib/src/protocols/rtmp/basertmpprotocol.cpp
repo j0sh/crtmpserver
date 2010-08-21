@@ -117,7 +117,7 @@ bool BaseRTMPProtocol::Initialize(Variant &parameters) {
 bool BaseRTMPProtocol::AllowFarProtocol(uint64_t type) {
 	if (type == PT_TCP
 			|| type == PT_RTMPE
-			|| type == PT_SSL
+			|| type == PT_INBOUND_SSL
 			|| type == PT_INBOUND_HTTP_FOR_RTMP)
 		return true;
 	FATAL("Far protocol %d not accepted", type);
