@@ -23,8 +23,8 @@
 #include "protocols/protocolmanager.h"
 #include "protocols/rtmp/messagefactories/messagefactories.h"
 
-RTMPEventSink::RTMPEventSink()
-: BaseEventSink(EVENT_SYNC_RTMP) {
+RTMPEventSink::RTMPEventSink(uint32_t contextId)
+: BaseEventSink(EVENT_SYNC_RTMP, contextId) {
 	_protocolId = 0;
 	_streamName = "";
 }
@@ -73,4 +73,13 @@ bool RTMPEventSink::SignalStreamUnRegistered(string streamName) {
 	_streamName = "";
 	return true;
 }
+
+bool RTMPEventSink::SignalUpgradeBandwidth(uint32_t oldBw, uint32_t newBw) {
+	return true;
+}
+
+bool RTMPEventSink::SignalDowngradeBandwidth(uint32_t oldBw, uint32_t newBw) {
+	return true;
+}
+
 #endif /* HAS_PROTOCOL_RTMP */

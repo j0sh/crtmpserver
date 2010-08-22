@@ -75,12 +75,13 @@ void EnvRun(string ip, uint16_t port)
 	configuration[CONF_APPLICATION_NAME] = "applestreaminclient";
 	configuration[CONF_APPLICATION_ALIASES].PushToArray("asc");
 	configuration[CONF_APPLICATION_DEFAULT] = (bool)true;
-	configuration[CONF_APPLICATION_VALIDATEHANDSHAKE] = (bool)false;
+	configuration[CONF_APPLICATION_VALIDATEHANDSHAKE] = (bool)true;
 	configuration[CONF_APPLICATION_KEYFRAMESEEK] = (bool)true;
 	configuration[CONF_APPLICATION_CLIENTSIDEBUFFER] = (int32_t) 15;
 	configuration[CONF_APPLICATION_SEEKGRANULARITY] = 1.00;
 	configuration[CONF_APPLICATION_MEDIAFOLDER] = "./";
 	configuration[CONF_APPLICATION_GENERATE_META_FILES] = (bool)false;
+	configuration["rtspHost"] = format("rtsp://127.0.0.1:%d/", port);
 	AppleStreamingClientApplication *pApp = new AppleStreamingClientApplication(
 			configuration);
 #ifdef ANDROID
@@ -105,7 +106,8 @@ void EnvRun(string ip, uint16_t port)
 	if (chain.size() == 0) {
 		ASSERT("Invalid protocol chain: %s", CONF_PROTOCOL_INBOUND_RTSP);
 	}
-	TCPAcceptor *pAcceptor = new TCPAcceptor(ip, port, acceptorConfig, chain);
+	TCPAcceptor *pAcceptor = new TCPAcceptor(ip,
+			(uint16_t) acceptorConfig[CONF_PORT], acceptorConfig, chain);
 	if (!pAcceptor->StartAccept(pApp)) {
 		ASSERT("Unable to fire up acceptor");
 	}
@@ -117,7 +119,8 @@ void EnvRun(string ip, uint16_t port)
 	if (chain.size() == 0) {
 		ASSERT("Invalid protocol chain: %s", CONF_PROTOCOL_INBOUND_BIN_VARIANT);
 	}
-	pAcceptor = new TCPAcceptor(ip, port + 1, acceptorConfig, chain);
+	pAcceptor = new TCPAcceptor(ip, (uint16_t) acceptorConfig[CONF_PORT],
+			acceptorConfig, chain);
 	if (!pAcceptor->StartAccept(pApp)) {
 		ASSERT("Unable to fire up acceptor");
 	}
@@ -129,7 +132,21 @@ void EnvRun(string ip, uint16_t port)
 	if (chain.size() == 0) {
 		ASSERT("Invalid protocol chain: %s", CONF_PROTOCOL_INBOUND_XML_VARIANT);
 	}
-	pAcceptor = new TCPAcceptor(ip, port + 2, acceptorConfig, chain);
+	pAcceptor = new TCPAcceptor(ip, (uint16_t) acceptorConfig[CONF_PORT],
+			acceptorConfig, chain);
+	if (!pAcceptor->StartAccept(pApp)) {
+		ASSERT("Unable to fire up acceptor");
+	}
+
+	//9. Create the RTMP acceptor
+	acceptorConfig[CONF_PORT] = (uint16_t) (1935);
+	acceptorConfig[CONF_PROTOCOL] = CONF_PROTOCOL_INBOUND_RTMP;
+	chain = ProtocolFactoryManager::ResolveProtocolChain(CONF_PROTOCOL_INBOUND_RTMP);
+	if (chain.size() == 0) {
+		ASSERT("Invalid protocol chain: %s", CONF_PROTOCOL_INBOUND_RTMP);
+	}
+	pAcceptor = new TCPAcceptor(ip, (uint16_t) acceptorConfig[CONF_PORT],
+			acceptorConfig, chain);
 	if (!pAcceptor->StartAccept(pApp)) {
 		ASSERT("Unable to fire up acceptor");
 	}

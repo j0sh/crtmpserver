@@ -402,6 +402,11 @@ bool OutboundConnectivity::CreateRTCPPacket(uint8_t *pDest, uint8_t *pSrc,
 	put_htonll(pDest + 8, ntp);
 
 	//6. RTP
+	//	double rtpDouble;
+	//	GETCLOCKS(rtpDouble);
+	//	rtpDouble = (rtpDouble / CLOCKS_PER_SEC) * rate;
+	//	uint32_t rtp = (uint32_t) rtpDouble;
+	//	put_htonl(pDest + 16, rtp);
 	memcpy(pDest + 16, pSrc + 4, 4);
 
 	//7. sender's packet count

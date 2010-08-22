@@ -184,26 +184,27 @@ bool OutNetRTPUDPH264Stream::FeedDataVideoFUA(uint8_t *pData, uint32_t dataLengt
 		}
 		totalLength -= 9;
 	} else {
-		if ((NALU_TYPE(pData[0]) != NALU_TYPE_SPS)
-				&& (NALU_TYPE(pData[0]) != NALU_TYPE_PPS)
-				&& (NALU_TYPE(pData[0]) != NALU_TYPE_SLICE)
+		if (
+				//				(NALU_TYPE(pData[0]) != NALU_TYPE_SPS)
+				//				&& (NALU_TYPE(pData[0]) != NALU_TYPE_PPS)
+				(NALU_TYPE(pData[0]) != NALU_TYPE_SLICE)
 				&& (NALU_TYPE(pData[0]) != NALU_TYPE_IDR)) {
 			//FINEST("ignoring absoluteTimestamp: %.2f; %s", absoluteTimestamp, STR(NALUToString(pData[0])));
 			return true;
 		}
 	}
 
-	if (processedLength == 0 && NALU_TYPE(pData[0]) == NALU_TYPE_IDR) {
-		put_htons(_pSPS + 2, _videoCounter);
-		_videoCounter++;
-		put_htonl(_pSPS + 4, (uint32_t) (absoluteTimestamp * 90.0));
-		put_htons(_pPPS + 2, _videoCounter);
-		_videoCounter++;
-		put_htonl(_pPPS + 4, (uint32_t) (absoluteTimestamp * 90.0));
-
-		_pConnectivity->FeedVideoData(_pSPS, _SPSLen);
-		_pConnectivity->FeedVideoData(_pPPS, _PPSLen);
-	}
+	//	if (processedLength == 0 && NALU_TYPE(pData[0]) == NALU_TYPE_IDR) {
+	//		put_htons(_pSPS + 2, _videoCounter);
+	//		_videoCounter++;
+	//		put_htonl(_pSPS + 4, (uint32_t) (absoluteTimestamp * 90.0));
+	//		put_htons(_pPPS + 2, _videoCounter);
+	//		_videoCounter++;
+	//		put_htonl(_pPPS + 4, (uint32_t) (absoluteTimestamp * 90.0));
+	//
+	//		_pConnectivity->FeedVideoData(_pSPS, _SPSLen);
+	//		_pConnectivity->FeedVideoData(_pPPS, _PPSLen);
+	//	}
 
 	uint32_t sentAmount = 0;
 	uint32_t chunkSize = 0;

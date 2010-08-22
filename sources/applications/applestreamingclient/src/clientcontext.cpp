@@ -43,6 +43,7 @@ ClientContext::ClientContext() {
 	_parsedChildPlaylistsCount = 0;
 	_currentItemIndex = 0;
 	_optimalBw = 0;
+	_lastUsedBw = 0;
 	_pSpeedComputer = NULL;
 	_tsId = 0;
 	_scheduleTimerId = 0;
@@ -51,7 +52,6 @@ ClientContext::ClientContext() {
 	_streamId = 0;
 	_pStreamsManager = NULL;
 	_lastWallClock = 0;
-	_lastStreamClock = 0;
 	_avData.EnsureSize(_maxAVBufferSize * 3);
 	INFO("Context created: %d (%p)", _id, this);
 }
@@ -102,7 +102,8 @@ ClientContext *ClientContext::GetContext(uint32_t &contextId,
 	if (contextId == 0) {
 		pResult = new ClientContext();
 		pResult->_applicationId = applicationId;
-		pResult->_pEventSink = BaseEventSink::GetInstance(masterProtocolType);
+		pResult->_pEventSink = BaseEventSink::GetInstance(masterProtocolType,
+				pResult->_id);
 		contextId = pResult->_id;
 		_contexts[pResult->_id] = pResult;
 	} else {
@@ -578,10 +579,12 @@ bool ClientContext::FetchKey(string keyUri, string itemUri, uint32_t bw) {
 	customParameters["protocolChain"] = PC_ITEM_KEY;
 	customParameters["itemUri"] = itemUri;
 	customParameters["bw"] = bw;
+	//replace(keyUri, "http://www.mlb.com", "https://qa.mlb.com");
 	return FetchURI(keyUri, "key", customParameters);
 }
 
 bool ClientContext::FetchTS(string uri, uint32_t bw, string key, uint64_t iv) {
+	//1. Prepare custom parameters
 	Variant customParameters;
 	if (key == "") {
 		if (_tsId > 0) {
@@ -601,6 +604,25 @@ bool ClientContext::FetchTS(string uri, uint32_t bw, string key, uint64_t iv) {
 	customParameters["key"] = key;
 	customParameters["iv"] = iv;
 	customParameters["bw"] = bw;
+
+	//2. setup last bw used
+	if (_lastUsedBw == 0)
+		_lastUsedBw = bw;
+
+	if (_lastUsedBw != bw) {
+		if (_pEventSink->GetType() == EVENT_SYNC_VARIANT) {
+			_avData.IgnoreAll();
+		}
+		if (_lastUsedBw < bw) {
+			_pEventSink->SignalUpgradeBandwidth(_lastUsedBw, bw);
+		} else {
+			_pEventSink->SignalDowngradeBandwidth(_lastUsedBw, bw);
+		}
+	}
+
+	_lastUsedBw = bw;
+
+
 	return FetchURI(uri, "ts", customParameters);
 }
 

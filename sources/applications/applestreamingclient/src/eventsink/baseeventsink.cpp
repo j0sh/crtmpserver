@@ -21,9 +21,11 @@
 #include "eventsink/rtmpeventsink.h"
 #include "protocols/protocoltypes.h"
 #include "eventsink/varianteventsink.h"
+#include "clientcontext.h"
 
-BaseEventSink::BaseEventSink(uint64_t type) {
+BaseEventSink::BaseEventSink(uint64_t type, uint32_t contextId) {
 	_type = type;
+	_contextId = contextId;
 }
 
 BaseEventSink::~BaseEventSink() {
@@ -33,19 +35,19 @@ uint64_t BaseEventSink::GetType() {
 	return _type;
 }
 
-BaseEventSink * BaseEventSink::GetInstance(uint64_t type) {
+BaseEventSink * BaseEventSink::GetInstance(uint64_t type, uint32_t contextId) {
 	switch (type) {
 #ifdef HAS_PROTOCOL_RTMP
 		case PT_INBOUND_RTMP:
 		{
-			return new RTMPEventSink();
+			return new RTMPEventSink(contextId);
 		}
 #endif /* HAS_PROTOCOL_RTMP */
 #ifdef HAS_PROTOCOL_VAR
 		case PT_XML_VAR:
 		case PT_BIN_VAR:
 		{
-			return new VariantEventSink();
+			return new VariantEventSink(contextId);
 		}
 #endif /* HAS_PROTOCOL_VAR */
 		default:
@@ -54,4 +56,8 @@ BaseEventSink * BaseEventSink::GetInstance(uint64_t type) {
 			return NULL;
 		}
 	}
+}
+
+ClientContext *BaseEventSink::GetContext() {
+	return ClientContext::GetContext(_contextId, 0, 0);
 }

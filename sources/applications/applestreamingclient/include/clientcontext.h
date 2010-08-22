@@ -60,6 +60,7 @@ private:
 	uint32_t _parsedChildPlaylistsCount;
 	uint32_t _currentItemIndex;
 	uint32_t _optimalBw;
+	uint32_t _lastUsedBw;
 	SpeedComputer *_pSpeedComputer;
 	uint32_t _scheduleTimerId;
 	IOBuffer _avData;
@@ -68,7 +69,6 @@ private:
 	uint32_t _streamId;
 	StreamsManager *_pStreamsManager;
 	double _lastWallClock;
-	double _lastStreamClock;
 private:
 	ClientContext();
 public:

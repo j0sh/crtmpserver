@@ -20,22 +20,65 @@
 
 #ifdef HAS_PROTOCOL_VAR
 #include "eventsink/varianteventsink.h"
+#include "clientcontext.h"
+#include "applestreamingclientapplication.h"
+#include "jnihelpers.h"
 
-VariantEventSink::VariantEventSink()
-: BaseEventSink(EVENT_SYNC_VARIANT) {
+VariantEventSink::VariantEventSink(uint32_t contextId)
+: BaseEventSink(EVENT_SYNC_VARIANT, contextId) {
 }
 
 VariantEventSink::~VariantEventSink() {
 }
 
 bool VariantEventSink::SignalStreamRegistered(string streamName) {
+	if (MAP_HAS1(_streamNames, streamName))
+		return true;
 	_streamNames[streamName] = streamName;
+#ifdef ANDROID
+	Variant message;
+	message["type"] = "streamNameRegistered";
+	message["streamName"] = GetRTSPHost() + streamName;
+	return CallJava(message);
+#else
 	return true;
+#endif
 }
 
 bool VariantEventSink::SignalStreamUnRegistered(string streamName) {
 	_streamNames.erase(streamName);
+#ifdef ANDROID
+	Variant message;
+	message["type"] = "streamNameUnRegistered";
+	message["streamName"] = GetRTSPHost() + streamName;
+	return CallJava(message);
+#else
 	return true;
+#endif
+}
+
+bool VariantEventSink::SignalUpgradeBandwidth(uint32_t oldBw, uint32_t newBw) {
+#ifdef ANDROID
+	Variant message;
+	message["type"] = "upgradeBandwidth";
+	message["oldBw"] = (uint32_t) oldBw;
+	message["newBw"] = (uint32_t) newBw;
+	return CallJava(message);
+#else
+	return true;
+#endif
+}
+
+bool VariantEventSink::SignalDowngradeBandwidth(uint32_t oldBw, uint32_t newBw) {
+#ifdef ANDROID
+	Variant message;
+	message["type"] = "downgradeBandwidth";
+	message["oldBw"] = (uint32_t) oldBw;
+	message["newBw"] = (uint32_t) newBw;
+	return CallJava(message);
+#else
+	return true;
+#endif
 }
 
 vector<string> VariantEventSink::GetStreamNames() {
@@ -47,6 +90,38 @@ vector<string> VariantEventSink::GetStreamNames() {
 
 	return result;
 }
+
+#ifdef ANDROID
+
+bool VariantEventSink::CallJava(Variant& message) {
+	ClientContext *pContext = GetContext();
+	if (pContext == NULL) {
+		FATAL("Unable to get context");
+		return false;
+	}
+	AppleStreamingClientApplication *pApp = pContext->GetApplication();
+	if (pApp == NULL) {
+		FATAL("Unable to get the application");
+		return false;
+	}
+	CallBackInfo &ci = pApp->GetJavaCallBackInterface();
+	FINEST("CallJava message:\n%s", STR(message.ToString()));
+	return ::CallJava(ci, message);
+}
+
+string VariantEventSink::GetRTSPHost() {
+	if (_rtspHost != "")
+		return _rtspHost;
+	ClientContext *pContext = GetContext();
+	if (pContext == NULL) {
+		FATAL("Unable to get context");
+		return false;
+	}
+	AppleStreamingClientApplication *pApp = pContext->GetApplication();
+	_rtspHost = (string) pApp->GetConfiguration()["rtspHost"];
+	return _rtspHost;
+}
+#endif
 
 #endif /* HAS_PROTOCOL_VAR */
 

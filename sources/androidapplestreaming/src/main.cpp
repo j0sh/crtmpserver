@@ -49,9 +49,9 @@ int main(void) {
 void* worker(void *) {
 #ifdef ANDROID
 	CallBackInfo ci;
-	EnvRun("0.0.0.0", 554, ci);
+	EnvRun("0.0.0.0", 5544, ci);
 #else
-	EnvRun("0.0.0.0", 554);
+	EnvRun("0.0.0.0", 5544);
 #endif /* ANDROID */
 	return NULL;
 }
@@ -82,18 +82,32 @@ void testContexts() {
 	FINEST("result:\n%s", STR(result.ToString()));
 }
 
-//#define MY_URL "http://mediadownloads.mlb.com/mlbam/2010/06/29/9505835_m3u8/128/dropf_9505835_100m_128K.m3u8"
-//#define MY_SESSION_ID ""
-//#define MY_KEY ""
-
+#define MY_URL "http://mediadownloads.mlb.com/mlbam/2010/06/29/9505835_m3u8/128/dropf_9505835_100m_128K.m3u8"
+#define MY_SESSION_ID ""
+#define MY_KEY ""
 
 //#define MY_URL "http://mlbvod-akc.mlb.com/mlbam/2010/04/08/MLB_GAME_VIDEO_LANPIT_HOME_20100408/master_wired.m3u8"
 //#define MY_SESSION_ID "playback=HTTP_CLOUD_WIRED&contentId=7320085&appAccountName=mlb&eventId=14-263849-2010-04-08&ipid=11627706&sessionKey=3HJ3abDj%2BPBkmIn8cprQTgkYIa8%3D"
 //#define MY_KEY "ugkuOk9Qy4HNS5uRxQcQXHfLuAI="
 
-#define MY_URL "http://mlbsegqa.mlb.com/mlbam/2010/08/17/MLB_GAME_VIDEO_DETNYA_HOME_20100817/master_mobile.m3u8"
-#define MY_SESSION_ID "playback=HTTP_CLOUD_WIRED&contentId=7320085&appAccountName=mlb&eventId=14-263849-2010-04-08&ipid=11627706&sessionKey=vlPZfM8Rj1TaGDmMrtDSQh1MIWc%3D"
-#define MY_KEY "Q8TZUMmOkyVgVSMotTCRMQ=="
+//#define MY_URL "http://mlbsegqa.mlb.com/mlbam/2010/08/17/MLB_GAME_VIDEO_DETNYA_HOME_20100817/master_mobile.m3u8"
+//#define MY_SESSION_ID "playback=HTTP_CLOUD_WIRED&contentId=7320085&appAccountName=mlb&eventId=14-263849-2010-04-08&ipid=11627706&sessionKey=vlPZfM8Rj1TaGDmMrtDSQh1MIWc%3D"
+//#define MY_KEY "Q8TZUMmOkyVgVSMotTCRMQ=="
+
+//#define MY_URL "http://mlbsegqa.mlb.com/mlbam/2010/08/17/MLB_GAME_VIDEO_DETNYA_HOME_20100817/master_mobile.m3u8"
+//#define MY_SESSION_ID "playback=HTTP_CLOUD_MOBILE&contentId=10111969&appAccountName=mlb&eventId=14-265611-2010-08-18&ipid=23272205&sessionKey=JfPr0nOJ%2BfVzHc%2BfNV9umf9p6Yw%3D&country=us&postalCode=10292&platform=ANDROID"
+//#define MY_KEY "7pG+lxgC/bRQ44iXCb0ydoVDCJA="
+
+//#define MY_URL "http://mlbsegqa.mlb.com/mlbam/2010/08/17/MLB_GAME_VIDEO_DETNYA_HOME_20100817/master_mobile.m3u8"
+//#define MY_KEY "7pG+lxgC/bRQ44iXCb0ydoVDCJA="
+//#define MY_SESSION_ID "playback=HTTP_CLOUD_MOBILE&contentId=10111969&appAccountName=mlb&eventId=14-265611-2010-08-18&ipid=23272205&sessionKey=JfPr0nOJ%2BfVzHc%2BfNV9umf9p6Yw%3D&country=us&postalCode=10292&platform=ANDROID"
+
+//#define MY_URL "http://mlbsegqa.mlb.com/mlbam/2010/08/17/MLB_GAME_VIDEO_DETNYA_HOME_20100817/master_mobile.m3u8"
+//#define MY_KEY "fzi/ekWlN/nJY7M7zyODvnWvwCk="
+//#define MY_SESSION_ID "playback=HTTP_CLOUD_MOBILE&contentId=10111969&appAccountName=mlb&eventId=14-265611-2010-08-18&ipid=23272205&sessionKey=lCzgmwnNPsLrnlcqm8bZ8Fk6GEM%3D&country=us&postalCode=10292&platform=ANDROID"
+
+
+
 
 //#define CONDENSED_CONN_STRING "base64:aHR0cDovL21sYnZvZC1ha2MubWxiLmNvbS9tbGJhbS8yMDEwLzA0LzA4L01MQl9HQU1FX1ZJREVPX0xBTlBJVF9IT01FXzIwMTAwNDA4L21hc3Rlcl93aXJlZC5tM3U4fHlNQmVFcEl6OEJEaUFYV0k0dUdIUm1UaHdIRT18cGxheWJhY2s9SFRUUF9DTE9VRF9XSVJFRCZjb250ZW50SWQ9NzMyMDA4NSZhcHBBY2NvdW50TmFtZT1tbGImZXZlbnRJZD0xNC0yNjM4NDktMjAxMC0wNC0wOCZpcGlkPTExNjI3NzA2JnNlc3Npb25LZXk9cUNveGRIaUlOY3FDbHlEcEZoU2dma3dJSWc0JTNE"
 //#define CONDENSED_CONN_STRING "aHR0cDovL21sYnZvZC1ha2MubWxiLmNvbS9tbGJhbS8yMDEwLzA0LzA4L01MQl9HQU1FX1ZJREVPX0xBTlBJVF9IT01FXzIwMTAwNDA4L21hc3Rlcl93aXJlZC5tM3U4fGJsOEQyRUFTRUY4V1VyeloreTNvME5pUXlBaz18cGxheWJhY2s9SFRUUF9DTE9VRF9XSVJFRCZjb250ZW50SWQ9NzMyMDA4NSZhcHBBY2NvdW50TmFtZT1tbGImZXZlbnRJZD0xNC0yNjM4NDktMjAxMC0wNC0wOCZpcGlkPTExNjI3NzA2JnNlc3Npb25LZXk9R0JuY1BzeFJCVjAySUM5bjgwUlAxU2RyOWV3JTNE"

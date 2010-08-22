@@ -26,19 +26,26 @@
 #define EVENT_SYNC_RTMP		MAKE_TAG4('R','T','M','P')
 #define EVENT_SYNC_VARIANT	MAKE_TAG3('V','A','R')
 
+class ClientContext;
+
 class BaseEventSink {
 private:
 	uint64_t _type;
+	uint32_t _contextId;
 public:
-	BaseEventSink(uint64_t type);
+	BaseEventSink(uint64_t type, uint32_t contextId);
 	virtual ~BaseEventSink();
 
 	uint64_t GetType();
 
-	static BaseEventSink * GetInstance(uint64_t type);
+	static BaseEventSink * GetInstance(uint64_t type, uint32_t contextId);
 
 	virtual bool SignalStreamRegistered(string streamName) = 0;
 	virtual bool SignalStreamUnRegistered(string streamName) = 0;
+	virtual bool SignalUpgradeBandwidth(uint32_t oldBw, uint32_t newBw) = 0;
+	virtual bool SignalDowngradeBandwidth(uint32_t oldBw, uint32_t newBw) = 0;
+protected:
+	ClientContext *GetContext();
 };
 
 

@@ -130,6 +130,14 @@ jobject VariantToJObject(Variant &value, JNIEnv* pEnv) {
 }
 
 bool CallJava(CallBackInfo &ci, Variant &parameters) {
+	if (ci.pEnv == NULL) {
+		WARN("No pEnv");
+		return true;
+	}
+	if (ci.pInterface == NULL) {
+		WARN("No pInterface");
+		return true;
+	}
 	ci.pEnv->PushLocalFrame(128);
 	if (ci.method == NULL) {
 		ci.clazz = ci.pEnv->FindClass("com/rtmpd/VideoCallbacks");
