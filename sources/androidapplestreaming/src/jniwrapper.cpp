@@ -36,6 +36,12 @@ extern "C" void Java_com_rtmpd_CommandsInterface_EnvRun(
 	EnvRun(env->GetStringUTFChars(ip, NULL), (uint16_t) port, ci);
 }
 
+extern "C" void Java_com_rtmpd_CommandsInterface_WaitEnvReady(
+		JNIEnv* pEnv,
+		jobject thiz) {
+	WaitEnvReady();
+}
+
 extern "C" void Java_com_rtmpd_CommandsInterface_EnvStop(
 		JNIEnv* pEnv, jobject thiz) {
 	EnvStop();

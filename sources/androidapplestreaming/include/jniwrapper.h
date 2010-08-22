@@ -31,6 +31,9 @@ extern "C" void Java_com_rtmpd_CommandsInterface_EnvRun(
 		jstring callbackMethodName,
 		jstring ip,
 		jint port);
+extern "C" void Java_com_rtmpd_CommandsInterface_WaitEnvReady(
+		JNIEnv* pEnv,
+		jobject thiz);
 extern "C" void Java_com_rtmpd_CommandsInterface_EnvStop(
 		JNIEnv* pEnv, jobject thiz);
 extern "C" jobject Java_com_rtmpd_CommandsInterface_ContextCreate(

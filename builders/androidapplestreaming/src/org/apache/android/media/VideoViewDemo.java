@@ -67,7 +67,7 @@ public class VideoViewDemo extends Activity implements VideoCallbacks {
 		
 	_thread = new Thread() {
 		public void run() {
-		    _ci.EnvRun(callbackObj, "0.0.0.0", 55544);
+		    _ci.EnvRun(callbackObj, "0.0.0.0", 5544);
 		}
 	    };
 	_thread.start();
@@ -143,21 +143,26 @@ public class VideoViewDemo extends Activity implements VideoCallbacks {
 	if (mContextId == -1)
 	    return;
 
-	url="http://10.0.2.1/~shiretu/jwp/m.m3u8";
-	String key="mv/riCUfFPozkOrRbr5ddlSFozU=";
-	String sessId="playback=HTTP_CLOUD_WIRED&contentId=7320085&appAccountName=mlb&eventId=14-263849-2010-04-08&ipid=11627706&sessionKey=f8ZFssJ4sqRLYIU1VAXCxyvM5mc%3D";
+	//url="http://10.0.2.1/~shiretu/jwp/m.m3u8";
+	//String key="mv/riCUfFPozkOrRbr5ddlSFozU=";
+	//String sessId="playback=HTTP_CLOUD_WIRED&contentId=7320085&appAccountName=mlb&eventId=14-263849-2010-04-08&ipid=11627706&sessionKey=f8ZFssJ4sqRLYIU1VAXCxyvM5mc%3D";
 
 	//url="http://mlbvod-akc.mlb.com/mlbam/2010/04/08/MLB_GAME_VIDEO_LANPIT_HOME_20100408/master_mobile.m3u8";
 	//String key="bl8D2EASEF8WUrzZ+y3o0NiQyAk=";
 	//String sessId="playback=HTTP_CLOUD_WIRED&contentId=7320085&appAccountName=mlb&eventId=14-263849-2010-04-08&ipid=11627706&sessionKey=GBncPsxRBV02IC9n80RP1Sdr9ew%3D";
  
-	//url="http://mediadownloads.mlb.com/mlbam/2010/06/29/9505835_m3u8/128/dropf_9505835_100m_128K.m3u8";
-	//String key="";
-	//String sessId="";
+	url="http://mediadownloads.mlb.com/mlbam/2010/06/29/9505835_m3u8/128/dropf_9505835_100m_128K.m3u8";
+	String key="";
+	String sessId="";
 
 	//url="http://mlbsegqa.mlb.com/mlbam/2010/08/17/MLB_GAME_VIDEO_DETNYA_HOME_20100817/master_mobile.m3u8";
 	//String key="/AMhXX7vmDTcQrsJndNI/TEw+sM=";
 	//String sessId="playback=HTTP_CLOUD_MOBILE&contentId=10111969&appAccountName=mlb&eventId=14-265611-2010-08-18&ipid=11627706&sessionKey=f8ZFssJ4sqRLYIU1VAXCxyvM5mc%3D&deviceId=ANDROID_356698030670609&country=us&postalCode=10011&platform=ANDROID";
+
+
+	//url="http://mlbsegqa.mlb.com/mlbam/2010/08/17/MLB_GAME_VIDEO_DETNYA_HOME_20100817/master_mobile.m3u8";
+	//String key="fzi/ekWlN/nJY7M7zyODvnWvwCk=";
+	//String sessId="playback=HTTP_CLOUD_MOBILE&contentId=10111969&appAccountName=mlb&eventId=14-265611-2010-08-18&ipid=23272205&sessionKey=lCzgmwnNPsLrnlcqm8bZ8Fk6GEM%3D&country=us&postalCode=10292&platform=ANDROID";
 
 	Toast.makeText(getApplicationContext(), "Opening: " + url, Toast.LENGTH_LONG).show();
 
@@ -212,7 +217,7 @@ public class VideoViewDemo extends Activity implements VideoCallbacks {
 		return;
 	    }
 
-	    final String path = "rtsp://127.0.0.1:55544/" + msgInfoListStreams.getStreamName(0);
+	    final String path = "rtsp://127.0.0.1:5544/" + msgInfoListStreams.getStreamName(0);
 	    Log.v(TAG, "path: " + path);
 	    if (path == null || path.length() == 0) {
 		Toast.makeText(VideoViewDemo.this, "File URL/path is empty",

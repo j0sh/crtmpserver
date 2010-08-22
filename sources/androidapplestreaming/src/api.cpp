@@ -182,6 +182,14 @@ void EnvRun(string ip, uint16_t port)
 	Logger::Free(true);
 }
 
+void WaitEnvReady() {
+	//	VariantConnection vc;
+	//	while (!vc.Connect(gAddress)) {
+	//		sleep(1);
+	//	}
+	sleep(4);
+}
+
 void EnvStop() {
 	IOHandlerManager::SignalShutdown();
 }

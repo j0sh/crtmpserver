@@ -28,6 +28,7 @@ void EnvRun(string ip, uint16_t port, CallBackInfo ci);
 #else
 void EnvRun(string ip, uint16_t port);
 #endif /* ANDROID */
+void WaitEnvReady();
 void EnvStop();
 
 Variant ContextCreate();
