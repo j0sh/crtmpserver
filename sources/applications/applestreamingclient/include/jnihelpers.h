@@ -55,8 +55,8 @@ typedef struct _CallBackInfo {
 		this->callbackHandler = ci.callbackHandler;
 		this->callbackClassName = ci.callbackClassName;
 		this->callbackClass = ci.callbackClass;
-		this->callbackMethodName = "";
-		this->callbackMethod = NULL;
+		this->callbackMethodName = ci.callbackMethodName;
+		this->callbackMethod = ci.callbackMethod;
 	}
 
 	operator string() {
