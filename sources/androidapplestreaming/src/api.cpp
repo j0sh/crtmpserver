@@ -183,11 +183,18 @@ void EnvRun(string ip, uint16_t port)
 }
 
 void WaitEnvReady() {
-	//	VariantConnection vc;
-	//	while (!vc.Connect(gAddress)) {
-	//		sleep(1);
-	//	}
-	sleep(4);
+	int fd = socket(PF_INET, SOCK_STREAM, 0);
+	while (true) {
+		if (gAddress.sin_port == 0) {
+			sleep(1);
+			continue;
+		}
+		int res = connect(fd, (sockaddr *) & gAddress, sizeof (gAddress));
+		if (res == 0)
+			break;
+		sleep(1);
+	}
+	close(fd);
 }
 
 void EnvStop() {
