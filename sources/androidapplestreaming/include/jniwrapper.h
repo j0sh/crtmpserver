@@ -24,7 +24,12 @@
 #include "jnihelpers.h"
 
 extern "C" void Java_com_rtmpd_CommandsInterface_EnvRun(
-		JNIEnv* pEnv, jobject thiz, jobject pCallbackInterface, jstring host,
+		JNIEnv* pEnv,
+		jobject thiz,
+		jobject callbackHandler,
+		jstring callbackClassName,
+		jstring callbackMethodName,
+		jstring ip,
 		jint port);
 extern "C" void Java_com_rtmpd_CommandsInterface_EnvStop(
 		JNIEnv* pEnv, jobject thiz);

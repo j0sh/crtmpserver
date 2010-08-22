@@ -17,16 +17,23 @@
  *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 #include "jniwrapper.h"
 #include "api.h"
 
 extern "C" void Java_com_rtmpd_CommandsInterface_EnvRun(
-		JNIEnv* pEnv, jobject thiz, jobject pInterface, jstring host, jint port) {
+		JNIEnv* env,
+		jobject thiz,
+		jobject callbackHandler,
+		jstring callbackClassName,
+		jstring callbackMethodName,
+		jstring ip,
+		jint port) {
 	CallBackInfo ci;
-	ci.pEnv = pEnv;
-	ci.pInterface = pInterface;
-	EnvRun(pEnv->GetStringUTFChars(host, NULL), (uint16_t) port, ci);
+	ci.env = env;
+	ci.callbackHandler = callbackHandler;
+	ci.callbackClassName = env->GetStringUTFChars(callbackClassName, NULL);
+	ci.callbackMethodName = env->GetStringUTFChars(callbackMethodName, NULL);
+	EnvRun(env->GetStringUTFChars(ip, NULL), (uint16_t) port, ci);
 }
 
 extern "C" void Java_com_rtmpd_CommandsInterface_EnvStop(

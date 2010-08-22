@@ -25,21 +25,48 @@
 #include "common.h"
 
 typedef struct _CallBackInfo {
-	JNIEnv* pEnv;
-	jobject pInterface;
-	jclass clazz;
-	jmethodID method;
+	JNIEnv* env;
+	jobject callbackHandler;
+	string callbackClassName;
+	jclass callbackClass;
+	string callbackMethodName;
+	jmethodID callbackMethod;
 
 	_CallBackInfo() {
-		pEnv = NULL;
-		pInterface = NULL;
-		clazz = NULL;
-		method = NULL;
+		env = NULL;
+		callbackHandler = NULL;
+		callbackClassName = "";
+		callbackClass = NULL;
+		callbackMethodName = "";
+		callbackMethod = NULL;
 	};
 
+	_CallBackInfo(_CallBackInfo & ci) {
+		copy(ci);
+	}
+
+	_CallBackInfo & operator =(_CallBackInfo & ci) {
+		copy(ci);
+		return *this;
+	}
+
+	void copy(_CallBackInfo & ci) {
+		this->env = ci.env;
+		this->callbackHandler = ci.callbackHandler;
+		this->callbackClassName = ci.callbackClassName;
+		this->callbackClass = ci.callbackClass;
+		this->callbackMethodName = "";
+		this->callbackMethod = NULL;
+	}
+
 	operator string() {
-		return format("pEnv: %p; pInterface: %p; clazz: %p; method: %p",
-				pEnv, pInterface, clazz, method);
+		return format("env: %p;\ncallbackHandler: %p;\ncallbackClassName: %s;\ncallbackClass: %p;\ncallbackMethodName: %s;\ncallbackMethod: %p",
+				env,
+				callbackHandler,
+				STR(callbackClassName),
+				callbackClass,
+				STR(callbackMethodName),
+				callbackMethod);
 	};
 } CallBackInfo;
 

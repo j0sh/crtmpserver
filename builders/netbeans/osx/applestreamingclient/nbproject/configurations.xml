@@ -141,6 +141,7 @@
             <pElem>../../../../sources/common/include</pElem>
             <pElem>../../../../sources/thelib/include</pElem>
             <pElem>../../../../sources/applications/applestreamingclient/include</pElem>
+            <pElem>../../../../../android/workbench/android-ndk-r4-crystax/build/platforms/android-4/arch-arm/usr/include</pElem>
           </incDir>
           <preprocessorList>
             <Elem>OSX</Elem>

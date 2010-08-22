@@ -50,6 +50,7 @@
           <preprocessorList>
             <Elem>OSX</Elem>
             <Elem>NET_KQUEUE</Elem>
+            <Elem>ANDROID</Elem>
           </preprocessorList>
         </ccTool>
       </compileType>
@@ -76,6 +77,7 @@
           <preprocessorList>
             <Elem>OSX</Elem>
             <Elem>NET_KQUEUE</Elem>
+            <Elem>ANDROID</Elem>
           </preprocessorList>
         </ccTool>
         <fortranCompilerTool>

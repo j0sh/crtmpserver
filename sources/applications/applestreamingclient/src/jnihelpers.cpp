@@ -130,23 +130,27 @@ jobject VariantToJObject(Variant &value, JNIEnv* pEnv) {
 }
 
 bool CallJava(CallBackInfo &ci, Variant &parameters) {
-	if (ci.pEnv == NULL) {
+	if (ci.env == NULL) {
 		WARN("No pEnv");
 		return true;
 	}
-	if (ci.pInterface == NULL) {
+	if (ci.callbackHandler == NULL) {
 		WARN("No pInterface");
 		return true;
 	}
-	ci.pEnv->PushLocalFrame(128);
-	if (ci.method == NULL) {
-		ci.clazz = ci.pEnv->FindClass("com/rtmpd/VideoCallbacks");
-		if (ci.clazz != NULL) {
-			ci.method = ci.pEnv->GetMethodID(ci.clazz, "EventAvailable", "(Ljava/lang/Object;)V");
+	ci.env->PushLocalFrame(128);
+	if (ci.callbackMethod == NULL) {
+		replace(ci.callbackClassName, ".", "/");
+		ci.callbackClass = ci.env->FindClass(STR(ci.callbackClassName));
+		if (ci.callbackClass != NULL) {
+			ci.callbackMethod = ci.env->GetMethodID(ci.callbackClass,
+					STR(ci.callbackMethodName), "(Ljava/util/HashMap;)V");
 		}
+		FINEST("********ci resolved:\n%s", STR(ci));
 	}
-	ci.pEnv->CallObjectMethod(ci.pInterface, ci.method, VariantToJObject(parameters, ci.pEnv));
-	ci.pEnv->PopLocalFrame(NULL);
+	ci.env->CallObjectMethod(ci.callbackHandler, ci.callbackMethod,
+			VariantToJObject(parameters, ci.env));
+	ci.env->PopLocalFrame(NULL);
 	return true;
 }
 
