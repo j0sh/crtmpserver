@@ -579,7 +579,7 @@ bool ClientContext::FetchKey(string keyUri, string itemUri, uint32_t bw) {
 	customParameters["protocolChain"] = PC_ITEM_KEY;
 	customParameters["itemUri"] = itemUri;
 	customParameters["bw"] = bw;
-	//replace(keyUri, "http://www.mlb.com", "https://qa.mlb.com");
+	replace(keyUri, "http://www.mlb.com", "https://qa.mlb.com");
 	return FetchURI(keyUri, "key", customParameters);
 }
 
