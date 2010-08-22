@@ -37,8 +37,9 @@ bool VariantEventSink::SignalStreamRegistered(string streamName) {
 	_streamNames[streamName] = streamName;
 #ifdef ANDROID
 	Variant message;
-	message["type"] = "streamNameRegistered";
-	message["streamName"] = GetRTSPHost() + streamName;
+	message["eventtype"] = "localuri";
+	message["localuri"] = GetRTSPHost() + streamName;
+	message["reason"] = "start";
 	return CallJava(message);
 #else
 	return true;
@@ -47,22 +48,32 @@ bool VariantEventSink::SignalStreamRegistered(string streamName) {
 
 bool VariantEventSink::SignalStreamUnRegistered(string streamName) {
 	_streamNames.erase(streamName);
-#ifdef ANDROID
-	Variant message;
-	message["type"] = "streamNameUnRegistered";
-	message["streamName"] = GetRTSPHost() + streamName;
-	return CallJava(message);
-#else
+	//#ifdef ANDROID
+	//	Variant message;
+	//	message["eventtype"] = "streamNameUnRegistered";
+	//	message["streamName"] = GetRTSPHost() + streamName;
+	//	return CallJava(message);
+	//#else
+	//	return true;
+	//#endif
 	return true;
-#endif
 }
 
 bool VariantEventSink::SignalUpgradeBandwidth(uint32_t oldBw, uint32_t newBw) {
 #ifdef ANDROID
 	Variant message;
-	message["type"] = "upgradeBandwidth";
+	message["eventtype"] = "switchup";
 	message["oldBw"] = (uint32_t) oldBw;
 	message["newBw"] = (uint32_t) newBw;
+	if (!CallJava(message)) {
+		FATAL("Unable to call java");
+		return false;
+	}
+
+	message.Reset();
+	message["eventtype"] = "localuri";
+	message["localuri"] = GetRTSPHost() + MAP_VAL(_streamNames.begin());
+	message["reason"] = "switchup";
 	return CallJava(message);
 #else
 	return true;
@@ -72,9 +83,18 @@ bool VariantEventSink::SignalUpgradeBandwidth(uint32_t oldBw, uint32_t newBw) {
 bool VariantEventSink::SignalDowngradeBandwidth(uint32_t oldBw, uint32_t newBw) {
 #ifdef ANDROID
 	Variant message;
-	message["type"] = "downgradeBandwidth";
+	message["eventtype"] = "switchdown";
 	message["oldBw"] = (uint32_t) oldBw;
 	message["newBw"] = (uint32_t) newBw;
+	if (!CallJava(message)) {
+		FATAL("Unable to call java");
+		return false;
+	}
+
+	message.Reset();
+	message["eventtype"] = "localuri";
+	message["localuri"] = GetRTSPHost() + MAP_VAL(_streamNames.begin());
+	message["reason"] = "switchdown";
 	return CallJava(message);
 #else
 	return true;
