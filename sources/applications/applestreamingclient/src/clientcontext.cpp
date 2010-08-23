@@ -257,8 +257,8 @@ bool ClientContext::StartFeeding() {
 	//3. Get the corresponding playlist
 	Playlist *pPlaylist = _childPlaylists[optimalBw];
 
-	//	if (_currentItemIndex == 0)
-	//		_currentItemIndex = pPlaylist->GetItemsCount() / 2 + 10;
+	if (_currentItemIndex == 0)
+		_currentItemIndex = pPlaylist->GetItemsCount() / 2 + 10;
 
 	//4. Is this the last item in the playlis?
 	if (_currentItemIndex >= pPlaylist->GetItemsCount()) {
@@ -361,9 +361,10 @@ bool ClientContext::ConsumeAVBuffer() {
 }
 
 uint32_t ClientContext::GetOptimalBw() {
-	if (_optimalBw == 0) {
-		_optimalBw = MAP_KEY(_childPlaylists.begin());
-	}
+	//	if (_optimalBw == 0) {
+	//		_optimalBw = MAP_KEY(_childPlaylists.begin());
+	//	}
+	_optimalBw = 800000;
 	return _optimalBw;
 }
 
