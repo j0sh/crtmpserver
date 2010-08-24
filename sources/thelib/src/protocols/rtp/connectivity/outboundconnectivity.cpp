@@ -68,8 +68,14 @@ do { \
         vd.msg_name = &MAP_VAL(i); \
         sent = sendmsg(fd, &vd, 0); \
     } \
-    RTP_DEBUG_MESSAGE(sent); \
-} while(0)
+	/*FATAL("TS: %02x%02x%02x%02x", \
+		((uint8_t *)vd.msg_iov[0].iov_base)[4], \
+		((uint8_t *)vd.msg_iov[0].iov_base)[5], \
+		((uint8_t *)vd.msg_iov[0].iov_base)[6], \
+		((uint8_t *)vd.msg_iov[0].iov_base)[7]); */\
+	RTP_DEBUG_MESSAGE(sent); \
+} \
+while (0)
 
 OutboundConnectivity::OutboundConnectivity()
 : BaseConnectivity() {
@@ -92,6 +98,8 @@ OutboundConnectivity::OutboundConnectivity()
 	_message.msg_iov = new iovec[1];
 	_message.msg_iovlen = 1;
 	_message.msg_namelen = sizeof (sockaddr_in);
+
+	_startupTime = 0;
 	WARN("OC created: %p", this);
 }
 
@@ -395,19 +403,32 @@ bool OutboundConnectivity::CreateRTCPPacket(uint8_t *pDest, uint8_t *pSrc,
 	//4. ssrc
 	put_htonl(pDest + 4, ssrc); //SSRC
 
-	//5. NTP
+	FINEST("-----%s-----", isAudio ? "AUDIO" : "VIDEO");
+
+	//5. setup the startup time
+	if (_startupTime == 0) {
+		GETCLOCKS(_startupTime);
+	}
+	FINEST("_startupTime: %.2f", _startupTime);
+
+	//6. Get the current time
+	double currentTime;
+	GETCLOCKS(currentTime);
+	FINEST("currentTime: %.2f", currentTime);
+
+	//7. NTP
 	uint64_t ntp;
-	//GETCUSTOMNTP(ntp, (ntohlp(pSrc + 4) / rate)*1000);
-	GETNTP(ntp);
+	GETCUSTOMNTP(ntp, currentTime);
 	put_htonll(pDest + 8, ntp);
 
 	//6. RTP
-	//	double rtpDouble;
-	//	GETCLOCKS(rtpDouble);
-	//	rtpDouble = (rtpDouble / CLOCKS_PER_SEC) * rate;
-	//	uint32_t rtp = (uint32_t) rtpDouble;
-	//	put_htonl(pDest + 16, rtp);
-	memcpy(pDest + 16, pSrc + 4, 4);
+	FINEST("rate: %d", rate);
+	double rtpDouble = ((currentTime - _startupTime) / (double) CLOCKS_PER_SEC) * rate;
+	FINEST("rtpDouble: %.2f", rtpDouble);
+	uint32_t rtp = (uint32_t) rtpDouble;
+	FINEST("rtp: %d", rtp);
+	put_htonl(pDest + 16, rtp);
+	//memcpy(pDest + 16, pSrc + 4, 4);
 
 	//7. sender's packet count
 	put_htonl(pDest + 20, packetsCount);

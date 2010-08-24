@@ -49,6 +49,7 @@ private:
 	map<uint32_t, uint32_t> _tcpClients;
 	BaseOutNetRTPUDPStream *_pOutStream;
 	msghdr _message;
+	double _startupTime;
 public:
 	OutboundConnectivity();
 	virtual ~OutboundConnectivity();

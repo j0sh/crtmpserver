@@ -67,3 +67,21 @@ bool ChildM3U8Protocol::SignalPlaylistAvailable() {
 	//3. Done
 	return true;
 }
+
+bool ChildM3U8Protocol::SignalPlaylistFailed() {
+	//1. Get the context
+	ClientContext *pContext = GetContext();
+	if (pContext == NULL) {
+		FATAL("Unable to get the context");
+		return false;
+	}
+
+	//2. Signal the context about the new playlist
+	if (!pContext->SignalChildPlaylistNotAvailable(_bw)) {
+		FATAL("Unable to signal master M3U8 playlist available");
+		return false;
+	}
+
+	//3. Done
+	return true;
+}

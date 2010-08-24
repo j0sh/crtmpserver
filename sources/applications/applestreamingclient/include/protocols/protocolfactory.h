@@ -38,6 +38,11 @@
 #define PC_ITEM_ENC			"bufferedHttpEnc"
 #define PC_ITEM				"bufferedHttp"
 
+#ifdef HAS_MS_TIMER
+#define PT_FINE_TIMER		MAKE_TAG4('F','T','M','R')
+#define PC_FINE_TIMER		"fineTimer"
+#endif /* HAS_MS_TIMER */
+
 class DLLEXP ProtocolFactory
 : public BaseProtocolFactory {
 public:

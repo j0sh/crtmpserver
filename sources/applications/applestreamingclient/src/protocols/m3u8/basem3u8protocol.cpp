@@ -57,7 +57,13 @@ bool BaseM3U8Protocol::SignalInputData(IOBuffer &buffer) {
 		FATAL("The HTTP request failed. Response headers\n%s",
 				STR(pHttpProtocol->GetHeaders().ToString()));
 		FATAL("Additional data:\n%s", STR(GetCustomParameters().ToString()));
-		return false;
+		if (!SignalPlaylistFailed()) {
+			FATAL("Unable to signal playlist available");
+			return false;
+		}
+		buffer.IgnoreAll();
+		EnqueueForDelete();
+		return true;
 	}
 
 	//3. See if we have a complete transfer

@@ -35,6 +35,9 @@ class AESAppProtocolHandler;
 class RTSPAppProtocolHandler;
 class VariantAppProtocolHandler;
 class ProtocolFactory;
+#ifdef HAS_MS_TIMER
+class FineTimer;
+#endif /* HAS_MS_TIMER */
 
 class AppleStreamingClientApplication
 : public BaseClientApplication {
@@ -50,6 +53,9 @@ private:
 	RTSPAppProtocolHandler *_pRTSPHandler;
 	VariantAppProtocolHandler *_pVariantHandler;
 	ProtocolFactory *_pFactory;
+#ifdef HAS_MS_TIMER
+	uint32_t _fineTimerId;
+#endif /* HAS_MS_TIMER */
 #ifdef ANDROID
 	CallBackInfo _ci;
 #endif /* ANDROID */
@@ -60,7 +66,10 @@ public:
 	void CloseAllContexts();
 
 	virtual bool Initialize();
-
+#ifdef HAS_MS_TIMER
+	void SetFineTimerId(uint32_t fineTimerId);
+	FineTimer *GetFineTimer();
+#endif /* HAS_MS_TIMER */
 #ifdef ANDROID
 	void SetJavaCallBackInterface(CallBackInfo ci);
 	CallBackInfo &GetJavaCallBackInterface();

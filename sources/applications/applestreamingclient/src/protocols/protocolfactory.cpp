@@ -25,6 +25,7 @@
 #include "protocols/key/inboundkeyprotocol.h"
 #include "protocols/aes/inboundaesprotocol.h"
 #include "protocols/httpbuff/httpbufferprotocol.h"
+#include "protocols/timer/finetimer.h"
 
 ProtocolFactory::ProtocolFactory() {
 
@@ -40,11 +41,18 @@ vector<uint64_t> ProtocolFactory::HandledProtocols() {
 	ADD_VECTOR_END(result, PT_INBOUND_KEY);
 	ADD_VECTOR_END(result, PT_HTTP_BUFF);
 	ADD_VECTOR_END(result, PT_INBOUND_AES);
+#ifdef HAS_MS_TIMER
+	ADD_VECTOR_END(result, PT_FINE_TIMER);
+#endif /* HAS_MS_TIMER */
 	return result;
 }
 
 vector<string> ProtocolFactory::HandledProtocolChains() {
 	vector<string> result;
+#ifdef HAS_MS_TIMER
+	ADD_VECTOR_END(result, PC_FINE_TIMER);
+#endif /* HAS_MS_TIMER */
+
 	ADD_VECTOR_END(result, PC_MASTER_PLAYLIST);
 	ADD_VECTOR_END(result, PC_CHILD_PLAYLIST);
 	ADD_VECTOR_END(result, PC_ITEM_KEY);
@@ -57,7 +65,16 @@ vector<string> ProtocolFactory::HandledProtocolChains() {
 
 vector<uint64_t> ProtocolFactory::ResolveProtocolChain(string name) {
 	vector<uint64_t> result;
-	if (name == PC_MASTER_PLAYLIST) {
+	if (false) {
+
+	}
+#ifdef HAS_MS_TIMER
+	else if (name == PC_FINE_TIMER) {
+		ADD_VECTOR_END(result, PT_UDP);
+		ADD_VECTOR_END(result, PT_FINE_TIMER);
+	}
+#endif /* HAS_MS_TIMER */
+	else if (name == PC_MASTER_PLAYLIST) {
 		ADD_VECTOR_END(result, PT_TCP);
 		ADD_VECTOR_END(result, PT_OUTBOUND_HTTP);
 		ADD_VECTOR_END(result, PT_INBOUND_MASTER_M3U8);
@@ -98,6 +115,11 @@ vector<uint64_t> ProtocolFactory::ResolveProtocolChain(string name) {
 BaseProtocol *ProtocolFactory::SpawnProtocol(uint64_t type, Variant &parameters) {
 	BaseProtocol *pResult = NULL;
 	switch (type) {
+#ifdef HAS_MS_TIMER
+		case PT_FINE_TIMER:
+			pResult = new FineTimer();
+			break;
+#endif /* HAS_MS_TIMER */
 		case PT_INBOUND_MASTER_M3U8:
 			pResult = new MasterM3U8Protocol();
 			break;

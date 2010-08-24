@@ -69,3 +69,7 @@ bool MasterM3U8Protocol::SignalPlaylistAvailable() {
 	//4. Done
 	return true;
 }
+
+bool MasterM3U8Protocol::SignalPlaylistFailed() {
+	NYIR;
+}

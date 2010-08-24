@@ -108,6 +108,7 @@ public:
 	static bool SignalProtocolCreated(BaseProtocol *pProtocol, Variant &parameters);
 	bool SignalMasterPlaylistAvailable();
 	bool SignalChildPlaylistAvailable(uint32_t bw);
+	bool SignalChildPlaylistNotAvailable(uint32_t bw);
 	bool SignalAESKeyAvailable(Variant &parameters);
 	bool SignalTSProtocolAvailable(uint32_t protocolId, uint32_t bw);
 	bool SignalTSChunkComplete(uint32_t bw);

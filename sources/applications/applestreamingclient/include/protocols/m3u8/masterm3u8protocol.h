@@ -32,6 +32,7 @@ public:
 protected:
 	virtual Playlist *GetPlaylist();
 	virtual bool SignalPlaylistAvailable();
+	virtual bool SignalPlaylistFailed();
 };
 
 

@@ -26,6 +26,7 @@
 #include "protocols/key/keyappprotocolhandler.h"
 #include "protocols/ts/tsappprotocolhandler.h"
 #include "protocols/aes/aesappprotocolhandler.h"
+#include "protocols/protocolmanager.h"
 #include "streaming/basestream.h"
 #include "streaming/streamstypes.h"
 #include "protocols/baseprotocol.h"
@@ -159,6 +160,17 @@ bool AppleStreamingClientApplication::Initialize() {
 
 	return true;
 }
+
+#ifdef HAS_MS_TIMER
+
+void AppleStreamingClientApplication::SetFineTimerId(uint32_t fineTimerId) {
+	_fineTimerId = fineTimerId;
+}
+
+FineTimer *AppleStreamingClientApplication::GetFineTimer() {
+	return (FineTimer *) ProtocolManager::GetProtocol(_fineTimerId);
+}
+#endif /* HAS_MS_TIMER */
 
 #ifdef ANDROID
 

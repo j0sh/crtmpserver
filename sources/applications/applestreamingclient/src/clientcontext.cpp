@@ -32,6 +32,8 @@
 #include "streaming/basestream.h"
 #include "streaming/streamsmanager.h"
 #include "protocols/ts/innettsstream.h"
+#include "applestreamingclientapplication.h"
+#include "protocols/timer/finetimer.h"
 
 uint32_t ClientContext::_idGenerator = 0;
 map<uint32_t, ClientContext *> ClientContext::_contexts;
@@ -85,6 +87,15 @@ ClientContext::~ClientContext() {
 		delete _pEventSink;
 		_pEventSink = NULL;
 	}
+#ifdef HAS_MS_TIMER
+	AppleStreamingClientApplication *pApp = GetApplication();
+	if (pApp != NULL) {
+		FineTimer *pFineTimer = pApp->GetFineTimer();
+		if (pFineTimer != NULL) {
+			pFineTimer->UnRegisterContextId(_id);
+		}
+	}
+#endif /* HAS_MS_TIMER */
 }
 
 vector<uint32_t> ClientContext::GetContextIds() {
@@ -226,9 +237,23 @@ bool ClientContext::StartProcessing() {
 	pScheduleTimer->EnqueueForTimeEvent(1);
 
 	//5. Add the recurring job for consuming the A/V data buffer
+#ifdef HAS_MS_TIMER
+	AppleStreamingClientApplication *pApp = GetApplication();
+	if (pApp != NULL) {
+		FineTimer *pFineTimer = pApp->GetFineTimer();
+		if (pFineTimer != NULL) {
+			pFineTimer->RegisterContextId(_id);
+		} else {
+			ASSERT("Unable to find fine timer");
+		}
+	} else {
+		ASSERT("Unable to find application");
+	}
+#else
 	Variant job;
 	job["type"] = "consumeAVBuffer";
 	pScheduleTimer->AddJob(job, true);
+#endif /* HAS_MS_TIMER */
 
 	//	job["type"] = "testJNICallback";
 	//	pScheduleTimer->AddJob(job, true);
@@ -338,7 +363,7 @@ bool ClientContext::ConsumeAVBuffer() {
 		}
 	}
 
-	//5. Does it have any registered consumers AND sps/pps? Return if not
+	//5. Does it have any registered consumers?
 	if (pStream->GetOutStreams().size() <= 0) {
 		WARN("No registered consumers or stream capabilities not yet known. Take a break...");
 		return true;
@@ -348,13 +373,17 @@ bool ClientContext::ConsumeAVBuffer() {
 	double wallClockDelta = time(NULL)*1000.00 - _lastWallClock;
 
 	//6. Feed
-	while ((wallClockDelta + 2000 > pStream->GetFeedTime()) &&
+	//	FINEST("BEFORE: wallClockDelta: %.2f; GetFeedTime: %.2f",
+	//			wallClockDelta, pStream->GetFeedTime());
+	while ((wallClockDelta > (pStream->GetFeedTime())) &&
 			(GETAVAILABLEBYTESCOUNT(_avData) > 8192)) {
 		if (!pTS->SignalInputData(_avData)) {
 			FATAL("Unable to feed TS protocol");
 			return false;
 		}
 	}
+	//	FINEST(" AFTER: wallClockDelta: %.2f; GetFeedTime: %.2f",
+	//			wallClockDelta, pStream->GetFeedTime());
 
 	//7. Done
 	return true;
@@ -461,6 +490,16 @@ bool ClientContext::SignalMasterPlaylistAvailable() {
 
 bool ClientContext::SignalChildPlaylistAvailable(uint32_t bw) {
 	_parsedChildPlaylistsCount++;
+	return StartFeeding();
+}
+
+bool ClientContext::SignalChildPlaylistNotAvailable(uint32_t bw) {
+	if (!MAP_HAS1(_childPlaylists, bw))
+		return true;
+	Playlist *pPl = _childPlaylists[bw];
+	delete pPl;
+	_childPlaylists.erase(bw);
+	WARN("bw %d removed", bw);
 	return StartFeeding();
 }
 
@@ -613,6 +652,15 @@ bool ClientContext::FetchTS(string uri, uint32_t bw, string key, uint64_t iv) {
 	if (_lastUsedBw != bw) {
 		if (_pEventSink->GetType() == EVENT_SYNC_VARIANT) {
 			_avData.IgnoreAll();
+			InNetTSStream *pStream = (InNetTSStream *) _pStreamsManager->FindByUniqueId(
+					_streamId);
+			if (pStream == NULL) {
+				FATAL("Unable to get the inbound stream");
+				return false;
+			}
+			StreamCapabilities *pSC = pStream->GetCapabilities();
+			pSC->Clear();
+			_pEventSink->SignalStreamUnRegistered(_streamName);
 		}
 		if (_lastUsedBw < bw) {
 			_pEventSink->SignalUpgradeBandwidth(_lastUsedBw, bw);

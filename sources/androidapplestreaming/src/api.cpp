@@ -98,15 +98,15 @@ void EnvRun(string ip, uint16_t port)
 
 	//7. Create the RTSP acceptor
 	Variant acceptorConfig;
-	acceptorConfig[CONF_IP] = "127.0.0.1";
+	acceptorConfig[CONF_IP] = ip;
 	acceptorConfig[CONF_PORT] = (uint16_t) port;
 	acceptorConfig[CONF_PROTOCOL] = CONF_PROTOCOL_INBOUND_RTSP;
 	vector<uint64_t> chain;
-	chain = ProtocolFactoryManager::ResolveProtocolChain(CONF_PROTOCOL_INBOUND_RTSP);
+	chain = ProtocolFactoryManager::ResolveProtocolChain(acceptorConfig[CONF_PROTOCOL]);
 	if (chain.size() == 0) {
-		ASSERT("Invalid protocol chain: %s", CONF_PROTOCOL_INBOUND_RTSP);
+		ASSERT("Invalid protocol chain: %s", STR(acceptorConfig[CONF_PROTOCOL]));
 	}
-	TCPAcceptor *pAcceptor = new TCPAcceptor(ip,
+	TCPAcceptor *pAcceptor = new TCPAcceptor(acceptorConfig[CONF_IP],
 			(uint16_t) acceptorConfig[CONF_PORT], acceptorConfig, chain);
 	if (!pAcceptor->StartAccept(pApp)) {
 		ASSERT("Unable to fire up acceptor");
@@ -115,11 +115,11 @@ void EnvRun(string ip, uint16_t port)
 	//8. Create the bin variant acceptor
 	acceptorConfig[CONF_PORT] = (uint16_t) (port + 1);
 	acceptorConfig[CONF_PROTOCOL] = CONF_PROTOCOL_INBOUND_BIN_VARIANT;
-	chain = ProtocolFactoryManager::ResolveProtocolChain(CONF_PROTOCOL_INBOUND_BIN_VARIANT);
+	chain = ProtocolFactoryManager::ResolveProtocolChain(acceptorConfig[CONF_PROTOCOL]);
 	if (chain.size() == 0) {
-		ASSERT("Invalid protocol chain: %s", CONF_PROTOCOL_INBOUND_BIN_VARIANT);
+		ASSERT("Invalid protocol chain: %s", STR(acceptorConfig[CONF_PROTOCOL]));
 	}
-	pAcceptor = new TCPAcceptor(ip, (uint16_t) acceptorConfig[CONF_PORT],
+	pAcceptor = new TCPAcceptor(acceptorConfig[CONF_IP], (uint16_t) acceptorConfig[CONF_PORT],
 			acceptorConfig, chain);
 	if (!pAcceptor->StartAccept(pApp)) {
 		ASSERT("Unable to fire up acceptor");
@@ -128,11 +128,11 @@ void EnvRun(string ip, uint16_t port)
 	//9. Create the xml variant acceptor
 	acceptorConfig[CONF_PORT] = (uint16_t) (port + 2);
 	acceptorConfig[CONF_PROTOCOL] = CONF_PROTOCOL_INBOUND_XML_VARIANT;
-	chain = ProtocolFactoryManager::ResolveProtocolChain(CONF_PROTOCOL_INBOUND_XML_VARIANT);
+	chain = ProtocolFactoryManager::ResolveProtocolChain(acceptorConfig[CONF_PROTOCOL]);
 	if (chain.size() == 0) {
-		ASSERT("Invalid protocol chain: %s", CONF_PROTOCOL_INBOUND_XML_VARIANT);
+		ASSERT("Invalid protocol chain: %s", STR(acceptorConfig[CONF_PROTOCOL]));
 	}
-	pAcceptor = new TCPAcceptor(ip, (uint16_t) acceptorConfig[CONF_PORT],
+	pAcceptor = new TCPAcceptor(acceptorConfig[CONF_IP], (uint16_t) acceptorConfig[CONF_PORT],
 			acceptorConfig, chain);
 	if (!pAcceptor->StartAccept(pApp)) {
 		ASSERT("Unable to fire up acceptor");
@@ -141,15 +141,34 @@ void EnvRun(string ip, uint16_t port)
 	//9. Create the RTMP acceptor
 	acceptorConfig[CONF_PORT] = (uint16_t) (1935);
 	acceptorConfig[CONF_PROTOCOL] = CONF_PROTOCOL_INBOUND_RTMP;
-	chain = ProtocolFactoryManager::ResolveProtocolChain(CONF_PROTOCOL_INBOUND_RTMP);
+	chain = ProtocolFactoryManager::ResolveProtocolChain(acceptorConfig[CONF_PROTOCOL]);
 	if (chain.size() == 0) {
-		ASSERT("Invalid protocol chain: %s", CONF_PROTOCOL_INBOUND_RTMP);
+		ASSERT("Invalid protocol chain: %s", STR(acceptorConfig[CONF_PROTOCOL]));
 	}
-	pAcceptor = new TCPAcceptor(ip, (uint16_t) acceptorConfig[CONF_PORT],
+	pAcceptor = new TCPAcceptor(acceptorConfig[CONF_IP], (uint16_t) acceptorConfig[CONF_PORT],
 			acceptorConfig, chain);
 	if (!pAcceptor->StartAccept(pApp)) {
 		ASSERT("Unable to fire up acceptor");
 	}
+
+	//10. Create the timer UDP protocol
+#ifdef HAS_MS_TIMER
+	acceptorConfig[CONF_PORT] = (uint16_t) (port + 3);
+	acceptorConfig[CONF_PROTOCOL] = "fineTimer";
+	acceptorConfig["FineTimerPeriod"] = 0.2;
+	chain = ProtocolFactoryManager::ResolveProtocolChain(acceptorConfig[CONF_PROTOCOL]);
+	if (chain.size() == 0) {
+		ASSERT("Invalid protocol chain: %s", STR(acceptorConfig[CONF_PROTOCOL]));
+	}
+	UDPCarrier *pUDPCarrier = UDPCarrier::Create(acceptorConfig[CONF_IP], (uint16_t) acceptorConfig[CONF_PORT]);
+	if (pUDPCarrier == NULL) {
+		ASSERT("Unable to bind on udp://%s:%d", STR(acceptorConfig[CONF_IP]), (uint16_t) acceptorConfig[CONF_PORT]);
+	}
+	BaseProtocol *pTimer = ProtocolFactoryManager::CreateProtocolChain(chain, acceptorConfig);
+	pTimer->GetFarEndpoint()->SetIOHandler(pUDPCarrier);
+	pUDPCarrier->SetProtocol(pTimer->GetFarEndpoint());
+	pApp->SetFineTimerId(pTimer->GetId());
+#endif /* HAS_MS_TIMER */
 
 	inet_aton("127.0.0.1", &gAddress.sin_addr);
 	gAddress.sin_family = AF_INET;
