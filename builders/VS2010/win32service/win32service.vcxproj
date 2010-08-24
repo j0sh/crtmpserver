@@ -72,12 +72,15 @@
     <ClInclude Include="..\..\..\sources\win32service\svcconfig\include\svcconfig.h" />
     <ClInclude Include="..\..\..\sources\win32service\svccontrol\include\svccontrol.h" />
     <ClInclude Include="..\..\..\sources\win32service\win32service\include\rtmpserver\rtmpserver.h" />
+    <ClInclude Include="..\..\..\sources\win32service\win32service\include\svc\serviceregistry.h" />
     <ClInclude Include="..\..\..\sources\win32service\win32service\include\svc\svc.h" />
+    <ClInclude Include="..\..\..\sources\win32service\win32service\include\svc\svcdefines.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\sources\win32service\svcconfig\src\svcconfig.cpp" />
     <ClCompile Include="..\..\..\sources\win32service\svccontrol\src\svccontrol.cpp" />
     <ClCompile Include="..\..\..\sources\win32service\win32service\src\rtmpserver\rtmpserver.cpp" />
+    <ClCompile Include="..\..\..\sources\win32service\win32service\src\svc\serviceregistry.cpp" />
     <ClCompile Include="..\..\..\sources\win32service\win32service\src\svc\svc.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -92,7 +95,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>NotSet</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -132,7 +135,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libeay32.lib;ssleay32.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libeay32.lib;ssleay32.lib;ws2_32.lib;shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

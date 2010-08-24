@@ -53,6 +53,12 @@
     <ClInclude Include="..\..\..\sources\win32service\svcconfig\include\svcconfig.h">
       <Filter>Header Files\svcconfig</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\sources\win32service\win32service\include\svc\serviceregistry.h">
+      <Filter>Header Files\win32service\svc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\win32service\win32service\include\svc\svcdefines.h">
+      <Filter>Header Files\win32service\svc</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\sources\win32service\win32service\src\rtmpserver\rtmpserver.cpp">
@@ -66,6 +72,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\sources\win32service\svccontrol\src\svccontrol.cpp">
       <Filter>Source Files\svccontrol</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\win32service\win32service\src\svc\serviceregistry.cpp">
+      <Filter>Source Files\win32service\svc</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
