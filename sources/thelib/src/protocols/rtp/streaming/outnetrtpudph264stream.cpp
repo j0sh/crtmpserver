@@ -342,5 +342,90 @@ bool OutNetRTPUDPH264Stream::FeedDataAudioMPEG4Generic(uint8_t *pData,
 
 	return true;
 }
+//bool OutNetRTPUDPH264Stream::FeedDataAudioMPEG4Generic_one_by_one(uint8_t *pData, uint32_t dataLength,
+//		uint32_t processedLength, uint32_t totalLength,
+//		double absoluteTimestamp) {
+//	return true;
+//	//1. We only support frame-by-frame approach
+//	if (dataLength != totalLength) {
+//		WARN("Chunked mode not yet supported");
+//		return true;
+//	}
+//	/*
+//	0                   1                   2                   3
+//	0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+//   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+//   |V=2|P|X|  CC   |M|     PT      |       sequence number         |
+//   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+//   |                           timestamp                           |
+//   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+//   |           synchronization source (SSRC) identifier            |
+//   +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
+//   |            contributing source (CSRC) identifiers             |
+//   |                             ....                              |
+//   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+//
+//   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+- .. -+-+-+-+-+-+-+-+-+-+
+//   |AU-headers-length|AU-header|AU-header|      |AU-header|padding|
+//   |                 |   (1)   |   (2)   |      |   (n)   | bits  |
+//   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+- .. -+-+-+-+-+-+-+-+-+-+
+//	 */
+//
+//	//	_audioData.msg_iov[0].iov_base[00] V,P,X,CC
+//	//	_audioData.msg_iov[0].iov_base[01] M,PT
+//	//	_audioData.msg_iov[0].iov_base[02] sequence number
+//	//	_audioData.msg_iov[0].iov_base[03] sequence number
+//	//	_audioData.msg_iov[0].iov_base[04] timestamp
+//	//	_audioData.msg_iov[0].iov_base[05] timestamp
+//	//	_audioData.msg_iov[0].iov_base[06] timestamp
+//	//	_audioData.msg_iov[0].iov_base[07] timestamp
+//	//	_audioData.msg_iov[0].iov_base[08] SSRC
+//	//	_audioData.msg_iov[0].iov_base[09] SSRC
+//	//	_audioData.msg_iov[0].iov_base[10] SSRC
+//	//	_audioData.msg_iov[0].iov_base[11] SSRC
+//	//	_audioData.msg_iov[0].iov_base[12] AU-headers-length
+//	//	_audioData.msg_iov[0].iov_base[13] AU-headers-length
+//
+//	//3. counter
+//	put_htons(((uint8_t *) _audioData.msg_iov[0].iov_base) + 2, _audioCounter);
+//	_audioCounter++;
+//
+//	//4. Timestamp
+//	put_htonl(((uint8_t *) _audioData.msg_iov[0].iov_base) + 4,
+//			(uint32_t) (absoluteTimestamp
+//			* (double) GetCapabilities()->audioCodecInfo.aac.sampleRate / 1000.000));
+//
+//	put_htons(((uint8_t *) _audioData.msg_iov[0].iov_base) + 12, 16);
+//
+//	uint16_t auHeader = (uint16_t) ((dataLength - 7) << 3);
+//	put_htons(((uint8_t *) _audioData.msg_iov[1].iov_base), auHeader);
+//	_audioData.msg_iov[1].iov_len = 2;
+//
+//	FINEST("%02x%02x %02x%02x %02x%02x%02x%02x %02x%02x%02x%02x - %02x%02x %02x%02x %08x %.2f",
+//			((uint8_t *) _audioData.msg_iov[0].iov_base)[0],
+//			((uint8_t *) _audioData.msg_iov[0].iov_base)[1],
+//			((uint8_t *) _audioData.msg_iov[0].iov_base)[2],
+//			((uint8_t *) _audioData.msg_iov[0].iov_base)[3],
+//			((uint8_t *) _audioData.msg_iov[0].iov_base)[4],
+//			((uint8_t *) _audioData.msg_iov[0].iov_base)[5],
+//			((uint8_t *) _audioData.msg_iov[0].iov_base)[6],
+//			((uint8_t *) _audioData.msg_iov[0].iov_base)[7],
+//			((uint8_t *) _audioData.msg_iov[0].iov_base)[8],
+//			((uint8_t *) _audioData.msg_iov[0].iov_base)[9],
+//			((uint8_t *) _audioData.msg_iov[0].iov_base)[10],
+//			((uint8_t *) _audioData.msg_iov[0].iov_base)[11],
+//			((uint8_t *) _audioData.msg_iov[0].iov_base)[12],
+//			((uint8_t *) _audioData.msg_iov[0].iov_base)[13],
+//			((uint8_t *) _audioData.msg_iov[1].iov_base)[0],
+//			((uint8_t *) _audioData.msg_iov[1].iov_base)[1],
+//			dataLength - 7,
+//			absoluteTimestamp);
+//
+//	//6. put the actual buffer
+//	_audioData.msg_iov[2].iov_len = dataLength - 7;
+//	_audioData.msg_iov[2].iov_base = pData + 7;
+//
+//	return _pConnectivity->FeedAudioData(_audioData);
+//}
 #endif /* HAS_PROTOCOL_RTP */
 

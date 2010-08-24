@@ -290,14 +290,24 @@ bool ClientContext::StartFeeding() {
 	//		_currentItemIndex = pPlaylist->GetItemsCount() / 2 + 10;
 
 	//4. Is this the last item in the playlis?
+	FINEST("---------------------------------------------------");
 	if (_currentItemIndex >= pPlaylist->GetItemsCount()) {
-		FINEST("End of list. Wait one sec and try again");
-		return EnqueueFetchChildPlaylist(_childPlaylists[optimalBw]->GetPlaylistUri(), optimalBw);
+		if (ReloadPlaylist(optimalBw)) {
+			WARN("End of list. Wait one sec and try again");
+			FINEST("---------------------------------------------------");
+			return EnqueueFetchChildPlaylist(_childPlaylists[optimalBw]->GetPlaylistUri(), optimalBw);
+		} else {
+			WARN("No playlist reload");
+			_currentItemIndex--;
+		}
 	}
+	FINEST("_currentItemIndex: %d", _currentItemIndex);
+	FINEST("---------------------------------------------------");
 
 	//4. Get the item URI and the key URI if available
 	string uri = pPlaylist->GetItemUri(_currentItemIndex);
 	string keyUri = pPlaylist->GetItemKeyUri(_currentItemIndex);
+	_mediaSequences[optimalBw] = pPlaylist->GetItemMediaSequence(_currentItemIndex);
 	if (keyUri != "")
 		keyUri += "&" + _connectingString.sessionId;
 
@@ -391,6 +401,24 @@ bool ClientContext::ConsumeAVBuffer() {
 
 	//7. Done
 	return true;
+}
+
+bool ClientContext::ReloadPlaylist(uint32_t bw) {
+	if (!MAP_HAS1(_mediaSequences, bw)) {
+		FINEST("bw %d not in _mediaSequences", bw);
+		return true;
+	}
+	if (!MAP_HAS1(_childPlaylists, bw)) {
+		FINEST("bw %d not in playlists", bw);
+		return true;
+	}
+
+	uint32_t lastSequence = _mediaSequences[bw];
+	FINEST("lastSequence: %d", lastSequence);
+	uint32_t playlistSequnece = _childPlaylists[bw]->GetLastMediaSequence();
+	FINEST("playlistSequnece: %d", playlistSequnece);
+
+	return lastSequence == playlistSequnece;
 }
 
 uint32_t ClientContext::GetOptimalBw() {

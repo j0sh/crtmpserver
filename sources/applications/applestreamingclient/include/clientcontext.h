@@ -70,6 +70,7 @@ private:
 	StreamsManager *_pStreamsManager;
 	double _lastWallClock;
 	map<uint32_t, uint32_t> _allowedBitrates;
+	map<uint32_t, uint32_t> _mediaSequences;
 private:
 	ClientContext();
 public:
@@ -123,6 +124,7 @@ public:
 	bool FetchChildPlaylist(string uri, uint32_t bw);
 	bool ConsumeAVBuffer();
 private:
+	bool ReloadPlaylist(uint32_t bw);
 	uint32_t GetOptimalBw();
 	bool ParseConnectingString();
 	bool FetchMasterPlaylist();

@@ -251,3 +251,9 @@ uint32_t Playlist::GetItemIndex(double seekPoint) {
 		return 0;
 	return index;
 }
+
+uint32_t Playlist::GetLastMediaSequence() {
+	if (_itemMediaSequences.size() == 0)
+		return 0;
+	return _itemMediaSequences[_itemMediaSequences.size() - 1];
+}

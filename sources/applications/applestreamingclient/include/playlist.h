@@ -61,6 +61,7 @@ public:
 	void ApproximateStartEndTimes(uint32_t index, double start, double end);
 	void GetSeekRange(double &min, double &max);
 	uint32_t GetItemIndex(double seekPoint);
+	uint32_t GetLastMediaSequence();
 };
 
 
