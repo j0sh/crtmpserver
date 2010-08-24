@@ -31,8 +31,8 @@
 
 struct RunningStatus {
     // startup parameters
-    int argc;
- //   char **argv;
+ //   int argc;
+    char * configPath;
 
     //Configuration file
     ConfigFile *pConfigFile;
@@ -49,9 +49,10 @@ struct RunningStatus {
 
 RunningStatus gRs = {0};
 
-void rtmpserver() {
+void rtmpserver(char * config_filePath) {
 	InitNetworking();
 
+	gRs.configPath = config_filePath;
     do {
         //2. Reset the run flag
         gRs.run = false;
@@ -81,7 +82,7 @@ bool Initialize() {
     Logger::AddLogLocation(pLogLocation);
 
     gRs.pConfigFile = new ConfigFile();
-	string configFilePath = "C:\\rtmpd-clean\\builders\\VS2010\\Debug\\rtmpserver.lua"/*"rtmpserver.lua"*/;
+	string configFilePath = gRs.configPath/*"C:\\rtmpd-clean\\builders\\VS2010\\Debug\\rtmpserver.lua"*/;
     string fileName;
     string extension;
     splitFileName(configFilePath, fileName, extension);

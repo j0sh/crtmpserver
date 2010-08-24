@@ -2,6 +2,11 @@
 #define LOGFILE "C:\\ServiceLogs.txt"
 #define SVCNAME TEXT("evo") //name of the service
 
+//For Registry. Everything is set manually, NOT following any convention.
+#define ADD_KEY 1
+#define GET_KEY_VALUE 2
+#define REGIST_SUCCESS "reg_success"
+#define REGIST_ERROR "reg_error"
 
 // The following are message definitions.
 //

@@ -6,4 +6,4 @@ void ConfRereadSignalHandler(void);
 bool Initialize();
 void Run();
 void Cleanup();
-void rtmpserver();
+void rtmpserver(char * config_filePath);
