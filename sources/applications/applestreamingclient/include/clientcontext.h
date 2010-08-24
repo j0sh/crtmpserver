@@ -69,6 +69,7 @@ private:
 	uint32_t _streamId;
 	StreamsManager *_pStreamsManager;
 	double _lastWallClock;
+	map<uint32_t, uint32_t> _allowedBitrates;
 private:
 	ClientContext();
 public:
@@ -100,6 +101,7 @@ public:
 	double GetCurrentTimestamp();
 	uint32_t GetCurrentChunkIndex();
 	AppleStreamingClientApplication *GetApplication();
+	void SetAllowedBitrates(map<uint32_t, uint32_t> allowedBitrates);
 
 	//processing
 	bool StartProcessing();

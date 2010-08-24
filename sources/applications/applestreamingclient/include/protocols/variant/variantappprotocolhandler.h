@@ -38,6 +38,7 @@ private:
 	void ProcessContextList(BaseVariantProtocol *pProtocol, Variant &request);
 	void ProcessContextClose(BaseVariantProtocol *pProtocol, Variant &request);
 	void ProcessContextCloseAll(BaseVariantProtocol *pProtocol, Variant &request);
+	void ProcessCommandSetBitrates(BaseVariantProtocol *pProtocol, Variant &request);
 	void ProcessCommandPlay(BaseVariantProtocol *pProtocol, Variant &request);
 	void ProcessCommandPause(BaseVariantProtocol *pProtocol, Variant &request);
 	void ProcessCommandResume(BaseVariantProtocol *pProtocol, Variant &request);

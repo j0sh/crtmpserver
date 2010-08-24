@@ -252,6 +252,29 @@ Variant ContextCloseAll() {
 	return response;
 }
 
+Variant CommandSetBitrates(uint32_t contextId, string bitRates) {
+	replace(bitRates, "[", "");
+	replace(bitRates, "]", "");
+	vector<string> parts;
+	split(bitRates, ",", parts);
+
+	vector<uint32_t> bws;
+	for (uint32_t i = 0; i < parts.size(); i++) {
+		string strBw = parts[i];
+		trim(strBw);
+		if (strBw == "")
+			continue;
+		uint32_t bw = (uint32_t) atol(STR(strBw));
+		ADD_VECTOR_END(bws, bw);
+	}
+
+	Variant request;
+	ASC_REQ_BUILD_COMMAND_SET_BITRATES(request, contextId, bws);
+	Variant response;
+	SEND_VARIANT_REQUEST(request, response);
+	return response;
+}
+
 Variant CommandPlay(uint32_t contextId, string connectingString) {
 	vector<string> parts;
 	split(connectingString, ":", parts);

@@ -44,6 +44,8 @@ extern "C" jobject Java_com_rtmpd_CommandsInterface_ContextClose(
 		JNIEnv* pEnv, jobject thiz, jint contextId);
 extern "C" jobject Java_com_rtmpd_CommandsInterface_ContextCloseAll(
 		JNIEnv* pEnv, jobject thiz);
+extern "C" jobject Java_com_rtmpd_CommandsInterface_CommandSetBitrates(
+		JNIEnv* pEnv, jobject thiz, jint contextId, jstring bitrates);
 extern "C" jobject Java_com_rtmpd_CommandsInterface_CommandPlay(
 		JNIEnv* pEnv, jobject thiz, jint contextId, jstring m3u8Uri,
 		jstring httpSessionId, jstring keyPassword);

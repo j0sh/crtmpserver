@@ -28,6 +28,7 @@
 #define ASC_REQ_TYPE_CONTEXT_CLOSE_ALL			"contextCloseAll"
 
 #define ASC_REQ_TYPE_COMMAND_PLAY				"commandPlay"
+#define ASC_REQ_TYPE_COMMAND_SET_BITRATES		"commandSetBitrates"
 #define ASC_REQ_TYPE_COMMAND_PAUSE				"commandPause"
 #define ASC_REQ_TYPE_COMMAND_RESUME				"commandResume"
 #define ASC_REQ_TYPE_COMMAND_SELECT_BANDWIDTH	"commandSelectBandwidth"
@@ -39,6 +40,7 @@
 #define	ASC_REQ_TYPE_INFO_BANDWIDTH				"infoBandwidth"
 #define	ASC_REQ_TYPE_INFO_PLAYBACK				"infoPlayback"
 
+#define ASC_REQ_COMMAND_SET_BITRATES_BITRATES		"bitrates"
 #define ASC_REQ_COMMAND_PLAY_URI_KEY				"uri"
 #define ASC_REQ_COMMAND_PLAY_SESSION_ID_KEY			"sessionId"
 #define ASC_REQ_COMMAND_PLAY_PASSWORD_KEY			"keyPassword"
@@ -87,6 +89,7 @@
 #define ASC_REQ_CONTEXT_ID(v)				ASC_REQ(v)["contextId"]
 #define ASC_REQ_PARAMS(v)					ASC_REQ(v)["parameters"]
 #define ASC_REQ_PARAM(v,key)				ASC_REQ_PARAMS(v)[(key)]
+#define ASC_REQ_COMMAND_SET_BITRATES_BWS(v)	ASC_REQ_PARAM(v,ASC_REQ_COMMAND_SET_BITRATES_BITRATES)
 #define ASC_REQ_COMMAND_PLAY_URI(v)			ASC_REQ_PARAM(v,ASC_REQ_COMMAND_PLAY_URI_KEY)
 #define ASC_REQ_COMMAND_PLAY_SESSION_ID(v)	ASC_REQ_PARAM(v,ASC_REQ_COMMAND_PLAY_SESSION_ID_KEY)
 #define ASC_REQ_COMMAND_PLAY_PASSWORD(v)	ASC_REQ_PARAM(v,ASC_REQ_COMMAND_PLAY_PASSWORD_KEY)
@@ -124,6 +127,16 @@ do {\
 
 #define ASC_REQ_BUILD_CONTEXT_CLOSE_ALL(v) \
 	ASC_REQ_BUILD(v,ASC_REQ_TYPE_CONTEXT_CLOSE_ALL,0,Variant())
+
+#define ASC_REQ_BUILD_COMMAND_SET_BITRATES(v,contextId,bws) \
+do { \
+	Variant parameters; \
+	parameters[ASC_REQ_COMMAND_SET_BITRATES_BITRATES].IsArray(true); \
+	for(uint32_t i=0;i<bws.size();i++) { \
+		parameters[ASC_REQ_COMMAND_SET_BITRATES_BITRATES].PushToArray((uint32_t)bws[i]); \
+	} \
+	ASC_REQ_BUILD(v,ASC_REQ_TYPE_COMMAND_SET_BITRATES,contextId,parameters); \
+} while(0)
 
 #define ASC_REQ_BUILD_COMMAND_PLAY(v,contextId,uri,sessionId,keyPassword) \
 do { \

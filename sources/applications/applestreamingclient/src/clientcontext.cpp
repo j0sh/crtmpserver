@@ -218,6 +218,10 @@ AppleStreamingClientApplication *ClientContext::GetApplication() {
 	return (AppleStreamingClientApplication *) pApplication;
 }
 
+void ClientContext::SetAllowedBitrates(map<uint32_t, uint32_t> allowedBitrates) {
+	_allowedBitrates = allowedBitrates;
+}
+
 bool ClientContext::StartProcessing() {
 	//1. Parse the connecting string and split it into usable pieces
 	if (!ParseConnectingString()) {
@@ -282,8 +286,8 @@ bool ClientContext::StartFeeding() {
 	//3. Get the corresponding playlist
 	Playlist *pPlaylist = _childPlaylists[optimalBw];
 
-	if (_currentItemIndex == 0)
-		_currentItemIndex = pPlaylist->GetItemsCount() / 2 + 10;
+	//	if (_currentItemIndex == 0)
+	//		_currentItemIndex = pPlaylist->GetItemsCount() / 2 + 10;
 
 	//4. Is this the last item in the playlis?
 	if (_currentItemIndex >= pPlaylist->GetItemsCount()) {
@@ -390,10 +394,10 @@ bool ClientContext::ConsumeAVBuffer() {
 }
 
 uint32_t ClientContext::GetOptimalBw() {
-	//	if (_optimalBw == 0) {
-	//		_optimalBw = MAP_KEY(_childPlaylists.begin());
-	//	}
-	_optimalBw = 800000;
+	if (_optimalBw == 0) {
+		_optimalBw = MAP_KEY(_childPlaylists.begin());
+	}
+	//_optimalBw = 800000;
 	return _optimalBw;
 }
 
@@ -466,6 +470,12 @@ bool ClientContext::SignalMasterPlaylistAvailable() {
 		uint32_t bw = _pMasterPlaylist->GetItemBandwidth(i);
 		if (bw < 10000)
 			bw *= 1024;
+		if (_allowedBitrates.size() > 0) {
+			if (!MAP_HAS1(_allowedBitrates, bw)) {
+				WARN("Skipping bitrate %d", bw);
+				continue;
+			}
+		}
 		string uri = _pMasterPlaylist->GetItemUri(i);
 
 		if (MAP_HAS1(_childPlaylists, bw)) {
@@ -529,45 +539,45 @@ bool ClientContext::SignalTSChunkComplete(uint32_t bw) {
 }
 
 bool ClientContext::SignalSpeedDetected(double instantAmount, double instantTime) {
-	//	FINEST("instantAmount: %.2f; instantTime: %.8f; Speed: %.2f KB/s",
-	//			instantAmount, instantTime, instantAmount / instantTime / 1024);
-	_pSpeedComputer->PushAmount(instantAmount, instantTime);
-	double meanSpeed = _pSpeedComputer->GetMeanSpeed();
-
-	uint32_t before = _optimalBw;
-	meanSpeed *= 8.0;
-	//	if (((aaa++) % 200) == 0) {
-	//		double ms = meanSpeed / 1024.00 / 8;
-	//		string um = "KB/s";
-	//		if (ms > 1024) {
-	//			ms = ms / 1024.00;
-	//			um = "MB/s";
+	//	//	FINEST("instantAmount: %.2f; instantTime: %.8f; Speed: %.2f KB/s",
+	//	//			instantAmount, instantTime, instantAmount / instantTime / 1024);
+	//	_pSpeedComputer->PushAmount(instantAmount, instantTime);
+	//	double meanSpeed = _pSpeedComputer->GetMeanSpeed();
+	//
+	//	uint32_t before = _optimalBw;
+	//	meanSpeed *= 8.0;
+	//	//	if (((aaa++) % 200) == 0) {
+	//	//		double ms = meanSpeed / 1024.00 / 8;
+	//	//		string um = "KB/s";
+	//	//		if (ms > 1024) {
+	//	//			ms = ms / 1024.00;
+	//	//			um = "MB/s";
+	//	//		}
+	//	//		//FINEST("Speed: %.2f %s", ms, STR(um));
+	//	//	}
+	//
+	//	_optimalBw = MAP_KEY(_childPlaylists.begin());
+	//
+	//	FOR_MAP(_childPlaylists, uint32_t, Playlist *, i) {
+	//		uint32_t testBandwidth = MAP_KEY(i);
+	//		//FINEST("meanSpeed: %.2f; testBandwidth: %.2f", meanSpeed, testBandwidth);
+	//		if (meanSpeed > testBandwidth) {
+	//			_optimalBw = testBandwidth;
 	//		}
-	//		//FINEST("Speed: %.2f %s", ms, STR(um));
 	//	}
-
-	_optimalBw = MAP_KEY(_childPlaylists.begin());
-
-	FOR_MAP(_childPlaylists, uint32_t, Playlist *, i) {
-		uint32_t testBandwidth = MAP_KEY(i);
-		//FINEST("meanSpeed: %.2f; testBandwidth: %.2f", meanSpeed, testBandwidth);
-		if (meanSpeed > testBandwidth) {
-			_optimalBw = testBandwidth;
-		}
-	}
-	if (before != _optimalBw) {
-		if (before < _optimalBw) {
-			if (GETAVAILABLEBYTESCOUNT(_avData) < _maxAVBufferSize / 3) {
-				_optimalBw = before;
-			} else {
-				INFO("BW changed: before: %d; after: %d; speed: %.3f",
-						before, _optimalBw, meanSpeed);
-			}
-		} else {
-			INFO("BW changed: before: %d; after: %d; speed: %.3f",
-					before, _optimalBw, meanSpeed);
-		}
-	}
+	//	if (before != _optimalBw) {
+	//		if (before < _optimalBw) {
+	//			if (GETAVAILABLEBYTESCOUNT(_avData) < _maxAVBufferSize / 3) {
+	//				_optimalBw = before;
+	//			} else {
+	//				INFO("BW changed: before: %d; after: %d; speed: %.3f",
+	//						before, _optimalBw, meanSpeed);
+	//			}
+	//		} else {
+	//			INFO("BW changed: before: %d; after: %d; speed: %.3f",
+	//					before, _optimalBw, meanSpeed);
+	//		}
+	//	}
 
 	return true;
 }

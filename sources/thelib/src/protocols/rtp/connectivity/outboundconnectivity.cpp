@@ -422,11 +422,14 @@ bool OutboundConnectivity::CreateRTCPPacket(uint8_t *pDest, uint8_t *pSrc,
 	put_htonll(pDest + 8, ntp);
 
 	//6. RTP
-	FINEST("rate: %d", rate);
+	//FINEST("rate: %d", rate);
 	double rtpDouble = ((currentTime - _startupTime) / (double) CLOCKS_PER_SEC) * rate;
-	FINEST("rtpDouble: %.2f", rtpDouble);
+	//FINEST("rtpDouble: %.2f", rtpDouble);
 	uint32_t rtp = (uint32_t) rtpDouble;
-	FINEST("rtp: %d", rtp);
+	//FINEST("rtp: %d", rtp);
+	//uint32_t packetRtp = ntohlp(pSrc + 4);
+	//FINEST("packetRtp: %d", packetRtp);
+	//FINEST("diff: %.0f", (double) packetRtp - (double) rtp);
 	put_htonl(pDest + 16, rtp);
 	//memcpy(pDest + 16, pSrc + 4, 4);
 

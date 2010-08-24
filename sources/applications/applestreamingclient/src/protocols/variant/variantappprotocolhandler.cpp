@@ -69,6 +69,8 @@ bool VariantAppProtocolHandler::ProcessMessage(BaseVariantProtocol *pProtocol,
 		ProcessContextCloseAll(pProtocol, lastReceived);
 	} else if (type == ASC_REQ_TYPE_COMMAND_PLAY) {
 		ProcessCommandPlay(pProtocol, lastReceived);
+	} else if (type == ASC_REQ_TYPE_COMMAND_SET_BITRATES) {
+		ProcessCommandSetBitrates(pProtocol, lastReceived);
 	} else if (type == ASC_REQ_TYPE_COMMAND_PAUSE) {
 		ProcessCommandPause(pProtocol, lastReceived);
 	} else if (type == ASC_REQ_TYPE_COMMAND_RESUME) {
@@ -115,6 +117,19 @@ void VariantAppProtocolHandler::ProcessContextClose(BaseVariantProtocol *pProtoc
 void VariantAppProtocolHandler::ProcessContextCloseAll(
 		BaseVariantProtocol *pProtocol, Variant &request) {
 	((AppleStreamingClientApplication *) GetApplication())->CloseAllContexts();
+	ASC_RES_BUILD_OK(request, Variant());
+}
+
+void VariantAppProtocolHandler::ProcessCommandSetBitrates(
+		BaseVariantProtocol *pProtocol, Variant &request) {
+	GET_CONTEXT(pProtocol, request);
+	map<uint32_t, uint32_t> bws;
+
+	FOR_MAP(ASC_REQ_COMMAND_SET_BITRATES_BWS(request), string, Variant, i) {
+		FINEST("(uint32_t)MAP_VAL(i): %d", (uint32_t) MAP_VAL(i));
+		bws[(uint32_t) MAP_VAL(i)] = (uint32_t) MAP_VAL(i);
+	}
+	pContext->SetAllowedBitrates(bws);
 	ASC_RES_BUILD_OK(request, Variant());
 }
 
