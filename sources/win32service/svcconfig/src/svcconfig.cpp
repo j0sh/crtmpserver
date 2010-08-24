@@ -131,8 +131,8 @@ bool __stdcall DoQuerySvc()
         else
         {
             printf("QueryServiceConfig failed (%d)", dwError);
-			return false;
             goto cleanup; 
+			return false;
         }
     }
   
@@ -143,8 +143,8 @@ bool __stdcall DoQuerySvc()
         &dwBytesNeeded) ) 
     {
         printf("QueryServiceConfig failed (%d)", GetLastError());
-		return false;
         goto cleanup;
+		return false;
     }
 
     if( !QueryServiceConfig2( 
@@ -163,8 +163,8 @@ bool __stdcall DoQuerySvc()
         else
         {
             printf("QueryServiceConfig2 failed (%d)", dwError);
-			return false;
             goto cleanup; 
+			return false;
         }
     }
  
@@ -176,8 +176,8 @@ bool __stdcall DoQuerySvc()
         &dwBytesNeeded) ) 
     {
         printf("QueryServiceConfig2 failed (%d)", GetLastError());
-		return false;
         goto cleanup;
+		return false;
     }
  
     // Print the configuration information.
@@ -200,10 +200,14 @@ bool __stdcall DoQuerySvc()
  
     LocalFree(lpsc); 
     LocalFree(lpsd);
-	return true;
+	goto success;
+
 cleanup:
     CloseServiceHandle(schService); 
     CloseServiceHandle(schSCManager);
+
+success:
+	return true;
 }
 
 //

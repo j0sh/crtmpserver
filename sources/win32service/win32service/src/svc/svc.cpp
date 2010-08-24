@@ -27,7 +27,7 @@ void __cdecl _tmain(int argc, TCHAR *argv[])
 	// Install/uninstall the service. 
     if( lstrcmpi( argv[1], TEXT("installService")) == 0 )
     {
-		if(GetSvcRegistry() != REGIST_ERROR)
+		if(SvcRegistry(ADD_KEY) != REGIST_ERROR)
 			SvcInstall();
 		else
 			printf("\n The service is not installed because of error(s) in registry\n");
@@ -64,14 +64,13 @@ void __cdecl _tmain(int argc, TCHAR *argv[])
     }else {
 		if ( argc == 1 ) //if no argument, assume that rtmpserver is started normally
 		{
-			if (!DoQuerySvc){
+			if (!DoQuerySvc()){
 				printf("Server will start normally.\n\n");
-				rtmpserver(GetSvcRegistry());
+				rtmpserver(SvcRegistry(GET_KEY_VALUE));
 				return;
 			}else{
 				printf("\nERROR: Server cannot be started normally because the service described above is already installed. .\n\n");
 				printf("Start/Stop the server by starting/stopping the service.\n\n");
-				printf("To start server normally, enter 'uninstallService' command to delete the service.\n\n");
 				return;
 			}
 		}
@@ -95,8 +94,7 @@ VOID __stdcall DisplayUsage()
     printf("\t  startService\n");
     printf("\t  stopService\n");
 	printf("Run as stand-alone:\n");
-	printf("\twin32service <configfile path>\n");
-	printf("\twin32service --use-implicit-console-appender\n");
+	printf("\twin32service\n");
 }
 //
 // Purpose: 

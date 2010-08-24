@@ -4,7 +4,7 @@
 
 char * QueryKey(HKEY hKey);
 HKEY AddKey();
-void SetKeyValue(HKEY hKey);
+DWORD SetKeyValue(HKEY hKey);
 
-char * GetSvcRegistry();
+char * SvcRegistry(int action);
 char * FormatWindowsError(int nError);

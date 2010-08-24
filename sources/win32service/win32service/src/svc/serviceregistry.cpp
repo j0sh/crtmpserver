@@ -7,12 +7,12 @@
 #define MAX_KEY_LENGTH 255
 #define MAX_VALUE_NAME 16383
 
-char * GetSvcRegistry()
+char * SvcRegistry(int action)
 {
 	HKEY hTestKey;
 	HKEY hSvcKey;
 	DWORD retCode;
-	char * config_path = "path";
+	char * config_path = "";
 
 	retCode = RegOpenKeyEx( HKEY_LOCAL_MACHINE,
         TEXT("SOFTWARE"),
@@ -22,23 +22,36 @@ char * GetSvcRegistry()
 
    if( retCode == ERROR_SUCCESS)
    {
-	   hSvcKey = AddKey();
-	   if(hSvcKey != NULL)
+	   hSvcKey = AddKey();//Creates the key if the key does not exist. If it does, it reads the key value.
+	   if(hSvcKey != NULL){
+		   switch (action)
+		   {
+		   case ADD_KEY:
+			   if(SetKeyValue(hSvcKey) != ERROR_SUCCESS)
+				   return REGIST_ERROR;
+			   else {
+				   RegCloseKey(hTestKey);
+				   return REGIST_SUCCESS;
+			   }
+			   break;
+
+		   case GET_KEY_VALUE:
+			   config_path = QueryKey(hSvcKey);
+			   printf("\n configuration path: %s\n", config_path);
+			   RegCloseKey(hTestKey);
+			   return config_path; //Return the config file path
+			   break;
+		   }
+	   }else
 	   {
-		   SetKeyValue(hSvcKey);
-		   config_path = QueryKey(AddKey());
-		   printf("\n configuration path: %s\n", config_path);
+		   return REGIST_ERROR;
 	   }
+
    } else
    {
 	   printf("\n ERROR opening key (%d): %s\n", retCode, FormatWindowsError(retCode));
 	   return REGIST_ERROR;
    }
-   
-   RegCloseKey(hTestKey);
-   
-   return config_path;
-
 }
 
 //Add the Evostream key to HKEY_LOCAL_MACHINE\SOFTWARE\
@@ -66,7 +79,7 @@ HKEY AddKey()
 
 }
 
-void SetKeyValue(HKEY hKey)
+DWORD SetKeyValue(HKEY hKey)
 {
 	DWORD retCode;
 
@@ -76,6 +89,8 @@ void SetKeyValue(HKEY hKey)
 	   printf("\nThe value of the config file was set successfully.\n");
 	else
 	   printf("\n ERROR setting path as key value (%d): %s\n", retCode, FormatWindowsError(retCode));
+
+	return retCode;
 }
 
 char * QueryKey(HKEY hKey) 
