@@ -147,6 +147,12 @@
     <Filter Include="Source Files\netio\select">
       <UniqueIdentifier>{f2eb28e4-33f8-4cfe-b9c7-e83bd7c45df7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\protocols\ssl">
+      <UniqueIdentifier>{50b83c2c-e273-42dd-957a-6f759b2d0926}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\protocols\ssl">
+      <UniqueIdentifier>{1f31908f-47a3-4e55-931b-86d0628ae501}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\sources\thelib\src\application\baseappprotocolhandler.cpp">
@@ -174,9 +180,6 @@
       <Filter>Source Files\protocols</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\sources\thelib\src\protocols\protocolmanager.cpp">
-      <Filter>Source Files\protocols</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\protocols\sslprotocol.cpp">
       <Filter>Source Files\protocols</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\sources\thelib\src\protocols\tcpprotocol.cpp">
@@ -557,6 +560,15 @@
     <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\streaming\outfilertmpflvstream.cpp">
       <Filter>Source Files\protocols\rtmp\streaming</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\ssl\basesslprotocol.cpp">
+      <Filter>Source Files\protocols\ssl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\ssl\inboundsslprotocol.cpp">
+      <Filter>Source Files\protocols\ssl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\ssl\outboundsslprotocol.cpp">
+      <Filter>Source Files\protocols\ssl</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\sources\thelib\include\application\baseappprotocolhandler.h">
@@ -590,9 +602,6 @@
       <Filter>Header Files\protocols</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\sources\thelib\include\protocols\protocoltypes.h">
-      <Filter>Header Files\protocols</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\protocols\sslprotocol.h">
       <Filter>Header Files\protocols</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\sources\thelib\include\protocols\tcpprotocol.h">
@@ -1005,6 +1014,15 @@
     </ClInclude>
     <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\streaming\outfilertmpflvstream.h">
       <Filter>Header Files\protocols\rtmp\streaming</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\ssl\basesslprotocol.h">
+      <Filter>Header Files\protocols\ssl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\ssl\inboundsslprotocol.h">
+      <Filter>Header Files\protocols\ssl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\ssl\outboundsslprotocol.h">
+      <Filter>Header Files\protocols\ssl</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

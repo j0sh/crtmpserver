@@ -137,7 +137,9 @@
     <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtp\streaming\baseoutnetrtpudpstream.cpp" />
     <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtp\streaming\innetrtpstream.cpp" />
     <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtp\streaming\outnetrtpudph264stream.cpp" />
-    <ClCompile Include="..\..\..\sources\thelib\src\protocols\sslprotocol.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\ssl\basesslprotocol.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\ssl\inboundsslprotocol.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\ssl\outboundsslprotocol.cpp" />
     <ClCompile Include="..\..\..\sources\thelib\src\protocols\tcpprotocol.cpp" />
     <ClCompile Include="..\..\..\sources\thelib\src\protocols\udpprotocol.cpp" />
     <ClCompile Include="..\..\..\sources\thelib\src\protocols\dns\inbounddnsresolverprotocol.cpp" />
@@ -279,7 +281,9 @@
     <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtp\streaming\baseoutnetrtpudpstream.h" />
     <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtp\streaming\innetrtpstream.h" />
     <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtp\streaming\outnetrtpudph264stream.h" />
-    <ClInclude Include="..\..\..\sources\thelib\include\protocols\sslprotocol.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\ssl\basesslprotocol.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\ssl\inboundsslprotocol.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\ssl\outboundsslprotocol.h" />
     <ClInclude Include="..\..\..\sources\thelib\include\protocols\tcpprotocol.h" />
     <ClInclude Include="..\..\..\sources\thelib\include\protocols\udpprotocol.h" />
     <ClInclude Include="..\..\..\sources\thelib\include\protocols\dns\inbounddnsresolverprotocol.h" />
