@@ -58,7 +58,7 @@ private:
 	map<uint32_t, Playlist *> _childPlaylists;
 	uint32_t _tsId;
 	uint32_t _parsedChildPlaylistsCount;
-	uint32_t _currentItemIndex;
+	uint32_t _currentSequence;
 	uint32_t _optimalBw;
 	uint32_t _lastUsedBw;
 	SpeedComputer *_pSpeedComputer;
@@ -70,7 +70,6 @@ private:
 	StreamsManager *_pStreamsManager;
 	double _lastWallClock;
 	map<uint32_t, uint32_t> _allowedBitrates;
-	map<uint32_t, uint32_t> _mediaSequences;
 private:
 	ClientContext();
 public:
@@ -124,7 +123,6 @@ public:
 	bool FetchChildPlaylist(string uri, uint32_t bw);
 	bool ConsumeAVBuffer();
 private:
-	bool ReloadPlaylist(uint32_t bw);
 	uint32_t GetOptimalBw();
 	bool ParseConnectingString();
 	bool FetchMasterPlaylist();

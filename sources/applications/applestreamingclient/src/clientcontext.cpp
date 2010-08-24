@@ -43,7 +43,7 @@ ClientContext::ClientContext() {
 	_pEventSink = NULL;
 	_pMasterPlaylist = NULL;
 	_parsedChildPlaylistsCount = 0;
-	_currentItemIndex = 0;
+	_currentSequence = 0;
 	_optimalBw = 0;
 	_lastUsedBw = 0;
 	_pSpeedComputer = NULL;
@@ -290,24 +290,16 @@ bool ClientContext::StartFeeding() {
 	//		_currentItemIndex = pPlaylist->GetItemsCount() / 2 + 10;
 
 	//4. Is this the last item in the playlis?
-	FINEST("---------------------------------------------------");
-	if (_currentItemIndex >= pPlaylist->GetItemsCount()) {
-		if (ReloadPlaylist(optimalBw)) {
-			WARN("End of list. Wait one sec and try again");
-			FINEST("---------------------------------------------------");
-			return EnqueueFetchChildPlaylist(_childPlaylists[optimalBw]->GetPlaylistUri(), optimalBw);
-		} else {
-			WARN("No playlist reload");
-			_currentItemIndex--;
-		}
+	string uri = pPlaylist->GetItemUri(_currentSequence);
+	if (uri == "") {
+		FINEST("---------------------------------------------------");
+		WARN("End of list. Wait one sec and try again");
+		FINEST("---------------------------------------------------");
+		return EnqueueFetchChildPlaylist(_childPlaylists[optimalBw]->GetPlaylistUri(), optimalBw);
 	}
-	FINEST("_currentItemIndex: %d", _currentItemIndex);
-	FINEST("---------------------------------------------------");
 
 	//4. Get the item URI and the key URI if available
-	string uri = pPlaylist->GetItemUri(_currentItemIndex);
-	string keyUri = pPlaylist->GetItemKeyUri(_currentItemIndex);
-	_mediaSequences[optimalBw] = pPlaylist->GetItemMediaSequence(_currentItemIndex);
+	string keyUri = pPlaylist->GetItemKeyUri(_currentSequence);
 	if (keyUri != "")
 		keyUri += "&" + _connectingString.sessionId;
 
@@ -401,24 +393,6 @@ bool ClientContext::ConsumeAVBuffer() {
 
 	//7. Done
 	return true;
-}
-
-bool ClientContext::ReloadPlaylist(uint32_t bw) {
-	if (!MAP_HAS1(_mediaSequences, bw)) {
-		FINEST("bw %d not in _mediaSequences", bw);
-		return true;
-	}
-	if (!MAP_HAS1(_childPlaylists, bw)) {
-		FINEST("bw %d not in playlists", bw);
-		return true;
-	}
-
-	uint32_t lastSequence = _mediaSequences[bw];
-	FINEST("lastSequence: %d", lastSequence);
-	uint32_t playlistSequnece = _childPlaylists[bw]->GetLastMediaSequence();
-	FINEST("playlistSequnece: %d", playlistSequnece);
-
-	return lastSequence == playlistSequnece;
 }
 
 uint32_t ClientContext::GetOptimalBw() {
@@ -546,7 +520,7 @@ bool ClientContext::SignalAESKeyAvailable(Variant &parameters) {
 	string key = parameters["payload"]["key"];
 	string itemUri = parameters["payload"]["itemUri"];
 	uint32_t bw = parameters["payload"]["bw"];
-	uint64_t iv = _childPlaylists[bw]->GetItemMediaSequence(_currentItemIndex);
+	uint64_t iv = _currentSequence;
 	//FINEST("itemUri: %s; bw: %d; key: %s", STR(itemUri), bw, STR(key));
 
 	return FetchTS(itemUri, bw, key, iv);
@@ -562,7 +536,7 @@ bool ClientContext::SignalTSProtocolAvailable(uint32_t protocolId, uint32_t bw) 
 }
 
 bool ClientContext::SignalTSChunkComplete(uint32_t bw) {
-	_currentItemIndex++;
+	_currentSequence++;
 	return StartFeeding();
 }
 

@@ -127,7 +127,7 @@ void Playlist::Parse(uint32_t skipCount) {
 				//11. If we get an non-comment
 				//that means the item is finished. Save it
 				_items[itemIndex] = item;
-				_itemMediaSequences[itemIndex] = _lastMediaSequence;
+				_itemMediaSequences[_lastMediaSequence] = itemIndex;
 				_itemKeyUris[itemIndex] = _pLastKeyUri;
 				_itemUris[itemIndex] = pLine;
 
@@ -188,7 +188,8 @@ uint32_t Playlist::GetItemsCount() {
 	return _items.size();
 }
 
-string Playlist::GetItemUri(uint32_t index) {
+string Playlist::GetItemUri(uint32_t &sequence) {
+	uint32_t index = GetIndex(sequence);
 	if (index >= _itemUris.size())
 		return "";
 	string result = _itemUris[index];
@@ -202,7 +203,8 @@ string Playlist::GetItemUri(uint32_t index) {
 	return "";
 }
 
-string Playlist::GetItemKeyUri(uint32_t index) {
+string Playlist::GetItemKeyUri(uint32_t &sequence) {
+	uint32_t index = GetIndex(sequence);
 	if (index >= _itemKeyUris.size())
 		return "";
 	if (_itemKeyUris[index] == NULL)
@@ -210,21 +212,15 @@ string Playlist::GetItemKeyUri(uint32_t index) {
 	return _itemKeyUris[index];
 }
 
-uint32_t Playlist::GetItemMediaSequence(uint32_t index) {
-	if (index >= _itemMediaSequences.size())
-		return 0;
-	return _itemMediaSequences[index];
-}
-
-uint32_t Playlist::GetItemBandwidth(uint32_t index) {
+uint32_t Playlist::GetItemBandwidth(uint32_t &sequence) {
+	uint32_t index = GetIndex(sequence);
 	if (index >= _itemBandwidths.size())
 		return 0;
 	return _itemBandwidths[index];
 }
 
-Variant Playlist::GetItemVariant(uint32_t index) {
-	if (index >= _items.size())
-		return Variant();
+Variant Playlist::GetItemVariant(uint32_t &sequence) {
+	uint32_t index = GetIndex(sequence);
 	Variant result;
 	result["encryptionKeyUri"] = GetItemKeyUri(index);
 	result["itemUri"] = GetItemUri(index);
@@ -232,28 +228,58 @@ Variant Playlist::GetItemVariant(uint32_t index) {
 	return result;
 }
 
-void Playlist::ApproximateStartEndTimes(uint32_t index, double start, double end) {
-	_meanDuration = _meanDuration * (double) _meanDurationCount + end - start;
-	_meanDurationCount++;
-	_meanDuration /= (double) _meanDurationCount;
-}
+uint32_t Playlist::GetIndex(uint32_t &sequence) {
+	FINEST("---------------------");
+	FINEST("sequence requested: %d", sequence);
+	//1. We have it, we return it
+	if (MAP_HAS1(_itemMediaSequences, sequence)) {
+		FINEST("WE have it");
+		FINEST("---------------------");
+		return _itemMediaSequences[sequence];
+	}
 
-void Playlist::GetSeekRange(double &min, double &max) {
-	min = 0;
-	max = (double) _items.size() * _meanDuration;
-}
+	//2. We don't have it, and is a 0 value, that means it was never initialized
+	if (sequence == 0) {
+		FINEST("sequence is 0");
+		FINEST("_itemMediaSequences.size(): %d", _itemMediaSequences.size());
+		if (_itemMediaSequences.size() != 0) {
+			//3. We have stuff. Init and return
+			FINEST("Return the first entry");
+			sequence = MAP_KEY(_itemMediaSequences.begin());
+			FINEST("---------------------");
+			return MAP_VAL(_itemMediaSequences.begin());
+		} else {
+			//4. We don't have stuff. Don't do nothing and return
+			FINEST("empty sequences");
+			FINEST("---------------------");
+			return 0xffffffff;
+		}
+	}
 
-uint32_t Playlist::GetItemIndex(double seekPoint) {
-	if (_meanDuration == 0)
-		return 0;
-	uint32_t index = (uint32_t) (seekPoint / _meanDuration);
-	if (_items.size() <= index)
-		return 0;
-	return index;
-}
+	//5. Ok, sequence is initialized but we don't have that value.
+	//So, we search the next one, init and return;
+	FINEST("DISC????");
+	if (_itemMediaSequences.size() > 0) {
+		FINEST("So, we have some items");
+		if (MAP_KEY(_itemMediaSequences.end()) >= sequence) {
+			FINEST("Our sequence is somewhere there...");
 
-uint32_t Playlist::GetLastMediaSequence() {
-	if (_itemMediaSequences.size() == 0)
-		return 0;
-	return _itemMediaSequences[_itemMediaSequences.size() - 1];
+			FOR_MAP(_itemMediaSequences, uint32_t, uint32_t, i) {
+				FINEST("sequence: %d; MAP_KEY(i): %d", sequence, MAP_KEY(i));
+				if (MAP_KEY(i) >= sequence) {
+					sequence = MAP_KEY(i);
+					FINEST("JACKPOT");
+					FINEST("---------------------");
+					return MAP_VAL(i);
+				}
+			}
+		} else {
+			FINEST("sequence is bigger than the last item");
+		}
+	}
+
+	//6. Nada. This is the bottom
+	FINEST("Nothing left to do....");
+	FINEST("---------------------");
+	return 0xffffffff;
 }
