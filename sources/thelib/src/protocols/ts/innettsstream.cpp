@@ -46,6 +46,8 @@ InNetTSStream::InNetTSStream(BaseProtocol *pProtocol,
 
 	_feedTime = 0;
 	_cursor = 0;
+
+	_firstNAL = true;
 }
 
 InNetTSStream::~InNetTSStream() {
@@ -149,6 +151,9 @@ bool InNetTSStream::FeedData(uint8_t *pData, uint32_t length, bool packetStart,
 			return false;
 		}
 	}
+
+	//#define HandleVideoData HandleVideoData_version1
+#define HandleVideoData HandleVideoData_version2
 
 	if (isAudio)
 		return HandleAudioData(pData, length, ptsTime - deltaTime, packetStart);
@@ -276,7 +281,7 @@ bool InNetTSStream::HandleAudioData(uint8_t *pRawBuffer, uint32_t rawBufferLengt
 	return true;
 }
 
-bool InNetTSStream::HandleVideoData(uint8_t *pBuffer, uint32_t length,
+bool InNetTSStream::HandleVideoData_version1(uint8_t *pBuffer, uint32_t length,
 		double timestamp, bool packetStart) {
 	//1. Store the data inside our buffer
 	_currentNal.ReadFromBuffer(pBuffer, length);
@@ -319,6 +324,50 @@ bool InNetTSStream::HandleVideoData(uint8_t *pBuffer, uint32_t length,
 				break;
 		} else {
 			//12. We are in the middle of a NAL
+			_cursor++;
+		}
+	}
+
+	return true;
+}
+
+bool InNetTSStream::HandleVideoData_version2(uint8_t *pBuffer, uint32_t length,
+		double timestamp, bool packetStart) {
+	//1. Store the data inside our buffer
+	_currentNal.ReadFromBuffer(pBuffer, length);
+
+	uint32_t size = GETAVAILABLEBYTESCOUNT(_currentNal);
+	if (size < 4)
+		return true;
+
+	uint8_t *pNalBuffer = GETIBPOINTER(_currentNal);
+
+	_cursor = 0;
+	if (_firstNAL) {
+		while (_cursor < size - 4) {
+			if (ntohlp(pNalBuffer + _cursor) == 1) {
+				_currentNal.Ignore(_cursor + 4);
+				_firstNAL = false;
+				_cursor += 4;
+				break;
+			}
+			_cursor++;
+		}
+	}
+
+	while (_cursor < size - 4) {
+		if (ntohlp(pNalBuffer + _cursor) == 1) {
+			if (!ProcessNal(timestamp)) {
+				FATAL("Unable to process NALU");
+				return false;
+			}
+			_currentNal.Ignore(_cursor + 4);
+			pNalBuffer = GETIBPOINTER(_currentNal);
+			size = GETAVAILABLEBYTESCOUNT(_currentNal);
+			_cursor = 0;
+			if (size < 4)
+				break;
+		} else {
 			_cursor++;
 		}
 	}
