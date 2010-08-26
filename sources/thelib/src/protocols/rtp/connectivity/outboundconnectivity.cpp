@@ -77,8 +77,13 @@ do { \
 } \
 while (0)
 
+//#define CreateRTCPPacket CreateRTCPPacket_mystyle
+#define CreateRTCPPacket CreateRTCPPacket_live555style
+
 OutboundConnectivity::OutboundConnectivity()
 : BaseConnectivity() {
+	_nextRTCPIncrement = 1000.00;
+
 	_videoDataFd = -1;
 	_videoDataPort = 0;
 	_videoRTCPFd = -1;
@@ -86,6 +91,7 @@ OutboundConnectivity::OutboundConnectivity()
 	_videoPacketsCount = 0;
 	_videoBytesCount = 0;
 	_videoFirstRtp = 0;
+	_videoNextRTCPTs = _nextRTCPIncrement;
 
 	_audioDataFd = -1;
 	_audioDataPort = 0;
@@ -94,6 +100,7 @@ OutboundConnectivity::OutboundConnectivity()
 	_audioPacketsCount = 0;
 	_audioBytesCount = 0;
 	_audioFirstRtp = 0;
+	_audioNextRTCPTs = _nextRTCPIncrement;
 
 	_pOutStream = NULL;
 	memset(&_message, 0, sizeof (_message));
@@ -382,7 +389,7 @@ bool OutboundConnectivity::FeedAudioDataTCP(msghdr &message) {
 	return true;
 }
 
-bool OutboundConnectivity::CreateRTCPPacket(uint8_t *pDest, uint8_t *pSrc,
+bool OutboundConnectivity::CreateRTCPPacket_mystyle(uint8_t *pDest, uint8_t *pSrc,
 		uint32_t ssrc, uint32_t rate, uint32_t packetsCount, uint32_t bytesCount,
 		bool isAudio) {
 
@@ -405,10 +412,6 @@ bool OutboundConnectivity::CreateRTCPPacket(uint8_t *pDest, uint8_t *pSrc,
 	|                      sender's octet count                     |
 	+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
 	 */
-
-	//	WARN("%s: MUST send SR to %d clients",
-	//			isAudio ? "Audio" : "Video",
-	//			_udpVideoRTCPClients.size());
 
 	//1. V,P,RC
 	pDest[0] = 0x80;
@@ -476,6 +479,65 @@ bool OutboundConnectivity::CreateRTCPPacket(uint8_t *pDest, uint8_t *pSrc,
 	FINEST("packetRtp: %d", packetRtp);
 	FINEST("diff: %d; (%.4f s)", packetRtp - rtp, ((double) packetRtp - rtp) / (double) rate);
 	FINEST("---------------");
+
+	return true;
+}
+
+bool OutboundConnectivity::CreateRTCPPacket_live555style(uint8_t *pDest, uint8_t *pSrc,
+		uint32_t ssrc, uint32_t rate, uint32_t packetsCount, uint32_t bytesCount,
+		bool isAudio) {
+
+	/*
+	 0                   1                   2                   3
+	 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+	+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+	|V=2|P|    RC   |   PT=SR=200   |             length            | header
+	+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+	|                         SSRC of sender                        |
+	+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
+	|              NTP timestamp, most significant word             | sender
+	+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+ info
+	|             NTP timestamp, least significant word             |
+	+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+	|                         RTP timestamp                         |
+	+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+	|                     sender's packet count                     |
+	+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+	|                      sender's octet count                     |
+	+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
+	 */
+
+	//1. V,P,RC
+	pDest[0] = 0x80;
+
+	//2. PT
+	pDest[1] = 0xc8;
+
+	//3. Length
+	pDest[2] = 0x00;
+	pDest[3] = 0x06;
+
+	//4. ssrc
+	put_htonl(pDest + 4, ssrc); //SSRC
+
+	//5. NTP
+	struct timeval timeNow;
+	gettimeofday(&timeNow, NULL);
+	put_htonl(pDest + 8, timeNow.tv_sec + 0x83AA7E80);
+	double fractionalPart = (timeNow.tv_usec / 15625.0)*0x04000000; // 2^32/10^6
+	put_htonl(pDest + 12, (uint32_t) fractionalPart);
+
+	//6. RTP
+	uint32_t timestampIncrement = (rate * timeNow.tv_sec);
+	timestampIncrement += (uint32_t) ((2.0 * rate * timeNow.tv_usec + 1000000.0) / 2000000);
+	uint32_t rtpTimestamp = 0 + timestampIncrement;
+	put_htonl(pDest + 16, rtpTimestamp);
+
+	//7. sender's packet count
+	put_htonl(pDest + 20, packetsCount);
+
+	//8. sender's octet count
+	put_htonl(pDest + 24, bytesCount);
 
 	return true;
 }

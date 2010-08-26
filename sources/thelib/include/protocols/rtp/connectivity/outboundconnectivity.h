@@ -35,6 +35,7 @@ private:
 	uint32_t _videoPacketsCount;
 	uint32_t _videoBytesCount;
 	uint32_t _videoFirstRtp;
+	double _videoNextRTCPTs;
 	map<uint32_t, sockaddr_in> _udpVideoDataClients;
 	map<uint32_t, sockaddr_in> _udpVideoRTCPClients;
 
@@ -45,6 +46,7 @@ private:
 	uint32_t _audioPacketsCount;
 	uint32_t _audioBytesCount;
 	uint32_t _audioFirstRtp;
+	double _audioNextRTCPTs;
 	map<uint32_t, sockaddr_in> _udpAudioDataClients;
 	map<uint32_t, sockaddr_in> _udpAudioRTCPClients;
 
@@ -52,6 +54,7 @@ private:
 	BaseOutNetRTPUDPStream *_pOutStream;
 	msghdr _message;
 	double _startupTime;
+	double _nextRTCPIncrement;
 public:
 	OutboundConnectivity();
 	virtual ~OutboundConnectivity();
@@ -86,7 +89,10 @@ private:
 	bool FeedVideoDataTCP(msghdr &message);
 	bool FeedAudioDataUDP(msghdr &message);
 	bool FeedAudioDataTCP(msghdr &message);
-	bool CreateRTCPPacket(uint8_t *pDest, uint8_t *pSrc,
+	bool CreateRTCPPacket_mystyle(uint8_t *pDest, uint8_t *pSrc,
+			uint32_t ssrc, uint32_t rate, uint32_t packetsCount,
+			uint32_t bytesCount, bool isAudio);
+	bool CreateRTCPPacket_live555style(uint8_t *pDest, uint8_t *pSrc,
 			uint32_t ssrc, uint32_t rate, uint32_t packetsCount,
 			uint32_t bytesCount, bool isAudio);
 };
