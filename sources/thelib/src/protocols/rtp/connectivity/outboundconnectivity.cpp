@@ -77,8 +77,8 @@ do { \
 } \
 while (0)
 
-//#define CreateRTCPPacket CreateRTCPPacket_mystyle
-#define CreateRTCPPacket CreateRTCPPacket_live555style
+#define CreateRTCPPacket CreateRTCPPacket_mystyle
+//#define CreateRTCPPacket CreateRTCPPacket_live555style
 
 OutboundConnectivity::OutboundConnectivity()
 : BaseConnectivity() {
