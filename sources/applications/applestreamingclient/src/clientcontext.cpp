@@ -357,15 +357,23 @@ bool ClientContext::ConsumeAVBuffer() {
 	}
 
 	//5. Continue feeding until we have stream capabilities
-	while (GETAVAILABLEBYTESCOUNT(_avData) > 8192) {
-		if ((pStream->GetCapabilities()->videoCodecId == CODEC_VIDEO_AVC)
-				&& (pStream->GetCapabilities()->audioCodecId == CODEC_AUDIO_AAC)) {
-			_pEventSink->SignalStreamRegistered(_streamName);
-			break;
+	if ((pStream->GetCapabilities()->videoCodecId != CODEC_VIDEO_AVC)
+			|| (pStream->GetCapabilities()->audioCodecId != CODEC_AUDIO_AAC)) {
+		while (GETAVAILABLEBYTESCOUNT(_avData) > 8192) {
+			if ((pStream->GetCapabilities()->videoCodecId == CODEC_VIDEO_AVC)
+					&& (pStream->GetCapabilities()->audioCodecId == CODEC_AUDIO_AAC)) {
+				_pEventSink->SignalStreamRegistered(_streamName);
+				break;
+			}
+			if (!pTS->SignalInputData(_avData)) {
+				FATAL("Unable to feed TS protocol");
+				return false;
+			}
 		}
-		if (!pTS->SignalInputData(_avData)) {
-			FATAL("Unable to feed TS protocol");
-			return false;
+		if ((pStream->GetCapabilities()->videoCodecId != CODEC_VIDEO_AVC)
+				|| (pStream->GetCapabilities()->audioCodecId != CODEC_AUDIO_AAC)) {
+			FINEST("SPS/PPS not yet available");
+			return true;
 		}
 	}
 
@@ -631,7 +639,6 @@ bool ClientContext::FetchKey(string keyUri, string itemUri, uint32_t bw) {
 	customParameters["protocolChain"] = PC_ITEM_KEY;
 	customParameters["itemUri"] = itemUri;
 	customParameters["bw"] = bw;
-	replace(keyUri, "http://www.mlb.com", "https://qa.mlb.com");
 	return FetchURI(keyUri, "key", customParameters);
 }
 

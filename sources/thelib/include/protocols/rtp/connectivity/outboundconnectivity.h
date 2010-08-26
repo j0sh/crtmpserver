@@ -34,6 +34,9 @@ private:
 	uint16_t _videoRTCPPort;
 	uint32_t _videoPacketsCount;
 	uint32_t _videoBytesCount;
+	uint32_t _videoFirstRtp;
+	map<uint32_t, sockaddr_in> _udpVideoDataClients;
+	map<uint32_t, sockaddr_in> _udpVideoRTCPClients;
 
 	int32_t _audioDataFd;
 	uint16_t _audioDataPort;
@@ -41,11 +44,10 @@ private:
 	uint16_t _audioRTCPPort;
 	uint32_t _audioPacketsCount;
 	uint32_t _audioBytesCount;
-
-	map<uint32_t, sockaddr_in> _udpVideoDataClients;
-	map<uint32_t, sockaddr_in> _udpVideoRTCPClients;
+	uint32_t _audioFirstRtp;
 	map<uint32_t, sockaddr_in> _udpAudioDataClients;
 	map<uint32_t, sockaddr_in> _udpAudioRTCPClients;
+
 	map<uint32_t, uint32_t> _tcpClients;
 	BaseOutNetRTPUDPStream *_pOutStream;
 	msghdr _message;

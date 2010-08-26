@@ -85,6 +85,7 @@ OutboundConnectivity::OutboundConnectivity()
 	_videoRTCPPort = 0;
 	_videoPacketsCount = 0;
 	_videoBytesCount = 0;
+	_videoFirstRtp = 0;
 
 	_audioDataFd = -1;
 	_audioDataPort = 0;
@@ -92,6 +93,7 @@ OutboundConnectivity::OutboundConnectivity()
 	_audioRTCPPort = 0;
 	_audioPacketsCount = 0;
 	_audioBytesCount = 0;
+	_audioFirstRtp = 0;
 
 	_pOutStream = NULL;
 	memset(&_message, 0, sizeof (_message));
@@ -100,7 +102,6 @@ OutboundConnectivity::OutboundConnectivity()
 	_message.msg_namelen = sizeof (sockaddr_in);
 
 	_startupTime = 0;
-	WARN("OC created: %p", this);
 }
 
 OutboundConnectivity::~OutboundConnectivity() {
@@ -307,24 +308,42 @@ bool OutboundConnectivity::InitializePorts(int32_t &dataFd, uint16_t &dataPort,
 	}
 
 bool OutboundConnectivity::FeedVideoDataUDP(msghdr &message) {
+	//	uint32_t packetRtp = ntohlp((uint8_t *) message.msg_iov[0].iov_base + 4);
+	//	if ((((uint8_t *) message.msg_iov[0].iov_base)[1] >> 7) != 0) {
+	//		//		FINEST("packetRtp: %d (%08x) %02x%02x%02x%02x %.2f %c",
+	//		//				packetRtp,
+	//		//				packetRtp,
+	//		//				((uint8_t *) message.msg_iov[0].iov_base)[4],
+	//		//				((uint8_t *) message.msg_iov[0].iov_base)[5],
+	//		//				((uint8_t *) message.msg_iov[0].iov_base)[6],
+	//		//				((uint8_t *) message.msg_iov[0].iov_base)[7],
+	//		//				(double) packetRtp / 90000.0,
+	//		//				((((uint8_t *) message.msg_iov[0].iov_base)[1] >> 7) != 0) ? '*' : ' ');
+	//		if (____last == packetRtp) {
+	//			WARN("Skip packet");
+	//			return true;
+	//		}
+	//		____last = packetRtp;
+	//	}
 	RTP_SEND_MESSAGE(_videoDataFd, _udpVideoDataClients, message);
 	_videoPacketsCount++;
 	COMPUTE_BYTES_COUNT(message, _videoBytesCount);
 	//uint16_t seq = ntohsp(((uint8_t *) message.msg_iov[0].iov_base) + 2);
 	//FINEST("seq: %d", seq);
-	if (((_videoPacketsCount % 300) == 0) || _videoPacketsCount == 1) {
+	if (((_videoPacketsCount % 300) == 0) || _videoPacketsCount <= 2) {
 		uint8_t buff[28];
-		CreateRTCPPacket(buff,
+		if (CreateRTCPPacket(buff,
 				(uint8_t *) message.msg_iov[0].iov_base,
 				_pOutStream->SSRC(),
 				90000,
 				_videoPacketsCount,
 				_videoBytesCount,
-				false);
-		_message.msg_iov[0].iov_base = buff;
-		_message.msg_iov[0].iov_len = 28;
+				false)) {
+			_message.msg_iov[0].iov_base = buff;
+			_message.msg_iov[0].iov_len = 28;
 
-		RTP_SEND_MESSAGE(_videoRTCPFd, _udpVideoRTCPClients, _message);
+			RTP_SEND_MESSAGE(_videoRTCPFd, _udpVideoRTCPClients, _message);
+		}
 	}
 	return true;
 }
@@ -340,19 +359,20 @@ bool OutboundConnectivity::FeedAudioDataUDP(msghdr &message) {
 	COMPUTE_BYTES_COUNT(message, _audioBytesCount);
 	//uint16_t seq = ntohsp(((uint8_t *) message.msg_iov[0].iov_base) + 2);
 	//FINEST("seq: %d", seq);
-	if (((_audioPacketsCount % 300) == 0) || (_audioPacketsCount == 1)) {
+	if (((_audioPacketsCount % 300) == 0) || (_audioPacketsCount <= 2)) {
 		uint8_t buff[28];
-		CreateRTCPPacket(buff,
+		if (CreateRTCPPacket(buff,
 				(uint8_t *) message.msg_iov[0].iov_base,
 				_pOutStream->SSRC(),
 				_pOutStream->GetCapabilities()->audioCodecInfo.aac.sampleRate,
 				_audioPacketsCount,
 				_audioBytesCount,
-				true);
-		_message.msg_iov[0].iov_base = buff;
-		_message.msg_iov[0].iov_len = 28;
+				true)) {
+			_message.msg_iov[0].iov_base = buff;
+			_message.msg_iov[0].iov_len = 28;
 
-		RTP_SEND_MESSAGE(_audioRTCPFd, _udpAudioRTCPClients, _message);
+			RTP_SEND_MESSAGE(_audioRTCPFd, _udpAudioRTCPClients, _message);
+		}
 	}
 	return true;
 }
@@ -403,18 +423,28 @@ bool OutboundConnectivity::CreateRTCPPacket(uint8_t *pDest, uint8_t *pSrc,
 	//4. ssrc
 	put_htonl(pDest + 4, ssrc); //SSRC
 
-	FINEST("-----%s-----", isAudio ? "AUDIO" : "VIDEO");
-
 	//5. setup the startup time
 	if (_startupTime == 0) {
 		GETCLOCKS(_startupTime);
 	}
-	FINEST("_startupTime: %.2f", _startupTime);
+
+	if (isAudio) {
+		if (_audioFirstRtp == 0) {
+			_audioFirstRtp = ntohlp(pSrc + 4);
+			return false;
+		}
+	} else {
+		if (_videoFirstRtp == 0) {
+			_videoFirstRtp = ntohlp(pSrc + 4);
+			return false;
+		}
+	}
+
+	uint32_t &firstRtp = isAudio ? _audioFirstRtp : _videoFirstRtp;
 
 	//6. Get the current time
 	double currentTime;
 	GETCLOCKS(currentTime);
-	FINEST("currentTime: %.2f", currentTime);
 
 	//7. NTP
 	uint64_t ntp;
@@ -422,22 +452,30 @@ bool OutboundConnectivity::CreateRTCPPacket(uint8_t *pDest, uint8_t *pSrc,
 	put_htonll(pDest + 8, ntp);
 
 	//6. RTP
-	//FINEST("rate: %d", rate);
-	double rtpDouble = ((currentTime - _startupTime) / (double) CLOCKS_PER_SEC) * rate;
-	//FINEST("rtpDouble: %.2f", rtpDouble);
-	uint32_t rtp = (uint32_t) rtpDouble;
-	//FINEST("rtp: %d", rtp);
-	//uint32_t packetRtp = ntohlp(pSrc + 4);
-	//FINEST("packetRtp: %d", packetRtp);
-	//FINEST("diff: %.0f", (double) packetRtp - (double) rtp);
+	double rtpDouble = ((currentTime - _startupTime) / (double) CLOCKS_PER_SECOND) * rate;
+	uint32_t rtp = (uint32_t) rtpDouble + firstRtp;
 	put_htonl(pDest + 16, rtp);
-	//memcpy(pDest + 16, pSrc + 4, 4);
 
 	//7. sender's packet count
 	put_htonl(pDest + 20, packetsCount);
 
 	//8. sender's octet count
 	put_htonl(pDest + 24, bytesCount);
+
+	FINEST("-----%s-----", isAudio ? "AUDIO" : "VIDEO");
+	FINEST("_startupTime: %.2f", _startupTime);
+	FINEST("currentTime: %.2f", currentTime);
+	FINEST("currentTime - _startupTime: %.2f (%.4f)",
+			currentTime - _startupTime,
+			(currentTime - _startupTime) / (double) CLOCKS_PER_SECOND);
+	FINEST("rate: %d", rate);
+	FINEST("rtpDouble: %.2f", rtpDouble);
+	FINEST("firstRtp: %d", firstRtp);
+	FINEST("rtp: %d", rtp);
+	uint32_t packetRtp = ntohlp(pSrc + 4);
+	FINEST("packetRtp: %d", packetRtp);
+	FINEST("diff: %d; (%.4f s)", packetRtp - rtp, ((double) packetRtp - rtp) / (double) rate);
+	FINEST("---------------");
 
 	return true;
 }

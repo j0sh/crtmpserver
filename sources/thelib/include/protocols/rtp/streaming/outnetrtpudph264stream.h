@@ -59,7 +59,10 @@ private:
 	bool FeedDataVideoFUA(uint8_t *pData, uint32_t dataLength,
 			uint32_t processedLength, uint32_t totalLength,
 			double absoluteTimestamp);
-	bool FeedDataAudioMPEG4Generic(uint8_t *pData, uint32_t dataLength,
+	bool FeedDataAudioMPEG4Generic_aggregate(uint8_t *pData, uint32_t dataLength,
+			uint32_t processedLength, uint32_t totalLength,
+			double absoluteTimestamp);
+	bool FeedDataAudioMPEG4Generic_one_by_one(uint8_t *pData, uint32_t dataLength,
 			uint32_t processedLength, uint32_t totalLength,
 			double absoluteTimestamp);
 };

@@ -38,6 +38,7 @@
           <itemPath>../../../../sources/applications/applestreamingclient/include/protocols/rtp/rtspappprotocolhandler.h</itemPath>
         </logicalFolder>
         <logicalFolder name="timer" displayName="timer" projectFiles="true">
+          <itemPath>../../../../sources/applications/applestreamingclient/include/protocols/timer/finetimer.h</itemPath>
           <itemPath>../../../../sources/applications/applestreamingclient/include/protocols/timer/scheduletimerprotocol.h</itemPath>
         </logicalFolder>
         <logicalFolder name="ts" displayName="ts" projectFiles="true">
@@ -94,6 +95,7 @@
           <itemPath>../../../../sources/applications/applestreamingclient/src/protocols/rtp/rtspappprotocolhandler.cpp</itemPath>
         </logicalFolder>
         <logicalFolder name="timer" displayName="timer" projectFiles="true">
+          <itemPath>../../../../sources/applications/applestreamingclient/src/protocols/timer/finetimer.cpp</itemPath>
           <itemPath>../../../../sources/applications/applestreamingclient/src/protocols/timer/scheduletimerprotocol.cpp</itemPath>
         </logicalFolder>
         <logicalFolder name="ts" displayName="ts" projectFiles="true">
@@ -152,6 +154,7 @@
             <Elem>HAS_PROTOCOL_TS</Elem>
             <Elem>HAS_PROTOCOL_VAR</Elem>
             <Elem>ANDROID</Elem>
+            <Elem>HAS_MS_TIMER</Elem>
           </preprocessorList>
         </ccTool>
         <linkerTool>

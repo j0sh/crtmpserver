@@ -50,9 +50,10 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/1372129895/inboundkeyprotocol.o \
 	${OBJECTDIR}/_ext/693221815/protocolfactory.o \
 	${OBJECTDIR}/_ext/693221815/genericprotocol.o \
-	${OBJECTDIR}/_ext/1568282619/tsappprotocolhandler.o \
 	${OBJECTDIR}/_ext/441423101/clientcontext.o \
+	${OBJECTDIR}/_ext/1568282619/tsappprotocolhandler.o \
 	${OBJECTDIR}/_ext/1147538975/httpbuffappprotocolhandler.o \
+	${OBJECTDIR}/_ext/53446657/finetimer.o \
 	${OBJECTDIR}/_ext/413657679/childm3u8protocol.o \
 	${OBJECTDIR}/_ext/1372139511/aesappprotocolhandler.o \
 	${OBJECTDIR}/_ext/61573733/rtmpeventsink.o \
@@ -174,20 +175,25 @@ ${OBJECTDIR}/_ext/693221815/genericprotocol.o: ../../../../sources/applications/
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_VAR -DANDROID -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/applestreamingclient/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/693221815/genericprotocol.o ../../../../sources/applications/applestreamingclient/src/protocols/genericprotocol.cpp
 
-${OBJECTDIR}/_ext/1568282619/tsappprotocolhandler.o: ../../../../sources/applications/applestreamingclient/src/protocols/ts/tsappprotocolhandler.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/1568282619
-	${RM} $@.d
-	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_VAR -DANDROID -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/applestreamingclient/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1568282619/tsappprotocolhandler.o ../../../../sources/applications/applestreamingclient/src/protocols/ts/tsappprotocolhandler.cpp
-
 ${OBJECTDIR}/_ext/441423101/clientcontext.o: ../../../../sources/applications/applestreamingclient/src/clientcontext.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/441423101
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_VAR -DANDROID -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/applestreamingclient/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/441423101/clientcontext.o ../../../../sources/applications/applestreamingclient/src/clientcontext.cpp
 
+${OBJECTDIR}/_ext/1568282619/tsappprotocolhandler.o: ../../../../sources/applications/applestreamingclient/src/protocols/ts/tsappprotocolhandler.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1568282619
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_VAR -DANDROID -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/applestreamingclient/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1568282619/tsappprotocolhandler.o ../../../../sources/applications/applestreamingclient/src/protocols/ts/tsappprotocolhandler.cpp
+
 ${OBJECTDIR}/_ext/1147538975/httpbuffappprotocolhandler.o: ../../../../sources/applications/applestreamingclient/src/protocols/httpbuff/httpbuffappprotocolhandler.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1147538975
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_VAR -DANDROID -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/applestreamingclient/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1147538975/httpbuffappprotocolhandler.o ../../../../sources/applications/applestreamingclient/src/protocols/httpbuff/httpbuffappprotocolhandler.cpp
+
+${OBJECTDIR}/_ext/53446657/finetimer.o: ../../../../sources/applications/applestreamingclient/src/protocols/timer/finetimer.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/53446657
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_VAR -DANDROID -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/applestreamingclient/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/53446657/finetimer.o ../../../../sources/applications/applestreamingclient/src/protocols/timer/finetimer.cpp
 
 ${OBJECTDIR}/_ext/413657679/childm3u8protocol.o: ../../../../sources/applications/applestreamingclient/src/protocols/m3u8/childm3u8protocol.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/413657679
