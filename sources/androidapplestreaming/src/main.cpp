@@ -135,9 +135,13 @@ void testContexts() {
 //#define MY_KEY "kL8KOUYTmywS7SiCmJmAvJjH51E="
 //#define MY_SESSION_ID "playback=HTTP_CLOUD_MOBILE&contentId=11090061&appAccountName=mlb&eventId=14-265698-2010-08-25&ipid=11627706&sessionKey=Pff4k8IQCTNjs46Plh6%2BBOvMEBw%3D&deviceId=ANDROID_A0000022419B22&country=us&postalCode=10011&platform=ANDROID"
 
-#define MY_URL "http://localhost/~shiretu/ts10/200/prog_index.m3u8"
-#define MY_KEY ""
-#define MY_SESSION_ID ""
+//#define MY_URL "http://localhost/~shiretu/ts10/200/prog_index.m3u8"
+//#define MY_KEY ""
+//#define MY_SESSION_ID ""
+
+#define MY_URL "http://mlblive-akc.mlb.com/mlbam/2010/08/26/MLB_GAME_VIDEO_ARISDN_HOME_20100826/master_mobile.m3u8"
+#define MY_KEY "Ey5xHlceWWeYwHOlMRuYMm/DZqE="
+#define MY_SESSION_ID "playback=HTTP_CLOUD_MOBILE&contentId=11131241&appAccountName=mlb&eventId=14-265710-2010-08-26&ipid=11627706&sessionKey=8EcVAKWRJQVyLjuxvLCJXgz6aSI%3D&deviceId=ANDROID_null&country=us&postalCode=10011&platform=ANDROID"
 
 //#define CONDENSED_CONN_STRING "base64:aHR0cDovL21sYnZvZC1ha2MubWxiLmNvbS9tbGJhbS8yMDEwLzA0LzA4L01MQl9HQU1FX1ZJREVPX0xBTlBJVF9IT01FXzIwMTAwNDA4L21hc3Rlcl93aXJlZC5tM3U4fHlNQmVFcEl6OEJEaUFYV0k0dUdIUm1UaHdIRT18cGxheWJhY2s9SFRUUF9DTE9VRF9XSVJFRCZjb250ZW50SWQ9NzMyMDA4NSZhcHBBY2NvdW50TmFtZT1tbGImZXZlbnRJZD0xNC0yNjM4NDktMjAxMC0wNC0wOCZpcGlkPTExNjI3NzA2JnNlc3Npb25LZXk9cUNveGRIaUlOY3FDbHlEcEZoU2dma3dJSWc0JTNE"
 //#define CONDENSED_CONN_STRING "aHR0cDovL21sYnZvZC1ha2MubWxiLmNvbS9tbGJhbS8yMDEwLzA0LzA4L01MQl9HQU1FX1ZJREVPX0xBTlBJVF9IT01FXzIwMTAwNDA4L21hc3Rlcl93aXJlZC5tM3U4fGJsOEQyRUFTRUY4V1VyeloreTNvME5pUXlBaz18cGxheWJhY2s9SFRUUF9DTE9VRF9XSVJFRCZjb250ZW50SWQ9NzMyMDA4NSZhcHBBY2NvdW50TmFtZT1tbGImZXZlbnRJZD0xNC0yNjM4NDktMjAxMC0wNC0wOCZpcGlkPTExNjI3NzA2JnNlc3Npb25LZXk9R0JuY1BzeFJCVjAySUM5bjgwUlAxU2RyOWV3JTNE"
@@ -147,7 +151,7 @@ void testCommands() {
 	FINEST("result:\n%s", STR(result.ToString()));
 
 	uint32_t contextId = (uint32_t) ASC_RES_PARAM(result, "contextId");
-	result = CommandSetBitrates(contextId, " []");
+	result = CommandSetBitrates(contextId, " [800000]");
 	FINEST("result:\n%s", STR(result.ToString()));
 
 	result = CommandPlay(contextId, MY_URL, MY_SESSION_ID, MY_KEY);

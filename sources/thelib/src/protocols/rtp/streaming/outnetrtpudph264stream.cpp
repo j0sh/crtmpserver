@@ -227,7 +227,7 @@ bool OutNetRTPUDPH264Stream::FeedDataVideoFUA(uint8_t *pData, uint32_t dataLengt
 
 		//3. Timestamp
 		put_htonl(((uint8_t *) _videoData.msg_iov[0].iov_base) + 4,
-				(uint32_t) (absoluteTimestamp * 90.0));
+				BaseConnectivity::ToRTPTS(absoluteTimestamp, 90000));
 
 		if (chunkSize == totalLength) {
 			//4. No chunking
@@ -315,8 +315,8 @@ bool OutNetRTPUDPH264Stream::FeedDataAudioMPEG4Generic_aggregate(uint8_t *pData,
 
 		//4. Timestamp
 		put_htonl(((uint8_t *) _audioData.msg_iov[0].iov_base) + 4,
-				(uint32_t) (absoluteTimestamp
-				* (double) GetCapabilities()->audioCodecInfo.aac.sampleRate / 1000.000));
+				BaseConnectivity::ToRTPTS(absoluteTimestamp,
+				GetCapabilities()->audioCodecInfo.aac.sampleRate));
 
 		//6. put the actual buffer
 		_audioData.msg_iov[2].iov_len = GETAVAILABLEBYTESCOUNT(_audioBuffer);

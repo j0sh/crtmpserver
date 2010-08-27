@@ -69,6 +69,7 @@ private:
 	uint32_t _streamId;
 	StreamsManager *_pStreamsManager;
 	double _lastWallClock;
+	double _firstFeedTime;
 	map<uint32_t, uint32_t> _allowedBitrates;
 private:
 	ClientContext();

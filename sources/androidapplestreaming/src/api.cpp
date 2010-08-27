@@ -138,6 +138,7 @@ void EnvRun(string ip, uint16_t port)
 		ASSERT("Unable to fire up acceptor");
 	}
 
+#ifdef HAS_PROTOCOL_RTMP
 	//9. Create the RTMP acceptor
 	acceptorConfig[CONF_PORT] = (uint16_t) (1935);
 	acceptorConfig[CONF_PROTOCOL] = CONF_PROTOCOL_INBOUND_RTMP;
@@ -150,6 +151,7 @@ void EnvRun(string ip, uint16_t port)
 	if (!pAcceptor->StartAccept(pApp)) {
 		ASSERT("Unable to fire up acceptor");
 	}
+#endif /* HAS_PROTOCOL_RTMP */
 
 	//10. Create the timer UDP protocol
 #ifdef HAS_MS_TIMER

@@ -55,6 +55,7 @@ ClientContext::ClientContext() {
 	_pStreamsManager = NULL;
 	_lastWallClock = 0;
 	_avData.EnsureSize(_maxAVBufferSize * 3);
+	_firstFeedTime = 0;
 	INFO("Context created: %d (%p)", _id, this);
 }
 
@@ -322,7 +323,11 @@ bool ClientContext::FetchChildPlaylist(string uri, uint32_t bw) {
 bool ClientContext::ConsumeAVBuffer() {
 	//1. initialize _lastFeedTime
 	if (_lastWallClock == 0) {
+#ifdef HAS_MS_TIMER
+		GETCLOCKS(_lastWallClock);
+#else
 		_lastWallClock = time(NULL)*1000.0;
+#endif /* HAS_MS_TIMER */
 		return true;
 	}
 
@@ -384,12 +389,22 @@ bool ClientContext::ConsumeAVBuffer() {
 	}
 
 	//5. How much seconds do we have to feed?
+#ifdef HAS_MS_TIMER
+	double currentTime;
+	GETCLOCKS(currentTime);
+	double wallClockDelta = ((currentTime - _lastWallClock) / (double) CLOCKS_PER_SECOND)*1000.00;
+#else
 	double wallClockDelta = time(NULL)*1000.00 - _lastWallClock;
+#endif /* HAS_MS_TIMER */
+
+	if (_firstFeedTime == 0) {
+		_firstFeedTime = pStream->GetFeedTime();
+	}
 
 	//6. Feed
 	//	FINEST("BEFORE: wallClockDelta: %.2f; GetFeedTime: %.2f",
 	//			wallClockDelta, pStream->GetFeedTime());
-	while ((wallClockDelta > (pStream->GetFeedTime())) &&
+	while ((wallClockDelta + 1000 > (pStream->GetFeedTime() - _firstFeedTime)) &&
 			(GETAVAILABLEBYTESCOUNT(_avData) > 8192)) {
 		if (!pTS->SignalInputData(_avData)) {
 			FATAL("Unable to feed TS protocol");

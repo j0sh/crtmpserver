@@ -528,10 +528,7 @@ bool OutboundConnectivity::CreateRTCPPacket_live555style(uint8_t *pDest, uint8_t
 	put_htonl(pDest + 12, (uint32_t) fractionalPart);
 
 	//6. RTP
-	uint32_t timestampIncrement = (rate * timeNow.tv_sec);
-	timestampIncrement += (uint32_t) ((2.0 * rate * timeNow.tv_usec + 1000000.0) / 2000000);
-	uint32_t rtpTimestamp = 0 + timestampIncrement;
-	put_htonl(pDest + 16, rtpTimestamp);
+	put_htonl(pDest + 16, ToRTPTS(timeNow, rate));
 
 	//7. sender's packet count
 	put_htonl(pDest + 20, packetsCount);

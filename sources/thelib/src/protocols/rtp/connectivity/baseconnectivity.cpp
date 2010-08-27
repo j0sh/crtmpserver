@@ -20,10 +20,34 @@
 #ifdef HAS_PROTOCOL_RTP
 #include "protocols/rtp/connectivity/baseconnectivity.h"
 
+//#define LIVE555WAY
+
 BaseConnectivity::BaseConnectivity() {
 
 }
 
 BaseConnectivity::~BaseConnectivity() {
 }
+
+uint32_t BaseConnectivity::ToRTPTS(struct timeval &tv, uint32_t rate) {
+#ifdef LIVE555WAY
+	u_int32_t timestampIncrement = (rate * tv.tv_sec);
+	timestampIncrement += (u_int32_t) ((2.0 * rate * tv.tv_usec + 1000000.0) / 2000000);
+	return timestampIncrement;
+#else
+	return (uint32_t) ((((double) tv.tv_sec * 1000000.00 + (double) tv.tv_usec) / 1000000.00)*(double) rate);
+#endif
+}
+
+uint32_t BaseConnectivity::ToRTPTS(double milliseconds, uint32_t rate) {
+#ifdef LIVE555WAY
+	struct timeval tv;
+	tv.tv_sec = (milliseconds / 1000.00);
+	tv.tv_usec = (((uint32_t) milliseconds) % 1000)*1000;
+	return ToRTPTS(tv, rate);
+#else
+	return (uint32_t) ((milliseconds / 1000.00)*(double) rate);
+#endif
+}
+
 #endif /* HAS_PROTOCOL_RTP */
