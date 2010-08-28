@@ -24,7 +24,6 @@
 
 int main(int argc, char **argv) {
 	TS_PRINT("Begin tests...\n");
-	printf("sizeof(Variant): %lu\n",sizeof(Variant));
 	EXECUTE_SUITE(CommonTestsSuite);
 	EXECUTE_SUITE(VariantTestsSuite);
 	EXECUTE_SUITE(TheLibTestsSuite);
