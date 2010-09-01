@@ -508,6 +508,8 @@
             <Elem>HAS_MEDIA_MP4</Elem>
             <Elem>HAS_MEDIA_MP3</Elem>
             <Elem>HAS_MEDIA_FLV</Elem>
+            <Elem>CreateRTCPPacket=CreateRTCPPacket_none</Elem>
+            <Elem>FeedDataAudioMPEG4Generic=FeedDataAudioMPEG4Generic_one_by_one</Elem>
           </preprocessorList>
         </ccTool>
         <linkerTool>
