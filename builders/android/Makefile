@@ -123,7 +123,10 @@ FEATURES_DEFINES=-DHAS_PROTOCOL_HTTP \
 	-DHAS_PROTOCOL_RTP \
 	-DHAS_PROTOCOL_TS \
 	-DHAS_PROTOCOL_VAR \
-	-DHAS_LUA 
+	-DHAS_LUA \
+	-DCreateRTCPPacket=CreateRTCPPacket_mystyle_only_once \
+	-DFeedDataAudioMPEG4Generic=FeedDataAudioMPEG4Generic_one_by_one
+
 DEFINES=$(PLATFORM_DEFINES) $(FEATURES_DEFINES)
 
 define BUILD_C_LIB_template
