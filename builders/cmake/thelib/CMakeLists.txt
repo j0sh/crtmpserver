@@ -4,6 +4,9 @@ PROJECT(thelib)
 #make the list with all the source files
 FILE(GLOB_RECURSE SOURCES "../../../sources/thelib/src/*.cpp" )
 
+ADD_DEFINITIONS(-DCreateRTCPPacket=CreateRTCPPacket_mystyle)
+ADD_DEFINITIONS(-DFeedDataAudioMPEG4Generic=FeedDataAudioMPEG4Generic_one_by_one)
+
 #prepare the include directories
 INCLUDE_DIRECTORIES(
 	${OPENSSL_INCLUDE_PATH}
