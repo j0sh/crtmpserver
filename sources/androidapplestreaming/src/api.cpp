@@ -61,6 +61,9 @@ void EnvRun(string ip, uint16_t port)
 	Logger::AddLogLocation(pLogLocation);
 #endif /* ANDROID */
 
+	//1.1 Create the settings string
+	INFO("Build signature:\n%s", BUILD_SIGNATURE);
+
 	//2. Create the default protocol factory
 	DefaultProtocolFactory *pFactory = new DefaultProtocolFactory();
 	if (!ProtocolFactoryManager::RegisterProtocolFactory(pFactory)) {
@@ -91,10 +94,12 @@ void EnvRun(string ip, uint16_t port)
 		ASSERT("Unable to initialize the application");
 	}
 
+#ifdef BUILD_SIGNATURE
 	//6. Register it to the app manager
 	if (!ClientApplicationManager::RegisterApplication(pApp)) {
 		ASSERT("Unable to register application");
 	}
+#endif /* BUILD_SIGNATURE */
 
 	//7. Create the RTSP acceptor
 	Variant acceptorConfig;

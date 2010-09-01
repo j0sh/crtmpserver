@@ -77,9 +77,6 @@ do { \
 } \
 while (0)
 
-#define CreateRTCPPacket CreateRTCPPacket_mystyle
-//#define CreateRTCPPacket CreateRTCPPacket_live555style
-
 OutboundConnectivity::OutboundConnectivity()
 : BaseConnectivity() {
 	_nextRTCPIncrement = 1000.00;
@@ -392,7 +389,7 @@ bool OutboundConnectivity::FeedAudioDataTCP(msghdr &message) {
 bool OutboundConnectivity::CreateRTCPPacket_mystyle(uint8_t *pDest, uint8_t *pSrc,
 		uint32_t ssrc, uint32_t rate, uint32_t packetsCount, uint32_t bytesCount,
 		bool isAudio) {
-
+	
 	/*
 	 0                   1                   2                   3
 	 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
@@ -538,5 +535,9 @@ bool OutboundConnectivity::CreateRTCPPacket_live555style(uint8_t *pDest, uint8_t
 
 	return true;
 }
-
+bool OutboundConnectivity::CreateRTCPPacket_none(uint8_t *pDest, uint8_t *pSrc,
+			uint32_t ssrc, uint32_t rate, uint32_t packetsCount,
+			uint32_t bytesCount, bool isAudio){
+	return false;
+}
 #endif /* HAS_PROTOCOL_RTP */

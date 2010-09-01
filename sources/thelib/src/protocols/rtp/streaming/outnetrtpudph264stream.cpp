@@ -146,8 +146,6 @@ bool OutNetRTPUDPH264Stream::FeedDataVideo(uint8_t *pData, uint32_t dataLength,
 bool OutNetRTPUDPH264Stream::FeedDataAudio(uint8_t *pData, uint32_t dataLength,
 		uint32_t processedLength, uint32_t totalLength,
 		double absoluteTimestamp, bool isAudio) {
-	//#define FeedDataAudioMPEG4Generic FeedDataAudioMPEG4Generic_one_by_one
-#define FeedDataAudioMPEG4Generic FeedDataAudioMPEG4Generic_aggregate
 	return FeedDataAudioMPEG4Generic(pData, dataLength, processedLength, totalLength,
 			absoluteTimestamp);
 }

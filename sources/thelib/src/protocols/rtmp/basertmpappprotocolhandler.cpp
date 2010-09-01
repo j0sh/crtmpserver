@@ -254,6 +254,7 @@ bool BaseRTMPAppProtocolHandler::ProcessUsrCtrl(BaseRTMPProtocol *pFrom,
 		case RM_USRCTRL_TYPE_STREAM_IS_RECORDED:
 		case RM_USRCTRL_TYPE_UNKNOWN1:
 		case RM_USRCTRL_TYPE_UNKNOWN2:
+		case RM_USRCTRL_TYPE_PING_RESPONSE:
 		{
 			WARN("User control message type: %s", STR(M_USRCTRL_TYPE_STRING(request)));
 			return true;

@@ -635,8 +635,7 @@ string BaseRTSPAppProtocolHandler::GetAudioTrack(RTSPProtocol *pFrom,
 		FINEST("result: %s", STR(result));
 		result += "a=control:trackID="
 				+ (string) pFrom->GetCustomParameters()["audioTrackId"] + "\r\n";
-		result += "a=fmtp:96 profile-level-id=15;mode=AAC-hbr;sizelength=13;indexlength=3;indexdeltalength=3;config=";
-		result += format("%02x%02x\r\n",
+		result += format("a=fmtp:96 streamtype=5; profile-level-id=15; mode=AAC-hbr; config=%02x%02x; SizeLength=13; IndexLength=3; IndexDeltaLength=3; Profile=1;\r\n",
 				pCapabilities->audioCodecInfo.aac.pAAC[2],
 				pCapabilities->audioCodecInfo.aac.pAAC[3]);
 		//ASSERT("result:\n`%s`", STR(result));

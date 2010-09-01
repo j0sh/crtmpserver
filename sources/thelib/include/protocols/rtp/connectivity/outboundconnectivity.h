@@ -95,6 +95,9 @@ private:
 	bool CreateRTCPPacket_live555style(uint8_t *pDest, uint8_t *pSrc,
 			uint32_t ssrc, uint32_t rate, uint32_t packetsCount,
 			uint32_t bytesCount, bool isAudio);
+	bool CreateRTCPPacket_none(uint8_t *pDest, uint8_t *pSrc,
+			uint32_t ssrc, uint32_t rate, uint32_t packetsCount,
+			uint32_t bytesCount, bool isAudio);
 };
 
 
