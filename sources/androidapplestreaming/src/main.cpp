@@ -90,22 +90,25 @@ void testContexts() {
 //#define MY_KEY ""
 //#define MY_SESSION_ID ""
 
+#define MY_URL "http://localhost/~shiretu/ts6_raw/master.m3u8"
+#define MY_KEY ""
+#define MY_SESSION_ID ""
 
 void testCommands() {
 	Variant result = ContextCreate();
 	FINEST("result:\n%s", STR(result.ToString()));
 
 	uint32_t contextId = (uint32_t) ASC_RES_PARAM(result, "contextId");
-	result = CommandSetBitrates(contextId, "[800000]");
+	result = CommandSetBitrates(contextId, "[850000]");
 	FINEST("result:\n%s", STR(result.ToString()));
 
-	//result = CommandPlay(contextId, MY_URL, MY_SESSION_ID, MY_KEY);
-	//FINEST("result:\n%s", STR(result.ToString()));
-
-	result = CommandPlay(contextId,
-		"aHR0cDovL21sYmxpdmUtYWtjLm1sYi5jb20vbWxiYW0vMjAxMC8wOC8yOC9NTEJfR0FNRV9WSURFT19LQ0FDTEVfSE9NRV8yMDEwMDgyOC9tYXN0ZXJfbW9iaWxlLm0zdTh8R3ZjbFJoV2lOMHlyZWcvL3NUeXJBNDJ4VXkwPXxwbGF5YmFjaz1IVFRQX0NMT1VEX01PQklMRSZjb250ZW50SWQ9MTEyNzU3MDkmYXBwQWNjb3VudE5hbWU9bWxiJmV2ZW50SWQ9MTQtMjY1NzQwLTIwMTAtMDgtMjgmaXBpZD0xMTYyNzcwNiZzZXNzaW9uS2V5PUFlMHNDUUFNUjJ2ZzQ2dUduT28xJTJGbVVYbjdFJTNEJmRldmljZUlkPUFORFJPSURfQTEwMDAwMTM3NTY2MDUmY291bnRyeT1ybyZwb3N0YWxDb2RlPTAwMDAwJnBsYXRmb3JtPUFORFJPSUQ="
-		);
+	result = CommandPlay(contextId, MY_URL, MY_SESSION_ID, MY_KEY);
 	FINEST("result:\n%s", STR(result.ToString()));
+
+	//	result = CommandPlay(contextId,
+	//			"aHR0cDovL21sYmxpdmUtYWtjLm1sYi5jb20vbWxiYW0vMjAxMC8wOC8yOC9NTEJfR0FNRV9WSURFT19LQ0FDTEVfSE9NRV8yMDEwMDgyOC9tYXN0ZXJfbW9iaWxlLm0zdTh8R3ZjbFJoV2lOMHlyZWcvL3NUeXJBNDJ4VXkwPXxwbGF5YmFjaz1IVFRQX0NMT1VEX01PQklMRSZjb250ZW50SWQ9MTEyNzU3MDkmYXBwQWNjb3VudE5hbWU9bWxiJmV2ZW50SWQ9MTQtMjY1NzQwLTIwMTAtMDgtMjgmaXBpZD0xMTYyNzcwNiZzZXNzaW9uS2V5PUFlMHNDUUFNUjJ2ZzQ2dUduT28xJTJGbVVYbjdFJTNEJmRldmljZUlkPUFORFJPSURfQTEwMDAwMTM3NTY2MDUmY291bnRyeT1ybyZwb3N0YWxDb2RlPTAwMDAwJnBsYXRmb3JtPUFORFJPSUQ="
+	//			);
+	//	FINEST("result:\n%s", STR(result.ToString()));
 
 	//	sleep(30);
 	//
