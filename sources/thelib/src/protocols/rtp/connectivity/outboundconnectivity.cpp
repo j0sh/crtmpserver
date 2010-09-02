@@ -79,8 +79,6 @@ while (0)
 
 OutboundConnectivity::OutboundConnectivity()
 : BaseConnectivity() {
-	_nextRTCPIncrement = 1000.00;
-
 	_videoDataFd = -1;
 	_videoDataPort = 0;
 	_videoRTCPFd = -1;
@@ -88,7 +86,8 @@ OutboundConnectivity::OutboundConnectivity()
 	_videoPacketsCount = 0;
 	_videoBytesCount = 0;
 	_videoFirstRtp = 0;
-	_videoNextRTCPTs = _nextRTCPIncrement;
+	_videoRtpTs = 0;
+	_videoRtcpSent = false;
 
 	_audioDataFd = -1;
 	_audioDataPort = 0;
@@ -97,7 +96,8 @@ OutboundConnectivity::OutboundConnectivity()
 	_audioPacketsCount = 0;
 	_audioBytesCount = 0;
 	_audioFirstRtp = 0;
-	_audioNextRTCPTs = _nextRTCPIncrement;
+	_videoRtpTs = 0;
+	_audioRtcpSent = false;
 
 	_pOutStream = NULL;
 	memset(&_message, 0, sizeof (_message));
@@ -150,6 +150,22 @@ uint32_t OutboundConnectivity::GetSSRC() {
 	if (_pOutStream != NULL)
 		return _pOutStream->SSRC();
 	return 0;
+}
+
+uint16_t OutboundConnectivity::GetLastVideoSequence() {
+	return _pOutStream->VideoCounter();
+}
+
+uint32_t OutboundConnectivity::GetLastVideoRTPTimestamp() {
+	return _videoRtpTs;
+}
+
+uint16_t OutboundConnectivity::GetLastAudioSequence() {
+	return _pOutStream->AudioCounter();
+}
+
+uint32_t OutboundConnectivity::GetLastAudioRTPTimestamp() {
+	return _audioRtpTs;
 }
 
 void OutboundConnectivity::RegisterUDPVideoClient(uint32_t protocolId,
@@ -230,6 +246,7 @@ bool OutboundConnectivity::FeedAudioData(uint8_t *pBuffer, uint32_t length) {
 }
 
 bool OutboundConnectivity::FeedVideoData(msghdr &message) {
+	_videoRtpTs = ntohlp(((uint8_t *) message.msg_iov[0].iov_base) + 4);
 	if (!FeedVideoDataUDP(message)) {
 		FATAL("Unable to feed video UDP clients");
 		return false;
@@ -243,6 +260,7 @@ bool OutboundConnectivity::FeedVideoData(msghdr &message) {
 }
 
 bool OutboundConnectivity::FeedAudioData(msghdr &message) {
+	_audioRtpTs = ntohlp(((uint8_t *) message.msg_iov[0].iov_base) + 4);
 	if (!FeedAudioDataUDP(message)) {
 		FATAL("Unable to feed audio UDP clients");
 		return false;
@@ -389,7 +407,7 @@ bool OutboundConnectivity::FeedAudioDataTCP(msghdr &message) {
 bool OutboundConnectivity::CreateRTCPPacket_mystyle(uint8_t *pDest, uint8_t *pSrc,
 		uint32_t ssrc, uint32_t rate, uint32_t packetsCount, uint32_t bytesCount,
 		bool isAudio) {
-	
+
 	/*
 	 0                   1                   2                   3
 	 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
@@ -480,6 +498,18 @@ bool OutboundConnectivity::CreateRTCPPacket_mystyle(uint8_t *pDest, uint8_t *pSr
 	return true;
 }
 
+bool OutboundConnectivity::CreateRTCPPacket_mystyle_only_once(uint8_t *pDest, uint8_t *pSrc,
+		uint32_t ssrc, uint32_t rate, uint32_t packetsCount,
+		uint32_t bytesCount, bool isAudio) {
+	bool &rtcpSent = isAudio ? _audioRtcpSent : _videoRtcpSent;
+	if (rtcpSent)
+		return false;
+
+	rtcpSent = CreateRTCPPacket_mystyle(pDest, pSrc, ssrc, rate, packetsCount,
+			bytesCount, isAudio);
+	return rtcpSent;
+}
+
 bool OutboundConnectivity::CreateRTCPPacket_live555style(uint8_t *pDest, uint8_t *pSrc,
 		uint32_t ssrc, uint32_t rate, uint32_t packetsCount, uint32_t bytesCount,
 		bool isAudio) {
@@ -535,9 +565,10 @@ bool OutboundConnectivity::CreateRTCPPacket_live555style(uint8_t *pDest, uint8_t
 
 	return true;
 }
+
 bool OutboundConnectivity::CreateRTCPPacket_none(uint8_t *pDest, uint8_t *pSrc,
-			uint32_t ssrc, uint32_t rate, uint32_t packetsCount,
-			uint32_t bytesCount, bool isAudio){
+		uint32_t ssrc, uint32_t rate, uint32_t packetsCount,
+		uint32_t bytesCount, bool isAudio) {
 	return false;
 }
 #endif /* HAS_PROTOCOL_RTP */

@@ -35,9 +35,10 @@ private:
 	uint32_t _videoPacketsCount;
 	uint32_t _videoBytesCount;
 	uint32_t _videoFirstRtp;
-	double _videoNextRTCPTs;
+	uint32_t _videoRtpTs;
 	map<uint32_t, sockaddr_in> _udpVideoDataClients;
 	map<uint32_t, sockaddr_in> _udpVideoRTCPClients;
+	bool _videoRtcpSent;
 
 	int32_t _audioDataFd;
 	uint16_t _audioDataPort;
@@ -46,15 +47,15 @@ private:
 	uint32_t _audioPacketsCount;
 	uint32_t _audioBytesCount;
 	uint32_t _audioFirstRtp;
-	double _audioNextRTCPTs;
+	uint32_t _audioRtpTs;
 	map<uint32_t, sockaddr_in> _udpAudioDataClients;
 	map<uint32_t, sockaddr_in> _udpAudioRTCPClients;
+	bool _audioRtcpSent;
 
 	map<uint32_t, uint32_t> _tcpClients;
 	BaseOutNetRTPUDPStream *_pOutStream;
 	msghdr _message;
 	double _startupTime;
-	double _nextRTCPIncrement;
 public:
 	OutboundConnectivity();
 	virtual ~OutboundConnectivity();
@@ -67,6 +68,10 @@ public:
 	string GetVideoServerPorts();
 	string GetAudioServerPorts();
 	uint32_t GetSSRC();
+	uint16_t GetLastVideoSequence();
+	uint32_t GetLastVideoRTPTimestamp();
+	uint16_t GetLastAudioSequence();
+	uint32_t GetLastAudioRTPTimestamp();
 
 	void RegisterUDPVideoClient(uint32_t protocolId, sockaddr_in &data,
 			sockaddr_in &rtcp);
@@ -90,6 +95,9 @@ private:
 	bool FeedAudioDataUDP(msghdr &message);
 	bool FeedAudioDataTCP(msghdr &message);
 	bool CreateRTCPPacket_mystyle(uint8_t *pDest, uint8_t *pSrc,
+			uint32_t ssrc, uint32_t rate, uint32_t packetsCount,
+			uint32_t bytesCount, bool isAudio);
+	bool CreateRTCPPacket_mystyle_only_once(uint8_t *pDest, uint8_t *pSrc,
 			uint32_t ssrc, uint32_t rate, uint32_t packetsCount,
 			uint32_t bytesCount, bool isAudio);
 	bool CreateRTCPPacket_live555style(uint8_t *pDest, uint8_t *pSrc,

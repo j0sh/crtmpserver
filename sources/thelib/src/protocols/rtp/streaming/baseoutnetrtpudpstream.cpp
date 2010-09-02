@@ -31,6 +31,8 @@ BaseOutNetRTPUDPStream::BaseOutNetRTPUDPStream(BaseProtocol *pProtocol,
 	_ssrc = 12;
 	srand((uint32_t) time(NULL));
 	_pConnectivity = NULL;
+	_videoCounter = rand();
+	_audioCounter = rand();
 }
 
 BaseOutNetRTPUDPStream::~BaseOutNetRTPUDPStream() {
@@ -46,6 +48,14 @@ void BaseOutNetRTPUDPStream::SetConnectivity(OutboundConnectivity *pConnectivity
 
 uint32_t BaseOutNetRTPUDPStream::SSRC() {
 	return _ssrc;
+}
+
+uint16_t BaseOutNetRTPUDPStream::VideoCounter() {
+	return _videoCounter;
+}
+
+uint16_t BaseOutNetRTPUDPStream::AudioCounter() {
+	return _audioCounter;
 }
 
 bool BaseOutNetRTPUDPStream::SignalPlay(double &absoluteTimestamp, double &length) {

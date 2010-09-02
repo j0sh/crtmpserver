@@ -31,6 +31,8 @@ class DLLEXP BaseOutNetRTPUDPStream
 protected:
 	uint32_t _ssrc;
 	OutboundConnectivity *_pConnectivity;
+	uint16_t _videoCounter;
+	uint16_t _audioCounter;
 public:
 	BaseOutNetRTPUDPStream(BaseProtocol *pProtocol,
 			StreamsManager *pStreamsManager, string name);
@@ -40,6 +42,8 @@ public:
 	void SetConnectivity(OutboundConnectivity *pConnectivity);
 
 	uint32_t SSRC();
+	uint16_t VideoCounter();
+	uint16_t AudioCounter();
 
 	virtual bool SignalPlay(double &absoluteTimestamp, double &length);
 	virtual bool SignalPause();

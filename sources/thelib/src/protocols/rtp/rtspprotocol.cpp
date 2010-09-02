@@ -312,6 +312,7 @@ bool RTSPProtocol::SendMessage(Variant &headers, string &content) {
 	//1. Add info about us
 	headers[RTSP_HEADERS][RTSP_HEADERS_SERVER] = RTSP_HEADERS_SERVER_US;
 	headers[RTSP_HEADERS][RTSP_HEADERS_X_POWERED_BY] = RTSP_HEADERS_X_POWERED_BY_US;
+	headers[RTSP_HEADERS]["Buffersize"] = "1000000";
 
 	//2. Add the content length if required
 	if (content.size() > 0) {
@@ -329,8 +330,8 @@ bool RTSPProtocol::SendMessage(Variant &headers, string &content) {
 	_outputBuffer.ReadFromString(content);
 
 
-	//	string aaa = string((char *) GETIBPOINTER(_outputBuffer), GETAVAILABLEBYTESCOUNT(_outputBuffer));
-	//	FINEST("\n`%s`", STR(aaa));
+	string aaa = string((char *) GETIBPOINTER(_outputBuffer), GETAVAILABLEBYTESCOUNT(_outputBuffer));
+	FINEST("\n`%s`", STR(aaa));
 
 	//5. Enqueue for outbound
 	return EnqueueForOutbound();

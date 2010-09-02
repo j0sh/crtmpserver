@@ -32,7 +32,8 @@ MODULES_DEFINES += -DHAS_PROTOCOL_VAR
 
 
 #RTSP related defines
-CreateRTCPPacket=CreateRTCPPacket_mystyle
+#CreateRTCPPacket=CreateRTCPPacket_mystyle
+CreateRTCPPacket=CreateRTCPPacket_mystyle_only_once
 #CreateRTCPPacket=CreateRTCPPacket_live555style
 #CreateRTCPPacket=CreateRTCPPacket_none
 FeedDataAudioMPEG4Generic=FeedDataAudioMPEG4Generic_one_by_one

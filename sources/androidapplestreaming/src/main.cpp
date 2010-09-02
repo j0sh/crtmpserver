@@ -99,7 +99,7 @@ void testCommands() {
 	FINEST("result:\n%s", STR(result.ToString()));
 
 	uint32_t contextId = (uint32_t) ASC_RES_PARAM(result, "contextId");
-	result = CommandSetBitrates(contextId, "[850000]");
+	result = CommandSetBitrates(contextId, "[350000]");
 	FINEST("result:\n%s", STR(result.ToString()));
 
 	result = CommandPlay(contextId, MY_URL, MY_SESSION_ID, MY_KEY);

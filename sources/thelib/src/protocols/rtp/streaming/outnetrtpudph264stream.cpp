@@ -32,7 +32,6 @@
 OutNetRTPUDPH264Stream::OutNetRTPUDPH264Stream(BaseProtocol *pProtocol,
 		StreamsManager *pStreamsManager, string name)
 : BaseOutNetRTPUDPStream(pProtocol, pStreamsManager, name) {
-	_videoCounter = rand();
 	memset(&_videoData, 0, sizeof (_videoData));
 	_videoData.msg_iov = new iovec[2];
 	_videoData.msg_iovlen = 2;
@@ -45,7 +44,6 @@ OutNetRTPUDPH264Stream::OutNetRTPUDPH264Stream(BaseProtocol *pProtocol,
 	_pPPS = NULL;
 	_PPSLen = 0;
 
-	_audioCounter = rand();
 	memset(&_audioData, 0, sizeof (_audioData));
 	_audioData.msg_iov = new iovec[3];
 	_audioData.msg_iovlen = 3;

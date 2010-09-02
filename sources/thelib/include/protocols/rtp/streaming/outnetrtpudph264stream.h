@@ -32,14 +32,12 @@ private:
 	string _orig;
 	string _copy;
 #endif
-	uint16_t _videoCounter;
 	msghdr _videoData;
 	uint8_t *_pSPS;
 	uint32_t _SPSLen;
 	uint8_t *_pPPS;
 	uint32_t _PPSLen;
 
-	uint16_t _audioCounter;
 	uint8_t _audioPacketsCount;
 	IOBuffer _audioBuffer;
 	msghdr _audioData;

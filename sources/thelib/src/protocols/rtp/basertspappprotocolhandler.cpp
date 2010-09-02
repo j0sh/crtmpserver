@@ -278,9 +278,11 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPRequestSetup(RTSPProtocol *pFrom,
 	if (isAudioTrack) {
 		pFrom->GetCustomParameters()["audioDataPortNumber"] = dataPortNumber;
 		pFrom->GetCustomParameters()["audioRtcpPortNumber"] = rtcpPortNumber;
+		pFrom->GetCustomParameters()["audioTrackUri"] = requestHeaders[RTSP_FIRST_LINE][RTSP_URL];
 	} else {
 		pFrom->GetCustomParameters()["videoDataPortNumber"] = dataPortNumber;
 		pFrom->GetCustomParameters()["videoRtcpPortNumber"] = rtcpPortNumber;
+		pFrom->GetCustomParameters()["videoTrackUri"] = requestHeaders[RTSP_FIRST_LINE][RTSP_URL];
 	}
 
 	//10. Create a session
@@ -348,6 +350,33 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPRequestPlay(RTSPProtocol *pFrom,
 
 	//6. prepare the response
 	pFrom->PushResponseFirstLine(RTSP_VERSION_1_0, 200, "OK");
+	pFrom->PushResponseHeader(RTSP_HEADERS_RANGE, "npt=0.0-");
+
+	string rtpInfoVideo = "";
+	string rtpInfoAudio = "";
+	if (pFrom->GetCustomParameters().HasKey("videoTrackId")) {
+		rtpInfoVideo = format("url=%s;seq=%u;rtptime=%u",
+				STR(pFrom->GetCustomParameters()["videoTrackUri"]),
+				pOutboundConnectivity->GetLastVideoSequence(),
+				0);
+		//pOutboundConnectivity->GetLastVideoRTPTimestamp());
+	}
+	if (pFrom->GetCustomParameters().HasKey("audioTrackId")) {
+		rtpInfoAudio = format("url=%s;seq=%u;rtptime=%u",
+				STR(pFrom->GetCustomParameters()["audioTrackUri"]),
+				pOutboundConnectivity->GetLastAudioSequence(),
+				0);
+		//pOutboundConnectivity->GetLastAudioRTPTimestamp());
+	}
+	string rtpInfo = rtpInfoVideo;
+	if (rtpInfo != "") {
+		if (rtpInfoAudio != "") {
+			rtpInfo += ", " + rtpInfoAudio;
+		}
+	} else {
+		rtpInfo = rtpInfoAudio;
+	}
+	//pFrom->PushResponseHeader(RTSP_HEADERS_RTP_INFO, rtpInfo);
 
 	//7. Done
 	return pFrom->SendResponseMessage();
