@@ -27,13 +27,14 @@ extern "C" void Java_com_rtmpd_CommandsInterface_EnvRun(
 		jstring callbackClassName,
 		jstring callbackMethodName,
 		jstring ip,
-		jint port) {
+		jint port,
+		jint logLevel) {
 	CallBackInfo ci;
 	ci.env = env;
 	ci.callbackHandler = callbackHandler;
 	ci.callbackClassName = env->GetStringUTFChars(callbackClassName, NULL);
 	ci.callbackMethodName = env->GetStringUTFChars(callbackMethodName, NULL);
-	EnvRun(env->GetStringUTFChars(ip, NULL), (uint16_t) port, ci);
+	EnvRun(env->GetStringUTFChars(ip, NULL), (uint16_t) port, ci, (int) logLevel);
 }
 
 extern "C" void Java_com_rtmpd_CommandsInterface_WaitEnvReady(

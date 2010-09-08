@@ -49,9 +49,9 @@ int main(void) {
 void* worker(void *) {
 #ifdef ANDROID
 	CallBackInfo ci;
-	EnvRun("0.0.0.0", 5544, ci);
+	EnvRun("0.0.0.0", 5544, ci, _FINEST_);
 #else
-	EnvRun("0.0.0.0", 5544);
+	EnvRun("0.0.0.0", 5544, _FINEST_);
 #endif /* ANDROID */
 	return NULL;
 }

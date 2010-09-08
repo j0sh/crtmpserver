@@ -24,9 +24,9 @@
 #include "jniwrapper.h"
 
 #ifdef ANDROID
-void EnvRun(string ip, uint16_t port, CallBackInfo ci);
+void EnvRun(string ip, uint16_t port, CallBackInfo ci, int logLevel);
 #else
-void EnvRun(string ip, uint16_t port);
+void EnvRun(string ip, uint16_t port, int logLevel);
 #endif /* ANDROID */
 void WaitEnvReady();
 void EnvStop();

@@ -30,7 +30,8 @@ extern "C" void Java_com_rtmpd_CommandsInterface_EnvRun(
 		jstring callbackClassName,
 		jstring callbackMethodName,
 		jstring ip,
-		jint port);
+		jint port,
+		jint logLevel);
 extern "C" void Java_com_rtmpd_CommandsInterface_WaitEnvReady(
 		JNIEnv* pEnv,
 		jobject thiz);

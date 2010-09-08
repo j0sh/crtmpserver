@@ -44,16 +44,18 @@ do { \
 }while(0)
 
 #ifdef ANDROID
-void EnvRun(string ip, uint16_t port, CallBackInfo ci)
+void EnvRun(string ip, uint16_t port, CallBackInfo ci, int logLevel)
 #else
 
-void EnvRun(string ip, uint16_t port)
+void EnvRun(string ip, uint16_t port, int logLevel)
 #endif /* ANDROID */
 {
 	//1. Initialize the logger
+	logLevel = logLevel < 0 ? 0 : logLevel;
+	logLevel = logLevel >= _FINEST_ ? _FINEST_ : logLevel;
 	Logger::Init();
 	BaseLogLocation *pLogLocation = new ConsoleLogLocation(true);
-	pLogLocation->SetLevel(_FINEST_);
+	pLogLocation->SetLevel(logLevel);
 	Logger::AddLogLocation(pLogLocation);
 #ifdef ANDROID
 	pLogLocation = new LogCatLogLocation();
@@ -63,7 +65,7 @@ void EnvRun(string ip, uint16_t port)
 
 #ifdef BUILD_SIGNATURE
 	//1.1 Create the settings string
-	INFO("Build signature:\n%s", BUILD_SIGNATURE);
+	FATAL("Build signature:\n%s", BUILD_SIGNATURE);
 #endif /* BUILD_SIGNATURE */
 
 	//2. Create the default protocol factory
