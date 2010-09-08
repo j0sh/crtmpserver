@@ -54,12 +54,14 @@ void EnvRun(string ip, uint16_t port, int logLevel)
 	logLevel = logLevel < 0 ? 0 : logLevel;
 	logLevel = logLevel >= _FINEST_ ? _FINEST_ : logLevel;
 	Logger::Init();
-	BaseLogLocation *pLogLocation = new ConsoleLogLocation(true);
-	pLogLocation->SetLevel(logLevel);
-	Logger::AddLogLocation(pLogLocation);
+	BaseLogLocation *pLogLocation = NULL;
 #ifdef ANDROID
 	pLogLocation = new LogCatLogLocation();
-	pLogLocation->SetLevel(_FINEST_);
+	pLogLocation->SetLevel(logLevel);
+	Logger::AddLogLocation(pLogLocation);
+#else
+	pLogLocation = new ConsoleLogLocation(true);
+	pLogLocation->SetLevel(logLevel);
 	Logger::AddLogLocation(pLogLocation);
 #endif /* ANDROID */
 
