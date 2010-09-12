@@ -64,6 +64,10 @@ MACRO(ADD_PRECOMPILED_HEADER _targetName _input )
 	#add a new target to the project
 	ADD_CUSTOM_TARGET(${_targetName}_gch DEPENDS ${_output})
 	ADD_DEPENDENCIES(${_targetName} ${_targetName}_gch)
-	SET_TARGET_PROPERTIES(${_targetName} PROPERTIES COMPILE_FLAGS "-include ${_name} -Winvalid-pch")
+	IF(CMAKE_SYSTEM_NAME MATCHES "OpenBSD")
+		SET_TARGET_PROPERTIES(${_targetName} PROPERTIES COMPILE_FLAGS "-include ${_name}")
+	ELSE (CMAKE_SYSTEM_NAME MATCHES "OpenBSD")
+		SET_TARGET_PROPERTIES(${_targetName} PROPERTIES COMPILE_FLAGS "-include ${_name} -Winvalid-pch")
+	ENDIF(CMAKE_SYSTEM_NAME MATCHES "OpenBSD")
 ENDMACRO(ADD_PRECOMPILED_HEADER)
 

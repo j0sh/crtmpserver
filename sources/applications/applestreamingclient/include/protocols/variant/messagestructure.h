@@ -253,19 +253,34 @@ do { \
 } while(0)
 
 #define ASC_RES_BUILD_UNKNOWN_REQUEST_TYPE(r) \
-	ASC_RES_BUILD(r,ASC_RES_STATUS_UNKNOWN_REQUEST_TYPE,Variant())
+do { \
+	Variant __tempVariant; \
+	ASC_RES_BUILD(r,ASC_RES_STATUS_UNKNOWN_REQUEST_TYPE,__tempVariant); \
+} while(0)
 
 #define ASC_RES_BUILD_NYI(r) \
-	ASC_RES_BUILD(r,ASC_RES_STATUS_NYI,Variant())
+do { \
+    Variant __tempVariant; \
+	ASC_RES_BUILD(r,ASC_RES_STATUS_NYI, __tempVariant); \
+} while(0)
 
 #define ASC_RES_BUILD_CONTEXT_CREATE_FAILED(r) \
-	ASC_RES_BUILD(r,ASC_RES_STATUS_CONTEXT_CREATE_FAILED,Variant())
+do { \
+    Variant __tempVariant; \
+	ASC_RES_BUILD(r,ASC_RES_STATUS_CONTEXT_CREATE_FAILED, __tempVariant); \
+} while(0)
 
 #define ASC_RES_BUILD_CONTEXT_NOT_FOUND(r) \
-	ASC_RES_BUILD(r,ASC_RES_STATUS_CONTEXT_NOT_FOUND,Variant())
+do { \
+	Variant __tempVariant; \
+	ASC_RES_BUILD(r,ASC_RES_STATUS_CONTEXT_NOT_FOUND,__tempVariant); \
+} while(0)
 
 #define ASC_RES_BUILD_COMMAND_PLAY_FAILED(r) \
-	ASC_RES_BUILD(r,ASC_RES_STATUS_COMMAND_PLAY_FAILED,Variant())
+do { \
+    Variant __tempVariant; \
+	ASC_RES_BUILD(r,ASC_RES_STATUS_COMMAND_PLAY_FAILED, __tempVariant); \
+} while(0)
 
 #define ASC_RES_BUILD_OK_INFO_LIST_STREAMS(r,streamNames) \
 do { \

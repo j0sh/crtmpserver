@@ -528,7 +528,8 @@ bool AMF3Serializer::ReadObject(IOBuffer &buffer, Variant &variant, bool readTyp
 
 	uint32_t objectIndex = _objects.size();
 	WARN("Begin reading object %d", objectIndex);
-	ADD_VECTOR_END(_objects, Variant());
+	Variant tempVariant=Variant();
+	ADD_VECTOR_END(_objects, tempVariant);
 
 	Variant traits;
 
@@ -540,7 +541,8 @@ bool AMF3Serializer::ReadObject(IOBuffer &buffer, Variant &variant, bool readTyp
 		uint32_t traitsIndex = _traits.size();
 		INFO("Begin reading traits names %d", traitsIndex);
 
-		ADD_VECTOR_END(_traits, Variant());
+		tempVariant=Variant();
+		ADD_VECTOR_END(_traits, tempVariant);
 		traits[AMF3_TRAITS_DYNAMIC] = (bool)isDynamic;
 
 		Variant className;

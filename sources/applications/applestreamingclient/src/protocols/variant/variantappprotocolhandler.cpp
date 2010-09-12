@@ -111,13 +111,15 @@ void VariantAppProtocolHandler::ProcessContextClose(BaseVariantProtocol *pProtoc
 		Variant &request) {
 	GET_CONTEXT(pProtocol, request);
 	ClientContext::ReleaseContext(contextId);
-	ASC_RES_BUILD_OK(request, Variant());
+	Variant tempVariant;
+	ASC_RES_BUILD_OK(request, tempVariant);
 }
 
 void VariantAppProtocolHandler::ProcessContextCloseAll(
 		BaseVariantProtocol *pProtocol, Variant &request) {
 	((AppleStreamingClientApplication *) GetApplication())->CloseAllContexts();
-	ASC_RES_BUILD_OK(request, Variant());
+	Variant tempVariant;
+	ASC_RES_BUILD_OK(request, tempVariant);
 }
 
 void VariantAppProtocolHandler::ProcessCommandSetBitrates(
@@ -130,7 +132,8 @@ void VariantAppProtocolHandler::ProcessCommandSetBitrates(
 		bws[(uint32_t) MAP_VAL(i)] = (uint32_t) MAP_VAL(i);
 	}
 	pContext->SetAllowedBitrates(bws);
-	ASC_RES_BUILD_OK(request, Variant());
+	Variant tempVariant;
+	ASC_RES_BUILD_OK(request, tempVariant);
 }
 
 void VariantAppProtocolHandler::ProcessCommandPlay(
@@ -148,7 +151,8 @@ void VariantAppProtocolHandler::ProcessCommandPlay(
 		ASC_RES_BUILD_COMMAND_PLAY_FAILED(request);
 		return;
 	}
-	ASC_RES_BUILD_OK(request, Variant());
+	Variant tempVariant;
+	ASC_RES_BUILD_OK(request, tempVariant);
 }
 
 void VariantAppProtocolHandler::ProcessCommandPause(
