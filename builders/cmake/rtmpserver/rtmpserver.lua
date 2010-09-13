@@ -270,7 +270,7 @@ configuration=
 			name="stresstest",
 			description="Application for stressing a streaming server",
 			protocol="dynamiclinklibrary",
-			targetServer="88.81.237.90",
+			targetServer="10.0.1.8",
 			targetApp="vod",
 			active=false,
 			--[[streams = 
@@ -284,9 +284,9 @@ configuration=
 			},]]--
 			streams = 
 			{
-				"gigi"
+				"mp4:sample1_1500kbps.f4v"
 			},
-			numberOfConnections=30,
+			numberOfConnections=1,
 			randomAccessStreams=false
 		},
 		{
