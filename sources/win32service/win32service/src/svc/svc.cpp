@@ -27,10 +27,11 @@ void __cdecl _tmain(int argc, TCHAR *argv[])
 	// Install/uninstall the service. 
     if( lstrcmpi( argv[1], TEXT("installService")) == 0 )
     {
-		if(SvcRegistry(ADD_KEY) != REGIST_ERROR)
+	//	if(SvcRegistry(ADD_KEY) != REGIST_ERROR)
+	//	SvcRegistry(GET_KEY_VALUE, REGKEY_CONFIGFILEPATH);
 			SvcInstall();
-		else
-			printf("\n The service is not installed because of error(s) in registry\n");
+	//	else
+	//		printf("\n The service is not installed because of error(s) in registry\n");
         return;
     }else if( lstrcmpi( argv[1], TEXT("uninstallService")) == 0)
     {
@@ -66,7 +67,8 @@ void __cdecl _tmain(int argc, TCHAR *argv[])
 		{
 			if (!DoQuerySvc()){
 				printf("Server will start normally.\n\n");
-				rtmpserver(SvcRegistry(GET_KEY_VALUE));
+				//printf("config for rtmp: %s\n", SvcRegistry(GET_KEY_VALUE, "configFile_path"));
+				rtmpserver(SvcRegistry(GET_KEY_VALUE, REGKEY_CONFIGFILEPATH));
 				return;
 			}else{
 				printf("\nERROR: Server cannot be started normally because the service described above is already installed. .\n\n");
@@ -390,7 +392,7 @@ int WriteToLog(char* str)
 
 DWORD WINAPI ThreadProc( __in  LPVOID lpParameter)
 {
-	rtmpserver(SvcRegistry(GET_KEY_VALUE));
+	rtmpserver(SvcRegistry(GET_KEY_VALUE, REGKEY_CONFIGFILEPATH));
 	//the lines below works too.
 	/*if(Initialize())
 		Run(); */

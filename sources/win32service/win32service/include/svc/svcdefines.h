@@ -1,8 +1,10 @@
 // For Evostream windows service 
 #define LOGFILE "C:\\ServiceLogs.txt"
-#define SVCNAME TEXT("evo") //name of the service
+#define SVCNAME TEXT("Evostream") //name of the service
+#define REGKEY_CONFIGFILEPATH "configFilePath"
 
 //For Registry. Everything is set manually, NOT following any convention.
+#define CONFIGFILE_PATH TEXT("C:\\rtmpserver.lua")//for testing
 #define ADD_KEY 1
 #define GET_KEY_VALUE 2
 #define REGIST_SUCCESS "reg_success"

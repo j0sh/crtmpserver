@@ -83,6 +83,7 @@ bool Initialize() {
 
     gRs.pConfigFile = new ConfigFile();
 	string configFilePath = gRs.configPath/*"C:\\rtmpd-clean\\builders\\VS2010\\Debug\\rtmpserver.lua"*/;
+	INFO("configFilePath=%s",gRs.configPath);
     string fileName;
     string extension;
     splitFileName(configFilePath, fileName, extension);
