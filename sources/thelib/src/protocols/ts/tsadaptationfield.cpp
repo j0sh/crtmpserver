@@ -109,7 +109,7 @@ bool TSAdaptationField::Read(uint8_t *pBuffer, uint32_t &cursor, uint32_t maxCur
 		//        CHECK_BOUNDS(_transportPrivateDataLength);
 		//        memcpy(_pTransportPrivateData, pBuffer + cursor, _transportPrivateDataLength);
 		//        cursor += _transportPrivateDataLength;
-		NYI;
+		WARN("transportPrivateData not yet implemented");
 	}
 
 	//9. Skip the next bytes until the adaptation field end

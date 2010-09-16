@@ -175,7 +175,7 @@ bool RTMPAppProtocolHandler::SpawnConnection(string targetServer, string targetA
 	//1. Prepare our custom parameters
 	Variant customParameters;
 	customParameters["remoteAppName"] = targetApp;
-	customParameters["remoteUri"] = format("rtmp://%s", STR(targetServer));
+	customParameters["remoteUri"] = format("rtmp://%s/%s", STR(targetServer),STR(targetApp));
 	customParameters["remoteStreamName"] = streamName;
 
 	//2. Prepare the final connect parameters

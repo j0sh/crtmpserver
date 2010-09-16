@@ -152,13 +152,10 @@ bool InNetTSStream::FeedData(uint8_t *pData, uint32_t length, bool packetStart,
 		}
 	}
 
-	//#define HandleVideoData HandleVideoData_version1
-#define HandleVideoData HandleVideoData_version2
-
 	if (isAudio)
 		return HandleAudioData(pData, length, ptsTime - deltaTime, packetStart);
 	else
-		return HandleVideoData(pData, length, ptsTime - deltaTime, packetStart);
+		return HandleTSVideoData(pData, length, ptsTime - deltaTime, packetStart);
 }
 
 bool InNetTSStream::FeedData(uint8_t *pData, uint32_t dataLength,
@@ -371,6 +368,78 @@ bool InNetTSStream::HandleVideoData_version2(uint8_t *pBuffer, uint32_t length,
 			_cursor++;
 		}
 	}
+
+	return true;
+}
+
+bool InNetTSStream::HandleVideoData_version3(uint8_t *pBuffer, uint32_t length,
+		double timestamp, bool packetStart) {
+	//1. Store the data inside our buffer
+	_currentNal.ReadFromBuffer(pBuffer, length);
+
+	//2. Get the initial buffer and size
+	uint32_t size = GETAVAILABLEBYTESCOUNT(_currentNal);
+	uint8_t *pNalBuffer = GETIBPOINTER(_currentNal);
+	_cursor=0;
+	uint32_t testValue=0;
+	
+	//3. If this is the first NAL encountered, than lock
+	//on the first byte from the first packet
+	if(_firstNAL){
+		while (_cursor < size - 4) {
+			testValue=ntohlp(pNalBuffer + _cursor);
+			if((testValue>>8)==1) {
+				_currentNal.Ignore(_cursor + 3);
+				_firstNAL = false;
+				_cursor = 0;
+				size = GETAVAILABLEBYTESCOUNT(_currentNal);
+				pNalBuffer = GETIBPOINTER(_currentNal);
+				break;
+			}
+			if(testValue==1){
+				_currentNal.Ignore(_cursor + 4);
+				_firstNAL = false;
+				_cursor = 0;
+				size = GETAVAILABLEBYTESCOUNT(_currentNal);
+				pNalBuffer = GETIBPOINTER(_currentNal);
+				break;
+			}
+			_cursor++;
+		}
+	}
+
+	//4. Search for the next NAL boundary
+	bool found = false;
+	int8_t markerSize=0;
+	
+	while (_cursor < size - 4) {
+		testValue=ntohlp(pNalBuffer + _cursor);
+		if((testValue>>8)==1) {
+			markerSize=3;
+			found=true;
+		} else if(testValue==1){
+			markerSize=4;
+			found=true;
+		}
+
+		if(!found){
+			_cursor++;
+			continue;
+		}
+		found=false;
+		
+		if (!ProcessNal(timestamp)) {
+			FATAL("Unable to process NALU");
+			return false;
+		}
+		
+		_currentNal.Ignore(_cursor + markerSize);
+		pNalBuffer = GETIBPOINTER(_currentNal);
+		size = GETAVAILABLEBYTESCOUNT(_currentNal);
+		_cursor = 0;
+		if (size < 4)
+			break;
+    }
 
 	return true;
 }

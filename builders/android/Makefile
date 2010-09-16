@@ -125,7 +125,8 @@ FEATURES_DEFINES=-DHAS_PROTOCOL_HTTP \
 	-DHAS_PROTOCOL_VAR \
 	-DHAS_LUA \
 	-DCreateRTCPPacket=CreateRTCPPacket_mystyle_only_once \
-	-DFeedDataAudioMPEG4Generic=FeedDataAudioMPEG4Generic_one_by_one
+	-DFeedDataAudioMPEG4Generic=FeedDataAudioMPEG4Generic_one_by_one \
+	-DHandleTSVideoData=HandleVideoData_version3
 
 DEFINES=$(PLATFORM_DEFINES) $(FEATURES_DEFINES)
 

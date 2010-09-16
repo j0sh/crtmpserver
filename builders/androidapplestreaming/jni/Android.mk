@@ -38,10 +38,12 @@ CreateRTCPPacket=CreateRTCPPacket_mystyle_only_once
 #CreateRTCPPacket=CreateRTCPPacket_none
 FeedDataAudioMPEG4Generic=FeedDataAudioMPEG4Generic_one_by_one
 #FeedDataAudioMPEG4Generic=FeedDataAudioMPEG4Generic_aggregate
+HandleTSVideoData=HandleVideoData_version3
 HAS_MS_TIMER=0
 
 MODULES_DEFINES+=-DCreateRTCPPacket=$(CreateRTCPPacket)
 MODULES_DEFINES+=-DFeedDataAudioMPEG4Generic=$(FeedDataAudioMPEG4Generic)
+MODULES_DEFINES+=-DHandleTSVideoData=$(HandleTSVideoData)
 ifeq ($(HAS_MS_TIMER), 1)
 	MODULES_DEFINES+=-DHAS_MS_TIMER
 endif

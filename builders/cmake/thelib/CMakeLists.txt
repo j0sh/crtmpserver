@@ -6,6 +6,8 @@ FILE(GLOB_RECURSE SOURCES "../../../sources/thelib/src/*.cpp" )
 
 ADD_DEFINITIONS(-DCreateRTCPPacket=CreateRTCPPacket_mystyle_only_once)
 ADD_DEFINITIONS(-DFeedDataAudioMPEG4Generic=FeedDataAudioMPEG4Generic_one_by_one)
+ADD_DEFINITIONS(-DHandleTSVideoData=HandleVideoData_version3)
+
 
 #prepare the include directories
 INCLUDE_DIRECTORIES(
