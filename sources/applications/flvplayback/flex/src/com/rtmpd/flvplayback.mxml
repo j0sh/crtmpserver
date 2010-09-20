@@ -160,7 +160,7 @@
 			</mx:Panel>
 			<mx:TextInput id="streamName" backgroundColor="#404040" width="100%" text="{_availableFlvs[dgFlvs.selectedIndex].flvName}"/>
 			<mx:Label text="Connecting string"/>
-			<mx:TextInput id="connectingString" text="rtmp://10.0.2.1/flvplayback" backgroundColor="#404040" width="100%"/>
+			<mx:TextInput id="connectingString" text="rtmp://127.0.0.1/flvplayback" backgroundColor="#404040" width="100%"/>
 			<mx:HBox width="100%">
 				<mx:Button width="100%" label="{IsConnected?'Disconnect':'Connect'}" click="ConnectDisconnect();"/>
 				<mx:Button width="100%" label="Play" enabled="{IsConnected}" click="PlayStream();"/>	

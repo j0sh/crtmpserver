@@ -255,8 +255,8 @@ bool TestLuaVM(Variant &testSuite) {
 
 	//2. Prepare the scripts locations
 	vector<string> scriptFiles;
-	ADD_VECTOR_END(scriptFiles, "./vmtests/vmtests.lua");
-	ADD_VECTOR_END(scriptFiles, "./vmtests/utils.lua");
+	ADD_VECTOR_END(scriptFiles, "./vmtests.lua");
+	ADD_VECTOR_END(scriptFiles, "./utils.lua");
 
 	//3. Test the machine
 	if (!TestVM(pVM, scriptFiles, testSuite)) {
