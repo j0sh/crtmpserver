@@ -4,7 +4,7 @@
 SRC_DIR=..
 DST_DIR=/tmp/rtmpserver
 LIBPREFIX=lib
-LIBSUFFIX=.dylib
+LIBSUFFIX=.so
 TMP_DIR=$DST_DIR/tmp
 STANDARD_LIBRARIES=$TMP_DIR/libraries
 APPLICATIONS_LIBRARIES=$TMP_DIR/applications
@@ -16,15 +16,24 @@ CHANGES_SCRIPT=$TMP_DIR/changes
 if [ -d "$DST_DIR" ]
 then
 	echo "Directory \`$DST_DIR\` exists. Abort";
-	exit -1;
+	exit;
 fi
+
+#re-link everything withoutput directory
+PREVDIR=`pwd`
+cd ../
+sh cleanup.sh
+cmake -D MY_OUTPUT_DIRECTORY=$DST_DIR .
+make
+cd $PREVDIR
+
 
 #create the temp directory where we are going to put
 #intermediate files. It will be deleted as last step
 mkdir -p $TMP_DIR
 
 #create the list of libraries needed by the server
-for i in `find $SRC_DIR -type d -depth 1|sed "s/^\.\.\///"`
+for i in `find $SRC_DIR -mindepth 1 -maxdepth 1 -type d|sed "s/^\.\.\///"`
 do
 	if [ ! -f "$SRC_DIR/$i/$LIBPREFIX$i$LIBSUFFIX" ]
 	then
@@ -35,7 +44,7 @@ done
 
 
 #create the list of available applications
-for i in `find $SRC_DIR/applications -type d -depth 1|sed "s/^\.\.\/applications\///"`
+for i in `find $SRC_DIR/applications -mindepth 1 -maxdepth 1 -type d|sed "s/^\.\.\/applications\///"`
 do
 	if [ ! -f "$SRC_DIR/applications/$i/$LIBPREFIX$i$LIBSUFFIX" ]
 	then
@@ -89,66 +98,6 @@ do
 	chmod 644 $DST_DIR/applications/$i/$LIBPREFIX$i$LIBSUFFIX
 done
 
-#change the bindings on executables
-for e in `cat $EXECUTABLES`
-do
-	echo "Fixing $e"
-	for l in `cat $STANDARD_LIBRARIES`
-	do
-		LIB_NAME=$LIBPREFIX$l$LIBSUFFIX
-		ORIG_NAME=`otool -L $DST_DIR/$e|grep $LIB_NAME|tr "\t" " "|sed "s/^ *//"|sed "s/\(.*\) (.*/\1/"`
-		if [ "$ORIG_NAME" == "" ]
-		then
-			continue;
-		fi
-		NEW_NAME="@executable_path/$LIB_NAME"
-		echo "install_name_tool -change $ORIG_NAME $NEW_NAME $DST_DIR/$e" >>$CHANGES_SCRIPT
-	done
-done
-
-#change the bindings on standard libraries
-for e in `cat $STANDARD_LIBRARIES`
-do
-	echo "Fixing $e"
-	for l in `cat $STANDARD_LIBRARIES`
-	do
-		LIB_NAME=$LIBPREFIX$l$LIBSUFFIX
-		ORIG_NAME=`otool -L $DST_DIR/$LIBPREFIX$e$LIBSUFFIX|grep $LIB_NAME|tr "\t" " "|sed "s/^ *//"|sed "s/\(.*\) (.*/\1/"`
-		if [ "$ORIG_NAME" == "" ]
-		then
-			continue;
-		fi
-		NEW_NAME="@executable_path/$LIB_NAME"
-		if [ "$e" == "$l" ]
-		then
-			echo "install_name_tool -id $NEW_NAME $DST_DIR/$LIBPREFIX$e$LIBSUFFIX" >>$CHANGES_SCRIPT
-		else
-			echo "install_name_tool -change $ORIG_NAME $NEW_NAME $DST_DIR/$LIBPREFIX$e$LIBSUFFIX" >>$CHANGES_SCRIPT
-		fi
-	done
-done
-
-#change the bindings on applications
-for e in `cat $APPLICATIONS_LIBRARIES`
-do
-	echo "Fixing $e"
-	for l in `cat $STANDARD_LIBRARIES`
-	do
-		LIB_NAME=$LIBPREFIX$l$LIBSUFFIX
-		ORIG_NAME=`otool -L $DST_DIR/applications/$e/$LIBPREFIX$e$LIBSUFFIX|grep $LIB_NAME|tr "\t" " "|sed "s/^ *//"|sed "s/\(.*\) (.*/\1/"`
-		if [ "$ORIG_NAME" == "" ]
-		then
-			continue;
-		fi
-		NEW_NAME="@executable_path/$LIB_NAME"
-		echo "install_name_tool -change $ORIG_NAME $NEW_NAME $DST_DIR/applications/$e/$LIBPREFIX$e$LIBSUFFIX" >>$CHANGES_SCRIPT
-	done
-	echo "install_name_tool -id @executable_path/applications/$e/$LIBPREFIX$e$LIBSUFFIX $DST_DIR/applications/$e/$LIBPREFIX$e$LIBSUFFIX" >>$CHANGES_SCRIPT
-done
-
-#apply the changes
-sh $CHANGES_SCRIPT
-
 #remove temp directory
 rm -rf $TMP_DIR
 
@@ -157,4 +106,6 @@ echo "#!/bin/sh" >>$DST_DIR/run.sh
 echo "./rtmpserver ./rtmpserver.lua" >>$DST_DIR/run.sh
 echo "" >>$DST_DIR/run.sh
 chmod 755 $DST_DIR/run.sh
+
+echo "Package created in \"$DST_DIR\""
 

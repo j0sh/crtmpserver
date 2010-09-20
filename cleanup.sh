@@ -34,6 +34,7 @@ for i in `find  ./ -type f -name "cmake_install.cmake"`;do  rm -rf $i;done
 for i in `find  ./ -type f -name "Makefile"`;do  rm -rf $i;done
 for i in `find  ./ -type f -name "CMakeCache.txt"`;do  rm -rf $i;done
 for i in `find  ./ -type f -name "*.dylib"`;do  rm -rf  $i;done
+for i in `find  ./ -type f -name "*.so"`;do  rm -rf  $i;done
 for i in `find  ./ -type f -name "*.a"`;do  rm -rf  $i;done
 for i in `find  ./ -type f -name "*.core"`;do  rm -rf  $i;done
 for i in `find  ./ -type f -name ".DS_Store"`;do  rm -rf  $i;done
