@@ -301,8 +301,6 @@ void InNetRTMPStream::InitializeVideoCapabilities(uint8_t *pData, uint32_t lengt
 			_videoCodecInit.IgnoreAll();
 			_videoCodecInit.ReadFromBuffer(pData, length);
 			//            FINEST("_videoCodecInit:\n%s", STR(_videoCodecInit));
-			//            FINEST("Cached the video codec initialization: %d",
-			//                    GETAVAILABLEBYTESCOUNT(_videoCodecInit));
 
 			_streamCapabilities.videoCodecId = CODEC_VIDEO_AVC;
 
@@ -317,7 +315,8 @@ void InNetRTMPStream::InitializeVideoCapabilities(uint8_t *pData, uint32_t lengt
 			memcpy(_streamCapabilities.videoCodecInfo.avc.pPPS,
 					pData + 13 + _streamCapabilities.videoCodecInfo.avc.SPSLength + 3,
 					_streamCapabilities.videoCodecInfo.avc.PPSLength);
-
+			FINEST("Cached the video codec initialization: %d",
+					GETAVAILABLEBYTESCOUNT(_videoCodecInit));
 			break;
 		}
 		default:

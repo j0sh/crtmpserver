@@ -126,6 +126,12 @@ void BaseOutNetRTMPStream::SetSendOnStatusPlayMessages(bool value) {
 bool BaseOutNetRTMPStream::FeedData(uint8_t *pData, uint32_t dataLength,
 		uint32_t processedLength, uint32_t totalLength,
 		double absoluteTimestamp, bool isAudio) {
+	//	FINEST("dataLength: % 5d; processedLength: % 5d; totalLength: % 5d; absoluteTimestamp: %.2f; isAudio: %d",
+	//			dataLength,
+	//			processedLength,
+	//			totalLength,
+	//			absoluteTimestamp,
+	//			isAudio);
 	if (_paused)
 		return true;
 	if (isAudio) {
@@ -142,7 +148,14 @@ bool BaseOutNetRTMPStream::FeedData(uint8_t *pData, uint32_t dataLength,
 
 			H_IA(_audioHeader) = true;
 			H_TS(_audioHeader) = (uint32_t) (absoluteTimestamp - (*_pDeltaAudioTime) + _seekTime);
-			_isFirstAudioFrame = false;
+			if ((pData[0] >> 4) == 10
+					&& (pData[1] == 0)) {
+				//AAC codec setup. Keep _isFirstAudioFrame == true;
+				_isFirstAudioFrame = true;
+			} else {
+				//not AAC codec setup
+				_isFirstAudioFrame = false;
+			}
 		} else {
 			ALLOW_EXECUTION(processedLength);
 			//        H_IA(_audioHeader) = true;
@@ -182,7 +195,15 @@ bool BaseOutNetRTMPStream::FeedData(uint8_t *pData, uint32_t dataLength,
 
 			H_IA(_videoHeader) = true;
 			H_TS(_videoHeader) = (uint32_t) (absoluteTimestamp - (*_pDeltaVideoTime) + _seekTime);
-			_isFirstVideoFrame = false;
+
+			if ((pData[0] == 0x17) //AVC keyframe
+					&& (pData[1] == 0)) { //codec setup
+				// h264 codec setup. Keep _isFirstVideoFrame == true
+				_isFirstVideoFrame = true;
+			} else {
+				//not h264 codec setup
+				_isFirstVideoFrame = false;
+			}
 		} else {
 			ALLOW_EXECUTION(processedLength);
 			//        H_IA(_videoHeader) = true;
