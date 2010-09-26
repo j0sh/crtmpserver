@@ -246,8 +246,6 @@ string BaseSSLProtocol::DumpBIO(BIO *pBIO) {
 }
 
 void BaseSSLProtocol::InitRandGenerator() {
-	srand((uint32_t) time(NULL));
-
 	uint32_t length = 16;
 	uint32_t *pBuffer = new uint32_t[length];
 

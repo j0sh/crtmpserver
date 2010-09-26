@@ -38,6 +38,10 @@ public:
 	virtual void RegisterProtocol(BaseProtocol *pProtocol);
 	virtual void UnRegisterProtocol(BaseProtocol *pProtocol);
 
+	virtual bool PullExternalStream(URI uri, Variant streamConfig);
+	static bool SignalProtocolCreated(BaseProtocol *pProtocol,
+			Variant &parameters);
+
 	virtual bool HandleRTSPRequest(RTSPProtocol *pFrom, Variant &requestHeaders,
 			string &content);
 	virtual bool HandleRTSPResponse(RTSPProtocol *pFrom, Variant &responseHeaders,
@@ -85,7 +89,6 @@ protected:
 	virtual bool Play(RTSPProtocol *pFrom);
 private:
 	OutboundConnectivity *GetOutboundConnectivity(RTSPProtocol *pFrom);
-	string GetStreamName(string url);
 	BaseInNetStream *GetInboundStream(string streamName);
 	StreamCapabilities *GetInboundStreamCapabilities(string streamName);
 	string GetAudioTrack(RTSPProtocol *pFrom,

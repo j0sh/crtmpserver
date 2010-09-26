@@ -30,7 +30,7 @@ public:
 	Controller();
 	virtual ~Controller();
 
-	static bool EnqueueDBRequest(string uri, Variant &payload, string applicationName);
+	static bool EnqueueDBRequest(string uriString, Variant &payload, string applicationName);
 	static bool SignalProtocolCreated(BaseProtocol *pProtocol, Variant &parameters);
 };
 

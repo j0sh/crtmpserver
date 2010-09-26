@@ -69,6 +69,18 @@ public:
 	virtual void UnRegisterProtocol(BaseProtocol *pProtocol);
 
 	/*
+	 * This is called by the framework when a stream needs to be pulled in
+	 * Basically, this will open a RTMP client and start playback a stream
+	 * */
+	virtual bool PullExternalStream(URI uri, Variant streamConfig);
+
+	/*
+	 * This is called by the framework when a stream needs to be pushed forward
+	 * Basically, this will open a RTMP client and start publishing a stream
+	 * */
+	virtual bool PushLocalStream(BaseInStream *pInStream, Variant streamConfig);
+
+	/*
 	 * This is called bt the framework when an outbound connection was established
 	 * */
 	virtual bool OutboundConnectionEstablished(OutboundRTMPProtocol *pFrom);
@@ -221,6 +233,28 @@ private:
 	 * This will generate all the meta and seek files inside the mediaFolder
 	 * */
 	void GenerateMetaFiles();
+
+	/*
+	 * This will return true if the connection is an outbound connection
+	 * which needs to pull in a stream
+	 * */
+	bool NeedsToPullExternalStream(BaseRTMPProtocol *pFrom);
+
+	/*
+	 * This will return true if the connection is an outbound connection
+	 * which is used to export a local stream
+	 * */
+	bool NeedsToPushLocalStream(BaseRTMPProtocol *pFrom);
+
+	/*
+	 * Initiate the stream pulling sequence: connect->createStream->Play
+	 * */
+	bool PullExternalStream(BaseRTMPProtocol *pFrom);
+
+	/*
+	 * Initiate the stream pushing sequence: connect->createStream->Publish
+	 * */
+	bool PushLocalStream(BaseRTMPProtocol *pFrom);
 };
 
 

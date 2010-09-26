@@ -55,7 +55,7 @@ public:
 			Variant &lastSent, Variant &lastReceived);
 
 private:
-	Variant GetScaffold(string url);
+	Variant GetScaffold(string uriString);
 };
 
 

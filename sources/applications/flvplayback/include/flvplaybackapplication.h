@@ -60,13 +60,6 @@ public:
 	virtual ~FLVPlaybackApplication();
 
 	virtual bool Initialize();
-#ifdef HAS_PROTOCOL_RTP
-	static bool SignalProtocolCreated(BaseProtocol *pProtocol,
-			Variant &parameters);
-private:
-	bool SpawnRTSPProtocols();
-	bool SpawnRTSPProtocol(vector<uint64_t> &chain, Variant &node);
-#endif /* HAS_PROTOCOL_RTP */
 };
 
 

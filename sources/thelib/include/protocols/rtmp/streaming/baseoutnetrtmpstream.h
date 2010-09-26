@@ -60,6 +60,8 @@ private:
 	Variant _completeMetadata;
 	string _clientId;
 	bool _paused;
+
+	bool _sendOnStatusPlayMessages;
 protected:
 	BaseOutNetRTMPStream(BaseProtocol *pProtocol, StreamsManager *pStreamsManager,
 			uint64_t type, string name, uint32_t rtmpStreamId, uint32_t chunkSize);
@@ -77,6 +79,7 @@ public:
 	void SetFeederChunkSize(uint32_t feederChunkSize);
 	bool CanDropFrames();
 	void CanDropFrames(bool canDropFrames);
+	void SetSendOnStatusPlayMessages(bool value);
 
 	virtual bool FeedData(uint8_t *pData, uint32_t dataLength,
 			uint32_t processedLength, uint32_t totalLength,

@@ -96,6 +96,7 @@ using namespace std;
 #define RESET_TIMER(timer,sec,usec) timer.tv_sec=sec;timer.tv_usec=usec;
 #define FD_COPY(src,dst) memcpy(dst,src,sizeof(fd_set));
 #define MSG_NOSIGNAL 0
+#define SRAND() srand(time(NULL));
 
 #define CLOCKS_PER_SECOND 1000000L
 #define GETCLOCKS(result) \
@@ -157,7 +158,6 @@ void splitFileName(string fileName, string &name, string &extension, char separa
 double GetFileModificationDate(string path);
 string normalizePath(string base, string file);
 bool ListFolder(string path, vector<string> &result);
-bool ParseURL(string stringUrl, string &host, uint16_t &port, string &user, string &pwd, string & doc);
 bool MoveFile(string src, string dst);
 void InstallQuitSignal(SignalFnc pQuitSignalFnc);
 void InstallConfRereadSignal(SignalFnc pConfRereadSignalFnc);

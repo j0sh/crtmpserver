@@ -67,7 +67,9 @@ public:
 
 		if (((event.flags & EV_ERROR) != 0) ||
 				((event.flags & EV_EOF) != 0)) {
-			DEBUG("***CONNECT ERROR***");
+			DEBUG("***CONNECT ERROR: Unable to connect to: %s:%d",
+					STR(_ip),
+					_port);
 			_closeSocket = true;
 			return false;
 		}

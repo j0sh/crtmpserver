@@ -29,16 +29,6 @@ class RTMPAppProtocolHandler
 public:
 	RTMPAppProtocolHandler(Variant &configuration);
 	virtual ~RTMPAppProtocolHandler();
-
-	virtual bool OutboundConnectionEstablished(OutboundRTMPProtocol *pFrom);
-	virtual bool ProcessInvokeConnectResult(BaseRTMPProtocol *pFrom,
-			Variant &request, Variant &response);
-	virtual bool ProcessInvokeCreateStreamResult(BaseRTMPProtocol *pFrom,
-			Variant &request, Variant &response);
-	virtual bool ProcessInvokeOnStatus(BaseRTMPProtocol *pFrom,
-			Variant &request);
-	virtual bool ProcessPeerBW(BaseRTMPProtocol *pFrom, Variant &request);
-	virtual bool ProcessInvokeOnBWDone(BaseRTMPProtocol *pFrom, Variant &request);
 };
 
 #endif	/* _RTMPAPPPROTOCOLHANDLER_H */

@@ -146,17 +146,31 @@ configuration=
 					protocol="inboundRtsp"
 				},]]--
 			},
-			rtspStreams = {
-				--[[{
-					url="rtsp://82.177.67.61/axis-media/media.amp",
-					streamName="stream1",
+			--[[externalStreams = 
+			{
+				{
+					uri="rtmp://10.0.1.15/vod/mp4:test_mp4",
+					localStreamName="stream1"
+				},
+				{
+                    uri="rtmp://10.0.1.15/vod/test_flv",
+                    localStreamName="stream2"
+                },
+				{
+					uri="rtsp://media-us-2.soundreach.net/slcn_lifestyle.sdp",
+					localStreamName="stream3",
+					forceTcp=true
+				},
+				{
+					uri="rtsp://82.177.67.61/axis-media/media.amp",
+					localStreamName="stream4",
 					forceTcp=false
 				},
 				{
-					url="rtsp://media-us-2.soundreach.net/slcn_lifestyle.sdp",
-					forceTcp=true
-				}]]--
-			},
+					uri="http://v13.nonxt6.c.youtube.com/videoplayback?ip=0.0.0.0&sparams=id%2Cexpire%2Cip%2Cipbits%2Citag%2Calgorithm%2Cburst%2Cfactor%2Coc%3AU0dXSlFSVl9FSkNNN19JTFpF&algorithm=throttle-factor&itag=34&ipbits=0&burst=40&sver=3&expire=1285178400&key=yt1&signature=548764ECB414E3CA08BDD414F4B633853F9051AC.D8FFF913C9B3BF1C339BD1A60A77C5D1790775EE&factor=1.25&id=bcdad173a3ba8daa&redirect_counter=1",
+					localStreamName="stream5",
+				}
+			},]]--
 			validateHandshake=true,
 			keyframeSeek=true,
 			seekGranularity=1.5, --in seconds, between 0.1 and 600
@@ -249,20 +263,21 @@ configuration=
 					emulateUserAgent="FMLE/3.0 (compatible; FMSc/1.0 http://www.rtmpd.com)"
 				}]]--,
 				{
-					targetUri="rtmp://localhost/vod"
+					targetUri="rtmp://localhost/vod",
 				},
 			},
-			rtspStreams = 
+			--[[externalStreams = 
 			{
-                --[[{
-                    --url="rtsp://82.177.67.58/channel1",
-                    --url="rtsp://217.153.33.206/axis-media/media.amp",
-                    url="rtsp://82.177.67.61/axis-media/media.amp",
-                    --url="rtsp://media-us-2.soundreach.net/slcn_lifestyle.sdp",
-                    --url="rtsp://0.0.0.0:8080/test.sdp",
-                    forceTcp=true
-                },]]--
-            },
+				{
+					uri="rtsp://82.177.67.61/axis-media/media.amp",
+					localStreamName="stream4",
+					forceTcp=false
+                },
+				{
+					uri="rtmp://edge01.fms.dutchview.nl/botr/bunny",
+					localStreamName="stream1"
+                },
+			},]]--
 			--validateHandshake=true,
 			--default=true,
 		},
@@ -270,7 +285,7 @@ configuration=
 			name="stresstest",
 			description="Application for stressing a streaming server",
 			protocol="dynamiclinklibrary",
-			targetServer="10.0.1.8",
+			targetServer="localhost",
 			targetApp="vod",
 			active=false,
 			--[[streams = 
@@ -284,9 +299,9 @@ configuration=
 			},]]--
 			streams = 
 			{
-				"mp4:sample1_1500kbps.f4v"
+				"mp4:lg.mp4"
 			},
-			numberOfConnections=1,
+			numberOfConnections=10,
 			randomAccessStreams=false
 		},
 		{

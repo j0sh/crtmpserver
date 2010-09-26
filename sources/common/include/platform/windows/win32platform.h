@@ -82,7 +82,8 @@ typedef long long int int64_t;
 #define LOAD_LIBRARY(file,flags) UnicodeLoadLibrary((file))
 #define OPEN_LIBRARY_ERROR "OPEN_LIBRARY_ERROR NOT IMPLEMENTED YET"
 #define GET_PROC_ADDRESS(libHandler, procName) GetProcAddress((libHandler), (procName))
-#define FREE_LIBRARY(libHandler) FreeLibrary((libHandler)) 
+#define FREE_LIBRARY(libHandler) FreeLibrary((libHandler))
+#define SRAND() srand(time(NULL));
 
 
 #define gmtime_r(_p_time_t, _p_struct_tm) *(_p_struct_tm) = *gmtime(_p_time_t);
@@ -157,7 +158,6 @@ DLLEXP void splitFileName(string fileName, string &name, string &extension, char
 DLLEXP double GetFileModificationDate(string path);
 DLLEXP string normalizePath(string base, string file);
 DLLEXP bool ListFolder(string path, vector<string> &result);
-DLLEXP bool ParseURL(string stringUrl, string &host, uint16_t &port, string &user, string &pwd, string & doc);
 DLLEXP bool MoveFile(string src, string dst);
 DLLEXP void InstallQuitSignal(SignalFnc pQuitSignalFnc);
 DLLEXP void InstallConfRereadSignal(SignalFnc pConfRereadSignalFnc);

@@ -21,6 +21,7 @@
 #include "application/baseclientapplication.h"
 #include "protocols/rtmp/basertmpappprotocolhandler.h"
 #include "protocols/rtmp/basertmpprotocol.h"
+#include "protocols/rtmp/outboundrtmpprotocol.h"
 #include "protocols/rtmp/messagefactories/messagefactories.h"
 #include "application/clientapplicationmanager.h"
 #include "protocols/ts/basetsappprotocolhandler.h"
@@ -84,8 +85,61 @@ void BaseRTMPAppProtocolHandler::UnRegisterProtocol(BaseProtocol *pProtocol) {
 	_resultMessageTracking.erase(pProtocol->GetId());
 }
 
+bool BaseRTMPAppProtocolHandler::PullExternalStream(URI uri, Variant streamConfig) {
+	//1. Prepare the custom parameters
+	Variant parameters;
+	parameters["customParameters"]["externalStreamConfig"] = streamConfig;
+	parameters[CONF_APPLICATION_NAME] = GetApplication()->GetName();
+	if (uri.scheme == "rtmp") {
+		parameters[CONF_PROTOCOL] = CONF_PROTOCOL_OUTBOUND_RTMP;
+	} else if (uri.scheme == "rtmpt") {
+		parameters[CONF_PROTOCOL] = CONF_PROTOCOL_OUTBOUND_RTMPT;
+	} else if (uri.scheme == "rtmpe") {
+		parameters[CONF_PROTOCOL] = CONF_PROTOCOL_OUTBOUND_RTMPE;
+	} else {
+		FATAL("scheme %s not supported by RTMP handler", STR(uri.scheme));
+		return false;
+	}
+
+	//2. start the connecting sequence
+	return OutboundRTMPProtocol::Connect(uri.ip, uri.port, parameters);
+}
+
+bool BaseRTMPAppProtocolHandler::PushLocalStream(BaseInStream *pInStream, Variant streamConfig) {
+	//1. Prepare the custom parameters
+	Variant parameters;
+	parameters["customParameters"]["localStreamConfig"] = streamConfig;
+	parameters["customParameters"]["localStreamConfig"]["localUniqueStreamId"] = pInStream->GetUniqueId();
+	parameters[CONF_APPLICATION_NAME] = GetApplication()->GetName();
+	if (streamConfig["targetUri"]["scheme"] == "rtmp") {
+		parameters[CONF_PROTOCOL] = CONF_PROTOCOL_OUTBOUND_RTMP;
+	} else if (streamConfig["targetUri"]["scheme"] == "rtmpt") {
+		parameters[CONF_PROTOCOL] = CONF_PROTOCOL_OUTBOUND_RTMPT;
+	} else if (streamConfig["targetUri"]["scheme"] == "rtmpe") {
+		parameters[CONF_PROTOCOL] = CONF_PROTOCOL_OUTBOUND_RTMPE;
+	} else {
+		FATAL("scheme %s not supported by RTMP handler",
+				STR(streamConfig["targetUri"]["scheme"]));
+		return false;
+	}
+
+	//2. start the connecting sequence
+	return OutboundRTMPProtocol::Connect(
+			streamConfig["targetUri"]["ip"],
+			(uint16_t) streamConfig["targetUri"]["port"],
+			parameters);
+}
+
 bool BaseRTMPAppProtocolHandler::OutboundConnectionEstablished(
 		OutboundRTMPProtocol *pFrom) {
+	if (NeedsToPullExternalStream(pFrom)) {
+		return PullExternalStream(pFrom);
+	}
+
+	if (NeedsToPushLocalStream(pFrom)) {
+		return PushLocalStream(pFrom);
+	}
+
 	WARN("You should override BaseRTMPAppProtocolHandler::OutboundConnectionEstablished");
 	return false;
 }
@@ -210,7 +264,8 @@ bool BaseRTMPAppProtocolHandler::ProcessWinAckSize(BaseRTMPProtocol *pFrom,
 
 bool BaseRTMPAppProtocolHandler::ProcessPeerBW(BaseRTMPProtocol *pFrom,
 		Variant &request) {
-	WARN("ProcessPeerBW:\n%s", STR(request.ToString()));
+	//WARN("ProcessPeerBW:\n%s", STR(request.ToString()));
+	WARN("ProcessPeerBW");
 	return true;
 }
 
@@ -252,11 +307,15 @@ bool BaseRTMPAppProtocolHandler::ProcessUsrCtrl(BaseRTMPProtocol *pFrom,
 		case RM_USRCTRL_TYPE_STREAM_BEGIN:
 		case RM_USRCTRL_TYPE_STREAM_SET_BUFFER_LENGTH:
 		case RM_USRCTRL_TYPE_STREAM_IS_RECORDED:
-		case RM_USRCTRL_TYPE_UNKNOWN1:
-		case RM_USRCTRL_TYPE_UNKNOWN2:
 		case RM_USRCTRL_TYPE_PING_RESPONSE:
 		{
 			WARN("User control message type: %s", STR(M_USRCTRL_TYPE_STRING(request)));
+			return true;
+		}
+		case RM_USRCTRL_TYPE_UNKNOWN1:
+		case RM_USRCTRL_TYPE_UNKNOWN2:
+		{
+			//WARN("User control message type: %s", STR(M_USRCTRL_TYPE_STRING(request)));
 			return true;
 		}
 		default:
@@ -282,8 +341,9 @@ bool BaseRTMPAppProtocolHandler::ProcessNotify(BaseRTMPProtocol *pFrom,
 		}
 	}
 	if (pInNetRTMPStream == NULL) {
-		WARN("No stream found. Searched for %d:%d", pFrom->GetId(),
-				(uint32_t) VH_SI(request));
+		WARN("No stream found. Searched for %d:%d. Message was:\n%s", pFrom->GetId(),
+				(uint32_t) VH_SI(request),
+				STR(request.ToString()));
 		return true;
 	}
 
@@ -398,6 +458,7 @@ bool BaseRTMPAppProtocolHandler::ProcessInvoke(BaseRTMPProtocol *pFrom,
 
 bool BaseRTMPAppProtocolHandler::ProcessInvokeConnect(BaseRTMPProtocol *pFrom,
 		Variant & request) {
+	//ASSERT("\n%s", STR(request));
 	//1. Send the channel specific messages
 	Variant response = GenericMessageFactory::GetWinAckSize(2500000);
 	if (!SendRTMPMessage(pFrom, response)) {
@@ -438,7 +499,7 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokeCreateStream(BaseRTMPProtocol *pFr
 	uint32_t id = 0;
 
 	//1. Create the neutral stream
-	if (!pFrom->CreateNeutralStream(id)) {
+	if (pFrom->CreateNeutralStream(id) == NULL) {
 		FATAL("Unable to create stream");
 		return false;
 	}
@@ -591,7 +652,7 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokePlay(BaseRTMPProtocol *pFrom,
 	}
 
 	INFO("Play request for stream name `%s`. Start: %.0f; length: %.0f",
-		STR(streamName),startTime,length);
+			STR(streamName), startTime, length);
 
 	//6. bind the network outbound stream to the inbound stream
 	//depending on the type of the outbound stream
@@ -759,9 +820,85 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokeDeleteStream(BaseRTMPProtocol *pFr
 
 bool BaseRTMPAppProtocolHandler::ProcessInvokeOnStatus(BaseRTMPProtocol *pFrom,
 		Variant & request) {
-	WARN("Default implementation of ProcessInvokeOnStatus in application %s: Request:\n%s",
-			STR(GetApplication()->GetName()),
-			STR(request.ToString()));
+	if ((!NeedsToPullExternalStream(pFrom))
+			&& (!NeedsToPushLocalStream(pFrom))) {
+		WARN("Default implementation of ProcessInvokeOnStatus in application %s: Request:\n%s",
+				STR(GetApplication()->GetName()),
+				STR(request.ToString()));
+		return true;
+	}
+
+	//1. Test and see if this connection is an outbound RTMP connection
+	//and get a pointer to it
+	if (pFrom->GetType() != PT_OUTBOUND_RTMP) {
+		FATAL("This is not an outbound connection");
+		return false;
+	}
+	OutboundRTMPProtocol *pProtocol = (OutboundRTMPProtocol *) pFrom;
+
+	//2. Validate the request
+	if (M_INVOKE_PARAM(request, 1) != V_MAP) {
+		FATAL("invalid onStatus:\n%s", STR(request.ToString()));
+		return false;
+	}
+	if (M_INVOKE_PARAM(request, 1)["code"] != V_STRING) {
+		FATAL("invalid onStatus:\n%s", STR(request.ToString()));
+		return false;
+	}
+
+	//pProtocol->
+
+	//6. Get our hands on streaming parameters
+	string path = "";
+	if (NeedsToPullExternalStream(pFrom))
+		path = "externalStreamConfig";
+	else
+		path = "localStreamConfig";
+	Variant &parameters = pFrom->GetCustomParameters()["customParameters"][path];
+
+	if (NeedsToPullExternalStream(pFrom)) {
+		if (M_INVOKE_PARAM(request, 1)["code"] != "NetStream.Play.Start") {
+			WARN("onStatus message ignored:\n%s", STR(request.ToString()));
+			return true;
+		}
+		InNetRTMPStream *pStream = pProtocol->CreateINS(VH_CI(request),
+				VH_SI(request), parameters["localStreamName"]);
+		if (pStream == NULL) {
+			FATAL("Unable to create stream");
+			return false;
+		}
+	} else {
+		if (M_INVOKE_PARAM(request, 1)["code"] != "NetStream.Publish.Start") {
+			WARN("onStatus message ignored:\n%s", STR(request.ToString()));
+			return true;
+		}
+
+		BaseInStream *pBaseInStream =
+				(BaseInStream *) GetApplication()->GetStreamsManager()->FindByUniqueId(
+				(uint32_t) parameters["localUniqueStreamId"]);
+		if (pBaseInStream == NULL) {
+			FATAL("Unable to find the inbound stream with id %u",
+					(uint32_t) parameters["localUniqueStreamId"]);
+			return false;
+		}
+
+		//5. Create the network outbound stream
+		BaseOutNetRTMPStream *pBaseOutNetRTMPStream = pProtocol->CreateONS(
+				VH_SI(request),
+				pBaseInStream->GetName(),
+				pBaseInStream->GetType());
+		if (pBaseOutNetRTMPStream == NULL) {
+			FATAL("Unable to create outbound stream");
+			return false;
+		}
+		pBaseOutNetRTMPStream->SetSendOnStatusPlayMessages(false);
+
+		//6. Link and return
+		if (!pBaseInStream->Link((BaseOutNetStream*) pBaseOutNetRTMPStream)) {
+			FATAL("Unable to link streams");
+			return false;
+		}
+	}
 
 	return true;
 }
@@ -816,7 +953,8 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokeGetStreamLength(BaseRTMPProtocol *
 
 bool BaseRTMPAppProtocolHandler::ProcessInvokeOnBWDone(BaseRTMPProtocol *pFrom,
 		Variant &request) {
-	WARN("ProcessInvokeOnBWDone:\n%s", STR(request.ToString()));
+	//WARN("ProcessInvokeOnBWDone:\n%s", STR(request.ToString()));
+	WARN("ProcessInvokeOnBWDone");
 	return true;
 }
 
@@ -859,19 +997,112 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokeResult(BaseRTMPProtocol *pFrom,
 
 bool BaseRTMPAppProtocolHandler::ProcessInvokeConnectResult(BaseRTMPProtocol *pFrom,
 		Variant &request, Variant & response) {
-	WARN("Default implementation of ProcessInvokeConnectResult: Request:\n%s\nResponse:\n%s",
-			STR(request.ToString()),
-			STR(response.ToString()));
+	//1. Do we need to push/pull a stream?
+	if ((!NeedsToPullExternalStream(pFrom))
+			&& (!NeedsToPushLocalStream(pFrom))) {
+		WARN("Default implementation of ProcessInvokeConnectResult: Request:\n%s\nResponse:\n%s",
+				STR(request.ToString()),
+				STR(response.ToString()));
+		return true;
+	}
 
+	//2. See if the result is OK or not
+	if (M_INVOKE_FUNCTION(response) != RM_INVOKE_FUNCTION_RESULT) {
+		FATAL("Connect failed:\n%s", STR(response.ToString()));
+		return false;
+	}
+	if (M_INVOKE_PARAM(response, 1) != V_MAP) {
+		FATAL("Connect failed:\n%s", STR(response.ToString()));
+		return false;
+	}
+	if (M_INVOKE_PARAM(response, 1)["code"] != V_STRING) {
+		FATAL("Connect failed:\n%s", STR(response.ToString()));
+		return false;
+	}
+	if (M_INVOKE_PARAM(response, 1)["code"] != "NetConnection.Connect.Success") {
+		FATAL("Connect failed:\n%s", STR(response.ToString()));
+		return false;
+	}
+
+	//3. Create the createStream request
+	Variant createStreamRequest = StreamMessageFactory::GetInvokeCreateStream();
+
+	//4. Send it
+	if (!SendRTMPMessage(pFrom, createStreamRequest, true)) {
+		FATAL("Unable to send request:\n%s", STR(createStreamRequest.ToString()));
+		return false;
+	}
+
+	//5. Done
 	return true;
 }
 
 bool BaseRTMPAppProtocolHandler::ProcessInvokeCreateStreamResult(BaseRTMPProtocol *pFrom,
 		Variant &request, Variant & response) {
-	WARN("Default implementation of ProcessInvokeCreateStreamResult: Request:\n%s\nResponse:\n%s",
-			STR(request.ToString()),
-			STR(response.ToString()));
+	//1. Do we need to push/pull a stream?
+	if ((!NeedsToPullExternalStream(pFrom))
+			&& (!NeedsToPushLocalStream(pFrom))) {
+		WARN("Default implementation of ProcessInvokeCreateStreamResult: Request:\n%s\nResponse:\n%s",
+				STR(request.ToString()),
+				STR(response.ToString()));
 
+		return true;
+	}
+
+	//2. Test and see if this connection is an outbound RTMP connection
+	//and get a pointer to it
+	if (pFrom->GetType() != PT_OUTBOUND_RTMP) {
+		FATAL("This is not an outbound connection");
+		return false;
+	}
+	OutboundRTMPProtocol *pProtocol = (OutboundRTMPProtocol *) pFrom;
+
+	//3. Test the response
+	if (M_INVOKE_FUNCTION(response) != RM_INVOKE_FUNCTION_RESULT) {
+		FATAL("createStream failed:\n%s", STR(response.ToString()));
+		return false;
+	}
+	if (M_INVOKE_PARAM(response, 1) != _V_NUMERIC) {
+		FATAL("createStream failed:\n%s", STR(response.ToString()));
+		return false;
+	}
+
+	//4. Get the assigned stream ID
+	uint32_t rtmpStreamId = (uint32_t) M_INVOKE_PARAM(response, 1);
+
+	//5. Create the neutral stream
+	RTMPStream *pStream = pProtocol->CreateNeutralStream(rtmpStreamId);
+	if (pStream == NULL) {
+		FATAL("Unable to create neutral stream");
+		return false;
+	}
+
+
+	//6. Get our hands on streaming parameters
+	string path = "";
+	if (NeedsToPullExternalStream(pFrom))
+		path = "externalStreamConfig";
+	else
+		path = "localStreamConfig";
+	Variant &parameters = pFrom->GetCustomParameters()["customParameters"][path];
+
+	//7. Create publish/play request
+	Variant publishPlayRequest;
+	if (NeedsToPullExternalStream(pFrom)) {
+		publishPlayRequest = StreamMessageFactory::GetInvokePlay(3, rtmpStreamId,
+				parameters["uri"]["document"], -2, -1);
+	} else {
+		publishPlayRequest = StreamMessageFactory::GetInvokePublish(3, rtmpStreamId,
+				parameters["targetStreamName"], "live");
+	}
+
+	//8. Send it
+	if (!SendRTMPMessage(pFrom, publishPlayRequest, true)) {
+		FATAL("Unable to send request:\n%s", STR(publishPlayRequest.ToString()));
+		return false;
+	}
+
+	//9. Done
 	return true;
 }
 
@@ -1370,6 +1601,155 @@ void BaseRTMPAppProtocolHandler::GenerateMetaFiles() {
 		FINEST("Parsing `%s`", STR(flashName));
 		GetMetaData(flashName, true);
 	}
+}
+
+bool BaseRTMPAppProtocolHandler::NeedsToPullExternalStream(
+		BaseRTMPProtocol *pFrom) {
+	Variant &parameters = pFrom->GetCustomParameters();
+	if (parameters != V_MAP)
+		return false;
+	if (!parameters.HasKey("customParameters"))
+		return false;
+	if (parameters["customParameters"] != V_MAP)
+		return false;
+	if (!parameters["customParameters"].HasKey("externalStreamConfig"))
+		return false;
+	if (parameters["customParameters"]["externalStreamConfig"] != V_MAP)
+		return false;
+	if (!parameters["customParameters"]["externalStreamConfig"].HasKey("uri"))
+		return false;
+	if (parameters["customParameters"]["externalStreamConfig"]["uri"] != V_MAP)
+		return false;
+	return true;
+}
+
+bool BaseRTMPAppProtocolHandler::NeedsToPushLocalStream(BaseRTMPProtocol *pFrom) {
+	Variant &parameters = pFrom->GetCustomParameters();
+	if (parameters != V_MAP)
+		return false;
+	if (!parameters.HasKey("customParameters"))
+		return false;
+	if (parameters["customParameters"] != V_MAP)
+		return false;
+	if (!parameters["customParameters"].HasKey("localStreamConfig"))
+		return false;
+	if (parameters["customParameters"]["localStreamConfig"] != V_MAP)
+		return false;
+	if (!parameters["customParameters"]["localStreamConfig"].HasKey("targetUri"))
+		return false;
+	if (parameters["customParameters"]["localStreamConfig"]["targetUri"] != V_MAP)
+		return false;
+	return true;
+}
+
+bool BaseRTMPAppProtocolHandler::PullExternalStream(BaseRTMPProtocol *pFrom) {
+	//1. Get the stream configuration and the URI from it
+	Variant &streamConfig = pFrom->GetCustomParameters()["customParameters"]["externalStreamConfig"];
+	URI uri;
+	if (!URI::FromVariant(streamConfig["uri"], uri)) {
+		FATAL("Unable to parse uri:\n%s", STR(streamConfig["uri"]));
+		return false;
+	}
+
+	//2. get the application name
+	string appName = uri.documentPath;
+	if (appName != "") {
+		if (appName[0] == '/')
+			appName = appName.substr(1, appName.size() - 1);
+	}
+	if (appName != "") {
+		if (appName[appName.size() - 1] == '/')
+			appName = appName.substr(0, appName.size() - 1);
+	}
+	if (appName == "") {
+		FATAL("Invalid uri: %s", STR(uri.fullUri));
+		return false;
+	}
+
+	//3. Compute tcUrl: rtmp://host/appName
+	string tcUrl = format("%s://%s:%d/%s",
+			STR(uri.scheme),
+			STR(uri.host),
+			uri.port,
+			STR(appName));
+
+	//4. Prepare the connect request
+	Variant connectRequest = ConnectionMessageFactory::GetInvokeConnect(
+			appName, //string appName
+			tcUrl, //string tcUrl
+			3191, //double audioCodecs
+			239, //double capabilities
+			"MAC 10,1,82,76", //string flashVer
+			false, //bool fPad
+			"", //string pageUrl
+			"", //string swfUrl
+			252, //double videoCodecs
+			1, //double videoFunction
+			0 //double objectEncoding
+			);
+
+	//5. Send it
+	if (!SendRTMPMessage(pFrom, connectRequest, true)) {
+		FATAL("Unable to send request:\n%s", STR(connectRequest.ToString()));
+		return false;
+	}
+
+	return true;
+}
+
+bool BaseRTMPAppProtocolHandler::PushLocalStream(BaseRTMPProtocol *pFrom) {
+	//1. Get the stream configuration and the URI from it
+	Variant &streamConfig = pFrom->GetCustomParameters()["customParameters"]["localStreamConfig"];
+	URI uri;
+	if (!URI::FromVariant(streamConfig["targetUri"], uri)) {
+		FATAL("Unable to parse uri:\n%s", STR(streamConfig["targetUri"]));
+		return false;
+	}
+
+	//2. get the application name
+	string appName = uri.fullDocumentPath;
+	if (appName != "") {
+		if (appName[0] == '/')
+			appName = appName.substr(1, appName.size() - 1);
+	}
+	if (appName != "") {
+		if (appName[appName.size() - 1] == '/')
+			appName = appName.substr(0, appName.size() - 1);
+	}
+	if (appName == "") {
+		FATAL("Invalid uri: %s", STR(uri.fullUri));
+		return false;
+	}
+
+	//3. Compute tcUrl: rtmp://host/appName
+	string tcUrl = format("%s://%s:%d/%s",
+			STR(uri.scheme),
+			STR(uri.host),
+			uri.port,
+			STR(appName));
+
+	//4. Prepare the connect request
+	Variant connectRequest = ConnectionMessageFactory::GetInvokeConnect(
+			appName, //string appName
+			tcUrl, //string tcUrl
+			3191, //double audioCodecs
+			239, //double capabilities
+			"MAC 10,1,82,76", //string flashVer
+			false, //bool fPad
+			"", //string pageUrl
+			"", //string swfUrl
+			252, //double videoCodecs
+			1, //double videoFunction
+			0 //double objectEncoding
+			);
+
+	//5. Send it
+	if (!SendRTMPMessage(pFrom, connectRequest, true)) {
+		FATAL("Unable to send request:\n%s", STR(connectRequest.ToString()));
+		return false;
+	}
+
+	return true;
 }
 #endif /* HAS_PROTOCOL_RTMP */
 

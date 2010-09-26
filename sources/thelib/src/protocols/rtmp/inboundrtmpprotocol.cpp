@@ -190,7 +190,6 @@ bool InboundRTMPProtocol::PerformHandshake(IOBuffer &buffer, bool encrypted) {
 	*(uint32_t *) (_pOutputBuffer + 4) = htonl(0x01020304); //----MARKED-LONG---
 
 	//generate random data
-	srand((uint32_t) time(NULL));
 	for (uint32_t i = 8; i < 3072; i++) {
 		_pOutputBuffer[i] = rand() % 256;
 	}

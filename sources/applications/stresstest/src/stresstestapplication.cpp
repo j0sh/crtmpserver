@@ -76,11 +76,6 @@ bool StressTestApplication::NormalizeConfiguration() {
 		FATAL("Invalid configuration: targetServer node is not a string value");
 		return false;
 	}
-	in_addr tempAddr;
-	if (inet_aton(STR(_configuration["targetServer"]), &tempAddr) != 1) {
-		FATAL("targetServer `%s` is invalid", STR(_configuration["targetServer"]));
-		return false;
-	}
 
 	//2. targetApp
 	if (!_configuration.HasKey("targetApp")) {

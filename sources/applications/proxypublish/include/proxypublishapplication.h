@@ -33,6 +33,7 @@ class LiveFLVAppProtocolHandler;
 class RTPAppProtocolHandler;
 class RTSPAppProtocolHandler;
 #endif /* HAS_PROTOCOL_RTP */
+class BaseInStream;
 
 class ProxyPublishApplication
 : public BaseClientApplication {
@@ -58,18 +59,9 @@ public:
 	virtual bool Initialize();
 
 	virtual void SignalStreamRegistered(BaseStream *pStream);
-	virtual void SignalStreamUnRegistered(BaseStream *pStream);
 private:
-	bool InitiateForwardingStream(BaseStream *pStream);
-	bool InitiateForwardingStream(BaseStream *pStream, Variant &target);
-#ifdef HAS_PROTOCOL_RTP
-public:
-	static bool SignalProtocolCreated(BaseProtocol *pProtocol,
-			Variant &parameters);
-private:
-	bool SpawnRTSPProtocols();
-	bool SpawnRTSPProtocol(vector<uint64_t> &chain, Variant &node);
-#endif /* HAS_PROTOCOL_RTP */
+	bool InitiateForwardingStream(BaseInStream *pStream);
+	bool InitiateForwardingStream(BaseInStream *pStream, Variant &target);
 };
 
 

@@ -120,50 +120,38 @@ bool BaseVariantAppProtocolHandler::ProcessMessage(BaseVariantProtocol *pProtoco
 	return true;
 }
 
-Variant BaseVariantAppProtocolHandler::GetScaffold(string url) {
+Variant BaseVariantAppProtocolHandler::GetScaffold(string uriString) {
 	//1. Search in the cache first
-	if (_urlCache.HasKey(url)) {
-		return _urlCache[url];
+	if (_urlCache.HasKey(uriString)) {
+		return _urlCache[uriString];
 	}
 
 	//2. Build it
 	Variant result;
 
 	//3. Split the URL into components
-	string host;
-	string ip;
-	uint16_t port;
-	string document;
-	string username;
-	string password;
-	if (!ParseURL(url, host, port, username, password, document)) {
-		FATAL("Invalid url: %s", STR(url));
-		return Variant();
-	}
-
-	//4. Resolve the IP
-	ip = GetHostByName(host);
-	if (ip == "") {
-		FATAL("Unable to resolve host %s into a valid ip", STR(host));
+	URI uri;
+	if (!URI::FromString(uriString, true, uri)) {
+		FATAL("Invalid url: %s", STR(uriString));
 		return Variant();
 	}
 
 	//5. Fix the document
-	if (document == "") {
-		document = "/";
+	if (uri.fullDocumentPath == "") {
+		uri.fullDocumentPath = "/";
 	}
 
 	//6. build the end result
-	result["username"] = username;
-	result["password"] = password;
-	result["host"] = host;
-	result["ip"] = ip;
-	result["port"] = port;
-	result["document"] = document;
+	result["username"] = uri.userName;
+	result["password"] = uri.password;
+	result["host"] = uri.host;
+	result["ip"] = uri.ip;
+	result["port"] = uri.port;
+	result["document"] = uri.fullDocumentPath;
 	result["applicationName"] = GetApplication()->GetName();
 
 	//7. Save it in the cache
-	_urlCache[url] = result;
+	_urlCache[uriString] = result;
 
 	//8. Done
 	return result;

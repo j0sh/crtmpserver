@@ -92,10 +92,39 @@ BaseAppProtocolHandler *BaseClientApplication::GetProtocolHandler(BaseProtocol *
 }
 
 BaseAppProtocolHandler *BaseClientApplication::GetProtocolHandler(uint64_t protocolType) {
-	if (!MAP_HAS1(_protocolsHandlers, protocolType))
+	if (!MAP_HAS1(_protocolsHandlers, protocolType)) {
+		FINEST("protocolType: %llu", protocolType);
+
+		FOR_MAP(_protocolsHandlers, uint64_t, BaseAppProtocolHandler *, i) {
+			FINEST("%llu: %p", MAP_KEY(i), MAP_VAL(i));
+		}
 		ASSERT("Protocol handler not activated for protocol type %d in application %s",
-			protocolType, STR(_name));
+				protocolType, STR(_name));
+	}
 	return _protocolsHandlers[protocolType];
+}
+
+BaseAppProtocolHandler *BaseClientApplication::GetProtocolHandler(string &scheme) {
+	BaseAppProtocolHandler *pResult = NULL;
+	if (false) {
+
+	}
+#ifdef HAS_PROTOCOL_RTMP
+	else if (scheme.find("rtmp") == 0) {
+		pResult = GetProtocolHandler(PT_INBOUND_RTMP);
+		if (pResult == NULL)
+			pResult = GetProtocolHandler(PT_OUTBOUND_RTMP);
+	}
+#endif /* HAS_PROTOCOL_RTMP */
+#ifdef HAS_PROTOCOL_RTP
+	else if (scheme == "rtsp") {
+		pResult = GetProtocolHandler(PT_RTSP);
+	}
+#endif /* HAS_PROTOCOL_RTP */
+	else {
+		WARN("scheme %s not recognized", STR(scheme));
+	}
+	return pResult;
 }
 
 void BaseClientApplication::RegisterProtocol(BaseProtocol *pProtocol) {
@@ -129,5 +158,64 @@ void BaseClientApplication::SignalStreamUnRegistered(BaseStream *pStream) {
 			STR(tagToString(pStream->GetType())),
 			STR(pStream->GetName()),
 			STR(_name));
+}
+
+bool BaseClientApplication::PullExternalStreams() {
+	//1. Minimal verifications
+	if (_configuration["externalStreams"] == V_NULL) {
+		return true;
+	}
+
+	if (_configuration["externalStreams"] != V_MAP) {
+		FATAL("Invalid rtspStreams node");
+		return false;
+	}
+
+	//2. Loop over the stream definitions and spawn the streams
+
+	FOR_MAP(_configuration["externalStreams"], string, Variant, i) {
+		Variant &streamConfig = MAP_VAL(i);
+		if (streamConfig != V_MAP) {
+			WARN("External stream configuration is invalid:\n%s",
+					STR(streamConfig.ToString()));
+			continue;
+		}
+		if (!PullExternalStream(streamConfig)) {
+			WARN("External stream configuration is invalid:\n%s",
+					STR(streamConfig.ToString()));
+		}
+	}
+
+	//3. Done
+	return true;
+}
+
+bool BaseClientApplication::PullExternalStream(Variant streamConfig) {
+	//1. Minimal verification
+	if (streamConfig["uri"] != V_STRING) {
+		FATAL("Invalid uri");
+		return false;
+	}
+
+	//2. Split the URI
+	URI uri;
+	if (!URI::FromString(streamConfig["uri"], true, uri)) {
+		FATAL("Invalid URI: %s", STR(streamConfig["uri"].ToString()));
+		return false;
+	}
+	streamConfig["uri"] = uri.ToVariant();
+
+	//3. Depending on the scheme name, get the curresponding protocol handler
+	///TODO: integrate this into protocol factory manager via protocol factories
+	BaseAppProtocolHandler *pProtocolHandler = GetProtocolHandler(uri.scheme);
+	if (pProtocolHandler == NULL) {
+		WARN("Unable to find protocol handler for scheme %s in application %s",
+				STR(uri.scheme),
+				STR(GetName()));
+		return false;
+	}
+
+	//4. Initiate the stream pulling sequence
+	return pProtocolHandler->PullExternalStream(uri, streamConfig);
 }
 

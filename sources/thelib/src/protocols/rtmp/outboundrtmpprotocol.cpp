@@ -182,7 +182,6 @@ bool OutboundRTMPProtocol::PerformHandshakeStage1(bool encrypted) {
 	}
 
 	//FINEST("PHS1: 3. Randomize the buffer");
-	srand((uint32_t) time(NULL));
 	for (uint32_t i = 0; i < 1536; i++) {
 		_pOutputBuffer[i] = rand() % 256;
 		//_pOutputBuffer[i] = 0;
@@ -380,7 +379,6 @@ bool OutboundRTMPProtocol::PerformHandshakeStage2(IOBuffer &inputBuffer,
 	}
 
 	//FINEST("PHS2: 6. Randomize the response");
-	srand((uint32_t) time(NULL));
 	for (uint32_t i = 0; i < 1536; i++) {
 		_pOutputBuffer[i] = rand() % 256;
 	}

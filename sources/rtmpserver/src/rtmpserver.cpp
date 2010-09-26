@@ -55,6 +55,7 @@ void Cleanup();
 RunningStatus gRs = {0};
 
 int main(int argc, char **argv) {
+	SRAND();
 	InitNetworking();
 
     //1. Pick up the startup parameters and hold them inside the running status

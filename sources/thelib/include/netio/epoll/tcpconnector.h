@@ -65,7 +65,9 @@ public:
 		IOHandlerManager::EnqueueForDelete(this);
 
 		if ((event.events & EPOLLERR) != 0) {
-			DEBUG("***CONNECT ERROR***");
+			DEBUG("***CONNECT ERROR: Unable to connect to: %s:%d",
+				STR(_ip),
+				_port);
 			_closeSocket = true;
 			return false;
 		}

@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -17,22 +17,33 @@
  *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef _URI_H
+#define	_URI_H
 
-#ifdef HAS_PROTOCOL_RTMP
-#include "rtmpappprotocolhandler.h"
-#include "protocols/rtmp/messagefactories/messagefactories.h"
-#include "protocols/rtmp/outboundrtmpprotocol.h"
-#include "streaming/baseinstream.h"
-#include "streaming/baseoutnetstream.h"
-#include "application/baseclientapplication.h"
+#include "platform/platform.h"
+#include "utils/misc/variant.h"
 
-RTMPAppProtocolHandler::RTMPAppProtocolHandler(Variant &configuration)
-: BaseRTMPAppProtocolHandler(configuration) {
+typedef struct _URI {
+	string fullUri;
+	string scheme;
+	string host;
+	string ip;
+	uint16_t port;
+	string userName;
+	string password;
+	string fullDocumentPath;
+	string documentPath;
+	string document;
+	map<string, string> parameters;
 
-}
+	void Reset();
 
-RTMPAppProtocolHandler::~RTMPAppProtocolHandler() {
-}
+	Variant ToVariant();
+	static bool FromVariant(Variant & variant, _URI & uri);
 
-#endif /* HAS_PROTOCOL_RTMP */
+	string ToString();
+	static bool FromString(string stringUri, bool resolveHost, _URI & uri);
+} URI;
+
+#endif	/* _URI_H */
 

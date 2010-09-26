@@ -95,6 +95,7 @@ using namespace std;
 #define MAP_NOCACHE 0
 #define MAP_NOEXTEND 0
 #define NOTE_USECONDS 0
+#define SRAND() sranddev();
 
 #define CLOCKS_PER_SECOND 1000000L
 #define GETCLOCKS(result) \
@@ -157,7 +158,6 @@ void splitFileName(string fileName, string &name, string &extension, char separa
 double GetFileModificationDate(string path);
 string normalizePath(string base, string file);
 bool ListFolder(string path, vector<string> &result);
-bool ParseURL(string stringUrl, string &host, uint16_t &port, string &user, string &pwd, string & doc);
 bool MoveFile(string src, string dst);
 void InstallQuitSignal(SignalFnc pQuitSignalFnc);
 void InstallConfRereadSignal(SignalFnc pConfRereadSignalFnc);

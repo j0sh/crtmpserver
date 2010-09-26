@@ -36,15 +36,8 @@ public:
 	virtual void UnRegisterProtocol(BaseProtocol *pProtocol);
 
 	void SpawnConnections();
-
-	virtual bool OutboundConnectionEstablished(OutboundRTMPProtocol *pFrom);
-	virtual bool ProcessInvokeConnectResult(BaseRTMPProtocol *pFrom,
-			Variant &request, Variant &response);
-	virtual bool ProcessInvokeCreateStreamResult(BaseRTMPProtocol *pFrom,
-			Variant &request, Variant &response);
 private:
 	string GetStreamName(uint32_t index, bool randomAccessStreams);
-	bool SpawnConnection(string targetServer, string targetApp, string streamName);
 };
 
 #endif	/* _RTMPAPPPROTOCOLHANDLER_H */

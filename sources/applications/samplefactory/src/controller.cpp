@@ -31,7 +31,7 @@ Controller::Controller() {
 Controller::~Controller() {
 }
 
-bool Controller::EnqueueDBRequest(string uri, Variant &payload, string applicationName) {
+bool Controller::EnqueueDBRequest(string uriString, Variant &payload, string applicationName) {
 
 	vector<uint64_t> protocolStackTypes =
 			ProtocolFactoryManager::ResolveProtocolChain("outboundHTTPDBAccess");
@@ -40,35 +40,26 @@ bool Controller::EnqueueDBRequest(string uri, Variant &payload, string applicati
 		return false;
 	}
 
-	string host;
-	string ip;
-	uint16_t port;
-	string document;
-	string dummy;
+	URI uri;
 
-	if (!ParseURL(uri, host, port, dummy, dummy, document)) {
-		FATAL("Invalid uri: %s", STR(uri));
+	if (!URI::FromString(uriString, true, uri)) {
+		FATAL("Invalid uri: %s", STR(uriString));
 		return false;
 	}
 
-	ip = GetHostByName(host);
-	if (ip == "") {
-		return false;
-	}
-
-	if (document == "") {
-		document = "/";
+	if (uri.fullDocumentPath == "") {
+		uri.fullDocumentPath = "/";
 	}
 
 	Variant parameters;
-	parameters["document"] = document;
-	parameters["host"] = host;
+	parameters["document"] = uri.fullDocumentPath;
+	parameters["host"] = uri.host;
 	parameters["applicationName"] = applicationName;
 	parameters["payload"] = payload;
 
 	FINEST("parameters:\n%s", STR(parameters.ToString()));
 
-	if (!TCPConnector<Controller>::Connect(ip, port, protocolStackTypes, parameters)) {
+	if (!TCPConnector<Controller>::Connect(uri.ip, uri.port, protocolStackTypes, parameters)) {
 		FATAL("Unable to open connection to origin");
 		return false;
 	}

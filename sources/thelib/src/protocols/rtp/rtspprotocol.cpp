@@ -280,8 +280,8 @@ InboundConnectivity *RTSPProtocol::GetInboundConnectivity(Variant &videoTrack,
 		Variant &audioTrack, string sdpStreamName) {
 	CloseInboundConnectivity();
 	string streamName;
-	if (GetCustomParameters().HasKey("streamName")) {
-		streamName = (string) GetCustomParameters()["streamName"];
+	if (GetCustomParameters().HasKey("localStreamName")) {
+		streamName = (string) GetCustomParameters()["localStreamName"];
 	} else {
 		streamName = sdpStreamName;
 	}

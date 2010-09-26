@@ -25,6 +25,7 @@
 #include "protocols/baseprotocol.h"
 #include "protocols/rtmp/channel.h"
 #include "protocols/rtmp/rtmpprotocolserializer.h"
+#include "streaming/rtmpstream.h"
 
 #define RECEIVED_BYTES_COUNT_REPORT_CHUNK 131072
 #define MAX_CHANNELS_COUNT (64+256+256)
@@ -103,7 +104,7 @@ public:
 
 	bool CloseStream(uint32_t streamId, bool createNeutralStream);
 
-	bool CreateNeutralStream(uint32_t &streamId);
+	RTMPStream * CreateNeutralStream(uint32_t &streamId);
 	InNetRTMPStream * CreateINS(uint32_t channelId, uint32_t streamId, string streamName);
 	BaseOutNetRTMPStream * CreateONS(uint32_t streamId, string streamName,
 			uint64_t inStreamType);

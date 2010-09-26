@@ -337,7 +337,7 @@ bool BaseRTMPProtocol::CloseStream(uint32_t streamId, bool createNeutralStream) 
 	return true;
 }
 
-bool BaseRTMPProtocol::CreateNeutralStream(uint32_t & streamId) {
+RTMPStream * BaseRTMPProtocol::CreateNeutralStream(uint32_t & streamId) {
 	//FINEST("-----bool BaseRTMPProtocol::CreateNeutralStream: %d", streamId);
 	if (streamId == 0) {
 		//Automatic allocation
@@ -349,16 +349,16 @@ bool BaseRTMPProtocol::CreateNeutralStream(uint32_t & streamId) {
 		}
 
 		if (streamId == 0) {
-			return false;
+			return NULL;
 		}
 	} else {
 		if (streamId == 0 || streamId >= MAX_STREAMS_COUNT) {
 			FATAL("Invalid stream id: %d", streamId);
-			return false;
+			return NULL;
 		}
 		if (_streams[streamId] != NULL) {
 			FATAL("Try to create a neutral stream on a non NULL placeholder");
-			return false;
+			return NULL;
 		}
 	}
 
@@ -366,7 +366,7 @@ bool BaseRTMPProtocol::CreateNeutralStream(uint32_t & streamId) {
 			GetApplication()->GetStreamsManager(), streamId);
 	_streams[streamId] = pStream;
 
-	return true;
+	return pStream;
 }
 
 InNetRTMPStream * BaseRTMPProtocol::CreateINS(uint32_t channelId,

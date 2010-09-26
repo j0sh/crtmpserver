@@ -709,8 +709,8 @@ bool ClientContext::FetchTS(string uri, uint32_t bw, string key, uint64_t iv) {
 	return FetchURI(uri, "ts", customParameters);
 }
 
-bool ClientContext::FetchURI(string uri, string requestType, Variant &customParameters) {
-	INFO("Fetch: %s", STR(uri));
+bool ClientContext::FetchURI(string uriString, string requestType, Variant &customParameters) {
+	INFO("Fetch: %s", STR(uriString));
 	customParameters["httpRequestType"] = requestType;
 	customParameters["contextId"] = _id;
 
@@ -723,28 +723,17 @@ bool ClientContext::FetchURI(string uri, string requestType, Variant &customPara
 	}
 
 	//2. Parse the URI and extract all needed data
-	string host;
-	string ip;
-	uint16_t port;
-	string document;
-	string dummy;
-
-	if (!ParseURL(uri, host, port, dummy, dummy, document)) {
-		FATAL("Invalid uri: %s", STR(uri));
+	URI uri;
+	if (!URI::FromString(uriString, true, uri)) {
+		FATAL("Invalid uri: %s", STR(uriString));
 		return false;
 	}
 
-	ip = GetHostByName(host);
-	if (ip == "") {
-		FATAL("Unable to resolve host `%s`", STR(host));
-		return false;
+	if (uri.fullDocumentPath == "") {
+		uri.fullDocumentPath = "/";
 	}
 
-	if (document == "") {
-		document = "/";
-	}
-
-	if ((uri[4] == 'S') || (uri[4] == 's')) {
+	if (uri.scheme == "https") {
 
 		FOR_VECTOR_ITERATOR(uint64_t, protocolStackTypes, i) {
 			if (VECTOR_VAL(i) == PT_INBOUND_HTTP) {
@@ -759,15 +748,15 @@ bool ClientContext::FetchURI(string uri, string requestType, Variant &customPara
 
 	//3. Prepare the HTTP info
 	Variant parameters;
-	parameters["fullUri"] = uri;
-	parameters["document"] = document;
-	parameters["host"] = host;
+	parameters["fullUri"] = uriString;
+	parameters["document"] = uri.fullDocumentPath;
+	parameters["host"] = uri.host;
 	parameters["applicationId"] = _applicationId;
 	parameters["contextId"] = _id;
 	parameters["payload"] = customParameters;
 
 	//4. Start the connection process
-	if (!TCPConnector<ClientContext>::Connect(ip, port, protocolStackTypes, parameters)) {
+	if (!TCPConnector<ClientContext>::Connect(uri.ip, uri.port, protocolStackTypes, parameters)) {
 		FATAL("Unable to open connection to origin");
 		return false;
 	}

@@ -29,12 +29,6 @@ class RTSPAppProtocolHandler
 public:
 	RTSPAppProtocolHandler(Variant &configuration);
 	virtual ~RTSPAppProtocolHandler();
-
-	virtual void RegisterProtocol(BaseProtocol *pProtocol);
-
-	virtual bool HandleRTSPResponse200Setup(RTSPProtocol *pFrom, Variant &requestHeaders,
-			string &requestContent, Variant &responseHeaders,
-			string &responseContent);
 };
 
 

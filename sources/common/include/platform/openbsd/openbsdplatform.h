@@ -97,6 +97,7 @@ using namespace std;
 #define MAP_NOCACHE 0
 #define NOTE_USECONDS 0
 #define MSG_NOSIGNAL 0
+#define SRAND() sranddev();
 
 #define CLOCKS_PER_SECOND 1000000L
 #define GETCLOCKS(result) \

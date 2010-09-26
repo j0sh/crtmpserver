@@ -28,6 +28,7 @@
 #include "protocols/rtp/streaming/outnetrtpudph264stream.h"
 #include "netio/netio.h"
 #include "protocols/rtp/connectivity/outboundconnectivity.h"
+#include "application/clientapplicationmanager.h"
 
 BaseRTSPAppProtocolHandler::BaseRTSPAppProtocolHandler(Variant &configuration)
 : BaseAppProtocolHandler(configuration) {
@@ -38,11 +39,93 @@ BaseRTSPAppProtocolHandler::~BaseRTSPAppProtocolHandler() {
 }
 
 void BaseRTSPAppProtocolHandler::RegisterProtocol(BaseProtocol *pProtocol) {
+	Variant &parameters = pProtocol->GetCustomParameters();
+	//1. Is this a client RTSP protocol?
+	if (pProtocol->GetType() != PT_RTSP)
+		return;
+	if (parameters != V_MAP)
+		return;
+	if (!parameters.HasKey("isClient"))
+		return;
+	if (parameters["isClient"] != V_BOOL)
+		return;
+	if (!((bool)parameters["isClient"]))
+		return;
 
+	//2. Get the protocol
+	RTSPProtocol *pRTSPProtocol = (RTSPProtocol *) pProtocol;
+
+	//3. validate the networking mode
+	if (parameters.HasKey("forceTcp")) {
+		if (parameters["forceTcp"] != V_BOOL) {
+			FATAL("Invalid forceTcp flag detected");
+			pRTSPProtocol->EnqueueForDelete();
+			return;
+		}
+	} else {
+		parameters["forceTcp"] = (bool)false;
+	}
+
+	//5. Start play
+	if (!Play(pRTSPProtocol)) {
+		FATAL("Unable to initiate play on uri %s",
+				STR(parameters["url"]));
+		pRTSPProtocol->EnqueueForDelete();
+		return;
+	}
 }
 
 void BaseRTSPAppProtocolHandler::UnRegisterProtocol(BaseProtocol *pProtocol) {
 
+}
+
+bool BaseRTSPAppProtocolHandler::PullExternalStream(URI uri, Variant streamConfig) {
+	//1. get the chain
+	vector<uint64_t> chain = ProtocolFactoryManager::ResolveProtocolChain(
+			CONF_PROTOCOL_INBOUND_RTSP);
+	if (chain.size() == 0) {
+		FATAL("Unable to resolve protocol chain");
+		return false;
+	}
+
+	//2. Save the app id inside the custom parameters and mark this connection
+	//as client connection
+	streamConfig["isClient"] = (bool)true;
+	streamConfig["appId"] = GetApplication()->GetId();
+	streamConfig["uri"] = uri.ToVariant();
+
+	//3. Connect
+	if (!TCPConnector<BaseRTSPAppProtocolHandler>::Connect(
+			uri.ip,
+			uri.port,
+			chain, streamConfig)) {
+		FATAL("Unable to connect to %s:%d",
+				STR(streamConfig["uri"]["ip"]),
+				(uint16_t) streamConfig["uri"]["port"]);
+		return false;
+	}
+
+	//4. Done
+	return true;
+}
+
+bool BaseRTSPAppProtocolHandler::SignalProtocolCreated(BaseProtocol *pProtocol,
+		Variant &parameters) {
+	//1. Sanitize
+	if (parameters["appId"] != V_UINT32) {
+		FATAL("Invalid custom parameters:\n%s", STR(parameters.ToString()));
+		return false;
+	}
+
+	//2. Get the application
+	BaseClientApplication *pApplication = ClientApplicationManager::FindAppById(
+			parameters["appId"]);
+
+	//3. Set it up inside the protocol
+	pProtocol->SetApplication(pApplication);
+
+	//4. Done
+	return true;
 }
 
 bool BaseRTSPAppProtocolHandler::HandleRTSPRequest(RTSPProtocol *pFrom,
@@ -140,17 +223,21 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPRequestOptions(RTSPProtocol *pFrom,
 bool BaseRTSPAppProtocolHandler::HandleRTSPRequestDescribe(RTSPProtocol *pFrom,
 		Variant &requestHeaders) {
 	//1. get the stream name
-	string streamName = GetStreamName(requestHeaders[RTSP_FIRST_LINE][RTSP_URL]);
-	if (streamName == "") {
+	URI uri;
+	if (!URI::FromString(requestHeaders[RTSP_FIRST_LINE][RTSP_URL], true, uri)) {
+		FATAL("Invalid URI: %s", STR(requestHeaders[RTSP_FIRST_LINE][RTSP_URL]));
+		return false;
+	}
+	if (uri.document == "") {
 		FATAL("Inavlid stream name");
 		return false;
 	}
 
 	//2. Get the inbound stream capabilities
-	BaseInNetStream *pInStream = GetInboundStream(streamName);
-	StreamCapabilities *pCapabilities = GetInboundStreamCapabilities(streamName);
+	BaseInNetStream *pInStream = GetInboundStream(uri.document);
+	StreamCapabilities *pCapabilities = GetInboundStreamCapabilities(uri.document);
 	if (pCapabilities == NULL) {
-		FATAL("Inbound stream %s not found", STR(streamName));
+		FATAL("Inbound stream %s not found", STR(uri.document));
 		return false;
 	}
 
@@ -158,7 +245,7 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPRequestDescribe(RTSPProtocol *pFrom,
 	string outboundContent = "";
 	outboundContent += "v=0\r\n";
 	outboundContent += "o=- 0 0 IN IP4 0.0.0.0\r\n";
-	outboundContent += "s=" + streamName + "\r\n";
+	outboundContent += "s=" + uri.document + "\r\n";
 	outboundContent += "u=http://www.rtmpd.com/\r\n";
 	outboundContent += "e=crtmpserver@gmail.com\r\n";
 	outboundContent += "c=IN IP4 0.0.0.0\r\n";
@@ -546,7 +633,18 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPResponse200Setup(
 				STR(responseHeaders.ToString()));
 		return false;
 	}
-	return true;
+
+	//2. Do the play command
+	string uri = (string) pFrom->GetCustomParameters()["uri"]["fullUri"];
+
+	//3. prepare the play command
+	pFrom->ClearRequestMessage();
+	pFrom->PushRequestFirstLine(RTSP_METHOD_PLAY, uri, RTSP_VERSION_1_0);
+	pFrom->PushRequestHeader(RTSP_HEADERS_SESSION,
+			responseHeaders[RTSP_HEADERS].GetValue(RTSP_HEADERS_SESSION, false));
+
+	//4. Done
+	return pFrom->SendRequestMessage();
 }
 
 bool BaseRTSPAppProtocolHandler::HandleRTSPResponse200Play(
@@ -569,11 +667,11 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPResponse404Play(RTSPProtocol *pFrom, 
 
 bool BaseRTSPAppProtocolHandler::Play(RTSPProtocol *pFrom) {
 	//1. Save the URL in the custom parameters
-	string url = (string) pFrom->GetCustomParameters()["url"];
+	string uri = (string) pFrom->GetCustomParameters()["uri"]["fullUri"];
 
 	//2. prepare the options command
 	pFrom->ClearRequestMessage();
-	pFrom->PushRequestFirstLine(RTSP_METHOD_OPTIONS, url, RTSP_VERSION_1_0);
+	pFrom->PushRequestFirstLine(RTSP_METHOD_OPTIONS, uri, RTSP_VERSION_1_0);
 
 	//3. Send it
 	if (!pFrom->SendRequestMessage()) {
@@ -606,19 +704,6 @@ OutboundConnectivity *BaseRTSPAppProtocolHandler::GetOutboundConnectivity(
 	}
 
 	return pOutboundConnectivity;
-}
-
-string BaseRTSPAppProtocolHandler::GetStreamName(string url) {
-	FINEST("url: %s", STR(url));
-	vector<string> parts;
-	split(url, "/", parts);
-	if (parts.size() == 0)
-		return "";
-	string streamName = parts[parts.size() - 1];
-	if (streamName.find("?") == string::npos)
-		return streamName;
-	NYI;
-	return "";
 }
 
 BaseInNetStream *BaseRTSPAppProtocolHandler::GetInboundStream(string streamName) {

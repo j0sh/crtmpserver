@@ -43,3 +43,16 @@ BaseAppProtocolHandler * BaseAppProtocolHandler::GetProtocolHandler(uint64_t pro
 	return _pApplication->GetProtocolHandler(protocolType);
 }
 
+bool BaseAppProtocolHandler::PullExternalStream(URI uri, Variant streamConfig) {
+	WARN("Pulling in streams for scheme %s in application %s not yet implemented. Stream configuration was:\n%s",
+			STR(uri.scheme),
+			STR(GetApplication()->GetName()),
+			STR(streamConfig.ToString()));
+	return false;
+}
+
+bool BaseAppProtocolHandler::PushLocalStream(BaseInStream *pInStream, Variant streamConfig) {
+	WARN("Pushing out streams for this protocol handler in application %s not yet implemented.",
+			STR(GetApplication()->GetName()));
+	return false;
+}

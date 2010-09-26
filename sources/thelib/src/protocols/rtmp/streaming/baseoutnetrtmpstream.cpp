@@ -1,21 +1,21 @@
 /* 
-*  Copyright (c) 2010,
-*  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
-*  
-*  This file is part of crtmpserver.
-*  crtmpserver is free software: you can redistribute it and/or modify
-*  it under the terms of the GNU General Public License as published by
-*  the Free Software Foundation, either version 3 of the License, or
-*  (at your option) any later version.
-*  
-*  crtmpserver is distributed in the hope that it will be useful,
-*  but WITHOUT ANY WARRANTY; without even the implied warranty of
-*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*  GNU General Public License for more details.
-*  
-*  You should have received a copy of the GNU General Public License
-*  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ *  Copyright (c) 2010,
+ *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
+ *
+ *  This file is part of crtmpserver.
+ *  crtmpserver is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  crtmpserver is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 
 #ifdef HAS_PROTOCOL_RTMP
@@ -62,6 +62,8 @@ BaseOutNetRTMPStream::BaseOutNetRTMPStream(BaseProtocol *pProtocol,
 	_clientId = format("%d_%d_%d", _pProtocol->GetId(), _rtmpStreamId, this);
 
 	_paused = false;
+
+	_sendOnStatusPlayMessages = true;
 
 	InternalReset();
 }
@@ -115,6 +117,10 @@ bool BaseOutNetRTMPStream::CanDropFrames() {
 
 void BaseOutNetRTMPStream::CanDropFrames(bool canDropFrames) {
 	_canDropFrames = canDropFrames;
+}
+
+void BaseOutNetRTMPStream::SetSendOnStatusPlayMessages(bool value) {
+	_sendOnStatusPlayMessages = value;
 }
 
 bool BaseOutNetRTMPStream::FeedData(uint8_t *pData, uint32_t dataLength,
@@ -282,36 +288,40 @@ void BaseOutNetRTMPStream::SignalAttachedToInStream() {
 		return;
 	}
 
-	//8. Send NetStream.Play.Reset
-	message = StreamMessageFactory::GetInvokeOnStatusStreamPlayReset(
-			_pChannelAudio->id, _rtmpStreamId, 0, true, 0, "reset...", GetName(),
-			_clientId);
-	TRACK_MESSAGE("Message:\n%s", STR(message.ToString()));
-	if (!_pRTMPProtocol->SendMessage(message)) {
-		FATAL("Unable to send message");
-		_pRTMPProtocol->EnqueueForDelete();
-		return;
-	}
+	if (_sendOnStatusPlayMessages) {
+		//8. Send NetStream.Play.Reset
+		message = StreamMessageFactory::GetInvokeOnStatusStreamPlayReset(
+				_pChannelAudio->id, _rtmpStreamId, 0, true, 0, "reset...", GetName(),
+				_clientId);
+		TRACK_MESSAGE("Message:\n%s", STR(message.ToString()));
+		if (!_pRTMPProtocol->SendMessage(message)) {
+			FATAL("Unable to send message");
+			_pRTMPProtocol->EnqueueForDelete();
+			return;
+		}
 
-	//9. NetStream.Play.Start
-	message = StreamMessageFactory::GetInvokeOnStatusStreamPlayStart(
-			_pChannelAudio->id, _rtmpStreamId, 0, true, 0, "start...", GetName(),
-			_clientId);
-	TRACK_MESSAGE("Message:\n%s", STR(message.ToString()));
-	if (!_pRTMPProtocol->SendMessage(message)) {
-		FATAL("Unable to send message");
-		_pRTMPProtocol->EnqueueForDelete();
-		return;
-	}
+		//9. NetStream.Play.Start
+		message = StreamMessageFactory::GetInvokeOnStatusStreamPlayStart(
+				_pChannelAudio->id, _rtmpStreamId, 0, true, 0, "start...", GetName(),
+				_clientId);
+		TRACK_MESSAGE("Message:\n%s", STR(message.ToString()));
+		if (!_pRTMPProtocol->SendMessage(message)) {
+			FATAL("Unable to send message");
+			_pRTMPProtocol->EnqueueForDelete();
+			return;
+		}
 
-	//10. notify |RtmpSampleAccess
-	message = StreamMessageFactory::GetNotifyRtmpSampleAccess(
-			_pChannelAudio->id, _rtmpStreamId, 0, true, false, false);
-	TRACK_MESSAGE("Message:\n%s", STR(message.ToString()));
-	if (!_pRTMPProtocol->SendMessage(message)) {
-		FATAL("Unable to send message");
-		_pRTMPProtocol->EnqueueForDelete();
-		return;
+		//10. notify |RtmpSampleAccess
+		message = StreamMessageFactory::GetNotifyRtmpSampleAccess(
+				_pChannelAudio->id, _rtmpStreamId, 0, true, false, false);
+		TRACK_MESSAGE("Message:\n%s", STR(message.ToString()));
+		if (!_pRTMPProtocol->SendMessage(message)) {
+			FATAL("Unable to send message");
+			_pRTMPProtocol->EnqueueForDelete();
+			return;
+		}
+	} else {
+		FINEST("Skip sending NetStream.Play.Reset, NetStream.Play.Start and notify |RtmpSampleAcces");
 	}
 
 	//11. notify onStatus code="NetStream.Data.Start"

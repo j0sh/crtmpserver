@@ -23,6 +23,7 @@
 #include "liveflvappprotocolhandler.h"
 #include "streaming/streamstypes.h"
 #include "streaming/basestream.h"
+#include "streaming/baseinstream.h"
 #include "protocols/rtmp/outboundrtmpprotocol.h"
 #include "rtpappprotocolhandler.h"
 #include "rtspappprotocolhandler.h"
@@ -117,33 +118,18 @@ bool ProxyPublishApplication::Initialize() {
 			target["emulateUserAgent"] = HTTP_HEADERS_SERVER_US;
 		}
 
-		string host;
-		string ip;
-		uint16_t port;
-		string application;
-		string dummy;
-
-		if (!ParseURL(target["targetUri"], host, port, dummy, dummy, application)) {
+		URI uri;
+		if (!URI::FromString(target["targetUri"], true, uri)) {
 			FATAL("Invalid uri: %s", STR(target["targetUri"]));
 			return false;
 		}
-
-		ip = GetHostByName(host);
-		if (ip == "") {
-			FATAL("Invalid target: %s", STR(target.ToString()));
+		if (uri.scheme.find("rtmp") != 0) {
+			FATAL("Supported target scheme is rtmp for now....");
 			return false;
 		}
 
-		if (application.size() > 0) {
-			if (application[0] == '/')
-				application = application.substr(1);
-		}
 
-		target["targetIp"] = ip;
-		target["targetPort"] = port;
-		target["targetApplication"] = application;
-		target["targetHost"] = host;
-
+		target["targetUri"] = uri.ToVariant();
 	}
 	_targetServers = _configuration["targetServers"];
 	_abortOnConnectError = (bool)_configuration["abortOnConnectError"];
@@ -167,10 +153,9 @@ bool ProxyPublishApplication::Initialize() {
 
 	_pRTSP = new RTSPAppProtocolHandler(_configuration);
 	RegisterAppProtocolHandler(PT_RTSP, _pRTSP);
-
-	return SpawnRTSPProtocols();
 #endif /* HAS_PROTOCOL_RTP */
-	return true;
+
+	return PullExternalStreams();
 }
 
 void ProxyPublishApplication::SignalStreamRegistered(BaseStream *pStream) {
@@ -185,17 +170,13 @@ void ProxyPublishApplication::SignalStreamRegistered(BaseStream *pStream) {
 	}
 
 	//2. Start the forwarding process
-	if (!InitiateForwardingStream(pStream)) {
+	if (!InitiateForwardingStream((BaseInStream *) pStream)) {
 		FATAL("Unable to initiate the forwarding process");
 		pStream->EnqueueForDelete();
 	}
 }
 
-void ProxyPublishApplication::SignalStreamUnRegistered(BaseStream *pStream) {
-	BaseClientApplication::SignalStreamUnRegistered(pStream);
-}
-
-bool ProxyPublishApplication::InitiateForwardingStream(BaseStream *pStream) {
+bool ProxyPublishApplication::InitiateForwardingStream(BaseInStream *pStream) {
 
 	FOR_MAP(_targetServers, string, Variant, i) {
 		Variant &target = MAP_VAL(i);
@@ -205,7 +186,7 @@ bool ProxyPublishApplication::InitiateForwardingStream(BaseStream *pStream) {
 					STR(tagToString(pStream->GetType())),
 					STR(pStream->GetName()),
 					STR(GetName()),
-					STR(format("rtmp://%s/%s", STR(target["ip"]), STR(target["appName"]))));
+					STR(target["targetUri"]["fullUri"]));
 			if (_abortOnConnectError) {
 				FATAL("Abort");
 				return false;
@@ -215,12 +196,12 @@ bool ProxyPublishApplication::InitiateForwardingStream(BaseStream *pStream) {
 	return true;
 }
 
-bool ProxyPublishApplication::InitiateForwardingStream(BaseStream *pStream, Variant &target) {
+bool ProxyPublishApplication::InitiateForwardingStream(BaseInStream *pStream, Variant &target) {
 #ifndef HAS_PROTOCOL_RTMP
 	FATAL("RTMP protocol not supported");
 	return false;
 #else
-	string remoteStreamName = pStream->GetName();
+	//1. Filter the stream
 	if (target.HasKey("localStreamName")) {
 		if (((string) target["localStreamName"]) != pStream->GetName()) {
 			if (pStream->GetName().find(((string) target["localStreamName"]) + "?") != 0) {
@@ -232,125 +213,22 @@ bool ProxyPublishApplication::InitiateForwardingStream(BaseStream *pStream, Vari
 		}
 	}
 
-	if (target.HasKey("targetStreamName")) {
-		remoteStreamName = (string) target["targetStreamName"];
-	}
+	//2. Compute the target stream name
+	Variant parameters = target;
+	if (!parameters.HasKey("targetStreamName"))
+		parameters["targetStreamName"] = pStream->GetName();
 
-	//1. Prepare our custom parameters
-	Variant customParameters;
-	customParameters["streamId"] = pStream->GetUniqueId();
-	customParameters["remoteAppName"] = target["targetApplication"];
-	customParameters["remoteUri"] = target["targetUri"];
-	customParameters["remoteStreamName"] = remoteStreamName;
-	customParameters["remoteUA"] = target["emulateUserAgent"];
-
-	//2. Prepare the final connect parameters
-	Variant parameters;
-	parameters[CONF_APPLICATION_NAME] = GetName();
-	parameters[CONF_PROTOCOL] = CONF_PROTOCOL_OUTBOUND_RTMP;
-	parameters["customParameters"] = customParameters;
-
-	INFO("Initiate forward stream %d of type %s with name `%s` owned by application `%s` to server %s",
+	//3. Some nice info
+	INFO("Initiate forward stream %d of type %s with name `%s` owned by application `%s` to server %s with name `%s`",
 			pStream->GetUniqueId(),
 			STR(tagToString(pStream->GetType())),
 			STR(pStream->GetName()),
 			STR(GetName()),
-			STR(format("%s/%s", STR(target["targetUri"]), STR(customParameters["remoteStreamName"]))));
+			STR((string) target["targetUri"]["fullUri"]),
+			STR(parameters["targetStreamName"]));
 
-	//3. Initiate the connect routine
-	return OutboundRTMPProtocol::Connect(target["targetIp"], target["targetPort"], parameters);
+	//3. Since we only accept RTMP targets, we will just fetch the RTMP handler
+	//and push the stream
+	return _pRTMPHandler->PushLocalStream(pStream, parameters);
 #endif /* HAS_PROTOCOL_RTMP */
-}
-
-bool ProxyPublishApplication::SpawnRTSPProtocols() {
-	//1. Minimal verifications
-	if (_configuration["rtspStreams"] == V_NULL)
-		return true;
-
-	if (_configuration["rtspStreams"] != V_MAP) {
-		FATAL("Invalid rtspStreams node");
-		return false;
-	}
-
-	//2. get the chain
-	vector<uint64_t> chain = ProtocolFactoryManager::ResolveProtocolChain(
-			CONF_PROTOCOL_INBOUND_RTSP);
-	if (chain.size() == 0) {
-		FATAL("Unable to resolve protocol chain");
-		return false;
-	}
-
-	//3. Spawn the connections
-
-	FOR_MAP(_configuration["rtspStreams"], string, Variant, i) {
-		if (!SpawnRTSPProtocol(chain, MAP_VAL(i))) {
-			FATAL("Unable to connect here:\n%s", STR(MAP_VAL(i).ToString()));
-			return false;
-		}
-	}
-
-	return true;
-}
-
-bool ProxyPublishApplication::SpawnRTSPProtocol(vector<uint64_t> &chain, Variant &node) {
-	//1. Minimal verification
-	if (node != V_MAP) {
-		FATAL("Invalid node");
-		return false;
-	}
-	if ((node["forceTcp"] != V_BOOL) || (node["url"] != V_STRING)) {
-		FATAL("Invalid node");
-		return false;
-	}
-
-	//2. Split the URI
-	string host;
-	uint16_t port;
-	string user;
-	string pwd;
-	string doc;
-
-	if (!ParseURL(node["url"], host, port, user, pwd, doc)) {
-		FATAL("Invalid URL: %s", STR(node["url"].ToString()));
-		return false;
-	}
-
-	//3. resolve the host
-	string ip = GetHostByName(host);
-	if (ip == "") {
-		FATAL("Unable to resolve host %s", STR(host));
-		return false;
-	}
-
-	//4. Save the app id inside the custom parameters
-	node["appId"] = GetId();
-	node["isClient"] = true;
-
-	//5. Connect
-	if (!TCPConnector<ProxyPublishApplication>::Connect(ip, port, chain, node)) {
-		FATAL("Unable to connect to %s:%d", STR(host), port);
-		return false;
-	}
-
-	//6. Done
-	return true;
-}
-
-bool ProxyPublishApplication::SignalProtocolCreated(BaseProtocol *pProtocol,
-		Variant &parameters) {
-	//1. Sanitize
-	if (parameters["appId"] != V_UINT32) {
-		FATAL("Invalid custom parameters:\n%s", STR(parameters.ToString()));
-		return false;
-	}
-
-	//2. Get the application
-	BaseClientApplication *pApplication = ClientApplicationManager::FindAppById(
-			parameters["appId"]);
-
-	//3. Set it up inside the protocol
-	pProtocol->SetApplication(pApplication);
-
-	//4. Done
-	return true;
 }

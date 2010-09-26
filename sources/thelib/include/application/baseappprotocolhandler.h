@@ -25,6 +25,7 @@
 
 class BaseClientApplication;
 class BaseProtocol;
+class BaseInStream;
 
 class DLLEXP BaseAppProtocolHandler {
 private:
@@ -39,6 +40,9 @@ public:
 	BaseClientApplication *GetApplication();
 
 	BaseAppProtocolHandler * GetProtocolHandler(uint64_t protocolType);
+
+	virtual bool PullExternalStream(URI uri, Variant streamConfig);
+	virtual bool PushLocalStream(BaseInStream *pInStream, Variant streamConfig);
 
 	virtual void RegisterProtocol(BaseProtocol *pProtocol) = 0;
 	virtual void UnRegisterProtocol(BaseProtocol *pProtocol) = 0;

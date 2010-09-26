@@ -10,6 +10,8 @@
 # Environment
 MKDIR=mkdir
 CP=cp
+GREP=grep
+NM=nm
 CCADMIN=CCadmin
 RANLIB=ranlib
 CC=gcc
@@ -31,9 +33,10 @@ OBJECTDIR=build/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
-	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/sources/applications/stresstest/src/rtmpappprotocolhandler.o \
-	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/sources/applications/stresstest/src/stresstest.o \
-	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/sources/applications/stresstest/src/stresstestapplication.o
+	${OBJECTDIR}/_ext/1256058352/stresstestapplication.o \
+	${OBJECTDIR}/_ext/1256058352/stresstest.o \
+	${OBJECTDIR}/_ext/1256058352/rtmpappprotocolhandler.o
+
 
 # C Compiler Flags
 CFLAGS=
@@ -53,7 +56,7 @@ LDLIBSOPTIONS=-L../thelib/../Debug/GNU-MacOSX -lthelib -L../common/dist/Debug/GN
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	${MAKE}  -f nbproject/Makefile-Debug.mk ../Debug/GNU-MacOSX/applications/stresstest/libstresstest.dylib
+	"${MAKE}"  -f nbproject/Makefile-Debug.mk ../Debug/GNU-MacOSX/applications/stresstest/libstresstest.dylib
 
 ../Debug/GNU-MacOSX/applications/stresstest/libstresstest.dylib: ../thelib/../Debug/GNU-MacOSX/libthelib.dylib
 
@@ -63,20 +66,20 @@ LDLIBSOPTIONS=-L../thelib/../Debug/GNU-MacOSX -lthelib -L../common/dist/Debug/GN
 	${MKDIR} -p ../Debug/GNU-MacOSX/applications/stresstest
 	${LINK.cc} -dynamiclib -install_name libstresstest.dylib -o ../${CND_CONF}/${CND_PLATFORM}/applications/stresstest/libstresstest.dylib -fPIC ${OBJECTFILES} ${LDLIBSOPTIONS} 
 
-${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/sources/applications/stresstest/src/rtmpappprotocolhandler.o: nbproject/Makefile-${CND_CONF}.mk ../../../../sources/applications/stresstest/src/rtmpappprotocolhandler.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/sources/applications/stresstest/src
+${OBJECTDIR}/_ext/1256058352/stresstestapplication.o: ../../../../sources/applications/stresstest/src/stresstestapplication.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1256058352
 	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/stresstest/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/sources/applications/stresstest/src/rtmpappprotocolhandler.o ../../../../sources/applications/stresstest/src/rtmpappprotocolhandler.cpp
+	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTMP -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/stresstest/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1256058352/stresstestapplication.o ../../../../sources/applications/stresstest/src/stresstestapplication.cpp
 
-${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/sources/applications/stresstest/src/stresstest.o: nbproject/Makefile-${CND_CONF}.mk ../../../../sources/applications/stresstest/src/stresstest.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/sources/applications/stresstest/src
+${OBJECTDIR}/_ext/1256058352/stresstest.o: ../../../../sources/applications/stresstest/src/stresstest.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1256058352
 	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/stresstest/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/sources/applications/stresstest/src/stresstest.o ../../../../sources/applications/stresstest/src/stresstest.cpp
+	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTMP -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/stresstest/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1256058352/stresstest.o ../../../../sources/applications/stresstest/src/stresstest.cpp
 
-${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/sources/applications/stresstest/src/stresstestapplication.o: nbproject/Makefile-${CND_CONF}.mk ../../../../sources/applications/stresstest/src/stresstestapplication.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/sources/applications/stresstest/src
+${OBJECTDIR}/_ext/1256058352/rtmpappprotocolhandler.o: ../../../../sources/applications/stresstest/src/rtmpappprotocolhandler.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1256058352
 	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/stresstest/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/sources/applications/stresstest/src/stresstestapplication.o ../../../../sources/applications/stresstest/src/stresstestapplication.cpp
+	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTMP -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/stresstest/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1256058352/rtmpappprotocolhandler.o ../../../../sources/applications/stresstest/src/rtmpappprotocolhandler.cpp
 
 # Subprojects
 .build-subprojects:

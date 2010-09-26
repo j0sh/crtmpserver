@@ -129,7 +129,7 @@ private:
 	bool FetchMasterPlaylist();
 	bool FetchKey(string keyUri, string itemUri, uint32_t bw);
 	bool FetchTS(string uri, uint32_t bw, string key, uint64_t iv);
-	bool FetchURI(string uri, string requestType, Variant &customParameters);
+	bool FetchURI(string uriString, string requestType, Variant &customParameters);
 
 	bool EnqueueStartFeeding();
 	bool EnqueueFetchChildPlaylist(string uri, uint32_t bw);

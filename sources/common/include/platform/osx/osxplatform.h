@@ -94,6 +94,7 @@ using namespace std;
 #define FD_READ_CHUNK 32768
 #define FD_WRITE_CHUNK FD_READ_CHUNK
 #define RESET_TIMER(timer,sec,usec) timer.tv_sec=sec;timer.tv_usec=usec;
+#define SRAND() sranddev();
 
 #define CLOCKS_PER_SECOND 1000000L
 #define GETCLOCKS(result) \
@@ -131,7 +132,6 @@ typedef struct _select_event {
 	uint8_t type;
 } select_event;
 
-
 string format(string format, ...);
 string vformat(string format, va_list args);
 void replace(string &target, string search, string replacement);
@@ -156,7 +156,6 @@ void splitFileName(string fileName, string &name, string &extension, char separa
 double GetFileModificationDate(string path);
 string normalizePath(string base, string file);
 bool ListFolder(string path, vector<string> &result);
-bool ParseURL(string stringUrl, string &host, uint16_t &port, string &user, string &pwd, string & doc);
 bool MoveFile(string src, string dst);
 void InstallQuitSignal(SignalFnc pQuitSignalFnc);
 void InstallConfRereadSignal(SignalFnc pConfRereadSignalFnc);
