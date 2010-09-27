@@ -225,7 +225,7 @@ bool InNetRTMPStream::FeedData(uint8_t *pData, uint32_t dataLength,
 		uint32_t processedLength, uint32_t totalLength,
 		double absoluteTimestamp, bool isAudio) {
 	if (isAudio) {
-		if (_streamCapabilities.audioCodecId == CODEC_AUDIO_UNKNOWN) {
+		//if (_streamCapabilities.audioCodecId == CODEC_AUDIO_UNKNOWN) {
 			if ((processedLength == 0) && //beginning of a packet
 					(pData[0] >> 4) == 10 && //AAC content
 					(pData[1] == 0)) {// AAC sequence header
@@ -234,14 +234,14 @@ bool InNetRTMPStream::FeedData(uint8_t *pData, uint32_t dataLength,
 				FINEST("Cached the audio codec initialization: %d",
 						GETAVAILABLEBYTESCOUNT(_audioCodecInit));
 			}
-		}
+		//}
 		_lastAudioTime = absoluteTimestamp;
 	} else {
-		if (_streamCapabilities.videoCodecId == CODEC_VIDEO_UNKNOWN) {
+		//if (_streamCapabilities.videoCodecId == CODEC_VIDEO_UNKNOWN) {
 			if (processedLength == 0) {
 				InitializeVideoCapabilities(pData, dataLength);
 			}
-		}
+		//}
 		_lastVideoTime = absoluteTimestamp;
 	}
 
@@ -267,35 +267,21 @@ BaseRTMPProtocol *InNetRTMPStream::GetRTMPProtocol() {
 }
 
 void InNetRTMPStream::InitializeVideoCapabilities(uint8_t *pData, uint32_t length) {
+	if(length==0)
+		return;
 	switch (pData[0]&0x0f) {
 		case 1:
-		{
-			_streamCapabilities.videoCodecId = CODEC_VIDEO_JPEG;
-			break;
-		}
 		case 2:
-		{
-			_streamCapabilities.videoCodecId = CODEC_VIDEO_SORENSON_H263;
-			break;
-		}
 		case 3:
-		{
-			_streamCapabilities.videoCodecId = CODEC_VIDEO_SCREEN_VIDEO;
-			break;
-		}
 		case 4:
-		{
-			_streamCapabilities.videoCodecId = CODEC_VIDEO_VP6;
-			break;
-		}
 		case 5:
-		{
-			_streamCapabilities.videoCodecId = CODEC_VIDEO_VP6_ALPHA;
+		case 6:
 			break;
-		}
 		case 7:
 		{
-			if ((pData[0] >> 4) != 1)
+			if(length<2)
+				break;
+			if (pData[1] != 0)
 				break;
 
 			_videoCodecInit.IgnoreAll();
@@ -315,7 +301,7 @@ void InNetRTMPStream::InitializeVideoCapabilities(uint8_t *pData, uint32_t lengt
 			memcpy(_streamCapabilities.videoCodecInfo.avc.pPPS,
 					pData + 13 + _streamCapabilities.videoCodecInfo.avc.SPSLength + 3,
 					_streamCapabilities.videoCodecInfo.avc.PPSLength);
-			FINEST("Cached the video codec initialization: %d",
+			FINEST("Cached the video codec initialization: CODEC_VIDEO_AVC: %d",
 					GETAVAILABLEBYTESCOUNT(_videoCodecInit));
 			break;
 		}
