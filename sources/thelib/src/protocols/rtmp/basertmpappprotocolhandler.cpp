@@ -1667,10 +1667,10 @@ bool BaseRTMPAppProtocolHandler::PullExternalStream(BaseRTMPProtocol *pFrom) {
 	}
 
 	//3. Compute tcUrl: rtmp://host/appName
-	string tcUrl = format("%s://%s:%d/%s",
+	string tcUrl = format("%s://%s%s/%s",
 			STR(uri.scheme),
 			STR(uri.host),
-			uri.port,
+			STR(uri.port==1935?"":format(":%d",uri.port)),
 			STR(appName));
 
 	//4. Prepare the connect request
@@ -1722,10 +1722,10 @@ bool BaseRTMPAppProtocolHandler::PushLocalStream(BaseRTMPProtocol *pFrom) {
 	}
 
 	//3. Compute tcUrl: rtmp://host/appName
-	string tcUrl = format("%s://%s:%d/%s",
+	string tcUrl = format("%s://%s%s/%s",
 			STR(uri.scheme),
 			STR(uri.host),
-			uri.port,
+			STR(uri.port==1935?"":format(":%d",uri.port)),
 			STR(appName));
 
 	//4. Prepare the connect request
@@ -1734,7 +1734,7 @@ bool BaseRTMPAppProtocolHandler::PushLocalStream(BaseRTMPProtocol *pFrom) {
 			tcUrl, //string tcUrl
 			3191, //double audioCodecs
 			239, //double capabilities
-			"MAC 10,1,82,76", //string flashVer
+			"FMLE/3.0 (compatible; FMSc/1.0; http://www.rtmpd.com)", //string flashVer
 			false, //bool fPad
 			"", //string pageUrl
 			"", //string swfUrl
