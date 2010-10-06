@@ -23,6 +23,8 @@
 #include "streaming/nalutypes.h"
 #include "streaming/baseoutstream.h"
 #include "protocols/baseprotocol.h"
+#include "protocols/rtmp/basertmpprotocol.h"
+#include "protocols/rtmp/streaming/baseoutnetrtmpstream.h"
 
 InNetRTPStream::InNetRTPStream(BaseProtocol *pProtocol,
 		StreamsManager *pStreamsManager, string name, string SPS, string PPS)
@@ -68,6 +70,12 @@ void InNetRTPStream::SignalOutStreamAttached(BaseOutStream *pOutStream) {
 			pOutStream->GetProtocol()->EnqueueForDelete();
 		}
 	}
+#ifdef HAS_PROTOCOL_RTMP
+	if (TAG_KIND_OF(pOutStream->GetType(), ST_OUT_NET_RTMP)) {
+		((BaseRTMPProtocol *) pOutStream->GetProtocol())->TrySetOutboundChunkSize(4 * 1024 * 1024);
+		((BaseOutNetRTMPStream *) pOutStream)->CanDropFrames(true);
+	}
+#endif /* HAS_PROTOCOL_RTMP */
 }
 
 void InNetRTPStream::SignalOutStreamDetached(BaseOutStream *pOutStream) {
