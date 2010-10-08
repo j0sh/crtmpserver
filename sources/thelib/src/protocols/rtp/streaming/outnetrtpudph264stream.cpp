@@ -151,21 +151,21 @@ bool OutNetRTPUDPH264Stream::FeedDataAudio(uint8_t *pData, uint32_t dataLength,
 void OutNetRTPUDPH264Stream::SignalAttachedToInStream() {
 	StreamCapabilities *pCapabilities = GetCapabilities();
 
-	_SPSLen = pCapabilities->videoCodecInfo.avc.SPSLength + 12;
+	_SPSLen = pCapabilities->avc._spsLength + 12;
 	_pSPS = new uint8_t[_SPSLen];
 	_pSPS[0] = 0x80;
 	_pSPS[1] = 0xE1;
 	put_htonl(_pSPS + 8, _ssrc);
-	memcpy(_pSPS + 12, pCapabilities->videoCodecInfo.avc.pSPS,
-			pCapabilities->videoCodecInfo.avc.SPSLength);
+	memcpy(_pSPS + 12, pCapabilities->avc._pSPS,
+			pCapabilities->avc._spsLength);
 
-	_PPSLen = pCapabilities->videoCodecInfo.avc.PPSLength + 12;
+	_PPSLen = pCapabilities->avc._ppsLength + 12;
 	_pPPS = new uint8_t[_PPSLen];
 	_pPPS[0] = 0x80;
 	_pPPS[1] = 0xE1;
 	put_htonl(_pPPS + 8, _ssrc);
-	memcpy(_pPPS + 12, pCapabilities->videoCodecInfo.avc.pPPS,
-			pCapabilities->videoCodecInfo.avc.PPSLength);
+	memcpy(_pPPS + 12, pCapabilities->avc._pPPS,
+			pCapabilities->avc._ppsLength);
 }
 
 bool OutNetRTPUDPH264Stream::FeedDataVideoFUA(uint8_t *pData, uint32_t dataLength,
@@ -312,7 +312,7 @@ bool OutNetRTPUDPH264Stream::FeedDataAudioMPEG4Generic_aggregate(uint8_t *pData,
 		//4. Timestamp
 		put_htonl(((uint8_t *) _audioData.msg_iov[0].iov_base) + 4,
 				BaseConnectivity::ToRTPTS(absoluteTimestamp,
-				GetCapabilities()->audioCodecInfo.aac.sampleRate));
+				GetCapabilities()->aac._sampleRate));
 
 		//6. put the actual buffer
 		_audioData.msg_iov[2].iov_len = GETAVAILABLEBYTESCOUNT(_audioBuffer);
@@ -342,13 +342,77 @@ bool OutNetRTPUDPH264Stream::FeedDataAudioMPEG4Generic_aggregate(uint8_t *pData,
 }
 
 bool OutNetRTPUDPH264Stream::FeedDataAudioMPEG4Generic_one_by_one(uint8_t *pData, uint32_t dataLength,
-		uint32_t processedLength, uint32_t totalLength,
-		double absoluteTimestamp) {
-	//1. We only support frame-by-frame approach
+		uint32_t processedLength, uint32_t totalLength, double absoluteTimestamp) {
+
+	//1. Take care of chunked content first
+	//this will update pData and dataLength if necessary
 	if (dataLength != totalLength) {
-		WARN("Chunked mode not yet supported");
+		//chunked
+		if (processedLength == 0) {
+			//beginning of the packet
+			_audioBuffer.IgnoreAll();
+			_audioBuffer.ReadFromBuffer(pData, dataLength);
+			return true;
+		} else {
+			if (totalLength < processedLength + dataLength) {
+				//middle
+				if (GETAVAILABLEBYTESCOUNT(_audioBuffer) == 0) {
+					//we don't have the beginning of the packet. We started
+					//directly in the middle
+					return true;
+				}
+				_audioBuffer.ReadFromBuffer(pData, dataLength);
+				return true;
+			} else {
+				//last
+				if (GETAVAILABLEBYTESCOUNT(_audioBuffer) == 0) {
+					//we don't have the beginning of the packet. We started
+					//directly in the middle
+					return true;
+				}
+				_audioBuffer.ReadFromBuffer(pData, dataLength);
+				pData = GETIBPOINTER(_audioBuffer);
+				dataLength = GETAVAILABLEBYTESCOUNT(_audioBuffer);
+				if (dataLength != totalLength) {
+					ASSERT("We should not be here!!!!");
+					return false;
+				}
+			}
+		}
+	}
+
+
+	//2. Do we have enough data?
+	if (dataLength <= 7) {
+		WARN("Bogus AAC packet");
+		_audioBuffer.IgnoreAll();
 		return true;
 	}
+
+	//3. Take care of the RTMP headers if necessary
+	if (_pInStream->GetType() == ST_IN_NET_RTMP) {
+		if (pData[1] != 1) {
+			WARN("This is a RTMP audio config packet");
+			_audioBuffer.IgnoreAll();
+			return true;
+		}
+		if (dataLength <= 9) {
+			WARN("Bogus AAC packet");
+			_audioBuffer.IgnoreAll();
+			return true;
+		}
+
+		//ASSERT("sdfsdfds");
+		dataLength -= 2;
+		pData += 2;
+	}
+
+	//4. The packet might start with an ADTS header. Remove it if necessary
+	uint32_t adtsHeaderLength = 0;
+	if ((ntohsp(pData) >> 3) == 0x1fff) {
+		adtsHeaderLength = 7;
+	}
+
 	/*
 	0                   1                   2                   3
 	0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
@@ -384,18 +448,18 @@ bool OutNetRTPUDPH264Stream::FeedDataAudioMPEG4Generic_one_by_one(uint8_t *pData
 	//	_audioData.msg_iov[0].iov_base[12] AU-headers-length
 	//	_audioData.msg_iov[0].iov_base[13] AU-headers-length
 
-	//3. counter
+	//5. counter
 	put_htons(((uint8_t *) _audioData.msg_iov[0].iov_base) + 2, _audioCounter);
 	_audioCounter++;
 
-	//4. Timestamp
+	//6. Timestamp
 	put_htonl(((uint8_t *) _audioData.msg_iov[0].iov_base) + 4,
 			(uint32_t) (absoluteTimestamp
-			* (double) GetCapabilities()->audioCodecInfo.aac.sampleRate / 1000.000));
+			* (double) GetCapabilities()->aac._sampleRate / 1000.000));
 
 	put_htons(((uint8_t *) _audioData.msg_iov[0].iov_base) + 12, 16);
 
-	uint16_t auHeader = (uint16_t) ((dataLength - 7) << 3);
+	uint16_t auHeader = (uint16_t) ((dataLength - adtsHeaderLength) << 3);
 	put_htons(((uint8_t *) _audioData.msg_iov[1].iov_base), auHeader);
 	_audioData.msg_iov[1].iov_len = 2;
 
@@ -419,11 +483,18 @@ bool OutNetRTPUDPH264Stream::FeedDataAudioMPEG4Generic_one_by_one(uint8_t *pData
 	//			dataLength - 7,
 	//			absoluteTimestamp);
 
-	//6. put the actual buffer
-	_audioData.msg_iov[2].iov_len = dataLength - 7;
-	_audioData.msg_iov[2].iov_base = pData + 7;
+	//7. put the actual buffer
+	_audioData.msg_iov[2].iov_len = dataLength - adtsHeaderLength;
+	_audioData.msg_iov[2].iov_base = pData + adtsHeaderLength;
 
-	return _pConnectivity->FeedAudioData(_audioData);
+	if (!_pConnectivity->FeedAudioData(_audioData)) {
+		FATAL("Unable to feed data");
+		_audioBuffer.IgnoreAll();
+		return false;
+	}
+
+	_audioBuffer.IgnoreAll();
+	return true;
 }
 #endif /* HAS_PROTOCOL_RTP */
 

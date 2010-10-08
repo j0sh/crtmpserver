@@ -380,15 +380,15 @@ bool InNetTSStream::HandleVideoData_version3(uint8_t *pBuffer, uint32_t length,
 	//2. Get the initial buffer and size
 	uint32_t size = GETAVAILABLEBYTESCOUNT(_currentNal);
 	uint8_t *pNalBuffer = GETIBPOINTER(_currentNal);
-	_cursor=0;
-	uint32_t testValue=0;
-	
+	uint32_t testValue = 0;
+
 	//3. If this is the first NAL encountered, than lock
 	//on the first byte from the first packet
-	if(_firstNAL){
+	if (_firstNAL) {
+		_cursor = 0;
 		while (_cursor < size - 4) {
-			testValue=ntohlp(pNalBuffer + _cursor);
-			if((testValue>>8)==1) {
+			testValue = ntohlp(pNalBuffer + _cursor);
+			if ((testValue >> 8) == 1) {
 				_currentNal.Ignore(_cursor + 3);
 				_firstNAL = false;
 				_cursor = 0;
@@ -396,7 +396,7 @@ bool InNetTSStream::HandleVideoData_version3(uint8_t *pBuffer, uint32_t length,
 				pNalBuffer = GETIBPOINTER(_currentNal);
 				break;
 			}
-			if(testValue==1){
+			if (testValue == 1) {
 				_currentNal.Ignore(_cursor + 4);
 				_firstNAL = false;
 				_cursor = 0;
@@ -408,38 +408,42 @@ bool InNetTSStream::HandleVideoData_version3(uint8_t *pBuffer, uint32_t length,
 		}
 	}
 
+	if (size < 4) {
+		return true;
+	}
+
 	//4. Search for the next NAL boundary
 	bool found = false;
-	int8_t markerSize=0;
-	
+	int8_t markerSize = 0;
+
 	while (_cursor < size - 4) {
-		testValue=ntohlp(pNalBuffer + _cursor);
-		if((testValue>>8)==1) {
-			markerSize=3;
-			found=true;
-		} else if(testValue==1){
-			markerSize=4;
-			found=true;
+		testValue = ntohlp(pNalBuffer + _cursor);
+		if ((testValue >> 8) == 1) {
+			markerSize = 3;
+			found = true;
+		} else if (testValue == 1) {
+			markerSize = 4;
+			found = true;
 		}
 
-		if(!found){
+		if (!found) {
 			_cursor++;
 			continue;
 		}
-		found=false;
-		
+		found = false;
+
 		if (!ProcessNal(timestamp)) {
 			FATAL("Unable to process NALU");
 			return false;
 		}
-		
+
 		_currentNal.Ignore(_cursor + markerSize);
 		pNalBuffer = GETIBPOINTER(_currentNal);
 		size = GETAVAILABLEBYTESCOUNT(_currentNal);
 		_cursor = 0;
 		if (size < 4)
 			break;
-    }
+	}
 
 	return true;
 }
@@ -461,22 +465,25 @@ void InNetTSStream::InitializeVideoCapabilities(uint8_t *pData, uint32_t length)
 	switch (NALU_TYPE(pData[0])) {
 		case NALU_TYPE_SPS:
 		{
-			_streamCapabilities.ClearVideo();
-			_streamCapabilities.videoCodecInfo.avc.SPSLength = (uint16_t) length;
-			_streamCapabilities.videoCodecInfo.avc.pSPS = new uint8_t[length];
-			memcpy(_streamCapabilities.videoCodecInfo.avc.pSPS, pData, length);
+			_SPS.IgnoreAll();
+			_SPS.ReadFromBuffer(pData, length);
 			break;
 		}
 		case NALU_TYPE_PPS:
 		{
-			if (_streamCapabilities.videoCodecInfo.avc.pSPS == NULL) {
-				_streamCapabilities.ClearVideo();
+			if (GETAVAILABLEBYTESCOUNT(_SPS) == 0)
 				break;
+			_PPS.IgnoreAll();
+			_PPS.ReadFromBuffer(pData, length);
+			if (!_streamCapabilities.InitVideoH264(
+					GETIBPOINTER(_SPS),
+					GETAVAILABLEBYTESCOUNT(_SPS),
+					GETIBPOINTER(_PPS),
+					GETAVAILABLEBYTESCOUNT(_PPS)
+					)) {
+				_streamCapabilities.ClearVideo();
+				WARN("Unable to initialize h264 codec");
 			}
-			_streamCapabilities.videoCodecInfo.avc.PPSLength = (uint16_t) length;
-			_streamCapabilities.videoCodecInfo.avc.pPPS = new uint8_t[length];
-			memcpy(_streamCapabilities.videoCodecInfo.avc.pPPS, pData, length);
-			_streamCapabilities.videoCodecId = CODEC_VIDEO_AVC;
 			break;
 		}
 		default:
@@ -489,28 +496,11 @@ void InNetTSStream::InitializeVideoCapabilities(uint8_t *pData, uint32_t length)
 void InNetTSStream::InitializeAudioCapabilities(uint8_t *pData, uint32_t length) {
 	//FINEST("_streamCapabilities.audioCodecId: %016llx", _streamCapabilities.audioCodecId);
 	if (_streamCapabilities.audioCodecId == CODEC_AUDIO_UNKNOWN) {
-		//FINEST("here");
 		uint8_t mpegts2rtmpProfile[] = {
 			1, 2, 3
 		};
 
 		BitArray codecSetup;
-		codecSetup.PutBits<uint8_t > (0x0a, 4);
-
-		//sampling rate. For AAC is 3 always
-		codecSetup.PutBits<uint8_t > (3, 2);
-
-		//WARN("sample size. Hardcode it to 16 bit right now....");
-		codecSetup.PutBits<uint8_t > (1, 1);
-
-		//sound type is always stereo for AAC
-		codecSetup.PutBits<uint8_t > (1, 1);
-
-		//put the sequence header marker
-		codecSetup.PutBits<uint8_t > (0, 8);
-
-		//FINEST("here");
-
 		//profile_index from MPEG-TS different from profile_index from RTMP
 		//so we need a map
 		uint8_t profile = pData[2] >> 6;
@@ -518,8 +508,6 @@ void InNetTSStream::InitializeAudioCapabilities(uint8_t *pData, uint32_t length)
 
 		//frequence mapping is the same
 		//iso13818-7.pdf page 46/206
-		uint32_t sampling_frequencies[] = {96000, 88200, 64000, 48000, 44100,
-			32000, 24000, 22050, 16000, 12000, 11025, 8000, 0, 0, 0, 0};
 		uint8_t sampling_frequency_index = (pData[2] >> 2)&0x0f;
 		codecSetup.PutBits<uint8_t > (sampling_frequency_index, 4);
 
@@ -527,26 +515,8 @@ void InNetTSStream::InitializeAudioCapabilities(uint8_t *pData, uint32_t length)
 		//and we have mono in this file... Need to check out this one...
 		codecSetup.PutBits<uint8_t > (2, 4);
 
-		//		FINEST("GETAVAILABLEBYTESCOUNT(_codecSetup): %d; _codecSetup:\n%s",
-		//				GETAVAILABLEBYTESCOUNT(codecSetup), STR(codecSetup));
-
-		//FINEST("here");
-
-		_streamCapabilities.ClearAudio();
-		_streamCapabilities.audioCodecId = CODEC_AUDIO_AAC;
-		_streamCapabilities.audioCodecInfo.aac.sampleRate
-				= sampling_frequencies[sampling_frequency_index];
-		_streamCapabilities.audioCodecInfo.aac.AACLength
-				= GETAVAILABLEBYTESCOUNT(codecSetup);
-		_streamCapabilities.audioCodecInfo.aac.pAAC
-				= new uint8_t[_streamCapabilities.audioCodecInfo.aac.AACLength];
-		memcpy(_streamCapabilities.audioCodecInfo.aac.pAAC,
-				GETIBPOINTER(codecSetup),
-				_streamCapabilities.audioCodecInfo.aac.AACLength);
-
-		//FINEST("here");
-
-		WARN("\n%s", STR(codecSetup));
+		_streamCapabilities.InitAudioAAC(GETIBPOINTER(codecSetup),
+				GETAVAILABLEBYTESCOUNT(codecSetup));
 	}
 }
 

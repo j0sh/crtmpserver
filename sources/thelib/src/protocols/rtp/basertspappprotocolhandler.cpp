@@ -441,7 +441,7 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPRequestPlay(RTSPProtocol *pFrom,
 
 	string rtpInfoVideo = "";
 	string rtpInfoAudio = "";
-	if (pFrom->GetCustomParameters().HasKey("videoTrackId")) {
+	if (pFrom->GetCustomParameters().HasKey("videoTrackUri")) {
 		rtpInfoVideo = format("url=%s;seq=%u;rtptime=%u",
 				STR(pFrom->GetCustomParameters()["videoTrackUri"]),
 				pOutboundConnectivity->GetLastVideoSequence(),
@@ -450,7 +450,7 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPRequestPlay(RTSPProtocol *pFrom,
 	}
 	if (pFrom->GetCustomParameters().HasKey("audioTrackId")) {
 		rtpInfoAudio = format("url=%s;seq=%u;rtptime=%u",
-				STR(pFrom->GetCustomParameters()["audioTrackUri"]),
+				STR(pFrom->GetCustomParameters()["videoTrackUri"]),
 				pOutboundConnectivity->GetLastAudioSequence(),
 				0);
 		//pOutboundConnectivity->GetLastAudioRTPTimestamp());
@@ -745,16 +745,14 @@ string BaseRTSPAppProtocolHandler::GetAudioTrack(RTSPProtocol *pFrom,
 		result += "m=audio 0 RTP/AVP 96\r\n";
 		result += "a=recvonly\r\n";
 		result += format("a=rtpmap:96 mpeg4-generic/%d/2\r\n",
-				pCapabilities->audioCodecInfo.aac.sampleRate);
+				pCapabilities->aac._sampleRate);
 		FINEST("result: %s", STR(result));
 		result += "a=control:trackID="
 				+ (string) pFrom->GetCustomParameters()["audioTrackId"] + "\r\n";
-		result += format("a=fmtp:96 streamtype=5; profile-level-id=15; mode=AAC-hbr; config=%02x%02x; SizeLength=13; IndexLength=3; IndexDeltaLength=3; Profile=1;\r\n",
-				pCapabilities->audioCodecInfo.aac.pAAC[2],
-				pCapabilities->audioCodecInfo.aac.pAAC[3]);
-		//ASSERT("result:\n`%s`", STR(result));
+		//rfc3640-fmtp-explained.txt Chapter 4.1
+		result += format("a=fmtp:96 streamtype=5; profile-level-id=15; mode=AAC-hbr; %s; SizeLength=13; IndexLength=3; IndexDeltaLength=3;\r\n",
+				STR(pCapabilities->aac.GetRTSPFmtpConfig()));
 	} else {
-
 		WARN("Unsupported audio codec: %s", STR(tagToString(pCapabilities->audioCodecId)));
 	}
 	return result;
@@ -773,14 +771,14 @@ string BaseRTSPAppProtocolHandler::GetVideoTrack(RTSPProtocol *pFrom,
 		result += "a=rtpmap:97 H264/90000\r\n";
 		result += "a=fmtp:97 profile-level-id=";
 		result += format("%02X%02X%02X",
-				pCapabilities->videoCodecInfo.avc.pSPS[1],
-				pCapabilities->videoCodecInfo.avc.pSPS[2],
-				pCapabilities->videoCodecInfo.avc.pSPS[3]);
+				pCapabilities->avc._pSPS[1],
+				pCapabilities->avc._pSPS[2],
+				pCapabilities->avc._pSPS[3]);
 		result += "; packetization-mode=1; sprop-parameter-sets=";
-		result += b64(pCapabilities->videoCodecInfo.avc.pSPS,
-				pCapabilities->videoCodecInfo.avc.SPSLength) + ",";
-		result += b64(pCapabilities->videoCodecInfo.avc.pPPS,
-				pCapabilities->videoCodecInfo.avc.PPSLength) + "\r\n";
+		result += b64(pCapabilities->avc._pSPS,
+				pCapabilities->avc._spsLength) + ",";
+		result += b64(pCapabilities->avc._pPPS,
+				pCapabilities->avc._ppsLength) + "\r\n";
 	} else {
 		WARN("Unsupported video codec: %s", STR(tagToString(pCapabilities->videoCodecId)));
 	}

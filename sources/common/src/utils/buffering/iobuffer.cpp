@@ -385,19 +385,48 @@ bool IOBuffer::MoveData() {
 
 bool IOBuffer::EnsureSize(uint32_t expected) {
 	SANITY_INPUT_BUFFER;
-	MoveData();
+	//1. Do we have enough space?
 	if (_published + expected <= _size) {
 		SANITY_INPUT_BUFFER;
 		return true;
 	}
-	if (expected < _minChunkSize)
+
+	//2. Apparently we don't! Try to move some data
+	MoveData();
+
+	//3. Again, do we have enough space?
+	if (_published + expected <= _size) {
+		SANITY_INPUT_BUFFER;
+		return true;
+	}
+
+	//4. Nope! So, let's get busy with making a brand new buffer...
+	//First, we allocate at least 1/3 of what we have and no less than _minChunkSize
+	if ((_published + expected - _size)<(_size / 3)) {
+		expected = _size + _size / 3 - _published;
+	}
+
+	if (expected < _minChunkSize) {
 		expected = _minChunkSize;
+	}
+
+	//5. Allocate
 	uint8_t *pTempBuffer = new uint8_t[_published + expected];
+	//	WARN("this: %p; %p->%p; %d -> %d",
+	//			this,
+	//			_pBuffer,
+	//			pTempBuffer,
+	//			_size,
+	//			_published + expected);
+
+	//6. Copy existing data if necessary and switch buffers
 	if (_pBuffer != NULL) {
 		memcpy(pTempBuffer, _pBuffer, _published);
 		delete[] _pBuffer;
 	}
 	_pBuffer = pTempBuffer;
+
+	//7. Update the size
 	_size = _published + expected;
 	SANITY_INPUT_BUFFER;
 	return true;

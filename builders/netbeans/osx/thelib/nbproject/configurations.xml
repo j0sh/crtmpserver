@@ -457,6 +457,7 @@
         <itemPath>../../../../sources/thelib/src/streaming/baseoutstream.cpp</itemPath>
         <itemPath>../../../../sources/thelib/src/streaming/basestream.cpp</itemPath>
         <itemPath>../../../../sources/thelib/src/streaming/nalutypes.cpp</itemPath>
+        <itemPath>../../../../sources/thelib/src/streaming/streamcapabilities.cpp</itemPath>
         <itemPath>../../../../sources/thelib/src/streaming/streamsmanager.cpp</itemPath>
       </logicalFolder>
     </logicalFolder>

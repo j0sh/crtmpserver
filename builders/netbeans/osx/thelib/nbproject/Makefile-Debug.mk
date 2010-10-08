@@ -147,6 +147,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/1636055853/baseinnetstream.o \
 	${OBJECTDIR}/_ext/554535297/iotimer.o \
 	${OBJECTDIR}/_ext/126235575/tcpcarrier.o \
+	${OBJECTDIR}/_ext/1636055853/streamcapabilities.o \
 	${OBJECTDIR}/_ext/1636055853/basestream.o \
 	${OBJECTDIR}/_ext/126235575/iohandler.o \
 	${OBJECTDIR}/_ext/554535297/inboundnamedpipecarrier.o \
@@ -785,6 +786,11 @@ ${OBJECTDIR}/_ext/126235575/tcpcarrier.o: ../../../../sources/thelib/src/netio/e
 	${MKDIR} -p ${OBJECTDIR}/_ext/126235575
 	${RM} $@.d
 	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_VAR -DHAS_PROTOCOL_LIVEFLV -DHAS_MEDIA_MP4 -DHAS_MEDIA_MP3 -DHAS_MEDIA_FLV -DCreateRTCPPacket=CreateRTCPPacket_none -DFeedDataAudioMPEG4Generic=FeedDataAudioMPEG4Generic_one_by_one -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/126235575/tcpcarrier.o ../../../../sources/thelib/src/netio/epoll/tcpcarrier.cpp
+
+${OBJECTDIR}/_ext/1636055853/streamcapabilities.o: ../../../../sources/thelib/src/streaming/streamcapabilities.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1636055853
+	${RM} $@.d
+	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_VAR -DHAS_PROTOCOL_LIVEFLV -DHAS_MEDIA_MP4 -DHAS_MEDIA_MP3 -DHAS_MEDIA_FLV -DCreateRTCPPacket=CreateRTCPPacket_none -DFeedDataAudioMPEG4Generic=FeedDataAudioMPEG4Generic_one_by_one -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1636055853/streamcapabilities.o ../../../../sources/thelib/src/streaming/streamcapabilities.cpp
 
 ${OBJECTDIR}/_ext/1636055853/basestream.o: ../../../../sources/thelib/src/streaming/basestream.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1636055853

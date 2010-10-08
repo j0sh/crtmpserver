@@ -225,23 +225,26 @@ bool InNetRTMPStream::FeedData(uint8_t *pData, uint32_t dataLength,
 		uint32_t processedLength, uint32_t totalLength,
 		double absoluteTimestamp, bool isAudio) {
 	if (isAudio) {
-		//if (_streamCapabilities.audioCodecId == CODEC_AUDIO_UNKNOWN) {
-			if ((processedLength == 0) && //beginning of a packet
-					(pData[0] >> 4) == 10 && //AAC content
-					(pData[1] == 0)) {// AAC sequence header
-				_audioCodecInit.IgnoreAll();
-				_audioCodecInit.ReadFromBuffer(pData, dataLength);
-				FINEST("Cached the audio codec initialization: %d",
-						GETAVAILABLEBYTESCOUNT(_audioCodecInit));
+		if ((processedLength == 0) //beginning of a packet
+				&& ((pData[0] >> 4) == 10) //AAC content
+				&& (pData[1] == 0) // AAC sequence header
+				) {
+			if (!InitializeAudioCapabilities(pData, dataLength)) {
+				FATAL("Unable to initialize audio capabilities");
+				return false;
 			}
-		//}
+		}
 		_lastAudioTime = absoluteTimestamp;
 	} else {
-		//if (_streamCapabilities.videoCodecId == CODEC_VIDEO_UNKNOWN) {
-			if (processedLength == 0) {
-				InitializeVideoCapabilities(pData, dataLength);
+		if ((processedLength == 0) //beginning of a packet
+				&& ((pData[0]&0x0f) == 7) //h264 content
+				&& (pData[1] == 0) //AVC sequence header
+				) {
+			if (!InitializeVideoCapabilities(pData, dataLength)) {
+				FATAL("Unable to initialize audio capabilities");
+				return false;
 			}
-		//}
+		}
 		_lastVideoTime = absoluteTimestamp;
 	}
 
@@ -266,50 +269,42 @@ BaseRTMPProtocol *InNetRTMPStream::GetRTMPProtocol() {
 	return (BaseRTMPProtocol *) _pProtocol;
 }
 
-void InNetRTMPStream::InitializeVideoCapabilities(uint8_t *pData, uint32_t length) {
-	if(length==0)
-		return;
-	switch (pData[0]&0x0f) {
-		case 1:
-		case 2:
-		case 3:
-		case 4:
-		case 5:
-		case 6:
-			break;
-		case 7:
-		{
-			if(length<2)
-				break;
-			if (pData[1] != 0)
-				break;
-
-			_videoCodecInit.IgnoreAll();
-			_videoCodecInit.ReadFromBuffer(pData, length);
-			//            FINEST("_videoCodecInit:\n%s", STR(_videoCodecInit));
-
-			_streamCapabilities.videoCodecId = CODEC_VIDEO_AVC;
-
-			_streamCapabilities.videoCodecInfo.avc.SPSLength = ntohsp(pData + 11);
-			_streamCapabilities.videoCodecInfo.avc.pSPS = new uint8_t[_streamCapabilities.videoCodecInfo.avc.SPSLength];
-			memcpy(_streamCapabilities.videoCodecInfo.avc.pSPS, pData + 13,
-					_streamCapabilities.videoCodecInfo.avc.SPSLength);
-
-			_streamCapabilities.videoCodecInfo.avc.PPSLength = ntohsp(pData
-					+ 13 + _streamCapabilities.videoCodecInfo.avc.SPSLength + 1);
-			_streamCapabilities.videoCodecInfo.avc.pPPS = new uint8_t[_streamCapabilities.videoCodecInfo.avc.PPSLength];
-			memcpy(_streamCapabilities.videoCodecInfo.avc.pPPS,
-					pData + 13 + _streamCapabilities.videoCodecInfo.avc.SPSLength + 3,
-					_streamCapabilities.videoCodecInfo.avc.PPSLength);
-			FINEST("Cached the video codec initialization: CODEC_VIDEO_AVC: %d",
-					GETAVAILABLEBYTESCOUNT(_videoCodecInit));
-			break;
-		}
-		default:
-		{
-			WARN("Unsupported codec: %d", pData[0]&0x0f);
-		}
+bool InNetRTMPStream::InitializeAudioCapabilities(uint8_t *pData, uint32_t length) {
+	if (length < 4) {
+		FATAL("Invalid length");
+		return false;
 	}
+	_audioCodecInit.IgnoreAll();
+	_audioCodecInit.ReadFromBuffer(pData, length);
+	if (!_streamCapabilities.InitAudioAAC(pData + 2, length - 2)) {
+		FATAL("InitAudioAAC failed");
+		return false;
+	}
+	FINEST("Cached the AAC audio codec initialization: %d",
+			GETAVAILABLEBYTESCOUNT(_audioCodecInit));
+	return true;
+}
+
+bool InNetRTMPStream::InitializeVideoCapabilities(uint8_t *pData, uint32_t length) {
+	if (length == 0)
+		return false;
+
+	_videoCodecInit.IgnoreAll();
+	_videoCodecInit.ReadFromBuffer(pData, length);
+	uint8_t *pSPS = pData + 13;
+	uint32_t spsLength = ntohsp(pData + 11);
+	uint8_t *pPPS = pData + 13 + spsLength + 3;
+	uint32_t ppsLength = ntohsp(pData
+			+ 13 + spsLength + 1);
+	if (!_streamCapabilities.InitVideoH264(pSPS, spsLength, pPPS, ppsLength)) {
+		FATAL("InitVideoH264 failed");
+		return false;
+	}
+
+	FINEST("Cached the h264 video codec initialization: %d",
+			GETAVAILABLEBYTESCOUNT(_videoCodecInit));
+
+	return true;
 }
 #endif /* HAS_PROTOCOL_RTMP */
 

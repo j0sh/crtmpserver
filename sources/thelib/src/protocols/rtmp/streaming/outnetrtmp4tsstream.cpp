@@ -76,51 +76,26 @@ bool OutNetRTMP4TSStream::FeedAudioData(uint8_t *pData, uint32_t dataLength,
 
 	//1. Send the audio codec setup if necessary
 	if (!_audioCodecSent) {
-		uint8_t mpegts2rtmpProfile[] = {
-			1, 2, 3
-		};
+		StreamCapabilities *pCapabilities = GetCapabilities();
+		if ((pCapabilities != NULL)
+				&& (pCapabilities->audioCodecId == CODEC_AUDIO_AAC)) {
+			IOBuffer codecSetup;
+			codecSetup.ReadFromRepeat(0xaf, 1);
+			codecSetup.ReadFromRepeat(0x00, 1);
+			codecSetup.ReadFromBuffer(pCapabilities->aac._pAAC,
+					pCapabilities->aac._aacLength);
 
-		BitArray codecSetup;
-		codecSetup.PutBits<uint8_t > (0x0a, 4);
-
-		//sampling rate. For AAC is 3 always
-		codecSetup.PutBits<uint8_t > (3, 2);
-
-		WARN("sample size. Hardcode it to 16 bit right now....");
-		codecSetup.PutBits<uint8_t > (1, 1);
-
-		//sound type is always stereo for AAC
-		codecSetup.PutBits<uint8_t > (1, 1);
-
-		//put the sequence header marker
-		codecSetup.PutBits<uint8_t > (0, 8);
-
-		//profile_index from MPEG-TS different from profile_index from RTMP
-		//so we need a map
-		uint8_t profile = pData[2] >> 6;
-		codecSetup.PutBits<uint8_t > (mpegts2rtmpProfile[profile], 5);
-
-		//frequence mapping is the same
-		uint8_t sampling_frequency_index = (pData[2] >> 2)&0x0f;
-		codecSetup.PutBits<uint8_t > (sampling_frequency_index, 4);
-
-		//this could be an issue... AAC from RTMP only supports stereo
-		//and we have mono in this file... Need to check out this one...
-		codecSetup.PutBits<uint8_t > (2, 4);
-
-		FINEST("GETAVAILABLEBYTESCOUNT(_codecSetup): %d; _codecSetup:\n%s",
-				GETAVAILABLEBYTESCOUNT(codecSetup), STR(codecSetup));
-
-		if (!BaseOutNetRTMPStream::FeedData(
-				GETIBPOINTER(codecSetup), //pData
-				GETAVAILABLEBYTESCOUNT(codecSetup), //dataLength
-				0, //processedLength
-				GETAVAILABLEBYTESCOUNT(codecSetup), //totalLength
-				absoluteTimestamp, //absoluteTimestamp
-				true //isAudio
-				)) {
-			FATAL("Unable to send audio codec setup");
-			return false;
+			if (!BaseOutNetRTMPStream::FeedData(
+					GETIBPOINTER(codecSetup), //pData
+					GETAVAILABLEBYTESCOUNT(codecSetup), //dataLength
+					0, //processedLength
+					GETAVAILABLEBYTESCOUNT(codecSetup), //totalLength
+					absoluteTimestamp, //absoluteTimestamp
+					true //isAudio
+					)) {
+				FATAL("Unable to send audio codec setup");
+				return false;
+			}
 		}
 
 		_audioCodecSent = true;

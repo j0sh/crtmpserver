@@ -76,7 +76,8 @@ public:
 			double absoluteTimestamp, bool isAudio);
 private:
 	BaseRTMPProtocol *GetRTMPProtocol();
-	void InitializeVideoCapabilities(uint8_t *pData, uint32_t length);
+	bool InitializeAudioCapabilities(uint8_t *pData, uint32_t length);
+	bool InitializeVideoCapabilities(uint8_t *pData, uint32_t length);
 };
 
 

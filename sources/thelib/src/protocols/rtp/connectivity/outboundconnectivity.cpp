@@ -386,7 +386,7 @@ bool OutboundConnectivity::FeedAudioDataUDP(msghdr &message) {
 		if (CreateRTCPPacket(buff,
 				(uint8_t *) message.msg_iov[0].iov_base,
 				_pOutStream->SSRC(),
-				_pOutStream->GetCapabilities()->audioCodecInfo.aac.sampleRate,
+				_pOutStream->GetCapabilities()->aac._sampleRate,
 				_audioPacketsCount,
 				_audioBytesCount,
 				true)) {

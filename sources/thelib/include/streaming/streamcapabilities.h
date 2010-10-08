@@ -23,86 +23,50 @@
 
 #include "streaming/codectypes.h"
 
-typedef struct _StreamCapabilities {
+struct _VIDEO_AVC {
+	uint8_t *_pSPS;
+	uint16_t _spsLength;
+	uint8_t *_pPPS;
+	uint16_t _ppsLength;
+
+	_VIDEO_AVC();
+	virtual ~_VIDEO_AVC();
+	bool Init(uint8_t *pSPS, uint32_t spsLength, uint8_t *pPPS, uint32_t ppsLength);
+	void Clear();
+};
+
+struct _AUDIO_AAC {
+	uint8_t *_pAAC;
+	uint32_t _aacLength;
+	uint8_t _audioObjectType;
+	uint8_t _sampleRateIndex;
+	uint32_t _sampleRate;
+	uint8_t _channelConfigurationIndex;
+
+	_AUDIO_AAC();
+	virtual ~_AUDIO_AAC();
+	bool Init(uint8_t *pBuffer, uint32_t length);
+	void Clear();
+	string GetRTSPFmtpConfig();
+};
+
+class StreamCapabilities {
+public:
 	uint64_t videoCodecId;
 	uint64_t audioCodecId;
+	_VIDEO_AVC avc;
+	_AUDIO_AAC aac;
+public:
+	StreamCapabilities();
+	virtual ~StreamCapabilities();
 
-	union {
+	bool InitAudioAAC(uint8_t *pBuffer, uint32_t length);
+	bool InitVideoH264(uint8_t *pSPS, uint32_t spsLength, uint8_t *pPPS, uint32_t ppsLength);
 
-		struct {
-			uint8_t *pSPS;
-			uint16_t SPSLength;
-			uint8_t *pPPS;
-			uint16_t PPSLength;
-		} avc;
-	} videoCodecInfo;
-
-	union {
-
-		struct {
-			uint8_t *pAAC;
-			uint32_t AACLength;
-			uint32_t sampleRate;
-		} aac;
-	} audioCodecInfo;
-
-	_StreamCapabilities() {
-		videoCodecId = CODEC_VIDEO_UNKNOWN;
-		memset(&videoCodecInfo, 0, sizeof (videoCodecInfo));
-		audioCodecId = CODEC_AUDIO_UNKNOWN;
-		memset(&audioCodecInfo, 0, sizeof (audioCodecInfo));
-	}
-
-	void ClearVideo() {
-		switch (videoCodecId) {
-			case CODEC_VIDEO_AVC:
-			{
-				if (videoCodecInfo.avc.pSPS != NULL) {
-					delete[] videoCodecInfo.avc.pSPS;
-				}
-				if (videoCodecInfo.avc.pPPS != NULL) {
-					delete[] videoCodecInfo.avc.pPPS;
-				}
-				break;
-			}
-			default:
-			{
-				break;
-			}
-		}
-		memset(&videoCodecInfo, 0, sizeof (videoCodecInfo));
-		videoCodecId = 0;
-	}
-
-	void ClearAudio() {
-		switch (audioCodecId) {
-			case CODEC_AUDIO_AAC:
-			{
-				if (audioCodecInfo.aac.pAAC != NULL) {
-					delete[] audioCodecInfo.aac.pAAC;
-				}
-				break;
-			}
-			default:
-			{
-				break;
-			}
-		}
-		memset(&audioCodecInfo, 0, sizeof (audioCodecInfo));
-		audioCodecId = 0;
-	}
-
-	void Clear() {
-		ClearVideo();
-		ClearAudio();
-	}
-
-	virtual ~_StreamCapabilities() {
-		Clear();
-	}
-} StreamCapabilities;
-
+	void ClearVideo();
+	void ClearAudio();
+	void Clear();
+};
 
 #endif	/* _STRAMCAPABILITIES_H */
-
 

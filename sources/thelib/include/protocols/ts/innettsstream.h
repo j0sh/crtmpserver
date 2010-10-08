@@ -55,6 +55,9 @@ private:
 	uint32_t _cursor;
 	StreamCapabilities _streamCapabilities;
 	bool _firstNAL;
+
+	IOBuffer _SPS;
+	IOBuffer _PPS;
 public:
 	InNetTSStream(BaseProtocol *pProtocol, StreamsManager *pStreamsManager,
 			string name);
