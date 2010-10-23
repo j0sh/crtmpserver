@@ -60,7 +60,7 @@ for i in `find  ./ -type f -name "rtmpserver"`;do  rm -rf  $i;done
 for i in `find  ./ -type f -name "cppapplicationserver"`;do  rm -rf  $i;done
 for i in `find  ./ -type f -name "rtmpserver"`;do  rm -rf  $i;done
 for i in `find  ./ -type f -name "mcbtests"`;do  rm -rf  $i;done
-for i in `find  ./ -type f -name "trafficdisector"`;do  rm -rf  $i;done
+for i in `find  ./ -type f -name "trafficdissector"`;do  rm -rf  $i;done
 for i in `find  ./ -type f -name "vmtests"`;do  rm -rf  $i;done
 for i in `find  ./ -type f -name "pcapdumper"`;do  rm -rf  $i;done
 for i in `find  ./ -type f -name "tssplitter"`;do  rm -rf  $i;done

@@ -33,6 +33,7 @@ OBJECTDIR=build/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
+	${OBJECTDIR}/_ext/1210521968/baseelement.o \
 	${OBJECTDIR}/_ext/1210522057/atomstsc.o \
 	${OBJECTDIR}/_ext/126235575/inboundnamedpipecarrier.o \
 	${OBJECTDIR}/_ext/517913122/tspacketheader.o \
@@ -40,6 +41,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/1210522057/atomurl.o \
 	${OBJECTDIR}/_ext/517913122/tspacketpmt.o \
 	${OBJECTDIR}/_ext/31226533/infilertmpstream.o \
+	${OBJECTDIR}/_ext/1210521968/intelement.o \
 	${OBJECTDIR}/_ext/772217591/inboundnamedpipecarrier.o \
 	${OBJECTDIR}/_ext/1215912322/innetrtpstream.o \
 	${OBJECTDIR}/_ext/517913122/pidtypes.o \
@@ -97,13 +99,17 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/1210522057/atomnull.o \
 	${OBJECTDIR}/_ext/126235575/udpcarrier.o \
 	${OBJECTDIR}/_ext/1826042562/binvariantprotocol.o \
+	${OBJECTDIR}/_ext/1210521968/dummyelement.o \
 	${OBJECTDIR}/_ext/1210515272/flvdocument.o \
 	${OBJECTDIR}/_ext/517913122/tsadaptationfield.o \
 	${OBJECTDIR}/_ext/1210522056/mp3document.o \
+	${OBJECTDIR}/_ext/1210521968/floatelement.o \
 	${OBJECTDIR}/_ext/772217591/udpcarrier.o \
 	${OBJECTDIR}/_ext/1210522057/atomstss.o \
 	${OBJECTDIR}/_ext/517913122/innettsstream.o \
 	${OBJECTDIR}/_ext/1210522057/baseatom.o \
+	${OBJECTDIR}/_ext/1210521968/boxelement.o \
+	${OBJECTDIR}/_ext/1210521968/mkvdocument.o \
 	${OBJECTDIR}/_ext/1210522057/atomdref.o \
 	${OBJECTDIR}/_ext/772217591/iohandler.o \
 	${OBJECTDIR}/_ext/1210522057/mp4document.o \
@@ -160,6 +166,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/554535297/iohandler.o \
 	${OBJECTDIR}/_ext/1210522057/atomdata.o \
 	${OBJECTDIR}/_ext/1210522057/atomilst.o \
+	${OBJECTDIR}/_ext/1210521968/stringelement.o \
 	${OBJECTDIR}/_ext/83984615/configfile.o \
 	${OBJECTDIR}/_ext/501751224/header_le_sa.o \
 	${OBJECTDIR}/_ext/501751224/rtmpeprotocol.o \
@@ -178,6 +185,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/1210522057/atomdinf.o \
 	${OBJECTDIR}/_ext/1210522057/atomminf.o \
 	${OBJECTDIR}/_ext/1636055853/baseinstream.o \
+	${OBJECTDIR}/_ext/1210521968/binaryelement.o \
 	${OBJECTDIR}/_ext/501751224/channel.o \
 	${OBJECTDIR}/_ext/554535297/tcpacceptor.o \
 	${OBJECTDIR}/_ext/1124563255/inboundsslprotocol.o \
@@ -185,8 +193,8 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/1215912322/outnetrtpudph264stream.o \
 	${OBJECTDIR}/_ext/502048917/inboundhttpprotocol.o \
 	${OBJECTDIR}/_ext/31226533/rtmpstream.o \
-	${OBJECTDIR}/_ext/373925503/clientapplicationmanager.o \
 	${OBJECTDIR}/_ext/1210522057/atommvhd.o \
+	${OBJECTDIR}/_ext/373925503/clientapplicationmanager.o \
 	${OBJECTDIR}/_ext/1210522057/versionedatom.o \
 	${OBJECTDIR}/_ext/373925503/baseappprotocolhandler.o
 
@@ -216,6 +224,11 @@ LDLIBSOPTIONS=-L../common/dist/Release/GNU-MacOSX -lcommon
 ../Release/GNU-MacOSX/libthelib.dylib: ${OBJECTFILES}
 	${MKDIR} -p ../Release/GNU-MacOSX
 	${LINK.cc} -L/opt/local/lib -llua -lcrypto -lssl -lfetch -dynamiclib -install_name libthelib.dylib -o ../${CND_CONF}/${CND_PLATFORM}/libthelib.dylib -fPIC ${OBJECTFILES} ${LDLIBSOPTIONS} 
+
+${OBJECTDIR}/_ext/1210521968/baseelement.o: ../../../../sources/thelib/src/mediaformats/mkv/baseelement.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1210521968
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_VAR -DHAS_PROTOCOL_LIVEFLV -DHAS_MEDIA_MP4 -DHAS_MEDIA_MP3 -DHAS_MEDIA_FLV -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1210521968/baseelement.o ../../../../sources/thelib/src/mediaformats/mkv/baseelement.cpp
 
 ${OBJECTDIR}/_ext/1210522057/atomstsc.o: ../../../../sources/thelib/src/mediaformats/mp4/atomstsc.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1210522057
@@ -251,6 +264,11 @@ ${OBJECTDIR}/_ext/31226533/infilertmpstream.o: ../../../../sources/thelib/src/pr
 	${MKDIR} -p ${OBJECTDIR}/_ext/31226533
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_VAR -DHAS_PROTOCOL_LIVEFLV -DHAS_MEDIA_MP4 -DHAS_MEDIA_MP3 -DHAS_MEDIA_FLV -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/31226533/infilertmpstream.o ../../../../sources/thelib/src/protocols/rtmp/streaming/infilertmpstream.cpp
+
+${OBJECTDIR}/_ext/1210521968/intelement.o: ../../../../sources/thelib/src/mediaformats/mkv/intelement.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1210521968
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_VAR -DHAS_PROTOCOL_LIVEFLV -DHAS_MEDIA_MP4 -DHAS_MEDIA_MP3 -DHAS_MEDIA_FLV -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1210521968/intelement.o ../../../../sources/thelib/src/mediaformats/mkv/intelement.cpp
 
 ${OBJECTDIR}/_ext/772217591/inboundnamedpipecarrier.o: ../../../../sources/thelib/src/netio/select/inboundnamedpipecarrier.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/772217591
@@ -537,6 +555,11 @@ ${OBJECTDIR}/_ext/1826042562/binvariantprotocol.o: ../../../../sources/thelib/sr
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_VAR -DHAS_PROTOCOL_LIVEFLV -DHAS_MEDIA_MP4 -DHAS_MEDIA_MP3 -DHAS_MEDIA_FLV -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1826042562/binvariantprotocol.o ../../../../sources/thelib/src/protocols/variant/binvariantprotocol.cpp
 
+${OBJECTDIR}/_ext/1210521968/dummyelement.o: ../../../../sources/thelib/src/mediaformats/mkv/dummyelement.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1210521968
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_VAR -DHAS_PROTOCOL_LIVEFLV -DHAS_MEDIA_MP4 -DHAS_MEDIA_MP3 -DHAS_MEDIA_FLV -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1210521968/dummyelement.o ../../../../sources/thelib/src/mediaformats/mkv/dummyelement.cpp
+
 ${OBJECTDIR}/_ext/1210515272/flvdocument.o: ../../../../sources/thelib/src/mediaformats/flv/flvdocument.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1210515272
 	${RM} $@.d
@@ -551,6 +574,11 @@ ${OBJECTDIR}/_ext/1210522056/mp3document.o: ../../../../sources/thelib/src/media
 	${MKDIR} -p ${OBJECTDIR}/_ext/1210522056
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_VAR -DHAS_PROTOCOL_LIVEFLV -DHAS_MEDIA_MP4 -DHAS_MEDIA_MP3 -DHAS_MEDIA_FLV -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1210522056/mp3document.o ../../../../sources/thelib/src/mediaformats/mp3/mp3document.cpp
+
+${OBJECTDIR}/_ext/1210521968/floatelement.o: ../../../../sources/thelib/src/mediaformats/mkv/floatelement.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1210521968
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_VAR -DHAS_PROTOCOL_LIVEFLV -DHAS_MEDIA_MP4 -DHAS_MEDIA_MP3 -DHAS_MEDIA_FLV -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1210521968/floatelement.o ../../../../sources/thelib/src/mediaformats/mkv/floatelement.cpp
 
 ${OBJECTDIR}/_ext/772217591/udpcarrier.o: ../../../../sources/thelib/src/netio/select/udpcarrier.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/772217591
@@ -571,6 +599,16 @@ ${OBJECTDIR}/_ext/1210522057/baseatom.o: ../../../../sources/thelib/src/mediafor
 	${MKDIR} -p ${OBJECTDIR}/_ext/1210522057
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_VAR -DHAS_PROTOCOL_LIVEFLV -DHAS_MEDIA_MP4 -DHAS_MEDIA_MP3 -DHAS_MEDIA_FLV -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1210522057/baseatom.o ../../../../sources/thelib/src/mediaformats/mp4/baseatom.cpp
+
+${OBJECTDIR}/_ext/1210521968/boxelement.o: ../../../../sources/thelib/src/mediaformats/mkv/boxelement.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1210521968
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_VAR -DHAS_PROTOCOL_LIVEFLV -DHAS_MEDIA_MP4 -DHAS_MEDIA_MP3 -DHAS_MEDIA_FLV -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1210521968/boxelement.o ../../../../sources/thelib/src/mediaformats/mkv/boxelement.cpp
+
+${OBJECTDIR}/_ext/1210521968/mkvdocument.o: ../../../../sources/thelib/src/mediaformats/mkv/mkvdocument.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1210521968
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_VAR -DHAS_PROTOCOL_LIVEFLV -DHAS_MEDIA_MP4 -DHAS_MEDIA_MP3 -DHAS_MEDIA_FLV -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1210521968/mkvdocument.o ../../../../sources/thelib/src/mediaformats/mkv/mkvdocument.cpp
 
 ${OBJECTDIR}/_ext/1210522057/atomdref.o: ../../../../sources/thelib/src/mediaformats/mp4/atomdref.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1210522057
@@ -852,6 +890,11 @@ ${OBJECTDIR}/_ext/1210522057/atomilst.o: ../../../../sources/thelib/src/mediafor
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_VAR -DHAS_PROTOCOL_LIVEFLV -DHAS_MEDIA_MP4 -DHAS_MEDIA_MP3 -DHAS_MEDIA_FLV -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1210522057/atomilst.o ../../../../sources/thelib/src/mediaformats/mp4/atomilst.cpp
 
+${OBJECTDIR}/_ext/1210521968/stringelement.o: ../../../../sources/thelib/src/mediaformats/mkv/stringelement.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1210521968
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_VAR -DHAS_PROTOCOL_LIVEFLV -DHAS_MEDIA_MP4 -DHAS_MEDIA_MP3 -DHAS_MEDIA_FLV -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1210521968/stringelement.o ../../../../sources/thelib/src/mediaformats/mkv/stringelement.cpp
+
 ${OBJECTDIR}/_ext/83984615/configfile.o: ../../../../sources/thelib/src/configuration/configfile.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/83984615
 	${RM} $@.d
@@ -942,6 +985,11 @@ ${OBJECTDIR}/_ext/1636055853/baseinstream.o: ../../../../sources/thelib/src/stre
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_VAR -DHAS_PROTOCOL_LIVEFLV -DHAS_MEDIA_MP4 -DHAS_MEDIA_MP3 -DHAS_MEDIA_FLV -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1636055853/baseinstream.o ../../../../sources/thelib/src/streaming/baseinstream.cpp
 
+${OBJECTDIR}/_ext/1210521968/binaryelement.o: ../../../../sources/thelib/src/mediaformats/mkv/binaryelement.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1210521968
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_VAR -DHAS_PROTOCOL_LIVEFLV -DHAS_MEDIA_MP4 -DHAS_MEDIA_MP3 -DHAS_MEDIA_FLV -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1210521968/binaryelement.o ../../../../sources/thelib/src/mediaformats/mkv/binaryelement.cpp
+
 ${OBJECTDIR}/_ext/501751224/channel.o: ../../../../sources/thelib/src/protocols/rtmp/channel.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/501751224
 	${RM} $@.d
@@ -977,15 +1025,15 @@ ${OBJECTDIR}/_ext/31226533/rtmpstream.o: ../../../../sources/thelib/src/protocol
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_VAR -DHAS_PROTOCOL_LIVEFLV -DHAS_MEDIA_MP4 -DHAS_MEDIA_MP3 -DHAS_MEDIA_FLV -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/31226533/rtmpstream.o ../../../../sources/thelib/src/protocols/rtmp/streaming/rtmpstream.cpp
 
-${OBJECTDIR}/_ext/373925503/clientapplicationmanager.o: ../../../../sources/thelib/src/application/clientapplicationmanager.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/373925503
-	${RM} $@.d
-	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_VAR -DHAS_PROTOCOL_LIVEFLV -DHAS_MEDIA_MP4 -DHAS_MEDIA_MP3 -DHAS_MEDIA_FLV -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/373925503/clientapplicationmanager.o ../../../../sources/thelib/src/application/clientapplicationmanager.cpp
-
 ${OBJECTDIR}/_ext/1210522057/atommvhd.o: ../../../../sources/thelib/src/mediaformats/mp4/atommvhd.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1210522057
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_VAR -DHAS_PROTOCOL_LIVEFLV -DHAS_MEDIA_MP4 -DHAS_MEDIA_MP3 -DHAS_MEDIA_FLV -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1210522057/atommvhd.o ../../../../sources/thelib/src/mediaformats/mp4/atommvhd.cpp
+
+${OBJECTDIR}/_ext/373925503/clientapplicationmanager.o: ../../../../sources/thelib/src/application/clientapplicationmanager.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/373925503
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_VAR -DHAS_PROTOCOL_LIVEFLV -DHAS_MEDIA_MP4 -DHAS_MEDIA_MP3 -DHAS_MEDIA_FLV -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/373925503/clientapplicationmanager.o ../../../../sources/thelib/src/application/clientapplicationmanager.cpp
 
 ${OBJECTDIR}/_ext/1210522057/versionedatom.o: ../../../../sources/thelib/src/mediaformats/mp4/versionedatom.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1210522057

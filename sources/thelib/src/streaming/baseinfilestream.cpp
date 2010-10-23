@@ -27,6 +27,7 @@
 #include "mediaformats/flv/flvdocument.h"
 #include "mediaformats/mp3/mp3document.h"
 #include "mediaformats/mp4/mp4document.h"
+#include "mediaformats/mkv/mkvdocument.h"
 
 #ifndef HAS_MMAP
 map<string, pair<uint32_t, File *> > BaseInFileStream::_fileCache;
@@ -120,6 +121,11 @@ bool BaseInFileStream::ResolveCompleteMetadata(Variant &metaData) {
 		pDocument = new MP4Document(metaData);
 	}
 #endif /* HAS_MEDIA_MP4 */
+#ifdef HAS_MEDIA_MKV
+	else if (metaData[META_MEDIA_TYPE] == MEDIA_TYPE_MKV) {
+		pDocument = new MKVDocument(metaData);
+	}
+#endif
 	else {
 		FATAL("File type not supported yet. Partial metadata:\n%s",
 				STR(metaData.ToString()));

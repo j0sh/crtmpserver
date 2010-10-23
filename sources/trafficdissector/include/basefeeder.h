@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -17,43 +17,38 @@
  *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _BASEMEDIADOCUMENT_H
-#define	_BASEMEDIADOCUMENT_H
-
+#ifndef _BASEFEEDER_H
+#define	_BASEFEEDER_H
 
 #include "common.h"
-#include "mediaformats/mediaframe.h"
-#include "mediaformats/mediafile.h"
 
-class BaseMediaDocument {
-protected:
-	MediaFile _mediaFile;
-	vector<MediaFrame> _frames;
-	uint32_t _audioSamplesCount;
-	uint32_t _videoSamplesCount;
-	Variant _metadata;
-	string _mediaFilePath;
-	string _seekFilePath;
-	string _metaFilePath;
-	bool _keyframeSeek;
-	uint32_t _seekGranularity;
-public:
-	BaseMediaDocument(Variant &metadata);
-	virtual ~BaseMediaDocument();
+#define DATA_TYPE_UNDEF 0
+#define DATA_TYPE_CLIENT2SERVER 1
+#define DATA_TYPE_SERVER2CLIENT 2
 
-	bool Process();
-	Variant GetMetadata();
-	MediaFile &GetMediaFile();
-protected:
-	static bool CompareFrames(const MediaFrame &frame1, const MediaFrame &frame2);
-	virtual bool ParseDocument() = 0;
-	virtual bool BuildFrames() = 0;
-	virtual Variant GetRTMPMeta() = 0;
+class MonitorRTMPProtocol;
+
+class BaseFeeder {
 private:
-	bool SaveSeekFile();
-	bool SaveMetaFile();
+	File _client2ServerBin;
+	File _server2ClientBin;
+	File _allBin;
+	IOBuffer _client2ServerBuffer;
+	IOBuffer _server2ClientBuffer;
+	MonitorRTMPProtocol *_pClient2Server;
+	MonitorRTMPProtocol *_pServer2Client;
+protected:
+	string _fileName;
+public:
+	BaseFeeder();
+	virtual ~BaseFeeder();
+
+	virtual bool Init(string fileName, MonitorRTMPProtocol *pFlash2Server,
+			MonitorRTMPProtocol *pServer2Flash);
+	virtual void Run() = 0;
+protected:
+	bool Feed(const uint8_t *pBuffer, uint32_t length, uint8_t type);
 };
 
-
-#endif	/* _BASEMEDIADOCUMENT_H */
+#endif	/* _BASEFEEDER_H */
 

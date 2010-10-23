@@ -20,6 +20,17 @@
         <logicalFolder name="flv" displayName="flv" projectFiles="true">
           <itemPath>../../../../sources/thelib/include/mediaformats/flv/flvdocument.h</itemPath>
         </logicalFolder>
+        <logicalFolder name="mkv" displayName="mkv" projectFiles="true">
+          <itemPath>../../../../sources/thelib/include/mediaformats/mkv/baseelement.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/mediaformats/mkv/binaryelement.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/mediaformats/mkv/boxelement.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/mediaformats/mkv/elementdummy.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/mediaformats/mkv/elementids.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/mediaformats/mkv/floatelement.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/mediaformats/mkv/intelement.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/mediaformats/mkv/mkvdocument.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/mediaformats/mkv/stringelement.h</itemPath>
+        </logicalFolder>
         <logicalFolder name="mp3" displayName="mp3" projectFiles="true">
           <itemPath>../../../../sources/thelib/include/mediaformats/mp3/id3parser.h</itemPath>
           <itemPath>../../../../sources/thelib/include/mediaformats/mp3/mp3document.h</itemPath>
@@ -67,6 +78,7 @@
           <itemPath>../../../../sources/thelib/include/mediaformats/mp4/versionedboxatom.h</itemPath>
         </logicalFolder>
         <itemPath>../../../../sources/thelib/include/mediaformats/basemediadocument.h</itemPath>
+        <itemPath>../../../../sources/thelib/include/mediaformats/mediafile.h</itemPath>
         <itemPath>../../../../sources/thelib/include/mediaformats/mediaframe.h</itemPath>
       </logicalFolder>
       <logicalFolder name="netio" displayName="netio" projectFiles="true">
@@ -257,6 +269,16 @@
                      projectFiles="true">
         <logicalFolder name="flv" displayName="flv" projectFiles="true">
           <itemPath>../../../../sources/thelib/src/mediaformats/flv/flvdocument.cpp</itemPath>
+        </logicalFolder>
+        <logicalFolder name="mkv" displayName="mkv" projectFiles="true">
+          <itemPath>../../../../sources/thelib/src/mediaformats/mkv/baseelement.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/mediaformats/mkv/binaryelement.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/mediaformats/mkv/boxelement.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/mediaformats/mkv/dummyelement.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/mediaformats/mkv/floatelement.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/mediaformats/mkv/intelement.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/mediaformats/mkv/mkvdocument.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/mediaformats/mkv/stringelement.cpp</itemPath>
         </logicalFolder>
         <logicalFolder name="mp3" displayName="mp3" projectFiles="true">
           <itemPath>../../../../sources/thelib/src/mediaformats/mp3/id3parser.cpp</itemPath>
@@ -509,8 +531,10 @@
             <Elem>HAS_MEDIA_MP4</Elem>
             <Elem>HAS_MEDIA_MP3</Elem>
             <Elem>HAS_MEDIA_FLV</Elem>
+            <Elem>HAS_MEDIA_MKV</Elem>
             <Elem>CreateRTCPPacket=CreateRTCPPacket_none</Elem>
             <Elem>FeedDataAudioMPEG4Generic=FeedDataAudioMPEG4Generic_one_by_one</Elem>
+            <Elem>HAS_MEDIA_MKV</Elem>
           </preprocessorList>
         </ccTool>
         <linkerTool>

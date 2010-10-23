@@ -50,13 +50,7 @@ Variant ID3Parser::GetMetadata() {
 	return _metadata;
 }
 
-#ifdef HAS_MMAP
-bool ID3Parser::Parse(MmapFile &file)
-#else
-
-bool ID3Parser::Parse(File &file)
-#endif /* HAS_MMAP */
-{
+bool ID3Parser::Parse(MediaFile &file) {
 	_metadata.Reset();
 
 	//http://www.id3.org/d3v2.3.0

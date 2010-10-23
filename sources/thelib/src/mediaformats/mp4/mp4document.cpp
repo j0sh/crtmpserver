@@ -73,18 +73,6 @@ MP4Document::~MP4Document() {
 	_allAtoms.clear();
 }
 
-#ifdef HAS_MMAP
-
-MmapFile &MP4Document::GetMediaFile() {
-	return _mediaFile;
-}
-#else
-
-File &MP4Document::GetMediaFile() {
-	return _mediaFile;
-}
-#endif /* HAS_MMAP */
-
 void MP4Document::AddAtom(BaseAtom *pAtom) {
 	ADD_VECTOR_END(_allAtoms, pAtom);
 }

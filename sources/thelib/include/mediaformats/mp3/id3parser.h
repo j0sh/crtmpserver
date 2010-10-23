@@ -22,6 +22,7 @@
 #define	_ID3PARSER_H
 
 #include "common.h"
+#include "mediaformats/mediafile.h"
 
 class ID3Parser {
 protected:
@@ -38,11 +39,7 @@ public:
 	virtual ~ID3Parser();
 
 	Variant GetMetadata();
-#ifdef HAS_MMAP
-	bool Parse(MmapFile &file);
-#else
-	bool Parse(File &file);
-#endif /* HAS_MMAP */
+	bool Parse(MediaFile &file);
 private:
 	bool ParseTags(IOBuffer &buffer);
 	bool ReadStringWithSize(IOBuffer &buffer, Variant &value, uint32_t size, bool hasEncoding);

@@ -74,7 +74,8 @@ bool RTMPAppProtocolHandler::ProcessGetAvailableFlvs(BaseRTMPProtocol *pFrom, Va
 				&& extension != MEDIA_TYPE_M4V
 				&& extension != MEDIA_TYPE_MOV
 				&& extension != MEDIA_TYPE_F4V
-				&& extension != MEDIA_TYPE_TS)
+				&& extension != MEDIA_TYPE_TS
+				&& extension != MEDIA_TYPE_MKV)
 			continue;
 		string flashName = "";
 		if (extension == MEDIA_TYPE_FLV) {
@@ -99,8 +100,6 @@ bool RTMPAppProtocolHandler::ProcessGetAvailableFlvs(BaseRTMPProtocol *pFrom, Va
 		//        if (v != V_NULL)
 		parameters[(uint32_t) 1].PushToArray(flashName);
 	}
-
-
 
 	map<uint32_t, BaseStream *> allInboundStreams =
 			GetApplication()->GetStreamsManager()->FindByType(ST_IN_NET, true);

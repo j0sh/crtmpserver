@@ -116,11 +116,6 @@ public:
 	MP4Document(Variant &metadata);
 	virtual ~MP4Document();
 
-#ifdef HAS_MMAP
-	MmapFile &GetMediaFile();
-#else
-	File &GetMediaFile();
-#endif /* HAS_MMAP */
 	void AddAtom(BaseAtom *pAtom);
 	BaseAtom * ReadAtom(BaseAtom *pParentAtom);
 protected:
