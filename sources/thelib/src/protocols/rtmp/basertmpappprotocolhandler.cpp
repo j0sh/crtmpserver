@@ -458,7 +458,7 @@ bool BaseRTMPAppProtocolHandler::ProcessInvoke(BaseRTMPProtocol *pFrom,
 
 bool BaseRTMPAppProtocolHandler::ProcessInvokeConnect(BaseRTMPProtocol *pFrom,
 		Variant & request) {
-	//ASSERT("\n%s", STR(request));
+	//FINEST("\n%s", STR(request.ToString()));
 	//1. Send the channel specific messages
 	Variant response = GenericMessageFactory::GetWinAckSize(2500000);
 	if (!SendRTMPMessage(pFrom, response)) {
@@ -1670,16 +1670,25 @@ bool BaseRTMPAppProtocolHandler::PullExternalStream(BaseRTMPProtocol *pFrom) {
 	string tcUrl = format("%s://%s%s/%s",
 			STR(uri.scheme),
 			STR(uri.host),
-			STR(uri.port==1935?"":format(":%d",uri.port)),
+			STR(uri.port == 1935 ? "" : format(":%d", uri.port)),
 			STR(appName));
 
-	//4. Prepare the connect request
+	//4. Get the user agent
+	string userAgent = "";
+	if (streamConfig["emulateUserAgent"] == V_STRING) {
+		userAgent = (string) streamConfig["emulateUserAgent"];
+	}
+	if (userAgent == "") {
+		userAgent = HTTP_HEADERS_SERVER_US;
+	}
+
+	//5. Prepare the connect request
 	Variant connectRequest = ConnectionMessageFactory::GetInvokeConnect(
 			appName, //string appName
 			tcUrl, //string tcUrl
 			3191, //double audioCodecs
 			239, //double capabilities
-			"MAC 10,1,82,76", //string flashVer
+			userAgent, //string flashVer
 			false, //bool fPad
 			"", //string pageUrl
 			"", //string swfUrl
@@ -1688,7 +1697,7 @@ bool BaseRTMPAppProtocolHandler::PullExternalStream(BaseRTMPProtocol *pFrom) {
 			0 //double objectEncoding
 			);
 
-	//5. Send it
+	//6. Send it
 	if (!SendRTMPMessage(pFrom, connectRequest, true)) {
 		FATAL("Unable to send request:\n%s", STR(connectRequest.ToString()));
 		return false;
@@ -1725,16 +1734,25 @@ bool BaseRTMPAppProtocolHandler::PushLocalStream(BaseRTMPProtocol *pFrom) {
 	string tcUrl = format("%s://%s%s/%s",
 			STR(uri.scheme),
 			STR(uri.host),
-			STR(uri.port==1935?"":format(":%d",uri.port)),
+			STR(uri.port == 1935 ? "" : format(":%d", uri.port)),
 			STR(appName));
 
-	//4. Prepare the connect request
+	//4. Get the user agent
+	string userAgent = "";
+	if (streamConfig["emulateUserAgent"] == V_STRING) {
+		userAgent = (string) streamConfig["emulateUserAgent"];
+	}
+	if (userAgent == "") {
+		userAgent = HTTP_HEADERS_SERVER_US;
+	}
+
+	//5. Prepare the connect request
 	Variant connectRequest = ConnectionMessageFactory::GetInvokeConnect(
 			appName, //string appName
 			tcUrl, //string tcUrl
 			3191, //double audioCodecs
 			239, //double capabilities
-			"FMLE/3.0 (compatible; FMSc/1.0; http://www.rtmpd.com)", //string flashVer
+			userAgent, //string flashVer
 			false, //bool fPad
 			"", //string pageUrl
 			"", //string swfUrl
@@ -1743,7 +1761,7 @@ bool BaseRTMPAppProtocolHandler::PushLocalStream(BaseRTMPProtocol *pFrom) {
 			0 //double objectEncoding
 			);
 
-	//5. Send it
+	//6. Send it
 	if (!SendRTMPMessage(pFrom, connectRequest, true)) {
 		FATAL("Unable to send request:\n%s", STR(connectRequest.ToString()));
 		return false;
