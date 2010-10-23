@@ -269,6 +269,7 @@ configuration=
 				}]]--,
 				{
 					targetUri="rtmp://localhost/vod",
+					targetStreamType="record", -- (live, record or append)
 					emulateUserAgent="My user agent"
 				},
 			},

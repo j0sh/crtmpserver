@@ -1092,8 +1092,17 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokeCreateStreamResult(BaseRTMPProtoco
 		publishPlayRequest = StreamMessageFactory::GetInvokePlay(3, rtmpStreamId,
 				parameters["uri"]["document"], -2, -1);
 	} else {
+		string targetStreamType = "";
+		if (parameters["targetStreamType"] == V_STRING) {
+			targetStreamType = (string) parameters["targetStreamType"];
+		}
+		if ((targetStreamType != "live")
+				&& (targetStreamType != "record")
+				&& (targetStreamType != "append")) {
+			targetStreamType = "live";
+		}
 		publishPlayRequest = StreamMessageFactory::GetInvokePublish(3, rtmpStreamId,
-				parameters["targetStreamName"], "live");
+				parameters["targetStreamName"], targetStreamType);
 	}
 
 	//8. Send it
