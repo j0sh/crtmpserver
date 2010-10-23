@@ -723,6 +723,7 @@ bool RTMPProtocolSerializer::DeserializeSharedObject(IOBuffer &buffer, Variant &
 
 	//5. Read the primitives as long as we have data in the buffer
 	Variant primitive;
+	uint32_t primitiveIndex = 0;
 	while (GETAVAILABLEBYTESCOUNT(buffer) > 0) {
 		primitive.Reset();
 
@@ -746,7 +747,6 @@ bool RTMPProtocolSerializer::DeserializeSharedObject(IOBuffer &buffer, Variant &
 		}
 
 		//8. Read the rest of the primitive based on it's type
-		uint32_t primitiveIndex = 0;
 		switch ((uint8_t) primitive[RM_SHAREDOBJECTPRIMITIVE_TYPE]) {
 			case SOT_CS_CONNECT:
 			{
