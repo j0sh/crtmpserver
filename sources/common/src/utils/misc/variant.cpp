@@ -1106,7 +1106,7 @@ void Variant::Compact() {
 		{
 			Variant &variant = *this;
 			int32_t val = (int32_t) variant;
-			if ((val < INT16_MIN) || (val > (int32_t)(UINT16_MAX)))
+			if ((val < INT16_MIN) || (val > (int32_t) (UINT16_MAX)))
 				break;
 			if (val < 0)
 				variant = (int16_t) variant;
@@ -1119,7 +1119,7 @@ void Variant::Compact() {
 		{
 			Variant &variant = *this;
 			int16_t val = (int16_t) variant;
-			if ((val < INT8_MIN) || (val > (int16_t)(UINT8_MAX)))
+			if ((val < INT8_MIN) || (val > (int16_t) (UINT8_MAX)))
 				break;
 			if (val < 0)
 				variant = (int8_t) variant;
@@ -1441,13 +1441,15 @@ bool Variant::DeserializeFromXmlFile(string path, Variant &variant) {
 	}
 
 	//3. Allocate memory
-	uint8_t *pBuffer = new uint8_t[(uint32_t) file.Size()];
+	uint8_t *pBuffer = new uint8_t[(uint32_t) file.Size() + 1];
 
 	//4. Read the content
 	if (!file.ReadBuffer((uint8_t *) pBuffer, file.Size())) {
 		FATAL("Unable to read the file");
+		delete[] pBuffer;
 		return false;
 	}
+	pBuffer[file.Size()] = 0;
 
 	//5. read the variant from the buffer
 	variant.Reset();
