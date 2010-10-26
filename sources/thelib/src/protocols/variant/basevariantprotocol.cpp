@@ -38,11 +38,13 @@ bool BaseVariantProtocol::Initialize(Variant &parameters) {
 }
 
 void BaseVariantProtocol::SetApplication(BaseClientApplication *pApplication) {
-	if (pApplication == NULL)
-		return;
 	BaseProtocol::SetApplication(pApplication);
-	_pProtocolHandler = (BaseVariantAppProtocolHandler *)
-			_pApplication->GetProtocolHandler(this);
+	if (pApplication != NULL) {
+		_pProtocolHandler = (BaseVariantAppProtocolHandler *)
+				pApplication->GetProtocolHandler(this);
+	} else {
+		_pProtocolHandler = NULL;
+	}
 }
 
 IOBuffer * BaseVariantProtocol::GetOutputBuffer() {

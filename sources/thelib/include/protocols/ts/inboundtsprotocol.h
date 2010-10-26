@@ -69,7 +69,6 @@ public:
 	virtual bool SignalInputData(IOBuffer &buffer);
 
 	virtual void SetApplication(BaseClientApplication *pApplication);
-	virtual void ResetApplication();
 	BaseTSAppProtocolHandler *GetProtocolHandler();
 	uint32_t GetChunkSize();
 	void SetStepByStep(bool stepByStep);

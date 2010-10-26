@@ -25,7 +25,6 @@
 
 InboundNamedPipeCarrier::InboundNamedPipeCarrier(int32_t fd, string path)
 : IOHandler(fd, fd, IOHT_INBOUNDNAMEDPIPE_CARRIER) {
-	_pProtocol = NULL;
 	_path = path;
 }
 
@@ -60,13 +59,6 @@ InboundNamedPipeCarrier *InboundNamedPipeCarrier::Create(string path,
 	}
 
 	return pResult;
-}
-
-void InboundNamedPipeCarrier::SetProtocol(BaseProtocol *pPotocol) {
-	if (_pProtocol != NULL) {
-		ASSERT("protocol already set up");
-	}
-	_pProtocol = pPotocol;
 }
 
 bool InboundNamedPipeCarrier::SignalOutputData() {

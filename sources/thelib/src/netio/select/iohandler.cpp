@@ -20,12 +20,14 @@
 #ifdef NET_SELECT
 #include "netio/select/iohandler.h"
 #include "netio/select/iohandlermanager.h"
+#include "protocols/baseprotocol.h"
 
 uint32_t IOHandler::_idGenerator = 0;
 
 IOHandler::IOHandler(int32_t inboundFd, int32_t outboundFd, IOHandlerType type) {
+	_pProtocol = NULL;
 	_type = type;
-	_id = _idGenerator++;
+	_id = ++_idGenerator;
 	_inboundFd = inboundFd;
 	_outboundFd = outboundFd;
 	IOHandlerManager::RegisterIOHandler(this);
@@ -33,6 +35,11 @@ IOHandler::IOHandler(int32_t inboundFd, int32_t outboundFd, IOHandlerType type) 
 
 IOHandler::~IOHandler() {
 	//FINEST("IOHandler %p is in destructor", this);
+	if (_pProtocol != NULL) {
+		_pProtocol->SetIOHandler(NULL);
+		_pProtocol->EnqueueForDelete();
+		_pProtocol = NULL;
+	}
 	IOHandlerManager::UnRegisterIOHandler(this);
 }
 
@@ -50,6 +57,10 @@ int32_t IOHandler::GetOutboundFd() {
 
 IOHandlerType IOHandler::GetType() {
 	return _type;
+}
+
+void IOHandler::SetProtocol(BaseProtocol *pPotocol) {
+	_pProtocol = pPotocol;
 }
 
 string IOHandler::IOHTToString(IOHandlerType type) {

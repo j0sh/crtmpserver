@@ -88,7 +88,6 @@ public:
 	virtual bool TimePeriodElapsed();
 	virtual void ReadyForSend();
 	virtual void SetApplication(BaseClientApplication *pApplication);
-	virtual void ResetApplication();
 
 	bool SendMessage(Variant &message);
 	bool SendRawData(Header &header, Channel &channel, uint8_t *pData, uint32_t length);

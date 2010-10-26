@@ -23,20 +23,15 @@
 
 #include "netio/select/iohandler.h"
 
-class BaseProtocol;
-
 class InboundNamedPipeCarrier
 : public IOHandler {
 private:
-	BaseProtocol *_pProtocol;
 	string _path;
 public:
 	InboundNamedPipeCarrier(int32_t fd, string path);
 	virtual ~InboundNamedPipeCarrier();
 
 	static InboundNamedPipeCarrier *Create(string path, uint16_t mode);
-
-	void SetProtocol(BaseProtocol *pPotocol);
 
 	virtual bool SignalOutputData();
 	virtual bool OnEvent(select_event &event);

@@ -24,8 +24,6 @@
 
 #include "netio/select/iohandler.h"
 
-class BaseProtocol;
-
 class DLLEXP UDPCarrier
 : public IOHandler {
 private:
@@ -35,11 +33,9 @@ private:
 	string _nearIp;
 	uint16_t _nearPort;
 public:
-	UDPCarrier(int32_t fd, BaseProtocol *pProtocol);
+	UDPCarrier(int32_t fd);
 	virtual ~UDPCarrier();
 
-	void ResetProtocol();
-	void SetProtocol(BaseProtocol *pProtocol);
 	virtual bool OnEvent(select_event &event);
 	virtual bool SignalOutputData();
 	virtual operator string();

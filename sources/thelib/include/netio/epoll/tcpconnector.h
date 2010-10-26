@@ -66,8 +66,8 @@ public:
 
 		if ((event.events & EPOLLERR) != 0) {
 			DEBUG("***CONNECT ERROR: Unable to connect to: %s:%d",
-				STR(_ip),
-				_port);
+					STR(_ip),
+					_port);
 			_closeSocket = true;
 			return false;
 		}
@@ -81,7 +81,8 @@ public:
 			return false;
 		}
 
-		TCPCarrier *pTCPCarrier = new TCPCarrier(_inboundFd, pProtocol->GetFarEndpoint());
+		TCPCarrier *pTCPCarrier = new TCPCarrier(_inboundFd);
+		pTCPCarrier->SetProtocol(pProtocol->GetFarEndpoint());
 		pProtocol->GetFarEndpoint()->SetIOHandler(pTCPCarrier);
 
 		if (!T::SignalProtocolCreated(pProtocol, _customParameters)) {

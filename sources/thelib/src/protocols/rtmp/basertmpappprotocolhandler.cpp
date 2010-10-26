@@ -53,7 +53,7 @@ BaseRTMPAppProtocolHandler::BaseRTMPAppProtocolHandler(Variant &configuration)
 BaseRTMPAppProtocolHandler::~BaseRTMPAppProtocolHandler() {
 
 	FOR_MAP(_connections, uint32_t, BaseRTMPProtocol *, i) {
-		MAP_VAL(i)->ResetApplication();
+		MAP_VAL(i)->SetApplication(NULL);
 		MAP_VAL(i)->EnqueueForDelete();
 	}
 }

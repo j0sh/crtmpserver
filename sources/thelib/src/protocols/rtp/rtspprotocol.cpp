@@ -70,11 +70,15 @@ bool RTSPProtocol::Initialize(Variant &parameters) {
 
 void RTSPProtocol::SetApplication(BaseClientApplication *pApplication) {
 	BaseProtocol::SetApplication(pApplication);
-	_pProtocolHandler = (BaseRTSPAppProtocolHandler *)
-			_pApplication->GetProtocolHandler(GetType());
-	if (_pProtocolHandler == NULL) {
-		FATAL("Protocol handler not found");
-		EnqueueForDelete();
+	if (pApplication != NULL) {
+		_pProtocolHandler = (BaseRTSPAppProtocolHandler *)
+				pApplication->GetProtocolHandler(GetType());
+		if (_pProtocolHandler == NULL) {
+			FATAL("Protocol handler not found");
+			EnqueueForDelete();
+		}
+	} else {
+		_pProtocolHandler = NULL;
 	}
 }
 

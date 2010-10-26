@@ -157,7 +157,8 @@ bool TCPAcceptor::OnConnectionAvailable(struct kevent &event) {
 	}
 
 	//5. Create the carrier and bind it
-	TCPCarrier *pTCPCarrier = new TCPCarrier(fd, pProtocol->GetFarEndpoint());
+	TCPCarrier *pTCPCarrier = new TCPCarrier(fd);
+	pTCPCarrier->SetProtocol(pProtocol->GetFarEndpoint());
 	pProtocol->GetFarEndpoint()->SetIOHandler(pTCPCarrier);
 
 	//6. Register the protocol stack with an application

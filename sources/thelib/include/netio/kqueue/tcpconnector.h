@@ -83,7 +83,8 @@ public:
 			return false;
 		}
 
-		TCPCarrier *pTCPCarrier = new TCPCarrier(_inboundFd, pProtocol->GetFarEndpoint());
+		TCPCarrier *pTCPCarrier = new TCPCarrier(_inboundFd);
+		pTCPCarrier->SetProtocol(pProtocol->GetFarEndpoint());
 		pProtocol->GetFarEndpoint()->SetIOHandler(pTCPCarrier);
 
 		if (!T::SignalProtocolCreated(pProtocol, _customParameters)) {

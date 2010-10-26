@@ -205,7 +205,7 @@ bool IOHandlerManager::Pulse() {
 }
 
 bool IOHandlerManager::UpdateFdSets(int32_t fd) {
-	uint8_t state;
+	uint8_t state = 0;
 
 	//    string str = "";
 	//    for (map<int32_t, map<uint32_t, uint8_t> >::iterator i = _fdState.begin();

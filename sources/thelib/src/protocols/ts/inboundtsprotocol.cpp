@@ -142,15 +142,13 @@ bool InboundTSProtocol::SignalInputData(IOBuffer &buffer) {
 }
 
 void InboundTSProtocol::SetApplication(BaseClientApplication *pApplication) {
-	assert(pApplication != NULL);
 	BaseProtocol::SetApplication(pApplication);
-	_pProtocolHandler = (BaseTSAppProtocolHandler *)
-			_pApplication->GetProtocolHandler(this);
-}
-
-void InboundTSProtocol::ResetApplication() {
-	BaseProtocol::ResetApplication();
-	_pProtocolHandler = NULL;
+	if (pApplication != NULL) {
+		_pProtocolHandler = (BaseTSAppProtocolHandler *)
+				pApplication->GetProtocolHandler(this);
+	} else {
+		_pProtocolHandler = NULL;
+	}
 }
 
 BaseTSAppProtocolHandler *InboundTSProtocol::GetProtocolHandler() {

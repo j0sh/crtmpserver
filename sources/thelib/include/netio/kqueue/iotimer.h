@@ -23,18 +23,14 @@
 
 #include "netio/kqueue/iohandler.h"
 
-class BaseProtocol;
-
 class IOTimer
 : public IOHandler {
 private:
     static int32_t _idGenerator;
-    BaseProtocol *_pProtocol;
 public:
-    IOTimer(BaseProtocol *pProtocol);
+    IOTimer();
     virtual ~IOTimer();
 
-    void ResetProtocol();
     virtual bool SignalOutputData();
     virtual bool OnEvent(struct kevent &event);
     bool EnqueueForTimeEvent(uint32_t seconds);

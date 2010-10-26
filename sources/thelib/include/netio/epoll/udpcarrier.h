@@ -35,11 +35,9 @@ private:
 	string _nearIp;
 	uint16_t _nearPort;
 public:
-	UDPCarrier(int32_t fd, BaseProtocol *pProtocol);
+	UDPCarrier(int32_t fd);
 	virtual ~UDPCarrier();
 
-	void ResetProtocol();
-	void SetProtocol(BaseProtocol *pProtocol);
 	virtual bool OnEvent(struct epoll_event &event);
 	virtual bool SignalOutputData();
 	virtual operator string();

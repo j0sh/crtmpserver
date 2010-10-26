@@ -34,6 +34,7 @@ class DLLEXP BaseProtocol {
 private:
 	static uint32_t _idGenerator;
 	uint32_t _id;
+	BaseClientApplication *_pApplication;
 protected:
 	uint64_t _type;
 	BaseProtocol *_pFarProtocol;
@@ -42,7 +43,6 @@ protected:
 	bool _deleteNear;
 	bool _enqueueForDelete;
 	bool _gracefullyEnqueueForDelete;
-	BaseClientApplication *_pApplication;
 	Variant _customParameters;
 public:
 
@@ -158,9 +158,6 @@ public:
 
 	//Sets the protocol's application
 	virtual void SetApplication(BaseClientApplication *pApplication);
-
-	//Resets the protocol's application
-	virtual void ResetApplication();
 
 	//This is called by the framework when data is available for processing,
 	//when making use of connection-less protocols

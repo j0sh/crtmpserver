@@ -44,16 +44,17 @@ if (_writeDataEnabled) { \
 
 StdioCarrier *StdioCarrier::_pInstance = NULL;
 
-StdioCarrier::StdioCarrier(BaseProtocol *pProtocol)
+StdioCarrier::StdioCarrier()
 : IOHandler(fileno(stdin), fileno(stdout), IOHT_STDIO) {
-	_pProtocol = pProtocol;
 	IOHandlerManager::EnableReadData(this);
 	_writeDataEnabled = false;
 }
 
 StdioCarrier *StdioCarrier::GetInstance(BaseProtocol *pProtocol) {
 	if (_pInstance == NULL) {
-		_pInstance = new StdioCarrier(pProtocol);
+		_pInstance = new StdioCarrier();
+		_pInstance->SetProtocol(pProtocol);
+		pProtocol->GetFarEndpoint()->SetIOHandler(_pInstance);
 		return _pInstance;
 	}
 	assert(_pInstance->_pProtocol != NULL);
@@ -66,15 +67,7 @@ StdioCarrier *StdioCarrier::GetInstance(BaseProtocol *pProtocol) {
 }
 
 StdioCarrier::~StdioCarrier() {
-	if (_pProtocol != NULL) {
-		_pProtocol->SetIOHandler(NULL);
-		delete _pProtocol;
-	}
 	_pInstance = NULL;
-}
-
-void StdioCarrier::ResetProtocol() {
-	_pProtocol = NULL;
 }
 
 bool StdioCarrier::OnEvent(select_event &event) {

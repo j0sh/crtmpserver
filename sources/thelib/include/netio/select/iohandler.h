@@ -23,6 +23,7 @@
 
 #include "common.h"
 
+
 typedef enum _IOHandlerType {
 	IOHT_ACCEPTOR,
 	IOHT_TCP_CONNECTOR,
@@ -33,13 +34,15 @@ typedef enum _IOHandlerType {
 	IOHT_STDIO
 } IOHandlerType;
 
+class BaseProtocol;
+
 class DLLEXP IOHandler {
 protected:
 	static uint32_t _idGenerator;
 	uint32_t _id;
-protected:
 	int32_t _inboundFd;
 	int32_t _outboundFd;
+	BaseProtocol *_pProtocol;
 private:
 	IOHandlerType _type;
 public:
@@ -49,6 +52,7 @@ public:
 	int32_t GetInboundFd();
 	int32_t GetOutboundFd();
 	IOHandlerType GetType();
+	void SetProtocol(BaseProtocol *pPotocol);
 	virtual bool SignalOutputData() = 0;
 	virtual bool OnEvent(select_event &event) = 0;
 	static string IOHTToString(IOHandlerType type);

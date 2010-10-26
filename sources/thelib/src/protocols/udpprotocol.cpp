@@ -31,7 +31,7 @@ UDPProtocol::~UDPProtocol() {
 	if (_pCarrier != NULL) {
 		IOHandler *pCarrier = _pCarrier;
 		_pCarrier = NULL;
-		((UDPCarrier *) pCarrier)->ResetProtocol();
+		pCarrier->SetProtocol(NULL);
 		delete pCarrier;
 	}
 }

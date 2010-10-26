@@ -21,7 +21,6 @@
 #ifndef _TCPCARRIER_H
 #define	_TCPCARRIER_H
 
-
 #include "netio/select/iohandler.h"
 
 class BaseProtocol;
@@ -29,7 +28,6 @@ class BaseProtocol;
 class DLLEXP TCPCarrier
 : public IOHandler {
 private:
-	BaseProtocol *_pProtocol;
 	bool _writeDataEnabled;
 	sockaddr_in _farAddress;
 	string _farIp;
@@ -40,9 +38,8 @@ private:
 	int32_t _sendBufferSize;
 	int32_t _recvBufferSize;
 public:
-	TCPCarrier(int32_t fd, BaseProtocol *pProtocol);
+	TCPCarrier(int32_t fd);
 	virtual ~TCPCarrier();
-	void ResetProtocol();
 	virtual bool OnEvent(select_event &event);
 	virtual bool SignalOutputData();
 	virtual operator string();

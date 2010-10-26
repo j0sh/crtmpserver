@@ -64,6 +64,7 @@
 #include "netio/select/tcpconnector.h"
 #include "netio/select/stdiocarrier.h"
 #define NETWORK_REACTOR "select"
+#error "Select system is not working now"
 #endif
 
 #ifdef NET_IOCP

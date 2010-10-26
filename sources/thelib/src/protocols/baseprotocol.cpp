@@ -51,30 +51,28 @@ BaseProtocol::~BaseProtocol() {
 			_id, STR(tagToString(_type)),
 			_pFarProtocol, _pNearProtocol, _deleteFar, _deleteNear);
 #endif
-	if (_pFarProtocol != NULL) {
-		_pFarProtocol->_pNearProtocol = NULL;
-		if (_deleteFar) {
-			delete _pFarProtocol;
-		}
-	}
-	if (_pNearProtocol != NULL) {
-		_pNearProtocol->_pFarProtocol = NULL;
-		if (_deleteNear) {
-			delete _pNearProtocol;
+	BaseProtocol *pFar = _pFarProtocol;
+	BaseProtocol *pNear = _pNearProtocol;
 
-		}
-	}
 	_pFarProtocol = NULL;
 	_pNearProtocol = NULL;
+	if (pFar != NULL) {
+		pFar->_pNearProtocol = NULL;
+		if (_deleteFar) {
+			pFar->EnqueueForDelete();
+		}
+	}
+	if (pNear != NULL) {
+		pNear->_pFarProtocol = NULL;
+		if (_deleteNear) {
+			pNear->EnqueueForDelete();
+		}
+	}
 #ifdef LOG_CONSTRUCTOR_DESTRUCTOR
 	FINEST("Protocol with id %d of type %s deleted; F: %p,N: %p, DF: %d, DN: %d",
 			_id, STR(tagToString(_type)),
 			_pFarProtocol, _pNearProtocol, _deleteFar, _deleteNear);
 #endif
-	if (_pApplication != NULL) {
-		_pApplication->UnRegisterProtocol(this);
-		_pApplication = NULL;
-	}
 	ProtocolManager::UnRegisterProtocol(this);
 }
 
@@ -329,16 +327,42 @@ void BaseProtocol::SignalInterProtocolEvent(Variant &event) {
 }
 
 void BaseProtocol::SetApplication(BaseClientApplication *pApplication) {
+	//1. Get the old and the new application name and id
+	string oldAppName = "(none)";
+	uint32_t oldAppId = 0;
+	string newAppName = "(none)";
+	uint32_t newAppId = 0;
+	if (_pApplication != NULL) {
+		oldAppName = _pApplication->GetName();
+		oldAppId = _pApplication->GetId();
+	}
+	if (pApplication != NULL) {
+		newAppName = pApplication->GetName();
+		newAppId = pApplication->GetId();
+	}
+
+	//2. Are we landing on the same application?
+	if (oldAppId == newAppId) {
+		return;
+	}
+
+	//3. If the application is the same, return. Otherwise, unregister
 	if (_pApplication != NULL) {
 		_pApplication->UnRegisterProtocol(this);
 		_pApplication = NULL;
 	}
-	_pApplication = pApplication;
-	_pApplication->RegisterProtocol(this);
-}
 
-void BaseProtocol::ResetApplication() {
-	_pApplication = NULL;
+	//4. Setup the new application
+	_pApplication = pApplication;
+
+	//5. Register to it
+	if (_pApplication != NULL) {
+		_pApplication->RegisterProtocol(this);
+	}
+
+	//6. Trigger log to production
+	//	FINEST("********** %s -> %s ********** %s", STR(oldAppName), STR(newAppName),
+	//			STR(*this));
 }
 
 bool BaseProtocol::SignalInputData(IOBuffer &buffer, sockaddr_in *pPeerAddress) {

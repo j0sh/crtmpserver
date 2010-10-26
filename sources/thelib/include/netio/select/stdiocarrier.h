@@ -24,20 +24,16 @@
 
 #include "netio/select/iohandler.h"
 
-class BaseProtocol;
-
 class DLLEXP StdioCarrier
 : public IOHandler {
 private:
 	static StdioCarrier *_pInstance;
-	BaseProtocol *_pProtocol;
 	bool _writeDataEnabled;
 private:
-	StdioCarrier(BaseProtocol *pProtocol);
+	StdioCarrier();
 public:
 	static StdioCarrier *GetInstance(BaseProtocol *pProtocol);
 	virtual ~StdioCarrier();
-	void ResetProtocol();
 	virtual bool OnEvent(select_event &event);
 	virtual bool SignalOutputData();
 	virtual operator string();

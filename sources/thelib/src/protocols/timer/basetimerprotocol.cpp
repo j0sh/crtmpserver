@@ -23,14 +23,15 @@
 
 BaseTimerProtocol::BaseTimerProtocol()
 : BaseProtocol(PT_TIMER) {
-	_pTimer = new IOTimer(this);
+	_pTimer = new IOTimer();
+	_pTimer->SetProtocol(this);
 }
 
 BaseTimerProtocol::~BaseTimerProtocol() {
 	if (_pTimer != NULL) {
 		IOTimer *pTimer = _pTimer;
 		_pTimer = NULL;
-		pTimer->ResetProtocol();
+		pTimer->SetProtocol(NULL);
 		delete pTimer;
 	}
 }

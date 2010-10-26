@@ -28,7 +28,7 @@ uint32_t BaseClientApplication::_idGenerator = 0;
 
 BaseClientApplication::BaseClientApplication(Variant &configuration)
 : _streamsManager(this) {
-	_id = _idGenerator++;
+	_id = ++_idGenerator;
 	_configuration = configuration;
 	_name = (string) configuration[CONF_APPLICATION_NAME];
 	if ((VariantType) configuration[CONF_APPLICATION_ALIASES] != V_NULL) {

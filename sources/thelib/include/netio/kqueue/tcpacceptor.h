@@ -23,7 +23,6 @@
 
 
 #include "netio/kqueue/iohandler.h"
-#include "protocols/baseprotocol.h"
 
 class BaseClientApplication;
 

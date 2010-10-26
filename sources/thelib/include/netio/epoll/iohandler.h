@@ -34,12 +34,15 @@ typedef enum _IOHandlerType {
 	IOHT_STDIO
 } IOHandlerType;
 
+class BaseProtocol;
+
 class IOHandler {
 protected:
 	static uint32_t _idGenerator;
 	uint32_t _id;
 	int32_t _inboundFd;
 	int32_t _outboundFd;
+	BaseProtocol *_pProtocol;
 private:
 	IOHandlerType _type;
 	IOHandlerManagerToken *_pToken;
@@ -52,6 +55,7 @@ public:
 	int32_t GetInboundFd();
 	int32_t GetOutboundFd();
 	IOHandlerType GetType();
+	void SetProtocol(BaseProtocol *pPotocol);
 	virtual bool SignalOutputData() = 0;
 	virtual bool OnEvent(struct epoll_event &event) = 0;
 	static string IOHTToString(IOHandlerType type);

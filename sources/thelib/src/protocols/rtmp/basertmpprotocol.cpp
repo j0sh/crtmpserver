@@ -73,7 +73,6 @@ BaseRTMPProtocol::BaseRTMPProtocol(uint64_t protocolType)
 	_selectedChannel = -1;
 	_inboundChunkSize = 128;
 	_outboundChunkSize = 128;
-	_pApplication = ClientApplicationManager::GetDefaultApplication();
 
 	for (uint32_t i = 0; i < MAX_STREAMS_COUNT; i++) {
 		_streams[i] = NULL;
@@ -87,11 +86,6 @@ BaseRTMPProtocol::BaseRTMPProtocol(uint64_t protocolType)
 }
 
 BaseRTMPProtocol::~BaseRTMPProtocol() {
-	if (_pApplication != NULL) {
-		_pApplication->UnRegisterProtocol(this);
-		_pProtocolHandler = NULL;
-		_pApplication = NULL;
-	}
 	for (uint32_t i = 0; i < MAX_STREAMS_COUNT; i++) {
 		if (_streams[i] != NULL) {
 			delete _streams[i];
@@ -189,15 +183,13 @@ void BaseRTMPProtocol::ReadyForSend() {
 }
 
 void BaseRTMPProtocol::SetApplication(BaseClientApplication *pApplication) {
-	assert(pApplication != NULL);
 	BaseProtocol::SetApplication(pApplication);
-	_pProtocolHandler = (BaseRTMPAppProtocolHandler *)
-			_pApplication->GetProtocolHandler(this);
-}
-
-void BaseRTMPProtocol::ResetApplication() {
-	BaseProtocol::ResetApplication();
-	_pProtocolHandler = NULL;
+	if (pApplication != NULL) {
+		_pProtocolHandler = (BaseRTMPAppProtocolHandler *)
+				pApplication->GetProtocolHandler(this);
+	} else {
+		_pProtocolHandler = NULL;
+	}
 }
 
 bool BaseRTMPProtocol::SendMessage(Variant & message) {
@@ -779,7 +771,7 @@ bool BaseRTMPProtocol::ProcessBytes(IOBuffer &buffer) {
 						}
 						if (H_ML(header) == channel.lastInProcBytes) {
 							channel.lastInProcBytes = 0;
-							if (_pApplication == NULL || _pProtocolHandler == NULL) {
+							if (_pProtocolHandler == NULL) {
 								FATAL("RTMP connection no longer associated with an application");
 								return false;
 							}

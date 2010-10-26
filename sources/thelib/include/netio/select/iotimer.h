@@ -23,18 +23,15 @@
 
 #include "netio/select/iohandler.h"
 
-class BaseProtocol;
-
 class DLLEXP IOTimer
 : public IOHandler {
 private:
 	static int32_t _idGenerator;
 	BaseProtocol *_pProtocol;
 public:
-	IOTimer(BaseProtocol *pProtocol);
+	IOTimer();
 	virtual ~IOTimer();
 
-	void ResetProtocol();
 	virtual bool SignalOutputData();
 	virtual bool OnEvent(select_event &event);
 	bool EnqueueForTimeEvent(uint32_t seconds);

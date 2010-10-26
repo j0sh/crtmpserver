@@ -21,15 +21,11 @@
 #ifndef _TCPCARRIER_H
 #define	_TCPCARRIER_H
 
-
 #include "netio/epoll/iohandler.h"
-
-class BaseProtocol;
 
 class TCPCarrier
 : public IOHandler {
 private:
-	BaseProtocol *_pProtocol;
 	bool _writeDataEnabled;
 	sockaddr_in _farAddress;
 	string _farIp;
@@ -40,9 +36,8 @@ private:
 	int32_t _sendBufferSize;
 	int32_t _recvBufferSize;
 public:
-	TCPCarrier(int32_t fd, BaseProtocol *pProtocol);
+	TCPCarrier(int32_t fd);
 	virtual ~TCPCarrier();
-	void ResetProtocol();
 	virtual bool OnEvent(struct epoll_event &event);
 	virtual bool SignalOutputData();
 	virtual operator string();

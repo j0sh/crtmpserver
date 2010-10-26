@@ -42,9 +42,8 @@ if (_writeDataEnabled) { \
     FINEST("Write data already disabled"); \
 }*/
 
-TCPCarrier::TCPCarrier(int32_t fd, BaseProtocol *pProtocol)
+TCPCarrier::TCPCarrier(int32_t fd)
 : IOHandler(fd, fd, IOHT_TCP_CARRIER) {
-	_pProtocol = pProtocol;
 	IOHandlerManager::EnableReadData(this);
 	_writeDataEnabled = false;
 	memset(&_farAddress, 0, sizeof (sockaddr_in));
@@ -59,15 +58,7 @@ TCPCarrier::TCPCarrier(int32_t fd, BaseProtocol *pProtocol)
 TCPCarrier::~TCPCarrier() {
 	//FINEST("Delete tcp carrier %p", this);
 	close(_inboundFd);
-	if (_pProtocol != NULL) {
-		_pProtocol->SetIOHandler(NULL);
-		delete _pProtocol;
-	}
 	//FINEST("Done delete tcp carrier %p", this);
-}
-
-void TCPCarrier::ResetProtocol() {
-	_pProtocol = NULL;
 }
 
 bool TCPCarrier::OnEvent(struct kevent &event) {

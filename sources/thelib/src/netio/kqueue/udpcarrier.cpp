@@ -24,9 +24,8 @@
 #include "netio/kqueue/iohandlermanager.h"
 #include "protocols/baseprotocol.h"
 
-UDPCarrier::UDPCarrier(int32_t fd, BaseProtocol *pProtocol)
+UDPCarrier::UDPCarrier(int32_t fd)
 : IOHandler(fd, fd, IOHT_UDP_CARRIER) {
-	_pProtocol = pProtocol;
 	IOHandlerManager::EnableReadData(this);
 	memset(&_peerAddress, 0, sizeof (sockaddr_in));
 	memset(&_nearAddress, 0, sizeof (sockaddr_in));
@@ -36,21 +35,6 @@ UDPCarrier::UDPCarrier(int32_t fd, BaseProtocol *pProtocol)
 
 UDPCarrier::~UDPCarrier() {
 	close(_inboundFd);
-	if (_pProtocol != NULL) {
-		_pProtocol->SetIOHandler(NULL);
-		delete _pProtocol;
-	}
-}
-
-void UDPCarrier::ResetProtocol() {
-	_pProtocol = NULL;
-}
-
-void UDPCarrier::SetProtocol(BaseProtocol *pProtocol) {
-	if (_pProtocol != NULL) {
-		ASSERT("This carrier is already bound");
-	}
-	_pProtocol = pProtocol;
 }
 
 bool UDPCarrier::OnEvent(struct kevent &event) {
@@ -152,7 +136,7 @@ UDPCarrier* UDPCarrier::Create(string bindIp, uint16_t bindPort) {
 	}
 
 	//4. Create the carrier
-	UDPCarrier *pResult = new UDPCarrier(sock, NULL);
+	UDPCarrier *pResult = new UDPCarrier(sock);
 	pResult->_nearAddress = bindAddress;
 
 	return pResult;

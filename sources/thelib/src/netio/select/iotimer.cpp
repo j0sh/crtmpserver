@@ -24,23 +24,14 @@
 
 int32_t IOTimer::_idGenerator;
 
-IOTimer::IOTimer(BaseProtocol *pProtocol)
+IOTimer::IOTimer()
 : IOHandler(0, 0, IOHT_TIMER) {
-	_pProtocol = pProtocol;
 	_outboundFd = _inboundFd = ++_idGenerator;
 }
 
 IOTimer::~IOTimer() {
 	//FINEST("Disable timer");
 	IOHandlerManager::DisableTimer(this);
-	if (_pProtocol != NULL) {
-		_pProtocol->SetIOHandler(NULL);
-		delete _pProtocol;
-	}
-}
-
-void IOTimer::ResetProtocol() {
-	_pProtocol = NULL;
 }
 
 bool IOTimer::SignalOutputData() {
