@@ -27,7 +27,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "utils/core.h"
 #include "rtmpappprotocolhandler.h"
 #include "protocols/rtmp/messagefactories/messagefactories.h"
 

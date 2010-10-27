@@ -28,7 +28,6 @@
  */
 
 
-#include "utils/core.h"
 #include "#APPNAME_LC#application.h"
 #include "rtmpappprotocolhandler.h"
 #include "protocols/baseprotocol.h"
@@ -42,8 +41,8 @@
 
 #APPNAME#Application::~#APPNAME#Application() {
 #ifdef HAS_PROTOCOL_RTMP
-    UnRegisterAppProtocolHandler(PT_INBOUNDRTMP);
-    UnRegisterAppProtocolHandler(PT_OUTBOUNDRTMP);
+    UnRegisterAppProtocolHandler(PT_INBOUND_RTMP);
+    UnRegisterAppProtocolHandler(PT_OUTBOUND_RTMP);
     if(_pRTMPHandler!=NULL) {
 	delete _pRTMPHandler;
 	_pRTMPHandler=NULL;
@@ -59,8 +58,8 @@ bool #APPNAME#Application::Initialize() {
     //1. Initialize the protocol handler(s)
 #ifdef HAS_PROTOCOL_RTMP    
     _pRTMPHandler = new RTMPAppProtocolHandler(_configuration);
-    RegisterAppProtocolHandler(PT_INBOUNDRTMP, _pRTMPHandler);
-    RegisterAppProtocolHandler(PT_OUTBOUNDRTMP, _pRTMPHandler);
+    RegisterAppProtocolHandler(PT_INBOUND_RTMP, _pRTMPHandler);
+    RegisterAppProtocolHandler(PT_OUTBOUND_RTMP, _pRTMPHandler);
 #endif /* HAS_PROTOCOL_RTMP */
 
     //2. Use your custom values inside your app config node

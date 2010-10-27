@@ -30,7 +30,7 @@
 #ifndef _#APPNAME_UC#_H
 #define	_#APPNAME_UC#_H
 
-#include "utils/core.h"
+#include "common.h"
 
 extern "C" DLLEXP BaseClientApplication *GetApplication(Variant configuration);
 extern "C" DLLEXP void ReleaseApplication(BaseClientApplication *pApplication);

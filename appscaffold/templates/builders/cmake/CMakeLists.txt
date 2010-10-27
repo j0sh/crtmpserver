@@ -6,7 +6,7 @@ FILE(GLOB_RECURSE SOURCES "../../../../sources/applications/#APPNAME_LC#/src/*.c
 
 #prepare the include directories
 INCLUDE_DIRECTORIES(
-	${LUA_INCLUDE_PATH}
+	../../../../3rdparty/lua-dev
 	../../../../sources/common/include
 	../../../../sources/thelib/include
 	../../../../sources/applications/#APPNAME_LC#/include

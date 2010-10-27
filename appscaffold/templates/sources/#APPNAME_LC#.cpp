@@ -27,7 +27,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "utils/core.h"
 #include "application/baseclientapplication.h"
 #include "#APPNAME_LC#.h"
 #include "#APPNAME_LC#application.h"
