@@ -47,8 +47,8 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/1145168487/timegm.o \
 	${OBJECTDIR}/_ext/1874657879/logcatloglocation.o \
 	${OBJECTDIR}/_ext/230374975/win32platform.o \
-	${OBJECTDIR}/_ext/1912657765/openbsdplatform.o \
 	${OBJECTDIR}/_ext/765644641/tinyxmlerror.o \
+	${OBJECTDIR}/_ext/1912657765/openbsdplatform.o \
 	${OBJECTDIR}/_ext/765644641/tinyxmlparser.o \
 	${OBJECTDIR}/_ext/674965218/file.o \
 	${OBJECTDIR}/_ext/1145168487/solarisplatform.o \
@@ -160,15 +160,15 @@ ${OBJECTDIR}/_ext/230374975/win32platform.o: ../../../../sources/common/src/plat
 	${RM} $@.d
 	$(COMPILE.cc) -g -DOSX -DUSE_MEM_POOL -DDEBUG_MEM_POOL -DLITTLE_ENDIAN_SHORT_ALIGNED -DHAS_LUA -I/opt/local/include -I../../../../sources/common/include -I/opt/local/include/libxml2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/230374975/win32platform.o ../../../../sources/common/src/platform/windows/win32platform.cpp
 
-${OBJECTDIR}/_ext/1912657765/openbsdplatform.o: ../../../../sources/common/src/platform/openbsd/openbsdplatform.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/1912657765
-	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DUSE_MEM_POOL -DDEBUG_MEM_POOL -DLITTLE_ENDIAN_SHORT_ALIGNED -DHAS_LUA -I/opt/local/include -I../../../../sources/common/include -I/opt/local/include/libxml2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1912657765/openbsdplatform.o ../../../../sources/common/src/platform/openbsd/openbsdplatform.cpp
-
 ${OBJECTDIR}/_ext/765644641/tinyxmlerror.o: ../../../../sources/common/src/utils/tinyxml/tinyxmlerror.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/765644641
 	${RM} $@.d
 	$(COMPILE.cc) -g -DOSX -DUSE_MEM_POOL -DDEBUG_MEM_POOL -DLITTLE_ENDIAN_SHORT_ALIGNED -DHAS_LUA -I/opt/local/include -I../../../../sources/common/include -I/opt/local/include/libxml2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/765644641/tinyxmlerror.o ../../../../sources/common/src/utils/tinyxml/tinyxmlerror.cpp
+
+${OBJECTDIR}/_ext/1912657765/openbsdplatform.o: ../../../../sources/common/src/platform/openbsd/openbsdplatform.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1912657765
+	${RM} $@.d
+	$(COMPILE.cc) -g -DOSX -DUSE_MEM_POOL -DDEBUG_MEM_POOL -DLITTLE_ENDIAN_SHORT_ALIGNED -DHAS_LUA -I/opt/local/include -I../../../../sources/common/include -I/opt/local/include/libxml2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1912657765/openbsdplatform.o ../../../../sources/common/src/platform/openbsd/openbsdplatform.cpp
 
 ${OBJECTDIR}/_ext/765644641/tinyxmlparser.o: ../../../../sources/common/src/utils/tinyxml/tinyxmlparser.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/765644641
