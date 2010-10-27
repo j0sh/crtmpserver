@@ -5,9 +5,10 @@
 		<![CDATA[
 //			import mx.controls.TextArea;
 //			import mx.controls.Button;
-			import mx.utils.ObjectUtil;
 			import com.rtmpd.generics.Connection;
 			import com.rtmpd.generics.Logging;
+			
+			import mx.utils.ObjectUtil;
 			
 			private var _stream:NetStream;
 			private var _video:Video;
@@ -17,6 +18,10 @@
 			public function Initialize():void
 			{
 				try{	
+					if(_video!=null){
+						rawChildren.removeChild(_video);
+						_video=null;
+					}
 					_video=new Video(width,height);
 					rawChildren.addChild(_video);
 					
@@ -77,6 +82,10 @@
 				if(_stream==null)
 					return;
 				_stream.seek(offset);
+			}
+			
+			public function set Camera(camera:Camera):void{
+				_video.attachCamera(camera);
 			}
 		]]>
 	</mx:Script>

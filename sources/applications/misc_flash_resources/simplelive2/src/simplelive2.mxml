@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx" minWidth="955" minHeight="600" 
+			   xmlns:components="com.rtmpd.generics.ui.components.*"
+			   applicationComplete="updateSettings()">
+	<fx:Script>
+		<![CDATA[
+			import mx.controls.Alert;
+			import mx.managers.PopUpManager;
+			import mx.utils.ObjectUtil;
+			[Bindable]
+			private var _microphone:Microphone=Microphone.getMicrophone();
+			
+			[Bindable]
+			private var _camera:Camera=Camera.getCamera();
+			
+			[Bindable]
+			private var _connection:NetConnection=null;
+			
+			private var _publishStream:NetStream=null;
+			
+			private function updateSettings():void{
+				_microphone.codec=cmbAudioCodec.selectedItem;
+				_microphone.encodeQuality=int(cmbAudioQuality.selectedItem);
+				_microphone.rate=int(cmbAudioRate.selectedItem);
+				_microphone.framesPerPacket=int(txtAudioFramesPerPacket.text);
+				_microphone.setSilenceLevel(int(txtAudioSilenceLevel.text))
+				_camera.setMode(
+					int(txtVideoWidth.text),
+					int(txtVideoHeight.text),
+					int(txtVideoFps.text));
+				_camera.setQuality(0,int(txtVideoQuality.text));
+				vidMonitor.Initialize();
+				vidMonitor.Camera=_camera;
+			}
+			
+			private function connectDisconect():void{
+				if(btnConnect.label=="Connect"){
+					if(_connection!=null){
+						_connection.close();
+						_connection=null;
+					}
+					_connection=new NetConnection();
+					_connection.client=this;
+					_connection.addEventListener(NetStatusEvent.NET_STATUS,NetStatusChanged);
+					_connection.connect(txtConnStr.text);
+				}else{
+					_connection.close();
+					_connection=null;
+				}
+			}
+			
+			private function get Connected():Boolean{
+				return _connection!=null&&_connection.connected;
+			}
+			
+			private function NetStatusChanged(evt:Event):void{
+				btnConnect.label=Connected?'Disconnect':'Connect';
+			}
+			
+			private function publish():void{
+				if(!Connected)
+					return;
+				if(_publishStream!=null){
+					_publishStream.close();
+					_publishStream=null;
+				}
+				_publishStream=new NetStream(_connection);
+				_publishStream.attachCamera(_camera);
+				_publishStream.attachAudio(_microphone);
+				_publishStream.publish(txtStreamName.text,"record");
+			}
+		]]>
+	</fx:Script>
+	<mx:HBox width="100%" height="100%">
+		<mx:VBox width="100%" height="100%">
+			<mx:HBox width="100%">
+				<mx:Label text="Connecting string: " />
+				<s:TextInput id="txtConnStr" width="100%" text="rtmp://localhost/vod"/>
+				<s:Button id="btnConnect" label="{_connection!=null&amp;&amp;_connection.connected?'Disconnect':'Connect'}" click="connectDisconect()" />
+			</mx:HBox>
+			<mx:HBox width="100%" height="100%">
+				<components:VideoPlayer id="vidMonitor" width="320" height="240" Camera="{_camera}"/>
+				<mx:VBox>
+					<mx:HBox>
+						<s:Label text="Stream name:" />
+						<s:TextInput id="txtStreamName" text="myStream" />
+					</mx:HBox>
+					<mx:HBox>
+						<s:Label text="Audio codec" />
+						<s:ComboBox id="cmbAudioCodec" selectedItem="speex">
+							<s:dataProvider>
+								<mx:ArrayList>
+									<fx:String>speex</fx:String>
+									<fx:String>nellymoser</fx:String>
+								</mx:ArrayList>
+							</s:dataProvider>
+						</s:ComboBox>
+					</mx:HBox>
+					<mx:HBox>
+						<s:Label text="Audio quality" />
+						<s:ComboBox id="cmbAudioQuality" selectedItem="10">
+							<s:dataProvider>
+								<mx:ArrayList>
+									<fx:String>0</fx:String>
+									<fx:String>1</fx:String>
+									<fx:String>2</fx:String>
+									<fx:String>3</fx:String>
+									<fx:String>4</fx:String>
+									<fx:String>5</fx:String>
+									<fx:String>6</fx:String>
+									<fx:String>7</fx:String>
+									<fx:String>8</fx:String>
+									<fx:String>9</fx:String>
+									<fx:String>10</fx:String>
+								</mx:ArrayList>
+							</s:dataProvider>
+						</s:ComboBox>
+					</mx:HBox>
+					<mx:HBox>
+						<s:Label text="Audio rate" />
+						<s:ComboBox id="cmbAudioRate" selectedItem="44">
+							<s:dataProvider>
+								<mx:ArrayList>
+									<fx:String>44</fx:String>
+									<fx:String>22</fx:String>
+									<fx:String>11</fx:String>
+									<fx:String>8</fx:String>
+									<fx:String>5</fx:String>
+								</mx:ArrayList>
+							</s:dataProvider>
+						</s:ComboBox>
+					</mx:HBox>
+					<mx:HBox>
+						<s:Label text="Audio frames per packet" />
+						<s:TextInput id="txtAudioFramesPerPacket" text="1"/>
+					</mx:HBox>
+					<mx:HBox>
+						<s:Label text="Audio silence level" />
+						<s:TextInput id="txtAudioSilenceLevel" text="0"/>
+					</mx:HBox>
+					<mx:HBox>
+						<s:Label text="Video width/height" />
+						<s:TextInput id="txtVideoWidth" text="640"/>
+						<s:TextInput id="txtVideoHeight" text="480"/>
+					</mx:HBox>
+					<mx:HBox>
+						<s:Label text="Video fps" />
+						<s:TextInput id="txtVideoFps" text="30"/>
+					</mx:HBox>
+					<mx:HBox>
+						<s:Label text="Video quality" />
+						<s:TextInput id="txtVideoQuality" text="90"/>
+					</mx:HBox>
+					<s:Button label="Update settings" click="updateSettings()" />
+					<s:Button label="Publish" click="publish()" />
+				</mx:VBox>
+			</mx:HBox>
+			<!--mx:HBox width="100%" height="100%">
+				<components:VideoPlayer width="100%" height="100%" />
+				<mx:VBox>
+					
+				</mx:VBox>
+			</mx:HBox-->
+		</mx:VBox>
+		<mx:VBox width="400" height="100%">
+			<s:TextArea id="txtLogs" width="100%" height="100%" />
+			<s:Button label="Clear logs" width="100%" click="{txtLogs.text=null}"/>
+		</mx:VBox>
+	</mx:HBox>
+</s:Application>
