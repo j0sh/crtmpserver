@@ -9,6 +9,7 @@
 			import mx.controls.Alert;
 			import mx.managers.PopUpManager;
 			import mx.utils.ObjectUtil;
+			
 			[Bindable]
 			private var _microphone:Microphone=Microphone.getMicrophone();
 			
@@ -25,14 +26,18 @@
 				_microphone.encodeQuality=int(cmbAudioQuality.selectedItem);
 				_microphone.rate=int(cmbAudioRate.selectedItem);
 				_microphone.framesPerPacket=int(txtAudioFramesPerPacket.text);
-				_microphone.setSilenceLevel(int(txtAudioSilenceLevel.text))
-				_camera.setMode(
-					int(txtVideoWidth.text),
-					int(txtVideoHeight.text),
-					int(txtVideoFps.text));
-				_camera.setQuality(0,int(txtVideoQuality.text));
-				vidMonitor.Initialize();
-				vidMonitor.Camera=_camera;
+				_microphone.setSilenceLevel(int(txtAudioSilenceLevel.text));
+				if(chkHasVideo.selected){
+					_camera.setMode(
+						int(txtVideoWidth.text),
+						int(txtVideoHeight.text),
+						int(txtVideoFps.text));
+					_camera.setQuality(0,int(txtVideoQuality.text));
+					vidMonitor.Initialize();
+					vidMonitor.Camera=_camera;
+				}else{
+					vidMonitor.Initialize();
+				}
 			}
 			
 			private function connectDisconect():void{
@@ -67,9 +72,11 @@
 					_publishStream=null;
 				}
 				_publishStream=new NetStream(_connection);
-				_publishStream.attachCamera(_camera);
 				_publishStream.attachAudio(_microphone);
-				_publishStream.publish(txtStreamName.text,"record");
+				if(chkHasVideo.selected){
+					_publishStream.attachCamera(_camera);
+				}
+				_publishStream.publish(txtStreamName.text);
 			}
 		]]>
 	</fx:Script>
@@ -139,6 +146,10 @@
 					<mx:HBox>
 						<s:Label text="Audio silence level" />
 						<s:TextInput id="txtAudioSilenceLevel" text="0"/>
+					</mx:HBox>
+					<mx:HBox>
+						<s:Label text="Has video" />
+						<s:CheckBox id="chkHasVideo" selected="false"/>
 					</mx:HBox>
 					<mx:HBox>
 						<s:Label text="Video width/height" />
