@@ -44,6 +44,9 @@ public:
 	bool ReadObject(IOBuffer &buffer, Variant &variant, bool readType = true);
 	bool WriteObject(IOBuffer &buffer, Variant &variant, bool writeType = true);
 
+	bool ReadTypedObject(IOBuffer &buffer, Variant &variant, bool readType = true);
+	bool WriteTypedObject(IOBuffer &buffer, Variant &variant, bool writeType = true);
+
 	bool ReadMixedArray(IOBuffer &buffer, Variant &variant, bool readType = true);
 	bool WriteMixedArray(IOBuffer &buffer, Variant &variant, bool writeType = true);
 

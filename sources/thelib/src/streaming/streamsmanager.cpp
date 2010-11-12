@@ -56,12 +56,14 @@ bool StreamsManager::RegisterStream(BaseStream *pStream) {
 }
 
 void StreamsManager::UnRegisterStream(BaseStream *pStream) {
+	bool signalStreamUnregistered = MAP_HAS1(_streamsByUniqueId, pStream->GetUniqueId());
 	MAP_ERASE1(_streamsByUniqueId, pStream->GetUniqueId());
 	if (pStream->GetProtocol() != NULL)
 		MAP_ERASE2(_streamsByProtocolId, pStream->GetProtocol()->GetId(), pStream->GetUniqueId());
 	MAP_ERASE2(_streamsByType, pStream->GetType(), pStream->GetUniqueId());
 	MAP_ERASE2(_streamsByName, pStream->GetName(), pStream->GetUniqueId());
-	_pApplication->SignalStreamUnRegistered(pStream);
+	if (signalStreamUnregistered)
+		_pApplication->SignalStreamUnRegistered(pStream);
 }
 
 void StreamsManager::UnRegisterStreams(uint32_t protocolId) {

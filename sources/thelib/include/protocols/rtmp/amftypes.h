@@ -54,6 +54,7 @@
 #define AMF0_ARRAY          0x0a
 #define AMF0_TIMESTAMP      0x0b
 #define AMF0_LONG_STRING    0x0c
+#define AMF0_TYPED_OBJECT	0x10
 #define AMF0_AMF3_OBJECT    0x11
 
 #define AMF3_UNDEFINED      0x00

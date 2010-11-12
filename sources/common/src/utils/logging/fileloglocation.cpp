@@ -42,6 +42,9 @@ void FileLogLocation::Log(int32_t level, string fileName, uint32_t lineNumber,
 		string functionName, string message) {
 	if (!_canLog)
 		return;
+	if (_level < 0 || level > _level) {
+		return;
+	}
 	string logEntry = format("%d:%s:%d:%s:%s\n",
 			level, STR(fileName), lineNumber, STR(functionName), STR(message));
 	_fileStream.write(STR(logEntry), logEntry.size());
