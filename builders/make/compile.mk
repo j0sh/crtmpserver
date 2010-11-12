@@ -1,15 +1,9 @@
 #toolchain paths
-TOOLCHAIN_BASE=
-TOOLCHAIN_PREFIX=
 CC=$(TOOLCHAIN_BASE)$(TOOLCHAIN_PREFIX)gcc
 CXX=$(TOOLCHAIN_BASE)$(TOOLCHAIN_PREFIX)g++
 AR=$(TOOLCHAIN_BASE)$(TOOLCHAIN_PREFIX)ar
 
 #output settings
-STATIC_LIB_SUFIX=.a
-STATIC_LIB_PREFIX=lib
-DYNAMIC_LIB_SUFIX=.so
-DYNAMIC_LIB_PREFIX=lib
 OUTPUT_BASE = ./output
 OUTPUT_BIN = $(OUTPUT_BASE)
 OUTPUT_OBJ = $(OUTPUT_BASE)
@@ -22,16 +16,6 @@ static_exec_name = $(OUTPUT_STATIC)$(2)/$(1)
 
 #project paths
 PROJECT_BASE_PATH=../..
-
-#linking flags
-dynamic_lib_flags = -Wl,-soname,$(DYNAMIC_LIB_PREFIX)$(1)$(DYNAMIC_LIB_SUFIX) -Wl,-rpath,"\$$ORIGIN"
-dynamic_exec_flags = -Wl,-rpath,"\$$ORIGIN"
-
-#compile switches
-PLATFORM_DEFINES = \
-	-DLINUX \
-	-DLITTLE_ENDIAN_BYTE_ALIGNED \
-	-DNET_EPOLL
 
 FEATURES_DEFINES = \
 	-DCreateRTCPPacket=CreateRTCPPacket_mystyle_only_once \
@@ -52,7 +36,6 @@ FEATURES_DEFINES = \
 DEFINES = $(PLATFORM_DEFINES) $(FEATURES_DEFINES)
 
 #library paths
-SSL_BASE=/usr/local
 SSL_INCLUDE=-I$(SSL_BASE)/include
 SSL_LIB=-L$(SSL_BASE)/lib -lssl -lcrypto
 
