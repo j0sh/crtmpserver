@@ -51,6 +51,8 @@
 #include <sys/stat.h>
 #include <sys/time.h>
 #include <vector>
+#include <sys/types.h>
+#include <sys/socket.h>
 using namespace std;
 
 

@@ -46,7 +46,7 @@ LUA_SRCS = $(shell find $(PROJECT_BASE_PATH)/3rdparty/lua-dev -type f -name "*.c
 LUA_OBJS = $(LUA_SRCS:.c=.lua.o)
 
 #common
-COMMON_INCLUDE=$(LUA_INCLUDE) -I$(PROJECT_BASE_PATH)/sources/common/include
+COMMON_INCLUDE=$(LUA_INCLUDE) $(SSL_INCLUDE) -I$(PROJECT_BASE_PATH)/sources/common/include
 COMMON_LIBS=$(SSL_LIB) -L$(OUTPUT_DYNAMIC) -llua
 COMMON_SRCS = $(shell find $(PROJECT_BASE_PATH)/sources/common/src -type f -name "*.cpp")
 COMMON_OBJS = $(COMMON_SRCS:.cpp=.common.o)
