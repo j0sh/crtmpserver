@@ -82,15 +82,12 @@ string uppercase(string value) {
 
 string changecase(string &value, bool lowerCase) {
 	string result = "";
-	//std::locale locE("english");
-	std::locale locE;
 	for (string::size_type i = 0; i < value.length(); i++) {
 		if (lowerCase)
-			result += tolower(value[i], locE);
+			result += tolower(value[i]);
 		else
-			result += toupper(value[i], locE);
+			result += toupper(value[i]);
 	}
-	//FINEST("Value: %s; Result: %s", STR(value), STR(result));
 	return result;
 }
 

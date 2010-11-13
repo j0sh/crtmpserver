@@ -19,6 +19,7 @@
 CC=$(TOOLCHAIN_BASE)$(TOOLCHAIN_PREFIX)gcc
 CXX=$(TOOLCHAIN_BASE)$(TOOLCHAIN_PREFIX)g++
 AR=$(TOOLCHAIN_BASE)$(TOOLCHAIN_PREFIX)ar
+STRIP=$(TOOLCHAIN_BASE)$(TOOLCHAIN_PREFIX)strip
 
 #output settings
 OUTPUT_BASE = ./output
@@ -106,7 +107,7 @@ lua: create_output_dirs $(LUA_OBJS)
 	$(CC) -fPIC -shared -o $(call dynamic_lib_name,lua,) $(call dynamic_lib_flags,lua) $(LUA_OBJS)
 
 %.lua.o: %.c
-	$(CC) -c $< -o $@
+	$(CC) -fPIC -c $< -o $@
 
 common: lua $(COMMON_OBJS)
 	@echo ----------- linking shared common
