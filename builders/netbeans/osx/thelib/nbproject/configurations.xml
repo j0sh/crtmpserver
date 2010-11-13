@@ -258,6 +258,7 @@
         <itemPath>../../../../sources/thelib/src/application/baseappprotocolhandler.cpp</itemPath>
         <itemPath>../../../../sources/thelib/src/application/baseclientapplication.cpp</itemPath>
         <itemPath>../../../../sources/thelib/src/application/clientapplicationmanager.cpp</itemPath>
+        <itemPath>../../../../sources/thelib/src/application/newfile</itemPath>
       </logicalFolder>
       <logicalFolder name="configuration"
                      displayName="configuration"
