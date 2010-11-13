@@ -277,3 +277,4 @@ BaseClientApplication *SpawnApplication(Variant configuration) {
 	}
 }
 #endif
+
