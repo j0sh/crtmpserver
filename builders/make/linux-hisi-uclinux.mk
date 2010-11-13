@@ -37,3 +37,6 @@ PLATFORM_DEFINES = -Os\
 
 SSL_BASE=/home/shiretu/work/hisi/openssl-dist
 
+#compile flags
+COMPILE_FLAGS= -fPIC -Os
+

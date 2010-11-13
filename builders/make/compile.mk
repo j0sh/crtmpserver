@@ -108,11 +108,11 @@ lua: create_output_dirs $(LUA_OBJS)
 	@echo -----------
 
 %.lua.o: %.c
-	$(CC) -fPIC -Os -c $< -o $@
+	$(CC) $(COMPILE_FLAGS) -c $< -o $@
 	
 common: lua $(COMMON_OBJS)
 	@echo ----------- linking shared common
-	$(CXX) -fPIC -shared $(COMMON_LIBS) -o $(call dynamic_lib_name,common,) $(call dynamic_lib_flags,common) $(COMMON_OBJS)
+	$(CXX) $(COMPILE_FLAGS) -shared $(COMMON_LIBS) -o $(call dynamic_lib_name,common,) $(call dynamic_lib_flags,common) $(COMMON_OBJS)
 	$(STRIP) -sx $(call dynamic_lib_name,common,)
 	@echo -----------
 
@@ -121,18 +121,18 @@ common: lua $(COMMON_OBJS)
 
 thelib: common $(THELIB_OBJS)
 	@echo ----------- linking shared thelib
-	$(CXX) -fPIC -shared $(THELIB_LIBS) -o $(call dynamic_lib_name,thelib,) $(call dynamic_lib_flags,thelib) $(THELIB_OBJS)
+	$(CXX) $(COMPILE_FLAGS) -shared $(THELIB_LIBS) -o $(call dynamic_lib_name,thelib,) $(call dynamic_lib_flags,thelib) $(THELIB_OBJS)
 	$(STRIP) -sx $(call dynamic_lib_name,thelib,)
 	@echo -----------
 
 %.thelib.o: %.cpp
-	$(CXX) -fPIC $(DEFINES) $(THELIB_INCLUDE) -c $< -o $@
+	$(CXX) $(COMPILE_FLAGS) $(DEFINES) $(THELIB_INCLUDE) -c $< -o $@
 
 tests: thelib $(TESTS_OBJS)
 	@echo ----------- linking tests
-	$(CXX) -fPIC $(TESTS_LIBS) -o $(call dynamic_exec_name,tests,) $(call dynamic_exec_flags,tests) $(TESTS_OBJS)
+	$(CXX) $(COMPILE_FLAGS) $(TESTS_LIBS) -o $(call dynamic_exec_name,tests,) $(call dynamic_exec_flags,tests) $(TESTS_OBJS)
 	$(STRIP) -sx $(call dynamic_exec_name,tests,)
-	$(CXX) -fPIC $(SSL_LIB) -o $(call static_exec_name,tests,) $(call static_exec_flags,tests) \
+	$(CXX) $(COMPILE_FLAGS) $(SSL_LIB) -o $(call static_exec_name,tests,) $(call static_exec_flags,tests) \
 		$(TESTS_OBJS) \
 		$(LUA_OBJS) \
 		$(COMMON_OBJS) \
@@ -141,14 +141,14 @@ tests: thelib $(TESTS_OBJS)
 	@echo -----------
 
 %.tests.o: %.cpp
-	$(CXX) -fPIC $(DEFINES) $(TESTS_INCLUDE) -c $< -o $@
+	$(CXX) $(COMPILE_FLAGS) $(DEFINES) $(TESTS_INCLUDE) -c $< -o $@
 
 rtmpserver: applications $(RTMPSERVER_OBJS_DYNAMIC) $(RTMPSERVER_OBJS_STATIC)
 	@echo ----------- linking dynamic rtmpserver
-	$(CXX) -fPIC $(RTMPSERVER_LIBS) -o $(call dynamic_exec_name,rtmpserver,) $(call dynamic_exec_flags,rtmpserver) $(RTMPSERVER_OBJS_DYNAMIC)
+	$(CXX) $(COMPILE_FLAGS) $(RTMPSERVER_LIBS) -o $(call dynamic_exec_name,rtmpserver,) $(call dynamic_exec_flags,rtmpserver) $(RTMPSERVER_OBJS_DYNAMIC)
 	$(STRIP) -sx $(call dynamic_exec_name,rtmpserver,)
 	@echo ----------- linking static rtmpserver
-	$(CXX) -fPIC $(SSL_LIB) -o $(call static_exec_name,rtmpserver,) $(call static_exec_flags,rtmpserver) \
+	$(CXX) $(COMPILE_FLAGS) $(SSL_LIB) -o $(call static_exec_name,rtmpserver,) $(call static_exec_flags,rtmpserver) \
 		$(RTMPSERVER_OBJS_STATIC) \
 		$(LUA_OBJS) \
 		$(COMMON_OBJS) \
@@ -160,10 +160,10 @@ rtmpserver: applications $(RTMPSERVER_OBJS_DYNAMIC) $(RTMPSERVER_OBJS_STATIC)
 	@echo -----------
 
 %.rtmpserver_dynamic.o: %.cpp
-	$(CXX) -fPIC $(DEFINES) $(RTMPSERVER_INCLUDE) -c $< -o $@
+	$(CXX) $(COMPILE_FLAGS) $(DEFINES) $(RTMPSERVER_INCLUDE) -c $< -o $@
 
 %.rtmpserver_static.o: %.cpp
-	$(CXX) -fPIC -DCOMPILE_STATIC $(DEFINES) $(RTMPSERVER_INCLUDE) -c $< -o $@
+	$(CXX) $(COMPILE_FLAGS) -DCOMPILE_STATIC $(DEFINES) $(RTMPSERVER_INCLUDE) -c $< -o $@
 
 clean:
 	@rm -rfv $(OUTPUT_BASE)

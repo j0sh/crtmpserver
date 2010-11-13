@@ -8,10 +8,10 @@ __appname__: thelib $(__APPNAME___OBJS)
 	@echo ----------- linking application __appname__
 	@mkdir -p $(OUTPUT_DYNAMIC)/applications/__appname__/mediaFolder
 	@mkdir -p $(OUTPUT_STATIC)/applications/__appname__/mediaFolder
-	$(CXX) -fPIC -shared $(__APPNAME___LIBS) -o $(call dynamic_lib_name,__appname__,/applications/__appname__) $(call dynamic_lib_flags,__appname__) $(__APPNAME___OBJS)
+	$(CXX) $(COMPILE_FLAGS) -shared $(__APPNAME___LIBS) -o $(call dynamic_lib_name,__appname__,/applications/__appname__) $(call dynamic_lib_flags,__appname__) $(__APPNAME___OBJS)
 	$(STRIP) -sx $(call dynamic_lib_name,__appname__,/applications/__appname__)
 	@echo -----------
 
 %.__appname__.o: %.cpp
-	$(CXX) -fPIC $(DEFINES) $(__APPNAME___INCLUDE) -c $< -o $@
+	$(CXX) $(COMPILE_FLAGS) $(DEFINES) $(__APPNAME___INCLUDE) -c $< -o $@
 
