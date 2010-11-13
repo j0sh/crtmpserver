@@ -39,17 +39,19 @@ FEATURES_DEFINES = \
 	-DCreateRTCPPacket=CreateRTCPPacket_mystyle_only_once \
 	-DFeedDataAudioMPEG4Generic=FeedDataAudioMPEG4Generic_one_by_one \
 	-DHandleTSVideoData=HandleVideoData_version3 \
-	-DHAS_PROTOCOL_HTTP \
 	-DHAS_PROTOCOL_RTMP \
-	-DHAS_PROTOCOL_LIVEFLV \
 	-DHAS_PROTOCOL_RTP \
-	-DHAS_PROTOCOL_TS \
-	-DHAS_PROTOCOL_VAR \
-	-DHAS_LUA \
-	-DHAS_MEDIA_MP3 \
-	-DHAS_MEDIA_MP4 \
-	-DHAS_MEDIA_FLV \
-	-DHAS_MEDIA_MKV
+	-DHAS_LUA
+
+#-DHAS_PROTOCOL_HTTP \
+        -DHAS_PROTOCOL_LIVEFLV \
+        -DHAS_PROTOCOL_TS \
+        -DHAS_PROTOCOL_VAR \
+        -DHAS_MEDIA_MP3 \
+        -DHAS_MEDIA_MP4 \
+        -DHAS_MEDIA_FLV \
+        -DHAS_MEDIA_MKV
+
 
 DEFINES = $(PLATFORM_DEFINES) $(FEATURES_DEFINES)
 
@@ -103,14 +105,16 @@ create_output_dirs:
 lua: create_output_dirs $(LUA_OBJS)
 	@echo ----------- linking shared lua
 	$(CC) -fPIC -shared -o $(call dynamic_lib_name,lua,) $(call dynamic_lib_flags,lua) $(LUA_OBJS)
+	$(STRIP) -sx $(call dynamic_lib_name,lua,)
 	@echo -----------
 
 %.lua.o: %.c
-	$(CC) -fPIC -c $< -o $@
+	$(CC) -fPIC -Os -c $< -o $@
 	
 common: lua $(COMMON_OBJS)
 	@echo ----------- linking shared common
 	$(CXX) -fPIC -shared $(COMMON_LIBS) -o $(call dynamic_lib_name,common,) $(call dynamic_lib_flags,common) $(COMMON_OBJS)
+	$(STRIP) -sx $(call dynamic_lib_name,common,)
 	@echo -----------
 
 %.common.o: %.cpp
@@ -119,6 +123,7 @@ common: lua $(COMMON_OBJS)
 thelib: common $(THELIB_OBJS)
 	@echo ----------- linking shared thelib
 	$(CXX) -fPIC -shared $(THELIB_LIBS) -o $(call dynamic_lib_name,thelib,) $(call dynamic_lib_flags,thelib) $(THELIB_OBJS)
+	$(STRIP) -sx $(call dynamic_lib_name,thelib,)
 	@echo -----------
 
 %.thelib.o: %.cpp
@@ -127,6 +132,13 @@ thelib: common $(THELIB_OBJS)
 tests: thelib $(TESTS_OBJS)
 	@echo ----------- linking tests
 	$(CXX) -fPIC $(TESTS_LIBS) -o $(call dynamic_exec_name,tests,) $(call dynamic_exec_flags,tests) $(TESTS_OBJS)
+	$(STRIP) -sx $(call dynamic_exec_name,tests,)
+	$(CXX) -fPIC $(SSL_LIB) -o $(call static_exec_name,tests,) $(call static_exec_flags,tests) \
+		$(TESTS_OBJS) \
+		$(LUA_OBJS) \
+		$(COMMON_OBJS) \
+		$(THELIB_OBJS)
+	$(STRIP) -sx $(call static_exec_name,tests,)
 	@echo -----------
 
 %.tests.o: %.cpp
@@ -135,6 +147,7 @@ tests: thelib $(TESTS_OBJS)
 rtmpserver: applications $(RTMPSERVER_OBJS_DYNAMIC) $(RTMPSERVER_OBJS_STATIC)
 	@echo ----------- linking dynamic rtmpserver
 	$(CXX) -fPIC $(RTMPSERVER_LIBS) -o $(call dynamic_exec_name,rtmpserver,) $(call dynamic_exec_flags,rtmpserver) $(RTMPSERVER_OBJS_DYNAMIC)
+	$(STRIP) -sx $(call dynamic_exec_name,rtmpserver,)
 	@echo ----------- linking static rtmpserver
 	$(CXX) -fPIC $(SSL_LIB) -o $(call static_exec_name,rtmpserver,) $(call static_exec_flags,rtmpserver) \
 		$(RTMPSERVER_OBJS_STATIC) \
@@ -142,6 +155,7 @@ rtmpserver: applications $(RTMPSERVER_OBJS_DYNAMIC) $(RTMPSERVER_OBJS_STATIC)
 		$(COMMON_OBJS) \
 		$(THELIB_OBJS) \
 		$(ALL_APPS_OBJS)
+	$(STRIP) -sx $(call static_exec_name,rtmpserver,)
 	@cp $(PROJECT_BASE_PATH)/builders/cmake/rtmpserver/rtmpserver.lua $(OUTPUT_DYNAMIC)
 	@cp $(PROJECT_BASE_PATH)/builders/cmake/rtmpserver/rtmpserver.lua $(OUTPUT_STATIC)
 	@echo -----------

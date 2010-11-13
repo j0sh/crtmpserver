@@ -9,6 +9,7 @@ admin: thelib $(ADMIN_OBJS)
 	@mkdir -p $(OUTPUT_DYNAMIC)/applications/admin/mediaFolder
 	@mkdir -p $(OUTPUT_STATIC)/applications/admin/mediaFolder
 	$(CXX) -fPIC -shared $(ADMIN_LIBS) -o $(call dynamic_lib_name,admin,/applications/admin) $(call dynamic_lib_flags,admin) $(ADMIN_OBJS)
+	$(STRIP) -sx $(call dynamic_lib_name,admin,/applications/admin)
 	@echo -----------
 
 %.admin.o: %.cpp
@@ -25,6 +26,7 @@ applestreamingclient: thelib $(APPLESTREAMINGCLIENT_OBJS)
 	@mkdir -p $(OUTPUT_DYNAMIC)/applications/applestreamingclient/mediaFolder
 	@mkdir -p $(OUTPUT_STATIC)/applications/applestreamingclient/mediaFolder
 	$(CXX) -fPIC -shared $(APPLESTREAMINGCLIENT_LIBS) -o $(call dynamic_lib_name,applestreamingclient,/applications/applestreamingclient) $(call dynamic_lib_flags,applestreamingclient) $(APPLESTREAMINGCLIENT_OBJS)
+	$(STRIP) -sx $(call dynamic_lib_name,applestreamingclient,/applications/applestreamingclient)
 	@echo -----------
 
 %.applestreamingclient.o: %.cpp
@@ -41,6 +43,7 @@ appselector: thelib $(APPSELECTOR_OBJS)
 	@mkdir -p $(OUTPUT_DYNAMIC)/applications/appselector/mediaFolder
 	@mkdir -p $(OUTPUT_STATIC)/applications/appselector/mediaFolder
 	$(CXX) -fPIC -shared $(APPSELECTOR_LIBS) -o $(call dynamic_lib_name,appselector,/applications/appselector) $(call dynamic_lib_flags,appselector) $(APPSELECTOR_OBJS)
+	$(STRIP) -sx $(call dynamic_lib_name,appselector,/applications/appselector)
 	@echo -----------
 
 %.appselector.o: %.cpp
@@ -57,6 +60,7 @@ flvplayback: thelib $(FLVPLAYBACK_OBJS)
 	@mkdir -p $(OUTPUT_DYNAMIC)/applications/flvplayback/mediaFolder
 	@mkdir -p $(OUTPUT_STATIC)/applications/flvplayback/mediaFolder
 	$(CXX) -fPIC -shared $(FLVPLAYBACK_LIBS) -o $(call dynamic_lib_name,flvplayback,/applications/flvplayback) $(call dynamic_lib_flags,flvplayback) $(FLVPLAYBACK_OBJS)
+	$(STRIP) -sx $(call dynamic_lib_name,flvplayback,/applications/flvplayback)
 	@echo -----------
 
 %.flvplayback.o: %.cpp
@@ -73,6 +77,7 @@ proxypublish: thelib $(PROXYPUBLISH_OBJS)
 	@mkdir -p $(OUTPUT_DYNAMIC)/applications/proxypublish/mediaFolder
 	@mkdir -p $(OUTPUT_STATIC)/applications/proxypublish/mediaFolder
 	$(CXX) -fPIC -shared $(PROXYPUBLISH_LIBS) -o $(call dynamic_lib_name,proxypublish,/applications/proxypublish) $(call dynamic_lib_flags,proxypublish) $(PROXYPUBLISH_OBJS)
+	$(STRIP) -sx $(call dynamic_lib_name,proxypublish,/applications/proxypublish)
 	@echo -----------
 
 %.proxypublish.o: %.cpp
@@ -89,6 +94,7 @@ samplefactory: thelib $(SAMPLEFACTORY_OBJS)
 	@mkdir -p $(OUTPUT_DYNAMIC)/applications/samplefactory/mediaFolder
 	@mkdir -p $(OUTPUT_STATIC)/applications/samplefactory/mediaFolder
 	$(CXX) -fPIC -shared $(SAMPLEFACTORY_LIBS) -o $(call dynamic_lib_name,samplefactory,/applications/samplefactory) $(call dynamic_lib_flags,samplefactory) $(SAMPLEFACTORY_OBJS)
+	$(STRIP) -sx $(call dynamic_lib_name,samplefactory,/applications/samplefactory)
 	@echo -----------
 
 %.samplefactory.o: %.cpp
@@ -105,6 +111,7 @@ stresstest: thelib $(STRESSTEST_OBJS)
 	@mkdir -p $(OUTPUT_DYNAMIC)/applications/stresstest/mediaFolder
 	@mkdir -p $(OUTPUT_STATIC)/applications/stresstest/mediaFolder
 	$(CXX) -fPIC -shared $(STRESSTEST_LIBS) -o $(call dynamic_lib_name,stresstest,/applications/stresstest) $(call dynamic_lib_flags,stresstest) $(STRESSTEST_OBJS)
+	$(STRIP) -sx $(call dynamic_lib_name,stresstest,/applications/stresstest)
 	@echo -----------
 
 %.stresstest.o: %.cpp
@@ -121,6 +128,7 @@ vptests: thelib $(VPTESTS_OBJS)
 	@mkdir -p $(OUTPUT_DYNAMIC)/applications/vptests/mediaFolder
 	@mkdir -p $(OUTPUT_STATIC)/applications/vptests/mediaFolder
 	$(CXX) -fPIC -shared $(VPTESTS_LIBS) -o $(call dynamic_lib_name,vptests,/applications/vptests) $(call dynamic_lib_flags,vptests) $(VPTESTS_OBJS)
+	$(STRIP) -sx $(call dynamic_lib_name,vptests,/applications/vptests)
 	@echo -----------
 
 %.vptests.o: %.cpp
