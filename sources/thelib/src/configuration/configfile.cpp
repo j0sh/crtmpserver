@@ -26,8 +26,8 @@
 #include "netio/netio.h"
 #include "protocols/protocolfactorymanager.h"
 
-ConfigFile::ConfigFile() {
-
+ConfigFile::ConfigFile(GetStaticApplication_t pFunction) {
+	_pFunction = pFunction;
 }
 
 ConfigFile::~ConfigFile() {
@@ -657,36 +657,39 @@ bool ConfigFile::ConfigureAcceptor(Variant &node, BaseClientApplication *pApplic
 bool ConfigFile::ConfigureApplication(Variant &node) {
 	if (node[CONF_PROTOCOL] == CONF_PROTOCOL_DYNAMICLINKLIBRARY) {
 		Normalize(node);
-		string libraryPath = node[CONF_APPLICATION_LIBRARY];
+		if (_pFunction == NULL) {
+			_libDescriptor.libraryPath = (string) node[CONF_APPLICATION_LIBRARY];
 
-		typedef BaseClientApplication * (*GetApplication_t)(Variant configuration);
-		typedef void (*ReleaseApplication_t)(BaseClientApplication * pApplication);
+			_libDescriptor.libHandler = LOAD_LIBRARY(STR(_libDescriptor.libraryPath), LOAD_LIBRARY_FLAGS);
 
-		LIB_HANDLER libHandler = LOAD_LIBRARY(STR(libraryPath), LOAD_LIBRARY_FLAGS);
+			if (_libDescriptor.libHandler == NULL) {
+				FATAL("Unable to open library %s. Error was: %s",
+						STR(node[CONF_APPLICATION_LIBRARY]),
+						OPEN_LIBRARY_ERROR);
+				return false;
+			}
 
-		if (libHandler == NULL) {
-			FATAL("Unable to open library %s. Error was: %s",
-					STR(node[CONF_APPLICATION_LIBRARY]),
-					OPEN_LIBRARY_ERROR);
-			return false;
-		}
+			string functioName = "GetApplication_" + (string) node[CONF_APPLICATION_NAME];
 
-		GetApplication_t GetApplication =
-				(GetApplication_t) GET_PROC_ADDRESS(libHandler, "GetApplication");
-		if (GetApplication == NULL) {
-			FATAL("Unable to find GetApplication function. Error was: %s",
-					OPEN_LIBRARY_ERROR);
-			FREE_LIBRARY(libHandler);
-			return false;
-		}
+			_libDescriptor.GetApplication =
+					(GetApplication_t) GET_PROC_ADDRESS(_libDescriptor.libHandler, STR(functioName));
+			if (_libDescriptor.GetApplication == NULL) {
+				FATAL("Unable to find %s function. Error was: %s",
+						STR(functioName),
+						OPEN_LIBRARY_ERROR);
+				return false;
+			}
 
-		ReleaseApplication_t ReleaseApplication =
-				(ReleaseApplication_t) GET_PROC_ADDRESS(libHandler, "ReleaseApplication");
-		if (ReleaseApplication == NULL) {
-			FATAL("Unable to find ReleaseApplication function. Error was: %s",
-					OPEN_LIBRARY_ERROR);
-			FREE_LIBRARY(libHandler);
-			return false;
+			functioName = "ReleaseApplication_" + (string) node[CONF_APPLICATION_NAME];
+
+			_libDescriptor.ReleaseApplication =
+					(ReleaseApplication_t) GET_PROC_ADDRESS(_libDescriptor.libHandler, STR(functioName));
+			if (_libDescriptor.ReleaseApplication == NULL) {
+				FATAL("Unable to find %s function. Error was: %s",
+						STR(functioName),
+						OPEN_LIBRARY_ERROR);
+				return false;
+			}
 		}
 
 		if (node.HasKey(CONF_APPLICATION_ALIASES) && node[CONF_APPLICATION_ALIASES] != V_NULL) {
@@ -737,16 +740,19 @@ bool ConfigFile::ConfigureApplication(Variant &node) {
 			node[CONF_APPLICATION_CLIENTSIDEBUFFER] = (int32_t) 5;
 		}
 
-		BaseClientApplication *pApplication = GetApplication(node);
+		BaseClientApplication *pApplication = NULL;
+		if (_pFunction == NULL) {
+			pApplication = _libDescriptor.GetApplication(node);
+		} else {
+			pApplication = _pFunction(node);
+		}
 		if (pApplication == NULL) {
 			FATAL("Unable to configure application. Function returned NULL");
-			FREE_LIBRARY(libHandler);
 			return false;
 		}
 
 		if (!pApplication->Initialize()) {
 			FATAL("Unable to initialize the application: %s", STR(node.ToString()));
-			FREE_LIBRARY(libHandler);
 			return false;
 		}
 
@@ -754,16 +760,12 @@ bool ConfigFile::ConfigureApplication(Variant &node) {
 			if (!ConfigureAcceptors(node[CONF_ACCEPTORS], pApplication)) {
 				FATAL("Unable to configure acceptors on application %s",
 						STR(node[CONF_APPLICATION_NAME]));
-				ReleaseApplication(pApplication);
-				FREE_LIBRARY(libHandler);
 				return false;
 			}
 		}
 
 		if (!ClientApplicationManager::RegisterApplication(pApplication)) {
 			FATAL("Unable to register application %s", STR(node.ToString()));
-			ReleaseApplication(pApplication);
-			FREE_LIBRARY(libHandler);
 			return false;
 		}
 
@@ -784,7 +786,7 @@ bool ConfigFile::ConfigureApplication(Variant &node) {
 
 		INFO("%s", STR(message));
 
-		ADD_VECTOR_END(_libraryHandlers, libHandler);
+		ADD_VECTOR_END(_libraryHandlers, _libDescriptor.libHandler);
 
 		return true;
 	} else {

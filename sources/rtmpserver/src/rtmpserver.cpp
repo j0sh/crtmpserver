@@ -17,7 +17,6 @@
  *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 #include "netio/netio.h"
 #include "configuration/configfile.h"
 #include "protocols/protocolmanager.h"
@@ -53,6 +52,10 @@ void Run();
 void Cleanup();
 
 RunningStatus gRs = {0};
+
+#ifdef COMPILE_STATIC
+BaseClientApplication *SpawnApplication(Variant configuration);
+#endif
 
 int main(int argc, char **argv) {
 	SRAND();
@@ -100,7 +103,11 @@ bool Initialize() {
 	}
 
 	INFO("Reading configuration from %s", gRs.argv[gRs.argc - 1]);
-	gRs.pConfigFile = new ConfigFile();
+#ifdef COMPILE_STATIC
+	gRs.pConfigFile = new ConfigFile(SpawnApplication);
+#else
+	gRs.pConfigFile = new ConfigFile(NULL);
+#endif
 	string configFilePath = gRs.argv[gRs.argc - 1];
 	string fileName;
 	string extension;
@@ -233,3 +240,40 @@ void ConfRereadSignalHandler(void) {
 	IOHandlerManager::SignalShutdown();
 }
 
+#ifdef COMPILE_STATIC
+extern "C" BaseClientApplication *GetApplication_admin(Variant configuration);
+extern "C" BaseClientApplication *GetApplication_applestreamingclient(Variant configuration);
+extern "C" BaseClientApplication *GetApplication_appselector(Variant configuration);
+extern "C" BaseClientApplication *GetApplication_flvplayback(Variant configuration);
+//extern "C" BaseClientApplication *GetApplication_houseband(Variant configuration);
+extern "C" BaseClientApplication *GetApplication_proxypublish(Variant configuration);
+extern "C" BaseClientApplication *GetApplication_samplefactory(Variant configuration);
+extern "C" BaseClientApplication *GetApplication_stresstest(Variant configuration);
+extern "C" BaseClientApplication *GetApplication_vptests(Variant configuration);
+
+BaseClientApplication *SpawnApplication(Variant configuration) {
+	if (configuration[CONF_APPLICATION_NAME] == "admin") {
+		return GetApplication_admin(configuration);
+	} else if (configuration[CONF_APPLICATION_NAME] == "applestreamingclient") {
+		return GetApplication_applestreamingclient(configuration);
+	} else if (configuration[CONF_APPLICATION_NAME] == "appselector") {
+		return GetApplication_appselector(configuration);
+	} else if (configuration[CONF_APPLICATION_NAME] == "flvplayback") {
+		return GetApplication_flvplayback(configuration);
+	}
+		//		else if (configuration[CONF_APPLICATION_NAME] == "houseband") {
+		//		return GetApplication_houseband(configuration);
+		//	}
+	else if (configuration[CONF_APPLICATION_NAME] == "proxypublish") {
+		return GetApplication_proxypublish(configuration);
+	} else if (configuration[CONF_APPLICATION_NAME] == "samplefactory") {
+		return GetApplication_samplefactory(configuration);
+	} else if (configuration[CONF_APPLICATION_NAME] == "stresstest") {
+		return GetApplication_stresstest(configuration);
+	} else if (configuration[CONF_APPLICATION_NAME] == "vptests") {
+		return GetApplication_vptests(configuration);
+	} else {
+		return NULL;
+	}
+}
+#endif
