@@ -75,43 +75,43 @@ THELIB_LIBS=$(COMMON_LIBS) -L$(OUTPUT_DYNAMIC) -lcommon
 THELIB_SRCS = $(shell find $(PROJECT_BASE_PATH)/sources/thelib/src -type f -name "*.cpp")
 THELIB_OBJS = $(THELIB_SRCS:.cpp=.thelib.o)
 
-#rtmpserver
-RTMPSERVER_INCLUDE=$(THELIB_INCLUDE) -I$(PROJECT_BASE_PATH)/sources/rtmpserver/include
-RTMPSERVER_LIBS=$(THELIB_LIBS) -L$(OUTPUT_DYNAMIC) -lthelib
-RTMPSERVER_SRCS=$(shell find $(PROJECT_BASE_PATH)/sources/rtmpserver/src -type f -name "*.cpp")
-RTMPSERVER_OBJS=$(RTMPSERVER_SRCS:.cpp=.rtmpserver.o)
-
 #tests
 TESTS_INCLUDE=$(THELIB_INCLUDE) -I$(PROJECT_BASE_PATH)/sources/tests/include
 TESTS_LIBS=$(THELIB_LIBS) -L$(OUTPUT_DYNAMIC) -lthelib
 TESTS_SRCS=$(shell find $(PROJECT_BASE_PATH)/sources/tests/src -type f -name "*.cpp")
 TESTS_OBJS=$(TESTS_SRCS:.cpp=.tests.o)
 
-#appselector
-APPSELECTOR_INCLUDE=$(THELIB_INCLUDE) -I$(PROJECT_BASE_PATH)/sources/applications/appselector/include
-APPSELECTOR_LIBS=$(THELIB_LIBS) -L$(OUTPUT_DYNAMIC) -lthelib
-APPSELECTOR_SRCS=$(shell find $(PROJECT_BASE_PATH)/sources/applications/appselector/src -type f -name "*.cpp")
-APPSELECTOR_OBJS=$(APPSELECTOR_SRCS:.cpp=.appselector.o)
+#rtmpserver
+RTMPSERVER_INCLUDE=$(THELIB_INCLUDE) -I$(PROJECT_BASE_PATH)/sources/rtmpserver/include
+RTMPSERVER_LIBS=$(THELIB_LIBS) -L$(OUTPUT_DYNAMIC) -lthelib
+RTMPSERVER_SRCS=$(shell find $(PROJECT_BASE_PATH)/sources/rtmpserver/src -type f -name "*.cpp")
+RTMPSERVER_OBJS_DYNAMIC=$(RTMPSERVER_SRCS:.cpp=.rtmpserver_dynamic.o)
+RTMPSERVER_OBJS_STATIC=$(RTMPSERVER_SRCS:.cpp=.rtmpserver_static.o)
 
 #targets
-all: create_output_dirs lua common thelib rtmpserver tests applications
+all: create_output_dirs lua common thelib applications tests rtmpserver
 	@echo ----------- DONE!!!
+
+include apps.mk
 
 create_output_dirs:
 	@echo ----------- Creating output directory
 	@mkdir -p $(OUTPUT_STATIC)
-	@mkdir -p $(OUTPUT_DYNAMIC)/applications/appselector/mediaFolder
+	@mkdir -p $(OUTPUT_DYNAMIC)
+	@echo -----------
 
 lua: create_output_dirs $(LUA_OBJS)
 	@echo ----------- linking shared lua
 	$(CC) -fPIC -shared -o $(call dynamic_lib_name,lua,) $(call dynamic_lib_flags,lua) $(LUA_OBJS)
+	@echo -----------
 
 %.lua.o: %.c
 	$(CC) -fPIC -c $< -o $@
-
+	
 common: lua $(COMMON_OBJS)
 	@echo ----------- linking shared common
 	$(CXX) -fPIC -shared $(COMMON_LIBS) -o $(call dynamic_lib_name,common,) $(call dynamic_lib_flags,common) $(COMMON_OBJS)
+	@echo -----------
 
 %.common.o: %.cpp
 	$(CXX) -fPIC $(DEFINES) $(COMMON_INCLUDE) -c $< -o $@
@@ -119,39 +119,46 @@ common: lua $(COMMON_OBJS)
 thelib: common $(THELIB_OBJS)
 	@echo ----------- linking shared thelib
 	$(CXX) -fPIC -shared $(THELIB_LIBS) -o $(call dynamic_lib_name,thelib,) $(call dynamic_lib_flags,thelib) $(THELIB_OBJS)
+	@echo -----------
 
 %.thelib.o: %.cpp
 	$(CXX) -fPIC $(DEFINES) $(THELIB_INCLUDE) -c $< -o $@
 
-rtmpserver: thelib $(RTMPSERVER_OBJS)
-	@echo ----------- linking rtmpserver
-	$(CXX) -fPIC $(RTMPSERVER_LIBS) -o $(call dynamic_exec_name,rtmpserver,) $(call dynamic_exec_flags,rtmpserver) $(RTMPSERVER_OBJS)
-
-%.rtmpserver.o: %.cpp
-	$(CXX) -fPIC $(DEFINES) $(RTMPSERVER_INCLUDE) -c $< -o $@
-
 tests: thelib $(TESTS_OBJS)
 	@echo ----------- linking tests
 	$(CXX) -fPIC $(TESTS_LIBS) -o $(call dynamic_exec_name,tests,) $(call dynamic_exec_flags,tests) $(TESTS_OBJS)
+	@echo -----------
 
 %.tests.o: %.cpp
 	$(CXX) -fPIC $(DEFINES) $(TESTS_INCLUDE) -c $< -o $@
 
-applications: appselector
+rtmpserver: applications $(RTMPSERVER_OBJS_DYNAMIC) $(RTMPSERVER_OBJS_STATIC)
+	@echo ----------- linking dynamic rtmpserver
+	$(CXX) -fPIC $(RTMPSERVER_LIBS) -o $(call dynamic_exec_name,rtmpserver,) $(call dynamic_exec_flags,rtmpserver) $(RTMPSERVER_OBJS_DYNAMIC)
+	@echo ----------- linking static rtmpserver
+	$(CXX) -fPIC $(SSL_LIB) -o $(call static_exec_name,rtmpserver,) $(call static_exec_flags,rtmpserver) \
+		$(RTMPSERVER_OBJS_STATIC) \
+		$(LUA_OBJS) \
+		$(COMMON_OBJS) \
+		$(THELIB_OBJS) \
+		$(ALL_APPS_OBJS)
+	@cp $(PROJECT_BASE_PATH)/builders/cmake/rtmpserver/rtmpserver.lua $(OUTPUT_DYNAMIC)
+	@cp $(PROJECT_BASE_PATH)/builders/cmake/rtmpserver/rtmpserver.lua $(OUTPUT_STATIC)
+	@echo -----------
 
-appselector: thelib $(APPSELECTOR_OBJS)
-	@echo ----------- linking application appselector
-	$(CXX) -fPIC -shared $(APPSELECTOR_LIBS) -o $(call dynamic_lib_name,appselector,/applications/appselector) $(call dynamic_lib_flags,appselector) $(APPSELECTOR_OBJS)
+%.rtmpserver_dynamic.o: %.cpp
+	$(CXX) -fPIC $(DEFINES) $(RTMPSERVER_INCLUDE) -c $< -o $@
 
-%.appselector.o: %.cpp
-	$(CXX) -fPIC $(DEFINES) $(APPSELECTOR_INCLUDE) -c $< -o $@
+%.rtmpserver_static.o: %.cpp
+	$(CXX) -fPIC -DCOMPILE_STATIC $(DEFINES) $(RTMPSERVER_INCLUDE) -c $< -o $@
 
 clean:
 	@rm -rfv $(OUTPUT_BASE)
 	@rm -rfv $(LUA_OBJS)
 	@rm -rfv $(COMMON_OBJS)
 	@rm -rfv $(THELIB_OBJS)
-	@rm -rfv $(RTMPSERVER_OBJS)
 	@rm -rfv $(TESTS_OBJS)
-	@rm -rfv $(APPSELECTOR_OBJS)
+	@rm -rfv $(RTMPSERVER_OBJS_DYNAMIC)
+	@rm -rfv $(RTMPSERVER_OBJS_STATIC)
+	@rm -rfv $(ALL_APPS_OBJS)
 
