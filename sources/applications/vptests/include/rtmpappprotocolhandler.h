@@ -24,21 +24,22 @@
 
 #include "protocols/rtmp/basertmpappprotocolhandler.h"
 
-class VariantAppProtocolHandler;
+namespace app_vptests {
+	class VariantAppProtocolHandler;
 
-class RTMPAppProtocolHandler
-: public BaseRTMPAppProtocolHandler {
-public:
-	RTMPAppProtocolHandler(Variant &configuration);
-	virtual ~RTMPAppProtocolHandler();
+	class RTMPAppProtocolHandler
+	: public BaseRTMPAppProtocolHandler {
+	public:
+		RTMPAppProtocolHandler(Variant &configuration);
+		virtual ~RTMPAppProtocolHandler();
 
-	virtual bool ProcessInvokeConnect(BaseRTMPProtocol *pFrom, Variant &request);
-private:
-	VariantAppProtocolHandler *GetVariantHandler(bool xml);
-	bool Send(string ip, uint16_t port, Variant &variant, bool xml = true);
-	bool Send(string url, Variant &variant, bool xml = true);
-};
-
+		virtual bool ProcessInvokeConnect(BaseRTMPProtocol *pFrom, Variant &request);
+	private:
+		VariantAppProtocolHandler *GetVariantHandler(bool xml);
+		bool Send(string ip, uint16_t port, Variant &variant, bool xml = true);
+		bool Send(string url, Variant &variant, bool xml = true);
+	};
+}
 #endif	/* _RTMPAPPPROTOCOLHANDLER_H */
 #endif /* HAS_PROTOCOL_RTMP */
 

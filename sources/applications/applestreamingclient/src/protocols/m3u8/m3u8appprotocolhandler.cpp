@@ -22,6 +22,7 @@
 #include "protocols/m3u8/masterm3u8protocol.h"
 #include "protocols/http/basehttpprotocol.h"
 #include "clientcontext.h"
+using namespace app_applestreamingclient;
 
 M3U8AppProtocolHandler::M3U8AppProtocolHandler(Variant &configuration)
 : BaseAppProtocolHandler(configuration) {

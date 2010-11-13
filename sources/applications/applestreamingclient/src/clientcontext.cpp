@@ -34,6 +34,7 @@
 #include "protocols/ts/innettsstream.h"
 #include "applestreamingclientapplication.h"
 #include "protocols/timer/finetimer.h"
+using namespace app_applestreamingclient;
 
 uint32_t ClientContext::_idGenerator = 0;
 map<uint32_t, ClientContext *> ClientContext::_contexts;

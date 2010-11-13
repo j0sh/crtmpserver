@@ -35,6 +35,7 @@
 #include "protocols/rtp/rtspappprotocolhandler.h"
 #include "protocols/httpbuff/httpbuffappprotocolhandler.h"
 #include "protocols/variant/variantappprotocolhandler.h"
+using namespace app_applestreamingclient;
 
 AppleStreamingClientApplication::AppleStreamingClientApplication(Variant &configuration)
 : BaseClientApplication(configuration) {

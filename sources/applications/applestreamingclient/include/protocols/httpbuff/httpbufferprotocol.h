@@ -23,24 +23,26 @@
 
 #include "protocols/genericprotocol.h"
 
-class HTTPBufferProtocol
-: public GenericProtocol {
-private:
-	double _lastTimestamp;
-	double _lastAmount;
-	bool _isEncrypted;
-public:
-	HTTPBufferProtocol();
-	virtual ~HTTPBufferProtocol();
+namespace app_applestreamingclient {
 
-	virtual bool AllowFarProtocol(uint64_t type);
-	virtual bool AllowNearProtocol(uint64_t type);
-	virtual bool SignalInputData(int32_t recvAmount);
-	virtual bool SignalInputData(IOBuffer &buffer);
+	class HTTPBufferProtocol
+	: public GenericProtocol {
+	private:
+		double _lastTimestamp;
+		double _lastAmount;
+		bool _isEncrypted;
+	public:
+		HTTPBufferProtocol();
+		virtual ~HTTPBufferProtocol();
 
-	bool TransferCompleted();
-};
+		virtual bool AllowFarProtocol(uint64_t type);
+		virtual bool AllowNearProtocol(uint64_t type);
+		virtual bool SignalInputData(int32_t recvAmount);
+		virtual bool SignalInputData(IOBuffer &buffer);
 
+		bool TransferCompleted();
+	};
+}
 
 #endif	/* _HTTPBUFFERPROTOCOL_H */
 

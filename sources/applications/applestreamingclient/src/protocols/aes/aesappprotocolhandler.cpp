@@ -21,6 +21,7 @@
 #include "protocols/baseprotocol.h"
 #include "protocols/protocolmanager.h"
 #include "protocols/genericprotocol.h"
+using namespace app_applestreamingclient;
 
 AESAppProtocolHandler::AESAppProtocolHandler(Variant &configuration)
 : BaseAppProtocolHandler(configuration) {

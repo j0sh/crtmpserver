@@ -22,31 +22,32 @@
 
 #include "protocols/timer/basetimerprotocol.h"
 
-class ClientContext;
+namespace app_applestreamingclient {
+	class ClientContext;
 
-class ScheduleTimerProtocol
-: public BaseTimerProtocol {
-private:
-	uint32_t _contextId;
-	vector<Variant> _queue1;
-	vector<Variant> _queue2;
-	vector<Variant> *_pInputQueue;
-	vector<Variant> *_pRunningQueue;
-public:
-	ScheduleTimerProtocol(uint32_t contextId);
-	virtual ~ScheduleTimerProtocol();
+	class ScheduleTimerProtocol
+	: public BaseTimerProtocol {
+	private:
+		uint32_t _contextId;
+		vector<Variant> _queue1;
+		vector<Variant> _queue2;
+		vector<Variant> *_pInputQueue;
+		vector<Variant> *_pRunningQueue;
+	public:
+		ScheduleTimerProtocol(uint32_t contextId);
+		virtual ~ScheduleTimerProtocol();
 
-	virtual bool TimePeriodElapsed();
+		virtual bool TimePeriodElapsed();
 
-	void AddJob(Variant &job, bool recurring);
-private:
-	bool ProcessJob(ClientContext *pContext, Variant &job);
-	bool ProcessJobStartFeeding(ClientContext *pContext, Variant &job);
-	bool ProcessJobFetchChildPlaylist(ClientContext *pContext, Variant &job);
-	bool ProcessJobConsumeAVBuffer(ClientContext *pContext, Variant &job);
-	bool ProcessJobTestJNICallback(ClientContext *pContext, Variant &job);
-};
-
+		void AddJob(Variant &job, bool recurring);
+	private:
+		bool ProcessJob(ClientContext *pContext, Variant &job);
+		bool ProcessJobStartFeeding(ClientContext *pContext, Variant &job);
+		bool ProcessJobFetchChildPlaylist(ClientContext *pContext, Variant &job);
+		bool ProcessJobConsumeAVBuffer(ClientContext *pContext, Variant &job);
+		bool ProcessJobTestJNICallback(ClientContext *pContext, Variant &job);
+	};
+}
 
 #endif	/* _SCHEDULETIMERPROTOCOL_H */
 

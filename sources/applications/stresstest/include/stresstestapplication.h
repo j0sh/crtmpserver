@@ -22,26 +22,26 @@
 #define _STRESSTESTAPPLICATION_H
 
 #include "application/baseclientapplication.h"
-
+namespace app_stresstest {
 #ifdef HAS_PROTOCOL_RTMP
-class RTMPAppProtocolHandler;
+	class RTMPAppProtocolHandler;
 #endif /* HAS_PROTOCOL_RTMP */
 
-class StressTestApplication
-: public BaseClientApplication {
-private:
+	class StressTestApplication
+	: public BaseClientApplication {
+	private:
 #ifdef HAS_PROTOCOL_RTMP
-	RTMPAppProtocolHandler *_pRTMPHandler;
+		RTMPAppProtocolHandler *_pRTMPHandler;
 #endif /* HAS_PROTOCOL_RTMP */
-public:
-	StressTestApplication(Variant &configuration);
-	virtual ~StressTestApplication();
+	public:
+		StressTestApplication(Variant &configuration);
+		virtual ~StressTestApplication();
 
-	virtual bool Initialize();
-private:
-	bool NormalizeConfiguration();
-};
-
+		virtual bool Initialize();
+	private:
+		bool NormalizeConfiguration();
+	};
+}
 
 #endif	/* _STRESSTESTAPPLICATION_H */
 

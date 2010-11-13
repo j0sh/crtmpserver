@@ -23,28 +23,30 @@
 
 #include "protocols/genericprotocol.h"
 
-class InboundAESProtocol
-: public GenericProtocol {
-private:
-	IOBuffer _tempBuffer;
-	IOBuffer _inputBuffer;
-	EVP_CIPHER_CTX _decContex;
-	bool _lastChunk;
-	uint8_t *_pIV;
-	uint8_t *_pKey;
-	uint32_t _totalDecrypted;
-public:
-	InboundAESProtocol();
-	virtual ~InboundAESProtocol();
+namespace app_applestreamingclient {
 
-	virtual IOBuffer * GetInputBuffer();
+	class InboundAESProtocol
+	: public GenericProtocol {
+	private:
+		IOBuffer _tempBuffer;
+		IOBuffer _inputBuffer;
+		EVP_CIPHER_CTX _decContex;
+		bool _lastChunk;
+		uint8_t *_pIV;
+		uint8_t *_pKey;
+		uint32_t _totalDecrypted;
+	public:
+		InboundAESProtocol();
+		virtual ~InboundAESProtocol();
 
-	virtual bool Initialize(Variant &parameters);
-	virtual bool AllowFarProtocol(uint64_t type);
-	virtual bool AllowNearProtocol(uint64_t type);
-	virtual bool SignalInputData(int32_t recvAmount);
-	virtual bool SignalInputData(IOBuffer &buffer);
-};
+		virtual IOBuffer * GetInputBuffer();
 
+		virtual bool Initialize(Variant &parameters);
+		virtual bool AllowFarProtocol(uint64_t type);
+		virtual bool AllowNearProtocol(uint64_t type);
+		virtual bool SignalInputData(int32_t recvAmount);
+		virtual bool SignalInputData(IOBuffer &buffer);
+	};
+}
 #endif	/* _INBOUNDAESPROTOCOL_H */
 

@@ -22,21 +22,23 @@
 
 #include "protocols/rtp/basertspappprotocolhandler.h"
 
-class ClientContext;
+namespace app_applestreamingclient {
+	class ClientContext;
 
-class RTSPAppProtocolHandler
-: public BaseRTSPAppProtocolHandler {
-public:
-	RTSPAppProtocolHandler(Variant &configuration);
-	virtual ~RTSPAppProtocolHandler();
+	class RTSPAppProtocolHandler
+	: public BaseRTSPAppProtocolHandler {
+	public:
+		RTSPAppProtocolHandler(Variant &configuration);
+		virtual ~RTSPAppProtocolHandler();
 
-	virtual void RegisterProtocol(BaseProtocol *pProtocol);
+		virtual void RegisterProtocol(BaseProtocol *pProtocol);
 
-	virtual bool HandleRTSPRequest(RTSPProtocol *pFrom, Variant &requestHeaders,
-			string &content);
-private:
-	ClientContext *GetContext(uint32_t contextId, uint64_t protocolType);
-};
+		virtual bool HandleRTSPRequest(RTSPProtocol *pFrom, Variant &requestHeaders,
+				string &content);
+	private:
+		ClientContext *GetContext(uint32_t contextId, uint64_t protocolType);
+	};
+}
 
 #endif	/* _RTSPAPPPROTOCOLHANDLER_H */
 

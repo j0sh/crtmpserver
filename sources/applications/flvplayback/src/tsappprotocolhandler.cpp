@@ -26,6 +26,7 @@
 #include "protocols/rtmp/sharedobjects/somanager.h"
 #include "protocols/rtmp/basertmpappprotocolhandler.h"
 #include "protocols/protocoltypes.h"
+using namespace app_flvplayback;
 
 TSAppProtocolHandler::TSAppProtocolHandler(Variant &configuration)
 : BaseTSAppProtocolHandler(configuration) {

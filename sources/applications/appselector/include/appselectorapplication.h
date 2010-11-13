@@ -22,29 +22,29 @@
 
 #include "application/baseclientapplication.h"
 
-class BaseRTMPProtocol;
-class OutboundRTMPProtocol;
+namespace app_appselector {
+
 #ifdef HAS_PROTOCOL_RTMP
-class RTMPAppProtocolHandler;
+	class RTMPAppProtocolHandler;
 #endif /* HAS_PROTOCOL_RTMP */
 #ifdef HAS_PROTOCOL_HTTP
-class HTTPAppProtocolHandler;
+	class HTTPAppProtocolHandler;
 #endif /* HAS_PROTOCOL_HTTP */
 
-class AppSelectorApplication
-: public BaseClientApplication {
-private:
+	class AppSelectorApplication
+	: public BaseClientApplication {
+	private:
 #ifdef HAS_PROTOCOL_RTMP
-	RTMPAppProtocolHandler *_pRTMPHandler;
+		RTMPAppProtocolHandler *_pRTMPHandler;
 #endif /* HAS_PROTOCOL_RTMP */
 #ifdef HAS_PROTOCOL_HTTP
-	HTTPAppProtocolHandler *_pHTTPHandler;
+		HTTPAppProtocolHandler *_pHTTPHandler;
 #endif /* HAS_PROTOCOL_HTTP */
-public:
-	AppSelectorApplication(Variant &configuration);
-	virtual ~AppSelectorApplication();
-};
-
+	public:
+		AppSelectorApplication(Variant &configuration);
+		virtual ~AppSelectorApplication();
+	};
+}
 
 #endif	/* _APPSELECTORAPPLICATION_H */
 

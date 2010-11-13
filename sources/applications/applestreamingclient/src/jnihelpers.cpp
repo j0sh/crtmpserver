@@ -20,6 +20,7 @@
 #ifdef ANDROID
 
 #include "jnihelpers.h"
+using namespace app_applestreamingclient;
 
 jobject VariantToJObject(Variant &value, JNIEnv* pEnv) {
 	pEnv->PushLocalFrame(128);

@@ -23,6 +23,7 @@
 #include "protocols/rtmp/messagefactories/messagefactories.h"
 #include "controller.h"
 #include "application/baseclientapplication.h"
+using namespace app_samplefactory;
 
 RTMPAppProtocolHandler::RTMPAppProtocolHandler(Variant &configuration)
 : BaseRTMPAppProtocolHandler(configuration) {

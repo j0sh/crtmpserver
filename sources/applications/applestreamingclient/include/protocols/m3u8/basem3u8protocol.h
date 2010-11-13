@@ -23,25 +23,26 @@
 
 #include "protocols/genericprotocol.h"
 
-class Playlist;
+namespace app_applestreamingclient {
+	class Playlist;
 
-class BaseM3U8Protocol
-: public GenericProtocol {
-public:
-	BaseM3U8Protocol(uint64_t type);
-	virtual ~BaseM3U8Protocol();
+	class BaseM3U8Protocol
+	: public GenericProtocol {
+	public:
+		BaseM3U8Protocol(uint64_t type);
+		virtual ~BaseM3U8Protocol();
 
-	virtual bool AllowFarProtocol(uint64_t type);
-	virtual bool AllowNearProtocol(uint64_t type);
-	virtual bool SignalInputData(int32_t recvAmount);
-	virtual bool SignalInputData(IOBuffer &buffer);
-protected:
-	bool ParsePlaylist(string fullUri, const uint8_t *pBuffer, uint32_t length);
-	virtual Playlist *GetPlaylist() = 0;
-	virtual bool SignalPlaylistAvailable() = 0;
-	virtual bool SignalPlaylistFailed() = 0;
-};
-
+		virtual bool AllowFarProtocol(uint64_t type);
+		virtual bool AllowNearProtocol(uint64_t type);
+		virtual bool SignalInputData(int32_t recvAmount);
+		virtual bool SignalInputData(IOBuffer &buffer);
+	protected:
+		bool ParsePlaylist(string fullUri, const uint8_t *pBuffer, uint32_t length);
+		virtual Playlist *GetPlaylist() = 0;
+		virtual bool SignalPlaylistAvailable() = 0;
+		virtual bool SignalPlaylistFailed() = 0;
+	};
+}
 
 #endif	/* _BASEM3U8PROTOCOL_H */
 

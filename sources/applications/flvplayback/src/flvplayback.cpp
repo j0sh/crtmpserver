@@ -20,14 +20,15 @@
 #include "application/baseclientapplication.h"
 #include "flvplayback.h"
 #include "flvplaybackapplication.h"
+using namespace app_flvplayback;
 
-extern "C" BaseClientApplication *GetApplication(Variant configuration) {
+extern "C" BaseClientApplication *GetApplication_flvplayback(Variant configuration) {
 	FLVPlaybackApplication *pApplication = new FLVPlaybackApplication(
 			configuration);
 	return pApplication;
 }
 
-extern "C" void ReleaseApplication(BaseClientApplication *pApplication) {
+extern "C" void ReleaseApplication_flvplayback(BaseClientApplication *pApplication) {
 	if (pApplication != NULL) {
 		delete pApplication;
 	}

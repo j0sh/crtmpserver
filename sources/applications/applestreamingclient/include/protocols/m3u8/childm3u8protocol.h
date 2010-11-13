@@ -23,21 +23,23 @@
 
 #include "protocols/m3u8/basem3u8protocol.h"
 
-class ChildM3U8Protocol
-: public BaseM3U8Protocol {
-private:
-	uint32_t _bw;
-public:
-	ChildM3U8Protocol();
-	virtual ~ChildM3U8Protocol();
+namespace app_applestreamingclient {
 
-	virtual bool Initialize(Variant &parameters);
-protected:
-	virtual Playlist *GetPlaylist();
-	virtual bool SignalPlaylistAvailable();
-	virtual bool SignalPlaylistFailed();
-};
+	class ChildM3U8Protocol
+	: public BaseM3U8Protocol {
+	private:
+		uint32_t _bw;
+	public:
+		ChildM3U8Protocol();
+		virtual ~ChildM3U8Protocol();
 
+		virtual bool Initialize(Variant &parameters);
+	protected:
+		virtual Playlist *GetPlaylist();
+		virtual bool SignalPlaylistAvailable();
+		virtual bool SignalPlaylistFailed();
+	};
+}
 
 #endif	/* _CHILDM3U8PROTOCOL_H */
 

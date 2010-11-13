@@ -23,16 +23,18 @@
 
 #include "application/baseappprotocolhandler.h"
 
-class M3U8AppProtocolHandler
-: public BaseAppProtocolHandler {
-public:
-	M3U8AppProtocolHandler(Variant &configuration);
-	virtual ~M3U8AppProtocolHandler();
+namespace app_applestreamingclient {
 
-	virtual void RegisterProtocol(BaseProtocol *pProtocol);
-	virtual void UnRegisterProtocol(BaseProtocol *pProtocol);
-};
+	class M3U8AppProtocolHandler
+	: public BaseAppProtocolHandler {
+	public:
+		M3U8AppProtocolHandler(Variant &configuration);
+		virtual ~M3U8AppProtocolHandler();
 
+		virtual void RegisterProtocol(BaseProtocol *pProtocol);
+		virtual void UnRegisterProtocol(BaseProtocol *pProtocol);
+	};
+}
 
 #endif	/* _M3U8PROTOCOLHANDLER_H */
 

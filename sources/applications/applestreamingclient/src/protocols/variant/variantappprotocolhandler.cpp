@@ -24,6 +24,7 @@
 #include "application/baseclientapplication.h"
 #include "eventsink/varianteventsink.h"
 #include "applestreamingclientapplication.h"
+using namespace app_applestreamingclient;
 
 #define GET_CONTEXT(pProtocol, request) \
 uint32_t contextId = ASC_REQ_CONTEXT_ID(request); \

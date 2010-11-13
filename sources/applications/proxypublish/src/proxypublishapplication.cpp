@@ -30,6 +30,7 @@
 #include "protocols/protocolfactorymanager.h"
 #include "application/clientapplicationmanager.h"
 #include "netio/netio.h"
+using namespace app_proxypublish;
 
 ProxyPublishApplication::ProxyPublishApplication(Variant &configuration)
 : BaseClientApplication(configuration) {

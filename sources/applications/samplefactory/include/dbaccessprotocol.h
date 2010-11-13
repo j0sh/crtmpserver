@@ -22,24 +22,25 @@
 #define	_DBACCESSPROTOCOL_H
 
 #include "protocols/baseprotocol.h"
+namespace app_samplefactory {
 
-class DLLEXP DBAccessProtocol
-: public BaseProtocol {
-private:
-	IOBuffer _outputBuffer;
-public:
-	DBAccessProtocol();
-	virtual ~DBAccessProtocol();
+	class DLLEXP DBAccessProtocol
+	: public BaseProtocol {
+	private:
+		IOBuffer _outputBuffer;
+	public:
+		DBAccessProtocol();
+		virtual ~DBAccessProtocol();
 
-	virtual bool AllowFarProtocol(uint64_t type);
-	virtual bool AllowNearProtocol(uint64_t type);
-	virtual bool SignalInputData(int32_t recvAmount);
-	virtual bool SignalInputData(IOBuffer &buffer);
-	virtual IOBuffer * GetOutputBuffer();
+		virtual bool AllowFarProtocol(uint64_t type);
+		virtual bool AllowNearProtocol(uint64_t type);
+		virtual bool SignalInputData(int32_t recvAmount);
+		virtual bool SignalInputData(IOBuffer &buffer);
+		virtual IOBuffer * GetOutputBuffer();
 
-	bool DoRequest(Variant &parameters);
-};
-
+		bool DoRequest(Variant &parameters);
+	};
+}
 
 #endif	/* _DBACCESSPROTOCOL_H */
 

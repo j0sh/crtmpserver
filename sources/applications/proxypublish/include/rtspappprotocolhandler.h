@@ -23,14 +23,15 @@
 #define	_RTSPAPPPROTOCOLHANDLER_H
 
 #include "protocols/rtp/basertspappprotocolhandler.h"
+namespace app_proxypublish {
 
-class RTSPAppProtocolHandler
-: public BaseRTSPAppProtocolHandler {
-public:
-	RTSPAppProtocolHandler(Variant &configuration);
-	virtual ~RTSPAppProtocolHandler();
-};
-
+	class RTSPAppProtocolHandler
+	: public BaseRTSPAppProtocolHandler {
+	public:
+		RTSPAppProtocolHandler(Variant &configuration);
+		virtual ~RTSPAppProtocolHandler();
+	};
+}
 
 #endif	/* _RTSPAPPPROTOCOLHANDLER_H */
 #endif /* HAS_PROTOCOL_RTP */

@@ -24,13 +24,15 @@
 
 #include "protocols/rtp/basertpappprotocolhandler.h"
 
-class RTPAppProtocolHandler
-: public BaseRTPAppProtocolHandler {
-public:
-	RTPAppProtocolHandler(Variant &configuration);
-	virtual ~RTPAppProtocolHandler();
-};
+namespace app_flvplayback {
 
+	class RTPAppProtocolHandler
+	: public BaseRTPAppProtocolHandler {
+	public:
+		RTPAppProtocolHandler(Variant &configuration);
+		virtual ~RTPAppProtocolHandler();
+	};
+}
 
 #endif	/* _RTPAPPPROTOCOLHANDLER_H */
 #endif /* HAS_PROTOCOL_RTP */

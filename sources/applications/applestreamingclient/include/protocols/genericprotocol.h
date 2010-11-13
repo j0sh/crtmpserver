@@ -23,21 +23,22 @@
 
 #include "protocols/baseprotocol.h"
 
-class ClientContext;
+namespace app_applestreamingclient {
+	class ClientContext;
 
-class GenericProtocol
-: public BaseProtocol {
-private:
-	uint32_t _contextId;
-public:
-	GenericProtocol(uint64_t type);
-	virtual ~GenericProtocol();
+	class GenericProtocol
+	: public BaseProtocol {
+	private:
+		uint32_t _contextId;
+	public:
+		GenericProtocol(uint64_t type);
+		virtual ~GenericProtocol();
 
-	virtual bool Initialize(Variant &parameters);
-	ClientContext *GetContext();
-	bool DoHTTPRequest();
-};
-
+		virtual bool Initialize(Variant &parameters);
+		ClientContext *GetContext();
+		bool DoHTTPRequest();
+	};
+}
 
 #endif	/* _GENERICPROTOCOL_H */
 

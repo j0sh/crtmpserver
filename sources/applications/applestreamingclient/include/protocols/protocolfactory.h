@@ -43,17 +43,19 @@
 #define PC_FINE_TIMER		"fineTimer"
 #endif /* HAS_MS_TIMER */
 
-class DLLEXP ProtocolFactory
-: public BaseProtocolFactory {
-public:
-	ProtocolFactory();
-	virtual ~ProtocolFactory();
+namespace app_applestreamingclient {
 
-	virtual vector<uint64_t> HandledProtocols();
-	virtual vector<string> HandledProtocolChains();
-	virtual vector<uint64_t> ResolveProtocolChain(string name);
-	virtual BaseProtocol *SpawnProtocol(uint64_t type, Variant &parameters);
-};
+	class DLLEXP ProtocolFactory
+	: public BaseProtocolFactory {
+	public:
+		ProtocolFactory();
+		virtual ~ProtocolFactory();
 
+		virtual vector<uint64_t> HandledProtocols();
+		virtual vector<string> HandledProtocolChains();
+		virtual vector<uint64_t> ResolveProtocolChain(string name);
+		virtual BaseProtocol *SpawnProtocol(uint64_t type, Variant &parameters);
+	};
+}
 
 #endif	/* _PROTOCOLFACTORY_H */

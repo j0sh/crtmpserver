@@ -21,6 +21,7 @@
 #ifdef HAS_PROTOCOL_LIVEFLV
 
 #include "liveflvappprotocolhandler.h"
+using namespace app_proxypublish;
 
 LiveFLVAppProtocolHandler::LiveFLVAppProtocolHandler(Variant &configuration)
 : BaseLiveFLVAppProtocolHandler(configuration) {

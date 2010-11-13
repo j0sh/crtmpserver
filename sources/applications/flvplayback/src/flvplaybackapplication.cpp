@@ -27,6 +27,7 @@
 #include "rtspappprotocolhandler.h"
 #include "netio/netio.h"
 #include "application/clientapplicationmanager.h"
+using namespace app_flvplayback;
 
 FLVPlaybackApplication::FLVPlaybackApplication(Variant &configuration)
 : BaseClientApplication(configuration) {

@@ -22,6 +22,7 @@
 #include "protocols/protocoltypes.h"
 #include "eventsink/varianteventsink.h"
 #include "clientcontext.h"
+using namespace app_applestreamingclient;
 
 BaseEventSink::BaseEventSink(uint64_t type, uint32_t contextId) {
 	_type = type;

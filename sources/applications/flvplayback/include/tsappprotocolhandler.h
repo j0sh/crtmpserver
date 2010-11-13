@@ -24,13 +24,15 @@
 
 #include "protocols/ts/basetsappprotocolhandler.h"
 
-class TSAppProtocolHandler
-: public BaseTSAppProtocolHandler {
-public:
-	TSAppProtocolHandler(Variant &configuration);
-	virtual ~TSAppProtocolHandler();
-};
+namespace app_flvplayback {
 
+	class TSAppProtocolHandler
+	: public BaseTSAppProtocolHandler {
+	public:
+		TSAppProtocolHandler(Variant &configuration);
+		virtual ~TSAppProtocolHandler();
+	};
+}
 
 #endif	/* _TSAPPPROTOCOLHANDLER_H */
 #endif	/* HAS_PROTOCOL_TS */

@@ -24,6 +24,7 @@
 #include "protocols/rtmp/basertmpprotocol.h"
 #include "protocols/rtmp/outboundrtmpprotocol.h"
 #include "protocols/rtmp/messagefactories/messagefactories.h"
+using namespace app_appselector;
 
 RTMPAppProtocolHandler::RTMPAppProtocolHandler(Variant &configuration)
 : BaseRTMPAppProtocolHandler(configuration) {

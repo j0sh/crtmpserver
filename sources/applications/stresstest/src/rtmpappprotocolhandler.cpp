@@ -23,6 +23,7 @@
 #include "protocols/rtmp/outboundrtmpprotocol.h"
 #include "protocols/rtmp/messagefactories/connectionmessagefactory.h"
 #include "protocols/rtmp/messagefactories/streammessagefactory.h"
+using namespace app_stresstest;
 
 RTMPAppProtocolHandler::RTMPAppProtocolHandler(Variant &configuration)
 : BaseRTMPAppProtocolHandler(configuration) {

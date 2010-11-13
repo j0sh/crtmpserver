@@ -23,17 +23,20 @@
 
 #include "protocols/genericprotocol.h"
 
-class InboundKeyProtocol
-: public GenericProtocol {
-public:
-	InboundKeyProtocol();
-	virtual ~InboundKeyProtocol();
+namespace app_applestreamingclient {
 
-	virtual bool AllowFarProtocol(uint64_t type);
-	virtual bool AllowNearProtocol(uint64_t type);
-	virtual bool SignalInputData(int32_t recvAmount);
-	virtual bool SignalInputData(IOBuffer &buffer);
-};
+	class InboundKeyProtocol
+	: public GenericProtocol {
+	public:
+		InboundKeyProtocol();
+		virtual ~InboundKeyProtocol();
+
+		virtual bool AllowFarProtocol(uint64_t type);
+		virtual bool AllowNearProtocol(uint64_t type);
+		virtual bool SignalInputData(int32_t recvAmount);
+		virtual bool SignalInputData(IOBuffer &buffer);
+	};
+}
 
 #endif	/* _INBOUNDKEYPROTOCOL_H */
 

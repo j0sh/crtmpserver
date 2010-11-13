@@ -22,6 +22,7 @@
 #include "protocols/http/outboundhttpprotocol.h"
 #include "clientcontext.h"
 #include "protocols/ts/inboundtsprotocol.h"
+using namespace app_applestreamingclient;
 
 TSAppProtocolHandler::TSAppProtocolHandler(Variant &configuration)
 : BaseTSAppProtocolHandler(configuration) {

@@ -21,6 +21,7 @@
 #include "protocolfactory.h"
 #include "protocols/http/outboundhttpprotocol.h"
 #include "controller.h"
+using namespace app_samplefactory;
 
 DBAccessProtocol::DBAccessProtocol()
 : BaseProtocol(PT_DBACCESS) {

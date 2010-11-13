@@ -23,8 +23,8 @@
 
 #include "common.h"
 
-extern "C" DLLEXP BaseClientApplication *GetApplication(Variant configuration);
-extern "C" DLLEXP void ReleaseApplication(BaseClientApplication *pApplication);
+extern "C" DLLEXP BaseClientApplication *GetApplication_vptests(Variant configuration);
+extern "C" DLLEXP void ReleaseApplication_vptests(BaseClientApplication *pApplication);
 
 #endif	/* _VPTESTS_H */
 

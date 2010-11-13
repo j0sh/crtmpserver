@@ -20,14 +20,15 @@
 #include "application/baseclientapplication.h"
 #include "samplefactory.h"
 #include "samplefactoryapplication.h"
+using namespace app_samplefactory;
 
-extern "C" BaseClientApplication *GetApplication(Variant configuration) {
+extern "C" BaseClientApplication *GetApplication_samplefactory(Variant configuration) {
 	SampleFactoryApplication *pApplication = new SampleFactoryApplication(
 			configuration);
 	return pApplication;
 }
 
-extern "C" void ReleaseApplication(BaseClientApplication *pApplication) {
+extern "C" void ReleaseApplication_samplefactory(BaseClientApplication *pApplication) {
 	if (pApplication != NULL) {
 		delete pApplication;
 	}

@@ -21,14 +21,15 @@
 #include "application/baseclientapplication.h"
 #include "proxypublish.h"
 #include "proxypublishapplication.h"
+using namespace app_proxypublish;
 
-extern "C" BaseClientApplication *GetApplication(Variant configuration) {
+extern "C" BaseClientApplication *GetApplication_proxypublish(Variant configuration) {
 	ProxyPublishApplication *pApplication = new ProxyPublishApplication(
 			configuration);
 	return pApplication;
 }
 
-extern "C" void ReleaseApplication(BaseClientApplication *pApplication) {
+extern "C" void ReleaseApplication_proxypublish(BaseClientApplication *pApplication) {
 	if (pApplication != NULL) {
 		delete pApplication;
 	}

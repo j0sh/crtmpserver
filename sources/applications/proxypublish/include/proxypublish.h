@@ -23,8 +23,8 @@
 
 #include "common.h"
 
-extern "C" DLLEXP BaseClientApplication *GetApplication(Variant configuration);
-extern "C" DLLEXP void ReleaseApplication(BaseClientApplication *pApplication);
+extern "C" DLLEXP BaseClientApplication *GetApplication_proxypublish(Variant configuration);
+extern "C" DLLEXP void ReleaseApplication_proxypublish(BaseClientApplication *pApplication);
 
 #endif	/* _PROXYPUBLISH_H */
 

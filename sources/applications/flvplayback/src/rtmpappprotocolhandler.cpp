@@ -25,6 +25,7 @@
 #include "application/baseclientapplication.h"
 #include "streaming/baseinnetstream.h"
 #include "streaming/streamstypes.h"
+using namespace app_flvplayback;
 
 RTMPAppProtocolHandler::RTMPAppProtocolHandler(Variant &configuration)
 : BaseRTMPAppProtocolHandler(configuration) {

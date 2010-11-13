@@ -24,17 +24,18 @@
 #define	_VARIANTAPPPROTOCOLHANDLER_H
 
 #include "protocols/variant/basevariantappprotocolhandler.h"
+namespace app_vptests {
 
-class VariantAppProtocolHandler
-: public BaseVariantAppProtocolHandler {
-public:
-	VariantAppProtocolHandler(Variant &configuration);
-	virtual ~VariantAppProtocolHandler();
+	class VariantAppProtocolHandler
+	: public BaseVariantAppProtocolHandler {
+	public:
+		VariantAppProtocolHandler(Variant &configuration);
+		virtual ~VariantAppProtocolHandler();
 
-	virtual bool ProcessMessage(BaseVariantProtocol *pProtocol,
-			Variant &lastSent, Variant &lastReceived);
-};
-
+		virtual bool ProcessMessage(BaseVariantProtocol *pProtocol,
+				Variant &lastSent, Variant &lastReceived);
+	};
+}
 
 #endif	/* _VARIANTAPPPROTOCOLHANDLER_H */
 #endif	/* HAS_PROTOCOL_VAR */

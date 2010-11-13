@@ -22,6 +22,7 @@
 #include "protocols/http/outboundhttpprotocol.h"
 #include "clientcontext.h"
 #include "protocols/tcpprotocol.h"
+using namespace app_applestreamingclient;
 
 HTTPBufferProtocol::HTTPBufferProtocol()
 : GenericProtocol(PT_HTTP_BUFF) {

@@ -23,6 +23,7 @@
 #include "stresstestapplication.h"
 #include "rtmpappprotocolhandler.h"
 #include "protocols/baseprotocol.h"
+using namespace app_stresstest;
 
 StressTestApplication::StressTestApplication(Variant &configuration)
 : BaseClientApplication(configuration) {

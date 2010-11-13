@@ -23,8 +23,8 @@
 
 #include "common.h"
 
-extern "C" DLLEXP BaseClientApplication *GetApplication(Variant configuration);
-extern "C" DLLEXP void ReleaseApplication(BaseClientApplication *pApplication);
+extern "C" DLLEXP BaseClientApplication *GetApplication_admin(Variant configuration);
+extern "C" DLLEXP void ReleaseApplication_admin(BaseClientApplication *pApplication);
 
 #endif	/* _ADMIN_H */
 

@@ -21,14 +21,15 @@
 #include "application/baseclientapplication.h"
 #include "admin.h"
 #include "adminapplication.h"
+using namespace app_admin;
 
-extern "C" BaseClientApplication *GetApplication(Variant configuration) {
+extern "C" BaseClientApplication *GetApplication_admin(Variant configuration) {
 	AdminApplication *pApplication = new AdminApplication(
 			configuration);
 	return pApplication;
 }
 
-extern "C" void ReleaseApplication(BaseClientApplication *pApplication) {
+extern "C" void ReleaseApplication_admin(BaseClientApplication *pApplication) {
 	if (pApplication != NULL) {
 		delete pApplication;
 	}

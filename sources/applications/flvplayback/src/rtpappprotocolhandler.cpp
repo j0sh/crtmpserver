@@ -20,6 +20,7 @@
 
 #ifdef HAS_PROTOCOL_RTP
 #include "rtpappprotocolhandler.h"
+using namespace app_flvplayback;
 
 RTPAppProtocolHandler::RTPAppProtocolHandler(Variant& configuration)
 : BaseRTPAppProtocolHandler(configuration) {

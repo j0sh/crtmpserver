@@ -24,61 +24,62 @@
 #include "application/baseclientapplication.h"
 #include "jnihelpers.h"
 
+namespace app_applestreamingclient {
 #ifdef HAS_PROTOCOL_RTMP
-class RTMPAppProtocolHandler;
+	class RTMPAppProtocolHandler;
 #endif /* HAS_PROTOCOL_RTMP */
-class M3U8AppProtocolHandler;
-class KeyAppProtocolHandler;
-class TSAppProtocolHandler;
-class HTTPBuffAppProtocolHandler;
-class AESAppProtocolHandler;
-class RTSPAppProtocolHandler;
-class VariantAppProtocolHandler;
-class ProtocolFactory;
+	class M3U8AppProtocolHandler;
+	class KeyAppProtocolHandler;
+	class TSAppProtocolHandler;
+	class HTTPBuffAppProtocolHandler;
+	class AESAppProtocolHandler;
+	class RTSPAppProtocolHandler;
+	class VariantAppProtocolHandler;
+	class ProtocolFactory;
 #ifdef HAS_MS_TIMER
-class FineTimer;
+	class FineTimer;
 #endif /* HAS_MS_TIMER */
 
-class AppleStreamingClientApplication
-: public BaseClientApplication {
-private:
+	class AppleStreamingClientApplication
+	: public BaseClientApplication {
+	private:
 #ifdef HAS_PROTOCOL_RTMP
-	RTMPAppProtocolHandler *_pRTMPHandler;
+		RTMPAppProtocolHandler *_pRTMPHandler;
 #endif /* HAS_PROTOCOL_RTMP */
-	M3U8AppProtocolHandler *_pM3U8Handler;
-	KeyAppProtocolHandler *_pKeyHandler;
-	TSAppProtocolHandler *_pTSHandler;
-	HTTPBuffAppProtocolHandler *_pHTTPBuff;
-	AESAppProtocolHandler *_pAESHandler;
-	RTSPAppProtocolHandler *_pRTSPHandler;
-	VariantAppProtocolHandler *_pVariantHandler;
-	ProtocolFactory *_pFactory;
+		M3U8AppProtocolHandler *_pM3U8Handler;
+		KeyAppProtocolHandler *_pKeyHandler;
+		TSAppProtocolHandler *_pTSHandler;
+		HTTPBuffAppProtocolHandler *_pHTTPBuff;
+		AESAppProtocolHandler *_pAESHandler;
+		RTSPAppProtocolHandler *_pRTSPHandler;
+		VariantAppProtocolHandler *_pVariantHandler;
+		ProtocolFactory *_pFactory;
 #ifdef HAS_MS_TIMER
-	uint32_t _fineTimerId;
+		uint32_t _fineTimerId;
 #endif /* HAS_MS_TIMER */
 #ifdef ANDROID
-	CallBackInfo _ci;
+		CallBackInfo _ci;
 #endif /* ANDROID */
-public:
-	AppleStreamingClientApplication(Variant &configuration);
-	virtual ~AppleStreamingClientApplication();
+	public:
+		AppleStreamingClientApplication(Variant &configuration);
+		virtual ~AppleStreamingClientApplication();
 
-	void CloseAllContexts();
+		void CloseAllContexts();
 
-	virtual bool Initialize();
+		virtual bool Initialize();
 #ifdef HAS_MS_TIMER
-	void SetFineTimerId(uint32_t fineTimerId);
-	FineTimer *GetFineTimer();
+		void SetFineTimerId(uint32_t fineTimerId);
+		FineTimer *GetFineTimer();
 #endif /* HAS_MS_TIMER */
 #ifdef ANDROID
-	void SetJavaCallBackInterface(CallBackInfo ci);
-	CallBackInfo &GetJavaCallBackInterface();
+		void SetJavaCallBackInterface(CallBackInfo ci);
+		CallBackInfo &GetJavaCallBackInterface();
 #endif /* ANDROID */
 
-	virtual void SignalStreamRegistered(BaseStream *pStream);
-	virtual void SignalStreamUnRegistered(BaseStream *pStream);
+		virtual void SignalStreamRegistered(BaseStream *pStream);
+		virtual void SignalStreamUnRegistered(BaseStream *pStream);
+	};
 };
-
 
 #endif	/* _APPLESTREAMINGCLIENTAPPLICATION_H */
 

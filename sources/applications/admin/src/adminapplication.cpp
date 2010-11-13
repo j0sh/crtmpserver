@@ -20,6 +20,7 @@
 #include "adminapplication.h"
 #include "rtmpappprotocolhandler.h"
 #include "protocols/baseprotocol.h"
+using namespace app_admin;
 
 AdminApplication::AdminApplication(Variant &configuration)
 : BaseClientApplication(configuration) {
@@ -53,5 +54,3 @@ bool AdminApplication::Initialize() {
 
 	return true;
 }
-
-

@@ -23,45 +23,44 @@
 
 #include "application/baseclientapplication.h"
 
-class BaseProtocol;
-
+namespace app_flvplayback {
 #ifdef HAS_PROTOCOL_RTMP
-class RTMPAppProtocolHandler;
+	class RTMPAppProtocolHandler;
 #endif /* HAS_PROTOCOL_RTMP */
 #ifdef HAS_PROTOCOL_LIVEFLV
-class LiveFLVAppProtocolHandler;
+	class LiveFLVAppProtocolHandler;
 #endif /* HAS_PROTOCOL_LIVEFLV */
 #ifdef HAS_PROTOCOL_TS
-class TSAppProtocolHandler;
+	class TSAppProtocolHandler;
 #endif /* HAS_PROTOCOL_TS */
 #ifdef HAS_PROTOCOL_RTP
-class RTPAppProtocolHandler;
-class RTSPAppProtocolHandler;
+	class RTPAppProtocolHandler;
+	class RTSPAppProtocolHandler;
 #endif /* HAS_PROTOCOL_RTP */
 
-class FLVPlaybackApplication
-: public BaseClientApplication {
-private:
+	class FLVPlaybackApplication
+	: public BaseClientApplication {
+	private:
 #ifdef HAS_PROTOCOL_RTMP
-	RTMPAppProtocolHandler *_pRTMPHandler;
+		RTMPAppProtocolHandler *_pRTMPHandler;
 #endif /* HAS_PROTOCOL_RTMP */
 #ifdef HAS_PROTOCOL_LIVEFLV
-	LiveFLVAppProtocolHandler *_pLiveFLV;
+		LiveFLVAppProtocolHandler *_pLiveFLV;
 #endif /* HAS_PROTOCOL_LIVEFLV */
 #ifdef HAS_PROTOCOL_TS
-	TSAppProtocolHandler *_pTS;
+		TSAppProtocolHandler *_pTS;
 #endif /* HAS_PROTOCOL_TS */
 #ifdef HAS_PROTOCOL_RTP
-	RTPAppProtocolHandler *_pRTP;
-	RTSPAppProtocolHandler *_pRTSP;
+		RTPAppProtocolHandler *_pRTP;
+		RTSPAppProtocolHandler *_pRTSP;
 #endif /* HAS_PROTOCOL_RTP */
-public:
-	FLVPlaybackApplication(Variant &configuration);
-	virtual ~FLVPlaybackApplication();
+	public:
+		FLVPlaybackApplication(Variant &configuration);
+		virtual ~FLVPlaybackApplication();
 
-	virtual bool Initialize();
-};
-
+		virtual bool Initialize();
+	};
+}
 
 #endif	/* _FLVPLAYBACKAPPLICATION_H */
 

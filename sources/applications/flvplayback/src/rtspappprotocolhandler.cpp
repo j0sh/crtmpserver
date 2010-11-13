@@ -26,6 +26,7 @@
 #include "protocols/protocolfactorymanager.h"
 #include "netio/netio.h"
 #include "protocols/protocolmanager.h"
+using namespace app_flvplayback;
 
 RTSPAppProtocolHandler::RTSPAppProtocolHandler(Variant& configuration)
 : BaseRTSPAppProtocolHandler(configuration) {

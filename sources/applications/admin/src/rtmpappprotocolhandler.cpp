@@ -17,13 +17,13 @@
  *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 #ifdef HAS_PROTOCOL_RTMP
 #include "rtmpappprotocolhandler.h"
 #include "protocols/rtmp/messagefactories/messagefactories.h"
 #include "protocols/rtmp/basertmpprotocol.h"
 #include "application/clientapplicationmanager.h"
 #include "netio/netio.h"
+using namespace app_admin;
 
 RTMPAppProtocolHandler::RTMPAppProtocolHandler(Variant &configuration)
 : BaseRTMPAppProtocolHandler(configuration) {

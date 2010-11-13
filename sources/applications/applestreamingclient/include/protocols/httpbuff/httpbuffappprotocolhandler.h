@@ -22,16 +22,18 @@
 
 #include "application/baseappprotocolhandler.h"
 
-class HTTPBuffAppProtocolHandler
-: public BaseAppProtocolHandler {
-public:
-	HTTPBuffAppProtocolHandler(Variant &configuration);
-	virtual ~HTTPBuffAppProtocolHandler();
+namespace app_applestreamingclient {
 
-	virtual void RegisterProtocol(BaseProtocol *pProtocol);
-	virtual void UnRegisterProtocol(BaseProtocol *pProtocol);
-};
+	class HTTPBuffAppProtocolHandler
+	: public BaseAppProtocolHandler {
+	public:
+		HTTPBuffAppProtocolHandler(Variant &configuration);
+		virtual ~HTTPBuffAppProtocolHandler();
 
+		virtual void RegisterProtocol(BaseProtocol *pProtocol);
+		virtual void UnRegisterProtocol(BaseProtocol *pProtocol);
+	};
+}
 
 #endif	/* _HTTPBUFFAPPPROTOCOLHANDLER_H */
 

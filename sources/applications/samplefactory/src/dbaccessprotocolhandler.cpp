@@ -18,6 +18,7 @@
  */
 
 #include "dbaccessprotocolhandler.h"
+using namespace app_samplefactory;
 
 DBAccessProtocolHandler::DBAccessProtocolHandler(Variant &configuration)
 : BaseAppProtocolHandler(configuration) {

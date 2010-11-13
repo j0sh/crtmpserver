@@ -21,8 +21,8 @@
 #ifndef _FLVPLAYBACK_H
 #define	_FLVPLAYBACK_H
 
-extern "C" DLLEXP BaseClientApplication *GetApplication(Variant configuration);
-extern "C" DLLEXP void ReleaseApplication(BaseClientApplication *pApplication);
+extern "C" DLLEXP BaseClientApplication *GetApplication_flvplayback(Variant configuration);
+extern "C" DLLEXP void ReleaseApplication_flvplayback(BaseClientApplication *pApplication);
 
 #endif	/* _FLVPLAYBACK_H */
 

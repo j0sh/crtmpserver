@@ -26,6 +26,7 @@
 #include "protocols/aes/inboundaesprotocol.h"
 #include "protocols/httpbuff/httpbufferprotocol.h"
 #include "protocols/timer/finetimer.h"
+using namespace app_applestreamingclient;
 
 ProtocolFactory::ProtocolFactory() {
 

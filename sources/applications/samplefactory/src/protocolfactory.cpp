@@ -21,6 +21,7 @@
 #include "protocolfactory.h"
 #include "protocols/baseprotocol.h"
 #include "dbaccessprotocol.h"
+using namespace app_samplefactory;
 
 ProtocolFactory::ProtocolFactory() {
 

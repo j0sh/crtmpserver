@@ -22,6 +22,7 @@
 #include "applestreamingclient.h"
 #include "applestreamingclientapplication.h"
 #include "jnihelpers.h"
+using namespace app_applestreamingclient;
 
 ScheduleTimerProtocol::ScheduleTimerProtocol(uint32_t contextId) {
 	_contextId = contextId;

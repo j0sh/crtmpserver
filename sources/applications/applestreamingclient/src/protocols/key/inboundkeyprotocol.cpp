@@ -21,6 +21,7 @@
 #include "protocols/protocolfactory.h"
 #include "protocols/http/outboundhttpprotocol.h"
 #include "clientcontext.h"
+using namespace app_applestreamingclient;
 
 InboundKeyProtocol::InboundKeyProtocol()
 : GenericProtocol(PT_INBOUND_KEY) {

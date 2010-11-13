@@ -27,6 +27,7 @@
 #include "eventsink/rtmpeventsink.h"
 #include "protocols/variant/messagestructure.h"
 #include "protocols/rtmp/messagefactories/genericmessagefactory.h"
+using namespace app_applestreamingclient;
 
 RTMPAppProtocolHandler::RTMPAppProtocolHandler(Variant &configuration)
 : BaseRTMPAppProtocolHandler(configuration) {

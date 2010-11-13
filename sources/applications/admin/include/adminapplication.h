@@ -21,25 +21,27 @@
 #ifndef _ADMINAPPLICATION_H
 #define _ADMINAPPLICATION_H
 
+
 #include "application/baseclientapplication.h"
 
+namespace app_admin {
 #ifdef HAS_PROTOCOL_RTMP
-class RTMPAppProtocolHandler;
+	class RTMPAppProtocolHandler;
 #endif /* HAS_PROTOCOL_RTMP */
 
-class AdminApplication
-: public BaseClientApplication {
-private:
+	class AdminApplication
+	: public BaseClientApplication {
+	private:
 #ifdef HAS_PROTOCOL_RTMP
-	RTMPAppProtocolHandler *_pRTMPHandler;
+		RTMPAppProtocolHandler *_pRTMPHandler;
 #endif /* HAS_PROTOCOL_RTMP */
-public:
-	AdminApplication(Variant &configuration);
-	virtual ~AdminApplication();
+	public:
+		AdminApplication(Variant &configuration);
+		virtual ~AdminApplication();
 
-	virtual bool Initialize();
-};
-
+		virtual bool Initialize();
+	};
+}
 
 #endif	/* _ADMINAPPLICATION_H */
 

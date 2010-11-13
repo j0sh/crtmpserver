@@ -17,8 +17,8 @@
  *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 #include "speedcomputer.h"
+using namespace app_applestreamingclient;
 
 SpeedComputer::SpeedComputer(uint32_t historyLength, uint8_t historyLengthUnit) {
 	_historyLength = historyLength;

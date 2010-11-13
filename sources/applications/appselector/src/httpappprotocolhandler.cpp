@@ -21,6 +21,7 @@
 
 #ifdef HAS_PROTOCOL_HTTP
 #include "httpappprotocolhandler.h"
+using namespace app_appselector;
 
 HTTPAppProtocolHandler::HTTPAppProtocolHandler(Variant &configuration)
 : BaseHTTPAppProtocolHandler(configuration) {

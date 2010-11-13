@@ -23,6 +23,7 @@
 #include "clientcontext.h"
 #include "applestreamingclientapplication.h"
 #include "jnihelpers.h"
+using namespace app_applestreamingclient;
 
 VariantEventSink::VariantEventSink(uint32_t contextId)
 : BaseEventSink(EVENT_SYNC_VARIANT, contextId) {

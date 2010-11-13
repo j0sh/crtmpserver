@@ -24,22 +24,21 @@
 
 #include "protocols/rtmp/basertmpappprotocolhandler.h"
 
-class RTMPAppProtocolHandler
-: public BaseRTMPAppProtocolHandler {
-public:
-	RTMPAppProtocolHandler(Variant &configuration);
-	virtual ~RTMPAppProtocolHandler();
+namespace app_flvplayback {
 
-	virtual bool ProcessInvokeGeneric(BaseRTMPProtocol *pFrom,
-			Variant &request);
-private:
-	bool ProcessGetAvailableFlvs(BaseRTMPProtocol *pFrom, Variant &request);
-	bool ProcessInsertMetadata(BaseRTMPProtocol *pFrom, Variant &request);
-};
+	class RTMPAppProtocolHandler
+	: public BaseRTMPAppProtocolHandler {
+	public:
+		RTMPAppProtocolHandler(Variant &configuration);
+		virtual ~RTMPAppProtocolHandler();
 
-
-
-
+		virtual bool ProcessInvokeGeneric(BaseRTMPProtocol *pFrom,
+				Variant &request);
+	private:
+		bool ProcessGetAvailableFlvs(BaseRTMPProtocol *pFrom, Variant &request);
+		bool ProcessInsertMetadata(BaseRTMPProtocol *pFrom, Variant &request);
+	};
+}
 #endif	/* _RTMPAPPPROTOCOLHANDLER_H */
 #endif /* HAS_PROTOCOL_RTMP */
 

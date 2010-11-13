@@ -22,6 +22,7 @@
 #include "protocols/httpbuff/httpbufferprotocol.h"
 #include "protocols/ts/inboundtsprotocol.h"
 #include "clientcontext.h"
+using namespace app_applestreamingclient;
 
 InboundAESProtocol::InboundAESProtocol()
 : GenericProtocol(PT_INBOUND_AES) {

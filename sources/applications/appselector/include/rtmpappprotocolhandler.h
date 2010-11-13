@@ -23,16 +23,18 @@
 
 #include "protocols/rtmp/basertmpappprotocolhandler.h"
 
-class RTMPAppProtocolHandler
-: public BaseRTMPAppProtocolHandler {
-public:
-	RTMPAppProtocolHandler(Variant &configuration);
-	virtual ~RTMPAppProtocolHandler();
+namespace app_appselector {
 
-	bool ProcessInvokeConnect(BaseRTMPProtocol *pFrom, Variant &request);
-	virtual bool OutboundConnectionEstablished(OutboundRTMPProtocol *pFrom);
-};
+	class RTMPAppProtocolHandler
+	: public BaseRTMPAppProtocolHandler {
+	public:
+		RTMPAppProtocolHandler(Variant &configuration);
+		virtual ~RTMPAppProtocolHandler();
 
+		bool ProcessInvokeConnect(BaseRTMPProtocol *pFrom, Variant &request);
+		virtual bool OutboundConnectionEstablished(OutboundRTMPProtocol *pFrom);
+	};
+}
 #endif	/* _RTMPAPPPROTOCOLHANDLER_H */
 #endif /* HAS_PROTOCOL_RTMP */
 

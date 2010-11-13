@@ -18,6 +18,7 @@
  */
 
 #include "playlist.h"
+using namespace app_applestreamingclient;
 
 Playlist::Playlist() {
 	Clear();

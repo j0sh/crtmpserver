@@ -21,6 +21,7 @@
 #include "vptestsapplication.h"
 #include "rtmpappprotocolhandler.h"
 #include "variantappprotocolhandler.h"
+using namespace app_vptests;
 
 VPTestsApplication::VPTestsApplication(Variant &configuration)
 : BaseClientApplication(configuration) {

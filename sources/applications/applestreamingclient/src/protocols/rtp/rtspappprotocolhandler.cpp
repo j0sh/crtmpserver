@@ -23,6 +23,7 @@
 #include "eventsink/varianteventsink.h"
 #include "protocols/rtp/rtspprotocol.h"
 #include "application/baseclientapplication.h"
+using namespace app_applestreamingclient;
 
 RTSPAppProtocolHandler::RTSPAppProtocolHandler(Variant &configuration)
 : BaseRTSPAppProtocolHandler(configuration) {

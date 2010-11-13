@@ -23,6 +23,7 @@
 #include "dbaccessprotocol.h"
 #include "protocols/protocolfactorymanager.h"
 #include "application/clientapplicationmanager.h"
+using namespace app_samplefactory;
 
 Controller::Controller() {
 

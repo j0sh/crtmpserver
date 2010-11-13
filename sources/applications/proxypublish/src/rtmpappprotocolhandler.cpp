@@ -25,6 +25,7 @@
 #include "streaming/baseinstream.h"
 #include "streaming/baseoutnetstream.h"
 #include "application/baseclientapplication.h"
+using namespace app_proxypublish;
 
 RTMPAppProtocolHandler::RTMPAppProtocolHandler(Variant &configuration)
 : BaseRTMPAppProtocolHandler(configuration) {

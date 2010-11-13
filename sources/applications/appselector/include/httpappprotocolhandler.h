@@ -23,13 +23,15 @@
 
 #include "protocols/http/basehttpprotocolhandler.h"
 
-class HTTPAppProtocolHandler
-: public BaseHTTPAppProtocolHandler {
-public:
-	HTTPAppProtocolHandler(Variant &configuration);
-	virtual ~HTTPAppProtocolHandler();
-};
+namespace app_appselector {
 
+	class HTTPAppProtocolHandler
+	: public BaseHTTPAppProtocolHandler {
+	public:
+		HTTPAppProtocolHandler(Variant &configuration);
+		virtual ~HTTPAppProtocolHandler();
+	};
+}
 
 #endif	/* _HTTPAPPPROTOCOLHANDLER_H */
 #endif	/* HAS_PROTOCOL_HTTP */

@@ -20,14 +20,15 @@
 #include "application/baseclientapplication.h"
 #include "applestreamingclient.h"
 #include "applestreamingclientapplication.h"
+using namespace app_applestreamingclient;
 
-extern "C" BaseClientApplication *GetApplication(Variant configuration) {
+extern "C" BaseClientApplication *GetApplication_applestreamingclient(Variant configuration) {
 	AppleStreamingClientApplication *pApplication = new AppleStreamingClientApplication(
 			configuration);
 	return pApplication;
 }
 
-extern "C" void ReleaseApplication(BaseClientApplication *pApplication) {
+extern "C" void ReleaseApplication_applestreamingclient(BaseClientApplication *pApplication) {
 	if (pApplication != NULL) {
 		delete pApplication;
 	}

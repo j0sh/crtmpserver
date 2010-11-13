@@ -22,6 +22,7 @@
 #ifdef HAS_PROTOCOL_VAR
 #include "variantappprotocolhandler.h"
 #include "protocols/variant/basevariantprotocol.h"
+using namespace app_vptests;
 
 VariantAppProtocolHandler::VariantAppProtocolHandler(Variant &configuration)
 : BaseVariantAppProtocolHandler(configuration) {

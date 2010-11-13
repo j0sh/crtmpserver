@@ -20,6 +20,7 @@
 #include "protocols/m3u8/childm3u8protocol.h"
 #include "protocols/protocolfactory.h"
 #include "clientcontext.h"
+using namespace app_applestreamingclient;
 
 ChildM3U8Protocol::ChildM3U8Protocol()
 : BaseM3U8Protocol(PT_INBOUND_CHILD_M3U8) {

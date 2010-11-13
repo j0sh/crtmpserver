@@ -22,6 +22,7 @@
 #include "protocols/rtmp/basertmpprotocol.h"
 #include "protocols/protocolmanager.h"
 #include "protocols/rtmp/messagefactories/messagefactories.h"
+using namespace app_applestreamingclient;
 
 RTMPEventSink::RTMPEventSink(uint32_t contextId)
 : BaseEventSink(EVENT_SYNC_RTMP, contextId) {

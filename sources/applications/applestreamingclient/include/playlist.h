@@ -23,44 +23,46 @@
 
 #include "common.h"
 
-class Playlist {
-private:
-	string _playlistUri;
-	string _partialUri;
-	IOBuffer _buffer;
-	uint32_t _lastMediaSequence;
-	char *_pLastKeyUri;
-	Variant _customData;
-	map<uint32_t, vector<char *> > _items;
-	map<uint32_t, uint32_t> _itemMediaSequences;
-	map<uint32_t, char *> _itemKeyUris;
-	map<uint32_t, char *> _itemUris;
-	map<uint32_t, uint32_t> _itemBandwidths;
-	double _startTime;
-	double _endTime;
-	double _meanDuration;
-	uint32_t _meanDurationCount;
-public:
-	Playlist();
-	virtual ~Playlist();
+namespace app_applestreamingclient {
 
-	IOBuffer * GetBuffer();
-	void Clear();
-	void SetPlaylistUri(string playlistUri);
-	string GetPlaylistUri();
-	void Parse(uint32_t skipCount = 0);
-	bool ParseBandwidthInfo();
+	class Playlist {
+	private:
+		string _playlistUri;
+		string _partialUri;
+		IOBuffer _buffer;
+		uint32_t _lastMediaSequence;
+		char *_pLastKeyUri;
+		Variant _customData;
+		map<uint32_t, vector<char *> > _items;
+		map<uint32_t, uint32_t> _itemMediaSequences;
+		map<uint32_t, char *> _itemKeyUris;
+		map<uint32_t, char *> _itemUris;
+		map<uint32_t, uint32_t> _itemBandwidths;
+		double _startTime;
+		double _endTime;
+		double _meanDuration;
+		uint32_t _meanDurationCount;
+	public:
+		Playlist();
+		virtual ~Playlist();
 
-	Variant & GetCustomData();
-	uint32_t GetItemsCount();
-	string GetItemUri(uint32_t &sequence);
-	string GetItemKeyUri(uint32_t &sequence);
-	uint32_t GetItemBandwidth(uint32_t &sequence);
-	Variant GetItemVariant(uint32_t &sequence);
-private:
-	uint32_t GetIndex(uint32_t &sequence);
+		IOBuffer * GetBuffer();
+		void Clear();
+		void SetPlaylistUri(string playlistUri);
+		string GetPlaylistUri();
+		void Parse(uint32_t skipCount = 0);
+		bool ParseBandwidthInfo();
+
+		Variant & GetCustomData();
+		uint32_t GetItemsCount();
+		string GetItemUri(uint32_t &sequence);
+		string GetItemKeyUri(uint32_t &sequence);
+		uint32_t GetItemBandwidth(uint32_t &sequence);
+		Variant GetItemVariant(uint32_t &sequence);
+	private:
+		uint32_t GetIndex(uint32_t &sequence);
+	};
 };
-
 
 #endif	/* _PLAYLIST_H */
 

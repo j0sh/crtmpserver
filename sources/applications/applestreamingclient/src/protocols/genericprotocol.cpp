@@ -20,6 +20,7 @@
 #include "protocols/genericprotocol.h"
 #include "protocols/http/outboundhttpprotocol.h"
 #include "clientcontext.h"
+using namespace app_applestreamingclient;
 
 GenericProtocol::GenericProtocol(uint64_t type)
 : BaseProtocol(type) {

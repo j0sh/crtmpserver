@@ -19,6 +19,7 @@
 
 #include "protocols/key/keyappprotocolhandler.h"
 #include "protocols/key/inboundkeyprotocol.h"
+using namespace app_applestreamingclient;
 
 KeyAppProtocolHandler::KeyAppProtocolHandler(Variant &configuration)
 : BaseAppProtocolHandler(configuration) {

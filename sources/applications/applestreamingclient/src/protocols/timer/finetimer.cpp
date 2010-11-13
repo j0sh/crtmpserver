@@ -22,6 +22,7 @@
 #include "protocols/protocolfactory.h"
 #include "protocols/genericprotocol.h"
 #include "clientcontext.h"
+using namespace app_applestreamingclient;
 
 FineTimer::FineTimer()
 : BaseProtocol(PT_FINE_TIMER) {

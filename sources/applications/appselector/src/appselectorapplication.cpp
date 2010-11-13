@@ -24,6 +24,7 @@
 #include "protocols/rtmp/outboundrtmpprotocol.h"
 #include "rtmpappprotocolhandler.h"
 #include "httpappprotocolhandler.h"
+using namespace app_appselector;
 
 AppSelectorApplication::AppSelectorApplication(Variant &configuration)
 : BaseClientApplication(configuration) {

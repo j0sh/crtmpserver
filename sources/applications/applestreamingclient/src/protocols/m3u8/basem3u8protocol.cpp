@@ -20,6 +20,7 @@
 #include "protocols/m3u8/basem3u8protocol.h"
 #include "protocols/http/outboundhttpprotocol.h"
 #include "clientcontext.h"
+using namespace app_applestreamingclient;
 
 BaseM3U8Protocol::BaseM3U8Protocol(uint64_t type)
 : GenericProtocol(type) {

@@ -24,6 +24,7 @@
 #include "protocolfactory.h"
 #include "protocols/protocolfactorymanager.h"
 #include "dbaccessprotocolhandler.h"
+using namespace app_samplefactory;
 
 SampleFactoryApplication::SampleFactoryApplication(Variant &configuration)
 : BaseClientApplication(configuration) {

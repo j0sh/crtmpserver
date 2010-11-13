@@ -22,6 +22,7 @@
 #include "rtmpappprotocolhandler.h"
 #include "variantappprotocolhandler.h"
 #include "protocols/protocoltypes.h"
+using namespace app_vptests;
 
 RTMPAppProtocolHandler::RTMPAppProtocolHandler(Variant &configuration)
 : BaseRTMPAppProtocolHandler(configuration) {

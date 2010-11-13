@@ -22,17 +22,18 @@
 #define	_DBACCESSPROTOCOLHANDLER_H
 
 #include "application/baseappprotocolhandler.h"
+namespace app_samplefactory {
 
-class DLLEXP DBAccessProtocolHandler
-: public BaseAppProtocolHandler {
-public:
-	DBAccessProtocolHandler(Variant &configuration);
-	virtual ~DBAccessProtocolHandler();
+	class DLLEXP DBAccessProtocolHandler
+	: public BaseAppProtocolHandler {
+	public:
+		DBAccessProtocolHandler(Variant &configuration);
+		virtual ~DBAccessProtocolHandler();
 
-	virtual void RegisterProtocol(BaseProtocol *pProtocol);
-	virtual void UnRegisterProtocol(BaseProtocol *pProtocol);
-};
-
+		virtual void RegisterProtocol(BaseProtocol *pProtocol);
+		virtual void UnRegisterProtocol(BaseProtocol *pProtocol);
+	};
+}
 
 #endif	/* _DBACCESSPROTOCOLHANDLER_H */
 
