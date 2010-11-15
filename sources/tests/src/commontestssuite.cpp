@@ -45,6 +45,7 @@ void CommonTestsSuite::Run() {
 	test_generateRandomString();
 	test_GetHostByName();
 	test_md5();
+	test_HMACsha256();
 	test_b64();
 	test_unb64();
 	test_ParseURL();
@@ -722,6 +723,22 @@ void CommonTestsSuite::test_GetHostByName() {
 
 void CommonTestsSuite::test_md5() {
 	TS_ASSERT(md5("MD5 test string", true) == "da42a8cd6c584e577a85dd796ae75eef");
+}
+
+void CommonTestsSuite::test_HMACsha256() {
+	string plain = "This is a test";
+	string key = "test_key";
+	uint8_t hash[32] = {0};
+	uint8_t wanted[] = {
+		0xA7, 0x97, 0x3B, 0x48, 0xB2, 0x92, 0x5A, 0x81,
+		0xFD, 0x93, 0x41, 0x95, 0x48, 0x51, 0x91, 0x88,
+		0xE4, 0xC5, 0xFB, 0xAE, 0x63, 0xD1, 0xF6, 0xF3,
+		0x1F, 0x16, 0xF7, 0xC0, 0x9A, 0xD3, 0xC4, 0x07
+	};
+	HMACsha256(STR(plain), plain.length(), STR(key), key.length(), hash);
+	for (uint32_t i = 0; i < 32; i++) {
+		TS_ASSERT(hash[i] == wanted[i]);
+	}
 }
 
 void CommonTestsSuite::test_b64() {

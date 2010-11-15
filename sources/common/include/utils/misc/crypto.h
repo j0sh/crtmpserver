@@ -47,6 +47,8 @@ private:
 DLLEXP void InitRC4Encryption(uint8_t *secretKey, uint8_t *pubKeyIn, uint8_t *pubKeyOut,
 		RC4_KEY *rc4keyIn, RC4_KEY *rc4keyOut);
 DLLEXP string md5(string source, bool textResult);
+DLLEXP void HMACsha256(const void *pData, uint32_t dataLength, const void *pKey,
+			uint32_t keyLength, void *pResult);
 DLLEXP string b64(string source);
 DLLEXP string b64(uint8_t *pBuffer, uint32_t length);
 DLLEXP string unb64(string source);

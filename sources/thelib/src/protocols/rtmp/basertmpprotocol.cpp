@@ -491,20 +491,6 @@ bool BaseRTMPProtocol::EnqueueForTimeEvent(uint32_t seconds) {
 	return false;
 }
 
-void BaseRTMPProtocol::HMACsha256(const void *pData, uint32_t dataLength,
-		const void *pKey, uint32_t keyLength, void *pResult) {
-	unsigned int digestLen;
-
-	HMAC_CTX ctx;
-	HMAC_CTX_init(&ctx);
-	HMAC_Init_ex(&ctx, (unsigned char*) pKey, keyLength, EVP_sha256(), NULL);
-	HMAC_Update(&ctx, (unsigned char *) pData, dataLength);
-	HMAC_Final(&ctx, (unsigned char *) pResult, &digestLen);
-	HMAC_CTX_cleanup(&ctx);
-
-	assert(digestLen == 32);
-}
-
 uint32_t BaseRTMPProtocol::GetDHOffset(uint8_t *pBuffer, uint8_t schemeNumber) {
 	switch (schemeNumber) {
 		case 0:

@@ -116,8 +116,6 @@ public:
 	virtual bool EnqueueForTimeEvent(uint32_t seconds);
 protected:
 	virtual bool PerformHandshake(IOBuffer &buffer) = 0;
-	void HMACsha256(const void *pData, uint32_t dataLength, const void *pKey,
-			uint32_t keyLength, void *pResult);
 	uint32_t GetDHOffset(uint8_t *pBuffer, uint8_t schemeNumber);
 	uint32_t GetDigestOffset(uint8_t *pBuffer, uint8_t schemeNumber);
 private:
