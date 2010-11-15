@@ -33,6 +33,7 @@ dynamic_exec_flags = -Os -Wl,-rpath,"\$$ORIGIN"
 PLATFORM_DEFINES = -Os\
 	-DLINUX \
 	-DLITTLE_ENDIAN_SHORT_ALIGNED \
+	-DAPPLY_DOUBLE_QUIRK \
 	-DNET_EPOLL
 
 SSL_BASE=/home/shiretu/work/hisi/openssl-dist

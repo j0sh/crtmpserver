@@ -373,7 +373,7 @@ bool RTSPProtocol::ParseInterleavedHeaders(IOBuffer &buffer) {
 	_rtpDataChanel = pBuffer[1];
 
 	//5. Get the packet length
-	_rtpDataLength = ntohsp(pBuffer + 2);
+	_rtpDataLength = ENTOHSP(pBuffer + 2);
 	if (_rtpDataLength > 8192) {
 		FATAL("RTP data length too big");
 		return false;

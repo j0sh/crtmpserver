@@ -54,16 +54,17 @@ void CommonTestsSuite::test_Endianess() {
 	uint16_t ui16 = 0x0102;
 	uint32_t ui32 = 0x01020304;
 	uint64_t ui64 = 0x0102030405060708LL;
+	double d = 123.456;
 
 	//host to network
 	uint8_t *pBuffer = NULL;
-	ui16 = htons(ui16);
+	ui16 = EHTONS(ui16);
 	pBuffer = (uint8_t *) & ui16;
 	TS_ASSERT(pBuffer[0] == 0x01);
 	TS_ASSERT(pBuffer[1] == 0x02);
 
 	pBuffer = NULL;
-	ui32 = htonl(ui32);
+	ui32 = EHTONL(ui32);
 	pBuffer = (uint8_t *) & ui32;
 	TS_ASSERT(pBuffer[0] == 0x01);
 	TS_ASSERT(pBuffer[1] == 0x02);
@@ -72,7 +73,7 @@ void CommonTestsSuite::test_Endianess() {
 
 	pBuffer = NULL;
 	ui32 = 0x01020304;
-	ui32 = htona(ui32);
+	ui32 = EHTONA(ui32);
 	pBuffer = (uint8_t *) & ui32;
 	TS_ASSERT(pBuffer[0] == 0x02);
 	TS_ASSERT(pBuffer[1] == 0x03);
@@ -80,7 +81,7 @@ void CommonTestsSuite::test_Endianess() {
 	TS_ASSERT(pBuffer[3] == 0x01);
 
 	pBuffer = NULL;
-	ui64 = htonll(ui64);
+	ui64 = EHTONLL(ui64);
 	pBuffer = (uint8_t *) & ui64;
 	TS_ASSERT(pBuffer[0] == 0x01);
 	TS_ASSERT(pBuffer[1] == 0x02);
@@ -90,6 +91,18 @@ void CommonTestsSuite::test_Endianess() {
 	TS_ASSERT(pBuffer[5] == 0x06);
 	TS_ASSERT(pBuffer[6] == 0x07);
 	TS_ASSERT(pBuffer[7] == 0x08);
+
+	pBuffer = NULL;
+	EHTOND(d, ui64);
+	pBuffer = (uint8_t *) & ui64;
+	TS_ASSERT(pBuffer[0] == 0x40);
+	TS_ASSERT(pBuffer[1] == 0x5e);
+	TS_ASSERT(pBuffer[2] == 0xdd);
+	TS_ASSERT(pBuffer[3] == 0x2f);
+	TS_ASSERT(pBuffer[4] == 0x1a);
+	TS_ASSERT(pBuffer[5] == 0x9f);
+	TS_ASSERT(pBuffer[6] == 0xbe);
+	TS_ASSERT(pBuffer[7] == 0x77);
 
 	//network to host pointer
 	char buffer[] = {
@@ -127,124 +140,141 @@ void CommonTestsSuite::test_Endianess() {
 		0x0c, 0x0d, 0x0e, 0x0f
 	};
 
-	ui16 = ntohsp(buffer);
+	ui16 = ENTOHSP(buffer);
 	TS_ASSERT(ui16 == 0x0001);
-	ui16 = ntohsp(buffer + 1);
+	ui16 = ENTOHSP(buffer + 1);
 	TS_ASSERT(ui16 == 0x0102);
-	ui16 = ntohsp(buffer + 2);
+	ui16 = ENTOHSP(buffer + 2);
 	TS_ASSERT(ui16 == 0x0203);
-	ui16 = ntohsp(buffer + 3);
+	ui16 = ENTOHSP(buffer + 3);
 	TS_ASSERT(ui16 == 0x0304);
-	ui16 = ntohsp(buffer + 4);
+	ui16 = ENTOHSP(buffer + 4);
 	TS_ASSERT(ui16 == 0x0405);
-	ui16 = ntohsp(buffer + 5);
+	ui16 = ENTOHSP(buffer + 5);
 	TS_ASSERT(ui16 == 0x0506);
-	ui16 = ntohsp(buffer + 6);
+	ui16 = ENTOHSP(buffer + 6);
 	TS_ASSERT(ui16 == 0x0607);
-	ui16 = ntohsp(buffer + 7);
+	ui16 = ENTOHSP(buffer + 7);
 	TS_ASSERT(ui16 == 0x0708);
-	ui16 = ntohsp(buffer + 8);
+	ui16 = ENTOHSP(buffer + 8);
 	TS_ASSERT(ui16 == 0x0809);
-	ui16 = ntohsp(buffer + 9);
+	ui16 = ENTOHSP(buffer + 9);
 	TS_ASSERT(ui16 == 0x090a);
-	ui16 = ntohsp(buffer + 10);
+	ui16 = ENTOHSP(buffer + 10);
 	TS_ASSERT(ui16 == 0x0a0b);
-	ui16 = ntohsp(buffer + 11);
+	ui16 = ENTOHSP(buffer + 11);
 	TS_ASSERT(ui16 == 0x0b0c);
-	ui16 = ntohsp(buffer + 12);
+	ui16 = ENTOHSP(buffer + 12);
 	TS_ASSERT(ui16 == 0x0c0d);
-	ui16 = ntohsp(buffer + 13);
+	ui16 = ENTOHSP(buffer + 13);
 	TS_ASSERT(ui16 == 0x0d0e);
-	ui16 = ntohsp(buffer + 14);
+	ui16 = ENTOHSP(buffer + 14);
 	TS_ASSERT(ui16 == 0x0e0f);
 
-	ui32 = ntohlp(buffer);
+	ui32 = ENTOHLP(buffer);
 	TS_ASSERT(ui32 == 0x00010203);
-	ui32 = ntohlp(buffer + 1);
+	ui32 = ENTOHLP(buffer + 1);
 	TS_ASSERT(ui32 == 0x01020304);
-	ui32 = ntohlp(buffer + 2);
+	ui32 = ENTOHLP(buffer + 2);
 	TS_ASSERT(ui32 == 0x02030405);
-	ui32 = ntohlp(buffer + 3);
+	ui32 = ENTOHLP(buffer + 3);
 	TS_ASSERT(ui32 == 0x03040506);
-	ui32 = ntohlp(buffer + 4);
+	ui32 = ENTOHLP(buffer + 4);
 	TS_ASSERT(ui32 == 0x04050607);
-	ui32 = ntohlp(buffer + 5);
+	ui32 = ENTOHLP(buffer + 5);
 	TS_ASSERT(ui32 == 0x05060708);
-	ui32 = ntohlp(buffer + 6);
+	ui32 = ENTOHLP(buffer + 6);
 	TS_ASSERT(ui32 == 0x06070809);
-	ui32 = ntohlp(buffer + 7);
+	ui32 = ENTOHLP(buffer + 7);
 	TS_ASSERT(ui32 == 0x0708090a);
-	ui32 = ntohlp(buffer + 8);
+	ui32 = ENTOHLP(buffer + 8);
 	TS_ASSERT(ui32 == 0x08090a0b);
-	ui32 = ntohlp(buffer + 9);
+	ui32 = ENTOHLP(buffer + 9);
 	TS_ASSERT(ui32 == 0x090a0b0c);
-	ui32 = ntohlp(buffer + 10);
+	ui32 = ENTOHLP(buffer + 10);
 	TS_ASSERT(ui32 == 0x0a0b0c0d);
-	ui32 = ntohlp(buffer + 11);
+	ui32 = ENTOHLP(buffer + 11);
 	TS_ASSERT(ui32 == 0x0b0c0d0e);
-	ui32 = ntohlp(buffer + 12);
+	ui32 = ENTOHLP(buffer + 12);
 	TS_ASSERT(ui32 == 0x0c0d0e0f);
 
-	ui32 = ntohap(buffer);
+	ui32 = ENTOHAP(buffer);
 	TS_ASSERT(ui32 == 0x03000102);
-	ui32 = ntohap(buffer + 1);
+	ui32 = ENTOHAP(buffer + 1);
 	TS_ASSERT(ui32 == 0x04010203);
-	ui32 = ntohap(buffer + 2);
+	ui32 = ENTOHAP(buffer + 2);
 	TS_ASSERT(ui32 == 0x05020304);
-	ui32 = ntohap(buffer + 3);
+	ui32 = ENTOHAP(buffer + 3);
 	TS_ASSERT(ui32 == 0x06030405);
-	ui32 = ntohap(buffer + 4);
+	ui32 = ENTOHAP(buffer + 4);
 	TS_ASSERT(ui32 == 0x07040506);
-	ui32 = ntohap(buffer + 5);
+	ui32 = ENTOHAP(buffer + 5);
 	TS_ASSERT(ui32 == 0x08050607);
-	ui32 = ntohap(buffer + 6);
+	ui32 = ENTOHAP(buffer + 6);
 	TS_ASSERT(ui32 == 0x09060708);
-	ui32 = ntohap(buffer + 7);
+	ui32 = ENTOHAP(buffer + 7);
 	TS_ASSERT(ui32 == 0x0a070809);
-	ui32 = ntohap(buffer + 8);
+	ui32 = ENTOHAP(buffer + 8);
 	TS_ASSERT(ui32 == 0x0b08090a);
-	ui32 = ntohap(buffer + 9);
+	ui32 = ENTOHAP(buffer + 9);
 	TS_ASSERT(ui32 == 0x0c090a0b);
-	ui32 = ntohap(buffer + 10);
+	ui32 = ENTOHAP(buffer + 10);
 	TS_ASSERT(ui32 == 0x0d0a0b0c);
-	ui32 = ntohap(buffer + 11);
+	ui32 = ENTOHAP(buffer + 11);
 	TS_ASSERT(ui32 == 0x0e0b0c0d);
-	ui32 = ntohap(buffer + 12);
+	ui32 = ENTOHAP(buffer + 12);
 	TS_ASSERT(ui32 == 0x0f0c0d0e);
 
-	ui64 = ntohllp(buffer);
+	ui64 = ENTOHLLP(buffer);
 	TS_ASSERT(ui64 == 0x0001020304050607LL);
-	ui64 = ntohllp(buffer + 1);
+	ui64 = ENTOHLLP(buffer + 1);
 	TS_ASSERT(ui64 == 0x0102030405060708LL);
-	ui64 = ntohllp(buffer + 2);
+	ui64 = ENTOHLLP(buffer + 2);
 	TS_ASSERT(ui64 == 0x0203040506070809LL);
-	ui64 = ntohllp(buffer + 3);
+	ui64 = ENTOHLLP(buffer + 3);
 	TS_ASSERT(ui64 == 0x030405060708090aLL);
-	ui64 = ntohllp(buffer + 4);
+	ui64 = ENTOHLLP(buffer + 4);
 	TS_ASSERT(ui64 == 0x0405060708090a0bLL);
-	ui64 = ntohllp(buffer + 5);
+	ui64 = ENTOHLLP(buffer + 5);
 	TS_ASSERT(ui64 == 0x05060708090a0b0cLL);
-	ui64 = ntohllp(buffer + 6);
+	ui64 = ENTOHLLP(buffer + 6);
 	TS_ASSERT(ui64 == 0x060708090a0b0c0dLL);
-	ui64 = ntohllp(buffer + 7);
+	ui64 = ENTOHLLP(buffer + 7);
 	TS_ASSERT(ui64 == 0x0708090a0b0c0d0eLL);
-	ui64 = ntohllp(buffer + 8);
+	ui64 = ENTOHLLP(buffer + 8);
 	TS_ASSERT(ui64 == 0x08090a0b0c0d0e0fLL);
+
+	char *pTempBuffer = new char[64 + 8];
+	char rawDouble[] = {0x40, 0x5E, 0xDD, 0x2F, 0x1A, 0x9F, 0xBE, 0x77};
+	double tempDoubleVal = 0;
+	for (int i = 0; i <= 64; i++) {
+		memset(pTempBuffer, 0, i);
+		memcpy(pTempBuffer + i, rawDouble, 8);
+		memset(pTempBuffer + i + 8, 0, 64 + 8 - i - 8);
+		ENTOHDP((pTempBuffer + i), tempDoubleVal);
+		TS_ASSERT(d == tempDoubleVal);
+	}
+	delete[] pTempBuffer;
 
 	//network to host
 #ifdef LITTLE_ENDIAN_BYTE_ALIGNED
-	TS_ASSERT(ntoha(0x01040302) == 0x01020304);
-	TS_ASSERT(ntohll(0x0807060504030201LL) == 0x0102030405060708LL);
+	TS_ASSERT(ENTOHA(0x01040302) == 0x01020304);
+	TS_ASSERT(ENTOHLL(0x0807060504030201LL) == 0x0102030405060708LL);
+	ENTOHD(0x77BE9F1A2FDD5E40LL, tempDoubleVal);
+	TS_ASSERT(d == tempDoubleVal);
 #endif /* LITTLE_ENDIAN_BYTE_ALIGNED */
 
 #ifdef LITTLE_ENDIAN_SHORT_ALIGNED
-	TS_ASSERT(ntoha(0x01040302) == 0x01020304);
-	TS_ASSERT(ntohll(0x0807060504030201LL) == 0x0102030405060708LL);
+	TS_ASSERT(ENTOHA(0x01040302) == 0x01020304);
+	TS_ASSERT(ENTOHLL(0x0807060504030201LL) == 0x0102030405060708LL);
+	ENTOHD(0x77BE9F1A2FDD5E40LL, tempDoubleVal);
+	TS_ASSERT(d == tempDoubleVal);
 #endif /* LITTLE_ENDIAN_SHORT_ALIGNED */
 
 #ifdef BIG_ENDIAN_BYTE_ALIGNED
-	TS_ASSERT(ntoha(0x02030401) == 0x01020304);
-	TS_ASSERT(ntohll(0x0102030405060708LL) == 0x0102030405060708LL);
+	TS_ASSERT(ENTOHA(0x02030401) == 0x01020304);
+	TS_ASSERT(ENTOHLL(0x0102030405060708LL) == 0x0102030405060708LL);
+#error ENTOHD not tested
 #endif /* BIG_ENDIAN_BYTE_ALIGNED */
 
 #ifdef BIG_ENDIAN_SHORT_ALIGNED
@@ -252,28 +282,34 @@ void CommonTestsSuite::test_Endianess() {
 #endif /* BIG_ENDIAN_SHORT_ALIGNED */
 
 	//double mirror
-	TS_ASSERT(ntohs(htons(0x0102)) == 0x0102);
-	TS_ASSERT(htons(ntohs(0x0102)) == 0x0102);
+	TS_ASSERT(ENTOHS(EHTONS(0x0102)) == 0x0102);
+	TS_ASSERT(EHTONS(ENTOHS(0x0102)) == 0x0102);
 
-	TS_ASSERT(ntohl(htonl(0x01020304)) == 0x01020304);
-	TS_ASSERT(htonl(ntohl(0x01020304)) == 0x01020304);
+	TS_ASSERT(ENTOHL(EHTONL(0x01020304)) == 0x01020304);
+	TS_ASSERT(EHTONL(ENTOHL(0x01020304)) == 0x01020304);
 
-	TS_ASSERT(ntoha(htona(0x01020304)) == 0x01020304);
-	TS_ASSERT(htona(ntoha(0x01020304)) == 0x01020304);
+	TS_ASSERT(ENTOHLL(EHTONLL(0x0102030405060708LL)) == 0x0102030405060708LL);
+	TS_ASSERT(EHTONLL(ENTOHLL(0x0102030405060708LL)) == 0x0102030405060708LL);
 
-	TS_ASSERT(ntohll(htonll(0x0102030405060708LL)) == 0x0102030405060708LL);
-	TS_ASSERT(htonll(ntohll(0x0102030405060708LL)) == 0x0102030405060708LL);
+	//EHTOND/ENTOHD are different. Requires 2 parameters. So, no double mirror
+
+	TS_ASSERT(ENTOHA(EHTONA(0x01020304)) == 0x01020304);
+	TS_ASSERT(EHTONA(ENTOHA(0x01020304)) == 0x01020304);
 
 	// Buffer Put routines
 	for (int i = 0; i < 16; i++) {
-		put_htons(buffer + i, 0x0102);
-		TS_ASSERT(ntohsp(buffer + i) == 0x0102);
+		EHTONSP(buffer + i, 0x0102);
+		TS_ASSERT(ENTOHSP(buffer + i) == 0x0102);
 
-		put_htonl(buffer + i, 0x01020304);
-		TS_ASSERT(ntohlp(buffer + i) == 0x01020304);
+		EHTONLP(buffer + i, 0x01020304);
+		TS_ASSERT(ENTOHLP(buffer + i) == 0x01020304);
 
-		put_htonll(buffer + i, 0x0102030405060708LL);
-		TS_ASSERT(ntohllp(buffer + i) == 0x0102030405060708LL);
+		EHTONLLP(buffer + i, 0x0102030405060708LL);
+		TS_ASSERT(ENTOHLLP(buffer + i) == 0x0102030405060708LL);
+
+		EHTONDP(d, (buffer + i));
+		ENTOHDP(buffer + i, tempDoubleVal);
+		TS_ASSERT(d == tempDoubleVal);
 	}
 }
 

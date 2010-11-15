@@ -54,7 +54,7 @@ bool InboundAESProtocol::Initialize(Variant &parameters) {
 	}
 
 	memset(_pIV, 0, 16);
-	put_htonll(_pIV + 8, (uint64_t) parameters["payload"]["iv"]);
+	EHTONLLP(_pIV, (uint64_t) parameters["payload"]["iv"]);
 	memcpy(_pKey, STR(parameters["payload"]["key"]), 16);
 
 	//	FINEST(" IV: %02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x",

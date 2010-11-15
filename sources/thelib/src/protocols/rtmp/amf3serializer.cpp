@@ -251,8 +251,9 @@ bool AMF3Serializer::ReadDouble(IOBuffer &buffer, Variant &variant, bool readTyp
 	READ_AMF3_TYPE(AMF3_DOUBLE);
 
 	AMF_CHECK_BOUNDARIES(buffer, 8);
-	uint64_t temp = ntohllp(GETIBPOINTER(buffer));
-	variant = *((double *) & temp);
+	double temp = 0;
+	ENTOHDP(GETIBPOINTER(buffer), temp);
+	variant = (double) temp;
 
 	if (!buffer.Ignore(8)) {
 		FATAL("Unable to ignore 8 bytes");
@@ -264,7 +265,9 @@ bool AMF3Serializer::ReadDouble(IOBuffer &buffer, Variant &variant, bool readTyp
 bool AMF3Serializer::WriteDouble(IOBuffer &buffer, double value, bool writeType) {
 	WRITE_AMF3_TYPE(AMF3_DOUBLE);
 
-	uint64_t u64Val = htonll(*((uint64_t *) & value));
+	//uint64_t u64Val = HTOND(*((uint64_t *) & value));
+	uint64_t u64Val = 0;
+	EHTOND(value, u64Val);
 
 	return buffer.ReadFromBuffer((uint8_t *) & u64Val, 8);
 }
@@ -335,7 +338,7 @@ bool AMF3Serializer::ReadDate(IOBuffer &buffer, Variant &variant, bool readType)
 	if ((temp & 0x01) == 1) {
 		//new date
 		AMF_CHECK_BOUNDARIES(buffer, 8);
-		uint64_t u64Val = ntohllp(GETIBPOINTER(buffer));
+		uint64_t u64Val = ENTOHLLP(GETIBPOINTER(buffer));
 		if (!buffer.Ignore(8)) {
 			FATAL("Unable to ignore 8 bytes");
 			return false;
@@ -528,7 +531,7 @@ bool AMF3Serializer::ReadObject(IOBuffer &buffer, Variant &variant, bool readTyp
 
 	uint32_t objectIndex = _objects.size();
 	WARN("Begin reading object %d", objectIndex);
-	Variant tempVariant=Variant();
+	Variant tempVariant = Variant();
 	ADD_VECTOR_END(_objects, tempVariant);
 
 	Variant traits;
@@ -541,7 +544,7 @@ bool AMF3Serializer::ReadObject(IOBuffer &buffer, Variant &variant, bool readTyp
 		uint32_t traitsIndex = _traits.size();
 		INFO("Begin reading traits names %d", traitsIndex);
 
-		tempVariant=Variant();
+		tempVariant = Variant();
 		ADD_VECTOR_END(_traits, tempVariant);
 		traits[AMF3_TRAITS_DYNAMIC] = (bool)isDynamic;
 
@@ -743,7 +746,7 @@ bool AMF3Serializer::ReadU29(IOBuffer &buffer, uint32_t & value) {
 }
 
 bool AMF3Serializer::WriteU29(IOBuffer &buffer, uint32_t value) {
-	uint32_t temp = htonl(value);
+	uint32_t temp = EHTONL(value);
 	uint8_t *pBuffer = (uint8_t*) & temp;
 	if ((0x00000000 <= value) && (value <= 0x0000007f)) {
 		buffer.ReadFromRepeat(pBuffer[3], 1);

@@ -457,7 +457,7 @@ bool RTMPProtocolSerializer::SerializeSharedObject(IOBuffer &buffer,
 
 				uint32_t length = buffer.GetCurrentWritePosition()
 						- rawLengthPosition - 4;
-				*(uint32_t *) (buffer.GetPointer() + rawLengthPosition) = htonl(length); //----MARKED-LONG---
+				*(uint32_t *) (buffer.GetPointer() + rawLengthPosition) = EHTONL(length); //----MARKED-LONG---
 				break;
 			}
 			case SOT_SC_CLEAR_DATA:
@@ -489,7 +489,7 @@ bool RTMPProtocolSerializer::SerializeSharedObject(IOBuffer &buffer,
 
 				uint32_t length = buffer.GetCurrentWritePosition()
 						- rawLengthPosition - 4;
-				*(uint32_t *) (buffer.GetPointer() + rawLengthPosition) = htonl(length); //----MARKED-LONG---
+				*(uint32_t *) (buffer.GetPointer() + rawLengthPosition) = EHTONL(length); //----MARKED-LONG---
 				break;
 			}
 			default:
@@ -569,13 +569,13 @@ bool RTMPProtocolSerializer::DeserializeInvoke(IOBuffer &buffer, Variant &messag
 
 bool RTMPProtocolSerializer::DeserializeAck(IOBuffer &buffer,
 		Variant &message) {
-	message = (uint32_t) ntohlp(GETIBPOINTER(buffer)); //----MARKED-LONG---
+	message = (uint32_t) ENTOHLP(GETIBPOINTER(buffer)); //----MARKED-LONG---
 	//FINEST("BR:\n%s", STR(message.ToString()));
 	return buffer.Ignore(4);
 }
 
 bool RTMPProtocolSerializer::DeserializeUsrCtrl(IOBuffer &buffer, Variant &message) {
-	message[RM_USRCTRL_TYPE] = ntohsp(GETIBPOINTER(buffer)); //----MARKED-SHORT----
+	message[RM_USRCTRL_TYPE] = ENTOHSP(GETIBPOINTER(buffer)); //----MARKED-SHORT----
 	message[RM_USRCTRL_TYPE_STRING] = GetUserCtrlTypeString(message[RM_USRCTRL_TYPE]);
 	if (!buffer.Ignore(2)) {
 		FATAL("Unable to ignore 2 bytes");
@@ -588,7 +588,7 @@ bool RTMPProtocolSerializer::DeserializeUsrCtrl(IOBuffer &buffer, Variant &messa
 		case RM_USRCTRL_TYPE_STREAM_DRY:
 		case RM_USRCTRL_TYPE_STREAM_IS_RECORDED:
 		{
-			message[RM_USRCTRL_STREAMID] = ntohlp(GETIBPOINTER(buffer)); //----MARKED-LONG---
+			message[RM_USRCTRL_STREAMID] = ENTOHLP(GETIBPOINTER(buffer)); //----MARKED-LONG---
 			if (!buffer.Ignore(4)) {
 				FATAL("Unable to ignore 4 bytes");
 				return false;
@@ -597,12 +597,12 @@ bool RTMPProtocolSerializer::DeserializeUsrCtrl(IOBuffer &buffer, Variant &messa
 		}
 		case RM_USRCTRL_TYPE_STREAM_SET_BUFFER_LENGTH:
 		{
-			message[RM_USRCTRL_STREAMID] = ntohlp(GETIBPOINTER(buffer)); //----MARKED-LONG---
+			message[RM_USRCTRL_STREAMID] = ENTOHLP(GETIBPOINTER(buffer)); //----MARKED-LONG---
 			if (!buffer.Ignore(4)) {
 				FATAL("Unable to ignore 4 bytes");
 				return false;
 			}
-			message[RM_USRCTRL_BUFFLEN] = ntohlp(GETIBPOINTER(buffer)); //----MARKED-LONG---
+			message[RM_USRCTRL_BUFFLEN] = ENTOHLP(GETIBPOINTER(buffer)); //----MARKED-LONG---
 			if (!buffer.Ignore(4)) {
 				FATAL("Unable to ignore 4 bytes");
 				return false;
@@ -612,7 +612,7 @@ bool RTMPProtocolSerializer::DeserializeUsrCtrl(IOBuffer &buffer, Variant &messa
 		}
 		case RM_USRCTRL_TYPE_PING_REQUEST:
 		{
-			message[RM_USRCTRL_PING] = ntohlp(GETIBPOINTER(buffer)); //----MARKED-LONG---
+			message[RM_USRCTRL_PING] = ENTOHLP(GETIBPOINTER(buffer)); //----MARKED-LONG---
 			if (!buffer.Ignore(4)) {
 				FATAL("Unable to ignore 4 bytes");
 				return false;
@@ -622,7 +622,7 @@ bool RTMPProtocolSerializer::DeserializeUsrCtrl(IOBuffer &buffer, Variant &messa
 		}
 		case RM_USRCTRL_TYPE_PING_RESPONSE:
 		{
-			message[RM_USRCTRL_PONG] = ntohlp(GETIBPOINTER(buffer)); //----MARKED-LONG---
+			message[RM_USRCTRL_PONG] = ENTOHLP(GETIBPOINTER(buffer)); //----MARKED-LONG---
 			if (!buffer.Ignore(4)) {
 				FATAL("Unable to ignore 4 bytes");
 				return false;
@@ -632,7 +632,7 @@ bool RTMPProtocolSerializer::DeserializeUsrCtrl(IOBuffer &buffer, Variant &messa
 		case RM_USRCTRL_TYPE_UNKNOWN1:
 		case RM_USRCTRL_TYPE_UNKNOWN2:
 		{
-			message[RM_USRCTRL_UNKNOWN_U32] = ntohlp(GETIBPOINTER(buffer)); //----MARKED-LONG---
+			message[RM_USRCTRL_UNKNOWN_U32] = ENTOHLP(GETIBPOINTER(buffer)); //----MARKED-LONG---
 			if (!buffer.Ignore(4)) {
 				FATAL("Unable to ignore 4 bytes");
 				return false;
@@ -650,18 +650,18 @@ bool RTMPProtocolSerializer::DeserializeUsrCtrl(IOBuffer &buffer, Variant &messa
 
 bool RTMPProtocolSerializer::DeserializeChunkSize(IOBuffer &buffer,
 		Variant &message) {
-	message = (uint32_t) ntohlp(GETIBPOINTER(buffer)); //----MARKED-LONG---
+	message = (uint32_t) ENTOHLP(GETIBPOINTER(buffer)); //----MARKED-LONG---
 	//FINEST("CS:\n%s", STR(message.ToString()));
 	return buffer.Ignore(4);
 }
 
 bool RTMPProtocolSerializer::DeserializeWinAckSize(IOBuffer &buffer, Variant &message) {
-	message = (uint32_t) ntohlp(GETIBPOINTER(buffer)); //----MARKED-LONG---
+	message = (uint32_t) ENTOHLP(GETIBPOINTER(buffer)); //----MARKED-LONG---
 	return buffer.Ignore(4);
 }
 
 bool RTMPProtocolSerializer::DeserializePeerBW(IOBuffer &buffer, Variant &message) {
-	message[RM_PEERBW_VALUE] = (uint32_t) ntohlp(GETIBPOINTER(buffer)); //----MARKED-LONG---
+	message[RM_PEERBW_VALUE] = (uint32_t) ENTOHLP(GETIBPOINTER(buffer)); //----MARKED-LONG---
 	if (!buffer.Ignore(4)) {
 		FATAL("Unable to ignore 4 bytes");
 		return false;
@@ -671,7 +671,7 @@ bool RTMPProtocolSerializer::DeserializePeerBW(IOBuffer &buffer, Variant &messag
 }
 
 bool RTMPProtocolSerializer::DeserializeAbortMessage(IOBuffer &buffer, Variant &message) {
-	message = (uint32_t) ntohlp(GETIBPOINTER(buffer)); //----MARKED-LONG---
+	message = (uint32_t) ENTOHLP(GETIBPOINTER(buffer)); //----MARKED-LONG---
 	if (!buffer.Ignore(4)) {
 		FATAL("Unable to ignore 4 bytes");
 		return false;

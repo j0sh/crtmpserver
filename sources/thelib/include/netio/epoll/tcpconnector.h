@@ -132,7 +132,7 @@ public:
 			FATAL("Unable to translate string %s to a valid IP address", STR(_ip));
 			return 0;
 		}
-		address.sin_port = htons(_port); //----MARKED-SHORT----
+		address.sin_port = EHTONS(_port); //----MARKED-SHORT----
 
 		if (!IOHandlerManager::EnableWriteData(this)) {
 			FATAL("Unable to enable reading data");

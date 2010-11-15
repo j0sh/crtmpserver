@@ -91,7 +91,7 @@ bool TSPacketPAT::Read(uint8_t *pBuffer, uint32_t &cursor, bool hasPointerField,
 
 	//3. read section length and syntax indicator
 	CHECK_BOUNDS(2);
-	_u1.raw = ntohsp((pBuffer + cursor)); //----MARKED-SHORT----
+	_u1.raw = ENTOHSP((pBuffer + cursor)); //----MARKED-SHORT----
 	cursor += 2;
 
 	//4. Compute entries count
@@ -99,7 +99,7 @@ bool TSPacketPAT::Read(uint8_t *pBuffer, uint32_t &cursor, bool hasPointerField,
 
 	//5. Read transport stream id
 	CHECK_BOUNDS(2);
-	_transportStreamId = ntohsp((pBuffer + cursor)); //----MARKED-SHORT----
+	_transportStreamId = ENTOHSP((pBuffer + cursor)); //----MARKED-SHORT----
 	cursor += 2;
 
 	//6. read current next indicator and version
@@ -118,12 +118,12 @@ bool TSPacketPAT::Read(uint8_t *pBuffer, uint32_t &cursor, bool hasPointerField,
 	for (uint32_t i = 0; i < _entriesCount; i++) {
 		//9.1. read the program number
 		CHECK_BOUNDS(2);
-		uint16_t programNumber = ntohsp((pBuffer + cursor)); //----MARKED-SHORT----
+		uint16_t programNumber = ENTOHSP((pBuffer + cursor)); //----MARKED-SHORT----
 		cursor += 2;
 
 		//9.2. read the network or program map pid
 		CHECK_BOUNDS(2);
-		uint16_t temp = ntohsp((pBuffer + cursor)); //----MARKED-SHORT----
+		uint16_t temp = ENTOHSP((pBuffer + cursor)); //----MARKED-SHORT----
 		cursor += 2;
 		temp &= 0x1fff;
 
@@ -137,7 +137,7 @@ bool TSPacketPAT::Read(uint8_t *pBuffer, uint32_t &cursor, bool hasPointerField,
 
 	//10. read the CRC
 	CHECK_BOUNDS(4);
-	_crc = ntohlp((pBuffer + cursor)); //----MARKED-LONG---
+	_crc = ENTOHLP((pBuffer + cursor)); //----MARKED-LONG---
 	cursor += 4;
 
 	//12. done
@@ -173,7 +173,7 @@ uint32_t TSPacketPAT::PeekCRC(uint8_t *pBuffer, uint32_t cursor,
 
 	//3. read section length
 	CHECK_BOUNDS(2);
-	uint16_t length = ntohsp((pBuffer + cursor)); //----MARKED-SHORT----
+	uint16_t length = ENTOHSP((pBuffer + cursor)); //----MARKED-SHORT----
 	length &= 0x0fff;
 	cursor += 2;
 
@@ -183,7 +183,7 @@ uint32_t TSPacketPAT::PeekCRC(uint8_t *pBuffer, uint32_t cursor,
 
 	//5. return the crc
 	CHECK_BOUNDS(4);
-	return ntohlp((pBuffer + cursor)); //----MARKED-LONG---
+	return ENTOHLP((pBuffer + cursor)); //----MARKED-LONG---
 }
 #endif	/* HAS_PROTOCOL_TS */
 

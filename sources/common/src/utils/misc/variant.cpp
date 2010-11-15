@@ -1210,19 +1210,19 @@ bool Variant::SerializeToBin(string &result) {
 		}
 		case V_INT16:
 		{
-			int16_t val = htons(_value.i16); //----MARKED-SHORT----
+			int16_t val = EHTONS(_value.i16); //----MARKED-SHORT----
 			result += string((char *) & val, sizeof (int16_t));
 			return true;
 		}
 		case V_INT32:
 		{
-			int32_t val = htonl(_value.i32); //----MARKED-LONG---
+			int32_t val = EHTONL(_value.i32); //----MARKED-LONG---
 			result += string((char *) & val, sizeof (int32_t));
 			return true;
 		}
 		case V_INT64:
 		{
-			int64_t val = htonll(_value.i64); //----MARKED-LONG---
+			int64_t val = EHTONLL(_value.i64);
 			result += string((char *) & val, sizeof (int64_t));
 			return true;
 		}
@@ -1233,25 +1233,26 @@ bool Variant::SerializeToBin(string &result) {
 		}
 		case V_UINT16:
 		{
-			uint16_t val = htons(_value.ui16); //----MARKED-SHORT----
+			uint16_t val = EHTONS(_value.ui16); //----MARKED-SHORT----
 			result += string((char *) & val, sizeof (uint16_t));
 			return true;
 		}
 		case V_UINT32:
 		{
-			uint32_t val = htonl(_value.ui32); //----MARKED-LONG---
+			uint32_t val = EHTONL(_value.ui32); //----MARKED-LONG---
 			result += string((char *) & val, sizeof (uint32_t));
 			return true;
 		}
 		case V_UINT64:
 		{
-			uint64_t val = htonll(_value.ui64); //----MARKED-LONG---
+			uint64_t val = EHTONLL(_value.ui64);
 			result += string((char *) & val, sizeof (uint64_t));
 			return true;
 		}
 		case V_DOUBLE:
 		{
-			uint64_t val = htonll(*((uint64_t *) & _value.d)); //----MARKED-LONG---
+			uint64_t val = 0;
+			EHTOND(_value.d, val);
 			result += string((char *) & val, sizeof (uint64_t));
 			return true;
 		}
@@ -1259,14 +1260,14 @@ bool Variant::SerializeToBin(string &result) {
 		case V_DATE:
 		case V_TIME:
 		{
-			uint64_t temp = htonll((uint64_t) timegm(_value.t)); //----MARKED-LONG---
+			uint64_t temp = EHTONLL((uint64_t) timegm(_value.t));
 			result += string((char *) & temp, sizeof (uint64_t));
 			return true;
 		}
 		case V_BYTEARRAY:
 		case V_STRING:
 		{
-			uint32_t length = htonl((uint32_t) _value.s->size()); //----MARKED-LONG---
+			uint32_t length = EHTONL((uint32_t) _value.s->size()); //----MARKED-LONG---
 			result += string((char *) & length, sizeof (uint32_t));
 			result += *(_value.s);
 			return true;
@@ -1279,16 +1280,16 @@ bool Variant::SerializeToBin(string &result) {
 
 			uint32_t length = 0;
 			if (_type == V_TYPED_MAP) {
-				length = htonl((uint32_t) _value.m->typeName.size()); //----MARKED-LONG---
+				length = EHTONL((uint32_t) _value.m->typeName.size()); //----MARKED-LONG---
 				result += string((char *) & length, sizeof (uint32_t));
 				result += _value.m->typeName;
 			}
 
-			length = htonl(MapSize()); //----MARKED-LONG---
+			length = EHTONL(MapSize()); //----MARKED-LONG---
 			result += string((char *) & length, sizeof (uint32_t));
 
 			FOR_MAP(*this, string, Variant, i) {
-				length = htonl((uint32_t) MAP_KEY(i).size()); //----MARKED-LONG---
+				length = EHTONL((uint32_t) MAP_KEY(i).size()); //----MARKED-LONG---
 				result += string((char *) & length, sizeof (uint32_t));
 				result += MAP_KEY(i);
 				string temp = "";
@@ -1667,7 +1668,7 @@ bool Variant::DeserializeFromBin(uint8_t *pBuffer, uint32_t bufferSize,
 		case V_INT16:
 		{
 			VARIANT_CHECK_BOUNDS(2);
-			uint16_t val = ntohsp(PTR); //----MARKED-SHORT----
+			uint16_t val = ENTOHSP(PTR); //----MARKED-SHORT----
 			cursor += 2;
 			variant = *((int16_t *) & val);
 			return true;
@@ -1676,7 +1677,7 @@ bool Variant::DeserializeFromBin(uint8_t *pBuffer, uint32_t bufferSize,
 		case V_INT32:
 		{
 			VARIANT_CHECK_BOUNDS(4);
-			uint32_t val = ntohlp(PTR); //----MARKED-LONG---
+			uint32_t val = ENTOHLP(PTR); //----MARKED-LONG---
 			cursor += 4;
 			variant = *((int32_t *) & val);
 			return true;
@@ -1684,7 +1685,7 @@ bool Variant::DeserializeFromBin(uint8_t *pBuffer, uint32_t bufferSize,
 		case V_INT64:
 		{
 			VARIANT_CHECK_BOUNDS(8);
-			uint64_t val = ntohlp(PTR); //----MARKED-LONG---
+			uint64_t val = ENTOHLLP(PTR); //----MARKED-LONG---
 			cursor += 8;
 			variant = *((int64_t *) & val);
 			return true;
@@ -1699,30 +1700,31 @@ bool Variant::DeserializeFromBin(uint8_t *pBuffer, uint32_t bufferSize,
 		case V_UINT16:
 		{
 			VARIANT_CHECK_BOUNDS(2);
-			variant = ntohsp(PTR); //----MARKED-SHORT----
+			variant = ENTOHSP(PTR); //----MARKED-SHORT----
 			cursor += 2;
 			return true;
 		}
 		case V_UINT32:
 		{
 			VARIANT_CHECK_BOUNDS(4);
-			variant = ntohlp(PTR); //----MARKED-LONG---
+			variant = ENTOHLP(PTR); //----MARKED-LONG---
 			cursor += 4;
 			return true;
 		}
 		case V_UINT64:
 		{
 			VARIANT_CHECK_BOUNDS(8);
-			variant = (uint64_t) ntohllp(PTR); //----MARKED-LONG---
+			variant = (uint64_t) ENTOHLLP(PTR); //----MARKED-LONG---
 			cursor += 8;
 			return true;
 		}
 		case V_DOUBLE:
 		{
 			VARIANT_CHECK_BOUNDS(8);
-			uint64_t val = ntohllp(PTR); //----MARKED-LONG---
+			double temp = 0;
+			ENTOHDP(PTR, temp);
 			cursor += 8;
-			variant = *((double *) & val);
+			variant = (double) temp;
 			return true;
 		}
 		case V_TIMESTAMP:
@@ -1730,7 +1732,7 @@ bool Variant::DeserializeFromBin(uint8_t *pBuffer, uint32_t bufferSize,
 		case V_TIME:
 		{
 			VARIANT_CHECK_BOUNDS(8);
-			time_t val = ntohllp(PTR); //----MARKED-LONG---
+			time_t val = (time_t) ENTOHLLP(PTR); //----MARKED-LONG---
 			cursor += 8;
 			variant = *((Timestamp *) gmtime(&val));
 			variant._type = type;
@@ -1740,7 +1742,7 @@ bool Variant::DeserializeFromBin(uint8_t *pBuffer, uint32_t bufferSize,
 		case V_STRING:
 		{
 			VARIANT_CHECK_BOUNDS(4);
-			uint32_t length = ntohlp(PTR); //----MARKED-LONG---
+			uint32_t length = ENTOHLP(PTR); //----MARKED-LONG---
 			cursor += 4;
 			VARIANT_CHECK_BOUNDS(length);
 			if (length > 1024 * 128) {
@@ -1763,7 +1765,7 @@ bool Variant::DeserializeFromBin(uint8_t *pBuffer, uint32_t bufferSize,
 			uint32_t length = 0;
 			if (type == V_TYPED_MAP) {
 				VARIANT_CHECK_BOUNDS(4);
-				length = ntohlp(PTR); //----MARKED-LONG---
+				length = ENTOHLP(PTR); //----MARKED-LONG---
 				cursor += 4;
 				VARIANT_CHECK_BOUNDS(length);
 				if (length > 1024 * 128) {
@@ -1776,7 +1778,7 @@ bool Variant::DeserializeFromBin(uint8_t *pBuffer, uint32_t bufferSize,
 			}
 
 			VARIANT_CHECK_BOUNDS(4);
-			length = ntohlp(PTR); //----MARKED-LONG---
+			length = ENTOHLP(PTR); //----MARKED-LONG---
 			if (length > 1024) {
 				FATAL("Length too large");
 				return false;
@@ -1788,7 +1790,7 @@ bool Variant::DeserializeFromBin(uint8_t *pBuffer, uint32_t bufferSize,
 				uint32_t keyLength;
 
 				VARIANT_CHECK_BOUNDS(4);
-				keyLength = ntohlp(PTR); //----MARKED-LONG---
+				keyLength = ENTOHLP(PTR); //----MARKED-LONG---
 				cursor += 4;
 				VARIANT_CHECK_BOUNDS(keyLength);
 				if (keyLength > 1024 * 128) {

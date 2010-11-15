@@ -51,25 +51,12 @@
             <Elem>OSX</Elem>
             <Elem>NET_KQUEUE</Elem>
             <Elem>HAS_PROTOCOL_RTMP</Elem>
+            <Elem>LITTLE_ENDIAN_BYTE_ALIGNED</Elem>
           </preprocessorList>
         </ccTool>
         <archiverTool>
         </archiverTool>
       </compileType>
-      <item path="../../../../sources/tests/src/basetestssuite.cpp"
-            ex="false"
-            tool="1">
-      </item>
-      <item path="../../../../sources/tests/src/commontestssuite.cpp"
-            ex="false"
-            tool="1">
-      </item>
-      <item path="../../../../sources/tests/src/main.cpp" ex="false" tool="1">
-      </item>
-      <item path="../../../../sources/tests/src/varianttestssuite.cpp"
-            ex="false"
-            tool="1">
-      </item>
     </conf>
     <conf name="Release" type="3">
       <toolsSet>

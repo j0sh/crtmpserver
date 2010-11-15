@@ -173,14 +173,14 @@ bool TCPCarrier::GetEndpointsInfo() {
 		return false;
 	}
 	_farIp = format("%s", inet_ntoa(((sockaddr_in *) & _farAddress)->sin_addr));
-	_farPort = ntohs(((sockaddr_in *) & _farAddress)->sin_port); //----MARKED-SHORT----
+	_farPort = ENTOHS(((sockaddr_in *) & _farAddress)->sin_port); //----MARKED-SHORT----
 
 	if (getsockname(_inboundFd, (sockaddr *) & _nearAddress, &len) != 0) {
 		FATAL("Unable to get peer's address");
 		return false;
 	}
 	_nearIp = format("%s", inet_ntoa(((sockaddr_in *) & _nearAddress)->sin_addr));
-	_nearPort = ntohs(((sockaddr_in *) & _nearAddress)->sin_port); //----MARKED-SHORT----
+	_nearPort = ENTOHS(((sockaddr_in *) & _nearAddress)->sin_port); //----MARKED-SHORT----
 	//FINEST("_nearAddress: %s; _nearPort: %d", STR(_nearAddress), _nearPort);
 	return true;
 }

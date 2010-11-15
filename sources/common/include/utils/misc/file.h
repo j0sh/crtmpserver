@@ -67,7 +67,7 @@ public:
 	bool ReadUI32(uint32_t *pValue, bool networkOrder = true);
 	bool ReadSUI32(uint32_t *pValue);
 	bool ReadUI64(uint64_t *pValue, bool networkOrder = true);
-	bool ReadDouble(double *pValue);
+	//bool ReadDouble(double *pValue, bool networkOrder = true);
 	bool ReadBuffer(uint8_t *pBuffer, uint64_t count);
 	bool ReadLine(uint8_t *pBuffer, uint64_t &maxSize);
 	bool ReadAll(string &str);
@@ -85,7 +85,7 @@ public:
 	bool PeekUI32(uint32_t *pValue, bool networkOrder = true);
 	bool PeekSUI32(uint32_t *pValue);
 	bool PeekUI64(uint64_t *pValue, bool networkOrder = true);
-	bool PeekDouble(double *pValue);
+	//bool PeekDouble(double *pValue);
 	bool PeekBuffer(uint8_t *pBuffer, uint64_t count);
 
 	//write data
@@ -101,7 +101,7 @@ public:
 	bool WriteUI32(uint32_t value, bool networkOrder = true);
 	bool WriteSUI32(uint32_t value);
 	bool WriteUI64(uint64_t value, bool networkOrder = true);
-	bool WriteDouble(double value);
+	//bool WriteDouble(double value, bool networkOrder = true);
 	bool WriteString(string &value);
 	bool WriteBuffer(const uint8_t *pBuffer, uint64_t count);
 	bool Flush();

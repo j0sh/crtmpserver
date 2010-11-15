@@ -53,7 +53,7 @@ bool IntElement::Read() {
 		FATAL("Unable to read buffer");
 		return false;
 	}
-	_value = ntohllp((uint8_t *) & _value);
+	_value = ENTOHLLP((uint8_t *) & _value);
 	return true;
 }
 

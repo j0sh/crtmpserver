@@ -35,7 +35,7 @@ TCPAcceptor::TCPAcceptor(string ipAddress, uint16_t port, Variant parameters,
 	_address.sin_family = PF_INET;
 	_address.sin_addr.s_addr = inet_addr(ipAddress.c_str());
 	assert(_address.sin_addr.s_addr != INADDR_NONE);
-	_address.sin_port = htons(port); //----MARKED-SHORT----
+	_address.sin_port = EHTONS(port); //----MARKED-SHORT----
 
 	_protocolChain = protocolChain;
 	_parameters = parameters;
@@ -76,7 +76,7 @@ bool TCPAcceptor::StartAccept(BaseClientApplication *pApplication) {
 		int error = errno;
 		FATAL("Unable to bind on address: tcp://%s:%d; Error was: %s (%d)",
 				inet_ntoa(((sockaddr_in *) & _address)->sin_addr),
-				ntohs(((sockaddr_in *) & _address)->sin_port),
+				ENTOHS(((sockaddr_in *) & _address)->sin_port),
 				strerror(error),
 				error);
 		return false;

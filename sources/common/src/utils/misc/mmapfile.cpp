@@ -335,7 +335,7 @@ bool MmapFile::PeekI16(int16_t *pValue, bool networkOrder) {
 	if (!PeekBuffer((uint8_t *) pValue, 2))
 		return false;
 	if (networkOrder)
-		*pValue = ntohs(*pValue); //----MARKED-SHORT----
+		*pValue = ENTOHS(*pValue); //----MARKED-SHORT----
 	return true;
 }
 
@@ -344,7 +344,7 @@ bool MmapFile::PeekI24(int32_t *pValue, bool networkOrder) {
 	if (!PeekBuffer((uint8_t *) pValue, 3))
 		return false;
 	if (networkOrder)
-		*pValue = ntohl(*pValue) >> 8; //----MARKED-LONG---
+		*pValue = ENTOHL(*pValue) >> 8; //----MARKED-LONG---
 	else
 		*pValue = *pValue << 8;
 	return true;
@@ -354,14 +354,14 @@ bool MmapFile::PeekI32(int32_t *pValue, bool networkOrder) {
 	if (!PeekBuffer((uint8_t *) pValue, 4))
 		return false;
 	if (networkOrder)
-		*pValue = ntohl(*pValue); //----MARKED-LONG---
+		*pValue = ENTOHL(*pValue); //----MARKED-LONG---
 	return true;
 }
 
 bool MmapFile::PeekSI32(int32_t *pValue) {
 	if (!PeekI32(pValue, false))
 		return false;
-	*pValue = ntoha(*pValue); //----MARKED-LONG---
+	*pValue = ENTOHA(*pValue); //----MARKED-LONG---
 	return true;
 }
 
@@ -369,7 +369,7 @@ bool MmapFile::PeekI64(int64_t *pValue, bool networkOrder) {
 	if (!PeekBuffer((uint8_t *) pValue, 8))
 		return false;
 	if (networkOrder)
-		*pValue = ntohll(*pValue); //----MARKED-LONG---
+		*pValue = ENTOHLL(*pValue);
 	return true;
 }
 

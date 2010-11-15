@@ -205,15 +205,15 @@ bool InboundConnectivity::SendRTP(sockaddr_in &address, uint32_t rtpId,
 		return false;
 	}
 
-	if (ntohs(address.sin_port) == 0) {
+	if (ENTOHS(address.sin_port) == 0) {
 		if (!_forceTcp) {
 			WARN("Invalid address: %s:%d",
-					inet_ntoa(address.sin_addr), ntohs(address.sin_port));
+					inet_ntoa(address.sin_addr), ENTOHS(address.sin_port));
 		}
 		return true;
 	}
 
-	//FINEST("%s:%d length: %d", inet_ntoa(address.sin_addr), ntohs(address.sin_port), length);
+	//FINEST("%s:%d length: %d", inet_ntoa(address.sin_addr), ENTOHS(address.sin_port), length);
 	return sendto(pRTCP->GetIOHandler()->GetOutboundFd(),
 			(char *) pBuffer, length, 0, (sockaddr *) & address, sizeof (address)) == (int32_t) length;
 }

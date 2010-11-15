@@ -98,12 +98,12 @@ bool InboundLiveFLVProtocol::SignalInputData(IOBuffer &buffer) {
 		uint32_t length;
 		uint32_t timestamp;
 		type = GETIBPOINTER(buffer)[0];
-		length = ntohlp((GETIBPOINTER(buffer) + 1)) >> 8; //----MARKED-LONG---
+		length = ENTOHLP((GETIBPOINTER(buffer) + 1)) >> 8; //----MARKED-LONG---
 		if (length >= 1024 * 1024) {
 			FATAL("Frame too large: %d", length);
 			return false;
 		}
-		timestamp = ntohap((GETIBPOINTER(buffer) + 4)); //----MARKED-LONG---
+		timestamp = ENTOHAP((GETIBPOINTER(buffer) + 4)); //----MARKED-LONG---
 		//        FINEST("type: %d; length: %d(0x%x); timestamp: %d(0x%x)", type, length,
 		//                length, timestamp, timestamp);
 

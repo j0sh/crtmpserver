@@ -62,7 +62,7 @@ bool InboundRTMPProtocol::PerformHandshake(IOBuffer &buffer) {
 				return false;
 			}
 
-			_currentFPVersion = ntohl(*((uint32_t *) (GETIBPOINTER(buffer) + 4))); //----MARKED-LONG---
+			_currentFPVersion = ENTOHL(*((uint32_t *) (GETIBPOINTER(buffer) + 4))); //----MARKED-LONG---
 			//FINEST("Flash player: %s", STR(_currentFlashPlayerVersion));
 
 			switch (handshakeType) {
@@ -187,7 +187,7 @@ bool InboundRTMPProtocol::PerformHandshake(IOBuffer &buffer, bool encrypted) {
 	*(uint32_t *) _pOutputBuffer = 0;
 
 	//version
-	*(uint32_t *) (_pOutputBuffer + 4) = htonl(0x01020304); //----MARKED-LONG---
+	*(uint32_t *) (_pOutputBuffer + 4) = EHTONL(0x01020304);
 
 	//generate random data
 	for (uint32_t i = 8; i < 3072; i++) {

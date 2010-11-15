@@ -202,7 +202,7 @@ bool InNetRTPStream::FeedVideoData(uint8_t *pData, uint32_t dataLength,
 		double ts = (double) rtpHeader._timestamp / 90.00;
 		//FINEST("ts: %.2f; delta: %.2f", ts, ts - _lastTs);
 		while (index + 3 < dataLength) {
-			uint16_t length = ntohsp(pData + index);
+			uint16_t length = ENTOHSP(pData + index);
 			index += 2;
 			if (index + length > dataLength) {
 				WARN("Bogus STAP-A");

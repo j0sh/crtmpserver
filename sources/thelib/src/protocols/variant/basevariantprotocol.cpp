@@ -100,7 +100,7 @@ bool BaseVariantProtocol::SignalInputData(IOBuffer &buffer) {
 #endif /* HAS_PROTOCOL_HTTP */
 	} else if (_pFarProtocol->GetType() == PT_TCP) {
 		while (GETAVAILABLEBYTESCOUNT(buffer) > 4) {
-			uint32_t size = ntohlp(GETIBPOINTER(buffer));
+			uint32_t size = ENTOHLP(GETIBPOINTER(buffer));
 			if (size > 1024 * 128) {
 				FATAL("Size too big: %u", size);
 				return false;
@@ -153,7 +153,7 @@ bool BaseVariantProtocol::Send(Variant &variant) {
 
 			_outputBuffer.ReadFromRepeat(0, 4);
 			uint32_t rawContentSize = rawContent.size();
-			put_htonl(GETIBPOINTER(_outputBuffer), rawContentSize);
+			EHTONLP(GETIBPOINTER(_outputBuffer), rawContentSize);
 			_outputBuffer.ReadFromString(rawContent);
 
 			//6. enqueue for outbound

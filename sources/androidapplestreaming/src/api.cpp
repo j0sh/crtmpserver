@@ -183,7 +183,7 @@ void EnvRun(string ip, uint16_t port, int logLevel)
 
 	inet_aton("127.0.0.1", &gAddress.sin_addr);
 	gAddress.sin_family = AF_INET;
-	gAddress.sin_port = htons(port + 1);
+	gAddress.sin_port = EHTONS(port + 1);
 
 	//10. Run
 	while (IOHandlerManager::Pulse()) {

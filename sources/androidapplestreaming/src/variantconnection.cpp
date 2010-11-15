@@ -51,7 +51,7 @@ bool VariantConnection::SendMessage(Variant &message, Variant &response) {
 	}
 	uint8_t *pBuffer = (uint8_t *) rawContent.c_str();
 	uint32_t size = rawContent.size();
-	put_htonl(pBuffer, size - 4);
+	EHTONLP(pBuffer, size - 4);
 
 	int32_t totalSentAmount = 0;
 	int32_t sentAmount = 0;
@@ -77,7 +77,7 @@ bool VariantConnection::SendMessage(Variant &message, Variant &response) {
 			WARN("not enough data. Wait for more...");
 			continue;
 		}
-		uint32_t variantSize = ntohlp(pBuffer);
+		uint32_t variantSize = ENTOHLP(pBuffer);
 		if (variantSize + 4 > size) {
 			WARN("not enough data. Wait for more...");
 			continue;

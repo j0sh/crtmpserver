@@ -488,7 +488,7 @@ bool BaseElement::ReadCUI(MediaFile &mf, uint64_t &value, bool removeLeadingBit)
 			bytes[0], bytes[1], bytes[2], bytes[3],
 			bytes[4], bytes[5], bytes[6], bytes[7]);
 
-	value = ntohllp(bytes);
+	value = ENTOHLLP(bytes);
 	DEBUG_READ_CUI("value: %016llx", value);
 
 	return true;

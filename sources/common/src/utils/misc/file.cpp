@@ -185,7 +185,7 @@ bool File::ReadI16(int16_t *pValue, bool networkOrder) {
 	if (!ReadBuffer((uint8_t *) pValue, 2))
 		return false;
 	if (networkOrder)
-		*pValue = ntohs(*pValue); //----MARKED-SHORT----
+		*pValue = ENTOHS(*pValue); //----MARKED-SHORT----
 	return true;
 }
 
@@ -194,7 +194,7 @@ bool File::ReadI24(int32_t *pValue, bool networkOrder) {
 	if (!ReadBuffer((uint8_t *) pValue, 3))
 		return false;
 	if (networkOrder)
-		*pValue = ntohl(*pValue) >> 8; //----MARKED-LONG---
+		*pValue = ENTOHL(*pValue) >> 8; //----MARKED-LONG---
 	else
 		*pValue = *pValue << 8;
 	return true;
@@ -204,14 +204,14 @@ bool File::ReadI32(int32_t *pValue, bool networkOrder) {
 	if (!ReadBuffer((uint8_t *) pValue, 4))
 		return false;
 	if (networkOrder)
-		*pValue = ntohl(*pValue); //----MARKED-LONG---
+		*pValue = ENTOHL(*pValue); //----MARKED-LONG---
 	return true;
 }
 
 bool File::ReadSI32(int32_t *pValue) {
 	if (!ReadI32(pValue, false))
 		return false;
-	*pValue = ntoha(*pValue); //----MARKED-LONG---
+	*pValue = ENTOHA(*pValue); //----MARKED-LONG---
 	return true;
 }
 
@@ -219,7 +219,7 @@ bool File::ReadI64(int64_t *pValue, bool networkOrder) {
 	if (!ReadBuffer((uint8_t *) pValue, 8))
 		return false;
 	if (networkOrder)
-		*pValue = ntohll(*pValue); //----MARKED-LONG---
+		*pValue = ENTOHLL(*pValue);
 	return true;
 }
 
@@ -247,9 +247,10 @@ bool File::ReadUI64(uint64_t *pValue, bool networkOrder) {
 	return ReadI64((int64_t *) pValue, networkOrder);
 }
 
-bool File::ReadDouble(double *pValue) {
-	return ReadBuffer((uint8_t *) pValue, sizeof (double));
-}
+//bool File::ReadDouble(double *pValue, bool networkOrder) {
+//	NYIR;
+//	//return ReadBuffer((uint8_t *) pValue, sizeof (double));
+//}
 
 bool File::ReadBuffer(uint8_t *pBuffer, uint64_t count) {
 	_file.read((char *) pBuffer, count);
@@ -354,11 +355,11 @@ bool File::PeekUI64(uint64_t *pValue, bool networkOrder) {
 	return PeekI64((int64_t *) pValue, networkOrder);
 }
 
-bool File::PeekDouble(double *pValue) {
-	if (!ReadDouble(pValue))
-		return false;
-	return SeekBehind(sizeof (double));
-}
+//bool File::PeekDouble(double *pValue) {
+//	if (!ReadDouble(pValue))
+//		return false;
+//	return SeekBehind(sizeof (double));
+//}
 
 bool File::PeekBuffer(uint8_t *pBuffer, uint64_t count) {
 	if (!ReadBuffer(pBuffer, count))
@@ -372,19 +373,19 @@ bool File::WriteI8(int8_t value) {
 
 bool File::WriteI16(int16_t value, bool networkOrder) {
 	if (networkOrder)
-		value = htons(value); //----MARKED-SHORT----
+		value = EHTONS(value); //----MARKED-SHORT----
 	return WriteBuffer((uint8_t *) & value, 2);
 }
 
 bool File::WriteI24(int32_t value, bool networkOrder) {
 	if (networkOrder)
-		value = htonl(value << 8); //----MARKED-LONG---
+		value = EHTONL(value << 8);
 	return WriteBuffer((uint8_t *) & value, 3);
 }
 
 bool File::WriteI32(int32_t value, bool networkOrder) {
 	if (networkOrder)
-		value = htonl(value); //----MARKED-LONG---
+		value = EHTONL(value);
 	return WriteBuffer((uint8_t *) & value, 4);
 }
 
@@ -398,7 +399,7 @@ bool File::WriteSI32(int32_t value) {
 
 bool File::WriteI64(int64_t value, bool networkOrder) {
 	if (networkOrder)
-		value = htonll(value); //----MARKED-LONG---
+		value = EHTONLL(value);
 	return WriteBuffer((uint8_t *) & value, 8);
 }
 
@@ -426,9 +427,10 @@ bool File::WriteUI64(uint64_t value, bool networkOrder) {
 	return WriteI64((int64_t) value, networkOrder);
 }
 
-bool File::WriteDouble(double value) {
-	return WriteBuffer((uint8_t *) & value, sizeof (double));
-}
+//bool File::WriteDouble(double value, bool networkOrder) {
+//	//return WriteBuffer((uint8_t *) & value, sizeof (double));
+//	NYIR;
+//}
 
 bool File::WriteString(string &value) {
 	return WriteBuffer((uint8_t *) STR(value), value.length());

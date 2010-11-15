@@ -129,11 +129,11 @@ double TSAdaptationField::GetTime() {
 bool TSAdaptationField::ReadComplexTime(uint8_t *pBuffer, uint32_t &cursor,
 		double &p1, double &p2, uint32_t maxCursor) {
 	CHECK_BOUNDS(4);
-	uint32_t temp32 = ntohlp((pBuffer + cursor)); //----MARKED-LONG---
+	uint32_t temp32 = ENTOHLP((pBuffer + cursor)); //----MARKED-LONG---
 	cursor += 4;
 
 	CHECK_BOUNDS(2);
-	uint16_t temp16 = ntohsp((pBuffer + cursor)); //----MARKED-SHORT----
+	uint16_t temp16 = ENTOHSP((pBuffer + cursor)); //----MARKED-SHORT----
 	cursor += 2;
 
 	p1 = (double) temp32 * 2.0 + (temp16 >> 15);

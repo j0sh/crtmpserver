@@ -81,7 +81,7 @@ bool AMF0Serializer::ReadShortString(IOBuffer &buffer, Variant &variant,
 	}
 
 	AMF_CHECK_BOUNDARIES(buffer, 2);
-	uint16_t length = ntohsp(GETIBPOINTER(buffer)); //----MARKED-SHORT----
+	uint16_t length = ENTOHSP(GETIBPOINTER(buffer)); //----MARKED-SHORT----
 	if (!buffer.Ignore(2)) {
 		FATAL("Unable to ignore 2 bytes");
 		return false;
@@ -99,7 +99,7 @@ bool AMF0Serializer::WriteShortString(IOBuffer &buffer, string &value, bool writ
 	if (writeType)
 		buffer.ReadFromRepeat(AMF0_SHORT_STRING, 1);
 
-	uint16_t length = htons((uint16_t) value.length()); //----MARKED-SHORT----
+	uint16_t length = EHTONS((uint16_t) value.length()); //----MARKED-SHORT----
 
 	buffer.ReadFromBuffer((uint8_t *) & length, 2);
 	buffer.ReadFromString(value);
@@ -125,7 +125,7 @@ bool AMF0Serializer::ReadLongString(IOBuffer &buffer, Variant &variant, bool rea
 
 	//uint16_t length = (GETIBPOINTER(buffer)[0] << 8) | GETIBPOINTER(buffer)[1];
 	AMF_CHECK_BOUNDARIES(buffer, 4);
-	uint32_t length = ntohlp(GETIBPOINTER(buffer)); //----MARKED-LONG---
+	uint32_t length = ENTOHLP(GETIBPOINTER(buffer)); //----MARKED-LONG---
 	if (!buffer.Ignore(4)) {
 		FATAL("Unable to ignore 4 bytes");
 		return false;
@@ -144,7 +144,7 @@ bool AMF0Serializer::WriteLongString(IOBuffer &buffer, string &value, bool write
 	if (writeType)
 		buffer.ReadFromRepeat(AMF0_LONG_STRING, 1);
 
-	uint32_t length = htonl((uint32_t) value.length()); //----MARKED-LONG---
+	uint32_t length = EHTONL((uint32_t) value.length());
 
 	buffer.ReadFromBuffer((uint8_t *) & length, 4);
 	buffer.ReadFromString(value);
@@ -169,8 +169,9 @@ bool AMF0Serializer::ReadDouble(IOBuffer &buffer, Variant &variant,
 	}
 
 	AMF_CHECK_BOUNDARIES(buffer, 8);
-	uint64_t temp = ntohllp(GETIBPOINTER(buffer));
-	variant = *((double *) & temp);
+	double temp = 0;
+	ENTOHDP(GETIBPOINTER(buffer), temp);
+	variant = (double) temp;
 
 	if (!buffer.Ignore(8)) {
 		FATAL("Unable to ignore 8 bytes");
@@ -183,7 +184,9 @@ bool AMF0Serializer::WriteDouble(IOBuffer &buffer, double value, bool writeType)
 	if (writeType)
 		buffer.ReadFromRepeat(AMF0_NUMBER, 1);
 
-	uint64_t temp = htonll(*(uint64_t *) & value);
+	//uint64_t temp = HTOND(*(uint64_t *) & value);
+	uint64_t temp = 0;
+	EHTOND(value, temp);
 	buffer.ReadFromBuffer((uint8_t *) & temp, 8);
 
 	return true;
@@ -301,7 +304,7 @@ bool AMF0Serializer::ReadMixedArray(IOBuffer &buffer, Variant &variant,
 	}
 
 	AMF_CHECK_BOUNDARIES(buffer, 4);
-	uint32_t length = ntohlp(GETIBPOINTER(buffer)); //----MARKED-LONG---
+	uint32_t length = ENTOHLP(GETIBPOINTER(buffer)); //----MARKED-LONG---
 	//FINEST("Detected mixed array length: %d",length);
 	if (!buffer.Ignore(4)) {
 		FATAL("Unable to ignore 4 bytes");
@@ -418,7 +421,7 @@ bool AMF0Serializer::ReadArray(IOBuffer &buffer, Variant &variant, bool readType
 	}
 
 	AMF_CHECK_BOUNDARIES(buffer, 4);
-	uint32_t length = ntohlp(GETIBPOINTER(buffer)); //----MARKED-LONG---
+	uint32_t length = ENTOHLP(GETIBPOINTER(buffer)); //----MARKED-LONG---
 	//FINEST("Detected array length: %d", length);
 	if (!buffer.Ignore(4)) {
 		FATAL("Unable to ignore 4 bytes");
@@ -654,7 +657,7 @@ bool AMF0Serializer::ReadUInt32(IOBuffer &buffer, Variant &variant, bool readTyp
 		NYIR;
 	}
 	AMF_CHECK_BOUNDARIES(buffer, 4);
-	variant = (uint32_t) ntohlp(GETIBPOINTER(buffer)); //----MARKED-LONG---
+	variant = (uint32_t) ENTOHLP(GETIBPOINTER(buffer)); //----MARKED-LONG---
 	return buffer.Ignore(4);
 }
 
@@ -662,7 +665,7 @@ bool AMF0Serializer::WriteUInt32(IOBuffer &buffer, uint32_t value, bool writeTyp
 	if (writeType) {
 		NYIR;
 	}
-	uint32_t val = htonl(value); //----MARKED-LONG---
+	uint32_t val = EHTONL(value); //----MARKED-LONG---
 	buffer.ReadFromBuffer((uint8_t *) & val, 4);
 	return true;
 }

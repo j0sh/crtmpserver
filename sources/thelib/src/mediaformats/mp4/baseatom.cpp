@@ -23,7 +23,7 @@
 #include "mediaformats/mp4/mp4document.h"
 
 string U32TOS(uint32_t type) {
-	type = ntohl(type);
+	type = ENTOHL(type);
 	return string((char *) & (type), 4);
 }
 

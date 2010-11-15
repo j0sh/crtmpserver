@@ -126,7 +126,7 @@ UDPCarrier* UDPCarrier::Create(string bindIp, uint16_t bindPort) {
 	if (bindIp != "") {
 		bindAddress.sin_family = PF_INET;
 		bindAddress.sin_addr.s_addr = inet_addr(bindIp.c_str());
-		bindAddress.sin_port = htons(bindPort); //----MARKED-SHORT----
+		bindAddress.sin_port = EHTONS(bindPort); //----MARKED-SHORT----
 		if (bindAddress.sin_addr.s_addr == INADDR_NONE) {
 			FATAL("Unable to bind on address %s:%d", STR(bindIp), bindPort);
 			close(sock);
@@ -177,7 +177,7 @@ bool UDPCarrier::GetEndpointsInfo() {
 		return false;
 	}
 	_nearIp = format("%s", inet_ntoa(((sockaddr_in *) & _nearAddress)->sin_addr));
-	_nearPort = ntohs(((sockaddr_in *) & _nearAddress)->sin_port); //----MARKED-SHORT----
+	_nearPort = ENTOHS(((sockaddr_in *) & _nearAddress)->sin_port); //----MARKED-SHORT----
 	//FINEST("_nearAddress: %s; _nearPort: %d", STR(_nearAddress), _nearPort);
 	return true;
 }

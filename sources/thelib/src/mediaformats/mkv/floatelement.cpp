@@ -46,7 +46,7 @@ bool FloatElement::Read() {
 			FATAL("Unable to read buffer");
 			return false;
 		}
-		temp = ntohl(temp);
+		temp = ENTOHL(temp);
 		_value = (double) (*((float *) &temp));
 		return true;
 	} else if (_payloadSize == 8) {
@@ -55,7 +55,7 @@ bool FloatElement::Read() {
 			FATAL("Unable to read buffer");
 			return false;
 		}
-		temp = ntohll(temp);
+		temp = ENTOHLL(temp);
 		_value = *((double *) &temp);
 		return true;
 	} else {

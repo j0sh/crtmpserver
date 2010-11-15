@@ -38,7 +38,7 @@ OutNetRTPUDPH264Stream::OutNetRTPUDPH264Stream(BaseProtocol *pProtocol,
 	_videoData.msg_namelen = sizeof (sockaddr_in);
 	_videoData.msg_iov[0].iov_base = new uint8_t[14];
 	((uint8_t *) _videoData.msg_iov[0].iov_base)[0] = 0x80;
-	put_htonl(((uint8_t *) _videoData.msg_iov[0].iov_base) + 8, _ssrc);
+	EHTONLP(((uint8_t *) _videoData.msg_iov[0].iov_base) + 8, _ssrc);
 	_pSPS = NULL;
 	_SPSLen = 0;
 	_pPPS = NULL;
@@ -52,7 +52,7 @@ OutNetRTPUDPH264Stream::OutNetRTPUDPH264Stream(BaseProtocol *pProtocol,
 	_audioData.msg_iov[0].iov_base = new uint8_t[14];
 	((uint8_t *) _audioData.msg_iov[0].iov_base)[0] = 0x80;
 	((uint8_t *) _audioData.msg_iov[0].iov_base)[1] = 0xe0;
-	put_htonl(((uint8_t *) _audioData.msg_iov[0].iov_base) + 8, _ssrc);
+	EHTONLP(((uint8_t *) _audioData.msg_iov[0].iov_base) + 8, _ssrc);
 	_audioData.msg_iov[1].iov_len = 0;
 	_audioData.msg_iov[1].iov_base = new uint8_t[16];
 	_audioPacketsCount = 0;
@@ -155,7 +155,7 @@ void OutNetRTPUDPH264Stream::SignalAttachedToInStream() {
 	_pSPS = new uint8_t[_SPSLen];
 	_pSPS[0] = 0x80;
 	_pSPS[1] = 0xE1;
-	put_htonl(_pSPS + 8, _ssrc);
+	EHTONLP(_pSPS + 8, _ssrc);
 	memcpy(_pSPS + 12, pCapabilities->avc._pSPS,
 			pCapabilities->avc._spsLength);
 
@@ -163,7 +163,7 @@ void OutNetRTPUDPH264Stream::SignalAttachedToInStream() {
 	_pPPS = new uint8_t[_PPSLen];
 	_pPPS[0] = 0x80;
 	_pPPS[1] = 0xE1;
-	put_htonl(_pPPS + 8, _ssrc);
+	EHTONLP(_pPPS + 8, _ssrc);
 	memcpy(_pPPS + 12, pCapabilities->avc._pPPS,
 			pCapabilities->avc._ppsLength);
 }
@@ -193,12 +193,12 @@ bool OutNetRTPUDPH264Stream::FeedDataVideoFUA(uint8_t *pData, uint32_t dataLengt
 	}
 
 	//	if (processedLength == 0 && NALU_TYPE(pData[0]) == NALU_TYPE_IDR) {
-	//		put_htons(_pSPS + 2, _videoCounter);
+	//		EHTONSP(_pSPS + 2, _videoCounter);
 	//		_videoCounter++;
-	//		put_htonl(_pSPS + 4, (uint32_t) (absoluteTimestamp * 90.0));
-	//		put_htons(_pPPS + 2, _videoCounter);
+	//		EHTONLP(_pSPS + 4, (uint32_t) (absoluteTimestamp * 90.0));
+	//		EHTONSP(_pPPS + 2, _videoCounter);
 	//		_videoCounter++;
-	//		put_htonl(_pPPS + 4, (uint32_t) (absoluteTimestamp * 90.0));
+	//		EHTONLP(_pPPS + 4, (uint32_t) (absoluteTimestamp * 90.0));
 	//
 	//		_pConnectivity->FeedVideoData(_pSPS, _SPSLen);
 	//		_pConnectivity->FeedVideoData(_pPPS, _PPSLen);
@@ -218,11 +218,11 @@ bool OutNetRTPUDPH264Stream::FeedDataVideoFUA(uint8_t *pData, uint32_t dataLengt
 		}
 
 		//2. counter
-		put_htons(((uint8_t *) _videoData.msg_iov[0].iov_base) + 2, _videoCounter);
+		EHTONSP(((uint8_t *) _videoData.msg_iov[0].iov_base) + 2, _videoCounter);
 		_videoCounter++;
 
 		//3. Timestamp
-		put_htonl(((uint8_t *) _videoData.msg_iov[0].iov_base) + 4,
+		EHTONLP(((uint8_t *) _videoData.msg_iov[0].iov_base) + 4,
 				BaseConnectivity::ToRTPTS(absoluteTimestamp, 90000));
 
 		if (chunkSize == totalLength) {
@@ -297,7 +297,7 @@ bool OutNetRTPUDPH264Stream::FeedDataAudioMPEG4Generic_aggregate(uint8_t *pData,
 		//		}
 		//		message += "\n";
 		//		for (uint32_t i = 0; i < _audioData.msg_iov[1].iov_len; i += 2) {
-		//			uint16_t val = ntohs((*((uint16_t *) _audioData.msg_iov[1].iov_base + i / 2)));
+		//			uint16_t val = ENTOHS((*((uint16_t *) _audioData.msg_iov[1].iov_base + i / 2)));
 		//			message += format("i: %d; val: %04x; len: %d; index: %d\n", i,
 		//					val,
 		//					(val >> 3),
@@ -306,11 +306,11 @@ bool OutNetRTPUDPH264Stream::FeedDataAudioMPEG4Generic_aggregate(uint8_t *pData,
 		//		WARN("Flush here\n%s", STR(message));
 
 		//3. counter
-		put_htons(((uint8_t *) _audioData.msg_iov[0].iov_base) + 2, _audioCounter);
+		EHTONSP(((uint8_t *) _audioData.msg_iov[0].iov_base) + 2, _audioCounter);
 		_audioCounter++;
 
 		//4. Timestamp
-		put_htonl(((uint8_t *) _audioData.msg_iov[0].iov_base) + 4,
+		EHTONLP(((uint8_t *) _audioData.msg_iov[0].iov_base) + 4,
 				BaseConnectivity::ToRTPTS(absoluteTimestamp,
 				GetCapabilities()->aac._sampleRate));
 
@@ -318,7 +318,7 @@ bool OutNetRTPUDPH264Stream::FeedDataAudioMPEG4Generic_aggregate(uint8_t *pData,
 		_audioData.msg_iov[2].iov_len = GETAVAILABLEBYTESCOUNT(_audioBuffer);
 		_audioData.msg_iov[2].iov_base = GETIBPOINTER(_audioBuffer);
 
-		put_htons(((uint8_t *) _audioData.msg_iov[0].iov_base) + 12,
+		EHTONSP(((uint8_t *) _audioData.msg_iov[0].iov_base) + 12,
 				_audioData.msg_iov[1].iov_len * 8);
 
 		_pConnectivity->FeedAudioData(_audioData);
@@ -331,7 +331,7 @@ bool OutNetRTPUDPH264Stream::FeedDataAudioMPEG4Generic_aggregate(uint8_t *pData,
 	uint16_t auHeader = (uint16_t) ((dataLength - 7) << 3);
 	auHeader = auHeader | ((uint8_t) (_audioData.msg_iov[1].iov_len / 2));
 	//FINEST("auHeader: %04x", auHeader);
-	put_htons(((uint8_t *) _audioData.msg_iov[1].iov_base) + _audioData.msg_iov[1].iov_len, auHeader);
+	EHTONSP(((uint8_t *) _audioData.msg_iov[1].iov_base) + _audioData.msg_iov[1].iov_len, auHeader);
 	_audioData.msg_iov[1].iov_len += 2;
 
 
@@ -409,7 +409,7 @@ bool OutNetRTPUDPH264Stream::FeedDataAudioMPEG4Generic_one_by_one(uint8_t *pData
 
 	//4. The packet might start with an ADTS header. Remove it if necessary
 	uint32_t adtsHeaderLength = 0;
-	if ((ntohsp(pData) >> 3) == 0x1fff) {
+	if ((ENTOHSP(pData) >> 3) == 0x1fff) {
 		adtsHeaderLength = 7;
 	}
 
@@ -449,18 +449,18 @@ bool OutNetRTPUDPH264Stream::FeedDataAudioMPEG4Generic_one_by_one(uint8_t *pData
 	//	_audioData.msg_iov[0].iov_base[13] AU-headers-length
 
 	//5. counter
-	put_htons(((uint8_t *) _audioData.msg_iov[0].iov_base) + 2, _audioCounter);
+	EHTONSP(((uint8_t *) _audioData.msg_iov[0].iov_base) + 2, _audioCounter);
 	_audioCounter++;
 
 	//6. Timestamp
-	put_htonl(((uint8_t *) _audioData.msg_iov[0].iov_base) + 4,
+	EHTONLP(((uint8_t *) _audioData.msg_iov[0].iov_base) + 4,
 			(uint32_t) (absoluteTimestamp
 			* (double) GetCapabilities()->aac._sampleRate / 1000.000));
 
-	put_htons(((uint8_t *) _audioData.msg_iov[0].iov_base) + 12, 16);
+	EHTONSP(((uint8_t *) _audioData.msg_iov[0].iov_base) + 12, 16);
 
 	uint16_t auHeader = (uint16_t) ((dataLength - adtsHeaderLength) << 3);
-	put_htons(((uint8_t *) _audioData.msg_iov[1].iov_base), auHeader);
+	EHTONSP(((uint8_t *) _audioData.msg_iov[1].iov_base), auHeader);
 	_audioData.msg_iov[1].iov_len = 2;
 
 	//	FINEST("%02x%02x %02x%02x %02x%02x%02x%02x %02x%02x%02x%02x - %02x%02x %02x%02x %08x %.2f",

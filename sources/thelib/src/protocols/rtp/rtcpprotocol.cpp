@@ -29,10 +29,10 @@ RTCPProtocol::RTCPProtocol()
 	_buff[1] = 0xc9; //PT
 	_buff[2] = 0x00; //length
 	_buff[3] = 0x07; //length
-	put_htonl(_buff + 4, GetId()); //SSRC of packet sender
-	put_htonl(_buff + 12, 0); //fraction lost/cumulative number of packets lost
-	put_htonl(_buff + 20, 0); //interarrival jitter
-	put_htonl(_buff + 28, 0); // delay since last SR (DLSR)
+	EHTONLP(_buff + 4, GetId()); //SSRC of packet sender
+	EHTONLP(_buff + 12, 0); //fraction lost/cumulative number of packets lost
+	EHTONLP(_buff + 20, 0); //interarrival jitter
+	EHTONLP(_buff + 28, 0); // delay since last SR (DLSR)
 }
 
 RTCPProtocol::~RTCPProtocol() {
@@ -66,7 +66,7 @@ bool RTCPProtocol::SignalInputData(IOBuffer &buffer, sockaddr_in *pPeerAddress) 
 	if (pBuffer[1] != 200)
 		return true;
 
-	_lsr = ntohlp(pBuffer + 10);
+	_lsr = ENTOHLP(pBuffer + 10);
 	//FINEST("_lsr: %08x\n%s", _lsr, STR(buffer));
 	buffer.IgnoreAll();
 
@@ -84,9 +84,9 @@ bool RTCPProtocol::SendRR(sockaddr_in &address) {
 	uint32_t seq;
 	_pConnectivity->GetSSRCAndSeq(GetId(), ssrc, seq);
 	//FINEST("ssrc: %08x", ssrc);
-	put_htonl(_buff + 8, ssrc); //SSRC_1 (SSRC of first source)
-	put_htonl(_buff + 16, seq); //extended highest sequence number received
-	put_htonl(_buff + 24, _lsr); //last SR (LSR)
+	EHTONLP(_buff + 8, ssrc); //SSRC_1 (SSRC of first source)
+	EHTONLP(_buff + 16, seq); //extended highest sequence number received
+	EHTONLP(_buff + 24, _lsr); //last SR (LSR)
 
 	//2. send it
 	if (!_pConnectivity->SendRTP(address, GetId(), _buff, 32)) {

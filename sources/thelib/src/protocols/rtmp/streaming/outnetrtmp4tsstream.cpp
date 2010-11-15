@@ -135,7 +135,7 @@ bool OutNetRTMP4TSStream::FeedVideoData(uint8_t *pData, uint32_t dataLength,
 				return false;
 			}
 			memcpy(_pSPSPPS + 6, pData + 1, 3); //profile,profile compat,level
-			put_htons(_pSPSPPS + 11, (uint16_t) dataLength);
+			EHTONSP(_pSPSPPS + 11, (uint16_t) dataLength);
 			memcpy(_pSPSPPS + 13, pData, dataLength);
 			_PPSStart = 13 + dataLength;
 			_spsAvailable = true;
@@ -154,7 +154,7 @@ bool OutNetRTMP4TSStream::FeedVideoData(uint8_t *pData, uint32_t dataLength,
 			}
 
 			_pSPSPPS[_PPSStart] = 1;
-			put_htons(_pSPSPPS + _PPSStart + 1, (uint16_t) dataLength);
+			EHTONSP(_pSPSPPS + _PPSStart + 1, (uint16_t) dataLength);
 			memcpy(_pSPSPPS + _PPSStart + 1 + 2, pData, dataLength);
 			_spsAvailable = false;
 
@@ -190,7 +190,7 @@ bool OutNetRTMP4TSStream::FeedVideoData(uint8_t *pData, uint32_t dataLength,
 			pBuffer[0] = (NALU_TYPE(pData[0]) == NALU_TYPE_IDR) ? 0x17 : 0x27;
 			pBuffer[1] = 0x01;
 			pBuffer[2] = pBuffer[3] = pBuffer[4] = 0;
-			put_htonl(pBuffer + 5, dataLength); //----MARKED-LONG---
+			EHTONLP(pBuffer + 5, dataLength); //----MARKED-LONG---
 
 			//13. Send it
 			if (!BaseOutNetRTMPStream::FeedData(

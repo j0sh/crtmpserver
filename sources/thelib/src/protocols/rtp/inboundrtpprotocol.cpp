@@ -90,9 +90,9 @@ bool InboundRTPProtocol::SignalInputData(IOBuffer &buffer,
 	//			pBuffer[15]);
 
 	//3. Get the RTP header parts that we are interested in and advance the buffer
-	_rtpHeader._flags = ntohlp(pBuffer);
-	_rtpHeader._timestamp = ntohlp(pBuffer + 4);
-	_rtpHeader._ssrc = ntohlp(pBuffer + 8);
+	_rtpHeader._flags = ENTOHLP(pBuffer);
+	_rtpHeader._timestamp = ENTOHLP(pBuffer + 4);
+	_rtpHeader._ssrc = ENTOHLP(pBuffer + 8);
 	if (GET_RTP_SEQ(_rtpHeader) < _lastSeq) {
 		if ((_lastSeq - GET_RTP_SEQ(_rtpHeader)) > (0xffff >> 2)) {
 			_seqRollOver++;

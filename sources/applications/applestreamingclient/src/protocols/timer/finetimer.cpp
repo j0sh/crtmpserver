@@ -41,7 +41,7 @@ bool FineTimer::Initialize(Variant &parameters) {
 	int32_t error = 0;
 	inet_aton(STR(parameters[CONF_IP]), &_address.sin_addr);
 	_address.sin_family = AF_INET;
-	_address.sin_port = htons((uint16_t) parameters[CONF_PORT]);
+	_address.sin_port = EHTONS((uint16_t) parameters[CONF_PORT]);
 	_fd = socket(AF_INET, SOCK_DGRAM, 0);
 	_period = (double) parameters["FineTimerPeriod"]*1000000.00;
 	if ((error = pthread_create(&_thread, NULL, FineTimerWorker, this)) != 0) {

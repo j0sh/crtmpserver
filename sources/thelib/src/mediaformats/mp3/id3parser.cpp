@@ -178,13 +178,13 @@ bool ID3Parser::ParseTags(IOBuffer &buffer) {
 			size = (size << 7) | (GETIBPOINTER(buffer)[2]&0x7f);
 			size = (size << 7) | (GETIBPOINTER(buffer)[3]&0x7f);
 		} else {
-			size = ntohlp(GETIBPOINTER(buffer));
+			size = ENTOHLP(GETIBPOINTER(buffer));
 		}
 		//FINEST("name: %s; size: %d", STR(name), size);
 		buffer.Ignore(4);
 
 		CHECK_BUFFER_SIZE(buffer, 2);
-		//uint16_t flags = ntohsp(GETIBPOINTER(buffer));
+		//uint16_t flags = ENTOHSP(GETIBPOINTER(buffer));
 		buffer.Ignore(2);
 		if (size == 0 || GETAVAILABLEBYTESCOUNT(buffer) < size) {
 			WARN("Invalid tagSize");

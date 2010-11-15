@@ -44,8 +44,8 @@ bool Header::Read(uint32_t channelId, uint8_t type, IOBuffer &buffer,
 				return true;
 			}
 			memcpy(hf.datac + 1, GETIBPOINTER(buffer), 11);
-			hf.s.ts = ntohl(hf.s.ts)&0x00ffffff; //----MARKED-LONG---
-			hf.s.ml = ntohl(hf.s.ml)&0x00ffffff; //----MARKED-LONG---
+			hf.s.ts = ENTOHL(hf.s.ts)&0x00ffffff; //----MARKED-LONG---
+			hf.s.ml = ENTOHL(hf.s.ml)&0x00ffffff; //----MARKED-LONG---
 			H_SI(*this) = ntosi(H_SI(*this));
 
 			if (hf.s.ts == 0x00ffffff) {
@@ -53,7 +53,7 @@ bool Header::Read(uint32_t channelId, uint8_t type, IOBuffer &buffer,
 					readCompleted = false;
 					return true;
 				}
-				hf.s.ts = ntohlp(GETIBPOINTER(buffer) + 11);
+				hf.s.ts = ENTOHLP(GETIBPOINTER(buffer) + 11);
 				readCompleted = true;
 				return buffer.Ignore(15);
 			} else {
@@ -69,15 +69,15 @@ bool Header::Read(uint32_t channelId, uint8_t type, IOBuffer &buffer,
 				return true;
 			}
 			memcpy(hf.datac + 1, GETIBPOINTER(buffer), 7);
-			hf.s.ts = ntohl(hf.s.ts)&0x00ffffff; //----MARKED-LONG---
-			hf.s.ml = ntohl(hf.s.ml)&0x00ffffff; //----MARKED-LONG---
+			hf.s.ts = ENTOHL(hf.s.ts)&0x00ffffff; //----MARKED-LONG---
+			hf.s.ml = ENTOHL(hf.s.ml)&0x00ffffff; //----MARKED-LONG---
 
 			if (hf.s.ts == 0x00ffffff) {
 				if (availableBytes < 11) {
 					readCompleted = false;
 					return true;
 				}
-				hf.s.ts = ntohlp(GETIBPOINTER(buffer) + 7);
+				hf.s.ts = ENTOHLP(GETIBPOINTER(buffer) + 7);
 				readCompleted = true;
 				return buffer.Ignore(11);
 			} else {
@@ -93,14 +93,14 @@ bool Header::Read(uint32_t channelId, uint8_t type, IOBuffer &buffer,
 				return true;
 			}
 			memcpy(hf.datac + 1, GETIBPOINTER(buffer), 3);
-			hf.s.ts = ntohl(hf.s.ts)&0x00ffffff; //----MARKED-LONG---
+			hf.s.ts = ENTOHL(hf.s.ts)&0x00ffffff; //----MARKED-LONG---
 
 			if (hf.s.ts == 0x00ffffff) {
 				if (availableBytes < 7) {
 					readCompleted = false;
 					return true;
 				}
-				hf.s.ts = ntohlp(GETIBPOINTER(buffer) + 3);
+				hf.s.ts = ENTOHLP(GETIBPOINTER(buffer) + 3);
 				readCompleted = true;
 				return buffer.Ignore(7);
 			} else {
@@ -242,7 +242,7 @@ bool Header::Write(IOBuffer &buffer) {
 		buffer.ReadFromByte(ht << 6);
 		buffer.ReadFromByte(ci - 64);
 	} else if (ci < 65599) {
-		uint16_t temp = htons(ci - 64);
+		uint16_t temp = EHTONS(ci - 64);
 		buffer.ReadFromByte((ht << 6) | 0x01);
 		buffer.ReadFromBuffer((uint8_t *) & temp, 2);
 	} else {
@@ -254,23 +254,23 @@ bool Header::Write(IOBuffer &buffer) {
 		case HT_FULL:
 		{
 			if (hf.s.ts < 0x00ffffff) {
-				hf.s.ts = htonl(hf.s.ts); //----MARKED-LONG---
-				hf.s.ml = htonl(hf.s.ml); //----MARKED-LONG---
+				hf.s.ts = EHTONL(hf.s.ts); //----MARKED-LONG---
+				hf.s.ml = EHTONL(hf.s.ml); //----MARKED-LONG---
 				H_SI(*this) = ntosi(H_SI(*this));
 				buffer.ReadFromBuffer(&hf.datac[1], 11);
-				hf.s.ts = ntohl(hf.s.ts); //----MARKED-LONG---
-				hf.s.ml = ntohl(hf.s.ml); //----MARKED-LONG---
+				hf.s.ts = ENTOHL(hf.s.ts); //----MARKED-LONG---
+				hf.s.ml = ENTOHL(hf.s.ml); //----MARKED-LONG---
 				H_SI(*this) = ntosi(H_SI(*this));
 				//FINEST("Output buffer: %s", STR(buffer));
 				return true;
 			} else {
-				uint32_t temp = htonl(hf.s.ts); //----MARKED-LONG---
-				hf.s.ts = htonl(0x00ffffff); //----MARKED-LONG---
-				hf.s.ml = htonl(hf.s.ml); //----MARKED-LONG---
+				uint32_t temp = EHTONL(hf.s.ts); //----MARKED-LONG---
+				hf.s.ts = EHTONL(0x00ffffff); //----MARKED-LONG---
+				hf.s.ml = EHTONL(hf.s.ml); //----MARKED-LONG---
 				H_SI(*this) = ntosi(H_SI(*this));
 				buffer.ReadFromBuffer(&hf.datac[1], 11);
-				hf.s.ts = ntohl(temp); //----MARKED-LONG---
-				hf.s.ml = ntohl(hf.s.ml); //----MARKED-LONG---
+				hf.s.ts = ENTOHL(temp); //----MARKED-LONG---
+				hf.s.ml = ENTOHL(hf.s.ml); //----MARKED-LONG---
 				H_SI(*this) = ntosi(H_SI(*this));
 				buffer.ReadFromBuffer((uint8_t *) & temp, 4);
 				//FINEST("Output buffer: %s", STR(buffer));
@@ -280,20 +280,20 @@ bool Header::Write(IOBuffer &buffer) {
 		case HT_SAME_STREAM:
 		{
 			if (hf.s.ts < 0x00ffffff) {
-				hf.s.ts = htonl(hf.s.ts); //----MARKED-LONG---
-				hf.s.ml = htonl(hf.s.ml); //----MARKED-LONG---
+				hf.s.ts = EHTONL(hf.s.ts); //----MARKED-LONG---
+				hf.s.ml = EHTONL(hf.s.ml); //----MARKED-LONG---
 				buffer.ReadFromBuffer(&hf.datac[1], 7);
-				hf.s.ts = ntohl(hf.s.ts); //----MARKED-LONG---
-				hf.s.ml = ntohl(hf.s.ml); //----MARKED-LONG---
+				hf.s.ts = ENTOHL(hf.s.ts); //----MARKED-LONG---
+				hf.s.ml = ENTOHL(hf.s.ml); //----MARKED-LONG---
 				//FINEST("Output buffer: %s", STR(buffer));
 				return true;
 			} else {
-				uint32_t temp = htonl(hf.s.ts); //----MARKED-LONG---
-				hf.s.ts = htonl(0x00ffffff); //----MARKED-LONG---
-				hf.s.ml = htonl(hf.s.ml); //----MARKED-LONG---
+				uint32_t temp = EHTONL(hf.s.ts); //----MARKED-LONG---
+				hf.s.ts = EHTONL(0x00ffffff); //----MARKED-LONG---
+				hf.s.ml = EHTONL(hf.s.ml); //----MARKED-LONG---
 				buffer.ReadFromBuffer(&hf.datac[1], 7);
-				hf.s.ts = ntohl(temp); //----MARKED-LONG---
-				hf.s.ml = ntohl(hf.s.ml); //----MARKED-LONG---
+				hf.s.ts = ENTOHL(temp); //----MARKED-LONG---
+				hf.s.ml = ENTOHL(hf.s.ml); //----MARKED-LONG---
 				buffer.ReadFromBuffer((uint8_t *) & temp, 4);
 				//FINEST("Output buffer: %s", STR(buffer));
 				return true;
@@ -302,16 +302,16 @@ bool Header::Write(IOBuffer &buffer) {
 		case HT_SAME_LENGTH_AND_STREAM:
 		{
 			if (hf.s.ts < 0x00ffffff) {
-				hf.s.ts = htonl(hf.s.ts); //----MARKED-LONG---
+				hf.s.ts = EHTONL(hf.s.ts); //----MARKED-LONG---
 				buffer.ReadFromBuffer(&hf.datac[1], 3);
-				hf.s.ts = ntohl(hf.s.ts); //----MARKED-LONG---
+				hf.s.ts = ENTOHL(hf.s.ts); //----MARKED-LONG---
 				//FINEST("Output buffer: %s", STR(buffer));
 				return true;
 			} else {
-				uint32_t temp = htonl(hf.s.ts); //----MARKED-LONG---
-				hf.s.ts = htonl(0x00ffffff); //----MARKED-LONG---
+				uint32_t temp = EHTONL(hf.s.ts); //----MARKED-LONG---
+				hf.s.ts = EHTONL(0x00ffffff); //----MARKED-LONG---
 				buffer.ReadFromBuffer(&hf.datac[1], 3);
-				hf.s.ts = ntohl(temp); //----MARKED-LONG---
+				hf.s.ts = ENTOHL(temp); //----MARKED-LONG---
 				buffer.ReadFromBuffer((uint8_t *) & temp, 4);
 				//FINEST("Output buffer: %s", STR(buffer));
 				return true;

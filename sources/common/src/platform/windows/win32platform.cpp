@@ -69,7 +69,7 @@ bool fileExists(string path) {
 
 string tagToString(uint64_t tag) {
 	string result;
-	uint64_t copy = htonll(tag);
+	uint64_t copy = EHTONLL(tag);
 	result = (char *) & copy;
 	return result;
 }

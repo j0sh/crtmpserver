@@ -73,7 +73,7 @@ bool InFileRTMPMP4Stream::BuildFrame(FileClass *pFile, MediaFrame &mediaFrame,
                 buffer.ReadFromBuffer(_videoCodecHeader, sizeof (_videoCodecHeader));
             }
 
-            mediaFrame.compositionOffset = (htonl(mediaFrame.compositionOffset & 0x00ffffff)) >> 8;
+            mediaFrame.compositionOffset = (EHTONL(mediaFrame.compositionOffset & 0x00ffffff)) >> 8;
 
             buffer.ReadFromBuffer((uint8_t *) & mediaFrame.compositionOffset, 3);
 

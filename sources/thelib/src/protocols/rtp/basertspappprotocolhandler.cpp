@@ -418,9 +418,9 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPRequestPlay(RTSPProtocol *pFrom,
 	//4.register the video
 	if (videoDataPortNumber != 0) {
 		sockaddr_in videoDataAddress = ((TCPCarrier *) pFrom->GetIOHandler())->GetFarEndpointAddress();
-		videoDataAddress.sin_port = htons(videoDataPortNumber);
+		videoDataAddress.sin_port = EHTONS(videoDataPortNumber);
 		sockaddr_in videoRtcpAddress = ((TCPCarrier *) pFrom->GetIOHandler())->GetFarEndpointAddress();
-		videoRtcpAddress.sin_port = htons(videoRtcpPortNumber);
+		videoRtcpAddress.sin_port = EHTONS(videoRtcpPortNumber);
 		pOutboundConnectivity->RegisterUDPVideoClient(pFrom->GetId(),
 				videoDataAddress, videoRtcpAddress);
 	}
@@ -428,9 +428,9 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPRequestPlay(RTSPProtocol *pFrom,
 	//5. Register the audio
 	if (audioDataPortNumber != 0) {
 		sockaddr_in audioDataAddress = ((TCPCarrier *) pFrom->GetIOHandler())->GetFarEndpointAddress();
-		audioDataAddress.sin_port = htons(audioDataPortNumber);
+		audioDataAddress.sin_port = EHTONS(audioDataPortNumber);
 		sockaddr_in audioRtcpAddress = ((TCPCarrier *) pFrom->GetIOHandler())->GetFarEndpointAddress();
-		audioRtcpAddress.sin_port = htons(audioRtcpPortNumber);
+		audioRtcpAddress.sin_port = EHTONS(audioRtcpPortNumber);
 		pOutboundConnectivity->RegisterUDPAudioClient(pFrom->GetId(),
 				audioDataAddress, audioRtcpAddress);
 	}

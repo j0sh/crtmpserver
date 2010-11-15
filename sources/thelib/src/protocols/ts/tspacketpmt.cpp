@@ -88,12 +88,12 @@ bool TSPacketPMT::Read(uint8_t *pBuffer, uint32_t &cursor, bool hasPointerField,
 
 	//3. read section length and syntax indicator
 	CHECK_BOUNDS(2);
-	_u1.raw = ntohsp((pBuffer + cursor)); //----MARKED-SHORT----
+	_u1.raw = ENTOHSP((pBuffer + cursor)); //----MARKED-SHORT----
 	cursor += 2;
 
 	//5. Read transport stream id
 	CHECK_BOUNDS(2);
-	_programNumber = ntohsp((pBuffer + cursor)); //----MARKED-SHORT----
+	_programNumber = ENTOHSP((pBuffer + cursor)); //----MARKED-SHORT----
 	cursor += 2;
 
 	//6. read current next indicator and version
@@ -109,13 +109,13 @@ bool TSPacketPMT::Read(uint8_t *pBuffer, uint32_t &cursor, bool hasPointerField,
 	_lastSectionNumber = pBuffer[cursor++];
 	//9. read PCR PID
 	CHECK_BOUNDS(2);
-	_pcrPID = ntohsp((pBuffer + cursor)); //----MARKED-SHORT----
+	_pcrPID = ENTOHSP((pBuffer + cursor)); //----MARKED-SHORT----
 	_pcrPID &= 0x1fff;
 	cursor += 2;
 
 	//10. read the program info length
 	CHECK_BOUNDS(2);
-	_programInfoLength = ntohsp((pBuffer + cursor)); //----MARKED-SHORT----
+	_programInfoLength = ENTOHSP((pBuffer + cursor)); //----MARKED-SHORT----
 	_programInfoLength &= 0x0fff;
 	cursor += 2;
 
@@ -148,14 +148,14 @@ bool TSPacketPMT::Read(uint8_t *pBuffer, uint32_t &cursor, bool hasPointerField,
 
 		//14.2. read the elementary pid
 		CHECK_BOUNDS(2);
-		streamInfo.elementaryPID = ntohsp((pBuffer + cursor)); //----MARKED-SHORT----
+		streamInfo.elementaryPID = ENTOHSP((pBuffer + cursor)); //----MARKED-SHORT----
 		streamInfo.elementaryPID &= 0x1fff;
 		cursor += 2;
 		streamsInfoCursor += 2;
 
 		//14.3. Read the elementary stream info length
 		CHECK_BOUNDS(2);
-		streamInfo.esInfoLength = ntohsp((pBuffer + cursor)); //----MARKED-SHORT----
+		streamInfo.esInfoLength = ENTOHSP((pBuffer + cursor)); //----MARKED-SHORT----
 		streamInfo.esInfoLength &= 0x0fff;
 		cursor += 2;
 		streamsInfoCursor += 2;
@@ -179,7 +179,7 @@ bool TSPacketPMT::Read(uint8_t *pBuffer, uint32_t &cursor, bool hasPointerField,
 
 	//15. Read the crc
 	CHECK_BOUNDS(4);
-	_crc = ntohlp((pBuffer + cursor)); //----MARKED-LONG---
+	_crc = ENTOHLP((pBuffer + cursor)); //----MARKED-LONG---
 	cursor += 4;
 
 	//16. Done
@@ -201,7 +201,7 @@ uint32_t TSPacketPMT::PeekCRC(uint8_t *pBuffer, uint32_t cursor,
 
 	//3. read section length
 	CHECK_BOUNDS(2);
-	uint16_t length = ntohsp((pBuffer + cursor)); //----MARKED-SHORT----
+	uint16_t length = ENTOHSP((pBuffer + cursor)); //----MARKED-SHORT----
 	length &= 0x0fff;
 	cursor += 2;
 
@@ -211,7 +211,7 @@ uint32_t TSPacketPMT::PeekCRC(uint8_t *pBuffer, uint32_t cursor,
 
 	//5. return the crc
 	CHECK_BOUNDS(4);
-	return ntohlp((pBuffer + cursor)); //----MARKED-LONG---
+	return ENTOHLP((pBuffer + cursor)); //----MARKED-LONG---
 }
 #endif	/* HAS_PROTOCOL_TS */
 

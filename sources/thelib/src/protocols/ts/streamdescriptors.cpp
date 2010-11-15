@@ -53,7 +53,7 @@ bool ReadStreamDescriptor(StreamDescriptor &descriptor,
 		case DESCRIPTOR_TYPE_REGISTRATION:
 		{
 			CHECK_BOUNDS(4);
-			descriptor.info.registration.formatIdentifier = ntohlp((pBuffer + cursor)); //----MARKED-LONG---
+			descriptor.info.registration.formatIdentifier = ENTOHLP((pBuffer + cursor)); //----MARKED-LONG---
 			cursor += 4;
 			if ((int32_t) descriptor.length - 4 > 0) {
 				CHECK_BOUNDS(descriptor.length - 4);

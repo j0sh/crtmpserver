@@ -125,8 +125,14 @@ thelib: common $(THELIB_OBJS)
 	$(CXX) -fPIC $(DEFINES) $(THELIB_INCLUDE) -c $< -o $@
 
 tests: thelib $(TESTS_OBJS)
-	@echo ----------- linking tests
+	@echo ----------- linking dynamic tests
 	$(CXX) -fPIC $(TESTS_LIBS) -o $(call dynamic_exec_name,tests,) $(call dynamic_exec_flags,tests) $(TESTS_OBJS)
+	@echo ----------- linking static tests
+	$(CXX) -fPIC $(SSL_LIB) -o $(call static_exec_name,tests) $(call static_exec_flags,tests) \
+		$(TESTS_OBJS) \
+		$(LUA_OBJS) \
+		$(COMMON_OBJS) \
+		$(THELIB_OBJS)
 	@echo -----------
 
 %.tests.o: %.cpp

@@ -240,7 +240,7 @@ bool InNetTSStream::HandleAudioData(uint8_t *pRawBuffer, uint32_t rawBufferLengt
 			break;
 		}
 
-		if ((ntohsp(pBuffer)&0xfff0) != 0xfff0) {
+		if ((ENTOHSP(pBuffer)&0xfff0) != 0xfff0) {
 			//WARN("Bogus marker %02x %02x. Skip one byte", pBuffer[0], pBuffer[1]);
 			_audioBuffer.Ignore(1);
 			continue;
@@ -294,7 +294,7 @@ bool InNetTSStream::HandleVideoData_version1(uint8_t *pBuffer, uint32_t length,
 	//4. Cycle through the buffer and detect nals
 	while (_cursor < size - 4) {
 		//5. Read the current position
-		uint32_t test = ntohlp((pNalBuffer + _cursor));
+		uint32_t test = ENTOHLP((pNalBuffer + _cursor));
 		if (test == 1) {
 			//6. This is the beginning of a new NALU. Process it
 			//if it has some data inside it
@@ -342,7 +342,7 @@ bool InNetTSStream::HandleVideoData_version2(uint8_t *pBuffer, uint32_t length,
 	_cursor = 0;
 	if (_firstNAL) {
 		while (_cursor < size - 4) {
-			if (ntohlp(pNalBuffer + _cursor) == 1) {
+			if (ENTOHLP(pNalBuffer + _cursor) == 1) {
 				_currentNal.Ignore(_cursor + 4);
 				_firstNAL = false;
 				_cursor += 4;
@@ -353,7 +353,7 @@ bool InNetTSStream::HandleVideoData_version2(uint8_t *pBuffer, uint32_t length,
 	}
 
 	while (_cursor < size - 4) {
-		if (ntohlp(pNalBuffer + _cursor) == 1) {
+		if (ENTOHLP(pNalBuffer + _cursor) == 1) {
 			if (!ProcessNal(timestamp)) {
 				FATAL("Unable to process NALU");
 				return false;
@@ -387,7 +387,7 @@ bool InNetTSStream::HandleVideoData_version3(uint8_t *pBuffer, uint32_t length,
 	if (_firstNAL) {
 		_cursor = 0;
 		while (_cursor < size - 4) {
-			testValue = ntohlp(pNalBuffer + _cursor);
+			testValue = ENTOHLP(pNalBuffer + _cursor);
 			if ((testValue >> 8) == 1) {
 				_currentNal.Ignore(_cursor + 3);
 				_firstNAL = false;
@@ -417,7 +417,7 @@ bool InNetTSStream::HandleVideoData_version3(uint8_t *pBuffer, uint32_t length,
 	int8_t markerSize = 0;
 
 	while (_cursor < size - 4) {
-		testValue = ntohlp(pNalBuffer + _cursor);
+		testValue = ENTOHLP(pNalBuffer + _cursor);
 		if ((testValue >> 8) == 1) {
 			markerSize = 3;
 			found = true;

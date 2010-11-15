@@ -246,7 +246,7 @@ bool OutboundConnectivity::FeedAudioData(uint8_t *pBuffer, uint32_t length) {
 }
 
 bool OutboundConnectivity::FeedVideoData(msghdr &message) {
-	_videoRtpTs = ntohlp(((uint8_t *) message.msg_iov[0].iov_base) + 4);
+	_videoRtpTs = ENTOHLP(((uint8_t *) message.msg_iov[0].iov_base) + 4);
 	if (!FeedVideoDataUDP(message)) {
 		FATAL("Unable to feed video UDP clients");
 		return false;
@@ -260,7 +260,7 @@ bool OutboundConnectivity::FeedVideoData(msghdr &message) {
 }
 
 bool OutboundConnectivity::FeedAudioData(msghdr &message) {
-	_audioRtpTs = ntohlp(((uint8_t *) message.msg_iov[0].iov_base) + 4);
+	_audioRtpTs = ENTOHLP(((uint8_t *) message.msg_iov[0].iov_base) + 4);
 	if (!FeedAudioDataUDP(message)) {
 		FATAL("Unable to feed audio UDP clients");
 		return false;
@@ -294,18 +294,18 @@ bool OutboundConnectivity::InitializePorts(int32_t &dataFd, uint16_t &dataPort,
 		if (getsockname(dataFd, (sockaddr *) & address, &len) != 0) {
 			ASSERT("Unable to get peer's address");
 		}
-		dataPort = ntohs(address.sin_port);
+		dataPort = ENTOHS(address.sin_port);
 
 		if ((dataPort % 2) != 0) {
-			address.sin_port = htons(dataPort - 1);
+			address.sin_port = EHTONS(dataPort - 1);
 		} else {
-			address.sin_port = htons(dataPort + 1);
+			address.sin_port = EHTONS(dataPort + 1);
 		}
 		if (bind(RTCPFd, (sockaddr *) & address, sizeof (address)) != 0) {
 			WARN("Unable to bind");
 			continue;
 		}
-		RTCPPort = ntohs(address.sin_port);
+		RTCPPort = ENTOHS(address.sin_port);
 
 		if ((dataPort % 2) != 0) {
 			uint16_t temp16 = dataPort;
@@ -330,7 +330,7 @@ bool OutboundConnectivity::InitializePorts(int32_t &dataFd, uint16_t &dataPort,
 	}
 
 bool OutboundConnectivity::FeedVideoDataUDP(msghdr &message) {
-	//	uint32_t packetRtp = ntohlp((uint8_t *) message.msg_iov[0].iov_base + 4);
+	//	uint32_t packetRtp = ENTOHLP((uint8_t *) message.msg_iov[0].iov_base + 4);
 	//	if ((((uint8_t *) message.msg_iov[0].iov_base)[1] >> 7) != 0) {
 	//		//		FINEST("packetRtp: %d (%08x) %02x%02x%02x%02x %.2f %c",
 	//		//				packetRtp,
@@ -350,7 +350,7 @@ bool OutboundConnectivity::FeedVideoDataUDP(msghdr &message) {
 	RTP_SEND_MESSAGE(_videoDataFd, _udpVideoDataClients, message);
 	_videoPacketsCount++;
 	COMPUTE_BYTES_COUNT(message, _videoBytesCount);
-	//uint16_t seq = ntohsp(((uint8_t *) message.msg_iov[0].iov_base) + 2);
+	//uint16_t seq = ENTOHSP(((uint8_t *) message.msg_iov[0].iov_base) + 2);
 	//FINEST("seq: %d", seq);
 	if (((_videoPacketsCount % 300) == 0) || _videoPacketsCount <= 2) {
 		uint8_t buff[28];
@@ -379,7 +379,7 @@ bool OutboundConnectivity::FeedAudioDataUDP(msghdr &message) {
 	RTP_SEND_MESSAGE(_audioDataFd, _udpAudioDataClients, message);
 	_audioPacketsCount++;
 	COMPUTE_BYTES_COUNT(message, _audioBytesCount);
-	//uint16_t seq = ntohsp(((uint8_t *) message.msg_iov[0].iov_base) + 2);
+	//uint16_t seq = ENTOHSP(((uint8_t *) message.msg_iov[0].iov_base) + 2);
 	//FINEST("seq: %d", seq);
 	if (((_audioPacketsCount % 300) == 0) || (_audioPacketsCount <= 2)) {
 		uint8_t buff[28];
@@ -439,7 +439,7 @@ bool OutboundConnectivity::CreateRTCPPacket_mystyle(uint8_t *pDest, uint8_t *pSr
 	pDest[3] = 0x06;
 
 	//4. ssrc
-	put_htonl(pDest + 4, ssrc); //SSRC
+	EHTONLP(pDest + 4, ssrc); //SSRC
 
 	//5. setup the startup time
 	if (_startupTime == 0) {
@@ -448,12 +448,12 @@ bool OutboundConnectivity::CreateRTCPPacket_mystyle(uint8_t *pDest, uint8_t *pSr
 
 	if (isAudio) {
 		if (_audioFirstRtp == 0) {
-			_audioFirstRtp = ntohlp(pSrc + 4);
+			_audioFirstRtp = ENTOHLP(pSrc + 4);
 			return false;
 		}
 	} else {
 		if (_videoFirstRtp == 0) {
-			_videoFirstRtp = ntohlp(pSrc + 4);
+			_videoFirstRtp = ENTOHLP(pSrc + 4);
 			return false;
 		}
 	}
@@ -467,18 +467,18 @@ bool OutboundConnectivity::CreateRTCPPacket_mystyle(uint8_t *pDest, uint8_t *pSr
 	//7. NTP
 	uint64_t ntp;
 	GETCUSTOMNTP(ntp, currentTime);
-	put_htonll(pDest + 8, ntp);
+	EHTONLLP(pDest + 8, ntp);
 
 	//6. RTP
 	double rtpDouble = ((currentTime - _startupTime) / (double) CLOCKS_PER_SECOND) * rate;
 	uint32_t rtp = (uint32_t) rtpDouble + firstRtp;
-	put_htonl(pDest + 16, rtp);
+	EHTONLP(pDest + 16, rtp);
 
 	//7. sender's packet count
-	put_htonl(pDest + 20, packetsCount);
+	EHTONLP(pDest + 20, packetsCount);
 
 	//8. sender's octet count
-	put_htonl(pDest + 24, bytesCount);
+	EHTONLP(pDest + 24, bytesCount);
 
 	FINEST("-----%s-----", isAudio ? "AUDIO" : "VIDEO");
 	FINEST("_startupTime: %.2f", _startupTime);
@@ -490,7 +490,7 @@ bool OutboundConnectivity::CreateRTCPPacket_mystyle(uint8_t *pDest, uint8_t *pSr
 	FINEST("rtpDouble: %.2f", rtpDouble);
 	FINEST("firstRtp: %d", firstRtp);
 	FINEST("rtp: %d", rtp);
-	uint32_t packetRtp = ntohlp(pSrc + 4);
+	uint32_t packetRtp = ENTOHLP(pSrc + 4);
 	FINEST("packetRtp: %d", packetRtp);
 	FINEST("diff: %d; (%.4f s)", packetRtp - rtp, ((double) packetRtp - rtp) / (double) rate);
 	FINEST("---------------");
@@ -545,23 +545,23 @@ bool OutboundConnectivity::CreateRTCPPacket_live555style(uint8_t *pDest, uint8_t
 	pDest[3] = 0x06;
 
 	//4. ssrc
-	put_htonl(pDest + 4, ssrc); //SSRC
+	EHTONLP(pDest + 4, ssrc); //SSRC
 
 	//5. NTP
 	struct timeval timeNow;
 	gettimeofday(&timeNow, NULL);
-	put_htonl(pDest + 8, timeNow.tv_sec + 0x83AA7E80);
+	EHTONLP(pDest + 8, timeNow.tv_sec + 0x83AA7E80);
 	double fractionalPart = (timeNow.tv_usec / 15625.0)*0x04000000; // 2^32/10^6
-	put_htonl(pDest + 12, (uint32_t) fractionalPart);
+	EHTONLP(pDest + 12, (uint32_t) fractionalPart);
 
 	//6. RTP
-	put_htonl(pDest + 16, ToRTPTS(timeNow, rate));
+	EHTONLP(pDest + 16, ToRTPTS(timeNow, rate));
 
 	//7. sender's packet count
-	put_htonl(pDest + 20, packetsCount);
+	EHTONLP(pDest + 20, packetsCount);
 
 	//8. sender's octet count
-	put_htonl(pDest + 24, bytesCount);
+	EHTONLP(pDest + 24, bytesCount);
 
 	return true;
 }

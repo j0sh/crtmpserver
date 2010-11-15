@@ -292,9 +292,9 @@ bool InNetRTMPStream::InitializeVideoCapabilities(uint8_t *pData, uint32_t lengt
 	_videoCodecInit.IgnoreAll();
 	_videoCodecInit.ReadFromBuffer(pData, length);
 	uint8_t *pSPS = pData + 13;
-	uint32_t spsLength = ntohsp(pData + 11);
+	uint32_t spsLength = ENTOHSP(pData + 11);
 	uint8_t *pPPS = pData + 13 + spsLength + 3;
-	uint32_t ppsLength = ntohsp(pData
+	uint32_t ppsLength = ENTOHSP(pData
 			+ 13 + spsLength + 1);
 	if (!_streamCapabilities.InitVideoH264(pSPS, spsLength, pPPS, ppsLength)) {
 		FATAL("InitVideoH264 failed");
