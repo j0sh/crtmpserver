@@ -241,40 +241,85 @@ void ConfRereadSignalHandler(void) {
 }
 
 #ifdef COMPILE_STATIC
+#ifdef HAS_APP_ADMIN
 extern "C" BaseClientApplication *GetApplication_admin(Variant configuration);
+#endif
+#ifdef HAS_APP_APPLESTREAMINGCLIENT
 extern "C" BaseClientApplication *GetApplication_applestreamingclient(Variant configuration);
+#endif
+#ifdef HAS_APP_APPSELECTOR
 extern "C" BaseClientApplication *GetApplication_appselector(Variant configuration);
+#endif
+#ifdef HAS_APP_FLVPLAYBACK
 extern "C" BaseClientApplication *GetApplication_flvplayback(Variant configuration);
-//extern "C" BaseClientApplication *GetApplication_houseband(Variant configuration);
+#endif
+#ifdef HAS_APP_HOUSEBAND
+extern "C" BaseClientApplication *GetApplication_houseband(Variant configuration);
+#endif
+#ifdef HAS_APP_PROXYPUBLISH
 extern "C" BaseClientApplication *GetApplication_proxypublish(Variant configuration);
+#endif
+#ifdef HAS_APP_SAMPLEFACTORY
 extern "C" BaseClientApplication *GetApplication_samplefactory(Variant configuration);
+#endif
+#ifdef HAS_APP_STRESSTEST
 extern "C" BaseClientApplication *GetApplication_stresstest(Variant configuration);
+#endif
+#ifdef HAS_APP_VPTESTS
 extern "C" BaseClientApplication *GetApplication_vptests(Variant configuration);
+#endif
 
 BaseClientApplication *SpawnApplication(Variant configuration) {
-	if (configuration[CONF_APPLICATION_NAME] == "admin") {
+	if (false) {
+
+	}
+#ifdef HAS_APP_ADMIN
+	else if (configuration[CONF_APPLICATION_NAME] == "admin") {
 		return GetApplication_admin(configuration);
-	} else if (configuration[CONF_APPLICATION_NAME] == "applestreamingclient") {
+	}
+#endif
+#ifdef HAS_APP_APPLESTREAMINGCLIENT
+	else if (configuration[CONF_APPLICATION_NAME] == "applestreamingclient") {
 		return GetApplication_applestreamingclient(configuration);
-	} else if (configuration[CONF_APPLICATION_NAME] == "appselector") {
+	}
+#endif
+#ifdef HAS_APP_APPSELECTOR
+	else if (configuration[CONF_APPLICATION_NAME] == "appselector") {
 		return GetApplication_appselector(configuration);
-	} else if (configuration[CONF_APPLICATION_NAME] == "flvplayback") {
+	}
+#endif
+#ifdef HAS_APP_FLVPLAYBACK
+	else if (configuration[CONF_APPLICATION_NAME] == "flvplayback") {
 		return GetApplication_flvplayback(configuration);
 	}
-		//		else if (configuration[CONF_APPLICATION_NAME] == "houseband") {
-		//		return GetApplication_houseband(configuration);
-		//	}
+#endif
+#ifdef HAS_APP_HOUSEBAND
+	else if (configuration[CONF_APPLICATION_NAME] == "houseband") {
+		return GetApplication_houseband(configuration);
+	}
+#endif
+#ifdef HAS_APP_PROXYPUBLISH
 	else if (configuration[CONF_APPLICATION_NAME] == "proxypublish") {
 		return GetApplication_proxypublish(configuration);
-	} else if (configuration[CONF_APPLICATION_NAME] == "samplefactory") {
+	}
+#endif
+#ifdef HAS_APP_SAMPLEFACTORY
+	else if (configuration[CONF_APPLICATION_NAME] == "samplefactory") {
 		return GetApplication_samplefactory(configuration);
-	} else if (configuration[CONF_APPLICATION_NAME] == "stresstest") {
+	}
+#endif
+#ifdef HAS_APP_STRESSTEST
+	else if (configuration[CONF_APPLICATION_NAME] == "stresstest") {
 		return GetApplication_stresstest(configuration);
-	} else if (configuration[CONF_APPLICATION_NAME] == "vptests") {
+	}
+#endif
+#ifdef HAS_APP_VPTESTS
+	else if (configuration[CONF_APPLICATION_NAME] == "vptests") {
 		return GetApplication_vptests(configuration);
-	} else {
+	}
+#endif
+	else {
 		return NULL;
 	}
 }
 #endif
-
