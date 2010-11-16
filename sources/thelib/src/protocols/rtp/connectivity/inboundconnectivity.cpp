@@ -94,8 +94,8 @@ bool InboundConnectivity::Initialize(Variant &videoTrack, Variant &audioTrack,
 			unb64((string) SDP_VIDEO_CODEC_H264_PPS(videoTrack)));
 
 	//6. make the stream known to inbound RTP protocols
-	_pRTPVideo->SetStream(_pInStream);
-	_pRTPAudio->SetStream(_pInStream);
+	_pRTPVideo->SetStream(_pInStream, false);
+	_pRTPAudio->SetStream(_pInStream, true);
 
 	//7. Make the this Connectivity known to all protocols
 	_pRTPVideo->SetInbboundConnectivity(this);
@@ -288,7 +288,7 @@ void InboundConnectivity::Cleanup() {
 		_pInStream = NULL;
 	}
 	if (_pRTPVideo != NULL) {
-		_pRTPVideo->SetStream(NULL);
+		_pRTPVideo->SetStream(NULL, false);
 		_pRTPVideo->EnqueueForDelete();
 		_pRTPVideo = NULL;
 	}
@@ -297,7 +297,7 @@ void InboundConnectivity::Cleanup() {
 		_pRTCPVideo = NULL;
 	}
 	if (_pRTPAudio != NULL) {
-		_pRTPAudio->SetStream(NULL);
+		_pRTPAudio->SetStream(NULL, true);
 		_pRTPAudio->EnqueueForDelete();
 		_pRTPAudio = NULL;
 	}

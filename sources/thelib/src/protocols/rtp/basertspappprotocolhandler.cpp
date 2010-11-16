@@ -600,9 +600,10 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPResponse200Describe(
 	}
 
 	//4. Get the first video track
-	Variant videoTrack = sdp.GetVideoTrack(30,
+	Variant videoTrack = sdp.GetVideoTrack(0,
 			requestHeaders[RTSP_FIRST_LINE][RTSP_URL]);
-	Variant audioTrack;
+	Variant audioTrack = sdp.GetAudioTrack(0,
+			requestHeaders[RTSP_FIRST_LINE][RTSP_URL]);
 	//FINEST("videoTrack:\n%s", STR(videoTrack.ToString()));
 
 

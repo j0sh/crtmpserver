@@ -46,17 +46,20 @@
 #define SDP_VIDEO_CODEC(x)			((x)["codec"])
 #define SDP_VIDEO_CODEC_H264_SPS(x)	((x)["h264SPS"])
 #define SDP_VIDEO_CODEC_H264_PPS(x)	((x)["h264PPS"])
+#define SDP_AUDIO_SERVER_IP(x)		((x)["ip"])
+#define SDP_AUDIO_CONTROL_URI(x)	((x)["controlUri"])
+#define SDP_AUDIO_CODEC(x)			((x)["codec"])
+#define SDP_AUDIO_CODEC_SETUP(x)	((x)["codecSetup"])
 
 class DLLEXP SDP
 : public Variant {
-private:
-	Variant _dummyTrack;
 public:
 	SDP();
 	virtual ~SDP();
 
 	static bool ParseSDP(SDP &sdp, string &raw);
 	Variant GetVideoTrack(uint32_t index, string uri);
+	Variant GetAudioTrack(uint32_t index, string uri);
 	string GetStreamName();
 private:
 	static bool ParseSection(Variant &result, vector<string> &lines,
@@ -78,7 +81,10 @@ private:
 	static bool ParseSDPLineV(Variant &result, string line);
 	static bool ParseSDPLineZ(Variant &result, string line);
 
-	Variant &GetTrack(uint32_t index, string type);
+	Variant GetTrack(uint32_t index, string type);
+private:
+	Variant ParseVideoTrack(Variant &track);
+	Variant ParseAudioTrack(Variant &track);
 };
 
 

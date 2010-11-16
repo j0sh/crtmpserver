@@ -30,9 +30,11 @@ class DLLEXP InNetRTPStream
 private:
 	uint16_t _counter;
 	IOBuffer _currentNalu;
-	IOBuffer _SPS;
-	IOBuffer _PPS;
-	double _lastTs;
+	IOBuffer _videoCodecSPS;
+	IOBuffer _videoCodecPPS;
+	IOBuffer _audioCodec;
+	double _lastVideoTs;
+	double _lastAudioTs;
 public:
 	InNetRTPStream(BaseProtocol *pProtocol, StreamsManager *pStreamsManager,
 			string name, string SPS, string PPS);

@@ -30,9 +30,10 @@ InNetRTPStream::InNetRTPStream(BaseProtocol *pProtocol,
 		StreamsManager *pStreamsManager, string name, string SPS, string PPS)
 : BaseInNetStream(pProtocol, pStreamsManager, ST_IN_NET_RTP, name) {
 	_counter = 0;
-	_SPS.ReadFromString(SPS);
-	_PPS.ReadFromString(PPS);
-	_lastTs = 0;
+	_videoCodecSPS.ReadFromString(SPS);
+	_videoCodecPPS.ReadFromString(PPS);
+	_lastVideoTs = 0;
+	_lastAudioTs = 0;
 }
 
 InNetRTPStream::~InNetRTPStream() {
@@ -52,22 +53,44 @@ void InNetRTPStream::ReadyForSend() {
 }
 
 void InNetRTPStream::SignalOutStreamAttached(BaseOutStream *pOutStream) {
-	if (_lastTs == 0)
-		return;
-	if (!pOutStream->FeedData(GETIBPOINTER(_SPS), GETAVAILABLEBYTESCOUNT(_SPS),
-			0, GETAVAILABLEBYTESCOUNT(_SPS),
-			_lastTs, false)) {
-		FATAL("Unable to feed stream");
-		if (pOutStream->GetProtocol() != NULL) {
-			pOutStream->GetProtocol()->EnqueueForDelete();
+	if (_lastVideoTs != 0) {
+		if (!pOutStream->FeedData(
+				GETIBPOINTER(_videoCodecSPS),
+				GETAVAILABLEBYTESCOUNT(_videoCodecSPS),
+				0,
+				GETAVAILABLEBYTESCOUNT(_videoCodecSPS),
+				_lastVideoTs,
+				false)) {
+			FATAL("Unable to feed stream");
+			if (pOutStream->GetProtocol() != NULL) {
+				pOutStream->GetProtocol()->EnqueueForDelete();
+			}
+		}
+		if (!pOutStream->FeedData(
+				GETIBPOINTER(_videoCodecPPS),
+				GETAVAILABLEBYTESCOUNT(_videoCodecPPS),
+				0,
+				GETAVAILABLEBYTESCOUNT(_videoCodecPPS),
+				_lastVideoTs,
+				false)) {
+			FATAL("Unable to feed stream");
+			if (pOutStream->GetProtocol() != NULL) {
+				pOutStream->GetProtocol()->EnqueueForDelete();
+			}
 		}
 	}
-	if (!pOutStream->FeedData(GETIBPOINTER(_PPS), GETAVAILABLEBYTESCOUNT(_PPS),
-			0, GETAVAILABLEBYTESCOUNT(_PPS),
-			_lastTs, false)) {
-		FATAL("Unable to feed stream");
-		if (pOutStream->GetProtocol() != NULL) {
-			pOutStream->GetProtocol()->EnqueueForDelete();
+	if (_lastAudioTs != 0) {
+		if (!pOutStream->FeedData(
+				GETIBPOINTER(_audioCodec),
+				GETAVAILABLEBYTESCOUNT(_audioCodec),
+				0,
+				GETAVAILABLEBYTESCOUNT(_audioCodec),
+				_lastAudioTs,
+				false)) {
+			FATAL("Unable to feed stream");
+			if (pOutStream->GetProtocol() != NULL) {
+				pOutStream->GetProtocol()->EnqueueForDelete();
+			}
 		}
 	}
 #ifdef HAS_PROTOCOL_RTMP
@@ -95,7 +118,7 @@ bool InNetRTPStream::SignalResume() {
 }
 
 bool InNetRTPStream::SignalSeek(double &absoluteTimestamp) {
-	NYIR;
+	return true;
 }
 
 bool InNetRTPStream::SignalStop() {
@@ -105,17 +128,18 @@ bool InNetRTPStream::SignalStop() {
 bool InNetRTPStream::FeedData(uint8_t *pData, uint32_t dataLength,
 		uint32_t processedLength, uint32_t totalLength,
 		double absoluteTimestamp, bool isAudio) {
-	if (_lastTs > absoluteTimestamp) {
+	double &lastTs = isAudio ? _lastAudioTs : _lastVideoTs;
+	if (lastTs > absoluteTimestamp) {
 		WARN("Back time on %s. ATS: %.2f LTS: %.2f; D: %.2f",
 				STR(GetName()),
 				absoluteTimestamp,
-				_lastTs,
-				absoluteTimestamp - _lastTs);
+				lastTs,
+				absoluteTimestamp - lastTs);
 		return true;
 	}
 	LinkedListNode<BaseOutStream *> *pTemp = _pOutStreams;
-	if (_lastTs == 0) {
-		_lastTs = absoluteTimestamp;
+	if (lastTs == 0) {
+		lastTs = absoluteTimestamp;
 		while (pTemp != NULL) {
 			if (!pTemp->info->IsEnqueueForDelete()) {
 				SignalOutStreamAttached(pTemp->info);
@@ -123,7 +147,7 @@ bool InNetRTPStream::FeedData(uint8_t *pData, uint32_t dataLength,
 			pTemp = pTemp->pPrev;
 		}
 	}
-	_lastTs = absoluteTimestamp;
+	lastTs = absoluteTimestamp;
 	pTemp = _pOutStreams;
 	while (pTemp != NULL) {
 		if (!pTemp->info->IsEnqueueForDelete()) {
@@ -210,16 +234,12 @@ bool InNetRTPStream::FeedVideoData(uint8_t *pData, uint32_t dataLength,
 				_counter = 0;
 				return true;
 			}
-			//FINEST("length: %d; %s", length, STR(NALUToString(pData[index])));
-			if ((NALU_TYPE(pData[index]) == NALU_TYPE_IDR)
-					|| (NALU_TYPE(pData[index]) == NALU_TYPE_SLICE)) {
-				if (!FeedData(pData + index,
-						length, 0,
-						length,
-						ts, false)) {
-					FATAL("Unable to feed NALU");
-					return false;
-				}
+			if (!FeedData(pData + index,
+					length, 0,
+					length,
+					ts, false)) {
+				FATAL("Unable to feed NALU");
+				return false;
 			}
 			index += length;
 		}

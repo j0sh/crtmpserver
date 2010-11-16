@@ -362,7 +362,7 @@ bool RTSPProtocol::ParseInterleavedHeaders(IOBuffer &buffer) {
 	//2. Do we have at least 4 bytes ($ sign, channel byte an 2-bytes length)?
 	uint32_t bufferLength = GETAVAILABLEBYTESCOUNT(buffer);
 	if (bufferLength < 4) {
-		WARN("Not enough data");
+		//WARN("Not enough data");
 		return true;
 	}
 

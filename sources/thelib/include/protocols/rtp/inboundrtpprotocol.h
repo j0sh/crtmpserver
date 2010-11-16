@@ -36,6 +36,7 @@ private:
 	InboundConnectivity *_pConnectivity;
 	uint16_t _lastSeq;
 	uint16_t _seqRollOver;
+	bool _isAudio;
 public:
 	InboundRTPProtocol();
 	virtual ~InboundRTPProtocol();
@@ -50,7 +51,7 @@ public:
 	uint32_t GetSSRC();
 	uint32_t GetExtendedSeq();
 
-	void SetStream(InNetRTPStream *pInStream);
+	void SetStream(InNetRTPStream *pInStream, bool isAudio);
 	void SetInbboundConnectivity(InboundConnectivity *pConnectivity);
 };
 

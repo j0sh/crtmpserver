@@ -32,6 +32,7 @@ InboundRTPProtocol::InboundRTPProtocol()
 	memset(&_rtpHeader, 0, sizeof (_rtpHeader));
 	_lastSeq = 0;
 	_seqRollOver = 0;
+	_isAudio = false;
 }
 
 InboundRTPProtocol::~InboundRTPProtocol() {
@@ -118,13 +119,17 @@ bool InboundRTPProtocol::SignalInputData(IOBuffer &buffer,
 
 	//5. Feed the data to the stream
 	if (_pInStream != NULL) {
-		if (!_pInStream->FeedVideoData(pBuffer, length, _rtpHeader)) {
-			FATAL("Unable to stream data");
-			if (_pConnectivity != NULL) {
-				_pConnectivity->EnqueueForDelete();
-				_pConnectivity = NULL;
+		if (_isAudio) {
+			NYI;
+		} else {
+			if (!_pInStream->FeedVideoData(pBuffer, length, _rtpHeader)) {
+				FATAL("Unable to stream data");
+				if (_pConnectivity != NULL) {
+					_pConnectivity->EnqueueForDelete();
+					_pConnectivity = NULL;
+				}
+				return false;
 			}
-			return false;
 		}
 	}
 
@@ -146,8 +151,9 @@ uint32_t InboundRTPProtocol::GetExtendedSeq() {
 	return (((uint32_t) _seqRollOver) << 16) | _lastSeq;
 }
 
-void InboundRTPProtocol::SetStream(InNetRTPStream *pInStream) {
+void InboundRTPProtocol::SetStream(InNetRTPStream *pInStream, bool isAudio) {
 	_pInStream = pInStream;
+	_isAudio = isAudio;
 }
 
 void InboundRTPProtocol::SetInbboundConnectivity(InboundConnectivity *pConnectivity) {

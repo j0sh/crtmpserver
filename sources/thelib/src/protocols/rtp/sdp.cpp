@@ -29,6 +29,7 @@ SDP::~SDP() {
 }
 
 bool SDP::ParseSDP(SDP &sdp, string &raw) {
+	FINEST("raw:\n%s\n", STR(raw));
 	//1. Reset
 	sdp.Reset();
 
@@ -96,7 +97,7 @@ bool SDP::ParseSDP(SDP &sdp, string &raw) {
 
 Variant SDP::GetVideoTrack(uint32_t index, string uri) {
 	//1. Find the track
-	Variant &track = GetTrack(0, "video");
+	Variant track = GetTrack(index, "video");
 	if (track == V_NULL) {
 		FATAL("Video track index %d not found", index);
 		return Variant();
@@ -122,6 +123,36 @@ Variant SDP::GetVideoTrack(uint32_t index, string uri) {
 	SDP_VIDEO_CODEC_H264_PPS(result) = track[SDP_A]
 			.GetValue("fmtp", false)
 			.GetValue("sprop-parameter-sets", false)["PPS"];
+
+	//3. Done
+	return result;
+}
+
+Variant SDP::GetAudioTrack(uint32_t index, string uri) {
+	//1. Find the track
+	Variant track = GetTrack(index, "audio");
+	if (track == V_NULL) {
+		FATAL("Audio track index %d not found", index);
+		return Variant();
+	}
+
+	//2. Prepare the info
+	Variant result;
+	SDP_AUDIO_SERVER_IP(result) = (*this)[SDP_SESSION][SDP_O]["address"];
+	string control = track[SDP_A].GetValue("control", false);
+	if (control.find("rtsp") == 0)
+		SDP_AUDIO_CONTROL_URI(result) = control;
+	else
+		SDP_AUDIO_CONTROL_URI(result) = uri + "/" + control;
+	SDP_AUDIO_CODEC(result) = track[SDP_A].GetValue("rtpmap", false)["encodingName"];
+	if ((uint64_t) SDP_AUDIO_CODEC(result) != CODEC_AUDIO_AAC) {
+		FATAL("The only supported audio codec is aac");
+		return Variant();
+	}
+
+	SDP_AUDIO_CODEC_SETUP(result) = track[SDP_A]
+			.GetValue("fmtp", false)
+			.GetValue("config", false);
 
 	//3. Done
 	return result;
@@ -510,54 +541,120 @@ bool SDP::ParseSDPLineZ(Variant &result, string line) {
 	NYIR;
 }
 
-Variant &SDP::GetTrack(uint32_t index, string type) {
+Variant SDP::GetTrack(uint32_t index, string type) {
 	uint32_t videoTracksCount = 0;
+	uint32_t audioTracksCount = 0;
 
 	FOR_MAP((*this)[SDP_MEDIATRACKS], string, Variant, i) {
 		if (MAP_VAL(i)[SDP_M]["media_type"] == type) {
-			videoTracksCount++;
-			if (videoTracksCount == (index + 1)) {
-				Variant &result = MAP_VAL(i);
-				if (!result.HasKey(SDP_A)) {
-					FATAL("Track with no attributes");
-					return _dummyTrack;
+			if (type == "video") {
+				videoTracksCount++;
+				if (videoTracksCount == (index + 1)) {
+					return ParseVideoTrack(MAP_VAL(i));
 				}
-				if (!result[SDP_A].HasKey("control", false)) {
-					FATAL("Track with no control uri");
-					return _dummyTrack;
+			} else if (type == "audio") {
+				audioTracksCount++;
+				if (audioTracksCount == (index + 1)) {
+					return ParseAudioTrack(MAP_VAL(i));
 				}
-				if (!result[SDP_A].HasKey("rtpmap", false)) {
-					FATAL("Track with no control uri");
-					return _dummyTrack;
-				}
-				if (!result[SDP_A].HasKey("fmtp", false)) {
-					FATAL("Track with no control uri");
-					return _dummyTrack;
-				}
-				Variant &fmtp = result[SDP_A].GetValue("fmtp", false);
-				if (type == "video") {
-					if (!fmtp.HasKey("sprop-parameter-sets", false)) {
-						FATAL("Video doesn't have sprop-parameter-sets");
-						return _dummyTrack;
-					}
-					Variant &temp = fmtp.GetValue("sprop-parameter-sets", false);
-					vector<string> parts;
-					split((string) temp, ",", parts);
-					if (parts.size() != 2) {
-						FATAL("Video doesn't have sprop-parameter-sets");
-						return _dummyTrack;
-					}
-					temp.Reset();
-					temp["SPS"] = parts[0];
-					temp["PPS"] = parts[1];
-				} else {
-					NYI;
-					return _dummyTrack;
-				}
-				return result;
 			}
 		}
 	}
-	return _dummyTrack;
+	return Variant();
+}
+
+Variant SDP::ParseVideoTrack(Variant &track) {
+	Variant result = track;
+	if (!result.HasKey(SDP_A)) {
+		FATAL("Track with no attributes");
+		return Variant();
+	}
+	if (!result[SDP_A].HasKey("control", false)) {
+		FATAL("Track with no control uri");
+		return Variant();
+	}
+	if (!result[SDP_A].HasKey("rtpmap", false)) {
+		FATAL("Track with no control uri");
+		return Variant();
+	}
+	if (!result[SDP_A].HasKey("fmtp", false)) {
+		FATAL("Track with no control uri");
+		return Variant();
+	}
+	Variant &fmtp = result[SDP_A].GetValue("fmtp", false);
+
+	if (!fmtp.HasKey("sprop-parameter-sets", false)) {
+		FATAL("Video doesn't have sprop-parameter-sets");
+		return Variant();
+	}
+	Variant &temp = fmtp.GetValue("sprop-parameter-sets", false);
+	vector<string> parts;
+	split((string) temp, ",", parts);
+	if (parts.size() != 2) {
+		FATAL("Video doesn't have sprop-parameter-sets");
+		return Variant();
+	}
+	temp.Reset();
+	temp["SPS"] = parts[0];
+	temp["PPS"] = parts[1];
+
+	return result;
+}
+
+Variant SDP::ParseAudioTrack(Variant &track) {
+	Variant result = track;
+
+	if (!result.HasKey(SDP_A)) {
+		FATAL("Track with no attributes");
+		return Variant();
+	}
+	if (!result[SDP_A].HasKey("control", false)) {
+		FATAL("Track with no control uri");
+		return Variant();
+	}
+	if (!result[SDP_A].HasKey("rtpmap", false)) {
+		FATAL("Track with no control uri");
+		return Variant();
+	}
+	if (!result[SDP_A].HasKey("fmtp", false)) {
+		FATAL("Track with no control uri");
+		return Variant();
+	}
+
+	Variant &fmtp = result[SDP_A].GetValue("fmtp", false);
+	if (!fmtp.HasKey("config", false)) {
+		FATAL("Invalid fmtp line:\n%s", STR(fmtp.ToString()));
+		return Variant();
+	}
+	if (!fmtp.HasKey("mode", false)) {
+		FATAL("Invalid fmtp line:\n%s", STR(fmtp.ToString()));
+		return Variant();
+	}
+	if (lowercase((string) fmtp.GetValue("mode", false)) != "aac-hbr") {
+		FATAL("Invalid fmtp line:\n%s", STR(fmtp.ToString()));
+		return Variant();
+	}
+	if (!fmtp.HasKey("SizeLength", false)) {
+		FATAL("Invalid fmtp line:\n%s", STR(fmtp.ToString()));
+		return Variant();
+	}
+	if ((string) fmtp.GetValue("sizelength", false) != "13") {
+		FATAL("Invalid fmtp line:\n%s", STR(fmtp.ToString()));
+		return Variant();
+	}
+	if (fmtp.HasKey("IndexLength", false)) {
+		if ((string) fmtp.GetValue("IndexLength", false) != "3") {
+			FATAL("Invalid fmtp line:\n%s", STR(fmtp.ToString()));
+			return Variant();
+		}
+	}
+	if (fmtp.HasKey("IndexDeltaLength", false)) {
+		if ((string) fmtp.GetValue("IndexDeltaLength", false) != "3") {
+			FATAL("Invalid fmtp line:\n%s", STR(fmtp.ToString()));
+			return Variant();
+		}
+	}
+
+	return track;
 }
 #endif /* HAS_PROTOCOL_RTP */
