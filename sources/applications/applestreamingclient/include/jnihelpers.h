@@ -24,56 +24,54 @@
 #include <jni.h>
 #include "common.h"
 
-namespace app_applestreamingclient {
+typedef struct _CallBackInfo {
+	JNIEnv* env;
+	jobject callbackHandler;
+	string callbackClassName;
+	jclass callbackClass;
+	string callbackMethodName;
+	jmethodID callbackMethod;
 
-	typedef struct _CallBackInfo {
-		JNIEnv* env;
-		jobject callbackHandler;
-		string callbackClassName;
-		jclass callbackClass;
-		string callbackMethodName;
-		jmethodID callbackMethod;
+	_CallBackInfo() {
+		env = NULL;
+		callbackHandler = NULL;
+		callbackClassName = "";
+		callbackClass = NULL;
+		callbackMethodName = "";
+		callbackMethod = NULL;
+	};
 
-		_CallBackInfo() {
-			env = NULL;
-			callbackHandler = NULL;
-			callbackClassName = "";
-			callbackClass = NULL;
-			callbackMethodName = "";
-			callbackMethod = NULL;
-		};
+	_CallBackInfo(_CallBackInfo & ci) {
+		copy(ci);
+	}
 
-		_CallBackInfo(_CallBackInfo & ci) {
-			copy(ci);
-		}
+	_CallBackInfo & operator =(_CallBackInfo & ci) {
+		copy(ci);
+		return *this;
+	}
 
-		_CallBackInfo & operator =(_CallBackInfo & ci) {
-			copy(ci);
-			return *this;
-		}
+	void copy(_CallBackInfo & ci) {
+		this->env = ci.env;
+		this->callbackHandler = ci.callbackHandler;
+		this->callbackClassName = ci.callbackClassName;
+		this->callbackClass = ci.callbackClass;
+		this->callbackMethodName = ci.callbackMethodName;
+		this->callbackMethod = ci.callbackMethod;
+	}
 
-		void copy(_CallBackInfo & ci) {
-			this->env = ci.env;
-			this->callbackHandler = ci.callbackHandler;
-			this->callbackClassName = ci.callbackClassName;
-			this->callbackClass = ci.callbackClass;
-			this->callbackMethodName = ci.callbackMethodName;
-			this->callbackMethod = ci.callbackMethod;
-		}
+	operator string() {
+		return format("env: %p;\ncallbackHandler: %p;\ncallbackClassName: %s;\ncallbackClass: %p;\ncallbackMethodName: %s;\ncallbackMethod: %p",
+				env,
+				callbackHandler,
+				STR(callbackClassName),
+				callbackClass,
+				STR(callbackMethodName),
+				callbackMethod);
+	};
+} CallBackInfo;
 
-		operator string() {
-			return format("env: %p;\ncallbackHandler: %p;\ncallbackClassName: %s;\ncallbackClass: %p;\ncallbackMethodName: %s;\ncallbackMethod: %p",
-					env,
-					callbackHandler,
-					STR(callbackClassName),
-					callbackClass,
-					STR(callbackMethodName),
-					callbackMethod);
-		};
-	} CallBackInfo;
+jobject VariantToJObject(Variant &value, JNIEnv* pEnv);
+bool CallJava(CallBackInfo &ci, Variant &parameters);
 
-	jobject VariantToJObject(Variant &value, JNIEnv* pEnv);
-	bool CallJava(CallBackInfo &ci, Variant &parameters);
-};
 #endif	/* _JNIHELPERS_H */
 #endif /* ANDROID */
