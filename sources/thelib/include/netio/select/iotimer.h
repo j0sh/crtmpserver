@@ -27,7 +27,6 @@ class DLLEXP IOTimer
 : public IOHandler {
 private:
 	static int32_t _idGenerator;
-	BaseProtocol *_pProtocol;
 public:
 	IOTimer();
 	virtual ~IOTimer();
