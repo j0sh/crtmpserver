@@ -27,21 +27,27 @@
 #include "protocols/rtmp/streaming/baseoutnetrtmpstream.h"
 
 InNetRTPStream::InNetRTPStream(BaseProtocol *pProtocol,
-		StreamsManager *pStreamsManager, string name, string SPS, string PPS)
+		StreamsManager *pStreamsManager, string name, string SPS, string PPS, string AAC)
 : BaseInNetStream(pProtocol, pStreamsManager, ST_IN_NET_RTP, name) {
 	_counter = 0;
-	_videoCodecSPS.ReadFromString(SPS);
-	_videoCodecPPS.ReadFromString(PPS);
 	_lastVideoTs = 0;
 	_lastAudioTs = 0;
+
+	_capabilities.InitAudioAAC(
+			(uint8_t *) STR(AAC),
+			AAC.length());
+	_capabilities.InitVideoH264(
+			(uint8_t *) STR(SPS),
+			SPS.length(),
+			(uint8_t *) STR(PPS),
+			PPS.length());
 }
 
 InNetRTPStream::~InNetRTPStream() {
 }
 
 StreamCapabilities * InNetRTPStream::GetCapabilities() {
-	NYI;
-	return NULL;
+	return &_capabilities;
 }
 
 bool InNetRTPStream::IsCompatibleWithType(uint64_t type) {
@@ -53,12 +59,15 @@ void InNetRTPStream::ReadyForSend() {
 }
 
 void InNetRTPStream::SignalOutStreamAttached(BaseOutStream *pOutStream) {
+	if (TAG_KIND_OF(pOutStream->GetType(), ST_OUT_NET_RTMP)) {
+		((BaseOutNetRTMPStream *) pOutStream)->CanDropFrames(true);
+	}
 	if (_lastVideoTs != 0) {
 		if (!pOutStream->FeedData(
-				GETIBPOINTER(_videoCodecSPS),
-				GETAVAILABLEBYTESCOUNT(_videoCodecSPS),
+				_capabilities.avc._pSPS,
+				_capabilities.avc._spsLength,
 				0,
-				GETAVAILABLEBYTESCOUNT(_videoCodecSPS),
+				_capabilities.avc._spsLength,
 				_lastVideoTs,
 				false)) {
 			FATAL("Unable to feed stream");
@@ -67,10 +76,10 @@ void InNetRTPStream::SignalOutStreamAttached(BaseOutStream *pOutStream) {
 			}
 		}
 		if (!pOutStream->FeedData(
-				GETIBPOINTER(_videoCodecPPS),
-				GETAVAILABLEBYTESCOUNT(_videoCodecPPS),
+				_capabilities.avc._pPPS,
+				_capabilities.avc._ppsLength,
 				0,
-				GETAVAILABLEBYTESCOUNT(_videoCodecPPS),
+				_capabilities.avc._ppsLength,
 				_lastVideoTs,
 				false)) {
 			FATAL("Unable to feed stream");
@@ -81,12 +90,12 @@ void InNetRTPStream::SignalOutStreamAttached(BaseOutStream *pOutStream) {
 	}
 	if (_lastAudioTs != 0) {
 		if (!pOutStream->FeedData(
-				GETIBPOINTER(_audioCodec),
-				GETAVAILABLEBYTESCOUNT(_audioCodec),
+				_capabilities.aac._pAAC,
+				_capabilities.aac._aacLength,
 				0,
-				GETAVAILABLEBYTESCOUNT(_audioCodec),
+				_capabilities.aac._aacLength,
 				_lastAudioTs,
-				false)) {
+				true)) {
 			FATAL("Unable to feed stream");
 			if (pOutStream->GetProtocol() != NULL) {
 				pOutStream->GetProtocol()->EnqueueForDelete();
@@ -106,15 +115,15 @@ void InNetRTPStream::SignalOutStreamDetached(BaseOutStream *pOutStream) {
 }
 
 bool InNetRTPStream::SignalPlay(double &absoluteTimestamp, double &length) {
-	NYIR;
+	return true;
 }
 
 bool InNetRTPStream::SignalPause() {
-	NYIR;
+	return true;
 }
 
 bool InNetRTPStream::SignalResume() {
-	NYIR;
+	return true;
 }
 
 bool InNetRTPStream::SignalSeek(double &absoluteTimestamp) {
@@ -122,15 +131,16 @@ bool InNetRTPStream::SignalSeek(double &absoluteTimestamp) {
 }
 
 bool InNetRTPStream::SignalStop() {
-	NYIR;
+	return true;
 }
 
 bool InNetRTPStream::FeedData(uint8_t *pData, uint32_t dataLength,
 		uint32_t processedLength, uint32_t totalLength,
 		double absoluteTimestamp, bool isAudio) {
 	double &lastTs = isAudio ? _lastAudioTs : _lastVideoTs;
-	if (lastTs > absoluteTimestamp) {
-		WARN("Back time on %s. ATS: %.2f LTS: %.2f; D: %.2f",
+	//if (lastTs > absoluteTimestamp) {
+	if ((uint64_t) (lastTs * 100.00) > (uint64_t) (absoluteTimestamp * 100.00)) {
+		WARN("Back time on %s. ATS: %.08f LTS: %.08f; D: %.8f",
 				STR(GetName()),
 				absoluteTimestamp,
 				lastTs,
@@ -187,12 +197,11 @@ bool InNetRTPStream::FeedVideoData(uint8_t *pData, uint32_t dataLength,
 	}
 
 	//2. get the nalu
-
+	double ts = (double) rtpHeader._timestamp / _capabilities.avc._rate * 1000.0;
 	uint8_t naluType = NALU_TYPE(pData[0]);
 	if (naluType <= 23) {
 		//3. Standard NALU
-		return FeedData(pData, dataLength, 0, dataLength,
-				(double) rtpHeader._timestamp / 90.00, false);
+		return FeedData(pData, dataLength, 0, dataLength, ts, false);
 	} else if (naluType == NALU_TYPE_FUA) {
 		if (GETAVAILABLEBYTESCOUNT(_currentNalu) == 0) {
 			_currentNalu.IgnoreAll();
@@ -213,7 +222,8 @@ bool InNetRTPStream::FeedVideoData(uint8_t *pData, uint32_t dataLength,
 				if (!FeedData(GETIBPOINTER(_currentNalu),
 						GETAVAILABLEBYTESCOUNT(_currentNalu), 0,
 						GETAVAILABLEBYTESCOUNT(_currentNalu),
-						(double) rtpHeader._timestamp / 90.00, false)) {
+						ts,
+						false)) {
 					FATAL("Unable to feed NALU");
 					return false;
 				}
@@ -223,7 +233,6 @@ bool InNetRTPStream::FeedVideoData(uint8_t *pData, uint32_t dataLength,
 		}
 	} else if (naluType == NALU_TYPE_STAPA) {
 		uint32_t index = 1;
-		double ts = (double) rtpHeader._timestamp / 90.00;
 		//FINEST("ts: %.2f; delta: %.2f", ts, ts - _lastTs);
 		while (index + 3 < dataLength) {
 			uint16_t length = ENTOHSP(pData + index);
@@ -250,5 +259,46 @@ bool InNetRTPStream::FeedVideoData(uint8_t *pData, uint32_t dataLength,
 		_counter = 0;
 		return true;
 	}
+}
+
+//double ____last = 0;
+
+bool InNetRTPStream::FeedAudioData(uint8_t *pData, uint32_t dataLength,
+		RTPHeader &rtpHeader) {
+	//1. Compute AUHeadersLength in bytes
+	uint16_t auHeadersLength = ENTOHSP(pData);
+	if ((auHeadersLength % 8) != 0) {
+		FATAL("Invalid AU headers length: %04x", auHeadersLength);
+		return false;
+	}
+
+	//2. apply it to the buffer
+	auHeadersLength = auHeadersLength / 8 + 2;
+	if (auHeadersLength >= dataLength) {
+		FATAL("Invalid AU headers length: %04x", auHeadersLength);
+		return false;
+	}
+	pData += auHeadersLength;
+	dataLength -= auHeadersLength;
+
+	//3. Compute the ts
+	double ts = (double) rtpHeader._timestamp / _capabilities.aac._sampleRate * 1000.00;
+	//	FINEST("ts: %.8f; diff: %.08f; dataLength: %d; auHeadersLength: %d",
+	//			ts / 1000.00, (ts - ____last) / 1000.00, dataLength, auHeadersLength - 2);
+	//	____last = ts;
+
+
+	//	FINEST("auHeadersLength: %d; dataLength: %d; %.02f; %02x %02x %02x %02x %02x %02x %02x %02x",
+	//			auHeadersLength, dataLength,
+	//			ts,
+	//			pData[0], pData[1], pData[2], pData[3],
+	//			pData[4], pData[5], pData[6], pData[7]);
+	//	return true;
+
+	return FeedData(pData,
+			dataLength,
+			0,
+			dataLength,
+			ts, true);
 }
 #endif /* HAS_PROTOCOL_RTP */

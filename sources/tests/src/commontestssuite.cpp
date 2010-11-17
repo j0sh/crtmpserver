@@ -48,6 +48,7 @@ void CommonTestsSuite::Run() {
 	test_HMACsha256();
 	test_b64();
 	test_unb64();
+	test_unhex();
 	test_ParseURL();
 }
 
@@ -753,6 +754,50 @@ void CommonTestsSuite::test_unb64() {
 	TS_ASSERT(unb64("dGhpcyBpcyBhIHRlc3Q=") == "this is a test");
 	TS_ASSERT(unb64("dGhpcyBpcyBhIHRlcw==") == "this is a tes");
 	TS_ASSERT(unb64("") == "");
+}
+
+void CommonTestsSuite::test_unhex() {
+	string hexString;
+	string bin;
+
+	hexString = "";
+	bin = unhex(hexString);
+	TS_ASSERT(bin == "");
+
+	hexString = "1";
+	bin = unhex(hexString);
+	TS_ASSERT(bin == "");
+
+	hexString = "1non_permitted_characters";
+	bin = unhex(hexString);
+	TS_ASSERT(bin == "");
+
+	hexString = "1non_permitted_characters1";
+	bin = unhex(hexString);
+	TS_ASSERT(bin == "");
+
+	for (uint32_t i = 0; i <= 255; i++) {
+		hexString = format("%02x", i);
+		bin = unhex(hexString);
+		TS_ASSERT(bin.length() == 1);
+		TS_ASSERT((uint8_t) bin[0] == i);
+	}
+
+	for (uint32_t i = 1; i <= 255; i++) {
+		hexString = "";
+		for (uint32_t j = 0; j < i; j++) {
+			hexString += format("%02x", j);
+		}
+		bin = unhex(hexString);
+		if (bin.length() != i) {
+			TS_ASSERT(bin.length() == i);
+		}
+		for (uint32_t j = 0; j < i; j++) {
+			if ((uint8_t) bin[j] != j) {
+				TS_ASSERT((uint8_t) bin[j] == j);
+			}
+		}
+	}
 }
 
 void CommonTestsSuite::test_ParseURL() {

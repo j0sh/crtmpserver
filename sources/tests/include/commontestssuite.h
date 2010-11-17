@@ -51,6 +51,7 @@ private:
 	void test_HMACsha256();
 	void test_b64();
 	void test_unb64();
+	void test_unhex();
 	void test_ParseURL();
 };
 

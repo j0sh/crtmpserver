@@ -29,7 +29,7 @@ SDP::~SDP() {
 }
 
 bool SDP::ParseSDP(SDP &sdp, string &raw) {
-	FINEST("raw:\n%s\n", STR(raw));
+	//FINEST("raw:\n%s\n", STR(raw));
 	//1. Reset
 	sdp.Reset();
 
@@ -135,6 +135,7 @@ Variant SDP::GetAudioTrack(uint32_t index, string uri) {
 		FATAL("Audio track index %d not found", index);
 		return Variant();
 	}
+	//FINEST("track:\n%s", STR(track.ToString()));
 
 	//2. Prepare the info
 	Variant result;

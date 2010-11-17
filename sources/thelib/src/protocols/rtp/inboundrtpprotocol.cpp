@@ -120,8 +120,16 @@ bool InboundRTPProtocol::SignalInputData(IOBuffer &buffer,
 	//5. Feed the data to the stream
 	if (_pInStream != NULL) {
 		if (_isAudio) {
-			NYI;
+			if (!_pInStream->FeedAudioData(pBuffer, length, _rtpHeader)) {
+				FATAL("Unable to stream data");
+				if (_pConnectivity != NULL) {
+					_pConnectivity->EnqueueForDelete();
+					_pConnectivity = NULL;
+				}
+				return false;
+			}
 		} else {
+			//FINEST("VIDEO: %08x", _rtpHeader._ssrc);
 			if (!_pInStream->FeedVideoData(pBuffer, length, _rtpHeader)) {
 				FATAL("Unable to stream data");
 				if (_pConnectivity != NULL) {

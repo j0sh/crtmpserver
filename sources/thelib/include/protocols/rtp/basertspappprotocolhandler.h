@@ -95,6 +95,7 @@ private:
 			StreamCapabilities *pCapabilities);
 	string GetVideoTrack(RTSPProtocol *pFrom,
 			StreamCapabilities *pCapabilities);
+	bool SendSetupTrackMessages(RTSPProtocol *pFrom, string sessionId);
 };
 
 

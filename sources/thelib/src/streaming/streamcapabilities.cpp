@@ -42,6 +42,9 @@ bool _VIDEO_AVC::Init(uint8_t *pSPS, uint32_t spsLength, uint8_t *pPPS,
 	_pPPS = new uint8_t[_ppsLength];
 	memcpy(_pPPS, pPPS, _ppsLength);
 
+	_rate = 90000;
+
+	//FINEST("H264 codec:\n%s", STR(*this));
 	return true;
 }
 
@@ -56,6 +59,15 @@ void _VIDEO_AVC::Clear() {
 		_pPPS = NULL;
 	}
 	_ppsLength = 0;
+	_rate = 0;
+}
+
+_VIDEO_AVC::operator string() {
+	string result;
+	result += format("_spsLength: %d\n", _spsLength);
+	result += format("_ppsLength: %d\n", _ppsLength);
+	result += format("_rate: %d", _rate);
+	return result;
 }
 
 _AUDIO_AAC::_AUDIO_AAC() {
@@ -102,7 +114,7 @@ bool _AUDIO_AAC::Init(uint8_t *pBuffer, uint32_t length) {
 		FATAL("Invalid _audioObjectType: %d", _audioObjectType);
 		return false;
 	}
-	FINEST("_audioObjectType: %d", _audioObjectType);
+	//FINEST("_audioObjectType: %d", _audioObjectType);
 
 	//3. Read the sample rate index
 	_sampleRateIndex = ba.ReadBits<uint8_t > (4);
@@ -111,7 +123,7 @@ bool _AUDIO_AAC::Init(uint8_t *pBuffer, uint32_t length) {
 		FATAL("Invalid sample rate: %d", _sampleRateIndex);
 		return false;
 	}
-	FINEST("_sampleRateIndex: %d", _sampleRateIndex);
+	//FINEST("_sampleRateIndex: %d", _sampleRateIndex);
 	if (_sampleRateIndex == 15) {
 		if (length < 5) {
 			FATAL("Invalid length: %d", length);
@@ -125,7 +137,7 @@ bool _AUDIO_AAC::Init(uint8_t *pBuffer, uint32_t length) {
 		};
 		_sampleRate = rates[_sampleRateIndex];
 	}
-	FINEST("_sampleRate: %d", _sampleRate);
+	//FINEST("_sampleRate: %d", _sampleRate);
 
 	//4. read the channel configuration index
 	_channelConfigurationIndex = ba.ReadBits<uint8_t > (4);
@@ -134,11 +146,13 @@ bool _AUDIO_AAC::Init(uint8_t *pBuffer, uint32_t length) {
 		FATAL("Invalid _channelConfigurationIndex: %d", _channelConfigurationIndex);
 		return false;
 	}
-	FINEST("_channelConfigurationIndex: %d", _channelConfigurationIndex);
+	//FINEST("_channelConfigurationIndex: %d", _channelConfigurationIndex);
 
 	_pAAC = new uint8_t[length];
 	memcpy(_pAAC, pBuffer, length);
 	_aacLength = length;
+
+	//FINEST("AAC codec:\n%s", STR(*this));
 
 	return true;
 }
@@ -161,6 +175,16 @@ string _AUDIO_AAC::GetRTSPFmtpConfig() {
 		result += format("%02x", _pAAC[i]);
 	}
 	return "config=" + result;
+}
+
+_AUDIO_AAC::operator string() {
+	string result;
+	result += format("_aacLength: %d\n", _aacLength);
+	result += format("_audioObjectType: %d\n", _audioObjectType);
+	result += format("_sampleRateIndex: %d\n", _sampleRateIndex);
+	result += format("_sampleRate: %d\n", _sampleRate);
+	result += format("_channelConfigurationIndex: %d", _channelConfigurationIndex);
+	return result;
 }
 
 StreamCapabilities::StreamCapabilities() {

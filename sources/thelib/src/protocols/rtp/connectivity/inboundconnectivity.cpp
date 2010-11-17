@@ -55,6 +55,8 @@ void InboundConnectivity::EnqueueForDelete() {
 bool InboundConnectivity::Initialize(Variant &videoTrack, Variant &audioTrack,
 		string streamName, bool forceTcp) {
 	_forceTcp = forceTcp;
+	//	FINEST("videoTrack:\n%s", STR(videoTrack.ToString()));
+	//	FINEST("audioTrack:\n%s", STR(audioTrack.ToString()));
 
 	//1. get the application
 	BaseClientApplication *pApplication = _pRTSP->GetApplication();
@@ -91,7 +93,9 @@ bool InboundConnectivity::Initialize(Variant &videoTrack, Variant &audioTrack,
 	_pInStream = new InNetRTPStream(_pRTSP, pApplication->GetStreamsManager(),
 			streamName,
 			unb64((string) SDP_VIDEO_CODEC_H264_SPS(videoTrack)),
-			unb64((string) SDP_VIDEO_CODEC_H264_PPS(videoTrack)));
+			unb64((string) SDP_VIDEO_CODEC_H264_PPS(videoTrack)),
+			unhex(SDP_AUDIO_CODEC_SETUP(audioTrack))
+			);
 
 	//6. make the stream known to inbound RTP protocols
 	_pRTPVideo->SetStream(_pInStream, false);

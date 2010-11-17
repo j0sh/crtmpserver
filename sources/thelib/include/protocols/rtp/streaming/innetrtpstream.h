@@ -30,14 +30,12 @@ class DLLEXP InNetRTPStream
 private:
 	uint16_t _counter;
 	IOBuffer _currentNalu;
-	IOBuffer _videoCodecSPS;
-	IOBuffer _videoCodecPPS;
-	IOBuffer _audioCodec;
 	double _lastVideoTs;
 	double _lastAudioTs;
+	StreamCapabilities _capabilities;
 public:
 	InNetRTPStream(BaseProtocol *pProtocol, StreamsManager *pStreamsManager,
-			string name, string SPS, string PPS);
+			string name, string SPS, string PPS, string AAC);
 	virtual ~InNetRTPStream();
 
 	virtual StreamCapabilities * GetCapabilities();
@@ -54,6 +52,8 @@ public:
 			uint32_t processedLength, uint32_t totalLength,
 			double absoluteTimestamp, bool isAudio);
 	virtual bool FeedVideoData(uint8_t *pData, uint32_t dataLength,
+			RTPHeader &rtpHeader);
+	virtual bool FeedAudioData(uint8_t *pData, uint32_t dataLength,
 			RTPHeader &rtpHeader);
 };
 

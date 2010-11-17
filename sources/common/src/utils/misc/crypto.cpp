@@ -301,3 +301,35 @@ string unb64(uint8_t *pBuffer, uint32_t length) {
 	delete[] pOut;
 	return result;
 }
+
+string unhex(string source) {
+	if (source == "")
+		return "";
+	if ((source.length() % 2) != 0) {
+		FATAL("Invalid hex string: %s", STR(source));
+		return "";
+	}
+	source = lowercase(source);
+	string result = "";
+	for (uint32_t i = 0; i < (source.length() / 2); i++) {
+		uint8_t val = 0;
+		if ((source[i * 2] >= '0') && (source[i * 2] <= '9')) {
+			val = (source[i * 2] - '0') << 4;
+		} else if ((source[i * 2] >= 'a') && (source[i * 2] <= 'f')) {
+			val = (source[i * 2] - 'a' + 10) << 4;
+		} else {
+			FATAL("Invalid hex string: %s", STR(source));
+			return "";
+		}
+		if ((source[i * 2 + 1] >= '0') && (source[i * 2 + 1] <= '9')) {
+			val |= (source[i * 2 + 1] - '0');
+		} else if ((source[i * 2 + 1] >= 'a') && (source[i * 2 + 1] <= 'f')) {
+			val |= (source[i * 2 + 1] - 'a' + 10);
+		} else {
+			FATAL("Invalid hex string: %s", STR(source));
+			return "";
+		}
+		result += (char) val;
+	}
+	return result;
+}

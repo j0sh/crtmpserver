@@ -334,8 +334,8 @@ bool RTSPProtocol::SendMessage(Variant &headers, string &content) {
 	_outputBuffer.ReadFromString(content);
 
 
-	string aaa = string((char *) GETIBPOINTER(_outputBuffer), GETAVAILABLEBYTESCOUNT(_outputBuffer));
-	FINEST("\n`%s`", STR(aaa));
+	//	string aaa = string((char *) GETIBPOINTER(_outputBuffer), GETAVAILABLEBYTESCOUNT(_outputBuffer));
+	//	FINEST("\n`%s`", STR(aaa));
 
 	//5. Enqueue for outbound
 	return EnqueueForOutbound();

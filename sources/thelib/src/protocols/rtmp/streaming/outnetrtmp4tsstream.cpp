@@ -46,6 +46,8 @@ name, rtmpStreamId, chunkSize) {
 	_pSPSPPS[5] = 1; //version
 	_pSPSPPS[9] = 0xff; //6 bits reserved (111111) + 2 bits nal size length - 1 (11)
 	_pSPSPPS[10] = 0xe1; //3 bits reserved (111) + 5 bits number of sps (00001)
+
+	_inboundStreamIsRTP = false;
 }
 
 OutNetRTMP4TSStream::~OutNetRTMP4TSStream() {
@@ -53,6 +55,7 @@ OutNetRTMP4TSStream::~OutNetRTMP4TSStream() {
 }
 
 bool OutNetRTMP4TSStream::IsCompatibleWithType(uint64_t type) {
+	_inboundStreamIsRTP = TAG_KIND_OF(type, ST_IN_NET_RTP);
 	return TAG_KIND_OF(type, ST_IN_NET_TS)
 			|| TAG_KIND_OF(type, ST_IN_NET_RTP);
 }
@@ -101,27 +104,44 @@ bool OutNetRTMP4TSStream::FeedAudioData(uint8_t *pData, uint32_t dataLength,
 		_audioCodecSent = true;
 	}
 
-	//2. Skip the ADTS headers and re-position the buffer
-	uint32_t totalADTSHeaderLength = 0;
-	if (((pData[1])&0x01) == 0)
-		totalADTSHeaderLength = 9;
-	else
-		totalADTSHeaderLength = 7;
-	pData += totalADTSHeaderLength - 2;
+	if (_inboundStreamIsRTP) {
+		pData -= 2;
+		dataLength += 2;
 
-	//3. Setup the RTMP header
-	pData[0] = 0xaf;
-	pData[1] = 0x01;
+		pData[0] = 0xaf;
+		pData[1] = 0x01;
 
-	//4. Feed
-	return BaseOutNetRTMPStream::FeedData(
-			pData, //pData
-			dataLength - totalADTSHeaderLength + 2, //dataLength
-			0, //processedLength
-			dataLength - totalADTSHeaderLength + 2, //totalLength
-			absoluteTimestamp, //absoluteTimestamp
-			true //isAudio
-			);
+		return BaseOutNetRTMPStream::FeedData(
+				pData, //pData
+				dataLength, //dataLength
+				0, //processedLength
+				dataLength, //totalLength
+				absoluteTimestamp, //absoluteTimestamp
+				true //isAudio
+				);
+	} else {
+		//2. Skip the ADTS headers and re-position the buffer
+		uint32_t totalADTSHeaderLength = 0;
+		if (((pData[1])&0x01) == 0)
+			totalADTSHeaderLength = 9;
+		else
+			totalADTSHeaderLength = 7;
+		pData += totalADTSHeaderLength - 2;
+
+		//3. Setup the RTMP header
+		pData[0] = 0xaf;
+		pData[1] = 0x01;
+
+		//4. Feed
+		return BaseOutNetRTMPStream::FeedData(
+				pData, //pData
+				dataLength - totalADTSHeaderLength + 2, //dataLength
+				0, //processedLength
+				dataLength - totalADTSHeaderLength + 2, //totalLength
+				absoluteTimestamp, //absoluteTimestamp
+				true //isAudio
+				);
+	}
 }
 
 bool OutNetRTMP4TSStream::FeedVideoData(uint8_t *pData, uint32_t dataLength,

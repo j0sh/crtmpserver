@@ -478,6 +478,7 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPRequestTearDown(RTSPProtocol *pFrom,
 bool BaseRTSPAppProtocolHandler::HandleRTSPResponse(RTSPProtocol *pFrom,
 		Variant &requestHeaders, string &requestContent, Variant &responseHeaders,
 		string &responseContent) {
+	//WARN("\n%s\n%s", STR(responseHeaders.ToString()), STR(responseContent));
 	switch ((uint32_t) responseHeaders[RTSP_FIRST_LINE][RTSP_STATUS_CODE]) {
 		case 200:
 		{
@@ -614,15 +615,12 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPResponse200Describe(
 		return false;
 	}
 
-	//6. Prepare the video SETUP request
-	pFrom->ClearRequestMessage();
-	pFrom->PushRequestFirstLine(RTSP_METHOD_SETUP,
-			SDP_VIDEO_CONTROL_URI(videoTrack), RTSP_VERSION_1_0);
-	pFrom->PushRequestHeader(RTSP_HEADERS_TRANSPORT,
-			pFrom->GetTransportHeaderLine(false));
+	//6. Store the tracks inside the session for later use
+	pFrom->GetCustomParameters()["pendingTracks"]["audio"] = audioTrack;
+	pFrom->GetCustomParameters()["pendingTracks"]["video"] = videoTrack;
 
-	//7. Done
-	return pFrom->SendRequestMessage();
+	//7. Start sending the setup commands on the pending tracks;
+	return SendSetupTrackMessages(pFrom, "");
 }
 
 bool BaseRTSPAppProtocolHandler::HandleRTSPResponse200Setup(
@@ -633,6 +631,15 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPResponse200Setup(
 				STR(requestHeaders.ToString()),
 				STR(responseHeaders.ToString()));
 		return false;
+	}
+
+	if ((pFrom->GetCustomParameters()["pendingTracks"]["video"] != V_NULL)
+			|| (pFrom->GetCustomParameters()["pendingTracks"]["audio"] != V_NULL)) {
+		string sessionId = "";
+		if (responseHeaders[RTSP_HEADERS].HasKey(RTSP_HEADERS_SESSION, false)) {
+			sessionId = (string) responseHeaders[RTSP_HEADERS].GetValue(RTSP_HEADERS_SESSION, false);
+		}
+		return SendSetupTrackMessages(pFrom, sessionId);
 	}
 
 	//2. Do the play command
@@ -784,6 +791,40 @@ string BaseRTSPAppProtocolHandler::GetVideoTrack(RTSPProtocol *pFrom,
 		WARN("Unsupported video codec: %s", STR(tagToString(pCapabilities->videoCodecId)));
 	}
 	return result;
+}
+
+bool BaseRTSPAppProtocolHandler::SendSetupTrackMessages(RTSPProtocol *pFrom, string sessionId) {
+	Variant track = pFrom->GetCustomParameters()["pendingTracks"]["audio"];
+	if (track != V_NULL) {
+		//6. Prepare the audio SETUP request
+		pFrom->ClearRequestMessage();
+		pFrom->PushRequestFirstLine(RTSP_METHOD_SETUP,
+				SDP_AUDIO_CONTROL_URI(track), RTSP_VERSION_1_0);
+		pFrom->PushRequestHeader(RTSP_HEADERS_TRANSPORT,
+				pFrom->GetTransportHeaderLine(true));
+		if (sessionId != "") {
+			pFrom->PushRequestHeader(RTSP_HEADERS_SESSION, sessionId);
+		}
+		pFrom->GetCustomParameters()["pendingTracks"].RemoveKey("audio");
+		return pFrom->SendRequestMessage();
+	}
+
+	track = pFrom->GetCustomParameters()["pendingTracks"]["video"];
+	if (track != V_NULL) {
+		//6. Prepare the video SETUP request
+		pFrom->ClearRequestMessage();
+		pFrom->PushRequestFirstLine(RTSP_METHOD_SETUP,
+				SDP_VIDEO_CONTROL_URI(track), RTSP_VERSION_1_0);
+		pFrom->PushRequestHeader(RTSP_HEADERS_TRANSPORT,
+				pFrom->GetTransportHeaderLine(false));
+		if (sessionId != "") {
+			pFrom->PushRequestHeader(RTSP_HEADERS_SESSION, sessionId);
+		}
+		pFrom->GetCustomParameters()["pendingTracks"].RemoveKey("video");
+		return pFrom->SendRequestMessage();
+	}
+
+	return true;
 }
 
 #endif /* HAS_PROTOCOL_RTP */
