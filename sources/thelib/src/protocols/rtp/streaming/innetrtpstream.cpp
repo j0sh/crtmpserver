@@ -119,15 +119,19 @@ bool InNetRTPStream::SignalPlay(double &absoluteTimestamp, double &length) {
 }
 
 bool InNetRTPStream::SignalPause() {
-	return true;
+	FATAL("Pause is not supported on inbound RTSP streams");
+	return false;
+	//return true;
 }
 
 bool InNetRTPStream::SignalResume() {
-	return true;
+	FATAL("Resume is not supported on inbound RTSP streams");
+	return false;
 }
 
 bool InNetRTPStream::SignalSeek(double &absoluteTimestamp) {
-	return true;
+	FATAL("Seek is not supported on inbound RTSP streams");
+	return false;
 }
 
 bool InNetRTPStream::SignalStop() {
@@ -138,7 +142,11 @@ bool InNetRTPStream::FeedData(uint8_t *pData, uint32_t dataLength,
 		uint32_t processedLength, uint32_t totalLength,
 		double absoluteTimestamp, bool isAudio) {
 	double &lastTs = isAudio ? _lastAudioTs : _lastVideoTs;
-	//if (lastTs > absoluteTimestamp) {
+
+	if ((uint64_t) (lastTs * 100.00) == (uint64_t) (absoluteTimestamp * 100.00)) {
+		absoluteTimestamp = lastTs;
+	}
+
 	if ((uint64_t) (lastTs * 100.00) > (uint64_t) (absoluteTimestamp * 100.00)) {
 		WARN("Back time on %s. ATS: %.08f LTS: %.08f; D: %.8f",
 				STR(GetName()),

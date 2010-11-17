@@ -194,6 +194,12 @@ bool BaseOutNetRTMPStream::FeedData(uint8_t *pData, uint32_t dataLength,
 				(*_pDeltaVideoTime) = absoluteTimestamp;
 
 			H_IA(_videoHeader) = true;
+			//			FINEST("absoluteTimestamp: %.2f; _pDeltaVideoTime: %.2f (a: %p; v: %p; c: %p); _seekTime: %.2f; r: %.2f",
+			//					absoluteTimestamp, (*_pDeltaVideoTime),
+			//					&_deltaAudioTime, &_deltaVideoTime,
+			//					_pDeltaVideoTime, _seekTime,
+			//					absoluteTimestamp - (*_pDeltaVideoTime) + _seekTime
+			//					);
 			H_TS(_videoHeader) = (uint32_t) (absoluteTimestamp - (*_pDeltaVideoTime) + _seekTime);
 
 			if ((pData[0] == 0x17) //AVC keyframe
@@ -255,16 +261,7 @@ void BaseOutNetRTMPStream::SignalAttachedToInStream() {
 	}
 
 	//3. Fix the time base
-	if ((TAG_KIND_OF(_attachedStreamType, ST_IN_FILE_RTMP))
-			|| (TAG_KIND_OF(_attachedStreamType, ST_IN_NET_RTMP))) {
-		//RTMP streams are having the same time base for audio and video
-		_pDeltaAudioTime = &_deltaAudioTime;
-		_pDeltaVideoTime = &_deltaAudioTime;
-	} else {
-		//otherwise consider them separate
-		_pDeltaAudioTime = &_deltaAudioTime;
-		_pDeltaVideoTime = &_deltaVideoTime;
-	}
+	FixTimeBase();
 
 
 	//4. Store the metadata
@@ -546,10 +543,7 @@ bool BaseOutNetRTMPStream::SignalSeek(double &absoluteTimestamp) {
 
 	InternalReset();
 
-	//we only do seek inside file containers. So is safe to assume
-	//that we have the same time base
-	_pDeltaAudioTime = &_deltaAudioTime;
-	_pDeltaVideoTime = &_deltaAudioTime;
+	FixTimeBase();
 
 	_seekTime = absoluteTimestamp;
 
@@ -781,6 +775,26 @@ void BaseOutNetRTMPStream::InternalReset() {
 
 	_attachedStreamType = 0;
 	_completeMetadata = Variant();
+}
+
+void BaseOutNetRTMPStream::FixTimeBase() {
+	//3. Fix the time base
+	if (_pInStream != NULL) {
+		uint64_t attachedStreamType = _pInStream->GetType();
+		if ((TAG_KIND_OF(attachedStreamType, ST_IN_FILE_RTMP))
+				|| (TAG_KIND_OF(attachedStreamType, ST_IN_NET_RTMP))) {
+			//RTMP streams are having the same time base for audio and video
+			_pDeltaAudioTime = &_deltaAudioTime;
+			_pDeltaVideoTime = &_deltaAudioTime;
+		} else {
+			//otherwise consider them separate
+			_pDeltaAudioTime = &_deltaAudioTime;
+			_pDeltaVideoTime = &_deltaVideoTime;
+		}
+	} else {
+		_pDeltaAudioTime = &_deltaAudioTime;
+		_pDeltaVideoTime = &_deltaVideoTime;
+	}
 }
 #endif /* HAS_PROTOCOL_RTMP */
 

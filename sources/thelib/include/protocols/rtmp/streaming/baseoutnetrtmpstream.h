@@ -101,6 +101,7 @@ private:
 			Header &header, Channel &channel);
 	bool AllowExecution(uint32_t totalProcessed);
 	void InternalReset();
+	void FixTimeBase();
 };
 
 
