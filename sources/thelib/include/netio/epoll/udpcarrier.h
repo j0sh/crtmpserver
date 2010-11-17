@@ -29,7 +29,6 @@ class BaseProtocol;
 class UDPCarrier
 : public IOHandler {
 private:
-	BaseProtocol *_pProtocol;
 	sockaddr_in _peerAddress;
 	sockaddr_in _nearAddress;
 	string _nearIp;

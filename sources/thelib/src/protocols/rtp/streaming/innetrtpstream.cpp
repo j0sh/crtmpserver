@@ -89,8 +89,10 @@ void InNetRTPStream::SignalOutStreamAttached(BaseOutStream *pOutStream) {
 		}
 	}
 	if (_lastAudioTs != 0) {
+		uint8_t *pTemp=new uint8_t[_capabilities.aac._aacLength+2];
+		memcpy(pTemp+2,_capabilities.aac._pAAC,_capabilities.aac._aacLength);
 		if (!pOutStream->FeedData(
-				_capabilities.aac._pAAC,
+				pTemp+2,
 				_capabilities.aac._aacLength,
 				0,
 				_capabilities.aac._aacLength,
@@ -101,6 +103,7 @@ void InNetRTPStream::SignalOutStreamAttached(BaseOutStream *pOutStream) {
 				pOutStream->GetProtocol()->EnqueueForDelete();
 			}
 		}
+		delete[] pTemp;
 	}
 #ifdef HAS_PROTOCOL_RTMP
 	if (TAG_KIND_OF(pOutStream->GetType(), ST_OUT_NET_RTMP)) {
