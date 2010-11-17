@@ -160,11 +160,13 @@ rtmpserver: applications $(RTMPSERVER_OBJS_DYNAMIC) $(RTMPSERVER_OBJS_STATIC)
 
 clean:
 	@rm -rfv $(OUTPUT_BASE)
-	@rm -rfv $(LUA_OBJS)
-	@rm -rfv $(COMMON_OBJS)
-	@rm -rfv $(THELIB_OBJS)
-	@rm -rfv $(TESTS_OBJS)
-	@rm -rfv $(RTMPSERVER_OBJS_DYNAMIC)
-	@rm -rfv $(RTMPSERVER_OBJS_STATIC)
-	@rm -rfv $(ALL_APPS_OBJS)
+	@sh cleanupobjs.sh
+	
+#@rm -rfv $(LUA_OBJS)
+#	@rm -rfv $(COMMON_OBJS)
+#	@rm -rfv $(THELIB_OBJS)
+#	@rm -rfv $(TESTS_OBJS)
+#	@rm -rfv $(RTMPSERVER_OBJS_DYNAMIC)
+#	@rm -rfv $(RTMPSERVER_OBJS_STATIC)
+#	@rm -rfv $(ALL_APPS_OBJS)
 
