@@ -1316,6 +1316,17 @@ bool Variant::SerializeToBin(string &result) {
 bool Variant::DeserializeFromXml(const uint8_t *pBuffer, uint32_t bufferLength,
 		Variant &variant) {
 	variant.Reset();
+	if (bufferLength == 0) {
+		return true;
+	}
+
+	uint8_t *pTemp = NULL;
+	if (pBuffer[bufferLength - 1] != 0) {
+		pTemp = new uint8_t[bufferLength + 1];
+		memcpy(pTemp, pBuffer, bufferLength);
+		pTemp[bufferLength] = 0;
+		pBuffer = pTemp;
+	}
 
 	TiXmlDocument document;
 	document.Parse((char *) pBuffer);
@@ -1325,14 +1336,20 @@ bool Variant::DeserializeFromXml(const uint8_t *pBuffer, uint32_t bufferLength,
 				document.ErrorDesc(),
 				document.ErrorRow(),
 				document.ErrorCol());
+		if (pTemp != NULL)
+			delete[] pTemp;
 		return false;
 	}
 
 	if (!DeserializeFromXml(document.RootElement(), variant)) {
 		variant.Reset();
+		if (pTemp != NULL)
+			delete[] pTemp;
 		return false;
 	}
 
+	if (pTemp != NULL)
+		delete[] pTemp;
 	return true;
 }
 
