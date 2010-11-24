@@ -33,6 +33,10 @@ RTCPProtocol::RTCPProtocol()
 	EHTONLP(_buff + 12, 0); //fraction lost/cumulative number of packets lost
 	EHTONLP(_buff + 20, 0); //interarrival jitter
 	EHTONLP(_buff + 28, 0); // delay since last SR (DLSR)
+	_isAudio = false;
+	_ssrc = rand();
+	_ssrc ^= GetId();
+	_validLastAddress = false;
 }
 
 RTCPProtocol::~RTCPProtocol() {
@@ -57,6 +61,13 @@ bool RTCPProtocol::SignalInputData(int32_t recvAmount) {
 }
 
 bool RTCPProtocol::SignalInputData(IOBuffer &buffer, sockaddr_in *pPeerAddress) {
+	//WARN("Got SR: %d",_isAudio);
+	//0. Save the last known address
+	if (&_lastAddress != pPeerAddress) {
+		_lastAddress = *pPeerAddress;
+		_validLastAddress = true;
+	}
+
 	//1. Parse the SR
 	uint8_t *pBuffer = GETIBPOINTER(buffer);
 	uint32_t length = GETAVAILABLEBYTESCOUNT(buffer);
@@ -71,58 +82,88 @@ bool RTCPProtocol::SignalInputData(IOBuffer &buffer, sockaddr_in *pPeerAddress) 
 	buffer.IgnoreAll();
 
 	//2. Send the RR
-	return SendRR(*pPeerAddress);
+	if (_pConnectivity == NULL) {
+		FATAL("no connectivity");
+		return false;
+	}
+	if (!_pConnectivity->SendRR(_isAudio)) {
+		FATAL("Unable to send RR");
+		_pConnectivity->EnqueueForDelete();
+		_pConnectivity = NULL;
+		return false;
+	}
+
+	return true;
 }
 
 bool RTCPProtocol::SignalInputData(IOBuffer &buffer) {
-	return SignalInputData(buffer, &_dummy);
+	return SignalInputData(buffer, &_lastAddress);
 }
 
-bool RTCPProtocol::SendRR(sockaddr_in &address) {
-	//1. prepare the buffer
-	uint32_t ssrc;
-	uint32_t seq;
-	_pConnectivity->GetSSRCAndSeq(GetId(), ssrc, seq);
-	//FINEST("ssrc: %08x", ssrc);
-	EHTONLP(_buff + 8, ssrc); //SSRC_1 (SSRC of first source)
-	EHTONLP(_buff + 16, seq); //extended highest sequence number received
-	EHTONLP(_buff + 24, _lsr); //last SR (LSR)
+//bool RTCPProtocol::SendRR(sockaddr_in &address) {
+//	//	//1. prepare the buffer
+//	//	uint32_t ssrc;
+//	//	uint32_t seq;
+//	//	_pConnectivity->GetSSRCAndSeq(GetId(), ssrc, seq);
+//	//	//FINEST("ssrc: %08x", ssrc);
+//	//	EHTONLP(_buff + 8, ssrc); //SSRC_1 (SSRC of first source)
+//	//	EHTONLP(_buff + 16, seq); //extended highest sequence number received
+//	//	EHTONLP(_buff + 24, _lsr); //last SR (LSR)
+//	//
+//	//	//2. send it
+//	//	if (!_pConnectivity->SendRTP(address, GetId(), _buff, 32)) {
+//	//		FATAL("Unable to send RR");
+//	//		if (_pConnectivity != NULL) {
+//	//			_pConnectivity->EnqueueForDelete();
+//	//			_pConnectivity = NULL;
+//	//		}
+//	//	}
+//	//
+//	//	//3. Done
+//	//	return true;
+//
+//	NYI;
+//	return true;
+//	/*
+//			0                   1                   2                   3
+//			0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+//		   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+//	header |V=2|P|    RC   |   PT=RR=201   |             length            |0
+//		   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+//		   |                     SSRC of packet sender                     |4
+//		   +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
+//	report |                 SSRC_1 (SSRC of first source)                 |8
+//	block  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+//	  1    | fraction lost |       cumulative number of packets lost       |12
+//		   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+//		   |           extended highest sequence number received           |16
+//		   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+//		   |                      interarrival jitter                      |20
+//		   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+//		   |                         last SR (LSR)                         |24
+//		   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+//		   |                   delay since last SR (DLSR)                  |28
+//		   +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
+//	 */
+//}
 
-	//2. send it
-	if (!_pConnectivity->SendRTP(address, GetId(), _buff, 32)) {
-		FATAL("Unable to send RR");
-		if (_pConnectivity != NULL) {
-			_pConnectivity->EnqueueForDelete();
-			_pConnectivity = NULL;
-		}
-	}
-
-	//3. Done
-	return true;
-	/*
-			0                   1                   2                   3
-			0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-		   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-	header |V=2|P|    RC   |   PT=RR=201   |             length            |0
-		   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-		   |                     SSRC of packet sender                     |4
-		   +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
-	report |                 SSRC_1 (SSRC of first source)                 |8
-	block  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-	  1    | fraction lost |       cumulative number of packets lost       |12
-		   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-		   |           extended highest sequence number received           |16
-		   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-		   |                      interarrival jitter                      |20
-		   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-		   |                         last SR (LSR)                         |24
-		   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-		   |                   delay since last SR (DLSR)                  |28
-		   +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
-	 */
+uint32_t RTCPProtocol::GetLastSenderReport() {
+	return _lsr;
 }
 
-void RTCPProtocol::SetInbboundConnectivity(InboundConnectivity *pConnectivity) {
+sockaddr_in *RTCPProtocol::GetLastAddress() {
+	if (_validLastAddress)
+		return &_lastAddress;
+	else
+		return NULL;
+}
+
+uint32_t RTCPProtocol::GetSSRC() {
+	return _ssrc;
+}
+
+void RTCPProtocol::SetInbboundConnectivity(InboundConnectivity *pConnectivity, bool isAudio) {
 	_pConnectivity = pConnectivity;
+	_isAudio = isAudio;
 }
 #endif /* HAS_PROTOCOL_RTP */

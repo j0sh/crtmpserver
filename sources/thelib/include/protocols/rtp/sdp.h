@@ -41,6 +41,8 @@
 #define SDP_V			"version"
 #define SDP_Z			"timeZone"
 
+#define SDP_TRACK_GLOBAL_INDEX(x)	((x)["globalTrackIndex"])
+#define SDP_TRACK_IS_AUDIO(x)		((x)["isAudio"])
 #define SDP_VIDEO_SERVER_IP(x)		((x)["ip"])
 #define SDP_VIDEO_CONTROL_URI(x)	((x)["controlUri"])
 #define SDP_VIDEO_CODEC(x)			((x)["codec"])

@@ -29,6 +29,7 @@
 #include "application/baseclientapplication.h"
 #include "protocols/rtp/streaming/innetrtpstream.h"
 #include "protocols/udpprotocol.h"
+#include "protocols/http/basehttpprotocol.h"
 
 InboundConnectivity::InboundConnectivity(RTSPProtocol *pRTSP)
 : BaseConnectivity() {
@@ -41,6 +42,48 @@ InboundConnectivity::InboundConnectivity(RTSPProtocol *pRTSP)
 	_forceTcp = false;
 	memset(_pProtocols, 0, sizeof (_pProtocols));
 	memset(&_dummyAddress, 0, sizeof (_dummyAddress));
+
+	memset(_audioRR, 0, sizeof (_audioRR));
+	_audioRR[0] = '$'; //marker
+	_audioRR[1] = 0; //channel
+	_audioRR[2] = 0; //size
+	_audioRR[3] = 56; //size
+	_audioRR[4] = 0x81; //V,P,RC
+	_audioRR[5] = 0xc9; //PT
+	_audioRR[6] = 0x00; //length
+	_audioRR[7] = 0x07; //length
+	EHTONLP(_audioRR + 16, 0x00ffffff); //fraction lost/cumulative number of packets lost
+	EHTONLP(_audioRR + 24, 0); //interarrival jitter
+	EHTONLP(_audioRR + 32, 0); // delay since last SR (DLSR)
+	_audioRR[36] = 0x81; //V,P,RC
+	_audioRR[37] = 0xca; //PT
+	_audioRR[38] = 0x00; //length
+	_audioRR[39] = 0x05; //length
+	_audioRR[44] = 0x01; //type
+	_audioRR[45] = 0x0d; //length
+	memcpy(_audioRR + 46, "machine.local", 0x0d); //name of the machine
+	_audioRR[59] = 0; //padding
+
+	memset(_videoRR, 0, sizeof (_videoRR));
+	_videoRR[0] = '$'; //marker
+	_videoRR[1] = 0; //channel
+	_videoRR[2] = 0; //size
+	_videoRR[3] = 56; //size
+	_videoRR[4] = 0x81; //V,P,RC
+	_videoRR[5] = 0xc9; //PT
+	_videoRR[6] = 0x00; //length
+	_videoRR[7] = 0x07; //length
+	EHTONLP(_videoRR + 16, 0x00ffffff); //fraction lost/cumulative number of packets lost
+	EHTONLP(_videoRR + 24, 0); //interarrival jitter
+	EHTONLP(_videoRR + 32, 0); // delay since last SR (DLSR)
+	_videoRR[36] = 0x81; //V,P,RC
+	_videoRR[37] = 0xca; //PT
+	_videoRR[38] = 0x00; //length
+	_videoRR[39] = 0x05; //length
+	_videoRR[44] = 0x01; //type
+	_videoRR[45] = 0x0d; //length
+	memcpy(_videoRR + 46, "machine.local", 0x0d); //name of the machine
+	_videoRR[59] = 0; //padding
 }
 
 InboundConnectivity::~InboundConnectivity() {
@@ -92,9 +135,9 @@ bool InboundConnectivity::Initialize(Variant &videoTrack, Variant &audioTrack,
 		streamName = format("rtsp_%d", _pRTSP->GetId());
 	_pInStream = new InNetRTPStream(_pRTSP, pApplication->GetStreamsManager(),
 			streamName,
-			unb64((string) SDP_VIDEO_CODEC_H264_SPS(videoTrack)),
-			unb64((string) SDP_VIDEO_CODEC_H264_PPS(videoTrack)),
-			unhex(SDP_AUDIO_CODEC_SETUP(audioTrack))
+			videoTrack != V_NULL ? unb64((string) SDP_VIDEO_CODEC_H264_SPS(videoTrack)) : "",
+			videoTrack != V_NULL ? unb64((string) SDP_VIDEO_CODEC_H264_PPS(videoTrack)) : "",
+			audioTrack != V_NULL ? unhex(SDP_AUDIO_CODEC_SETUP(audioTrack)) : ""
 			);
 
 	//6. make the stream known to inbound RTP protocols
@@ -103,9 +146,9 @@ bool InboundConnectivity::Initialize(Variant &videoTrack, Variant &audioTrack,
 
 	//7. Make the this Connectivity known to all protocols
 	_pRTPVideo->SetInbboundConnectivity(this);
-	_pRTCPVideo->SetInbboundConnectivity(this);
+	_pRTCPVideo->SetInbboundConnectivity(this, false);
 	_pRTPAudio->SetInbboundConnectivity(this);
-	_pRTCPAudio->SetInbboundConnectivity(this);
+	_pRTCPAudio->SetInbboundConnectivity(this, true);
 
 	//8. Done
 	return true;
@@ -113,10 +156,16 @@ bool InboundConnectivity::Initialize(Variant &videoTrack, Variant &audioTrack,
 
 string InboundConnectivity::GetTransportHeaderLine(bool isAudio) {
 	if (_forceTcp) {
-		if (isAudio)
-			return "RTP/AVP/TCP;interleaved=0-1";
-		else
-			return "RTP/AVP/TCP;interleaved=2-3";
+		BaseProtocol *pProtocol = isAudio ? _pRTPAudio : _pRTPVideo;
+		for (uint32_t i = 0; i < 255; i++) {
+			if ((_pProtocols[i] != NULL) && (_pProtocols[i]->GetId() == pProtocol->GetId())) {
+				string result = format("RTP/AVP/TCP;unicast;interleaved=%d-%d", i, i + 1);
+				//FINEST("%s: %s", isAudio ? "audio" : "video", STR(result));
+				return result;
+			}
+		}
+		FATAL("No track");
+		return "";
 	} else {
 		return format("RTP/AVP;unicast;client_port=%s",
 				isAudio ? STR(GetAudioClientPorts())
@@ -159,67 +208,70 @@ string InboundConnectivity::GetVideoClientPorts() {
 			((UDPCarrier *) _pRTCPVideo->GetIOHandler())->GetNearEndpointPort());
 }
 
-void InboundConnectivity::GetSSRCAndSeq(uint32_t rtpId, uint32_t &ssrc, uint32_t &seq) {
-	//1. Reset
-	ssrc = 0;
-	seq = 0;
+bool InboundConnectivity::SendRR(bool isAudio) {
+	/*
+			0                   1                   2                   3
+			0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+		   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+	header |V=2|P|    RC   |   PT=RR=201   |             length            |0
+		   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+		   |                     SSRC of packet sender                     |4
+		   +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
+	report |                 SSRC_1 (SSRC of first source)                 |8
+	block  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+	  1    | fraction lost |       cumulative number of packets lost       |12
+		   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+		   |           extended highest sequence number received           |16
+		   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+		   |                      interarrival jitter                      |20
+		   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+		   |                         last SR (LSR)                         |24
+		   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+		   |                   delay since last SR (DLSR)                  |28
+		   +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
+		   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+	header |V=2|P|    SC   |  PT=SDES=202  |             length            |
+		   +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
+	chunk  |                          SSRC/CSRC_1                          |
+	  1    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+		   |                           SDES items                          |
+		   |                              ...                              |
+		   +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
+	chunk  |                          SSRC/CSRC_2                          |
+	  2    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+		   |                           SDES items                          |
+		   |                              ...                              |
+		   +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
+	 */
 
-	//2. Get the correct protocol
-	InboundRTPProtocol *pRTP = NULL;
-	if (_pRTCPAudio != NULL) {
-		if (_pRTCPAudio->GetId() == rtpId) {
-			pRTP = _pRTPAudio;
-		}
-	}
-	if (pRTP == NULL) {
-		if (_pRTCPVideo != NULL) {
-			if (_pRTCPVideo->GetId() == rtpId) {
-				pRTP = _pRTPVideo;
+	InboundRTPProtocol *pRTP = isAudio ? _pRTPAudio : _pRTPVideo;
+	RTCPProtocol *pRTCP = isAudio ? _pRTCPAudio : _pRTCPVideo;
+	uint8_t *pBuffer = isAudio ? _audioRR : _videoRR;
+
+	//1. prepare the buffer
+	EHTONLP(pBuffer + 12, pRTP->GetSSRC()); //SSRC_1 (SSRC of first source)
+	EHTONLP(pBuffer + 20, pRTP->GetExtendedSeq()); //extended highest sequence number received
+	EHTONLP(pBuffer + 28, pRTCP->GetLastSenderReport()); //last SR (LSR)
+
+	//WARN("Send RR: %d", isAudio);
+	if (_forceTcp) {
+		return _pRTSP->SendRaw(pBuffer, 60);
+	} else {
+		if (pRTCP->GetLastAddress() != NULL) {
+			if (sendto(pRTCP->GetIOHandler()->GetOutboundFd(),
+					(char *) (pBuffer + 4), 56, 0,
+					(sockaddr *) pRTCP->GetLastAddress(), sizeof (sockaddr)) != 56) {
+				FATAL("Unable to send data: %d %s", errno, strerror(errno));
+				return false;
 			}
-		}
-	}
-	if (pRTP == NULL) {
-		return;
-	}
-
-	//3. get the required info
-	ssrc = pRTP->GetSSRC();
-	//FINEST("ssrc: %08x", ssrc);
-	seq = pRTP->GetExtendedSeq();
-	//FINEST("seq: %08x", seq);
-}
-
-bool InboundConnectivity::SendRTP(sockaddr_in &address, uint32_t rtpId,
-		uint8_t *pBuffer, uint32_t length) {
-	RTCPProtocol *pRTCP = NULL;
-	if (_pRTCPAudio != NULL) {
-		if (_pRTCPAudio->GetId() == rtpId) {
-			pRTCP = _pRTCPAudio;
-		}
-	}
-	if (pRTCP == NULL) {
-		if (_pRTCPVideo != NULL) {
-			if (_pRTCPVideo->GetId() == rtpId) {
-				pRTCP = _pRTCPVideo;
-			}
-		}
-	}
-	if (pRTCP == NULL) {
-		FATAL("Unable to find the protocol");
-		return false;
-	}
-
-	if (ENTOHS(address.sin_port) == 0) {
-		if (!_forceTcp) {
-			WARN("Invalid address: %s:%d",
-					inet_ntoa(address.sin_addr), ENTOHS(address.sin_port));
+		} else {
+			WARN("Skip this RR because we don't have a valid address yet");
 		}
 		return true;
 	}
 
-	//FINEST("%s:%d length: %d", inet_ntoa(address.sin_addr), ENTOHS(address.sin_port), length);
-	return sendto(pRTCP->GetIOHandler()->GetOutboundFd(),
-			(char *) pBuffer, length, 0, (sockaddr *) & address, sizeof (address)) == (int32_t) length;
+	//3. Done
+	return true;
 }
 
 bool InboundConnectivity::InitializeUDP(Variant &videoTrack, Variant &audioTrack) {
@@ -277,10 +329,25 @@ bool InboundConnectivity::InitializeTCP(Variant &videoTrack, Variant &audioTrack
 	_pRTCPAudio = new RTCPProtocol();
 
 	//2. Add them in the fast-pickup array
-	_pProtocols[0] = _pRTPVideo;
-	_pProtocols[1] = _pRTCPVideo;
-	_pProtocols[2] = _pRTPAudio;
-	_pProtocols[3] = _pRTCPAudio;
+	if (videoTrack != V_NULL) {
+		uint8_t idx = (uint8_t) ((uint32_t) SDP_TRACK_GLOBAL_INDEX(videoTrack)*2);
+		_pProtocols[idx] = _pRTPVideo;
+		_pProtocols[idx + 1] = _pRTCPVideo;
+		EHTONLP(_videoRR + 8, _pRTCPVideo->GetSSRC()); //SSRC of packet sender
+		EHTONLP(_videoRR + 40, _pRTCPVideo->GetSSRC()); //SSRC of packet sender
+		_videoRR[1] = idx + 1;
+		//FINEST("video: %d-%d; RTCP SSRC: %08x", idx, idx + 1, _pRTCPVideo->GetSSRC());
+	}
+
+	if (audioTrack != V_NULL) {
+		uint8_t idx = (uint8_t) ((uint32_t) SDP_TRACK_GLOBAL_INDEX(audioTrack)*2);
+		_pProtocols[idx] = _pRTPAudio;
+		_pProtocols[idx + 1] = _pRTCPAudio;
+		EHTONLP(_audioRR + 8, _pRTCPAudio->GetSSRC()); //SSRC of packet sender
+		EHTONLP(_audioRR + 40, _pRTCPAudio->GetSSRC()); //SSRC of packet sender
+		_audioRR[1] = idx + 1;
+		//FINEST("audio: %d-%d; RTCP SSRC: %08x", idx, idx + 1, _pRTCPAudio->GetSSRC());
+	}
 
 	//3. Done
 	return true;

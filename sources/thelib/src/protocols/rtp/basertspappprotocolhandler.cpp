@@ -605,19 +605,23 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPResponse200Describe(
 			requestHeaders[RTSP_FIRST_LINE][RTSP_URL]);
 	Variant audioTrack = sdp.GetAudioTrack(0,
 			requestHeaders[RTSP_FIRST_LINE][RTSP_URL]);
-	//FINEST("videoTrack:\n%s", STR(videoTrack.ToString()));
+	//	FINEST("videoTrack:\n%s", STR(videoTrack.ToString()));
+	//	FINEST("audioTrack:\n%s", STR(audioTrack.ToString()));
 
+	//5. Store the tracks inside the session for later use
+	if (audioTrack != V_NULL) {
+		pFrom->GetCustomParameters()["pendingTracks"][(uint32_t) SDP_TRACK_GLOBAL_INDEX(audioTrack)] = audioTrack;
+	}
+	if (videoTrack != V_NULL) {
+		pFrom->GetCustomParameters()["pendingTracks"][(uint32_t) SDP_TRACK_GLOBAL_INDEX(videoTrack)] = videoTrack;
+	}
 
-	//5. Create the inbound connectivity
+	//6. Create the inbound connectivity
 	if (pFrom->GetInboundConnectivity(videoTrack, audioTrack,
 			sdp.GetStreamName()) == NULL) {
 		FATAL("Unable to get the inbound connectivity");
 		return false;
 	}
-
-	//6. Store the tracks inside the session for later use
-	pFrom->GetCustomParameters()["pendingTracks"]["audio"] = audioTrack;
-	pFrom->GetCustomParameters()["pendingTracks"]["video"] = videoTrack;
 
 	//7. Start sending the setup commands on the pending tracks;
 	return SendSetupTrackMessages(pFrom, "");
@@ -633,8 +637,7 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPResponse200Setup(
 		return false;
 	}
 
-	if ((pFrom->GetCustomParameters()["pendingTracks"]["video"] != V_NULL)
-			|| (pFrom->GetCustomParameters()["pendingTracks"]["audio"] != V_NULL)) {
+	if (pFrom->GetCustomParameters()["pendingTracks"].MapSize() != 0) {
 		string sessionId = "";
 		if (responseHeaders[RTSP_HEADERS].HasKey(RTSP_HEADERS_SESSION, false)) {
 			sessionId = (string) responseHeaders[RTSP_HEADERS].GetValue(RTSP_HEADERS_SESSION, false);
@@ -794,33 +797,23 @@ string BaseRTSPAppProtocolHandler::GetVideoTrack(RTSPProtocol *pFrom,
 }
 
 bool BaseRTSPAppProtocolHandler::SendSetupTrackMessages(RTSPProtocol *pFrom, string sessionId) {
-	Variant track = pFrom->GetCustomParameters()["pendingTracks"]["audio"];
-	if (track != V_NULL) {
-		//6. Prepare the audio SETUP request
-		pFrom->ClearRequestMessage();
-		pFrom->PushRequestFirstLine(RTSP_METHOD_SETUP,
-				SDP_AUDIO_CONTROL_URI(track), RTSP_VERSION_1_0);
-		pFrom->PushRequestHeader(RTSP_HEADERS_TRANSPORT,
-				pFrom->GetTransportHeaderLine(true));
-		if (sessionId != "") {
-			pFrom->PushRequestHeader(RTSP_HEADERS_SESSION, sessionId);
-		}
-		pFrom->GetCustomParameters()["pendingTracks"].RemoveKey("audio");
-		return pFrom->SendRequestMessage();
+	if (pFrom->GetCustomParameters()["pendingTracks"].MapSize() == 0) {
+		WARN("No more tracks");
+		return true;
 	}
-
-	track = pFrom->GetCustomParameters()["pendingTracks"]["video"];
+	Variant track = MAP_VAL(pFrom->GetCustomParameters()["pendingTracks"].begin());
 	if (track != V_NULL) {
 		//6. Prepare the video SETUP request
 		pFrom->ClearRequestMessage();
 		pFrom->PushRequestFirstLine(RTSP_METHOD_SETUP,
 				SDP_VIDEO_CONTROL_URI(track), RTSP_VERSION_1_0);
 		pFrom->PushRequestHeader(RTSP_HEADERS_TRANSPORT,
-				pFrom->GetTransportHeaderLine(false));
+				pFrom->GetTransportHeaderLine(SDP_TRACK_IS_AUDIO(track)));
 		if (sessionId != "") {
 			pFrom->PushRequestHeader(RTSP_HEADERS_SESSION, sessionId);
 		}
-		pFrom->GetCustomParameters()["pendingTracks"].RemoveKey("video");
+		pFrom->GetCustomParameters()["pendingTracks"].RemoveKey(
+				MAP_KEY(pFrom->GetCustomParameters()["pendingTracks"].begin()));
 		return pFrom->SendRequestMessage();
 	}
 

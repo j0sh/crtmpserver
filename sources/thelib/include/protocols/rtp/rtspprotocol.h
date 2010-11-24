@@ -93,9 +93,8 @@ public:
 	void CloseInboundConnectivity();
 
 	string GetTransportHeaderLine(bool isAudio);
-	//	bool CreateUDPInboundProtocols(Variant &parameters);
-	//	bool CreateRTSPInboundProtocols();
-	//	void CloseInProtocols();
+
+	bool SendRaw(uint8_t *pBuffer, uint32_t length);
 
 private:
 	bool SendMessage(Variant &headers, string &content);

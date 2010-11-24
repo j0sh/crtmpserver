@@ -36,12 +36,14 @@ private:
 
 	InboundRTPProtocol *_pRTPVideo;
 	RTCPProtocol *_pRTCPVideo;
+	uint8_t _videoRR[60];
 	InboundRTPProtocol *_pRTPAudio;
 	RTCPProtocol *_pRTCPAudio;
+	uint8_t _audioRR[60];
 
 	InNetRTPStream *_pInStream;
 
-	BaseProtocol *_pProtocols[4];
+	BaseProtocol *_pProtocols[256];
 	IOBuffer _inputBuffer;
 	sockaddr_in _dummyAddress;
 
@@ -60,9 +62,9 @@ public:
 
 	string GetAudioClientPorts();
 	string GetVideoClientPorts();
-	void GetSSRCAndSeq(uint32_t rtpId, uint32_t &ssrc, uint32_t &seq);
-	bool SendRTP(sockaddr_in &address, uint32_t rtpId,
-			uint8_t *pBuffer, uint32_t length);
+	bool SendRR(bool isAudio);
+//	bool SendRTP(sockaddr_in &address, uint32_t rtpId,
+//			uint8_t *pBuffer, uint32_t length);
 private:
 	bool InitializeUDP(Variant &videoTrack, Variant &audioTrack);
 	bool InitializeTCP(Variant &videoTrack, Variant &audioTrack);

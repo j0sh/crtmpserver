@@ -33,6 +33,7 @@ InboundRTPProtocol::InboundRTPProtocol()
 	_lastSeq = 0;
 	_seqRollOver = 0;
 	_isAudio = false;
+	_packetsCount = 0;
 }
 
 InboundRTPProtocol::~InboundRTPProtocol() {
@@ -120,6 +121,7 @@ bool InboundRTPProtocol::SignalInputData(IOBuffer &buffer,
 	//5. Feed the data to the stream
 	if (_pInStream != NULL) {
 		if (_isAudio) {
+			//FINEST("AUDIO: %08x", _rtpHeader._ssrc);
 			if (!_pInStream->FeedAudioData(pBuffer, length, _rtpHeader)) {
 				FATAL("Unable to stream data");
 				if (_pConnectivity != NULL) {
@@ -143,6 +145,22 @@ bool InboundRTPProtocol::SignalInputData(IOBuffer &buffer,
 
 	//6. Ignore the data
 	buffer.IgnoreAll();
+
+	//7. Increment the packets count
+	_packetsCount++;
+
+	//8. Send the RR if necesary
+	if ((_packetsCount % 300) == 0) {
+
+		if (_pConnectivity != NULL) {
+			if (!_pConnectivity->SendRR(_isAudio)) {
+				FATAL("Unable to send RR");
+				_pConnectivity->EnqueueForDelete();
+				_pConnectivity = NULL;
+				return false;
+			}
+		}
+	}
 
 	//7. Done
 	return true;

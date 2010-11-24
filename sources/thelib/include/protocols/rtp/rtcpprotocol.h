@@ -31,7 +31,10 @@ private:
 	InboundConnectivity *_pConnectivity;
 	uint32_t _lsr;
 	uint8_t _buff[32];
-	sockaddr_in _dummy;
+	sockaddr_in _lastAddress;
+	bool _isAudio;
+	uint32_t _ssrc;
+	bool _validLastAddress;
 public:
 	RTCPProtocol();
 	virtual ~RTCPProtocol();
@@ -43,9 +46,12 @@ public:
 	virtual bool SignalInputData(IOBuffer &buffer, sockaddr_in *pPeerAddress);
 	virtual bool SignalInputData(IOBuffer &buffer);
 
-	bool SendRR(sockaddr_in &address);
+	//bool SendRR(sockaddr_in &address);
+	uint32_t GetLastSenderReport();
+	sockaddr_in *GetLastAddress();
+	uint32_t GetSSRC();
 
-	void SetInbboundConnectivity(InboundConnectivity *pConnectivity);
+	void SetInbboundConnectivity(InboundConnectivity *pConnectivity, bool isAudio);
 };
 
 

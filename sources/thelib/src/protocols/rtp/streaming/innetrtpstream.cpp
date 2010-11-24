@@ -33,14 +33,19 @@ InNetRTPStream::InNetRTPStream(BaseProtocol *pProtocol,
 	_lastVideoTs = 0;
 	_lastAudioTs = 0;
 
-	_capabilities.InitAudioAAC(
-			(uint8_t *) STR(AAC),
-			AAC.length());
-	_capabilities.InitVideoH264(
-			(uint8_t *) STR(SPS),
-			SPS.length(),
-			(uint8_t *) STR(PPS),
-			PPS.length());
+	if (AAC.length() != 0) {
+		_capabilities.InitAudioAAC(
+				(uint8_t *) STR(AAC),
+				AAC.length());
+	}
+
+	if ((SPS.length() != 0) && (PPS.length() != 0)) {
+		_capabilities.InitVideoH264(
+				(uint8_t *) STR(SPS),
+				SPS.length(),
+				(uint8_t *) STR(PPS),
+				PPS.length());
+	}
 }
 
 InNetRTPStream::~InNetRTPStream() {
@@ -89,10 +94,10 @@ void InNetRTPStream::SignalOutStreamAttached(BaseOutStream *pOutStream) {
 		}
 	}
 	if (_lastAudioTs != 0) {
-		uint8_t *pTemp=new uint8_t[_capabilities.aac._aacLength+2];
-		memcpy(pTemp+2,_capabilities.aac._pAAC,_capabilities.aac._aacLength);
+		uint8_t *pTemp = new uint8_t[_capabilities.aac._aacLength + 2];
+		memcpy(pTemp + 2, _capabilities.aac._pAAC, _capabilities.aac._aacLength);
 		if (!pOutStream->FeedData(
-				pTemp+2,
+				pTemp + 2,
 				_capabilities.aac._aacLength,
 				0,
 				_capabilities.aac._aacLength,

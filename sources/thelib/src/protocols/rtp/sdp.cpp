@@ -123,6 +123,8 @@ Variant SDP::GetVideoTrack(uint32_t index, string uri) {
 	SDP_VIDEO_CODEC_H264_PPS(result) = track[SDP_A]
 			.GetValue("fmtp", false)
 			.GetValue("sprop-parameter-sets", false)["PPS"];
+	SDP_TRACK_GLOBAL_INDEX(result) = SDP_TRACK_GLOBAL_INDEX(track);
+	SDP_TRACK_IS_AUDIO(result) = (bool)false;
 
 	//3. Done
 	return result;
@@ -154,6 +156,8 @@ Variant SDP::GetAudioTrack(uint32_t index, string uri) {
 	SDP_AUDIO_CODEC_SETUP(result) = track[SDP_A]
 			.GetValue("fmtp", false)
 			.GetValue("config", false);
+	SDP_TRACK_GLOBAL_INDEX(result) = SDP_TRACK_GLOBAL_INDEX(track);
+	SDP_TRACK_IS_AUDIO(result) = (bool)true;
 
 	//3. Done
 	return result;
@@ -545,23 +549,31 @@ bool SDP::ParseSDPLineZ(Variant &result, string line) {
 Variant SDP::GetTrack(uint32_t index, string type) {
 	uint32_t videoTracksCount = 0;
 	uint32_t audioTracksCount = 0;
+	uint32_t globalTrackIndex = 0;
+	Variant result;
 
 	FOR_MAP((*this)[SDP_MEDIATRACKS], string, Variant, i) {
 		if (MAP_VAL(i)[SDP_M]["media_type"] == type) {
 			if (type == "video") {
 				videoTracksCount++;
 				if (videoTracksCount == (index + 1)) {
-					return ParseVideoTrack(MAP_VAL(i));
+					result = ParseVideoTrack(MAP_VAL(i));
+					break;
 				}
 			} else if (type == "audio") {
 				audioTracksCount++;
 				if (audioTracksCount == (index + 1)) {
-					return ParseAudioTrack(MAP_VAL(i));
+					result = ParseAudioTrack(MAP_VAL(i));
+					break;
 				}
 			}
 		}
+		globalTrackIndex++;
 	}
-	return Variant();
+	if (result != V_NULL) {
+		SDP_TRACK_GLOBAL_INDEX(result) = globalTrackIndex;
+	}
+	return result;
 }
 
 Variant SDP::ParseVideoTrack(Variant &track) {
@@ -575,11 +587,11 @@ Variant SDP::ParseVideoTrack(Variant &track) {
 		return Variant();
 	}
 	if (!result[SDP_A].HasKey("rtpmap", false)) {
-		FATAL("Track with no control uri");
+		FATAL("Track with no rtpmap");
 		return Variant();
 	}
 	if (!result[SDP_A].HasKey("fmtp", false)) {
-		FATAL("Track with no control uri");
+		FATAL("Track with no fmtp");
 		return Variant();
 	}
 	Variant &fmtp = result[SDP_A].GetValue("fmtp", false);
@@ -614,11 +626,11 @@ Variant SDP::ParseAudioTrack(Variant &track) {
 		return Variant();
 	}
 	if (!result[SDP_A].HasKey("rtpmap", false)) {
-		FATAL("Track with no control uri");
+		FATAL("Track with no rtpmap");
 		return Variant();
 	}
 	if (!result[SDP_A].HasKey("fmtp", false)) {
-		FATAL("Track with no control uri");
+		FATAL("Track with no fmtp uri");
 		return Variant();
 	}
 
@@ -656,6 +668,6 @@ Variant SDP::ParseAudioTrack(Variant &track) {
 		}
 	}
 
-	return track;
+	return result;
 }
 #endif /* HAS_PROTOCOL_RTP */

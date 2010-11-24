@@ -312,11 +312,15 @@ string RTSPProtocol::GetTransportHeaderLine(bool isAudio) {
 	return _pInboundConnectivity->GetTransportHeaderLine(isAudio);
 }
 
+bool RTSPProtocol::SendRaw(uint8_t *pBuffer, uint32_t length) {
+	_outputBuffer.ReadFromBuffer(pBuffer, length);
+	return EnqueueForOutbound();
+}
+
 bool RTSPProtocol::SendMessage(Variant &headers, string &content) {
 	//1. Add info about us
 	headers[RTSP_HEADERS][RTSP_HEADERS_SERVER] = RTSP_HEADERS_SERVER_US;
 	headers[RTSP_HEADERS][RTSP_HEADERS_X_POWERED_BY] = RTSP_HEADERS_X_POWERED_BY_US;
-	headers[RTSP_HEADERS]["Buffersize"] = "1000000";
 
 	//2. Add the content length if required
 	if (content.size() > 0) {

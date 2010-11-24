@@ -37,6 +37,7 @@ private:
 	uint16_t _lastSeq;
 	uint16_t _seqRollOver;
 	bool _isAudio;
+	uint32_t _packetsCount;
 public:
 	InboundRTPProtocol();
 	virtual ~InboundRTPProtocol();
