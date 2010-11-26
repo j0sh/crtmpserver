@@ -35,6 +35,9 @@ InNetTSStream::InNetTSStream(BaseProtocol *pProtocol,
 	_dtsTimeAudio = 0;
 #endif
 	_deltaTimeAudio = -1;
+	_lastGotAudioTimestamp = 0;
+	_lastSentAudioTimestamp = 0;
+	_audioPacketsCount = 0;
 
 	//video section
 	_pVideoPidDescriptor = NULL;
@@ -230,6 +233,11 @@ bool InNetTSStream::HandleAudioData(uint8_t *pRawBuffer, uint32_t rawBufferLengt
 
 	InitializeAudioCapabilities(pRawBuffer, rawBufferLength);
 
+	if (_lastGotAudioTimestamp != timestamp) {
+		_audioPacketsCount = 0;
+	}
+	_lastGotAudioTimestamp = timestamp;
+
 	for (;;) {
 		//2. Get the buffer details: length and pointer
 		uint32_t bufferLength = GETAVAILABLEBYTESCOUNT(_audioBuffer);
@@ -265,8 +273,16 @@ bool InNetTSStream::HandleAudioData(uint8_t *pRawBuffer, uint32_t rawBufferLengt
 			break;
 		}
 
+		double ts = timestamp + (((double) _audioPacketsCount * 1024.00) / (double) _streamCapabilities.aac._sampleRate)*1000.0;
+		_audioPacketsCount++;
+		if (_lastSentAudioTimestamp >= ts) {
+			ts = _lastSentAudioTimestamp;
+		}
+		_lastSentAudioTimestamp = ts;
+		//FINEST("timestamp: %.2f; _audioPacketsCount: %d", timestamp, _audioPacketsCount);
+
 		//5. Feed
-		if (!FeedData(pBuffer, frameLength, 0, frameLength, timestamp, true)) {
+		if (!FeedData(pBuffer, frameLength, 0, frameLength, ts, true)) {
 			FATAL("Unable to feed audio data");
 			return false;
 		}

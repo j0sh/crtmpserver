@@ -40,6 +40,9 @@ private:
 #endif
 	double _deltaTimeAudio;
 	IOBuffer _audioBuffer;
+	double _lastGotAudioTimestamp;
+	double _lastSentAudioTimestamp;
+	uint32_t _audioPacketsCount;
 
 	//video section
 	_PIDDescriptor *_pVideoPidDescriptor;
