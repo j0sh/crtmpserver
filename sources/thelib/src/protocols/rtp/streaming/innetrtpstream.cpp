@@ -281,40 +281,47 @@ bool InNetRTPStream::FeedVideoData(uint8_t *pData, uint32_t dataLength,
 
 bool InNetRTPStream::FeedAudioData(uint8_t *pData, uint32_t dataLength,
 		RTPHeader &rtpHeader) {
-	//1. Compute AUHeadersLength in bytes
-	uint16_t auHeadersLength = ENTOHSP(pData);
-	if ((auHeadersLength % 8) != 0) {
-		FATAL("Invalid AU headers length: %04x", auHeadersLength);
+	//1. Compute chunks count
+	uint16_t chunksCount = ENTOHSP(pData);
+	if ((chunksCount % 16) != 0) {
+		FATAL("Invalid AU headers length: %04x", chunksCount);
 		return false;
 	}
+	chunksCount = chunksCount / 16;
 
-	//2. apply it to the buffer
-	auHeadersLength = auHeadersLength / 8 + 2;
-	if (auHeadersLength >= dataLength) {
-		FATAL("Invalid AU headers length: %04x", auHeadersLength);
-		return false;
+	//3. Feed the buffer chunk by chunk
+	uint32_t cursor = 2 + 2 * chunksCount;
+	//	string msg = "";
+	//	for (uint32_t i = 0; i < cursor; i++) {
+	//		msg += format("%02x ", pData[i]);
+	//	}
+	//	FINEST("%s", STR(msg));
+	uint16_t chunkSize = 0;
+	double ts = 0;
+	for (uint32_t i = 0; i < chunksCount; i++) {
+		if (i != (uint32_t) (chunksCount - 1)) {
+			chunkSize = (ENTOHSP(pData + 2 + 2 * i)) >> 3;
+		} else {
+			chunkSize = dataLength - cursor;
+		}
+		ts = (double) (rtpHeader._timestamp + i * 1024) / (double) _capabilities.aac._sampleRate * 1000.00;
+		if ((cursor + chunkSize) > dataLength) {
+			FATAL("Unable to feed data: cursor: %d; chunkSize: %d; dataLength: %d; chunksCount: %d",
+					cursor, chunkSize, dataLength, chunksCount);
+			return false;
+		}
+		if (!FeedData(pData + cursor,
+				chunkSize,
+				0,
+				chunkSize,
+				ts, true)) {
+			FATAL("Unable to feed data");
+			return false;
+		}
+		cursor += chunkSize;
+
 	}
-	pData += auHeadersLength;
-	dataLength -= auHeadersLength;
 
-	//3. Compute the ts
-	double ts = (double) rtpHeader._timestamp / _capabilities.aac._sampleRate * 1000.00;
-	//	FINEST("ts: %.8f; diff: %.08f; dataLength: %d; auHeadersLength: %d",
-	//			ts / 1000.00, (ts - ____last) / 1000.00, dataLength, auHeadersLength - 2);
-	//	____last = ts;
-
-
-	//	FINEST("auHeadersLength: %d; dataLength: %d; %.02f; %02x %02x %02x %02x %02x %02x %02x %02x",
-	//			auHeadersLength, dataLength,
-	//			ts,
-	//			pData[0], pData[1], pData[2], pData[3],
-	//			pData[4], pData[5], pData[6], pData[7]);
-	//	return true;
-
-	return FeedData(pData,
-			dataLength,
-			0,
-			dataLength,
-			ts, true);
+	return true;
 }
 #endif /* HAS_PROTOCOL_RTP */

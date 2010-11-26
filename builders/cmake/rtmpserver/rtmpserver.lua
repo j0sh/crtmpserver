@@ -149,6 +149,19 @@ configuration=
 			externalStreams = 
 			{
 				--[[{
+					uri="rtsp://0.0.0.0:2323/test.sdp",
+					localStreamName="stream-1-udp"
+				},
+				{
+					uri="rtsp://stream01.qt.slamtv.true.nl/slamtv.sdp",
+					localStreamName="stream0-udp"
+				},
+				{
+                    uri="rtsp://stream01.qt.slamtv.true.nl/slamtv.sdp",
+                    localStreamName="stream0-tcp",
+					forceTcp=true
+                },
+				{
 					uri="rtmp://10.0.1.15/vod/mp4:test_mp4",
 					localStreamName="stream1"
 				},

@@ -34,6 +34,7 @@ InboundRTPProtocol::InboundRTPProtocol()
 	_seqRollOver = 0;
 	_isAudio = false;
 	_packetsCount = 0;
+	_delta = 0;
 }
 
 InboundRTPProtocol::~InboundRTPProtocol() {
@@ -117,6 +118,11 @@ bool InboundRTPProtocol::SignalInputData(IOBuffer &buffer,
 	//4. Skip the RTP header
 	pBuffer += 12 + GET_RTP_CC(_rtpHeader)*4;
 	length -= 12 + GET_RTP_CC(_rtpHeader)*4;
+
+	if (_delta == 0) {
+		_delta = _rtpHeader._timestamp;
+	}
+	_rtpHeader._timestamp -= _delta;
 
 	//5. Feed the data to the stream
 	if (_pInStream != NULL) {
