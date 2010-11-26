@@ -18,7 +18,7 @@
  */
 
 #ifdef FREEBSD
-#include "platform/freebsd/freebsdplatform.h"
+#include "common.h"
 
 string alowedCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 static map<int, SignalFnc> _signalHandlers;

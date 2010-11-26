@@ -25,18 +25,19 @@ STATIC_LIB_PREFIX=lib
 DYNAMIC_LIB_SUFIX=.so
 DYNAMIC_LIB_PREFIX=lib
 
+FPIC = -fPIC
+OPTIMIZATIONS = -Os
+COMPILE_FLAGS = $(FPIC) $(OPTIMIZATIONS)
+
 #linking flags
-dynamic_lib_flags = -Os -Wl,-soname,$(DYNAMIC_LIB_PREFIX)$(1)$(DYNAMIC_LIB_SUFIX) -Wl,-rpath,"\$$ORIGIN"
-dynamic_exec_flags = -Os -Wl,-rpath,"\$$ORIGIN"
+dynamic_lib_flags = $(FPIC) $(OPTIMIZATIONS) -Wl,-soname,$(DYNAMIC_LIB_PREFIX)$(1)$(DYNAMIC_LIB_SUFIX) -Wl,-rpath,"\$$ORIGIN"
+dynamic_exec_flags = $(FPIC) $(OPTIMIZATIONS) -Wl,-rpath,"\$$ORIGIN"
 
 #compile switches
-PLATFORM_DEFINES = -Os\
+PLATFORM_DEFINES = \
 	-DLINUX \
 	-DLITTLE_ENDIAN_SHORT_ALIGNED \
 	-DNET_EPOLL
 
 SSL_BASE=/home/shiretu/work/openssl-dist-brickcom
-
-#compile flags
-COMPILE_FLAGS= -fPIC -Os
 

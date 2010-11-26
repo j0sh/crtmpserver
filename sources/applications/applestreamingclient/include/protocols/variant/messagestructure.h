@@ -247,7 +247,7 @@ do { \
 do { \
 	Variant responseParameters; \
 	responseParameters.IsArray(true); \
-	for(uint32_t contextIdsIndex;contextIdsIndex<(contextIds).size();contextIdsIndex++) \
+	for(uint32_t contextIdsIndex=0;contextIdsIndex<(contextIds).size();contextIdsIndex++) \
 		responseParameters.PushToArray((contextIds)[contextIdsIndex]); \
 	ASC_RES_BUILD(r,ASC_RES_STATUS_OK,responseParameters); \
 } while(0)
@@ -286,7 +286,7 @@ do { \
 do { \
 	Variant responseParameters; \
 	responseParameters.IsArray(true); \
-	for(uint32_t streamNamesIndex;streamNamesIndex<(streamNames).size();streamNamesIndex++) \
+	for(uint32_t streamNamesIndex=0;streamNamesIndex<(streamNames).size();streamNamesIndex++) \
 		responseParameters.PushToArray((streamNames)[streamNamesIndex]); \
 	ASC_RES_BUILD(r,ASC_RES_STATUS_OK,responseParameters); \
 } while(0)

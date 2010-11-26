@@ -15,10 +15,9 @@
 #  You should have received a copy of the GNU General Public License
 #  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #toolchain paths
-TOOLCHAIN_BASE=/home/shiretu/work/hisi/hisi-linux/x86-arm/gcc-3.4.3-uClibc-0.9.28
-TOOLCHAIN_PREFIX=/usr/bin/arm-hismall-linux-
+TOOLCHAIN_BASE=
+TOOLCHAIN_PREFIX=
 #output settings
 STATIC_LIB_SUFIX=.a
 STATIC_LIB_PREFIX=lib
@@ -29,16 +28,17 @@ FPIC = -fPIC
 OPTIMIZATIONS = -O3
 COMPILE_FLAGS = $(FPIC) $(OPTIMIZATIONS)
 
+
 #linking flags
-dynamic_lib_flags = $(FPIC) $(OPTIMIZATIONS) -Wl,-soname,$(DYNAMIC_LIB_PREFIX)$(1)$(DYNAMIC_LIB_SUFIX) -Wl,-rpath,"\$$ORIGIN"
-dynamic_exec_flags = $(FPIC) $(OPTIMIZATIONS) -Wl,-rpath,"\$$ORIGIN"
+dynamic_lib_flags = $(FPIC) $(OPTIMIZATIONS) -Wl,-soname,$(DYNAMIC_LIB_PREFIX)$(1)$(DYNAMIC_LIB_SUFIX) -Wl,-z,origin -Wl,-rpath,"\$$ORIGIN"
+dynamic_exec_flags = $(FPIC) $(OPTIMIZATIONS) -Wl,-z,origin -Wl,-rpath,"\$$ORIGIN"
 
 #compile switches
 PLATFORM_DEFINES = \
-	-DLINUX \
-	-DLITTLE_ENDIAN_SHORT_ALIGNED \
-	-DAPPLY_DOUBLE_QUIRK \
-	-DNET_EPOLL
+	-DFREEBSD \
+	-DLITTLE_ENDIAN_BYTE_ALIGNED \
+	-DNET_KQUEUE \
+	-O3
 
-SSL_BASE=/home/shiretu/work/hisi/openssl-dist
+SSL_BASE=/usr/local
 
