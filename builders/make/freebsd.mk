@@ -37,8 +37,7 @@ dynamic_exec_flags = $(FPIC) $(OPTIMIZATIONS) -Wl,-z,origin -Wl,-rpath,"\$$ORIGI
 PLATFORM_DEFINES = \
 	-DFREEBSD \
 	-DLITTLE_ENDIAN_BYTE_ALIGNED \
-	-DNET_KQUEUE \
-	-O3
+	-DNET_KQUEUE 
 
 SSL_BASE=/usr/local
 
