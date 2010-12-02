@@ -529,7 +529,9 @@ bool RTSPProtocol::ParseFirstLine(string &line) {
 			|| (parts[0] == RTSP_METHOD_PAUSE)
 			|| (parts[0] == RTSP_METHOD_PLAY)
 			|| (parts[0] == RTSP_METHOD_SETUP)
-			|| (parts[0] == RTSP_METHOD_TEARDOWN)) {
+			|| (parts[0] == RTSP_METHOD_TEARDOWN)
+			|| (parts[0] == RTSP_METHOD_RECORD)
+			|| (parts[0] == RTSP_METHOD_ANNOUNCE)) {
 		if (parts[2] != RTSP_VERSION_1_0) {
 			FATAL("RTSP version not supported: %s", STR(parts[2]));
 			return false;

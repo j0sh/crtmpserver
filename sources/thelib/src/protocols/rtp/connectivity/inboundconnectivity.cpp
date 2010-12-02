@@ -209,6 +209,8 @@ string InboundConnectivity::GetVideoClientPorts() {
 }
 
 bool InboundConnectivity::SendRR(bool isAudio) {
+	if (_forceTcp)
+		return true;
 	/*
 			0                   1                   2                   3
 			0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
@@ -305,6 +307,21 @@ bool InboundConnectivity::InitializeUDP(Variant &videoTrack, Variant &audioTrack
 		Cleanup();
 		return false;
 	}
+
+	//	//4. get the ports if available
+	//	uint16_t videoRTPPort = 0;
+	//	uint16_t videoRTCPPort = 0;
+	//	if (videoTrack.HasKey("portsOrChannels")) {
+	//		videoRTPPort = (uint16_t) videoTrack["portsOrChannels"][(uint32_t) 0];
+	//		videoRTCPPort = (uint16_t) videoTrack["portsOrChannels"][(uint32_t) 1];
+	//	}
+	//
+	//	uint16_t audioRTPPort = 0;
+	//	uint16_t audioRTCPPort = 0;
+	//	if (audioTrack.HasKey("portsOrChannels")) {
+	//		audioRTPPort = (uint16_t) audioTrack["portsOrChannels"][(uint32_t) 0];
+	//		audioRTCPPort = (uint16_t) audioTrack["portsOrChannels"][(uint32_t) 1];
+	//	}
 
 	//4. Create the carriers
 	if (!CreateCarriers(_pRTPVideo, _pRTCPVideo)) {
@@ -424,6 +441,8 @@ bool InboundConnectivity::CreateCarriers(InboundRTPProtocol *pRTP, RTCPProtocol 
 		pCarrier2->SetProtocol(pRTCP->GetFarEndpoint());
 		pRTCP->GetFarEndpoint()->SetIOHandler(pCarrier2);
 		//WARN("pRTCP: %s", STR(*pRTCP));
+
+		//WARN("RTP/RTCP pair: %d-%d", pCarrier1->GetNearEndpointPort(), pCarrier2->GetNearEndpointPort());
 
 		return true;
 	}

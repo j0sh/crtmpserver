@@ -43,21 +43,29 @@ public:
 			Variant &parameters);
 
 	virtual bool HandleRTSPRequest(RTSPProtocol *pFrom, Variant &requestHeaders,
-			string &content);
+			string &requestContent);
 	virtual bool HandleRTSPResponse(RTSPProtocol *pFrom, Variant &responseHeaders,
-			string &content);
+			string &responseContent);
 protected:
 	//handle requests routines
 	virtual bool HandleRTSPRequestOptions(RTSPProtocol *pFrom,
-			Variant &requestHeaders);
+			Variant &requestHeaders, string &requestContent);
 	virtual bool HandleRTSPRequestDescribe(RTSPProtocol *pFrom,
-			Variant &requestHeaders);
+			Variant &requestHeaders, string &requestContent);
 	virtual bool HandleRTSPRequestSetup(RTSPProtocol *pFrom,
-			Variant &requestHeaders);
+			Variant &requestHeaders, string &requestContent);
+	virtual bool HandleRTSPRequestSetupOutbound(RTSPProtocol *pFrom,
+			Variant &requestHeaders, string &requestContent);
+	virtual bool HandleRTSPRequestSetupInbound(RTSPProtocol *pFrom,
+			Variant &requestHeaders, string &requestContent);
 	virtual bool HandleRTSPRequestPlay(RTSPProtocol *pFrom,
-			Variant &requestHeaders);
+			Variant &requestHeaders, string &requestContent);
 	virtual bool HandleRTSPRequestTearDown(RTSPProtocol *pFrom,
-			Variant &requestHeaders);
+			Variant &requestHeaders, string &requestContent);
+	virtual bool HandleRTSPRequestAnnounce(RTSPProtocol *pFrom,
+			Variant &requestHeaders, string &requestContent);
+	virtual bool HandleRTSPRequestRecord(RTSPProtocol *pFrom,
+			Variant &requestHeaders, string &requestContent);
 
 	//handle response routines
 	virtual bool HandleRTSPResponse(RTSPProtocol *pFrom, Variant &requestHeaders,

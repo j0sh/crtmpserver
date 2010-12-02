@@ -217,9 +217,12 @@ bool InNetRTPStream::FeedVideoData(uint8_t *pData, uint32_t dataLength,
 	uint8_t naluType = NALU_TYPE(pData[0]);
 	if (naluType <= 23) {
 		//3. Standard NALU
+		//FINEST("Standard NALU");
 		return FeedData(pData, dataLength, 0, dataLength, ts, false);
 	} else if (naluType == NALU_TYPE_FUA) {
 		if (GETAVAILABLEBYTESCOUNT(_currentNalu) == 0) {
+			//			FINEST("--------------");
+			//			FINEST("First NALU_TYPE_FUA");
 			_currentNalu.IgnoreAll();
 			//start NAL
 			if ((pData[1] >> 7) == 0) {
@@ -230,11 +233,20 @@ bool InNetRTPStream::FeedVideoData(uint8_t *pData, uint32_t dataLength,
 			}
 			pData[1] = (pData[0]&0xe0) | (pData[1]&0x1f);
 			_currentNalu.ReadFromBuffer(pData + 1, dataLength - 1);
+			//			FINEST("NALU_TYPE_FUA: %s; s: %d",
+			//					STR(NALUToString(pData[1])),
+			//					GETAVAILABLEBYTESCOUNT(_currentNalu));
 			return true;
 		} else {
 			//middle NAL
 			_currentNalu.ReadFromBuffer(pData + 2, dataLength - 2);
+			//			FINEST("MIDDLE NALU_TYPE_FUA: end: %d; s: %d",
+			//					((pData[1] >> 6)&0x01),
+			//					GETAVAILABLEBYTESCOUNT(_currentNalu));
 			if (((pData[1] >> 6)&0x01) == 1) {
+				//				FINEST("NALU_TYPE_FUA feed; s: %d",
+				//						GETAVAILABLEBYTESCOUNT(_currentNalu));
+				//				FINEST("--------------");
 				if (!FeedData(GETIBPOINTER(_currentNalu),
 						GETAVAILABLEBYTESCOUNT(_currentNalu), 0,
 						GETAVAILABLEBYTESCOUNT(_currentNalu),
