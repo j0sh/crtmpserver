@@ -163,6 +163,9 @@ bool TCPAcceptor::OnConnectionAvailable(select_event &event) {
 		pProtocol->SetApplication(_pApplication);
 	}
 
+	if (pProtocol->GetNearEndpoint()->GetOutputBuffer() != NULL)
+		pProtocol->GetNearEndpoint()->EnqueueForOutbound();
+
 	//7. Done
 	return true;
 }

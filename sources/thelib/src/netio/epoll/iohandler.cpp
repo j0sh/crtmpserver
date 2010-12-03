@@ -71,6 +71,10 @@ void IOHandler::SetProtocol(BaseProtocol *pPotocol) {
 	_pProtocol = pPotocol;
 }
 
+BaseProtocol *IOHandler::GetProtocol() {
+	return _pProtocol;
+}
+
 string IOHandler::IOHTToString(IOHandlerType type) {
 	switch (type) {
 		case IOHT_ACCEPTOR:

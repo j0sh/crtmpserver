@@ -37,6 +37,7 @@
 #include "protocols/rtp/rtspprotocol.h"
 #include "protocols/rtp/inboundrtpprotocol.h"
 #include "protocols/rtp/rtcpprotocol.h"
+#include "protocols/cli/inboundtextcliprotocol.h"
 
 DefaultProtocolFactory::DefaultProtocolFactory()
 : BaseProtocolFactory() {
@@ -87,6 +88,9 @@ vector<uint64_t> DefaultProtocolFactory::HandledProtocols() {
 	ADD_VECTOR_END(result, PT_RTCP);
 	ADD_VECTOR_END(result, PT_INBOUND_RTP);
 #endif /* HAS_PROTOCOL_RTP */
+#ifdef HAS_PROTOCOL_CLI
+	ADD_VECTOR_END(result, PT_INBOUND_CLITXT);
+#endif /* HAS_PROTOCOL_CLI */
 
 	return result;
 }
@@ -133,7 +137,12 @@ vector<string> DefaultProtocolFactory::HandledProtocolChains() {
 	ADD_VECTOR_END(result, CONF_PROTOCOL_INBOUND_RTSP_RTP);
 	ADD_VECTOR_END(result, CONF_PROTOCOL_INBOUND_UDP_RTP);
 #endif /* HAS_PROTOCOL_RTP */
-
+#ifdef HAS_PROTOCOL_CLI
+	ADD_VECTOR_END(result, CONF_PROTOCOL_INBOUND_CLI_TXT);
+#ifdef HAS_PROTOCOL_HTTP
+	ADD_VECTOR_END(result, CONF_PROTOCOL_INBOUND_HTTP_CLI_TXT);
+#endif /* HAS_PROTOCOL_HTTP */
+#endif /* HAS_PROTOCOL_CLI */
 	return result;
 }
 
@@ -242,6 +251,19 @@ vector<uint64_t> DefaultProtocolFactory::ResolveProtocolChain(string name) {
 	}
 #endif /* HAS_PROTOCOL_HTTP */
 #endif /* HAS_PROTOCOL_VAR */
+#ifdef HAS_PROTOCOL_CLI
+	else if (name == CONF_PROTOCOL_INBOUND_CLI_TXT) {
+		ADD_VECTOR_END(result, PT_TCP);
+		ADD_VECTOR_END(result, PT_INBOUND_CLITXT);
+	}
+#ifdef HAS_PROTOCOL_HTTP
+	else if (name == CONF_PROTOCOL_INBOUND_HTTP_CLI_TXT) {
+		ADD_VECTOR_END(result, PT_TCP);
+		ADD_VECTOR_END(result, PT_INBOUND_HTTP);
+		ADD_VECTOR_END(result, PT_INBOUND_CLITXT);
+	}
+#endif /* HAS_PROTOCOL_HTTP */
+#endif /* HAS_PROTOCOL_CLI */
 	else {
 		FATAL("Invalid protocol chain: %s.", STR(name));
 	}
@@ -319,6 +341,11 @@ BaseProtocol *DefaultProtocolFactory::SpawnProtocol(uint64_t type, Variant &para
 			pResult = new InboundRTPProtocol();
 			break;
 #endif /* HAS_PROTOCOL_RTP */
+#ifdef HAS_PROTOCOL_CLI
+		case PT_INBOUND_CLITXT:
+			pResult = new InboundTextCLIProtocol();
+			break;
+#endif /* HAS_PROTOCOL_CLI */
 		default:
 			FATAL("Spawning protocol %s not yet implemented",
 					STR(tagToString(type)));

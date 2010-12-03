@@ -76,18 +76,21 @@ void ClientApplicationManager::UnRegisterApplication(BaseClientApplication* pCli
 	if (MAP_HAS1(_applicationsByName, pClientApplication->GetName()))
 		_applicationsByName.erase(pClientApplication->GetName());
 
-	FOR_VECTOR_ITERATOR(string, pClientApplication->GetAliases(), i) {
-		if (MAP_HAS1(_applicationsByName, VECTOR_VAL(i)))
-			_applicationsByName.erase(VECTOR_VAL(i));
+	vector<string> aliases = pClientApplication->GetAliases();
+
+	for (uint32_t i = 0; i < aliases.size(); i++) {
+		if (MAP_HAS1(_applicationsByName, aliases[i]))
+			_applicationsByName.erase(aliases[i]);
 	}
+
 	if (_pDefaultApplication != NULL) {
 		if (_pDefaultApplication->GetId() == pClientApplication->GetId()) {
 			_pDefaultApplication = NULL;
 		}
 	}
 
-	//    FINEST("Application `%s` (%d) unregistered", STR(pClientApplication->GetName()),
-	//            pClientApplication->GetId());
+	FINEST("Application `%s` (%d) unregistered", STR(pClientApplication->GetName()),
+			pClientApplication->GetId());
 }
 
 BaseClientApplication *ClientApplicationManager::GetDefaultApplication() {

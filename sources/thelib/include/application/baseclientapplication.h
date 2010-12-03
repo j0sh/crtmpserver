@@ -23,6 +23,7 @@
 
 #include "common.h"
 #include "streaming/streamsmanager.h"
+#include "netio/netio.h"
 
 class BaseProtocol;
 class BaseAppProtocolHandler;
@@ -67,6 +68,8 @@ public:
 
 	virtual bool PullExternalStreams();
 	virtual bool PullExternalStream(Variant streamConfig);
+
+	static void Shutdown(BaseClientApplication *pApplication);
 };
 
 

@@ -48,11 +48,14 @@ void ProtocolManager::EnqueueForDelete(BaseProtocol *pProtocol) {
 		_deadProtocols[pProtocol->GetId()] = pProtocol;
 }
 
-void ProtocolManager::CleanupDeadProtocols() {
+uint32_t ProtocolManager::CleanupDeadProtocols() {
+	uint32_t result = 0;
 	while (_deadProtocols.size() > 0) {
 		BaseProtocol *pBaseProtocol = MAP_VAL(_deadProtocols.begin());
 		delete pBaseProtocol;
+		result++;
 	}
+	return result;
 }
 
 void ProtocolManager::Shutdown() {
@@ -72,3 +75,6 @@ BaseProtocol * ProtocolManager::GetProtocol(uint32_t id,
 	return NULL;
 }
 
+map<uint32_t, BaseProtocol *> ProtocolManager::GetActiveProtocols() {
+	return _activeProtocols;
+}

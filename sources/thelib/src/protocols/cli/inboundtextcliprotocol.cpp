@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -17,31 +17,14 @@
  *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifdef HAS_PROTOCOL_CLI
+#include "protocols/cli/inboundtextcliprotocol.h"
 
-#ifndef _PROTOCOLMANAGER_H
-#define	_PROTOCOLMANAGER_H
+InboundTextCLIProtocol::InboundTextCLIProtocol()
+: InboundBaseCLIProtocol(PT_INBOUND_CLITXT) {
 
-#include "common.h"
+}
 
-class BaseProtocol;
-
-class DLLEXP ProtocolManager {
-private:
-	static map<uint32_t, BaseProtocol *> _activeProtocols;
-	static map<uint32_t, BaseProtocol *> _deadProtocols;
-public:
-	static void RegisterProtocol(BaseProtocol *pProtocol);
-	static void UnRegisterProtocol(BaseProtocol *pProtocol);
-	static void EnqueueForDelete(BaseProtocol *pProtocol);
-	static uint32_t CleanupDeadProtocols();
-	static void Shutdown();
-
-	static BaseProtocol * GetProtocol(uint32_t id,
-			bool includeDeadProtocols = false);
-	static map<uint32_t, BaseProtocol *> GetActiveProtocols();
-};
-
-
-#endif	/* _PROTOCOLMANAGER_H */
-
-
+InboundTextCLIProtocol::~InboundTextCLIProtocol() {
+}
+#endif /* HAS_PROTOCOL_CLI */

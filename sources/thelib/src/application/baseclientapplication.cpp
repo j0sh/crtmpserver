@@ -20,9 +20,11 @@
 
 #include "common.h"
 #include "application/baseclientapplication.h"
+#include "protocols/protocolmanager.h"
 #include "application/baseappprotocolhandler.h"
 #include "protocols/baseprotocol.h"
 #include "streaming/basestream.h"
+#include "application/clientapplicationmanager.h"
 
 uint32_t BaseClientApplication::_idGenerator = 0;
 
@@ -219,3 +221,59 @@ bool BaseClientApplication::PullExternalStream(Variant streamConfig) {
 	return pProtocolHandler->PullExternalStream(uri, streamConfig);
 }
 
+void BaseClientApplication::Shutdown(BaseClientApplication *pApplication) {
+	//1. Get the list of all active protocols
+	map<uint32_t, BaseProtocol *> protocols = ProtocolManager::GetActiveProtocols();
+
+	//2. enqueue for delete for all protocols bound to pApplication
+
+	FOR_MAP(protocols, uint32_t, BaseProtocol *, i) {
+		if ((MAP_VAL(i)->GetApplication() != NULL)
+				&& (MAP_VAL(i)->GetApplication()->GetId() == pApplication->GetId())) {
+			MAP_VAL(i)->EnqueueForDelete();
+		}
+	}
+
+	//1. Get the list of all active IOHandlers and enqueue for delete for all services bound to pApplication
+	map<uint32_t, IOHandler *> handlers = IOHandlerManager::GetActiveHandlers();
+
+	FOR_MAP(handlers, uint32_t, IOHandler *, i) {
+		BaseProtocol *pProtocol = MAP_VAL(i)->GetProtocol();
+		BaseProtocol *pTemp = pProtocol;
+		while (pTemp != NULL) {
+			if ((pTemp->GetApplication() != NULL)
+					&& (pTemp->GetApplication()->GetId() == pApplication->GetId())) {
+				IOHandlerManager::EnqueueForDelete(MAP_VAL(i));
+				break;
+			}
+			pTemp = pTemp->GetNearProtocol();
+		}
+	}
+
+	handlers = IOHandlerManager::GetActiveHandlers();
+
+	FOR_MAP(handlers, uint32_t, IOHandler *, i) {
+		if ((MAP_VAL(i)->GetType() == IOHT_ACCEPTOR)
+				&& (((TCPAcceptor *) MAP_VAL(i))->GetApplication() != NULL)) {
+			if (((TCPAcceptor *) MAP_VAL(i))->GetApplication()->GetId() == pApplication->GetId())
+				IOHandlerManager::EnqueueForDelete(MAP_VAL(i));
+		}
+	}
+
+	//3. Make sure we cleanup everything
+	uint32_t count = 0;
+	while (count != 3) {
+		if ((IOHandlerManager::DeleteDeadHandlers() != 0)
+				|| (ProtocolManager::CleanupDeadProtocols() != 0)) {
+			count = 0;
+		} else {
+			count++;
+		}
+	}
+
+	//4. Unregister it
+	ClientApplicationManager::UnRegisterApplication(pApplication);
+
+	//5. Delete it
+	delete pApplication;
+}

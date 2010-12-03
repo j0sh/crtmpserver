@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -18,30 +18,19 @@
  */
 
 
-#ifndef _PROTOCOLMANAGER_H
-#define	_PROTOCOLMANAGER_H
+#ifdef HAS_PROTOCOL_CLI
+#ifndef _INBOUNDTEXTCLIPROTOCOL_H
+#define	_INBOUNDTEXTCLIPROTOCOL_H
 
-#include "common.h"
+#include "protocols/cli/inboundbasecliprotocol.h"
 
-class BaseProtocol;
-
-class DLLEXP ProtocolManager {
-private:
-	static map<uint32_t, BaseProtocol *> _activeProtocols;
-	static map<uint32_t, BaseProtocol *> _deadProtocols;
+class InboundTextCLIProtocol
+: public InboundBaseCLIProtocol {
 public:
-	static void RegisterProtocol(BaseProtocol *pProtocol);
-	static void UnRegisterProtocol(BaseProtocol *pProtocol);
-	static void EnqueueForDelete(BaseProtocol *pProtocol);
-	static uint32_t CleanupDeadProtocols();
-	static void Shutdown();
-
-	static BaseProtocol * GetProtocol(uint32_t id,
-			bool includeDeadProtocols = false);
-	static map<uint32_t, BaseProtocol *> GetActiveProtocols();
+	InboundTextCLIProtocol();
+	virtual ~InboundTextCLIProtocol();
 };
 
 
-#endif	/* _PROTOCOLMANAGER_H */
-
-
+#endif	/* _INBOUNDTEXTCLIPROTOCOL_H */
+#endif /* HAS_PROTOCOL_CLI */

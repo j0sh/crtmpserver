@@ -59,6 +59,7 @@ public:
 	bool LoadXmlString(string xmlContent);
 	bool ConfigureLogAppenders();
 	bool ConfigureDNSResolver();
+	bool ConfigureCLI();
 	bool ConfigureApplications();
 	bool IsDaemon();
 	string GetServicesInfo();

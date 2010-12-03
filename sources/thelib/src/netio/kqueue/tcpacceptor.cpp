@@ -167,6 +167,9 @@ bool TCPAcceptor::OnConnectionAvailable(struct kevent &event) {
 		pProtocol->SetApplication(_pApplication);
 	}
 
+	if (pProtocol->GetNearEndpoint()->GetOutputBuffer() != NULL)
+		pProtocol->GetNearEndpoint()->EnqueueForOutbound();
+
 	//7. Done
 	return true;
 }

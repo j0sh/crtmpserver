@@ -69,7 +69,7 @@ public:
 	static bool DisableTimer(IOHandler *pIOHandler, bool ignoreError = false);
 	static bool Pulse();
 	static void EnqueueForDelete(IOHandler *pIOHandler);
-	static void DeleteDeadHandlers();
+	static uint32_t DeleteDeadHandlers();
 private:
 #ifndef HAS_KQUEUE_TIMERS
 	static void ProcessTimer(TimerEvent &event);

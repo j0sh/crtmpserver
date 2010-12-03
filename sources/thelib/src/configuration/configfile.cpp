@@ -122,6 +122,22 @@ bool ConfigFile::ConfigureDNSResolver() {
 	return true;
 }
 
+bool ConfigFile::ConfigureCLI() {
+	if (!_configuration.HasKey(CONF_CLI))
+		return true;
+	if (!ValidateAcceptor(_configuration[CONF_CLI])) {
+		FATAL("Unable to validate DNS resolver");
+		return false;
+	}
+
+	if (!ConfigureAcceptor(_configuration[CONF_CLI], NULL)) {
+		FATAL("Unable to configure acceptors on DNS resolver");
+		return false;
+	}
+
+	return true;
+}
+
 bool ConfigFile::ConfigureApplications() {
 	if (!ValidateApplications()) {
 		FATAL("Unable to validate applications");

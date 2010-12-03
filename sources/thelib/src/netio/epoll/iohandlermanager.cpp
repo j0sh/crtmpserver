@@ -216,14 +216,17 @@ void IOHandlerManager::EnqueueForDelete(IOHandler *pIOHandler) {
 		_deadIOHandlers[pIOHandler->GetId()] = pIOHandler;
 }
 
-void IOHandlerManager::DeleteDeadHandlers() {
+uint32_t IOHandlerManager::DeleteDeadHandlers() {
+	uint32_t result = 0;
 	while (_deadIOHandlers.size() > 0) {
 		IOHandler *pIOHandler = MAP_VAL(_deadIOHandlers.begin());
 		//FINEST("Delete IOH %p", pIOHandler);
 		_deadIOHandlers.erase(pIOHandler->GetId());
 		delete pIOHandler;
+		result++;
 		//FINEST("Done delete IOH %p", pIOHandler);
 	}
+	return result;
 }
 
 bool IOHandlerManager::Pulse() {

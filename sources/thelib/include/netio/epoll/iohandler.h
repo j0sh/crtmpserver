@@ -56,6 +56,7 @@ public:
 	int32_t GetOutboundFd();
 	IOHandlerType GetType();
 	void SetProtocol(BaseProtocol *pPotocol);
+	BaseProtocol *GetProtocol();
 	virtual bool SignalOutputData() = 0;
 	virtual bool OnEvent(struct epoll_event &event) = 0;
 	static string IOHTToString(IOHandlerType type);

@@ -67,6 +67,8 @@
 #define PT_INBOUND_RTP			MAKE_TAG4('I','R','T','P')
 #define PT_OUTBOUND_RTP			MAKE_TAG4('O','R','T','P')
 
+//CLI protocols
+#define PT_INBOUND_CLITXT		MAKE_TAG7('I','C','L','I','T','X','T')
 
 #endif	/* _PROTOCOLTYPES_H */
 

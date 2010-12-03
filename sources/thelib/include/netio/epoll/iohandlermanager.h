@@ -58,7 +58,7 @@ public:
 	static bool EnableTimer(IOHandler *pIOHandler, uint32_t seconds);
 	static bool DisableTimer(IOHandler *pIOHandler, bool ignoreError = false);
 	static void EnqueueForDelete(IOHandler *pIOHandler);
-	static void DeleteDeadHandlers();
+	static uint32_t DeleteDeadHandlers();
 	static bool Pulse();
 private:
 	static void SetupToken(IOHandler *pIOHandler);
