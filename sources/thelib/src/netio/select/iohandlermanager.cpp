@@ -150,12 +150,15 @@ void IOHandlerManager::EnqueueForDelete(IOHandler *pIOHandler) {
 	}
 }
 
-void IOHandlerManager::DeleteDeadHandlers() {
+uint32_t IOHandlerManager::DeleteDeadHandlers() {
+	uint32_t result = 0;
 	while (_deadIOHandlers.size() > 0) {
 		IOHandler *pIOHandler = MAP_VAL(_deadIOHandlers.begin());
 		_deadIOHandlers.erase(pIOHandler->GetId());
 		delete pIOHandler;
+		result++;
 	}
+	return result;
 }
 
 bool IOHandlerManager::Pulse() {

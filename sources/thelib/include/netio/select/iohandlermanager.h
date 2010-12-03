@@ -57,7 +57,7 @@ public:
 	static bool DisableTimer(IOHandler *pIOHandler);
 	static bool Pulse();
 	static void EnqueueForDelete(IOHandler *pIOHandler);
-	static void DeleteDeadHandlers();
+	static uint32_t DeleteDeadHandlers();
 private:
 	static bool UpdateFdSets(int32_t fd);
 	static void ProcessTimer(TimerEvent &event);
