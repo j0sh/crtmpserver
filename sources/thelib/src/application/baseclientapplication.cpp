@@ -230,6 +230,7 @@ void BaseClientApplication::Shutdown(BaseClientApplication *pApplication) {
 	FOR_MAP(protocols, uint32_t, BaseProtocol *, i) {
 		if ((MAP_VAL(i)->GetApplication() != NULL)
 				&& (MAP_VAL(i)->GetApplication()->GetId() == pApplication->GetId())) {
+			MAP_VAL(i)->SetApplication(NULL);
 			MAP_VAL(i)->EnqueueForDelete();
 		}
 	}
@@ -257,17 +258,6 @@ void BaseClientApplication::Shutdown(BaseClientApplication *pApplication) {
 				&& (((TCPAcceptor *) MAP_VAL(i))->GetApplication() != NULL)) {
 			if (((TCPAcceptor *) MAP_VAL(i))->GetApplication()->GetId() == pApplication->GetId())
 				IOHandlerManager::EnqueueForDelete(MAP_VAL(i));
-		}
-	}
-
-	//3. Make sure we cleanup everything
-	uint32_t count = 0;
-	while (count != 3) {
-		if ((IOHandlerManager::DeleteDeadHandlers() != 0)
-				|| (ProtocolManager::CleanupDeadProtocols() != 0)) {
-			count = 0;
-		} else {
-			count++;
 		}
 	}
 

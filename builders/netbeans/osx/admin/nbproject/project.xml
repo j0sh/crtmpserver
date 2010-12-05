@@ -13,6 +13,14 @@
                 <make-dep-project>../thelib</make-dep-project>
                 <make-dep-project>../common</make-dep-project>
             </make-dep-projects>
+            <sourceRootList>
+                <sourceRootElem>../../../sources/applications/admin/include</sourceRootElem>
+                <sourceRootElem>../../../sources/applications/admin/src</sourceRootElem>
+            </sourceRootList>
+            <confList>
+                <confElem>Debug</confElem>
+                <confElem>Release</confElem>
+            </confList>
         </data>
     </configuration>
 </project>

@@ -23,32 +23,27 @@
 
 #include "protocols/baseprotocol.h"
 
+class BaseCLIAppProtocolHandler;
+
 class InboundBaseCLIProtocol
 : public BaseProtocol {
 private:
+	BaseCLIAppProtocolHandler *_pProtocolHandler;
+protected:
 	IOBuffer _outputBuffer;
 public:
 	InboundBaseCLIProtocol(uint64_t type);
 	virtual ~InboundBaseCLIProtocol();
 
 	virtual bool Initialize(Variant &parameters);
+	virtual void SetApplication(BaseClientApplication *pApplication);
 	virtual bool AllowFarProtocol(uint64_t type);
 	virtual bool AllowNearProtocol(uint64_t type);
 	virtual IOBuffer * GetOutputBuffer();
 	virtual bool SignalInputData(int32_t recvAmount);
-	virtual bool SignalInputData(IOBuffer &buffer);
-private:
-	void Send(string status, string message);
-	void SendFail(string message);
-	void SendSuccess(string message);
-	
-	void ExecuteCommand(string &command);
-	void ExecuteCommand(Variant &command);
-	void ExecuteCommandHelp(Variant &command);
-	void ExecuteCommandShutdown(Variant &command);
-	void ExecuteCommandListApps(Variant &command);
-	void ExecuteCommandListServices(Variant &command);
-	void ExecuteCommandShutdownApp(Variant &command);
+	virtual bool SendMessage(Variant &message) = 0;
+protected:
+	bool ProcessMessage(Variant &message);
 };
 
 

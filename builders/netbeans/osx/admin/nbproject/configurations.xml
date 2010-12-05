@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configurationDescriptor version="65">
+<configurationDescriptor version="69">
   <logicalFolder name="root" displayName="root" projectFiles="true">
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
       <itemPath>../../../../sources/applications/admin/include/admin.h</itemPath>
       <itemPath>../../../../sources/applications/admin/include/adminapplication.h</itemPath>
+      <itemPath>../../../../sources/applications/admin/include/cliappprotocolhandler.h</itemPath>
       <itemPath>../../../../sources/applications/admin/include/rtmpappprotocolhandler.h</itemPath>
     </logicalFolder>
     <logicalFolder name="SourceFiles"
@@ -13,6 +14,7 @@
                    projectFiles="true">
       <itemPath>../../../../sources/applications/admin/src/admin.cpp</itemPath>
       <itemPath>../../../../sources/applications/admin/src/adminapplication.cpp</itemPath>
+      <itemPath>../../../../sources/applications/admin/src/cliappprotocolhandler.cpp</itemPath>
       <itemPath>../../../../sources/applications/admin/src/rtmpappprotocolhandler.cpp</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
@@ -44,6 +46,8 @@
           <preprocessorList>
             <Elem>OSX</Elem>
             <Elem>NET_KQUEUE</Elem>
+            <Elem>HAS_PROTOCOL_CLI</Elem>
+            <Elem>HAS_PROTOCOL_RTMP</Elem>
           </preprocessorList>
         </ccTool>
         <linkerTool>
@@ -76,18 +80,6 @@
           </linkerLibItems>
         </linkerTool>
       </compileType>
-      <item path="../../../../sources/applications/admin/src/admin.cpp"
-            ex="false"
-            tool="1">
-      </item>
-      <item path="../../../../sources/applications/admin/src/adminapplication.cpp"
-            ex="false"
-            tool="1">
-      </item>
-      <item path="../../../../sources/applications/admin/src/rtmpappprotocolhandler.cpp"
-            ex="false"
-            tool="1">
-      </item>
     </conf>
     <conf name="Release" type="2">
       <toolsSet>

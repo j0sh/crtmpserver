@@ -19,6 +19,7 @@
 
 #include "adminapplication.h"
 #include "rtmpappprotocolhandler.h"
+#include "cliappprotocolhandler.h"
 #include "protocols/baseprotocol.h"
 using namespace app_admin;
 
@@ -27,6 +28,9 @@ AdminApplication::AdminApplication(Variant &configuration)
 #ifdef HAS_PROTOCOL_RTMP
 	_pRTMPHandler = NULL;
 #endif /* HAS_PROTOCOL_RTMP */
+#ifdef HAS_PROTOCOL_CLI
+	_pCLIHandler = NULL;
+#endif /* HAS_PROTOCOL_CLI */
 }
 
 AdminApplication::~AdminApplication() {
@@ -38,6 +42,13 @@ AdminApplication::~AdminApplication() {
 		_pRTMPHandler = NULL;
 	}
 #endif /* HAS_PROTOCOL_RTMP */
+#ifdef HAS_PROTOCOL_CLI
+	UnRegisterAppProtocolHandler(PT_INBOUND_CLITXT);
+	if (_pCLIHandler != NULL) {
+		delete _pCLIHandler;
+		_pCLIHandler = NULL;
+	}
+#endif /* HAS_PROTOCOL_CLI */
 }
 
 bool AdminApplication::Initialize() {
@@ -51,6 +62,11 @@ bool AdminApplication::Initialize() {
 	RegisterAppProtocolHandler(PT_INBOUND_RTMP, _pRTMPHandler);
 	RegisterAppProtocolHandler(PT_OUTBOUND_RTMP, _pRTMPHandler);
 #endif /* HAS_PROTOCOL_RTMP */
+
+#ifdef HAS_PROTOCOL_CLI
+	_pCLIHandler = new CLIAppProtocolHandler(_configuration);
+	RegisterAppProtocolHandler(PT_INBOUND_CLITXT, _pCLIHandler);
+#endif /* HAS_PROTOCOL_CLI */
 
 	return true;
 }

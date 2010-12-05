@@ -120,6 +120,11 @@
         <itemPath>../../../../sources/thelib/include/netio/netio.h</itemPath>
       </logicalFolder>
       <logicalFolder name="protocols" displayName="protocols" projectFiles="true">
+        <logicalFolder name="cli" displayName="cli" projectFiles="true">
+          <itemPath>../../../../sources/thelib/include/protocols/cli/basecliappprotocolhandler.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/protocols/cli/inboundbasecliprotocol.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/protocols/cli/inboundtextcliprotocol.h</itemPath>
+        </logicalFolder>
         <logicalFolder name="dns" displayName="dns" projectFiles="true">
           <itemPath>../../../../sources/thelib/include/protocols/dns/inbounddnsresolverprotocol.h</itemPath>
           <itemPath>../../../../sources/thelib/include/protocols/dns/outbounddnsresolverprotocol.h</itemPath>
@@ -362,6 +367,11 @@
         </logicalFolder>
       </logicalFolder>
       <logicalFolder name="protocols" displayName="protocols" projectFiles="true">
+        <logicalFolder name="cli" displayName="cli" projectFiles="true">
+          <itemPath>../../../../sources/thelib/src/protocols/cli/basecliappprotocolhandler.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/protocols/cli/inboundbasecliprotocol.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/protocols/cli/inboundtextcliprotocol.cpp</itemPath>
+        </logicalFolder>
         <logicalFolder name="dns" displayName="dns" projectFiles="true">
           <itemPath>../../../../sources/thelib/src/protocols/dns/inbounddnsresolverprotocol.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/protocols/dns/outbounddnsresolverprotocol.cpp</itemPath>
@@ -536,6 +546,7 @@
             <Elem>CreateRTCPPacket=CreateRTCPPacket_none</Elem>
             <Elem>FeedDataAudioMPEG4Generic=FeedDataAudioMPEG4Generic_one_by_one</Elem>
             <Elem>HAS_MEDIA_MKV</Elem>
+            <Elem>HAS_PROTOCOL_CLI</Elem>
           </preprocessorList>
         </ccTool>
         <linkerTool>

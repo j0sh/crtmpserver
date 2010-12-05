@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -17,38 +17,21 @@
  *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifdef HAS_PROTOCOL_CLI
+#ifndef _CLIAPPPROTOCOLHANDLER_H
+#define	_CLIAPPPROTOCOLHANDLER_H
 
-#ifndef _ADMINAPPLICATION_H
-#define _ADMINAPPLICATION_H
-
-
-#include "application/baseclientapplication.h"
+#include "protocols/cli/basecliappprotocolhandler.h"
 
 namespace app_admin {
-#ifdef HAS_PROTOCOL_RTMP
-	class RTMPAppProtocolHandler;
-#endif /* HAS_PROTOCOL_RTMP */
-#ifdef HAS_PROTOCOL_CLI
-	class CLIAppProtocolHandler;
-#endif /* HAS_PROTOCOL_CLI */
 
-	class AdminApplication
-	: public BaseClientApplication {
-	private:
-#ifdef HAS_PROTOCOL_RTMP
-		RTMPAppProtocolHandler *_pRTMPHandler;
-#endif /* HAS_PROTOCOL_RTMP */
-#ifdef HAS_PROTOCOL_CLI
-		CLIAppProtocolHandler *_pCLIHandler;
-#endif /* HAS_PROTOCOL_CLI */
+	class CLIAppProtocolHandler
+	: public BaseCLIAppProtocolHandler {
 	public:
-		AdminApplication(Variant &configuration);
-		virtual ~AdminApplication();
-
-		virtual bool Initialize();
+		CLIAppProtocolHandler(Variant &configuration);
+		virtual ~CLIAppProtocolHandler();
 	};
 }
 
-#endif	/* _ADMINAPPLICATION_H */
-
-
+#endif	/* _CLIAPPPROTOCOLHANDLER_H */
+#endif	/* HAS_PROTOCOL_CLI */

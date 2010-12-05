@@ -29,6 +29,12 @@ class InboundTextCLIProtocol
 public:
 	InboundTextCLIProtocol();
 	virtual ~InboundTextCLIProtocol();
+
+	virtual bool Initialize(Variant &parameters);
+	virtual bool SignalInputData(IOBuffer &buffer);
+	virtual bool SendMessage(Variant &message);
+private:
+	bool ParseCommand(string &command);
 };
 
 

@@ -32,7 +32,11 @@ include Makefile.nb
 OBJECTDIR=build/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
-OBJECTFILES=
+OBJECTFILES= \
+	${OBJECTDIR}/_ext/2107059025/cliappprotocolhandler.o \
+	${OBJECTDIR}/_ext/2107059025/admin.o \
+	${OBJECTDIR}/_ext/2107059025/adminapplication.o \
+	${OBJECTDIR}/_ext/2107059025/rtmpappprotocolhandler.o
 
 
 # C Compiler Flags
@@ -53,7 +57,7 @@ LDLIBSOPTIONS=-L../common/dist/Release/GNU-MacOSX -lcommon -L../thelib/../Releas
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	${MAKE}  -f nbproject/Makefile-Release.mk ../Release/GNU-MacOSX/applications/admin/libadmin.dylib
+	"${MAKE}"  -f nbproject/Makefile-Release.mk ../Release/GNU-MacOSX/applications/admin/libadmin.dylib
 
 ../Release/GNU-MacOSX/applications/admin/libadmin.dylib: ../common/dist/Release/GNU-MacOSX/libcommon.dylib
 
@@ -61,7 +65,27 @@ LDLIBSOPTIONS=-L../common/dist/Release/GNU-MacOSX -lcommon -L../thelib/../Releas
 
 ../Release/GNU-MacOSX/applications/admin/libadmin.dylib: ${OBJECTFILES}
 	${MKDIR} -p ../Release/GNU-MacOSX/applications/admin
-	${LINK.c} -dynamiclib -install_name libadmin.dylib -o ../${CND_CONF}/${CND_PLATFORM}/applications/admin/libadmin.dylib -fPIC ${OBJECTFILES} ${LDLIBSOPTIONS} 
+	${LINK.cc} -dynamiclib -install_name libadmin.dylib -o ../${CND_CONF}/${CND_PLATFORM}/applications/admin/libadmin.dylib -fPIC ${OBJECTFILES} ${LDLIBSOPTIONS} 
+
+${OBJECTDIR}/_ext/2107059025/cliappprotocolhandler.o: ../../../../sources/applications/admin/src/cliappprotocolhandler.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/2107059025
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/admin/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/2107059025/cliappprotocolhandler.o ../../../../sources/applications/admin/src/cliappprotocolhandler.cpp
+
+${OBJECTDIR}/_ext/2107059025/admin.o: ../../../../sources/applications/admin/src/admin.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/2107059025
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/admin/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/2107059025/admin.o ../../../../sources/applications/admin/src/admin.cpp
+
+${OBJECTDIR}/_ext/2107059025/adminapplication.o: ../../../../sources/applications/admin/src/adminapplication.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/2107059025
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/admin/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/2107059025/adminapplication.o ../../../../sources/applications/admin/src/adminapplication.cpp
+
+${OBJECTDIR}/_ext/2107059025/rtmpappprotocolhandler.o: ../../../../sources/applications/admin/src/rtmpappprotocolhandler.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/2107059025
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/admin/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/2107059025/rtmpappprotocolhandler.o ../../../../sources/applications/admin/src/rtmpappprotocolhandler.cpp
 
 # Subprojects
 .build-subprojects:

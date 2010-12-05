@@ -27,14 +27,6 @@ configuration=
 		}
 	},
 
-	 cli=
-    {
-            ip="0.0.0.0",
-            port=1112,
-            protocol="inboundTxtCli"
-    },
-
-
 	-- this is the place where all the logging facilities are setted up
 	-- you can add/remove any number of locations
 	logAppenders=
@@ -265,6 +257,14 @@ configuration=
 				"admin_alias2",
 				"admin_alias3",
 			},
+			acceptors = 
+			{
+				{
+					ip="0.0.0.0",
+					port=1112,
+					protocol="inboundTxtCli"
+				},
+			}
 			--validateHandshake=true,
 			--default=true,
 		},

@@ -58,7 +58,7 @@ mkdir -p ${NBTMPDIR}
 
 # Copy files and create directories and links
 cd "${TOP}"
-makeDirectory ${NBTMPDIR}/libadmin.dylib/lib
+makeDirectory "${NBTMPDIR}/libadmin.dylib/lib"
 copyFileToTmpDir "${OUTPUT_PATH}" "${NBTMPDIR}/${PACKAGE_TOP_DIR}lib/${OUTPUT_BASENAME}" 0644
 
 
