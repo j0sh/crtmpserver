@@ -463,6 +463,11 @@ bool ClientContext::ParseConnectingString() {
 }
 
 bool ClientContext::SignalProtocolCreated(BaseProtocol *pProtocol, Variant &parameters) {
+	if (pProtocol == NULL) {
+		FATAL("Connection failed:\n%s", STR(parameters.ToString()));
+		return false;
+	}
+
 	//1. Get the context
 	uint32_t contextId = parameters["contextId"];
 	assert(contextId != 0);

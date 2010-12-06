@@ -87,6 +87,11 @@ bool BaseVariantAppProtocolHandler::Send(string url, Variant &variant, bool xml)
 }
 
 bool BaseVariantAppProtocolHandler::SignalProtocolCreated(BaseProtocol *pProtocol, Variant &parameters) {
+	if (pProtocol == NULL) {
+		FATAL("Connection failed:\n%s", STR(parameters.ToString()));
+		return false;
+	}
+
 	//1. Validate the protocol
 	if (pProtocol->GetType() != PT_BIN_VAR &&
 			pProtocol->GetType() != PT_XML_VAR) {

@@ -111,6 +111,10 @@ bool BaseRTSPAppProtocolHandler::PullExternalStream(URI uri, Variant streamConfi
 
 bool BaseRTSPAppProtocolHandler::SignalProtocolCreated(BaseProtocol *pProtocol,
 		Variant &parameters) {
+	if(pProtocol==NULL){
+		FATAL("Connection failed:\n%s",STR(parameters.ToString()));
+		return false;
+	}
 	//1. Sanitize
 	if (parameters["appId"] != V_UINT32) {
 		FATAL("Invalid custom parameters:\n%s", STR(parameters.ToString()));

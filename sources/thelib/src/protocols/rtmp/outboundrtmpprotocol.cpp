@@ -143,6 +143,11 @@ bool OutboundRTMPProtocol::Connect(string ip, uint16_t port,
 
 bool OutboundRTMPProtocol::SignalProtocolCreated(BaseProtocol *pProtocol,
 		Variant customParameters) {
+	if (pProtocol == NULL) {
+		FATAL("Connection failed:\n%s", STR(parameters.ToString()));
+		return false;
+	}
+
 	//1. Get the application designated for the newly created connection
 	if (customParameters[CONF_APPLICATION_NAME] != V_STRING) {
 		FATAL("connect parameters must have an application name");

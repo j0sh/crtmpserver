@@ -68,6 +68,7 @@ public:
 			DEBUG("***CONNECT ERROR: Unable to connect to: %s:%d",
 					STR(_ip),
 					_port);
+			T::SignalProtocolCreated(NULL, _customParameters);
 			_closeSocket = true;
 			return false;
 		}
@@ -77,6 +78,7 @@ public:
 
 		if (pProtocol == NULL) {
 			FATAL("Unable to create protocol chain");
+			T::SignalProtocolCreated(NULL, _customParameters);
 			_closeSocket = true;
 			return false;
 		}

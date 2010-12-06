@@ -69,6 +69,11 @@ bool Controller::EnqueueDBRequest(string uriString, Variant &payload, string app
 }
 
 bool Controller::SignalProtocolCreated(BaseProtocol *pProtocol, Variant &parameters) {
+	if (pProtocol == NULL) {
+		FATAL("Connection failed:\n%s", STR(parameters.ToString()));
+		return false;
+	}
+
 	BaseProtocol *pEndpoint = pProtocol->GetNearEndpoint();
 	if (pEndpoint->GetType() != PT_DBACCESS) {
 		FATAL("This is not waht we've expected");

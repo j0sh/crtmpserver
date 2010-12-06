@@ -64,7 +64,7 @@ public:
 
 	virtual bool OnEvent(select_event &event) {
 		IOHandlerManager::EnqueueForDelete(this);
-
+		WARN("THIS IS NOT COMPLETE:Y IMPLEMENTED");
 		//        if (((event.flags & EV_ERROR) != 0) ||
 		//                ((event.flags & EV_EOF) != 0)) {
 		//            DEBUG("***CONNECT ERROR***");
@@ -77,6 +77,7 @@ public:
 
 		if (pProtocol == NULL) {
 			FATAL("Unable to create protocol chain");
+			T::SignalProtocolCreated(NULL, _customParameters);
 			_closeSocket = true;
 			return false;
 		}

@@ -57,6 +57,11 @@ bool OutboundDNSResolverProtocol::Connect(string ip, uint16_t port,
 
 bool OutboundDNSResolverProtocol::SignalProtocolCreated(BaseProtocol *pProtocol,
 		Variant customParameters) {
+	if (pProtocol == NULL) {
+		FATAL("Connection failed:\n%s", STR(parameters.ToString()));
+		return false;
+	}
+
 	if (_dnsProtocolResolverId != 0) {
 		FATAL("There is already a connected protocol resolver");
 		return false;
