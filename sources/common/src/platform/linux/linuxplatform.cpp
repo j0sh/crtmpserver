@@ -58,8 +58,10 @@ void replace(string &target, string search, string replacement) {
 	if (search == "")
 		return;
 	string::size_type i = string::npos;
-	while ((i = target.find(search)) != string::npos) {
+	string::size_type lastPos = 0;
+	while ((i = target.find(search, lastPos)) != string::npos) {
 		target.replace(i, search.length(), replacement);
+		lastPos = i + replacement.length();
 	}
 }
 

@@ -291,15 +291,15 @@ void IOBuffer::ReadFromRepeat(uint8_t byte, uint32_t size) {
 	SANITY_INPUT_BUFFER;
 }
 
-bool IOBuffer::WriteToTCPFd(int32_t fd, uint32_t size) {
+bool IOBuffer::WriteToTCPFd(int32_t fd, uint32_t size, int32_t &sentAmount) {
 	SANITY_INPUT_BUFFER;
 	bool result = true;
-	int32_t sent = send(fd, (char *) (_pBuffer + _consumed),
+	sentAmount = send(fd, (char *) (_pBuffer + _consumed),
 			_published - _consumed, MSG_NOSIGNAL);
 	//size > _published - _consumed ? _published - _consumed : size,
 	int err = LASTSOCKETERROR;
 
-	if (sent < 0) {
+	if (sentAmount < 0) {
 		if (err != SOCKERROR_SEND_IN_PROGRESS) {
 			FATAL("Unable to send %d bytes of data data. Size advertised by network layer was %d [%d: %s]",
 					_published - _consumed, size, err, strerror(err));
@@ -308,7 +308,7 @@ bool IOBuffer::WriteToTCPFd(int32_t fd, uint32_t size) {
 		}
 	} else {
 		//FINEST("Sent: %d", sent);
-		_consumed += sent;
+		_consumed += sentAmount;
 	}
 	if (result)
 		Recycle();

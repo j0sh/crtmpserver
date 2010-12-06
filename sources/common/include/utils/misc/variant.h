@@ -201,6 +201,9 @@ public:
 
 	static bool DeserializeFromXmlFile(string path, Variant &variant);
 	bool SerializeToXmlFile(string fileName);
+
+	static bool DeserializeFromJSON(string &raw, Variant &result);
+	bool SerializeToJSON(string &result);
 private:
 	TiXmlElement *SerializeToXmlElement(string &name);
 	static bool DeserializeFromBin(uint8_t *pBuffer, uint32_t bufferSize,
@@ -208,6 +211,7 @@ private:
 	static bool DeserializeFromXml(TiXmlElement *pNode, Variant &variant);
 	void InternalCopy(const Variant &val);
 	void NormalizeTs();
+	void EscapeJSON(string &value);
 };
 
 

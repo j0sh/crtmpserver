@@ -1500,6 +1500,94 @@ bool Variant::SerializeToXmlFile(string fileName) {
 	return true;
 }
 
+bool Variant::DeserializeFromJSON(string &raw, Variant &result) {
+	NYIR;
+}
+
+bool Variant::SerializeToJSON(string &result) {
+	switch (_type) {
+		case V_NULL:
+		case V_UNDEFINED:
+		{
+			result += "null";
+			break;
+		}
+		case V_BOOL:
+		{
+			result += ((bool)(*this)) ? "true" : "false";
+			break;
+		}
+		case V_INT8:
+		case V_INT16:
+		case V_INT32:
+		case V_INT64:
+		{
+			int64_t value = (int64_t) (*this);
+			result += format("%lld", value);
+			break;
+		}
+		case V_UINT8:
+		case V_UINT16:
+		case V_UINT32:
+		case V_UINT64:
+		{
+			uint64_t value = (uint64_t) (*this);
+			result += format("%llu", value);
+			break;
+		}
+		case V_DOUBLE:
+		{
+			result += format("%.4f", (double) (*this));
+			break;
+		}
+		case V_TIMESTAMP:
+		case V_DATE:
+		case V_TIME:
+		case V_TYPED_MAP:
+		case V_BYTEARRAY:
+		{
+			result += "\"V_TIMESTAMP,V_DATE,V_TIME,V_TYPED_MAP and V_BYTEARRAY not supported by JSON\"";
+			break;
+		}
+		case V_STRING:
+		{
+			string value = (string) (*this);
+			EscapeJSON(value);
+			result += value;
+			break;
+		}
+		case V_MAP:
+		{
+			result += IsArray() ? "[" : "{";
+
+			FOR_MAP(_value.m->children, string, Variant, i) {
+				if (!IsArray()) {
+					string key = MAP_KEY(i);
+					EscapeJSON(key);
+					result += key + ":";
+				}
+				if (!MAP_VAL(i).SerializeToJSON(result)) {
+					FATAL("Unable to serialize to JSON");
+					return false;
+				}
+				result += ",";
+			}
+			if (_value.m->children.size() > 0) {
+				result[result.size() - 1] = IsArray() ? ']' : '}';
+			} else {
+				result += IsArray() ? "]" : "}";
+			}
+			break;
+		}
+		default:
+		{
+			ASSERT("Invalid type %d", _type);
+			break;
+		}
+	}
+	return true;
+}
+
 TiXmlElement *Variant::SerializeToXmlElement(string &name) {
 	TiXmlElement *pResult = NULL;
 	switch (_type) {
@@ -2050,4 +2138,14 @@ void Variant::NormalizeTs() {
 	//            _value.t->tm_zone);
 }
 
-
+void Variant::EscapeJSON(string &value) {
+	replace(value, "\\", "\\\\");
+	replace(value, "/", "\\/");
+	replace(value, "\"", "\\\"");
+	replace(value, "\b", "\\b");
+	replace(value, "\f", "\\f");
+	replace(value, "\n", "\\n");
+	replace(value, "\r", "\\r");
+	replace(value, "\t", "\\t");
+	value = "\"" + value + "\"";
+}

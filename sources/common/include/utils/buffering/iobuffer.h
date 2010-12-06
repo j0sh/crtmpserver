@@ -61,7 +61,7 @@ public:
 	void ReadFromRepeat(uint8_t byte, uint32_t size);
 
 	//Read from this buffer and put to a destination
-	bool WriteToTCPFd(int32_t fd, uint32_t size);
+	bool WriteToTCPFd(int32_t fd, uint32_t size, int32_t &sentAmount);
 	bool WriteToStdio(int32_t fd, uint32_t size);
 
 	//Utility functions
