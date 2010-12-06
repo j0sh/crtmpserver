@@ -144,7 +144,7 @@ bool OutboundRTMPProtocol::Connect(string ip, uint16_t port,
 bool OutboundRTMPProtocol::SignalProtocolCreated(BaseProtocol *pProtocol,
 		Variant customParameters) {
 	if (pProtocol == NULL) {
-		FATAL("Connection failed:\n%s", STR(parameters.ToString()));
+		FATAL("Connection failed:\n%s", STR(customParameters.ToString()));
 		return false;
 	}
 
