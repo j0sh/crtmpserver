@@ -101,5 +101,9 @@ InboundNamedPipeCarrier::operator string() {
 	return format("INP(%d)", _inboundFd);
 }
 
+void InboundNamedPipeCarrier::GetStats(Variant &info) {
+
+}
+
 #endif /* NET_EPOLL */
 

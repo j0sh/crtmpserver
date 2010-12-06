@@ -37,12 +37,15 @@ private:
 	uint16_t _nearPort;
 	int32_t _sendBufferSize;
 	int32_t _recvBufferSize;
+	uint64_t _rx;
+	uint64_t _tx;
 public:
 	TCPCarrier(int32_t fd);
 	virtual ~TCPCarrier();
 	virtual bool OnEvent(select_event &event);
 	virtual bool SignalOutputData();
 	virtual operator string();
+	virtual void GetStats(Variant &info);
 
 	sockaddr_in &GetFarEndpointAddress();
 	string GetFarEndpointAddressIp();

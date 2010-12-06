@@ -35,6 +35,7 @@ public:
 	virtual bool OnEvent(struct epoll_event &eventWrapper);
 	bool EnqueueForTimeEvent(uint32_t seconds);
 	virtual operator string();
+	virtual void GetStats(Variant &info);
 };
 
 #endif	/* _TIMERIO_H */

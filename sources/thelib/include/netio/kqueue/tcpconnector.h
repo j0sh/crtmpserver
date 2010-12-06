@@ -157,6 +157,10 @@ public:
 	operator string() {
 		return format("CN(%d)", _inboundFd);
 	}
+
+	virtual void GetStats(Variant &info) {
+
+	}
 };
 
 

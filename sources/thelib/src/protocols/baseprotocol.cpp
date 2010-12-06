@@ -375,6 +375,14 @@ bool BaseProtocol::SignalInputData(int32_t recvAmount, sockaddr_in *pPeerAddress
 	return SignalInputData(recvAmount);
 }
 
+void BaseProtocol::GetStats(Variant &info) {
+	IOHandler *pIOHandler = GetIOHandler();
+	if (pIOHandler != NULL) {
+		pIOHandler->GetStats(info["carrier"]);
+	}
+	info["id"] = GetId();
+}
+
 string BaseProtocol::ToString(uint32_t currentId) {
 	string result = "";
 	if (_id == currentId)

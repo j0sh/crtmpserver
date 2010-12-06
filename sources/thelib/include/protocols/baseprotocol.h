@@ -167,6 +167,10 @@ public:
 	//directly from the network i/o layer
 	virtual bool SignalInputData(int32_t recvAmount, sockaddr_in *pPeerAddress);
 
+	//This will return a Variant containing various statistic information
+	//This should be overriden if more/less info is desired
+	virtual void GetStats(Variant &info);
+
 	//
 	//must be implemented by the class that inherits this class
 	//

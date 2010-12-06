@@ -37,6 +37,7 @@ public:
 	virtual bool OnEvent(select_event &event);
 	virtual bool SignalOutputData();
 	virtual operator string();
+	virtual void GetStats(Variant &info);
 };
 
 #endif	/* _STDIOCARRIER_H */

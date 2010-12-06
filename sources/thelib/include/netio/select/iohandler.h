@@ -23,7 +23,6 @@
 
 #include "common.h"
 
-
 typedef enum _IOHandlerType {
 	IOHT_ACCEPTOR,
 	IOHT_TCP_CONNECTOR,
@@ -58,6 +57,7 @@ public:
 	virtual bool OnEvent(select_event &event) = 0;
 	static string IOHTToString(IOHandlerType type);
 	virtual operator string() = 0;
+	virtual void GetStats(Variant &info) = 0;
 };
 
 

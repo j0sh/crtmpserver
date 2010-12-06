@@ -38,6 +38,7 @@ public:
 	virtual bool OnEvent(select_event &event);
 	virtual bool SignalOutputData();
 	virtual operator string();
+	virtual void GetStats(Variant &info);
 
 	string GetFarEndpointAddress();
 	uint16_t GetFarEndpointPort();

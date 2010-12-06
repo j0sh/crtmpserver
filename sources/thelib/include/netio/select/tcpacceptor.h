@@ -46,6 +46,7 @@ public:
 	BaseClientApplication *GetApplication();
 	vector<uint64_t> &GetProtocolChain();
 	virtual operator string();
+	virtual void GetStats(Variant &info);
 private:
 	bool IsAlive();
 };

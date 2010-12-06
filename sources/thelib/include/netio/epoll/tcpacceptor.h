@@ -20,7 +20,7 @@
 #ifdef NET_EPOLL
 #ifndef _TCPACCEPTOR_H
 #define	_TCPACCEPTOR_H
- 
+
 
 #include "netio/epoll/iohandler.h"
 
@@ -45,6 +45,7 @@ public:
 	BaseClientApplication *GetApplication();
 	vector<uint64_t> &GetProtocolChain();
 	virtual operator string();
+	virtual void GetStats(Variant &info);
 private:
 	bool IsAlive();
 };

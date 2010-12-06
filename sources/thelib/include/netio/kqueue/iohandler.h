@@ -61,6 +61,7 @@ public:
 	virtual bool OnEvent(struct kevent &event) = 0;
 	static string IOHTToString(IOHandlerType type);
 	virtual operator string() = 0;
+	virtual void GetStats(Variant &info) = 0;
 };
 
 

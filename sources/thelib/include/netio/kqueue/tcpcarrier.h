@@ -33,12 +33,15 @@ private:
 	sockaddr_in _nearAddress;
 	string _nearIp;
 	uint16_t _nearPort;
+	uint64_t _rx;
+	uint64_t _tx;
 public:
 	TCPCarrier(int32_t fd);
 	virtual ~TCPCarrier();
 	virtual bool OnEvent(struct kevent &event);
 	virtual bool SignalOutputData();
 	virtual operator string();
+	virtual void GetStats(Variant &info);
 
 	sockaddr_in &GetFarEndpointAddress();
 	string GetFarEndpointAddressIp();

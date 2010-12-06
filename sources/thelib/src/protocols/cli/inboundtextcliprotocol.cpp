@@ -78,20 +78,25 @@ bool InboundTextCLIProtocol::SendMessage(Variant &message) {
 	if (message["data"] == V_MAP) {
 		output += "\r\n";
 
-		FOR_MAP(message["data"], string, Variant, i) {
-			Variant &item = MAP_VAL(i);
-			if (item == V_STRING) {
-				output += (string) item + "\r\n";
-			} else {
-				string line = "";
+		string item = "";
+		Variant count;
+		count["count"] = message["data"].MapSize();
+		if (!count.SerializeToJSON(item)) {
+			FATAL("Unable to serialize to JSON");
+			return false;
+		}
+		output += item + "\r\n\r\n";
 
-				FOR_MAP(item, string, Variant, i) {
-					line += MAP_KEY(i) + ": " + STR(MAP_VAL(i)) + "; ";
-				}
-				output += line + "\r\n";
+		FOR_MAP(message["data"], string, Variant, i) {
+			item = "";
+			if (!MAP_VAL(i).SerializeToJSON(item)) {
+				FATAL("Unable to serialize to JSON");
+				return false;
 			}
+			output += item + "\r\n";
 		}
 	}
+	
 	output += "\r\nrtmpd>";
 	_outputBuffer.ReadFromString(output);
 	return EnqueueForOutbound();

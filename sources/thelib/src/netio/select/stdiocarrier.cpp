@@ -128,6 +128,9 @@ StdioCarrier::operator string() {
 	return format("IO(%d,%d)", _inboundFd, _outboundFd);
 }
 
+void StdioCarrier::GetStats(Variant &info) {
+
+}
 
 #endif /* NET_SELECT */
 

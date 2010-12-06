@@ -107,4 +107,3 @@ uint32_t TCPProtocol::GetDecodedBytesCount() {
 	return _decodedBytesCount;
 }
 
-

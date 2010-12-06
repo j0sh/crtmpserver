@@ -40,6 +40,7 @@ public:
 	virtual bool OnEvent(struct epoll_event &event);
 	virtual bool SignalOutputData();
 	virtual operator string();
+	virtual void GetStats(Variant &info);
 
 	string GetFarEndpointAddress();
 	uint16_t GetFarEndpointPort();

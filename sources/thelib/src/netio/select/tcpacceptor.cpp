@@ -186,6 +186,10 @@ TCPAcceptor::operator string() {
 	return format("A(%d)", _inboundFd);
 }
 
+void TCPAcceptor::GetStats(Variant &info) {
+
+}
+
 bool TCPAcceptor::IsAlive() {
 	//TODO: Implement this. It must return true
 	//if this acceptor is operational

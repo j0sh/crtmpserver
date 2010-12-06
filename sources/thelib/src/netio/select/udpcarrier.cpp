@@ -75,6 +75,10 @@ UDPCarrier::operator string() {
 	return format("UDP(%d)", _inboundFd);
 }
 
+void UDPCarrier::GetStats(Variant &info) {
+
+}
+
 string UDPCarrier::GetFarEndpointAddress() {
 	ASSERT("Operation not supported");
 	return "";

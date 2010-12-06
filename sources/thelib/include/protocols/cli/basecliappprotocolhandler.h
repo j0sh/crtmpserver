@@ -44,6 +44,8 @@ protected:
 			Variant &parameters);
 	virtual bool ProcessMessageListServices(BaseProtocol *pFrom,
 			Variant &parameters);
+	virtual bool ProcessMessageListConnections(BaseProtocol *pFrom,
+			Variant &parameters);
 	virtual bool ProcessMessageShutdownApp(BaseProtocol *pFrom,
 			Variant &parameters);
 	virtual bool ProcessMessageShutdownService(BaseProtocol *pFrom,

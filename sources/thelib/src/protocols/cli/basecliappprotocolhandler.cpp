@@ -54,6 +54,8 @@ bool BaseCLIAppProtocolHandler::ProcessMessage(BaseProtocol *pFrom,
 		return ProcessMessageListApps(pFrom, message["parameters"]);
 	} else if (command == "listservices") {
 		return ProcessMessageListServices(pFrom, message["parameters"]);
+	} else if (command == "listconnections") {
+		return ProcessMessageListConnections(pFrom, message["parameters"]);
 	} else if (command == "shutdownapp") {
 		return ProcessMessageShutdownApp(pFrom, message["parameters"]);
 	} else if (command == "shutdownservice") {
@@ -69,13 +71,14 @@ bool BaseCLIAppProtocolHandler::ProcessMessageHelp(BaseProtocol *pFrom,
 		Variant &parameters) {
 	Variant data;
 
-	data.PushToArray("help                      prints this help");
-	data.PushToArray("quit                      quit CLI");
-	data.PushToArray("shutdown                  terminate the server process");
-	data.PushToArray("listApps                  returns a list of loaded applications");
-	data.PushToArray("listServices              returns a list of available services");
-	data.PushToArray("shutdownapp id=<id>       terminates an application");
-	data.PushToArray("shutdownservice id=<id>   terminates a service");
+	data.PushToArray("help                             prints this help");
+	data.PushToArray("quit                             quit CLI");
+	data.PushToArray("shutdown                         terminate the server process");
+	data.PushToArray("listApps                         returns a list of loaded applications");
+	data.PushToArray("listServices                     returns a list of available services");
+	data.PushToArray("listConnections [type=<proto>]   returns the list of active connection");
+	data.PushToArray("shutdownapp id=<id>              terminates an application");
+	data.PushToArray("shutdownservice id=<id>          terminates a service");
 
 	return SendSuccess(pFrom, "Available commands", data);
 }
@@ -153,6 +156,57 @@ bool BaseCLIAppProtocolHandler::ProcessMessageListServices(BaseProtocol *pFrom,
 		}
 	}
 	return SendSuccess(pFrom, "Available services", data);
+}
+
+bool BaseCLIAppProtocolHandler::ProcessMessageListConnections(BaseProtocol *pFrom,
+		Variant &parameters) {
+
+	uint64_t protoType = 0;
+
+	if (parameters == V_MAP) {
+		//1. Get type
+		if (parameters.HasKey("type")) {
+			if (parameters["type"] != V_STRING) {
+				return SendFail(pFrom, "Syntax error. Type help for details");
+			}
+			string typeString = parameters["type"];
+			if ((typeString.length() == 0)
+					|| (typeString.length() > 8)) {
+				return SendFail(pFrom, "Syntax error. Type help for details");
+			}
+			for (uint32_t i = 0; i < typeString.length(); i++) {
+				protoType = protoType | (((uint64_t) typeString[i]) << ((7 - i)*8));
+			}
+		}
+	}
+
+	//2. Get all protocols
+	map<uint32_t, BaseProtocol *> allProtocols = ProtocolManager::GetActiveProtocols();
+
+	//3. Filter them
+	map<uint32_t, BaseProtocol *> protocols;
+
+	FOR_MAP(allProtocols, uint32_t, BaseProtocol *, i) {
+		if (protoType != 0) {
+			if (MAP_VAL(i)->GetType() == protoType) {
+				protocols[MAP_VAL(i)->GetId()] = MAP_VAL(i);
+			}
+		} else {
+			protocols[MAP_VAL(i)->GetNearEndpoint()->GetId()] = MAP_VAL(i)->GetNearEndpoint();
+		}
+	}
+
+	Variant data;
+	
+	//4. Get the stats for each connection
+
+	FOR_MAP(protocols, uint32_t, BaseProtocol *, i) {
+		Variant item;
+		MAP_VAL(i)->GetStats(item);
+		data.PushToArray(item);
+	}
+
+	return SendSuccess(pFrom, "Connections", data);
 }
 
 bool BaseCLIAppProtocolHandler::ProcessMessageShutdownApp(BaseProtocol *pFrom,

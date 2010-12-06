@@ -36,6 +36,7 @@ public:
 	virtual bool SignalOutputData();
 	virtual bool OnEvent(select_event &event);
 	virtual operator string();
+	virtual void GetStats(Variant &info);
 };
 
 #endif	/* _INBOUNDNAMEDPIPECARRIER_H */

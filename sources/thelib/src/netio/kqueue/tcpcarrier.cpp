@@ -53,6 +53,8 @@ TCPCarrier::TCPCarrier(int32_t fd)
 	_nearIp = "";
 	_nearPort = 0;
 	GetEndpointsInfo();
+	_rx = 0;
+	_tx = 0;
 }
 
 TCPCarrier::~TCPCarrier() {
@@ -62,7 +64,8 @@ TCPCarrier::~TCPCarrier() {
 }
 
 bool TCPCarrier::OnEvent(struct kevent &event) {
-	int32_t recvAmount = 0;
+	int32_t readAmount = 0;
+	int32_t writeAmount = 0;
 
 	//3. Do the I/O
 	switch (event.filter) {
@@ -70,14 +73,14 @@ bool TCPCarrier::OnEvent(struct kevent &event) {
 		{
 			IOBuffer *pInputBuffer = _pProtocol->GetInputBuffer();
 			assert(pInputBuffer != NULL);
-			if (!pInputBuffer->ReadFromTCPFd(event.ident, event.data, recvAmount)) {
+			if (!pInputBuffer->ReadFromTCPFd(event.ident, event.data, readAmount)) {
 				FATAL("Unable to read data. %s:%d -> %s:%d",
 						STR(_farIp), _farPort,
 						STR(_nearIp), _nearPort);
 				return false;
 			}
-
-			return _pProtocol->SignalInputData(recvAmount);
+			_rx += readAmount;
+			return _pProtocol->SignalInputData(readAmount);
 		}
 		case EVFILT_WRITE:
 		{
@@ -85,13 +88,14 @@ bool TCPCarrier::OnEvent(struct kevent &event) {
 
 			while ((pOutputBuffer = _pProtocol->GetOutputBuffer()) != NULL) {
 				//FINEST("Try to send buffer:\n%s", STR(*pOutputBuffer));
-				if (!pOutputBuffer->WriteToTCPFd(event.ident, event.data)) {
+				if (!pOutputBuffer->WriteToTCPFd(event.ident, event.data, writeAmount)) {
 					FATAL("Unable to send data. %s:%d -> %s:%d",
 							STR(_farIp), _farPort,
 							STR(_nearIp), _nearPort);
 					IOHandlerManager::EnqueueForDelete(this);
 					return false;
 				}
+				_tx += writeAmount;
 				if (GETAVAILABLEBYTESCOUNT(*pOutputBuffer) > 0) {
 					ENABLE_WRITE_DATA;
 					break;
@@ -120,6 +124,21 @@ TCPCarrier::operator string() {
 	if (_pProtocol != NULL)
 		return STR(*_pProtocol);
 	return format("TCP(%d)", _inboundFd);
+}
+
+void TCPCarrier::GetStats(Variant &info) {
+	if (!GetEndpointsInfo()) {
+		FATAL("Unable to get endpoints info");
+		info = "unable to get endpoints info";
+		return;
+	}
+	info["type"] = "IOHT_TCP_CARRIER";
+	info["farIP"] = _farIp;
+	info["farPort"] = _farPort;
+	info["nearIP"] = _nearIp;
+	info["nearPort"] = _nearPort;
+	info["rx"] = _rx;
+	info["tx"] = _tx;
 }
 
 sockaddr_in &TCPCarrier::GetFarEndpointAddress() {
