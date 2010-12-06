@@ -504,6 +504,18 @@ void CommonTestsSuite::test_replace() {
 	str = "test string ";
 	replace(str, "", "TEST");
 	TS_ASSERT(str == "test string ");
+
+	str = "aaa";
+	replace(str, "a", "aa");
+	TS_ASSERT(str == "aaaaaa");
+
+	str = "aaaaa";
+	replace(str, "aa", "a");
+	TS_ASSERT(str == "aaa");
+
+	str = "aaa";
+	replace(str, "aa", "a");
+	TS_ASSERT(str == "aa");
 }
 
 void CommonTestsSuite::test_split() {

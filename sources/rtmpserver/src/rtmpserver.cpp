@@ -175,12 +175,6 @@ bool Initialize() {
 	INFO("Initialize I/O handlers manager: %s", NETWORK_REACTOR);
 	IOHandlerManager::Initialize();
 
-	INFO("Initialize CLI");
-	if (!gRs.pConfigFile->ConfigureCLI()) {
-		FATAL("Unable to configure CLI");
-		return false;
-	}
-
 	INFO("Initialize DNS resolver");
 	if (!gRs.pConfigFile->ConfigureDNSResolver()) {
 		FATAL("Unable to configure DNS resolver");
