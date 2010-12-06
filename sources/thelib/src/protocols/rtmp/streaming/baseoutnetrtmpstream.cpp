@@ -126,6 +126,8 @@ void BaseOutNetRTMPStream::SetSendOnStatusPlayMessages(bool value) {
 bool BaseOutNetRTMPStream::FeedData(uint8_t *pData, uint32_t dataLength,
 		uint32_t processedLength, uint32_t totalLength,
 		double absoluteTimestamp, bool isAudio) {
+	if (dataLength == 0)
+		return true;
 	//	FINEST("dataLength: % 5d; processedLength: % 5d; totalLength: % 5d; absoluteTimestamp: %.2f; isAudio: %d",
 	//			dataLength,
 	//			processedLength,
