@@ -220,8 +220,11 @@ void BaseProtocol::SetOutboundConnectParameters(Variant &customParameters) {
 
 void BaseProtocol::GetStackStats(Variant &info) {
 	IOHandler *pIOHandler = GetIOHandler();
-	if (pIOHandler != NULL)
+	if (pIOHandler != NULL) {
 		pIOHandler->GetStats(info["carrier"]);
+	} else {
+		info["carrier"] = Variant();
+	}
 	BaseProtocol *pTemp = GetFarEndpoint();
 	while (pTemp != NULL) {
 		Variant item;
