@@ -20,7 +20,6 @@
 
 #ifdef HAS_MEDIA_MP3
 #include "mediaformats/mp3/id3parser.h"
-#include "protocols/baseprotocol.h"
 #include "mediaformats/mediaframe.h"
 
 #define TAG_USLT MAKE_TAG4('U','S','L','T')

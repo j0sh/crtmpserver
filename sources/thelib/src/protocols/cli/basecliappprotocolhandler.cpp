@@ -197,12 +197,12 @@ bool BaseCLIAppProtocolHandler::ProcessMessageListConnections(BaseProtocol *pFro
 	}
 
 	Variant data;
-	
+
 	//4. Get the stats for each connection
 
 	FOR_MAP(protocols, uint32_t, BaseProtocol *, i) {
 		Variant item;
-		MAP_VAL(i)->GetStats(item);
+		MAP_VAL(i)->GetStackStats(item);
 		data.PushToArray(item);
 	}
 

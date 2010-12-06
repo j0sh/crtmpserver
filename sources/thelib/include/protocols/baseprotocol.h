@@ -102,6 +102,10 @@ public:
 	void SetOutboundConnectParameters(Variant &customParameters);
 	Variant &GetCustomParameters();
 
+	//this will return complete information about all protocols in the current
+	//stack, including the carrier if available
+	void GetStackStats(Variant &info);
+
 	//utility functions
 	operator string();
 

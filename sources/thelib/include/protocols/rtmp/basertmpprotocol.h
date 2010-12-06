@@ -75,6 +75,8 @@ protected:
 	LinkedListNode<BaseOutNetRTMPStream *> *_pSignaledRTMPOutNetStream;
 	map<InFileRTMPStream *, InFileRTMPStream *> _inFileStreams;
 	uint8_t _authStage;
+	uint64_t _rxInvokes;
+	uint64_t _txInvokes;
 public:
 	BaseRTMPProtocol(uint64_t protocolType);
 	virtual ~BaseRTMPProtocol();
@@ -88,6 +90,8 @@ public:
 	virtual bool TimePeriodElapsed();
 	virtual void ReadyForSend();
 	virtual void SetApplication(BaseClientApplication *pApplication);
+
+	virtual void GetStats(Variant &info);
 
 	bool SendMessage(Variant &message);
 	bool SendRawData(Header &header, Channel &channel, uint8_t *pData, uint32_t length);

@@ -61,6 +61,12 @@ void BaseStream::SetName(string name) {
 	_name = name;
 }
 
+void BaseStream::GetStats(Variant &info) {
+	info["uniqueId"] = _uniqueId;
+	info["type"] = tagToString(_type);
+	info["name"] = _name;
+}
+
 BaseProtocol * BaseStream::GetProtocol() {
 	return _pProtocol;
 }

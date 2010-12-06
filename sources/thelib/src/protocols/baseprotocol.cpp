@@ -22,6 +22,7 @@
 #include "netio/netio.h"
 #include "protocols/protocolmanager.h"
 #include "application/baseclientapplication.h"
+#include "protocols/tcpprotocol.h"
 
 //#define LOG_CONSTRUCTOR_DESTRUCTOR
 
@@ -217,6 +218,19 @@ void BaseProtocol::SetOutboundConnectParameters(Variant &customParameters) {
 	_customParameters = customParameters;
 }
 
+void BaseProtocol::GetStackStats(Variant &info) {
+	IOHandler *pIOHandler = GetIOHandler();
+	if (pIOHandler != NULL)
+		pIOHandler->GetStats(info["carrier"]);
+	BaseProtocol *pTemp = GetFarEndpoint();
+	while (pTemp != NULL) {
+		Variant item;
+		pTemp->GetStats(item);
+		info["stack"].PushToArray(item);
+		pTemp = pTemp->GetNearProtocol();
+	}
+}
+
 Variant &BaseProtocol::GetCustomParameters() {
 	return _customParameters;
 }
@@ -376,11 +390,8 @@ bool BaseProtocol::SignalInputData(int32_t recvAmount, sockaddr_in *pPeerAddress
 }
 
 void BaseProtocol::GetStats(Variant &info) {
-	IOHandler *pIOHandler = GetIOHandler();
-	if (pIOHandler != NULL) {
-		pIOHandler->GetStats(info["carrier"]);
-	}
 	info["id"] = GetId();
+	info["type"] = tagToString(_type);
 }
 
 string BaseProtocol::ToString(uint32_t currentId) {

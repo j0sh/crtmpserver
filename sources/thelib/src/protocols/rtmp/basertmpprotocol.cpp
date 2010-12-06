@@ -83,6 +83,8 @@ BaseRTMPProtocol::BaseRTMPProtocol(uint64_t protocolType)
 
 	_pSignaledRTMPOutNetStream = NULL;
 	_authStage = AS_AUTHENTICATING;
+	_rxInvokes = 0;
+	_txInvokes = 0;
 }
 
 BaseRTMPProtocol::~BaseRTMPProtocol() {
@@ -192,6 +194,25 @@ void BaseRTMPProtocol::SetApplication(BaseClientApplication *pApplication) {
 	}
 }
 
+void BaseRTMPProtocol::GetStats(Variant &info) {
+	BaseProtocol::GetStats(info);
+	info["rxInvokes"] = _rxInvokes;
+	info["txInvokes"] = _txInvokes;
+	for (uint32_t i = 0; i < MAX_STREAMS_COUNT; i++) {
+		if (_streams[i] != NULL) {
+			Variant si;
+			_streams[i]->GetStats(si);
+			info["streams"].PushToArray(si);
+		}
+	}
+
+	FOR_MAP(_inFileStreams, InFileRTMPStream *, InFileRTMPStream *, i) {
+		Variant si;
+		MAP_VAL(i)->GetStats(si);
+		info["streams"].PushToArray(si);
+	}
+}
+
 bool BaseRTMPProtocol::SendMessage(Variant & message) {
 	//    //1. Test the ability to further send data
 	//    if (GETAVAILABLEBYTESCOUNT(_outputBuffer) >= MAX_RTMP_OUTPUT_BUFFER) {
@@ -207,6 +228,8 @@ bool BaseRTMPProtocol::SendMessage(Variant & message) {
 		FATAL("Unable to serialize RTMP message");
 		return false;
 	}
+
+	_txInvokes++;
 
 	//3. Mark the connection as ready for outbound transfer
 	return EnqueueForOutbound();
@@ -766,6 +789,7 @@ bool BaseRTMPProtocol::ProcessBytes(IOBuffer &buffer) {
 								FATAL("Unable to send rtmp message to application");
 								return false;
 							}
+							_rxInvokes++;
 
 							if (GETAVAILABLEBYTESCOUNT(channel.inputData) != 0) {
 								FATAL("Invalid message!!! We have leftovers: %d bytes",

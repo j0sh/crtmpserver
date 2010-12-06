@@ -66,6 +66,11 @@ public:
 	void SetName(string name);
 
 	/*
+	 * This will return information about the stream
+	 * */
+	virtual void GetStats(Variant &info);
+
+	/*
 	 * Returns the protocol that owns this stream.
 	 * */
 	BaseProtocol * GetProtocol();
