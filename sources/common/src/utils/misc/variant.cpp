@@ -1500,8 +1500,262 @@ bool Variant::SerializeToXmlFile(string fileName) {
 	return true;
 }
 
-bool Variant::DeserializeFromJSON(string &raw, Variant &result) {
-	NYIR;
+bool ReadJSONWhiteSpace(string &raw, uint32_t &start) {
+	for (; start < raw.length(); start++) {
+		if ((raw[start] != ' ')
+				&& (raw[start] != '\t')
+				&& (raw[start] != '\r')
+				&& (raw[start] != '\n'))
+			break;
+	}
+	return true;
+}
+
+bool ReadJSONDelimiter(string &raw, uint32_t &start, char &c) {
+	if (!ReadJSONWhiteSpace(raw, start)) {
+		FATAL("Invalid JSON object");
+		return false;
+	}
+	if ((raw.size() - start) < 1) {
+		FATAL("Invalid JSON delimiter");
+		return false;
+	}
+	c = raw[start];
+	start++;
+	return ReadJSONWhiteSpace(raw, start);
+}
+
+bool ReadJSONString(string &raw, Variant &result, uint32_t &start) {
+	if ((raw.size() - start) < 2) {
+		FATAL("Invalid JSON string");
+		return false;
+	}
+	if (raw[start] != '\"') {
+		FATAL("Invalid JSON string: %d", start);
+		return false;
+	}
+	start++;
+	string::size_type pos = start;
+	while (true) {
+		pos = raw.find('\"', start);
+		if (pos == string::npos) {
+			FATAL("Invalid JSON string");
+			return false;
+		}
+		if (raw[pos - 1] == '\\') {
+			pos++;
+		} else {
+			result = raw.substr(start, pos - start);
+			start = pos + 1;
+			return true;
+		}
+	}
+}
+
+bool ReadJSONNumber(string &raw, Variant &result, uint32_t &start) {
+	string str = "";
+	for (; start < raw.length(); start++) {
+		if ((raw[start] < '0')
+				|| (raw[start] > '9')) {
+			break;
+		}
+		str += raw[start];
+	}
+	if (str == "") {
+		FATAL("Invalid JSON number");
+		return false;
+	}
+	result = (int64_t) atoll(STR(str));
+	return true;
+}
+
+bool ReadJSONObject(string &raw, Variant &result, uint32_t &start) {
+	result.Reset();
+	result.IsArray(false);
+	if ((raw.size() - start) < 2) {
+		FATAL("Invalid JSON array");
+		return false;
+	}
+	if (raw[start] != '{') {
+		FATAL("Invalid JSON object");
+		return false;
+	}
+	start++;
+	char c;
+	while (start < raw.length()) {
+		if (raw[start] == '}') {
+			start++;
+			return true;
+		}
+		Variant key;
+		if (!Variant::DeserializeFromJSON(raw, key, start)) {
+			FATAL("Invalid JSON object");
+			return false;
+		}
+
+		if (!ReadJSONDelimiter(raw, start, c)) {
+			FATAL("Invalid JSON object");
+			return false;
+		}
+		if (c != ':') {
+			FATAL("Invalid JSON object");
+			return false;
+		}
+
+		Variant value;
+		if (!Variant::DeserializeFromJSON(raw, value, start)) {
+			FATAL("Invalid JSON object");
+			return false;
+		}
+		result[key] = value;
+
+
+		if (!ReadJSONDelimiter(raw, start, c)) {
+			FATAL("Invalid JSON object");
+			return false;
+		}
+		if (c == '}') {
+			return true;
+		} else if (c == ',') {
+			continue;
+		} else {
+			FATAL("Invalid JSON object");
+			return false;
+		}
+	}
+	return false;
+}
+
+bool ReadJSONArray(string &raw, Variant &result, uint32_t &start) {
+	result.Reset();
+	result.IsArray(true);
+	if ((raw.size() - start) < 2) {
+		FATAL("Invalid JSON array");
+		return false;
+	}
+	if (raw[start] != '[') {
+		FATAL("Invalid JSON array");
+		return false;
+	}
+	start++;
+	char c;
+	while (start < raw.length()) {
+		if (raw[start] == ']') {
+			start++;
+			return true;
+		}
+		Variant value;
+		if (!Variant::DeserializeFromJSON(raw, value, start)) {
+			FATAL("Invalid JSON array");
+			return false;
+		}
+		result.PushToArray(value);
+
+		if (!ReadJSONDelimiter(raw, start, c)) {
+			FATAL("Invalid JSON array");
+			return false;
+		}
+		if (c == ']') {
+			return true;
+		} else if (c == ',') {
+			continue;
+		} else {
+			FATAL("Invalid JSON array");
+			return false;
+		}
+	}
+	return false;
+}
+
+bool ReadJSONBool(string &raw, Variant &result, uint32_t &start, string wanted) {
+	if ((raw.size() - start) < wanted.size()) {
+		FATAL("Invalid JSON bool");
+		return false;
+	}
+	string temp = lowercase(raw.substr(start, wanted.size()));
+	if (temp != wanted) {
+		FATAL("Invalid JSON bool");
+		return false;
+	}
+	start += wanted.size();
+	result = (bool)(wanted == "true");
+	return true;
+}
+
+bool ReadJSONNull(string &raw, Variant &result, uint32_t &start) {
+	if ((raw.size() - start) < 4) {
+		FATAL("Invalid JSON null");
+		return false;
+	}
+	string temp = lowercase(raw.substr(start, 4));
+	if (temp != "null") {
+		FATAL("Invalid JSON null");
+		return false;
+	}
+	start += 4;
+	result.Reset();
+	return true;
+}
+
+bool Variant::DeserializeFromJSON(string &raw, Variant &result, uint32_t &start) {
+	result.Reset();
+	if (start >= raw.size()) {
+		return false;
+	}
+
+	if (!ReadJSONWhiteSpace(raw, start)) {
+		FATAL("Invalid JSON string");
+		return false;
+	}
+
+	switch (raw[start]) {
+		case '\"':
+		{
+			return ReadJSONString(raw, result, start);
+		}
+		case '-':
+		case '0':
+		case '1':
+		case '2':
+		case '3':
+		case '4':
+		case '5':
+		case '6':
+		case '7':
+		case '8':
+		case '9':
+		{
+			return ReadJSONNumber(raw, result, start);
+		}
+		case '{':
+		{
+			return ReadJSONObject(raw, result, start);
+		}
+		case '[':
+		{
+			return ReadJSONArray(raw, result, start);
+		}
+		case 't':
+		case 'T':
+		{
+			return ReadJSONBool(raw, result, start, "true");
+		}
+		case 'f':
+		case 'F':
+		{
+			return ReadJSONBool(raw, result, start, "false");
+		}
+		case 'n':
+		case 'N':
+		{
+			return ReadJSONNull(raw, result, start);
+		}
+		default:
+		{
+			result.Reset();
+			return false;
+		}
+	}
 }
 
 bool Variant::SerializeToJSON(string &result) {

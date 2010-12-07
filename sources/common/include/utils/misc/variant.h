@@ -202,7 +202,7 @@ public:
 	static bool DeserializeFromXmlFile(string path, Variant &variant);
 	bool SerializeToXmlFile(string fileName);
 
-	static bool DeserializeFromJSON(string &raw, Variant &result);
+	static bool DeserializeFromJSON(string &raw, Variant &result, uint32_t &start);
 	bool SerializeToJSON(string &result);
 private:
 	TiXmlElement *SerializeToXmlElement(string &name);
