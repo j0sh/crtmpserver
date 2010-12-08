@@ -211,7 +211,16 @@ private:
 	static bool DeserializeFromXml(TiXmlElement *pNode, Variant &variant);
 	void InternalCopy(const Variant &val);
 	void NormalizeTs();
-	void EscapeJSON(string &value);
+	static void EscapeJSON(string &value);
+	static void UnEscapeJSON(string &value);
+	static bool ReadJSONWhiteSpace(string &raw, uint32_t &start);
+	static bool ReadJSONDelimiter(string &raw, uint32_t &start, char &c);
+	static bool ReadJSONString(string &raw, Variant &result, uint32_t &start);
+	static bool ReadJSONNumber(string &raw, Variant &result, uint32_t &start);
+	static bool ReadJSONObject(string &raw, Variant &result, uint32_t &start);
+	static bool ReadJSONArray(string &raw, Variant &result, uint32_t &start);
+	static bool ReadJSONBool(string &raw, Variant &result, uint32_t &start, string wanted);
+	static bool ReadJSONNull(string &raw, Variant &result, uint32_t &start);
 };
 
 
