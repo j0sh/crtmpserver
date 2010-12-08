@@ -237,7 +237,7 @@ bool InNetRTMPStream::FeedData(uint8_t *pData, uint32_t dataLength,
 		_lastAudioTime = absoluteTimestamp;
 	} else {
 		if ((processedLength == 0) //beginning of a packet
-				&& ((pData[0]&0x0f) == 7) //h264 content
+				&& (pData[0] == 0x17) //0x10 - key frame, 0x07 h264 content
 				&& (pData[1] == 0) //AVC sequence header
 				) {
 			if (!InitializeVideoCapabilities(pData, dataLength)) {

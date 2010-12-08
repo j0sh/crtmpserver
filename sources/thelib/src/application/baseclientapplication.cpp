@@ -217,7 +217,20 @@ bool BaseClientApplication::PullExternalStream(Variant streamConfig) {
 		return false;
 	}
 
-	//4. Initiate the stream pulling sequence
+	//4. normalize the stream name
+	string streamName = "";
+	if (streamConfig["localStreamName"] == V_STRING)
+		streamName = (string) streamConfig["localStreamName"];
+	trim(streamName);
+	if (streamName == "") {
+		streamConfig["localStreamName"] = "stream_" + generateRandomString(8);
+		WARN("No localstream name for external URI: %s. Defaulted to %s",
+				STR(uri.fullUri),
+				STR(streamConfig["localStreamName"]));
+	}
+
+
+	//5. Initiate the stream pulling sequence
 	return pProtocolHandler->PullExternalStream(uri, streamConfig);
 }
 
