@@ -67,6 +67,7 @@ bool FLVDocument::BuildFrames() {
 
 		//6. Set the frame type based on the tag type
 		//Also set the iskeyFrame property here
+		bool mustBreak = false;
 		switch (tagType) {
 			case 8: //audio data
 				_audioSamplesCount++;
@@ -81,8 +82,11 @@ bool FLVDocument::BuildFrames() {
 				break;
 			default:
 				WARN("Invalid tag type: %d at cursor %llu", tagType, _mediaFile.Cursor());
-				return true;
+				mustBreak = true;
+				break;
 		}
+		if (mustBreak)
+			break;
 
 		//7. Read the frame length
 		uint32_t tempLength;
