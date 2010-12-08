@@ -203,7 +203,8 @@ bool BaseCLIAppProtocolHandler::ProcessMessageListConnections(BaseProtocol *pFro
 	FOR_MAP(protocols, uint32_t, BaseProtocol *, i) {
 		Variant item;
 		MAP_VAL(i)->GetStackStats(item);
-		data.PushToArray(item);
+		if (item != V_NULL)
+			data.PushToArray(item);
 	}
 
 	return SendSuccess(pFrom, "Connections", data);

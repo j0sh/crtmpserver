@@ -37,7 +37,7 @@
 //#define TRACK_MESSAGE(...) FINEST(__VA_ARGS__)
 #define TRACK_MESSAGE(...)
 
-#define ALLOW_EXECUTION(feederProcessed) if (!AllowExecution(feederProcessed)) { /*FINEST("We are not allowed to send this data");*/ return true; }
+#define ALLOW_EXECUTION(feederProcessed,dataLength,isAudio) if (!AllowExecution(feederProcessed,dataLength,isAudio)) { /*FINEST("We are not allowed to send this data");*/ return true; }
 
 BaseOutNetRTMPStream::BaseOutNetRTMPStream(BaseProtocol *pProtocol,
 		StreamsManager *pStreamsManager, uint64_t type, string name, uint32_t rtmpStreamId,
@@ -64,6 +64,15 @@ BaseOutNetRTMPStream::BaseOutNetRTMPStream(BaseProtocol *pProtocol,
 	_paused = false;
 
 	_sendOnStatusPlayMessages = true;
+
+	_audioPacketsCount = 0;
+	_audioDroppedPacketsCount = 0;
+	_audioBytesCount = 0;
+	_audioDroppedBytesCount = 0;
+	_videoPacketsCount = 0;
+	_videoDroppedPacketsCount = 0;
+	_videoBytesCount = 0;
+	_videoDroppedBytesCount = 0;
 
 	InternalReset();
 }
@@ -123,11 +132,22 @@ void BaseOutNetRTMPStream::SetSendOnStatusPlayMessages(bool value) {
 	_sendOnStatusPlayMessages = value;
 }
 
+void BaseOutNetRTMPStream::GetStats(Variant &info) {
+	BaseOutNetStream::GetStats(info);
+	info["canDropFrames"] = (bool)_canDropFrames;
+	info["audio"]["packetsCount"] = _audioPacketsCount;
+	info["audio"]["droppedPacketsCount"] = _audioDroppedPacketsCount;
+	info["audio"]["bytesCount"] = _audioBytesCount;
+	info["audio"]["droppedBytesCount"] = _audioDroppedBytesCount;
+	info["video"]["packetsCount"] = _videoPacketsCount;
+	info["video"]["droppedPacketsCount"] = _videoDroppedPacketsCount;
+	info["video"]["bytesCount"] = _videoBytesCount;
+	info["video"]["droppedBytesCount"] = _videoDroppedBytesCount;
+}
+
 bool BaseOutNetRTMPStream::FeedData(uint8_t *pData, uint32_t dataLength,
 		uint32_t processedLength, uint32_t totalLength,
 		double absoluteTimestamp, bool isAudio) {
-	if (dataLength == 0)
-		return true;
 	//	FINEST("dataLength: % 5d; processedLength: % 5d; totalLength: % 5d; absoluteTimestamp: %.2f; isAudio: %d",
 	//			dataLength,
 	//			processedLength,
@@ -137,7 +157,13 @@ bool BaseOutNetRTMPStream::FeedData(uint8_t *pData, uint32_t dataLength,
 	if (_paused)
 		return true;
 	if (isAudio) {
+		if (processedLength == 0)
+			_audioPacketsCount++;
+		_audioBytesCount += dataLength;
 		if (_isFirstAudioFrame) {
+			if (dataLength == 0)
+				return true;
+
 			//first frame
 			if (processedLength != 0) {
 				//middle of packet
@@ -159,7 +185,7 @@ bool BaseOutNetRTMPStream::FeedData(uint8_t *pData, uint32_t dataLength,
 				_isFirstAudioFrame = false;
 			}
 		} else {
-			ALLOW_EXECUTION(processedLength);
+			ALLOW_EXECUTION(processedLength, dataLength, isAudio);
 			//        H_IA(_audioHeader) = true;
 			//        H_TS(_audioHeader) = absoluteTime - _deltaTime;
 			H_IA(_audioHeader) = false;
@@ -173,8 +199,14 @@ bool BaseOutNetRTMPStream::FeedData(uint8_t *pData, uint32_t dataLength,
 		return ChunkAndSend(pData, dataLength, _audioBucket,
 				_audioHeader, *_pChannelAudio);
 	} else {
+		if (processedLength == 0)
+			_videoPacketsCount++;
+		_videoBytesCount += dataLength;
 		//FINEST("absoluteTime: %f", absoluteTime);
 		if (_isFirstVideoFrame) {
+			if (dataLength == 0)
+				return true;
+
 			//first frame
 			if (processedLength != 0) {
 				//middle of packet
@@ -213,7 +245,7 @@ bool BaseOutNetRTMPStream::FeedData(uint8_t *pData, uint32_t dataLength,
 				_isFirstVideoFrame = false;
 			}
 		} else {
-			ALLOW_EXECUTION(processedLength);
+			ALLOW_EXECUTION(processedLength, dataLength, isAudio);
 			//        H_IA(_videoHeader) = true;
 			//        H_TS(_videoHeader) = absoluteTime - _deltaTime;
 			H_IA(_videoHeader) = false;
@@ -701,9 +733,12 @@ bool BaseOutNetRTMPStream::ChunkAndSend(uint8_t *pData, uint32_t length,
 	return true;
 }
 
-bool BaseOutNetRTMPStream::AllowExecution(uint32_t totalProcessed) {
+bool BaseOutNetRTMPStream::AllowExecution(uint32_t totalProcessed, uint32_t dataLength, bool isAudio) {
 	if (_canDropFrames) {
 		//we are allowed to drop frames
+
+		uint64_t &bytesCounter = isAudio ? _audioDroppedBytesCount : _videoDroppedBytesCount;
+		uint64_t &packetsCounter = isAudio ? _audioDroppedPacketsCount : _videoDroppedPacketsCount;
 
 		if (_currentFrameDropped) {
 			//current frame was dropped. Test to see if we are in the middle
@@ -711,6 +746,7 @@ bool BaseOutNetRTMPStream::AllowExecution(uint32_t totalProcessed) {
 			if (totalProcessed != 0) {
 				//we are in the middle of it. Don't allow execution
 				//FINEST("In the middle of a dropped frame");
+				bytesCounter += dataLength;
 				return false;
 			} else {
 				//this is a new frame. We will detect later if it can be sent
@@ -731,6 +767,8 @@ bool BaseOutNetRTMPStream::AllowExecution(uint32_t totalProcessed) {
 					//FINEST("Too many data left unsent: %d; max: %d",
 					//        GETAVAILABLEBYTESCOUNT(*_pRTMPProtocol->GetOutputBuffer()),
 					//        _maxBufferSize);
+					packetsCounter++;
+					bytesCounter += dataLength;
 					_currentFrameDropped = true;
 					return false;
 				} else {

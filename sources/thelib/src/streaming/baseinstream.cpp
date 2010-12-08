@@ -50,6 +50,16 @@ vector<BaseOutStream *> BaseInStream::GetOutStreams() {
 	return result;
 }
 
+void BaseInStream::GetStats(Variant &info) {
+	BaseStream::GetStats(info);
+	LinkedListNode<BaseOutStream *> *pTemp = _pOutStreams;
+	info["outStreamsUniqueIds"] = Variant();
+	while (pTemp != NULL) {
+		info["outStreamsUniqueIds"].PushToArray(pTemp->info->GetUniqueId());
+		pTemp = pTemp->pPrev;
+	}
+}
+
 bool BaseInStream::Link(BaseOutStream *pOutStream, bool reverseLink) {
 	if ((!pOutStream->IsCompatibleWithType(GetType()))
 			|| (!IsCompatibleWithType(pOutStream->GetType()))) {

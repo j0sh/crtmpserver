@@ -31,6 +31,8 @@ UDPCarrier::UDPCarrier(int32_t fd)
 	memset(&_nearAddress, 0, sizeof (sockaddr_in));
 	_nearIp = "";
 	_nearPort = 0;
+	_rx = 0;
+	_tx = 0;
 }
 
 UDPCarrier::~UDPCarrier() {
@@ -50,7 +52,7 @@ bool UDPCarrier::OnEvent(struct kevent &event) {
 				FATAL("Unable to read data");
 				return false;
 			}
-
+			_rx += recvAmount;
 			return _pProtocol->SignalInputData(recvAmount, &_peerAddress);
 		}
 		case EVFILT_WRITE:
@@ -76,7 +78,15 @@ UDPCarrier::operator string() {
 }
 
 void UDPCarrier::GetStats(Variant &info) {
-
+	if (!GetEndpointsInfo()) {
+		FATAL("Unable to get endpoints info");
+		info = "unable to get endpoints info";
+		return;
+	}
+	info["type"] = "IOHT_TCP_CARRIER";
+	info["nearIP"] = _nearIp;
+	info["nearPort"] = _nearPort;
+	info["rx"] = _rx;
 }
 
 string UDPCarrier::GetFarEndpointAddress() {

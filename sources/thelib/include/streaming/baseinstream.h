@@ -39,6 +39,8 @@ public:
 
 	vector<BaseOutStream *> GetOutStreams();
 
+	virtual void GetStats(Variant &info);
+
 	/*
 	 * pOutStream - the out-stream to be linked to this in stream.
 	 * reverseLink - if true, pOutStream::Link will be called internally

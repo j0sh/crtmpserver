@@ -71,6 +71,11 @@ public:
 	BaseInStream *GetInStream();
 
 	/*
+	 * This will return information about the stream
+	 * */
+	virtual void GetStats(Variant &info);
+
+	/*
 	 * This will start the feeding process
 	 * absoluteTimestamp - the timestamp where we want to seek
 	 *                     before start the feeding process

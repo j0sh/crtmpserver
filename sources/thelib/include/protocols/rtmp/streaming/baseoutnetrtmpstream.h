@@ -62,6 +62,15 @@ private:
 	bool _paused;
 
 	bool _sendOnStatusPlayMessages;
+
+	uint64_t _audioPacketsCount;
+	uint64_t _audioDroppedPacketsCount;
+	uint64_t _audioBytesCount;
+	uint64_t _audioDroppedBytesCount;
+	uint64_t _videoPacketsCount;
+	uint64_t _videoDroppedPacketsCount;
+	uint64_t _videoBytesCount;
+	uint64_t _videoDroppedBytesCount;
 protected:
 	BaseOutNetRTMPStream(BaseProtocol *pProtocol, StreamsManager *pStreamsManager,
 			uint64_t type, string name, uint32_t rtmpStreamId, uint32_t chunkSize);
@@ -80,6 +89,7 @@ public:
 	bool CanDropFrames();
 	void CanDropFrames(bool canDropFrames);
 	void SetSendOnStatusPlayMessages(bool value);
+	virtual void GetStats(Variant &info);
 
 	virtual bool FeedData(uint8_t *pData, uint32_t dataLength,
 			uint32_t processedLength, uint32_t totalLength,
@@ -99,7 +109,7 @@ public:
 private:
 	bool ChunkAndSend(uint8_t *pData, uint32_t length, IOBuffer &bucket,
 			Header &header, Channel &channel);
-	bool AllowExecution(uint32_t totalProcessed);
+	bool AllowExecution(uint32_t totalProcessed, uint32_t dataLength, bool isAudio);
 	void InternalReset();
 	void FixTimeBase();
 };

@@ -123,6 +123,15 @@ BaseInStream *BaseOutStream::GetInStream() {
 	return _pInStream;
 }
 
+void BaseOutStream::GetStats(Variant &info) {
+	BaseStream::GetStats(info);
+	if (_pInStream != NULL) {
+		info["inStreamUniqueId"] = _pInStream->GetUniqueId();
+	} else {
+		info["inStreamUniqueId"] = Variant();
+	}
+}
+
 bool BaseOutStream::Play(double absoluteTimestamp, double length) {
 	if (_pInStream != NULL) {
 		if (!_pInStream->SignalPlay(absoluteTimestamp, length)) {
