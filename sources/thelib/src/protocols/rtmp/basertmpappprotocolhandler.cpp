@@ -86,7 +86,20 @@ void BaseRTMPAppProtocolHandler::UnRegisterProtocol(BaseProtocol *pProtocol) {
 }
 
 bool BaseRTMPAppProtocolHandler::PullExternalStream(URI uri, Variant streamConfig) {
-	//1. Prepare the custom parameters
+	//1. normalize the stream name
+	string streamName = "";
+	if (streamConfig["localStreamName"] == V_STRING)
+		streamName = (string) streamConfig["localStreamName"];
+	trim(streamName);
+	if (streamName == "") {
+		streamConfig["localStreamName"] = "stream_" + generateRandomString(8);
+		WARN("No localstream name for external URI: %s. Defaulted to %s",
+				STR(uri.fullUri),
+				STR(streamConfig["localStreamName"]));
+	}
+
+	//2. Prepare the custom parameters
+	FINEST("Begin pullExternalStream");
 	Variant parameters;
 	parameters["customParameters"]["externalStreamConfig"] = streamConfig;
 	parameters[CONF_APPLICATION_NAME] = GetApplication()->GetName();
@@ -101,7 +114,7 @@ bool BaseRTMPAppProtocolHandler::PullExternalStream(URI uri, Variant streamConfi
 		return false;
 	}
 
-	//2. start the connecting sequence
+	//3. start the connecting sequence
 	return OutboundRTMPProtocol::Connect(uri.ip, uri.port, parameters);
 }
 
