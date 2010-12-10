@@ -418,28 +418,8 @@ void BaseOutNetRTMPStream::SignalDetachedFromInStream() {
 			_pRTMPProtocol->EnqueueForDelete();
 			return;
 		}
-
-		//3. Stream eof
-		message = StreamMessageFactory::GetUserControlStreamEof(_rtmpStreamId);
-		TRACK_MESSAGE("Message:\n%s", STR(message.ToString()));
-		if (!_pRTMPProtocol->SendMessage(message)) {
-			FATAL("Unable to send message");
-			_pRTMPProtocol->EnqueueForDelete();
-			return;
-		}
-
-		//4. NetStream.Play.Stop
-		message = StreamMessageFactory::GetInvokeOnStatusStreamPlayStop(
-				_pChannelAudio->id, _rtmpStreamId, 0, false, 0, "stop...", GetName(),
-				_clientId);
-		TRACK_MESSAGE("Message:\n%s", STR(message.ToString()));
-		if (!_pRTMPProtocol->SendMessage(message)) {
-			FATAL("Unable to send message");
-			_pRTMPProtocol->EnqueueForDelete();
-			return;
-		}
 	} else {
-		//5. Send the unpublish notify
+		//3. Send the unpublish notify
 		message = StreamMessageFactory::GetInvokeOnStatusStreamPlayUnpublishNotify(
 				_pChannelAudio->id, _rtmpStreamId, 0, true, 0, "unpublished...",
 				_clientId);
@@ -449,6 +429,26 @@ void BaseOutNetRTMPStream::SignalDetachedFromInStream() {
 			_pRTMPProtocol->EnqueueForDelete();
 			return;
 		}
+	}
+
+	//4. NetStream.Play.Stop
+	message = StreamMessageFactory::GetInvokeOnStatusStreamPlayStop(
+			_pChannelAudio->id, _rtmpStreamId, 0, false, 0, "stop...", GetName(),
+			_clientId);
+	TRACK_MESSAGE("Message:\n%s", STR(message.ToString()));
+	if (!_pRTMPProtocol->SendMessage(message)) {
+		FATAL("Unable to send message");
+		_pRTMPProtocol->EnqueueForDelete();
+		return;
+	}
+
+	//5. Stream eof
+	message = StreamMessageFactory::GetUserControlStreamEof(_rtmpStreamId);
+	TRACK_MESSAGE("Message:\n%s", STR(message.ToString()));
+	if (!_pRTMPProtocol->SendMessage(message)) {
+		FATAL("Unable to send message");
+		_pRTMPProtocol->EnqueueForDelete();
+		return;
 	}
 
 	//6. Reset internally
@@ -603,8 +603,10 @@ void BaseOutNetRTMPStream::SignalStreamCompleted() {
 		return;
 	}
 
-	//2. Stream eof
-	message = StreamMessageFactory::GetUserControlStreamEof(_rtmpStreamId);
+	//3. NetStream.Play.Stop
+	message = StreamMessageFactory::GetInvokeOnStatusStreamPlayStop(
+			_pChannelAudio->id, _rtmpStreamId, 0, false, 0, "stop...", GetName(),
+			_clientId);
 	TRACK_MESSAGE("Message:\n%s", STR(message.ToString()));
 	if (!_pRTMPProtocol->SendMessage(message)) {
 		FATAL("Unable to send message");
@@ -612,10 +614,8 @@ void BaseOutNetRTMPStream::SignalStreamCompleted() {
 		return;
 	}
 
-	//3. NetStream.Play.Stop
-	message = StreamMessageFactory::GetInvokeOnStatusStreamPlayStop(
-			_pChannelAudio->id, _rtmpStreamId, 0, false, 0, "stop...", GetName(),
-			_clientId);
+	//2. Stream eof
+	message = StreamMessageFactory::GetUserControlStreamEof(_rtmpStreamId);
 	TRACK_MESSAGE("Message:\n%s", STR(message.ToString()));
 	if (!_pRTMPProtocol->SendMessage(message)) {
 		FATAL("Unable to send message");

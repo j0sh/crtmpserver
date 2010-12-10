@@ -99,7 +99,6 @@ bool BaseRTMPAppProtocolHandler::PullExternalStream(URI uri, Variant streamConfi
 	}
 
 	//2. Prepare the custom parameters
-	FINEST("Begin pullExternalStream");
 	Variant parameters;
 	parameters["customParameters"]["externalStreamConfig"] = streamConfig;
 	parameters[CONF_APPLICATION_NAME] = GetApplication()->GetName();
