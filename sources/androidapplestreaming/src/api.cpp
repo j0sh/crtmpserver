@@ -26,6 +26,7 @@
 #include "application/clientapplicationmanager.h"
 #include "variantconnection.h"
 #include "protocols/variant/messagestructure.h"
+using namespace app_applestreamingclient;
 
 static sockaddr_in gAddress = {0};
 

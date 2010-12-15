@@ -188,7 +188,14 @@ configuration=
 					uri="rtmp://edge01.fms.dutchview.nl/botr/bunny",
 					localStreamName="stream6",
 					emulateUserAgent="MAC 10,1,82,76",
-				}]]--
+				}
+				{
+ 					uri="rtmp://edge01.fms.dutchview.nl/botr/bunny",
+					localStreamName="stream6",
+					swfUrl="http://www.example.com/example.swf";
+					pageUrl="http://www.example.com/";
+					emulateUserAgent="MAC 10,1,82,76",
+ 				}]]--
 			},
 			validateHandshake=true,
 			keyframeSeek=true,

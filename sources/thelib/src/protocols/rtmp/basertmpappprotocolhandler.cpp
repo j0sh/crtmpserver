@@ -1702,8 +1702,18 @@ bool BaseRTMPAppProtocolHandler::PullExternalStream(BaseRTMPProtocol *pFrom) {
 	if (userAgent == "") {
 		userAgent = HTTP_HEADERS_SERVER_US;
 	}
+	
+	//5. Get swfUrl and pageUrl
+	string swfUrl = "";
+	if (streamConfig["swfUrl"] == V_STRING) {
+		swfUrl = (string) streamConfig["swfUrl"];
+	}
+	string pageUrl = ""; 
+	if (streamConfig["pageUrl"] == V_STRING) {
+		pageUrl = (string) streamConfig["pageUrl"];
+	} 
 
-	//5. Prepare the connect request
+	//6. Prepare the connect request
 	Variant connectRequest = ConnectionMessageFactory::GetInvokeConnect(
 			appName, //string appName
 			tcUrl, //string tcUrl
@@ -1711,14 +1721,14 @@ bool BaseRTMPAppProtocolHandler::PullExternalStream(BaseRTMPProtocol *pFrom) {
 			239, //double capabilities
 			userAgent, //string flashVer
 			false, //bool fPad
-			"", //string pageUrl
-			"", //string swfUrl
+			pageUrl, //string pageUrl
+			swfUrl, //string swfUrl
 			252, //double videoCodecs
 			1, //double videoFunction
 			0 //double objectEncoding
 			);
 
-	//6. Send it
+	//7. Send it
 	if (!SendRTMPMessage(pFrom, connectRequest, true)) {
 		FATAL("Unable to send request:\n%s", STR(connectRequest.ToString()));
 		return false;
