@@ -260,7 +260,7 @@ bool BaseCLIAppProtocolHandler::Send(BaseProtocol *pTo, string status, string de
 
 	//2. Send it
 	switch (pTo->GetType()) {
-		case PT_INBOUND_CLITXT:
+		case PT_INBOUND_JSONCLI:
 			return ((InboundBaseCLIProtocol *) pTo)->SendMessage(message);
 		default:
 			WARN("Protocol %s not supported yet", STR(tagToString(pTo->GetType())));

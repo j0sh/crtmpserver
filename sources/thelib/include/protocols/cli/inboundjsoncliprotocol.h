@@ -19,16 +19,18 @@
 
 
 #ifdef HAS_PROTOCOL_CLI
-#ifndef _INBOUNDTEXTCLIPROTOCOL_H
-#define	_INBOUNDTEXTCLIPROTOCOL_H
+#ifndef _INBOUNDJSONCLIPROTOCOL_H
+#define	_INBOUNDJSONCLIPROTOCOL_H
 
 #include "protocols/cli/inboundbasecliprotocol.h"
 
-class InboundTextCLIProtocol
+class InboundJSONCLIProtocol
 : public InboundBaseCLIProtocol {
+private:
+	bool _useLengthPadding;
 public:
-	InboundTextCLIProtocol();
-	virtual ~InboundTextCLIProtocol();
+	InboundJSONCLIProtocol();
+	virtual ~InboundJSONCLIProtocol();
 
 	virtual bool Initialize(Variant &parameters);
 	virtual bool SignalInputData(IOBuffer &buffer);
@@ -38,5 +40,5 @@ private:
 };
 
 
-#endif	/* _INBOUNDTEXTCLIPROTOCOL_H */
+#endif	/* _INBOUNDJSONCLIPROTOCOL_H */
 #endif /* HAS_PROTOCOL_CLI */

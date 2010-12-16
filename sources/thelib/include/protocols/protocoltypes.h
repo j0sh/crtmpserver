@@ -68,7 +68,7 @@
 #define PT_OUTBOUND_RTP			MAKE_TAG4('O','R','T','P')
 
 //CLI protocols
-#define PT_INBOUND_CLITXT		MAKE_TAG7('I','C','L','I','T','X','T')
+#define PT_INBOUND_JSONCLI		MAKE_TAG8('I','J','S','O','N','C','L','I')
 
 #endif	/* _PROTOCOLTYPES_H */
 

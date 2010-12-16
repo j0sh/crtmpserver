@@ -18,25 +18,29 @@
  */
 
 #ifdef HAS_PROTOCOL_CLI
-#include "protocols/cli/inboundtextcliprotocol.h"
+#include "protocols/cli/inboundjsoncliprotocol.h"
 
-InboundTextCLIProtocol::InboundTextCLIProtocol()
-: InboundBaseCLIProtocol(PT_INBOUND_CLITXT) {
-
+InboundJSONCLIProtocol::InboundJSONCLIProtocol()
+: InboundBaseCLIProtocol(PT_INBOUND_JSONCLI) {
+	_useLengthPadding = false;
 }
 
-InboundTextCLIProtocol::~InboundTextCLIProtocol() {
+InboundJSONCLIProtocol::~InboundJSONCLIProtocol() {
 }
 
 #define MAX_COMMAND_LENGTH 1024
 
-bool InboundTextCLIProtocol::Initialize(Variant &parameters) {
+bool InboundJSONCLIProtocol::Initialize(Variant &parameters) {
 	InboundBaseCLIProtocol::Initialize(parameters);
-	_outputBuffer.ReadFromString("\r\nWelcome to "HTTP_HEADERS_X_POWERED_BY_US"\r\n\r\nType help for a list of commands\r\n\r\nrtmpd>");
-	return EnqueueForOutbound();
+	//	_outputBuffer.ReadFromString("\r\nWelcome to "HTTP_HEADERS_X_POWERED_BY_US"\r\n\r\nType help for a list of commands\r\n\r\nrtmpd>");
+	//	return EnqueueForOutbound();
+	if (parameters["useLengthPadding"] == V_BOOL) {
+		_useLengthPadding = (bool)parameters["useLengthPadding"];
+	}
+	return true;
 }
 
-bool InboundTextCLIProtocol::SignalInputData(IOBuffer &buffer) {
+bool InboundJSONCLIProtocol::SignalInputData(IOBuffer &buffer) {
 	//1. Get the buffer and the length
 	uint8_t *pBuffer = GETIBPOINTER(buffer);
 	uint32_t length = GETAVAILABLEBYTESCOUNT(buffer);
@@ -71,38 +75,48 @@ bool InboundTextCLIProtocol::SignalInputData(IOBuffer &buffer) {
 	return true;
 }
 
-bool InboundTextCLIProtocol::SendMessage(Variant &message) {
-	string output = "";
-	output = "\r\nSTATUS: " + (string) message["status"] + "\r\n\r\n";
-	output += (string) message["description"] + "\r\n";
-	if (message["data"] == V_MAP) {
-		output += "\r\n";
-
-		string item = "";
-		Variant count;
-		count["count"] = message["data"].MapSize();
-		if (!count.SerializeToJSON(item)) {
-			FATAL("Unable to serialize to JSON");
-			return false;
-		}
-		output += item + "\r\n\r\n";
-
-		FOR_MAP(message["data"], string, Variant, i) {
-			item = "";
-			if (!MAP_VAL(i).SerializeToJSON(item)) {
-				FATAL("Unable to serialize to JSON");
-				return false;
-			}
-			output += item + "\r\n";
-		}
+bool InboundJSONCLIProtocol::SendMessage(Variant &message) {
+	//	string output = "";
+	//	output = "\r\nSTATUS: " + (string) message["status"] + "\r\n\r\n";
+	//	output += (string) message["description"] + "\r\n";
+	//	if (message["data"] == V_MAP) {
+	//		output += "\r\n";
+	//
+	//		string item = "";
+	//		Variant count;
+	//		count["count"] = message["data"].MapSize();
+	//		if (!count.SerializeToJSON(item)) {
+	//			FATAL("Unable to serialize to JSON");
+	//			return false;
+	//		}
+	//		output += item + "\r\n\r\n";
+	//
+	//		FOR_MAP(message["data"], string, Variant, i) {
+	//			item = "";
+	//			if (!MAP_VAL(i).SerializeToJSON(item)) {
+	//				FATAL("Unable to serialize to JSON");
+	//				return false;
+	//			}
+	//			output += item + "\r\n";
+	//		}
+	//	}
+	//
+	//	output += "\r\nrtmpd>";
+	string json;
+	if (!message.SerializeToJSON(json)) {
+		FATAL("Unable to serialize to JSON");
+		return false;
 	}
-	
-	output += "\r\nrtmpd>";
-	_outputBuffer.ReadFromString(output);
+	json += "\r\n\r\n";
+	if (_useLengthPadding) {
+		uint32_t size = htonl(json.length());
+		_outputBuffer.ReadFromBuffer((uint8_t *) & size, 4);
+	}
+	_outputBuffer.ReadFromString(json);
 	return EnqueueForOutbound();
 }
 
-bool InboundTextCLIProtocol::ParseCommand(string &command) {
+bool InboundJSONCLIProtocol::ParseCommand(string &command) {
 	//1. Replace the '\\' escape sequence
 	replace(command, "\\\\", "_#slash#_");
 
