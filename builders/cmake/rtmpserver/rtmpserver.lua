@@ -269,7 +269,8 @@ configuration=
 				{
 					ip="0.0.0.0",
 					port=1112,
-					protocol="inboundTxtCli"
+					protocol="inboundJsonCli",
+					useLengthPadding=true
 				},
 			}
 			--validateHandshake=true,
