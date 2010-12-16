@@ -62,7 +62,6 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/31226533/infilertmpmp4stream.o \
 	${OBJECTDIR}/_ext/126235575/stdiocarrier.o \
 	${OBJECTDIR}/_ext/31226533/outnetrtmp4tsstream.o \
-	${OBJECTDIR}/_ext/1124578851/inboundtextcliprotocol.o \
 	${OBJECTDIR}/_ext/1636055853/nalutypes.o \
 	${OBJECTDIR}/_ext/1966546713/basemediadocument.o \
 	${OBJECTDIR}/_ext/1124564181/rtcpprotocol.o \
@@ -105,6 +104,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/1210521968/dummyelement.o \
 	${OBJECTDIR}/_ext/1210515272/flvdocument.o \
 	${OBJECTDIR}/_ext/517913122/tsadaptationfield.o \
+	${OBJECTDIR}/_ext/1124578851/inboundjsoncliprotocol.o \
 	${OBJECTDIR}/_ext/1210522056/mp3document.o \
 	${OBJECTDIR}/_ext/1210521968/floatelement.o \
 	${OBJECTDIR}/_ext/772217591/udpcarrier.o \
@@ -373,11 +373,6 @@ ${OBJECTDIR}/_ext/31226533/outnetrtmp4tsstream.o: ../../../../sources/thelib/src
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_VAR -DHAS_PROTOCOL_LIVEFLV -DHAS_MEDIA_MP4 -DHAS_MEDIA_MP3 -DHAS_MEDIA_FLV -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/31226533/outnetrtmp4tsstream.o ../../../../sources/thelib/src/protocols/rtmp/streaming/outnetrtmp4tsstream.cpp
 
-${OBJECTDIR}/_ext/1124578851/inboundtextcliprotocol.o: ../../../../sources/thelib/src/protocols/cli/inboundtextcliprotocol.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/1124578851
-	${RM} $@.d
-	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_VAR -DHAS_PROTOCOL_LIVEFLV -DHAS_MEDIA_MP4 -DHAS_MEDIA_MP3 -DHAS_MEDIA_FLV -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1124578851/inboundtextcliprotocol.o ../../../../sources/thelib/src/protocols/cli/inboundtextcliprotocol.cpp
-
 ${OBJECTDIR}/_ext/1636055853/nalutypes.o: ../../../../sources/thelib/src/streaming/nalutypes.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1636055853
 	${RM} $@.d
@@ -587,6 +582,11 @@ ${OBJECTDIR}/_ext/517913122/tsadaptationfield.o: ../../../../sources/thelib/src/
 	${MKDIR} -p ${OBJECTDIR}/_ext/517913122
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_VAR -DHAS_PROTOCOL_LIVEFLV -DHAS_MEDIA_MP4 -DHAS_MEDIA_MP3 -DHAS_MEDIA_FLV -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/517913122/tsadaptationfield.o ../../../../sources/thelib/src/protocols/ts/tsadaptationfield.cpp
+
+${OBJECTDIR}/_ext/1124578851/inboundjsoncliprotocol.o: ../../../../sources/thelib/src/protocols/cli/inboundjsoncliprotocol.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1124578851
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_VAR -DHAS_PROTOCOL_LIVEFLV -DHAS_MEDIA_MP4 -DHAS_MEDIA_MP3 -DHAS_MEDIA_FLV -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1124578851/inboundjsoncliprotocol.o ../../../../sources/thelib/src/protocols/cli/inboundjsoncliprotocol.cpp
 
 ${OBJECTDIR}/_ext/1210522056/mp3document.o: ../../../../sources/thelib/src/mediaformats/mp3/mp3document.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1210522056

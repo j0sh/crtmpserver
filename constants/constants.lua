@@ -5,7 +5,6 @@ CONF_PATH_SEPARATOR="pathSeparator",
 CONF_ACCEPTORS="acceptors",
 CONF_IP="ip",
 CONF_PORT="port",
-CONF_CLI="cli",
 CONF_DNSRESOLVER="dnsResolver",
 CONF_DNSRESOLVER_SELF="self",
 CONF_SSL_KEY="sslKey",
@@ -59,8 +58,8 @@ CONF_PROTOCOL_OUTBOUND_HTTP_XML_VARIANT="outboundHttpXmlVariant",
 CONF_PROTOCOL_OUTBOUND_HTTP_BIN_VARIANT="outboundHttpBinVariant",
 
 -- CLI protocols
-CONF_PROTOCOL_INBOUND_CLI_TXT="inboundTxtCli",
-CONF_PROTOCOL_INBOUND_HTTP_CLI_TXT="inboundHttpTxtCli",
+CONF_PROTOCOL_INBOUND_CLI_JSON="inboundJsonCli",
+CONF_PROTOCOL_INBOUND_HTTP_CLI_JSON="inboundHttpJsonCli",
 
 CONF_NUMBER_OF_THREADS="numberOfThreads",
 CONF_APPLICATIONS="applications",

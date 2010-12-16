@@ -43,7 +43,7 @@ AdminApplication::~AdminApplication() {
 	}
 #endif /* HAS_PROTOCOL_RTMP */
 #ifdef HAS_PROTOCOL_CLI
-	UnRegisterAppProtocolHandler(PT_INBOUND_CLITXT);
+	UnRegisterAppProtocolHandler(PT_INBOUND_JSONCLI);
 	if (_pCLIHandler != NULL) {
 		delete _pCLIHandler;
 		_pCLIHandler = NULL;
@@ -65,7 +65,7 @@ bool AdminApplication::Initialize() {
 
 #ifdef HAS_PROTOCOL_CLI
 	_pCLIHandler = new CLIAppProtocolHandler(_configuration);
-	RegisterAppProtocolHandler(PT_INBOUND_CLITXT, _pCLIHandler);
+	RegisterAppProtocolHandler(PT_INBOUND_JSONCLI, _pCLIHandler);
 #endif /* HAS_PROTOCOL_CLI */
 
 	return true;

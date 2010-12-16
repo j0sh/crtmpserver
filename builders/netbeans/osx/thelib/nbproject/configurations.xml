@@ -123,7 +123,7 @@
         <logicalFolder name="cli" displayName="cli" projectFiles="true">
           <itemPath>../../../../sources/thelib/include/protocols/cli/basecliappprotocolhandler.h</itemPath>
           <itemPath>../../../../sources/thelib/include/protocols/cli/inboundbasecliprotocol.h</itemPath>
-          <itemPath>../../../../sources/thelib/include/protocols/cli/inboundtextcliprotocol.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/protocols/cli/inboundjsoncliprotocol.h</itemPath>
         </logicalFolder>
         <logicalFolder name="dns" displayName="dns" projectFiles="true">
           <itemPath>../../../../sources/thelib/include/protocols/dns/inbounddnsresolverprotocol.h</itemPath>
@@ -263,7 +263,6 @@
         <itemPath>../../../../sources/thelib/src/application/baseappprotocolhandler.cpp</itemPath>
         <itemPath>../../../../sources/thelib/src/application/baseclientapplication.cpp</itemPath>
         <itemPath>../../../../sources/thelib/src/application/clientapplicationmanager.cpp</itemPath>
-        <itemPath>../../../../sources/thelib/src/application/newfile</itemPath>
       </logicalFolder>
       <logicalFolder name="configuration"
                      displayName="configuration"
@@ -370,7 +369,7 @@
         <logicalFolder name="cli" displayName="cli" projectFiles="true">
           <itemPath>../../../../sources/thelib/src/protocols/cli/basecliappprotocolhandler.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/protocols/cli/inboundbasecliprotocol.cpp</itemPath>
-          <itemPath>../../../../sources/thelib/src/protocols/cli/inboundtextcliprotocol.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/protocols/cli/inboundjsoncliprotocol.cpp</itemPath>
         </logicalFolder>
         <logicalFolder name="dns" displayName="dns" projectFiles="true">
           <itemPath>../../../../sources/thelib/src/protocols/dns/inbounddnsresolverprotocol.cpp</itemPath>
