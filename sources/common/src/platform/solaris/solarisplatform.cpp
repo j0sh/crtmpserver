@@ -97,8 +97,12 @@ string changecase(string &value, bool lowerCase) {
 
 string tagToString(uint64_t tag) {
 	string result;
-	uint64_t copy = EHTONLL(tag);
-	result = (char *) & copy;
+	for (uint32_t i = 0; i < 8; i++) {
+		uint8_t v = (tag >> ((7 - i)*8)&0xff);
+		if (v == 0)
+			break;
+		result += (char) v;
+	}
 	return result;
 }
 
