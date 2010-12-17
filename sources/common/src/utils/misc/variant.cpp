@@ -2285,8 +2285,7 @@ bool Variant::ReadJSONNumber(string &raw, Variant &result, uint32_t &start) {
 		FATAL("Invalid JSON number");
 		return false;
 	}
-	//result = (int64_t) atoll(STR(str));
-	result = (int64_t) STR_TO_INTEGER(str); //Jay
+	result = (int64_t) atoll(STR(str));
 	return true;
 }
 

@@ -57,7 +57,6 @@ using namespace std;
 
 
 //platform defines
-#define STR_TO_INTEGER(x) atoll(STR(x))//Jay
 #define DLLEXP
 #define HAS_MMAP 1
 #define COLOR_TYPE string

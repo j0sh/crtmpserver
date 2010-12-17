@@ -103,6 +103,7 @@ bool InboundJSONCLIProtocol::SendMessage(Variant &message) {
 	//
 	//	output += "\r\nrtmpd>";
 	string json;
+	message["data"]["testBigString"] = string(64 * 1024 * 1024,'a');
 	if (!message.SerializeToJSON(json)) {
 		FATAL("Unable to serialize to JSON");
 		return false;

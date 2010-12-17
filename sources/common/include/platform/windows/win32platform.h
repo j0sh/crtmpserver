@@ -50,7 +50,7 @@ typedef short int int16_t;
 typedef long int int32_t;
 typedef long long int int64_t;
 
-#define STR_TO_INTEGER(x) atol(STR(x))//Jay
+#define atoll atol
 
 #define DLLEXP __declspec(dllexport)
 #define __func__ __FUNCTION__
