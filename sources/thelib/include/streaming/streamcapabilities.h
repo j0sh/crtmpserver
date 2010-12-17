@@ -30,12 +30,12 @@ struct _VIDEO_AVC {
 	uint16_t _ppsLength;
 	uint32_t _rate;
 
-	_VIDEO_AVC();
-	virtual ~_VIDEO_AVC();
+	DLLEXP _VIDEO_AVC();
+	DLLEXP virtual ~_VIDEO_AVC();
 	bool Init(uint8_t *pSPS, uint32_t spsLength, uint8_t *pPPS, uint32_t ppsLength);
 	void Clear();
 
-	operator string();
+	DLLEXP operator string();
 };
 
 struct _AUDIO_AAC {
@@ -46,16 +46,16 @@ struct _AUDIO_AAC {
 	uint32_t _sampleRate;
 	uint8_t _channelConfigurationIndex;
 
-	_AUDIO_AAC();
-	virtual ~_AUDIO_AAC();
+	DLLEXP _AUDIO_AAC();
+	DLLEXP virtual ~_AUDIO_AAC();
 	bool Init(uint8_t *pBuffer, uint32_t length);
 	void Clear();
-	string GetRTSPFmtpConfig();
+	DLLEXP string GetRTSPFmtpConfig();
 
 	operator string();
 };
 
-class StreamCapabilities {
+class DLLEXP StreamCapabilities {
 public:
 	uint64_t videoCodecId;
 	uint64_t audioCodecId;
