@@ -34,6 +34,7 @@
 #include <vector>
 #include <map>
 #include <fstream>
+#include <fcntl.h>
 #include <iostream>
 #include <sstream>
 #include <cctype>
@@ -48,6 +49,8 @@ typedef char int8_t;
 typedef short int int16_t;
 typedef long int int32_t;
 typedef long long int int64_t;
+
+#define STR_TO_INTEGER(x) atol(STR(x))//Jay
 
 #define DLLEXP __declspec(dllexport)
 #define __func__ __FUNCTION__
