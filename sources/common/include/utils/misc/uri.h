@@ -36,13 +36,13 @@ typedef struct _URI {
 	string document;
 	map<string, string> parameters;
 
-	void Reset();
+	DLLEXP void Reset();
 
-	Variant ToVariant();
-	static bool FromVariant(Variant & variant, _URI & uri);
+	DLLEXP Variant ToVariant();
+	DLLEXP static bool FromVariant(Variant & variant, _URI & uri);
 
-	string ToString();
-	static bool FromString(string stringUri, bool resolveHost, _URI & uri);
+	DLLEXP string ToString();
+	DLLEXP static bool FromString(string stringUri, bool resolveHost, _URI & uri);
 } URI;
 
 #endif	/* _URI_H */
