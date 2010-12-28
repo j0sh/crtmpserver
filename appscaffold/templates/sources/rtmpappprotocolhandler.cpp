@@ -29,6 +29,7 @@
 
 #include "rtmpappprotocolhandler.h"
 #include "protocols/rtmp/messagefactories/messagefactories.h"
+using namespace app_#APPNAME_LC#;
 
 RTMPAppProtocolHandler::RTMPAppProtocolHandler(Variant &configuration)
 : BaseRTMPAppProtocolHandler(configuration) {

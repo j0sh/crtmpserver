@@ -31,6 +31,7 @@
 #include "#APPNAME_LC#application.h"
 #include "rtmpappprotocolhandler.h"
 #include "protocols/baseprotocol.h"
+using namespace app_#APPNAME_LC#;
 
 #APPNAME#Application::#APPNAME#Application(Variant &configuration)
 : BaseClientApplication(configuration) {

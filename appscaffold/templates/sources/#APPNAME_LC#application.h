@@ -31,24 +31,23 @@
 #define _#APPNAME_UC#APPLICATION_H
 
 #include "application/baseclientapplication.h"
-
+namespace app_#APPNAME_LC# {
 #ifdef HAS_PROTOCOL_RTMP
-class RTMPAppProtocolHandler;
+	class RTMPAppProtocolHandler;
 #endif /* HAS_PROTOCOL_RTMP */
 
-class #APPNAME#Application
-: public BaseClientApplication {
-private:
+	class #APPNAME#Application
+	: public BaseClientApplication {
+	private:
 #ifdef HAS_PROTOCOL_RTMP
-	RTMPAppProtocolHandler *_pRTMPHandler;
+		RTMPAppProtocolHandler *_pRTMPHandler;
 #endif /* HAS_PROTOCOL_RTMP */
-public:
-    #APPNAME#Application(Variant &configuration);
-    virtual ~#APPNAME#Application();
-
-    virtual bool Initialize();
-};
-
+	public:
+    	#APPNAME#Application(Variant &configuration);
+    	virtual ~#APPNAME#Application();
+    	virtual bool Initialize();
+	};
+}
 
 #endif	/* _#APPNAME_UC#APPLICATION_H */
 

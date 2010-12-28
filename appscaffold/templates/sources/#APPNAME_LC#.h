@@ -32,8 +32,8 @@
 
 #include "common.h"
 
-extern "C" DLLEXP BaseClientApplication *GetApplication(Variant configuration);
-extern "C" DLLEXP void ReleaseApplication(BaseClientApplication *pApplication);
+extern "C" DLLEXP BaseClientApplication *GetApplication_#APPNAME_LC#(Variant configuration);
+extern "C" DLLEXP void ReleaseApplication_#APPNAME_LC#(BaseClientApplication *pApplication);
 
 #endif	/* _#APPNAME_UC#_H */
 
