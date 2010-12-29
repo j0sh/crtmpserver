@@ -30,6 +30,8 @@ namespace app_admin {
 	public:
 		CLIAppProtocolHandler(Variant &configuration);
 		virtual ~CLIAppProtocolHandler();
+
+		virtual bool ProcessMessage(BaseProtocol *pFrom, Variant &message);
 	};
 }
 
