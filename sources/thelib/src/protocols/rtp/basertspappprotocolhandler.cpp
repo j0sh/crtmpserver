@@ -90,18 +90,20 @@ bool BaseRTSPAppProtocolHandler::PullExternalStream(URI uri, Variant streamConfi
 
 	//2. Save the app id inside the custom parameters and mark this connection
 	//as client connection
-	streamConfig["isClient"] = (bool)true;
-	streamConfig["appId"] = GetApplication()->GetId();
-	streamConfig["uri"] = uri.ToVariant();
+	Variant customParameters;
+	customParameters["customParameters"]["externalStreamConfig"] = streamConfig;
+	customParameters["isClient"] = (bool)true;
+	customParameters["appId"] = GetApplication()->GetId();
+	customParameters["uri"] = uri.ToVariant();
 
 	//3. Connect
 	if (!TCPConnector<BaseRTSPAppProtocolHandler>::Connect(
 			uri.ip,
 			uri.port,
-			chain, streamConfig)) {
+			chain, customParameters)) {
 		FATAL("Unable to connect to %s:%d",
-				STR(streamConfig["uri"]["ip"]),
-				(uint16_t) streamConfig["uri"]["port"]);
+				STR(customParameters["uri"]["ip"]),
+				(uint16_t) customParameters["uri"]["port"]);
 		return false;
 	}
 
@@ -111,10 +113,6 @@ bool BaseRTSPAppProtocolHandler::PullExternalStream(URI uri, Variant streamConfi
 
 bool BaseRTSPAppProtocolHandler::SignalProtocolCreated(BaseProtocol *pProtocol,
 		Variant &parameters) {
-	if(pProtocol==NULL){
-		FATAL("Connection failed:\n%s",STR(parameters.ToString()));
-		return false;
-	}
 	//1. Sanitize
 	if (parameters["appId"] != V_UINT32) {
 		FATAL("Invalid custom parameters:\n%s", STR(parameters.ToString()));
@@ -124,6 +122,11 @@ bool BaseRTSPAppProtocolHandler::SignalProtocolCreated(BaseProtocol *pProtocol,
 	//2. Get the application
 	BaseClientApplication *pApplication = ClientApplicationManager::FindAppById(
 			parameters["appId"]);
+
+	if (pProtocol == NULL) {
+		FATAL("Connection failed:\n%s", STR(parameters.ToString()));
+		return pApplication->OutboundConnectionFailed(parameters);
+	}
 
 	//3. Set it up inside the protocol
 	pProtocol->SetApplication(pApplication);

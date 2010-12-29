@@ -34,23 +34,8 @@ public:
 	void RegisterProtocol(BaseProtocol *pProtocol);
 	void UnRegisterProtocol(BaseProtocol *pProtocol);
 
-	virtual bool ProcessMessage(BaseProtocol *pFrom, Variant &message);
+	virtual bool ProcessMessage(BaseProtocol *pFrom, Variant &message) = 0;
 protected:
-	virtual bool ProcessMessageHelp(BaseProtocol *pFrom, Variant &parameters);
-	virtual bool ProcessMessageQuit(BaseProtocol *pFrom, Variant &parameters);
-	virtual bool ProcessMessageShutdown(BaseProtocol *pFrom,
-			Variant &parameters);
-	virtual bool ProcessMessageListApps(BaseProtocol *pFrom,
-			Variant &parameters);
-	virtual bool ProcessMessageListServices(BaseProtocol *pFrom,
-			Variant &parameters);
-	virtual bool ProcessMessageListConnections(BaseProtocol *pFrom,
-			Variant &parameters);
-	virtual bool ProcessMessageShutdownApp(BaseProtocol *pFrom,
-			Variant &parameters);
-	virtual bool ProcessMessageShutdownService(BaseProtocol *pFrom,
-			Variant &parameters);
-private:
 	bool Send(BaseProtocol *pTo, string status, string description, Variant &data);
 	bool SendFail(BaseProtocol *pTo, string description);
 	bool SendSuccess(BaseProtocol *pTo, string description, Variant &data);

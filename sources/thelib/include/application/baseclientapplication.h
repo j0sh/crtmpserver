@@ -60,6 +60,11 @@ public:
 	BaseAppProtocolHandler *GetProtocolHandler(uint64_t protocolType);
 	virtual BaseAppProtocolHandler *GetProtocolHandler(string &scheme);
 
+	/*
+	 * This is called bt the framework when an outbound connection faild to connect
+	 * */
+	virtual bool OutboundConnectionFailed(Variant &customParameters);
+
 	virtual void RegisterProtocol(BaseProtocol *pProtocol);
 	virtual void UnRegisterProtocol(BaseProtocol *pProtocol);
 
@@ -68,6 +73,7 @@ public:
 
 	virtual bool PullExternalStreams();
 	virtual bool PullExternalStream(Variant streamConfig);
+	virtual bool PushLocalStream(Variant streamConfig);
 
 	static void Shutdown(BaseClientApplication *pApplication);
 };

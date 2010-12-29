@@ -25,6 +25,7 @@
 #include "protocols/baseprotocol.h"
 #include "streaming/basestream.h"
 #include "application/clientapplicationmanager.h"
+#include "streaming/streamstypes.h"
 
 uint32_t BaseClientApplication::_idGenerator = 0;
 
@@ -129,6 +130,11 @@ BaseAppProtocolHandler *BaseClientApplication::GetProtocolHandler(string &scheme
 	return pResult;
 }
 
+bool BaseClientApplication::OutboundConnectionFailed(Variant &customParameters) {
+	WARN("You should override BaseRTMPAppProtocolHandler::OutboundConnectionFailed");
+	return false;
+}
+
 void BaseClientApplication::RegisterProtocol(BaseProtocol *pProtocol) {
 	if (!MAP_HAS1(_protocolsHandlers, pProtocol->GetType()))
 		ASSERT("Protocol handler not activated for protocol type %s in application %s",
@@ -219,6 +225,53 @@ bool BaseClientApplication::PullExternalStream(Variant streamConfig) {
 
 	//4. Initiate the stream pulling sequence
 	return pProtocolHandler->PullExternalStream(uri, streamConfig);
+}
+
+bool BaseClientApplication::PushLocalStream(Variant streamConfig) {
+	//1. Minimal verification
+	if (streamConfig["targetUri"] != V_STRING) {
+		FATAL("Invalid uri");
+		return false;
+	}
+	if (streamConfig["localStreamName"] != V_STRING) {
+		FATAL("Invalid local stream name");
+		return false;
+	}
+	string streamName = (string) streamConfig["localStreamName"];
+	trim(streamName);
+	if (streamName == "") {
+		FATAL("Invalid local stream name");
+		return false;
+	}
+	StreamsManager *pStreamsManager = GetStreamsManager();
+	map<uint32_t, BaseStream *> streams = pStreamsManager->FindByTypeByName(
+			ST_IN_NET, streamName, true, true);
+	if (streams.size() == 0) {
+		FATAL("Stream %s not found", STR(streamName));
+		return false;
+	}
+
+	//2. Split the URI
+	URI uri;
+	if (!URI::FromString(streamConfig["targetUri"], true, uri)) {
+		FATAL("Invalid URI: %s", STR(streamConfig["targetUri"].ToString()));
+		return false;
+	}
+	streamConfig["targetUri"] = uri.ToVariant();
+
+	//3. Depending on the scheme name, get the curresponding protocol handler
+	///TODO: integrate this into protocol factory manager via protocol factories
+	BaseAppProtocolHandler *pProtocolHandler = GetProtocolHandler(uri.scheme);
+	if (pProtocolHandler == NULL) {
+		WARN("Unable to find protocol handler for scheme %s in application %s",
+				STR(uri.scheme),
+				STR(GetName()));
+		return false;
+	}
+
+	//4. Initiate the stream pulling sequence
+	return pProtocolHandler->PushLocalStream(
+			(BaseInStream *) MAP_VAL(streams.begin()), streamConfig);
 }
 
 void BaseClientApplication::Shutdown(BaseClientApplication *pApplication) {
