@@ -50,6 +50,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/765644641/tinyxmlerror.o \
 	${OBJECTDIR}/_ext/1912657765/openbsdplatform.o \
 	${OBJECTDIR}/_ext/765644641/tinyxmlparser.o \
+	${OBJECTDIR}/_ext/674965218/buildversion.o \
 	${OBJECTDIR}/_ext/674965218/file.o \
 	${OBJECTDIR}/_ext/1145168487/solarisplatform.o \
 	${OBJECTDIR}/_ext/1874657879/consoleloglocation.o \
@@ -174,6 +175,11 @@ ${OBJECTDIR}/_ext/765644641/tinyxmlparser.o: ../../../../sources/common/src/util
 	${MKDIR} -p ${OBJECTDIR}/_ext/765644641
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -DOSX -DUSE_MEM_POOL -DDEBUG_MEM_POOL -DLITTLE_ENDIAN_SHORT_ALIGNED -DHAS_LUA -I/opt/local/include -I../../../../sources/common/include -I/opt/local/include/libxml2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/765644641/tinyxmlparser.o ../../../../sources/common/src/utils/tinyxml/tinyxmlparser.cpp
+
+${OBJECTDIR}/_ext/674965218/buildversion.o: ../../../../sources/common/src/utils/misc/buildversion.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/674965218
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -DOSX -DUSE_MEM_POOL -DDEBUG_MEM_POOL -DLITTLE_ENDIAN_SHORT_ALIGNED -DHAS_LUA -I/opt/local/include -I../../../../sources/common/include -I/opt/local/include/libxml2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/674965218/buildversion.o ../../../../sources/common/src/utils/misc/buildversion.cpp
 
 ${OBJECTDIR}/_ext/674965218/file.o: ../../../../sources/common/src/utils/misc/file.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/674965218

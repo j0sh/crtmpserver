@@ -99,6 +99,7 @@
                        displayName="misc"
                        projectFiles="true"
                        kind="SOURCE_LOGICAL_FOLDER">
+          <itemPath>../../../../sources/common/include/utils/misc/buildversion.h</itemPath>
           <itemPath>../../../../sources/common/include/utils/misc/crypto.h</itemPath>
           <itemPath>../../../../sources/common/include/utils/misc/dhgroups.h</itemPath>
           <itemPath>../../../../sources/common/include/utils/misc/file.h</itemPath>
@@ -205,6 +206,7 @@
                        displayName="misc"
                        projectFiles="true"
                        kind="SOURCE_LOGICAL_FOLDER">
+          <itemPath>../../../../sources/common/src/utils/misc/buildversion.cpp</itemPath>
           <itemPath>../../../../sources/common/src/utils/misc/crypto.cpp</itemPath>
           <itemPath>../../../../sources/common/src/utils/misc/file.cpp</itemPath>
           <itemPath>../../../../sources/common/src/utils/misc/mmapfile.cpp</itemPath>

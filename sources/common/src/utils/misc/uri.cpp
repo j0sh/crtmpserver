@@ -55,7 +55,7 @@ bool parseURI(string stringUri, URI &uri) {
 	if (components[0][components[0].size() - 1] != ':')
 		return false;
 
-	uri.scheme = components[0].substr(0, components[0].size() - 1);
+	uri.scheme = lowercase(components[0].substr(0, components[0].size() - 1));
 	LOG_URI_SPLIT("uri.scheme: %s", STR(uri.scheme));
 
 

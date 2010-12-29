@@ -17,17 +17,12 @@
  *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _MISC_H
-#define	_MISC_H
+#ifndef _BUILDVERSION_H
+#define	_BUILDVERSION_H
 
-#include "utils/misc/crypto.h"
-#include "utils/misc/file.h"
-#include "utils/misc/linkedlist.h"
-#include "utils/misc/mmapfile.h"
-#include "utils/misc/timersmanager.h"
-#include "utils/misc/variant.h"
-#include "utils/misc/uri.h"
-#include "utils/misc/buildversion.h"
+#include "platform/platform.h"
 
-#endif	/* _MISC_H */
+string GetBuildDate();
+
+#endif	/* _BUILDVERSION_H */
 
