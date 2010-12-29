@@ -18,7 +18,6 @@
       <itemPath>../../../../sources/applications/flvplayback/src/flvplayback.cpp</itemPath>
       <itemPath>../../../../sources/applications/flvplayback/src/flvplaybackapplication.cpp</itemPath>
       <itemPath>../../../../sources/applications/flvplayback/src/liveflvappprotocolhandler.cpp</itemPath>
-      <itemPath>newfile</itemPath>
       <itemPath>../../../../sources/applications/flvplayback/src/rtmpappprotocolhandler.cpp</itemPath>
       <itemPath>../../../../sources/applications/flvplayback/src/rtpappprotocolhandler.cpp</itemPath>
       <itemPath>../../../../sources/applications/flvplayback/src/rtspappprotocolhandler.cpp</itemPath>
