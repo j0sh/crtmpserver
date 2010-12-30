@@ -54,16 +54,11 @@ bool ReadStreamDescriptor(StreamDescriptor &descriptor,
 		{
 			CHECK_BOUNDS(4);
 			descriptor.info.registration.formatIdentifier = ENTOHLP((pBuffer + cursor)); //----MARKED-LONG---
-			cursor += 4;
-			if ((int32_t) descriptor.length - 4 > 0) {
-				CHECK_BOUNDS(descriptor.length - 4);
-				memcpy(descriptor.info.registration.additionalInfo,
-						pBuffer + cursor, descriptor.length - 4);
-			} else {
-				CHECK_BOUNDS(sizeof (descriptor.info.registration.additionalInfo));
-				memset(descriptor.info.registration.additionalInfo, 0,
-						sizeof (descriptor.info.registration.additionalInfo));
-			}
+			descriptor.info.registration.additionalInfoLength = descriptor.length - 4;
+			memcpy(descriptor.info.registration.additionalInfo,
+					pBuffer + cursor,
+					descriptor.info.registration.additionalInfoLength);
+			cursor += descriptor.length;
 			return true;
 		}
 		case DESCRIPTOR_TYPE_DATA_STREAM_ALIGNMENT:
