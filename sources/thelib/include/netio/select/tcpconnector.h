@@ -64,7 +64,7 @@ public:
 
 	virtual bool OnEvent(select_event &event) {
 		IOHandlerManager::EnqueueForDelete(this);
-		WARN("THIS IS NOT COMPLETE:Y IMPLEMENTED");
+		WARN("THIS IS NOT COMPLETELY IMPLEMENTED");
 		//        if (((event.flags & EV_ERROR) != 0) ||
 		//                ((event.flags & EV_EOF) != 0)) {
 		//            DEBUG("***CONNECT ERROR***");

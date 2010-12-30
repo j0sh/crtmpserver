@@ -25,9 +25,13 @@
 
 string alowedCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 static map<int, SignalFnc> _signalHandlers;
+static Platform _platform;
 
 SolarisPlatform::SolarisPlatform() {
-
+	//Ignore all SIGPIPE signals
+	struct sigaction act;
+	act.sa_handler = SIG_IGN;
+	sigaction(SIGPIPE, &act, NULL);
 }
 
 SolarisPlatform::~SolarisPlatform() {
@@ -124,12 +128,7 @@ bool SetFdNonBlock(int32_t fd) {
 }
 
 bool SetFdNoSIGPIPE(int32_t fd) {
-	int32_t one = 1;
-	if (setsockopt(fd, SOL_SOCKET, SO_NOSIGPIPE,
-			(const char*) & one, sizeof (one)) != 0) {
-		FATAL("Unable to set SO_NOSIGPIPE");
-		return false;
-	}
+	//In solaris, we have to ignore SIGPIPE using sigaction
 	return true;
 }
 
