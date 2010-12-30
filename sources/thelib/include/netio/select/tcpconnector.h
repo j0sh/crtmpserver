@@ -107,8 +107,8 @@ public:
 			return 0;
 		}
 
-		if (!SetFdNonBlock(fd)) {
-			FATAL("Unable to put socket in non-blocking mode");
+		if (!SetFdOptions(fd)) {
+			FATAL("Unable to set socket options");
 			return false;
 		}
 

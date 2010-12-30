@@ -123,15 +123,60 @@ bool SetFdNonBlock(int32_t fd) {
 	return true;
 }
 
-bool DeleteFile(string path) {
-	if (remove(STR(path)) != 0) {
-		FATAL("Unable to delete file `%s`", STR(path));
+bool SetFdNoSIGPIPE(int32_t fd) {
+	//This is not needed because we use MSG_NOSIGNAL when using
+	//send/write functions
+	return true;
+}
+
+bool SetFdKeepAlive(int32_t fd) {
+	int32_t one = 1;
+	if (setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE,
+			(const char*) & one, sizeof (one)) != 0) {
+		FATAL("Unable to set SO_NOSIGPIPE");
 		return false;
 	}
 	return true;
 }
 
-bool SetFdNoSIGPIPE(int32_t fd) {
+bool SetFdNoNagle(int32_t fd) {
+	int32_t one = 1;
+	if (setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, (char *) & one, sizeof (one)) != 0) {
+		FATAL("Unable to disable Nagle");
+		return false;
+	}
+	return true;
+}
+
+bool SetFdOptions(int32_t fd) {
+	if (!SetFdNonBlock(fd)) {
+		FATAL("Unable to set non block");
+		return false;
+	}
+
+	if (!SetFdNoSIGPIPE(fd)) {
+		FATAL("Unable to set no SIGPIPE");
+		return false;
+	}
+
+	if (!SetFdKeepAlive(fd)) {
+		FATAL("Unable to set keep alive");
+		return false;
+	}
+
+	if (!SetFdNoNagle(fd)) {
+		FATAL("Unable to disable Nagle algorithm");
+		return false;
+	}
+
+	return true;
+}
+
+bool DeleteFile(string path) {
+	if (remove(STR(path)) != 0) {
+		FATAL("Unable to delete file `%s`", STR(path));
+		return false;
+	}
 	return true;
 }
 

@@ -20,16 +20,6 @@
 #ifndef _BASEPLATFORM_H
 #define _BASEPLATFORM_H
 
-#include <openssl/bn.h>
-#include <openssl/dh.h>
-#include <openssl/rc4.h>
-#include <openssl/ssl.h>
-#include <openssl/rand.h>
-#include <openssl/err.h>
-#include <openssl/bio.h>
-#include <openssl/hmac.h>
-#include <openssl/aes.h>
-
 #define STR(x) (((string)(x)).c_str())
 #define MAP_HAS1(m,k) ((bool)((m).find((k))!=(m).end()))
 #define MAP_HAS2(m,k1,k2) ((MAP_HAS1((m),(k1))==true)?MAP_HAS1((m)[(k1)],(k2)):false)

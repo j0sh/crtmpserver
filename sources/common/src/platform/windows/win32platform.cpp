@@ -275,7 +275,38 @@ bool SetFdNonBlock(int32_t fd) {
 }
 
 bool SetFdNoSIGPIPE(int32_t fd) {
-	NYI;
+	NYIR;
+}
+
+bool SetFdKeepAlive(int32_t fd) {
+	NYIR;
+}
+
+bool SetFdNoNagle(int32_t fd) {
+	NYIR;
+}
+
+bool SetFdOptions(int32_t fd) {
+	if (!SetFdNonBlock(fd)) {
+		FATAL("Unable to set non block");
+		return false;
+	}
+
+	if (!SetFdNoSIGPIPE(fd)) {
+		FATAL("Unable to set no SIGPIPE");
+		return false;
+	}
+
+	if (!SetFdKeepAlive(fd)) {
+		FATAL("Unable to set keep alive");
+		return false;
+	}
+
+	if (!SetFdNoNagle(fd)) {
+		FATAL("Unable to disable Nagle algorithm");
+		return false;
+	}
+
 	return true;
 }
 

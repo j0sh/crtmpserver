@@ -50,6 +50,7 @@ void CommonTestsSuite::Run() {
 	test_unb64();
 	test_unhex();
 	test_ParseURL();
+	test_SetFdOptions();
 }
 
 void CommonTestsSuite::test_Endianess() {
@@ -943,3 +944,17 @@ void CommonTestsSuite::test_ParseURL() {
 	TS_ASSERT(uri.fullDocumentPath == "/stiintza");
 }
 
+void CommonTestsSuite::test_SetFdOptions() {
+	int32_t fd = socket(AF_INET, SOCK_STREAM, 0);
+	TS_ASSERT(fd > 0);
+	TS_ASSERT(SetFdNoSIGPIPE(fd));
+	TS_ASSERT(SetFdNonBlock(fd));
+	TS_ASSERT(SetFdNoNagle(fd));
+	TS_ASSERT(SetFdKeepAlive(fd));
+	CLOSE_SOCKET(fd);
+	fd = -1;
+	fd = socket(AF_INET, SOCK_STREAM, 0);
+	TS_ASSERT(fd > 0);
+	TS_ASSERT(SetFdOptions(fd));
+	CLOSE_SOCKET(fd);
+}

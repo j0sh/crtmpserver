@@ -54,21 +54,8 @@ bool TCPAcceptor::StartAccept(BaseClientApplication *pApplication) {
 		return false;
 	}
 
-	int32_t one = 1;
-
-	if (setsockopt(_inboundFd, SOL_SOCKET, SO_REUSEADDR, (char *) & one, sizeof (one)) != 0) {
-		FATAL("Unable to reuse address");
-		return false;
-	}
-
-	one = 1;
-	if (setsockopt(_inboundFd, IPPROTO_TCP, TCP_NODELAY, (char *) & one, sizeof (one)) != 0) {
-		FATAL("Unable to disable Nagle");
-		return false;
-	}
-
-	if (!SetFdNoSIGPIPE(_inboundFd)) {
-		FATAL("Unable to set SO_NOSIGPIPE");
+	if (!SetFdOptions(_inboundFd)) {
+		FATAL("Unable to set socket options");
 		return false;
 	}
 
@@ -118,32 +105,8 @@ bool TCPAcceptor::OnConnectionAvailable(struct kevent &event) {
 	}
 	INFO("Client connected: %s", inet_ntoa(((sockaddr_in *) & address)->sin_addr));
 
-	//2. Disable Nagle's algorithm
-	int32_t one = 1;
-	if (setsockopt(fd, IPPROTO_TCP, TCP_NODELAY,
-			(const char*) & one, sizeof (one)) != 0) {
-		FATAL("Unable to set TCP_NODELAY");
-		return false;
-	}
-
-	if (setsockopt(_inboundFd, SOL_SOCKET, SO_KEEPALIVE, (char *) & one, sizeof (one)) != 0) {
-		FATAL("Unable to enable keepalive");
-		return false;
-	}
-
-	if (!SetFdNoSIGPIPE(fd)) {
-		FATAL("Unable to set SO_NOSIGPIPE");
-		return false;
-	}
-
-	//3. Put the socket in non-blocking mode
-	int flags;
-	if ((flags = fcntl(fd, F_GETFL, 0)) < 0) {
-		FATAL("Unable to get current flags");
-		return false;
-	}
-	if (fcntl(fd, F_SETFL, flags | O_NONBLOCK) < 0) {
-		FATAL("Unable to set O_NONBLOCK");
+	if (!SetFdOptions(_inboundFd)) {
+		FATAL("Unable to set socket options");
 		return false;
 	}
 

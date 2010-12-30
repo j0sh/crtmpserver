@@ -53,6 +53,7 @@ private:
 	void test_unb64();
 	void test_unhex();
 	void test_ParseURL();
+	void test_SetFdOptions();
 };
 
 #endif /* __COMMONTESTSSUITE_H */

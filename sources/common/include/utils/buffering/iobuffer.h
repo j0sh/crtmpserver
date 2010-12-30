@@ -24,6 +24,7 @@
 #include "platform/platform.h"
 #include "utils/misc/file.h"
 #include "utils/misc/mmapfile.h"
+#include "utils/misc/crypto.h"
 
 #define GETAVAILABLEBYTESCOUNT(x)     ((x)._published - (x)._consumed)
 #define GETIBPOINTER(x)     ((uint8_t *)((x)._pBuffer + (x)._consumed))
