@@ -951,6 +951,7 @@ void CommonTestsSuite::test_SetFdOptions() {
 	TS_ASSERT(SetFdNonBlock(fd));
 	TS_ASSERT(SetFdNoNagle(fd));
 	TS_ASSERT(SetFdKeepAlive(fd));
+	TS_ASSERT(SetFdReuseAddress(fd));
 	CLOSE_SOCKET(fd);
 	fd = -1;
 	fd = socket(AF_INET, SOCK_STREAM, 0);

@@ -149,6 +149,7 @@ DLLEXP bool SetFdNonBlock(int32_t fd);
 DLLEXP bool SetFdNoSIGPIPE(int32_t fd);
 DLLEXP bool SetFdKeepAlive(int32_t fd);
 DLLEXP bool SetFdNoNagle(int32_t fd);
+DLLEXP bool SetFdReuseAddress(int32_t fd);
 DLLEXP bool SetFdOptions(int32_t fd);
 DLLEXP bool DeleteFile(string path);
 DLLEXP string GetHostByName(string name);

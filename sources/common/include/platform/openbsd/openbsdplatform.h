@@ -148,6 +148,7 @@ bool SetFdNonBlock(int32_t fd);
 bool SetFdNoSIGPIPE(int32_t fd);
 bool SetFdKeepAlive(int32_t fd);
 bool SetFdNoNagle(int32_t fd);
+bool SetFdReuseAddress(int32_t fd);
 bool SetFdOptions(int32_t fd);
 bool DeleteFile(string path);
 string GetHostByName(string name);

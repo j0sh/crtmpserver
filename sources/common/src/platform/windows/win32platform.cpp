@@ -286,6 +286,10 @@ bool SetFdNoNagle(int32_t fd) {
 	NYIR;
 }
 
+bool SetFdReuseAddress(int32_t fd) {
+	NYIR;
+}
+
 bool SetFdOptions(int32_t fd) {
 	if (!SetFdNonBlock(fd)) {
 		FATAL("Unable to set non block");
@@ -304,6 +308,11 @@ bool SetFdOptions(int32_t fd) {
 
 	if (!SetFdNoNagle(fd)) {
 		FATAL("Unable to disable Nagle algorithm");
+		return false;
+	}
+
+	if (!SetFdReuseAddress(fd)) {
+		FATAL("Unable to enable reuse address");
 		return false;
 	}
 

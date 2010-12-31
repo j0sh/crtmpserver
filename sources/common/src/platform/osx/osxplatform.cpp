@@ -149,6 +149,15 @@ bool SetFdNoNagle(int32_t fd) {
 	return true;
 }
 
+bool SetFdReuseAddress(int32_t fd) {
+	int32_t one = 1;
+	if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (char *) & one, sizeof (one)) != 0) {
+		FATAL("Unable to reuse address");
+		return false;
+	}
+	return true;
+}
+
 bool SetFdOptions(int32_t fd) {
 	if (!SetFdNonBlock(fd)) {
 		FATAL("Unable to set non block");
@@ -167,6 +176,11 @@ bool SetFdOptions(int32_t fd) {
 
 	if (!SetFdNoNagle(fd)) {
 		FATAL("Unable to disable Nagle algorithm");
+		return false;
+	}
+
+	if (!SetFdReuseAddress(fd)) {
+		FATAL("Unable to enable reuse address");
 		return false;
 	}
 

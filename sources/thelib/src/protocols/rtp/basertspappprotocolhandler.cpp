@@ -90,7 +90,7 @@ bool BaseRTSPAppProtocolHandler::PullExternalStream(URI uri, Variant streamConfi
 
 	//2. Save the app id inside the custom parameters and mark this connection
 	//as client connection
-	Variant customParameters;
+	Variant customParameters = streamConfig;
 	customParameters["customParameters"]["externalStreamConfig"] = streamConfig;
 	customParameters["isClient"] = (bool)true;
 	customParameters["appId"] = GetApplication()->GetId();
