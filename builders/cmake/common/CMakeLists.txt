@@ -4,10 +4,6 @@ PROJECT(common)
 #make the list with all the source files
 FILE(GLOB_RECURSE SOURCES "../../../sources/common/src/*.cpp" )
 
-#make sure we touch the build number
-MESSAGE(STATUS "Bump the build date")
-EXECUTE_PROCESS(COMMAND touch ../../sources/common/src/utils/misc/buildversion.cpp)
-
 #prepare the include directories
 INCLUDE_DIRECTORIES(
 	${OPENSSL_INCLUDE_PATH}
