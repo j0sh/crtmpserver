@@ -27,7 +27,6 @@
 #include "utils/misc/timersmanager.h"
 #include "utils/misc/variant.h"
 #include "utils/misc/uri.h"
-#include "utils/misc/buildversion.h"
 
 #endif	/* _MISC_H */
 

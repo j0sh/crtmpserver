@@ -44,6 +44,7 @@ protected:
 	bool _enqueueForDelete;
 	bool _gracefullyEnqueueForDelete;
 	Variant _customParameters;
+	double _creationTimestamp;
 public:
 
 	BaseProtocol(uint64_t type);
@@ -59,6 +60,9 @@ public:
 	//returns the id of the protocol. Each protocol instance has an id
 	//the id is unique across all protocols, no matter the type
 	uint32_t GetId();
+
+	//returns the creation timestamp expressed in milliseconds for 1970 epoch
+	double GetSpawnTimestamp();
 
 	//Gets the far protocol
 	BaseProtocol *GetFarProtocol();

@@ -34,6 +34,7 @@ protected:
 	uint32_t _uniqueId;
 	BaseProtocol *_pProtocol;
 	string _name;
+	double _creationTimestamp;
 public:
 	BaseStream(BaseProtocol *pProtocol, StreamsManager *pStreamsManager,
 			uint64_t type, string name);
@@ -58,6 +59,11 @@ public:
 	 * Returns the unique id of this stream. This is read-only
 	 * */
 	uint32_t GetUniqueId();
+
+	/*
+	 * returns the creation timestamp expressed in milliseconds for 1970 epoch
+	 * */
+	double GetSpawnTimestamp();
 
 	/*
 	 * Returns the name of this stream. This is setup-once

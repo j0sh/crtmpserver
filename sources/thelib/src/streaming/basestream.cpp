@@ -30,6 +30,9 @@ BaseStream::BaseStream(BaseProtocol *pProtocol, StreamsManager *pStreamsManager,
 	_pProtocol = pProtocol;
 	_name = name;
 	_pStreamsManager->RegisterStream(this);
+	GETCLOCKS(_creationTimestamp);
+	_creationTimestamp /= (double) CLOCKS_PER_SECOND;
+	_creationTimestamp *= 1000.00;
 	//FINEST("Stream %u created: %s", _uniqueId, STR(tagToString(_type)));
 }
 
@@ -48,6 +51,10 @@ uint64_t BaseStream::GetType() {
 
 uint32_t BaseStream::GetUniqueId() {
 	return _uniqueId;
+}
+
+double BaseStream::GetSpawnTimestamp() {
+	return _creationTimestamp;
 }
 
 string BaseStream::GetName() {

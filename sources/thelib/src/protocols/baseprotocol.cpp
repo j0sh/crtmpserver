@@ -44,6 +44,9 @@ BaseProtocol::BaseProtocol(uint64_t type) {
 			_pFarProtocol, _pNearProtocol, _deleteFar, _deleteNear);
 #endif
 	ProtocolManager::RegisterProtocol(this);
+	GETCLOCKS(_creationTimestamp);
+	_creationTimestamp /= (double) CLOCKS_PER_SECOND;
+	_creationTimestamp *= 1000.00;
 }
 
 BaseProtocol::~BaseProtocol() {
@@ -83,6 +86,10 @@ uint64_t BaseProtocol::GetType() {
 
 uint32_t BaseProtocol::GetId() {
 	return _id;
+}
+
+double BaseProtocol::GetSpawnTimestamp() {
+	return _creationTimestamp;
 }
 
 BaseProtocol *BaseProtocol::GetFarProtocol() {
