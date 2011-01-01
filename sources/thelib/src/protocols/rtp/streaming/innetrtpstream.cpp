@@ -151,16 +151,18 @@ bool InNetRTPStream::FeedData(uint8_t *pData, uint32_t dataLength,
 		double absoluteTimestamp, bool isAudio) {
 	double &lastTs = isAudio ? _lastAudioTs : _lastVideoTs;
 
-	if ((uint64_t) (lastTs * 100.00) == (uint64_t) (absoluteTimestamp * 100.00)) {
+	if ((-1.0 < (lastTs * 100.00 - absoluteTimestamp * 100.00))
+			&& ((lastTs * 100.00 - absoluteTimestamp * 100.00) < 1.00)) {
 		absoluteTimestamp = lastTs;
 	}
 
-	if ((uint64_t) (lastTs * 100.00) > (uint64_t) (absoluteTimestamp * 100.00)) {
-		WARN("Back time on %s. ATS: %.08f LTS: %.08f; D: %.8f",
+	if (lastTs * 100.00 > absoluteTimestamp * 100.00) {
+		WARN("Back time on %s. ATS: %.08f LTS: %.08f; D: %.8f; isAudio: %d",
 				STR(GetName()),
 				absoluteTimestamp,
 				lastTs,
-				absoluteTimestamp - lastTs);
+				absoluteTimestamp - lastTs,
+				isAudio);
 		return true;
 	}
 	LinkedListNode<BaseOutStream *> *pTemp = _pOutStreams;
@@ -213,7 +215,7 @@ bool InNetRTPStream::FeedVideoData(uint8_t *pData, uint32_t dataLength,
 	}
 
 	//2. get the nalu
-	double ts = (double) rtpHeader._timestamp / _capabilities.avc._rate * 1000.0;
+	double ts = (double) rtpHeader._timestamp / (double) _capabilities.avc._rate * 1000.0;
 	uint8_t naluType = NALU_TYPE(pData[0]);
 	if (naluType <= 23) {
 		//3. Standard NALU

@@ -37,10 +37,9 @@ private:
 	uint16_t _lastSeq;
 	uint16_t _seqRollOver;
 	uint64_t _lastTimestamp;
-	uint32_t _timestampRollover;
+	uint64_t _timestampRollover;
 	bool _isAudio;
 	uint32_t _packetsCount;
-	uint32_t _delta;
 public:
 	InboundRTPProtocol();
 	virtual ~InboundRTPProtocol();

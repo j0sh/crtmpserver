@@ -36,7 +36,6 @@ InboundRTPProtocol::InboundRTPProtocol()
 	_timestampRollover = 0;
 	_isAudio = false;
 	_packetsCount = 0;
-	_delta = 0;
 }
 
 InboundRTPProtocol::~InboundRTPProtocol() {
@@ -121,29 +120,15 @@ bool InboundRTPProtocol::SignalInputData(IOBuffer &buffer,
 	pBuffer += 12 + GET_RTP_CC(_rtpHeader)*4;
 	length -= 12 + GET_RTP_CC(_rtpHeader)*4;
 
-	//5. Normalize the timestamp to 0
-	if (_delta == 0) {
-		_delta = _rtpHeader._timestamp;
-	}
-	_rtpHeader._timestamp -= _delta;
-
-
-	//	if (GetId() == 10) {
-	//		_rtpHeader._timestamp = (uint32_t) _rtpHeader._timestamp + 0xffdd0000;
-	//		//FINEST("%d: _rtpHeader._timestamp: %08x", GetId(), _rtpHeader._timestamp);
-	//	}
-	//	if (GetId() == 12) {
-	//		_rtpHeader._timestamp = (uint32_t) _rtpHeader._timestamp + 0xfff00000;
-		//		//FINEST("%d: _rtpHeader._timestamp: %08x", GetId(), _rtpHeader._timestamp);
-	//	}
-
 	//6. Detect rollover and adjust the timestamp
 	if (_rtpHeader._timestamp < _lastTimestamp) {
+		FINEST("Possible roll over: _rtpHeader._timestamp: %016llx; _lastTimestamp: %016llx",
+				_rtpHeader._timestamp, _lastTimestamp);
 		if ((((_rtpHeader._timestamp & 0x80000000) >> 31) == 0)
 				&& (((_lastTimestamp & 0x80000000) >> 31) == 1)) {
 			_timestampRollover++;
 			_lastTimestamp = _rtpHeader._timestamp;
-			WARN("Roll over on %d", GetId());
+			WARN("Roll over on %d; _timestampRollover: %d", GetId(), _timestampRollover);
 		} else {
 			WARN("Bogus timestamp. current ts: %016llx; last ts: %016llx",
 					_rtpHeader._timestamp, _lastTimestamp);
@@ -153,7 +138,15 @@ bool InboundRTPProtocol::SignalInputData(IOBuffer &buffer,
 	} else {
 		_lastTimestamp = _rtpHeader._timestamp;
 	}
-	_rtpHeader._timestamp = _timestampRollover * 0xffffffff + _rtpHeader._timestamp;
+	//	string msg = "";
+	//	if ((_lastSeq % 1000) == 0) {
+	//		msg = format("%d: %016llx", GetId(), _rtpHeader._timestamp);
+	//	}
+	_rtpHeader._timestamp = (_timestampRollover << 32) | _rtpHeader._timestamp;
+	//	if ((_lastSeq % 1000) == 0) {
+	//		msg += format("(%016llx)", _rtpHeader._timestamp);
+	//		FINEST(STR(msg));
+	//	}
 
 	//5. Feed the data to the stream
 	if (_pInStream != NULL) {

@@ -45,11 +45,10 @@ void FileLogLocation::Log(int32_t level, string fileName, uint32_t lineNumber,
 	if (_level < 0 || level > _level) {
 		return;
 	}
-	string logEntry = format("%d:%s:%d:%s:%s\n",
-			level, STR(fileName), lineNumber, STR(functionName), STR(message));
+	string logEntry = format("%d:%d:%s:%d:%s:%s\n",
+			time(NULL), level, STR(fileName), lineNumber, STR(functionName),
+			STR(message));
 	_fileStream.write(STR(logEntry), logEntry.size());
-	if ((_counter++) % 1000 == 0) {
-		_fileStream.flush();
-	}
+	_fileStream.flush();
 }
 
