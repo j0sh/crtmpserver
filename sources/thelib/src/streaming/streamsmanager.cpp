@@ -19,7 +19,8 @@
 
 
 #include "streaming/streamsmanager.h"
-#include "streaming/basestream.h"
+#include "streaming/baseoutstream.h"
+#include "streaming/streamstypes.h"
 #include "protocols/baseprotocol.h"
 #include "application/baseclientapplication.h"
 
@@ -72,6 +73,52 @@ void StreamsManager::UnRegisterStreams(uint32_t protocolId) {
 	FOR_MAP(streams, uint32_t, BaseStream *, i) {
 		UnRegisterStream(MAP_VAL(i));
 	}
+}
+
+map<uint32_t, BaseStream *> StreamsManager::GetAllStreams() {
+	return _streamsByUniqueId;
+}
+
+map<uint32_t, BaseOutStream *> StreamsManager::GetWaitingSubscribers(string streamName, uint64_t inboundStreamType) {
+	//1. Validate the inbound stream type
+	if (!TAG_KIND_OF(inboundStreamType, ST_IN))
+		return map<uint32_t, BaseOutStream *>();
+
+	//2. Get get the short version of the stream name
+	vector<string> parts;
+	split(streamName, "?", parts);
+	string shortName = parts[0];
+	FINEST("short name: %s; long name: %s", STR(shortName), STR(streamName));
+
+	//2. get the 2 kinds of subscribers
+	map<uint32_t, BaseStream *> shortSubscribers;
+	map<uint32_t, BaseStream *> longSubscribers;
+	shortSubscribers = FindByTypeByName(ST_OUT, shortName, true, false);
+	longSubscribers = FindByTypeByName(ST_OUT, streamName, true, false);
+
+	FINEST("short count: %d; long count: %d", shortSubscribers.size(), longSubscribers.size());
+
+	//3. merge them
+	map<uint32_t, BaseOutStream *> result;
+
+	FOR_MAP(shortSubscribers, uint32_t, BaseStream *, i) {
+		if (((BaseOutStream *) MAP_VAL(i))->IsLinked())
+			continue;
+		if (!((BaseOutStream *) MAP_VAL(i))->IsCompatibleWithType(inboundStreamType))
+			continue;
+		result[MAP_KEY(i)] = (BaseOutStream *) MAP_VAL(i);
+	}
+
+	FOR_MAP(longSubscribers, uint32_t, BaseStream *, i) {
+		if (((BaseOutStream *) MAP_VAL(i))->IsLinked())
+			continue;
+		if (!((BaseOutStream *) MAP_VAL(i))->IsCompatibleWithType(inboundStreamType))
+			continue;
+		result[MAP_KEY(i)] = (BaseOutStream *) MAP_VAL(i);
+	}
+
+	//4. Done
+	return result;
 }
 
 map<uint32_t, BaseStream *> StreamsManager::FindByName(string name, bool partial) {

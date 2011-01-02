@@ -204,11 +204,6 @@ protected:
 			bool trackResponse = false);
 private:
 	/*
-	 * Returns the list of waiting subscribers for a particular stream name
-	 * */
-	map<uint32_t, BaseStream *> GetWaitingSubscribers(string streamName);
-
-	/*
 	 * Tries to create an outbound stream and link it to the live inbound stream
 	 * streamName - the name of the live inbound stream
 	 * linked - will be set to true if the linking succeeded. Otherwise it will

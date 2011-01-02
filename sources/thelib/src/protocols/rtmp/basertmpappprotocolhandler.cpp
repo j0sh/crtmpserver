@@ -559,15 +559,16 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokePublish(BaseRTMPProtocol *pFrom,
 	}
 
 	//6. Get the list of waiting subscribers
-	map<uint32_t, BaseStream *> subscribedOutStreams = GetWaitingSubscribers(
-			streamName);
+	map<uint32_t, BaseOutStream *> subscribedOutStreams =
+			GetApplication()->GetStreamsManager()->GetWaitingSubscribers(
+			streamName, pInNetRTMPStream->GetType());
 	FINEST("subscribedOutStreams count: %d", subscribedOutStreams.size());
 
 
 	//7. Bind the waiting subscribers
 
-	FOR_MAP(subscribedOutStreams, uint32_t, BaseStream *, i) {
-		BaseOutStream *pBaseOutStream = (BaseOutStream *) MAP_VAL(i);
+	FOR_MAP(subscribedOutStreams, uint32_t, BaseOutStream *, i) {
+		BaseOutStream *pBaseOutStream = MAP_VAL(i);
 		pBaseOutStream->Link(pInNetRTMPStream);
 	}
 
@@ -1452,40 +1453,6 @@ bool BaseRTMPAppProtocolHandler::SendRTMPMessage(BaseRTMPProtocol *pTo,
 			return false;
 		}
 	}
-}
-
-map<uint32_t, BaseStream *> BaseRTMPAppProtocolHandler::GetWaitingSubscribers(string streamName) {
-	//1. Get get the short version of the stream name
-	vector<string> parts;
-	split(streamName, "?", parts);
-	string shortName = parts[0];
-	FINEST("short name: %s; long name: %s", STR(shortName), STR(streamName));
-
-	//2. get the 2 kinds of subscribers
-	map<uint32_t, BaseStream *> shortSubscribers;
-	map<uint32_t, BaseStream *> longSubscribers;
-	shortSubscribers = GetApplication()->GetStreamsManager()->FindByTypeByName(
-			ST_OUT, shortName, true, false);
-	longSubscribers = GetApplication()->GetStreamsManager()->FindByTypeByName(
-			ST_OUT, streamName, true, false);
-
-	FINEST("short count: %d; long count: %d", shortSubscribers.size(), longSubscribers.size());
-
-	//3. merge them
-	map<uint32_t, BaseStream *> result;
-
-	FOR_MAP(shortSubscribers, uint32_t, BaseStream *, i) {
-		if (!((BaseOutStream *) MAP_VAL(i))->IsLinked())
-			result[MAP_KEY(i)] = MAP_VAL(i);
-	}
-
-	FOR_MAP(longSubscribers, uint32_t, BaseStream *, i) {
-		if (!((BaseOutStream *) MAP_VAL(i))->IsLinked())
-			result[MAP_KEY(i)] = MAP_VAL(i);
-	}
-
-	//4. Done
-	return result;
 }
 
 bool BaseRTMPAppProtocolHandler::TryLinkToLiveStream(BaseRTMPProtocol *pFrom,

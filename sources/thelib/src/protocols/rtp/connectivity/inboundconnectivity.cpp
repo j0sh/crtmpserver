@@ -150,7 +150,21 @@ bool InboundConnectivity::Initialize(Variant &videoTrack, Variant &audioTrack,
 	_pRTPAudio->SetInbboundConnectivity(this);
 	_pRTCPAudio->SetInbboundConnectivity(this, true);
 
-	//8. Done
+	//8. Pickup all outbound waiting streams
+	map<uint32_t, BaseOutStream *> subscribedOutStreams =
+			pApplication->GetStreamsManager()->GetWaitingSubscribers(
+			streamName, _pInStream->GetType());
+	FINEST("subscribedOutStreams count: %d", subscribedOutStreams.size());
+
+
+	//9. Bind the waiting subscribers
+
+	FOR_MAP(subscribedOutStreams, uint32_t, BaseOutStream *, i) {
+		BaseOutStream *pBaseOutStream = MAP_VAL(i);
+		pBaseOutStream->Link(_pInStream);
+	}
+
+	//10. Done
 	return true;
 }
 
@@ -276,7 +290,7 @@ bool InboundConnectivity::SendRR(bool isAudio) {
 	return true;
 }
 
-bool InboundConnectivity::InitializeUDP(Variant &videoTrack, Variant &audioTrack) {
+bool InboundConnectivity::InitializeUDP(Variant &videoTrack, Variant & audioTrack) {
 	//3. Create all protocols
 	Variant dummy;
 	_pRTPVideo = (InboundRTPProtocol *) ProtocolFactoryManager::CreateProtocolChain(
@@ -338,7 +352,7 @@ bool InboundConnectivity::InitializeUDP(Variant &videoTrack, Variant &audioTrack
 	return true;
 }
 
-bool InboundConnectivity::InitializeTCP(Variant &videoTrack, Variant &audioTrack) {
+bool InboundConnectivity::InitializeTCP(Variant &videoTrack, Variant & audioTrack) {
 	//1. create the protocols
 	_pRTPVideo = new InboundRTPProtocol();
 	_pRTCPVideo = new RTCPProtocol();
@@ -395,7 +409,7 @@ void InboundConnectivity::Cleanup() {
 	}
 }
 
-bool InboundConnectivity::CreateCarriers(InboundRTPProtocol *pRTP, RTCPProtocol *pRTCP) {
+bool InboundConnectivity::CreateCarriers(InboundRTPProtocol *pRTP, RTCPProtocol * pRTCP) {
 	UDPCarrier *pCarrier1 = NULL;
 	UDPCarrier *pCarrier2 = NULL;
 	for (uint32_t i = 0; i < 10; i++) {

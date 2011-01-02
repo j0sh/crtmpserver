@@ -24,6 +24,7 @@
 #include "common.h"
 
 class BaseStream;
+class BaseOutStream;
 class BaseClientApplication;
 
 class DLLEXP StreamsManager {
@@ -49,6 +50,18 @@ public:
 	bool RegisterStream(BaseStream *pStream);
 	void UnRegisterStream(BaseStream *pStream);
 	void UnRegisterStreams(uint32_t protocolId);
+
+	/*
+	 * Returns the entire collection of streams
+	 * */
+	map<uint32_t, BaseStream *> GetAllStreams();
+
+	/*
+	 * Returns all the outbound streams waiting for a inbound stream called
+	 * streamName who has the type inboundStreamType
+	 * */
+	map<uint32_t, BaseOutStream *> GetWaitingSubscribers(string streamName,
+			uint64_t inboundStreamType);
 
 	/*
 	 * Find streams by name
