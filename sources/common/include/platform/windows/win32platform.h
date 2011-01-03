@@ -24,6 +24,7 @@
 #include "platform/baseplatform.h"
 
 #include <assert.h>
+#include <time.h>
 #include <io.h>
 #include <Shlwapi.h>
 #include <sys/types.h>
