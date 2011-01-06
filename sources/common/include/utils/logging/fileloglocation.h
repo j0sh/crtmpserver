@@ -30,18 +30,18 @@
 class DLLEXP FileLogLocation
 : public BaseLogLocation {
 private:
-	ofstream _fileStream; //!< Output file stream
-	bool _canLog; //!< Variable that prevents logging. If file stream fails, this is set to false.
-	uint32_t _counter; //<! Counts the number of lines in the log file. To lessen HDD load, flushing of the file stream only happens when this value is divisible by 1000
+	ofstream _fileStream; //! Output file stream
+	bool _canLog; //! Variable that prevents logging. If file stream fails, this is set to false.
+	uint32_t _counter; //! Counts the number of lines in the log file. To lessen HDD load, flushing of the file stream only happens when this value is divisible by 1000
 public:
-	/*! Constructor: It checks if there is error in the file stream. If there are errors, _canLog will become false and logging will not be done.
+	/*! @brief Constructor: It checks if there is error in the file stream. If there are errors, _canLog will become false and logging will not be done.
 		@param path - The path of the file where the logs will be saved
 		@param append - Boolean that indicates whether to append the logs in the existing file or to create a new one.
 	*/
 	FileLogLocation(string path, bool append);
 	virtual ~FileLogLocation();
 private:
-	/*! Logs the messages
+	/*! @brief Logs the messages
 		@param level: Variable that indicates how critical the log is about. It ranges from "INFO" to "FATAL".
 		@param filename: Shows file name of the source code that displayed the log message.
 		@param lineNumber: Shows line number in the source code that displayed the log message.

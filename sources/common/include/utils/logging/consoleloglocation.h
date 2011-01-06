@@ -33,13 +33,13 @@ private:
 	bool _allowColors;
 	static vector<COLOR_TYPE> _colors;
 public:
-	/*! Constructor.
+	/*! @brief Constructor.
 		@param allowColors - when set to true, the constructor assigns color on messages based on the level of warning
 	*/
 	ConsoleLogLocation(bool allowColors = true);
 	virtual ~ConsoleLogLocation();
 
-	/*! Logs the messages
+	/*! @brief Logs the messages
 		@param level: Variable that indicates how critical the log is about. It ranges from "INFO" to "FATAL".
 		@param filename: Shows file name of the source code that displayed the log message.
 		@param lineNumber: Shows line number in the source code that displayed the log message.
