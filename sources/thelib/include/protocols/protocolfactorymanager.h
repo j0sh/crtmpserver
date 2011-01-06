@@ -26,6 +26,10 @@
 class BaseProtocolFactory;
 class BaseProtocol;
 
+/*!
+	@class ProtocolFactoryManager
+	@brief Class that manages protocol factories.
+*/
 class DLLEXP ProtocolFactoryManager {
 private:
     static map<uint32_t, BaseProtocolFactory *> _factoriesById;

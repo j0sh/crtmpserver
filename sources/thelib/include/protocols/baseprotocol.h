@@ -54,7 +54,9 @@ public:
 	//general purpose, fixed methods
 	//
 
-	//returns the type of the protocol
+	/*!
+		@abstract Returns the type of the protocol
+	*/
 	uint64_t GetType();
 
 	//returns the id of the protocol. Each protocol instance has an id
