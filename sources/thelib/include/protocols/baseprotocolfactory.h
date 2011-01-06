@@ -35,31 +35,31 @@ private:
 	uint32_t _id;
 public:
 	/*!
-		Constructor: Increments the _idGenerator parameter.
+		@brief Constructor: Increments the _idGenerator parameter.
 	*/
 	BaseProtocolFactory();
 	virtual ~BaseProtocolFactory();
 
 	/*!
-		Returns the factory's ID.
+		@brief Returns the factory's ID.
 	*/
 	uint32_t GetId();
 
 	/*!
-		Function that will contain all the protocols that will be handled by the factory.
+		@brief Function that will contain all the protocols that will be handled by the factory.
 	*/
 	virtual vector<uint64_t> HandledProtocols() = 0;
 	/*!
-		Function that will contain all the protocol chains that will be handled by the factory.
+		@brief Function that will contain all the protocol chains that will be handled by the factory.
 	*/
 	virtual vector<string> HandledProtocolChains() = 0;
 	/*!
-		This functions is where the protocol chains whose names are all defined, are resolved.
+		@brief This functions is where the protocol chains whose names are all defined, are resolved.
 		@param name: The name given to the protocol chain.
 	*/
 	virtual vector<uint64_t> ResolveProtocolChain(string name) = 0;
 	/*!
-		This function is where protocols are spawned.
+		@brief This function is where protocols are spawned.
 		@param type: The protocol to be spawned.
 		@param parameters: Each protocol can have parameters. This is optional.
 	*/
