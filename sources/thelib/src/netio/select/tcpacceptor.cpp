@@ -24,6 +24,7 @@
 #include "protocols/protocolfactorymanager.h"
 #include "protocols/tcpprotocol.h"
 #include "netio/select/tcpcarrier.h"
+#include "application/baseclientapplication.h"
 
 TCPAcceptor::TCPAcceptor(string ipAddress, uint16_t port, Variant parameters,
 		vector<uint64_t>/*&*/ protocolChain)
@@ -39,6 +40,9 @@ TCPAcceptor::TCPAcceptor(string ipAddress, uint16_t port, Variant parameters,
 
 	_protocolChain = protocolChain;
 	_parameters = parameters;
+	_enabled = false;
+	_acceptedCount = 0;
+	_droppedCount = 0;
 }
 
 TCPAcceptor::~TCPAcceptor() {
@@ -75,6 +79,8 @@ bool TCPAcceptor::StartAccept(BaseClientApplication *pApplication) {
 		return false;
 	}
 
+	_enabled = true;
+
 	return IOHandlerManager::EnableAcceptConnections(this);
 }
 
@@ -104,7 +110,21 @@ bool TCPAcceptor::OnConnectionAvailable(select_event &event) {
 		FATAL("Unable to accept client connection: %s (%d)", strerror(error), error);
 		return false;
 	}
-	INFO("Client connected: %s", inet_ntoa(((sockaddr_in *) & address)->sin_addr));
+	if (!_enabled) {
+		CLOSE_SOCKET(fd);
+		_droppedCount++;
+		WARN("Acceptor is not enabled. Client dropped: %s:%d -> %s:%d",
+				inet_ntoa(((sockaddr_in *) & address)->sin_addr),
+				ENTOHS(((sockaddr_in *) & address)->sin_port),
+				inet_ntoa(((sockaddr_in *) & _address)->sin_addr),
+				ENTOHS(((sockaddr_in *) & _address)->sin_port));
+		return true;
+	}
+	INFO("Client connected: %s:%d -> %s:%d",
+			inet_ntoa(((sockaddr_in *) & address)->sin_addr),
+			ENTOHS(((sockaddr_in *) & address)->sin_port),
+			inet_ntoa(((sockaddr_in *) & _address)->sin_addr),
+			ENTOHS(((sockaddr_in *) & _address)->sin_port));
 
 	if (!SetFdOptions(_inboundFd)) {
 		FATAL("Unable to set socket options");
@@ -134,6 +154,8 @@ bool TCPAcceptor::OnConnectionAvailable(select_event &event) {
 	if (pProtocol->GetNearEndpoint()->GetOutputBuffer() != NULL)
 		pProtocol->GetNearEndpoint()->EnqueueForOutbound();
 
+	_acceptedCount++;
+
 	//7. Done
 	return true;
 }
@@ -155,7 +177,23 @@ TCPAcceptor::operator string() {
 }
 
 void TCPAcceptor::GetStats(Variant &info) {
+	info = _parameters;
+	info["id"] = GetId();
+	info["enabled"] = (bool)_enabled;
+	info["acceptedConnectionsCount"] = _acceptedCount;
+	info["droppedConnectionsCount"] = _droppedCount;
+	if (_pApplication != NULL) {
+		info["appId"] = _pApplication->GetId();
+		info["appName"] = _pApplication->GetName();
+	}
+}
 
+bool TCPAcceptor::Enable() {
+	return _enabled;
+}
+
+void TCPAcceptor::Enable(bool enabled) {
+	_enabled = enabled;
 }
 
 bool TCPAcceptor::IsAlive() {

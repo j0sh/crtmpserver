@@ -34,6 +34,9 @@ private:
 	vector<uint64_t> _protocolChain;
 	BaseClientApplication *_pApplication;
 	Variant _parameters;
+	bool _enabled;
+	uint32_t _acceptedCount;
+	uint32_t _droppedCount;
 public:
 	TCPAcceptor(string ipAddress, uint16_t port, Variant parameters,
 			vector<uint64_t>/*&*/ protocolChain);
@@ -47,6 +50,8 @@ public:
 	vector<uint64_t> &GetProtocolChain();
 	virtual operator string();
 	virtual void GetStats(Variant &info);
+	bool Enable();
+	void Enable(bool enabled);
 private:
 	bool IsAlive();
 };
