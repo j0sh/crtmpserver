@@ -402,6 +402,12 @@ bool BaseProtocol::SignalInputData(int32_t recvAmount, sockaddr_in *pPeerAddress
 void BaseProtocol::GetStats(Variant &info) {
 	info["id"] = GetId();
 	info["type"] = tagToString(_type);
+	info["creationTimestamp"] = _creationTimestamp;
+	double queryTimestamp = 0;
+	GETCLOCKS(queryTimestamp);
+	queryTimestamp /= (double) CLOCKS_PER_SECOND;
+	queryTimestamp *= 1000.00;
+	info["queryTimestamp"] = queryTimestamp;
 }
 
 string BaseProtocol::ToString(uint32_t currentId) {

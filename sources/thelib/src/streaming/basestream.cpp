@@ -72,6 +72,13 @@ void BaseStream::GetStats(Variant &info) {
 	info["uniqueId"] = _uniqueId;
 	info["type"] = tagToString(_type);
 	info["name"] = _name;
+	info["creationTimestamp"] = _creationTimestamp;
+	double queryTimestamp = 0;
+	GETCLOCKS(queryTimestamp);
+	queryTimestamp /= (double) CLOCKS_PER_SECOND;
+	queryTimestamp *= 1000.00;
+	info["queryTimestamp"] = queryTimestamp;
+	info["upTime"] = queryTimestamp - _creationTimestamp;
 }
 
 BaseProtocol * BaseStream::GetProtocol() {
