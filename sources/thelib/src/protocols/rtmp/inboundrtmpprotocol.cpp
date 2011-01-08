@@ -167,12 +167,16 @@ bool InboundRTMPProtocol::ValidateClientScheme(IOBuffer &inputBuffer, uint8_t sc
 }
 
 bool InboundRTMPProtocol::PerformHandshake(IOBuffer &buffer, bool encrypted) {
-	if (encrypted || _pProtocolHandler->ValidateHandshake()) {
-		if (!ValidateClient(buffer)) {
+	if (!ValidateClient(buffer)) {
+		if (encrypted || _pProtocolHandler->ValidateHandshake()) {
 			FATAL("Unable to validate client");
 			return false;
+		} else {
+			WARN("Client not validated");
+			_validationScheme = 0;
 		}
 	}
+
 
 	//get the buffers
 	uint8_t *pInputBuffer = GETIBPOINTER(buffer);
