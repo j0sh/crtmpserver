@@ -37,6 +37,8 @@ private:
 	bool _enabled;
 	uint32_t _acceptedCount;
 	uint32_t _droppedCount;
+	string _ipAddress;
+	uint16_t _port;
 public:
 	TCPAcceptor(string ipAddress, uint16_t port, Variant parameters,
 			vector<uint64_t>/*&*/ protocolChain);

@@ -43,6 +43,8 @@ TCPAcceptor::TCPAcceptor(string ipAddress, uint16_t port, Variant parameters,
 	_enabled = false;
 	_acceptedCount = 0;
 	_droppedCount = 0;
+	_ipAddress = ipAddress;
+	_port = port;
 }
 
 TCPAcceptor::~TCPAcceptor() {
@@ -116,15 +118,15 @@ bool TCPAcceptor::OnConnectionAvailable(select_event &event) {
 		WARN("Acceptor is not enabled. Client dropped: %s:%d -> %s:%d",
 				inet_ntoa(((sockaddr_in *) & address)->sin_addr),
 				ENTOHS(((sockaddr_in *) & address)->sin_port),
-				inet_ntoa(((sockaddr_in *) & _address)->sin_addr),
-				ENTOHS(((sockaddr_in *) & _address)->sin_port));
+				STR(_ipAddress),
+				_port);
 		return true;
 	}
 	INFO("Client connected: %s:%d -> %s:%d",
 			inet_ntoa(((sockaddr_in *) & address)->sin_addr),
 			ENTOHS(((sockaddr_in *) & address)->sin_port),
-			inet_ntoa(((sockaddr_in *) & _address)->sin_addr),
-			ENTOHS(((sockaddr_in *) & _address)->sin_port));
+			STR(_ipAddress),
+			_port);
 
 	if (!SetFdOptions(_inboundFd)) {
 		FATAL("Unable to set socket options");
