@@ -165,7 +165,6 @@ bool BaseSSLProtocol::SignalInputData(IOBuffer &buffer) {
 	}
 
 	//6. If we have pending data inside the decrypted buffer, bubble it up on the protocol stack
-	//FINEST("_inputBuffer:\n%s", STR(_inputBuffer));
 	if (GETAVAILABLEBYTESCOUNT(_inputBuffer) > 0) {
 		if (_pNearProtocol != NULL) {
 			if (!_pNearProtocol->SignalInputData(_inputBuffer)) {

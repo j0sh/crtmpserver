@@ -839,60 +839,60 @@ void ConfigFile::FinishServiceInfo() {
 	_listeningSockets << "+---+---------------+-----+-------------------------+-------------------------+" << endl;
 }
 
-void ConfigFile::Normalize(Variant &configuration) {
+void ConfigFile::Normalize(Variant &appConfigurationNode) {
 	//FINEST("Before:\n%s", STR(configuration.ToString()));
 
-	configuration[CONF_APPLICATION_DIRECTORY] =
+	appConfigurationNode[CONF_APPLICATION_DIRECTORY] =
 			format("%s%s%c", STR(_rootApplicationsDirectory),
-			STR(configuration[CONF_APPLICATION_NAME]), PATH_SEPARATOR);
+			STR(appConfigurationNode[CONF_APPLICATION_NAME]), PATH_SEPARATOR);
 
-	string name = configuration[CONF_APPLICATION_NAME];
+	string name = appConfigurationNode[CONF_APPLICATION_NAME];
 
 
 	//1. Normalize the library path
-	if ((VariantType) configuration[CONF_APPLICATION_LIBRARY] == V_NULL) {
+	if ((VariantType) appConfigurationNode[CONF_APPLICATION_LIBRARY] == V_NULL) {
 
 		string libraryName = format(LIBRARY_NAME_PATTERN, STR(name));
-		configuration[CONF_APPLICATION_LIBRARY] = format("%s%s",
-				STR(configuration[CONF_APPLICATION_DIRECTORY]),
+		appConfigurationNode[CONF_APPLICATION_LIBRARY] = format("%s%s",
+				STR(appConfigurationNode[CONF_APPLICATION_DIRECTORY]),
 				STR(libraryName));
 	}
 
 	//2. Normalize the media folder
-	if ((VariantType) configuration[CONF_APPLICATION_MEDIAFOLDER] == V_NULL) {
-		configuration[CONF_APPLICATION_MEDIAFOLDER] = format("%s%s%c",
-				STR(configuration[CONF_APPLICATION_DIRECTORY]),
+	if ((VariantType) appConfigurationNode[CONF_APPLICATION_MEDIAFOLDER] == V_NULL) {
+		appConfigurationNode[CONF_APPLICATION_MEDIAFOLDER] = format("%s%s%c",
+				STR(appConfigurationNode[CONF_APPLICATION_DIRECTORY]),
 				CONF_APPLICATION_MEDIAFOLDER,
 				PATH_SEPARATOR);
 	} else {
-		string mediaFolder = configuration[CONF_APPLICATION_MEDIAFOLDER];
+		string mediaFolder = appConfigurationNode[CONF_APPLICATION_MEDIAFOLDER];
 		if (mediaFolder[mediaFolder.length() - 1] != PATH_SEPARATOR)
 			mediaFolder += PATH_SEPARATOR;
-		configuration[CONF_APPLICATION_MEDIAFOLDER] = mediaFolder;
+		appConfigurationNode[CONF_APPLICATION_MEDIAFOLDER] = mediaFolder;
 	}
 
 
 	//3. Normalize the users db file
-	if (configuration.HasKey(CONF_APPLICATION_AUTH)) {
+	if (appConfigurationNode.HasKey(CONF_APPLICATION_AUTH)) {
 		//FINEST("Before:\n%s", STR(configuration.ToString()));
-		if (!configuration[CONF_APPLICATION_AUTH].HasKey(
+		if (!appConfigurationNode[CONF_APPLICATION_AUTH].HasKey(
 				CONF_APPLICATION_AUTH_USERS_FILE)) {
-			configuration[CONF_APPLICATION_AUTH][CONF_APPLICATION_AUTH_USERS_FILE] =
+			appConfigurationNode[CONF_APPLICATION_AUTH][CONF_APPLICATION_AUTH_USERS_FILE] =
 					format("%s%s",
-					STR(configuration[CONF_APPLICATION_DIRECTORY]),
+					STR(appConfigurationNode[CONF_APPLICATION_DIRECTORY]),
 					"users.lua");
 		}
 
 		//4. Normalize the encoders list
-		if (configuration[CONF_APPLICATION_AUTH].HasKey(
+		if (appConfigurationNode[CONF_APPLICATION_AUTH].HasKey(
 				CONF_APPLICATION_AUTH_ENCODER_AGENTS)) {
 			Variant temp;
 
-			FOR_MAP(configuration[CONF_APPLICATION_AUTH][CONF_APPLICATION_AUTH_ENCODER_AGENTS],
+			FOR_MAP(appConfigurationNode[CONF_APPLICATION_AUTH][CONF_APPLICATION_AUTH_ENCODER_AGENTS],
 					string, Variant, i) {
 				temp[MAP_VAL(i)] = (bool)true;
 			}
-			configuration[CONF_APPLICATION_AUTH][CONF_APPLICATION_AUTH_ENCODER_AGENTS] = temp;
+			appConfigurationNode[CONF_APPLICATION_AUTH][CONF_APPLICATION_AUTH_ENCODER_AGENTS] = temp;
 
 			//FINEST("temp:\n%s", STR(temp.ToString()));
 		}
@@ -901,9 +901,9 @@ void ConfigFile::Normalize(Variant &configuration) {
 	}
 
 	//4. Normalize the crt/key location inside acceptors
-	if (configuration.HasKey(CONF_ACCEPTORS)) {
+	if (appConfigurationNode.HasKey(CONF_ACCEPTORS)) {
 
-		FOR_MAP(configuration[CONF_ACCEPTORS], string, Variant, i) {
+		FOR_MAP(appConfigurationNode[CONF_ACCEPTORS], string, Variant, i) {
 			if (MAP_VAL(i)[CONF_SSL_KEY] != V_STRING) {
 				MAP_VAL(i).RemoveKey(CONF_SSL_CERT);
 				MAP_VAL(i).RemoveKey(CONF_SSL_KEY);
@@ -918,16 +918,20 @@ void ConfigFile::Normalize(Variant &configuration) {
 			string key = MAP_VAL(i)[CONF_SSL_KEY];
 			string cert = MAP_VAL(i)[CONF_SSL_CERT];
 
-			if (key[0] != CONF_PATH_SEPARATOR[0]) {
-				key = format("%s%s",
-						STR(configuration[CONF_APPLICATION_DIRECTORY]),
-						STR(key));
+			if (key != "") {
+				if (key[0] != PATH_SEPARATOR) {
+					key = format("%s%s",
+							STR(appConfigurationNode[CONF_APPLICATION_DIRECTORY]),
+							STR(key));
+				}
 			}
 
-			if (cert[0] != CONF_PATH_SEPARATOR[0]) {
-				cert = format("%s%s",
-						STR(configuration[CONF_APPLICATION_DIRECTORY]),
-						STR(cert));
+			if (cert != "") {
+				if (cert[0] != PATH_SEPARATOR) {
+					cert = format("%s%s",
+							STR(appConfigurationNode[CONF_APPLICATION_DIRECTORY]),
+							STR(cert));
+				}
 			}
 
 			MAP_VAL(i)[CONF_SSL_KEY] = key;

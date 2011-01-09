@@ -85,50 +85,36 @@ bool InboundSSLProtocol::InitGlobalContext(Variant &parameters) {
 
 		//7. Store the global context for later usage
 		_pGlobalContexts[hash] = _pGlobalSSLContext;
-	}
-
-	int32_t errorCode = SSL_ERROR_NONE;
-	if (!SSL_is_init_finished(_pSSL)) {
-		errorCode = SSL_accept(_pSSL);
-		if (errorCode < 0) {
-			int32_t error = SSL_get_error(_pSSL, errorCode);
-			if (error != SSL_ERROR_WANT_READ &&
-					error != SSL_ERROR_WANT_WRITE) {
-				FATAL("Unable to accept SSL connection: %d; %s",
-						error, STR(GetSSLErrors()));
-				return false;
-			}
-		}
+		INFO("SSL server context initialized");
 	}
 
 	return true;
 }
 
 bool InboundSSLProtocol::DoHandshake() {
-	//	//5. enter in either connecting or accepting state
-	//	if (GetType() == PT_INBOUND_SSL) {
-	//		SSL_set_accept_state(_pSSL);
-	//	} else {
-	//		SSL_set_connect_state(_pSSL);
-	//		int32_t errorCode = SSL_ERROR_NONE;
-	//		if (!SSL_is_init_finished(_pSSL)) {
-	//			errorCode = SSL_connect(_pSSL);
-	//			if (errorCode < 0) {
-	//				int32_t error = SSL_get_error(_pSSL, errorCode);
-	//				if (error != SSL_ERROR_WANT_READ &&
-	//						error != SSL_ERROR_WANT_WRITE) {
-	//					FATAL("Unable to accept SSL connection: %d; %s",
-	//							error, STR(GetSSLErrors()));
-	//					return false;
-	//				}
-	//			}
-	//			if (!PerformIO()) {
-	//				FATAL("Unable to perform I/O");
-	//			}
-	//		}
-	//	}
-	//	//6. Done
-	//	return true;
-	NYIR;
+	if (_sslHandshakeCompleted)
+		return true;
+
+	int32_t errorCode = SSL_ERROR_NONE;
+
+	errorCode = SSL_accept(_pSSL);
+	if (errorCode < 0) {
+		int32_t error = SSL_get_error(_pSSL, errorCode);
+		if (error != SSL_ERROR_WANT_READ &&
+				error != SSL_ERROR_WANT_WRITE) {
+			FATAL("Unable to accept SSL connection: %d; %s",
+					error, STR(GetSSLErrors()));
+			return false;
+		}
+	}
+
+	if (!PerformIO()) {
+		FATAL("Unable to perform I/O");
+		return false;
+	}
+
+	_sslHandshakeCompleted = SSL_is_init_finished(_pSSL);
+
+	return true;
 }
 
