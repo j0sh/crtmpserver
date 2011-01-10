@@ -2,15 +2,19 @@
 <mx:UIComponent xmlns:mx="http://www.adobe.com/2006/mxml">
 	<mx:Script>
 		<![CDATA[
-			import mx.utils.StringUtil;
-			import mx.utils.ObjectUtil;
 			import mx.controls.Alert;
+			import mx.controls.Label;
+			import mx.utils.ObjectUtil;
+			import mx.utils.StringUtil;
 			private var _video:Video;
 			private var _stream:NetStream;
 			private var _lastOnMetaData:Object;
 			private var _streamName:String;
+			private var _lastOnCuePoint:Date;
+			private var _CP:Label;
 			
-			public function Init():void {
+			public function Init(lbl:Label):void {
+				_CP=lbl;
 				_video=new Video(width,height);
 				try {
 					addChild(_video);
@@ -31,6 +35,11 @@
 				return 0;
 			}
 			
+			public function get LastOnCuePoint():Date{
+				return _lastOnCuePoint;
+			}
+			
+			
 			public function get StreamName():String{
 				return _streamName;
 			}
@@ -48,6 +57,13 @@
 					_video.width=event["width"];
 					_video.height=event["height"];
 				}
+			}
+			
+			public function onCuePoint(event:Object):void{
+				if(event["name"]!=null)
+					_CP.text="CP: "+ event["name"];
+				else
+					_CP.text="CP: "+ new Date();
 			}
 			
 			public function myMsg(o:Object):void{

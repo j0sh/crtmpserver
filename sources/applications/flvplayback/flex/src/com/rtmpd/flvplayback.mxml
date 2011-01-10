@@ -35,11 +35,11 @@
 			}
 			
 			private function ConnectToServer():void{
-				video.Init();
+				video.Init(cplabel);
 				_connection=new NetConnection();
 				_connection.proxyType="best";
-				Alert.show(_connection.proxyType);
-				Alert.show(flash.system.Capabilities.serverString);
+//				Alert.show(_connection.proxyType);
+//				Alert.show(flash.system.Capabilities.serverString);
 				//_connection.objectEncoding = flash.net.ObjectEncoding.AMF0;
 				_connection.addEventListener(NetStatusEvent.NET_STATUS,ConnectionStatus);
 				_connection.connect(connectingString.text);
@@ -96,7 +96,7 @@
 				result+="; Time head: "+video.TimeHead;
 				return result;
 			}
-			
+						
 			private function FireVideoDisplayTitleChanged():void{
 				dispatchEvent(new Event("VideoDisplayTitleChanged"));
 			}
@@ -154,6 +154,7 @@
 			<mx:Button id="seek" click="SeekTo()" label="seekTo 00:30"/>
 			<mx:Button id="pause" click="Pause()" label="Pause"/>
 			<mx:Button id="resume" click="Resume()" label="Resume"/>
+			<mx:Label id="cplabel" />
 			<mx:Panel width="100%" height="100%" title="Available FLVs">
 				<mx:DataGrid id="dgFlvs" width="100%" height="100%" headerHeight="0" dataProvider="{AvailableFlvs}" alternatingItemColors="[#030303, #404040]">
 					<mx:columns>
