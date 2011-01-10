@@ -188,10 +188,10 @@ bool InboundRTMPProtocol::PerformHandshake(IOBuffer &buffer, bool encrypted) {
 	}
 
 	//timestamp
-	*(uint32_t *) _pOutputBuffer = 0;
+	EHTONLP(_pOutputBuffer, (uint32_t) time(NULL));
 
 	//version
-	*(uint32_t *) (_pOutputBuffer + 4) = EHTONL(0x01020304);
+	EHTONLP(_pOutputBuffer + 4, (uint32_t) 0x00000000);
 
 	//generate random data
 	for (uint32_t i = 8; i < 3072; i++) {

@@ -193,13 +193,14 @@ bool OutboundRTMPProtocol::PerformHandshakeStage1(bool encrypted) {
 	}
 
 	//FINEST("PHS1: 4. Put the uptime. In our case, 0.");
-	*((uint32_t *) _pOutputBuffer) = 0;
+	EHTONLP(_pOutputBuffer, (uint32_t) time(NULL));
 
 	//FINEST("PHS1: 5. Put the flash version. We impersonate with 9.0.124.2");
-	_pOutputBuffer[4] = 9;
-	_pOutputBuffer[5] = 0;
-	_pOutputBuffer[6] = 124;
-	_pOutputBuffer[7] = 2;
+	EHTONLP(_pOutputBuffer + 4, 0);
+	//	_pOutputBuffer[4] = 9;
+	//	_pOutputBuffer[5] = 0;
+	//	_pOutputBuffer[6] = 124;
+	//	_pOutputBuffer[7] = 2;
 
 	uint32_t clientDHOffset = GetDHOffset(_pOutputBuffer, 0);
 	//FINEST("PHS1: 6. Get the DH public key position: %d", clientDHOffset);
