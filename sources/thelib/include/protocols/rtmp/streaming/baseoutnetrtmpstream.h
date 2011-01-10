@@ -83,6 +83,7 @@ public:
 	virtual ~BaseOutNetRTMPStream();
 
 	uint32_t GetRTMPStreamId();
+	uint32_t GetCommandsChannelId();
 	void SetChunkSize(uint32_t chunkSize);
 	uint32_t GetChunkSize();
 	void SetFeederChunkSize(uint32_t feederChunkSize);

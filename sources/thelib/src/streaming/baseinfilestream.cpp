@@ -402,6 +402,10 @@ bool BaseInFileStream::Feed() {
 	//5. Skip on metadata
 	if (_currentFrame.type == MEDIAFRAME_TYPE_DATA) {
 		_currentFrameIndex++;
+		if (!FeedMetaData(_pFile, _currentFrame)) {
+			FATAL("Unable to feed metadata");
+			return false;
+		}
 		return Feed();
 	}
 

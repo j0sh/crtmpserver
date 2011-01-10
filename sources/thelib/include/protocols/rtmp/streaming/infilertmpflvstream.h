@@ -23,9 +23,16 @@
 #define	_INFILERTMPFLVSTREAM_H
 
 #include "protocols/rtmp/streaming/infilertmpstream.h"
+#include "protocols/rtmp/amf0serializer.h"
 
 class DLLEXP InFileRTMPFLVStream
 : public InFileRTMPStream {
+private:
+	IOBuffer _metadataBuffer;
+	AMF0Serializer _amfSerializer;
+	string _metadataName;
+	Variant _metadataParameters;
+	Variant _tempVariant;
 public:
     InFileRTMPFLVStream(BaseProtocol *pProtocol,
             StreamsManager *pStreamsManager, string name);
@@ -33,6 +40,7 @@ public:
 protected:
     virtual bool BuildFrame(FileClass *pFile, MediaFrame &mediaFrame,
             IOBuffer &buffer);
+	virtual bool FeedMetaData(FileClass *pFile, MediaFrame &mediaFrame);
 };
 
 

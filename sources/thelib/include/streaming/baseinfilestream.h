@@ -132,6 +132,7 @@ public:
 protected:
 	virtual bool BuildFrame(FileClass *pFile, MediaFrame &mediaFrame,
 			IOBuffer &buffer) = 0;
+	virtual bool FeedMetaData(FileClass *pFile, MediaFrame &mediaFrame) = 0;
 private:
 	/*
 	 * This will seek to the specified point in time.

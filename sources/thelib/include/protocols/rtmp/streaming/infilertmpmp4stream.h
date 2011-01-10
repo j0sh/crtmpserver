@@ -39,6 +39,7 @@ public:
 protected:
     virtual bool BuildFrame(FileClass *pFile, MediaFrame &mediaFrame,
             IOBuffer &buffer);
+	virtual bool FeedMetaData(FileClass *pFile, MediaFrame &mediaFrame);
 };
 
 

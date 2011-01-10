@@ -108,6 +108,13 @@ uint32_t BaseOutNetRTMPStream::GetRTMPStreamId() {
 	return _rtmpStreamId;
 }
 
+uint32_t BaseOutNetRTMPStream::GetCommandsChannelId() {
+	//	if (_pChannelAudio == NULL)
+	//		return 3;
+	//	return _pChannelAudio->id;
+	return 3;
+}
+
 void BaseOutNetRTMPStream::SetChunkSize(uint32_t chunkSize) {
 	_chunkSize = chunkSize;
 }
