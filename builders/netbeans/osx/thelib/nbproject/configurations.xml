@@ -181,6 +181,7 @@
           <itemPath>../../../../sources/thelib/include/protocols/rtmp/header_le_sa.h</itemPath>
           <itemPath>../../../../sources/thelib/include/protocols/rtmp/inboundhttp4rtmp.h</itemPath>
           <itemPath>../../../../sources/thelib/include/protocols/rtmp/inboundrtmpprotocol.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/protocols/rtmp/inboundrtmpsdiscriminatorprotocol.h</itemPath>
           <itemPath>../../../../sources/thelib/include/protocols/rtmp/outboundrtmpprotocol.h</itemPath>
           <itemPath>../../../../sources/thelib/include/protocols/rtmp/rtmpeprotocol.h</itemPath>
           <itemPath>../../../../sources/thelib/include/protocols/rtmp/rtmpprotocolserializer.h</itemPath>
@@ -423,6 +424,7 @@
           <itemPath>../../../../sources/thelib/src/protocols/rtmp/header_le_sa.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/protocols/rtmp/inboundhttp4rtmp.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/protocols/rtmp/inboundrtmpprotocol.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/protocols/rtmp/inboundrtmpsdiscriminatorprotocol.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/protocols/rtmp/outboundrtmpprotocol.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/protocols/rtmp/rtmpeprotocol.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/protocols/rtmp/rtmpprotocolserializer.cpp</itemPath>

@@ -67,6 +67,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/1124564181/rtcpprotocol.o \
 	${OBJECTDIR}/_ext/1210522057/atomstbl.o \
 	${OBJECTDIR}/_ext/772217591/iohandlermanager.o \
+	${OBJECTDIR}/_ext/501751224/inboundrtmpsdiscriminatorprotocol.o \
 	${OBJECTDIR}/_ext/1919749812/udpprotocol.o \
 	${OBJECTDIR}/_ext/1896237080/somessagefactory.o \
 	${OBJECTDIR}/_ext/1210522057/atomco64.o \
@@ -112,8 +113,8 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/517913122/innettsstream.o \
 	${OBJECTDIR}/_ext/1210522057/baseatom.o \
 	${OBJECTDIR}/_ext/1210521968/boxelement.o \
-	${OBJECTDIR}/_ext/1210521968/mkvdocument.o \
 	${OBJECTDIR}/_ext/1210522057/atomdref.o \
+	${OBJECTDIR}/_ext/1210521968/mkvdocument.o \
 	${OBJECTDIR}/_ext/772217591/iohandler.o \
 	${OBJECTDIR}/_ext/1210522057/mp4document.o \
 	${OBJECTDIR}/_ext/1636055853/baseoutfilestream.o \
@@ -398,6 +399,11 @@ ${OBJECTDIR}/_ext/772217591/iohandlermanager.o: ../../../../sources/thelib/src/n
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_VAR -DHAS_PROTOCOL_LIVEFLV -DHAS_MEDIA_MP4 -DHAS_MEDIA_MP3 -DHAS_MEDIA_FLV -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/772217591/iohandlermanager.o ../../../../sources/thelib/src/netio/select/iohandlermanager.cpp
 
+${OBJECTDIR}/_ext/501751224/inboundrtmpsdiscriminatorprotocol.o: ../../../../sources/thelib/src/protocols/rtmp/inboundrtmpsdiscriminatorprotocol.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/501751224
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_VAR -DHAS_PROTOCOL_LIVEFLV -DHAS_MEDIA_MP4 -DHAS_MEDIA_MP3 -DHAS_MEDIA_FLV -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/501751224/inboundrtmpsdiscriminatorprotocol.o ../../../../sources/thelib/src/protocols/rtmp/inboundrtmpsdiscriminatorprotocol.cpp
+
 ${OBJECTDIR}/_ext/1919749812/udpprotocol.o: ../../../../sources/thelib/src/protocols/udpprotocol.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1919749812
 	${RM} $@.d
@@ -623,15 +629,15 @@ ${OBJECTDIR}/_ext/1210521968/boxelement.o: ../../../../sources/thelib/src/mediaf
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_VAR -DHAS_PROTOCOL_LIVEFLV -DHAS_MEDIA_MP4 -DHAS_MEDIA_MP3 -DHAS_MEDIA_FLV -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1210521968/boxelement.o ../../../../sources/thelib/src/mediaformats/mkv/boxelement.cpp
 
-${OBJECTDIR}/_ext/1210521968/mkvdocument.o: ../../../../sources/thelib/src/mediaformats/mkv/mkvdocument.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/1210521968
-	${RM} $@.d
-	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_VAR -DHAS_PROTOCOL_LIVEFLV -DHAS_MEDIA_MP4 -DHAS_MEDIA_MP3 -DHAS_MEDIA_FLV -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1210521968/mkvdocument.o ../../../../sources/thelib/src/mediaformats/mkv/mkvdocument.cpp
-
 ${OBJECTDIR}/_ext/1210522057/atomdref.o: ../../../../sources/thelib/src/mediaformats/mp4/atomdref.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1210522057
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_VAR -DHAS_PROTOCOL_LIVEFLV -DHAS_MEDIA_MP4 -DHAS_MEDIA_MP3 -DHAS_MEDIA_FLV -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1210522057/atomdref.o ../../../../sources/thelib/src/mediaformats/mp4/atomdref.cpp
+
+${OBJECTDIR}/_ext/1210521968/mkvdocument.o: ../../../../sources/thelib/src/mediaformats/mkv/mkvdocument.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1210521968
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_VAR -DHAS_PROTOCOL_LIVEFLV -DHAS_MEDIA_MP4 -DHAS_MEDIA_MP3 -DHAS_MEDIA_FLV -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1210521968/mkvdocument.o ../../../../sources/thelib/src/mediaformats/mkv/mkvdocument.cpp
 
 ${OBJECTDIR}/_ext/772217591/iohandler.o: ../../../../sources/thelib/src/netio/select/iohandler.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/772217591
