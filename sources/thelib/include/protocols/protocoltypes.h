@@ -33,6 +33,7 @@
 
 //RTMP protocols
 #define PT_INBOUND_RTMP			MAKE_TAG2('I','R')
+#define PT_INBOUND_RTMPS_DISC	MAKE_TAG3('I','R','S')
 #define PT_OUTBOUND_RTMP		MAKE_TAG2('O','R')
 #define PT_MONITOR_RTMP			MAKE_TAG2('M','R')
 

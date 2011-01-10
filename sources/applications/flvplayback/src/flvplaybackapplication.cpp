@@ -80,6 +80,7 @@ bool FLVPlaybackApplication::Initialize() {
 #ifdef HAS_PROTOCOL_RTMP
 	_pRTMPHandler = new RTMPAppProtocolHandler(_configuration);
 	RegisterAppProtocolHandler(PT_INBOUND_RTMP, _pRTMPHandler);
+	RegisterAppProtocolHandler(PT_INBOUND_RTMPS_DISC, _pRTMPHandler);
 	RegisterAppProtocolHandler(PT_OUTBOUND_RTMP, _pRTMPHandler);
 #endif /* HAS_PROTOCOL_RTMP */
 #ifdef HAS_PROTOCOL_LIVEFLV

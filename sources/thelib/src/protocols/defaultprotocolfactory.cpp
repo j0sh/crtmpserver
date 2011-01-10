@@ -38,6 +38,7 @@
 #include "protocols/rtp/inboundrtpprotocol.h"
 #include "protocols/rtp/rtcpprotocol.h"
 #include "protocols/cli/inboundjsoncliprotocol.h"
+#include "protocols/rtmp/inboundrtmpsdiscriminatorprotocol.h"
 
 DefaultProtocolFactory::DefaultProtocolFactory()
 : BaseProtocolFactory() {
@@ -62,6 +63,7 @@ vector<uint64_t> DefaultProtocolFactory::HandledProtocols() {
 #endif /* HAS_PROTOCOL_TS */
 #ifdef HAS_PROTOCOL_RTMP
 	ADD_VECTOR_END(result, PT_INBOUND_RTMP);
+	ADD_VECTOR_END(result, PT_INBOUND_RTMPS_DISC);
 	ADD_VECTOR_END(result, PT_OUTBOUND_RTMP);
 	ADD_VECTOR_END(result, PT_MONITOR_RTMP);
 	ADD_VECTOR_END(result, PT_RTMPE);
@@ -162,14 +164,13 @@ vector<uint64_t> DefaultProtocolFactory::ResolveProtocolChain(string name) {
 	} else if (name == CONF_PROTOCOL_OUTBOUND_RTMP) {
 		ADD_VECTOR_END(result, PT_TCP);
 		ADD_VECTOR_END(result, PT_OUTBOUND_RTMP);
-	}
-#ifdef HAS_PROTOCOL_HTTP
-	else if (name == CONF_PROTOCOL_INBOUND_RTMPS) {
+	} else if (name == CONF_PROTOCOL_INBOUND_RTMPS) {
 		ADD_VECTOR_END(result, PT_TCP);
 		ADD_VECTOR_END(result, PT_INBOUND_SSL);
-		ADD_VECTOR_END(result, PT_INBOUND_HTTP);
-		ADD_VECTOR_END(result, PT_INBOUND_HTTP_FOR_RTMP);
-	} else if (name == CONF_PROTOCOL_INBOUND_RTMPT) {
+		ADD_VECTOR_END(result, PT_INBOUND_RTMPS_DISC);
+	}
+#ifdef HAS_PROTOCOL_HTTP
+	else if (name == CONF_PROTOCOL_INBOUND_RTMPT) {
 		ADD_VECTOR_END(result, PT_TCP);
 		ADD_VECTOR_END(result, PT_INBOUND_HTTP);
 		ADD_VECTOR_END(result, PT_INBOUND_HTTP_FOR_RTMP);
@@ -294,6 +295,9 @@ BaseProtocol *DefaultProtocolFactory::SpawnProtocol(uint64_t type, Variant &para
 #ifdef HAS_PROTOCOL_RTMP
 		case PT_INBOUND_RTMP:
 			pResult = new InboundRTMPProtocol();
+			break;
+		case PT_INBOUND_RTMPS_DISC:
+			pResult = new InboundRTMPSDiscriminatorProtocol();
 			break;
 		case PT_OUTBOUND_RTMP:
 			pResult = new OutboundRTMPProtocol();

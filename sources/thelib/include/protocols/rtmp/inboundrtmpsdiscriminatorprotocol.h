@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -17,32 +17,30 @@
  *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 #ifdef HAS_PROTOCOL_RTMP
-#ifndef _INBOUNDRTMPPROTOCOL_H
-#define	_INBOUNDRTMPPROTOCOL_H
+#ifndef _INBOUNDRTMPSDISCRIMINATORPROTOCOL_H
+#define	_INBOUNDRTMPSDISCRIMINATORPROTOCOL_H
 
-#include "protocols/rtmp/basertmpprotocol.h"
+#include "protocols/baseprotocol.h"
 
-class DLLEXP InboundRTMPProtocol
-: public BaseRTMPProtocol {
-private:
-	RC4_KEY*_pKeyIn;
-	RC4_KEY*_pKeyOut;
-	uint8_t *_pOutputBuffer;
-	uint32_t _currentFPVersion;
-	uint8_t _validationScheme;
+class InboundRTMPSDiscriminatorProtocol
+: public BaseProtocol {
 public:
-	InboundRTMPProtocol();
-	virtual ~InboundRTMPProtocol();
-protected:
-	virtual bool PerformHandshake(IOBuffer &buffer);
+	InboundRTMPSDiscriminatorProtocol();
+	virtual ~InboundRTMPSDiscriminatorProtocol();
+
+	virtual bool Initialize(Variant &parameters);
+	virtual bool AllowFarProtocol(uint64_t type);
+	virtual bool AllowNearProtocol(uint64_t type);
+	virtual bool SignalInputData(int32_t recvAmount);
+	virtual bool SignalInputData(IOBuffer &buffer);
 private:
-	bool ValidateClient(IOBuffer &inputBuffer);
-	bool ValidateClientScheme(IOBuffer &inputBuffer, uint8_t scheme);
-	bool PerformHandshake(IOBuffer &inputBuffer, bool encrypted);
+#ifdef HAS_PROTOCOL_HTTP
+	bool BindHTTP(IOBuffer &buffer);
+#endif /* HAS_PROTOCOL_HTTP */
+	bool BindSSL(IOBuffer &buffer);
 };
 
-#endif	/* _INBOUNDRTMPPROTOCOL_H */
-#endif /* HAS_PROTOCOL_RTMP */
 
+#endif	/* _INBOUNDRTMPSDISCRIMINATORPROTOCOL_H */
+#endif /* HAS_PROTOCOL_RTMP */

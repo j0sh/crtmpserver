@@ -37,6 +37,9 @@
 			private function ConnectToServer():void{
 				video.Init();
 				_connection=new NetConnection();
+				_connection.proxyType="best";
+				Alert.show(_connection.proxyType);
+				Alert.show(flash.system.Capabilities.serverString);
 				//_connection.objectEncoding = flash.net.ObjectEncoding.AMF0;
 				_connection.addEventListener(NetStatusEvent.NET_STATUS,ConnectionStatus);
 				_connection.connect(connectingString.text);
