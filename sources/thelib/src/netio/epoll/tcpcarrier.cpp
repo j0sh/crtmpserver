@@ -32,9 +32,11 @@ if (!_writeDataEnabled) { \
 
 #define DISABLE_WRITE_DATA \
 if (_writeDataEnabled) { \
-    _writeDataEnabled = false; \
-    IOHandlerManager::DisableWriteData(this); \
-    _pProtocol->ReadyForSend(); \
+	_pProtocol->ReadyForSend(); \
+	if(_pProtocol->GetOutputBuffer()==NULL) {\
+		_writeDataEnabled = false; \
+		IOHandlerManager::DisableWriteData(this); \
+	} \
 }
 
 TCPCarrier::TCPCarrier(int32_t fd)
@@ -97,7 +99,7 @@ bool TCPCarrier::OnEvent(struct epoll_event &event) {
 	if ((event.events & EPOLLOUT) != 0) {
 		IOBuffer *pOutputBuffer = NULL;
 
-		while ((pOutputBuffer = _pProtocol->GetOutputBuffer()) != NULL) {
+		if ((pOutputBuffer = _pProtocol->GetOutputBuffer()) != NULL) {
 			if (!pOutputBuffer->WriteToTCPFd(_inboundFd, _sendBufferSize, writeAmount)) {
 				FATAL("Unable to send data. %s:%d -> %s:%d",
 						STR(_farIp), _farPort,
@@ -106,13 +108,10 @@ bool TCPCarrier::OnEvent(struct epoll_event &event) {
 				return false;
 			}
 			_tx += writeAmount;
-			if (GETAVAILABLEBYTESCOUNT(*pOutputBuffer) > 0) {
-				ENABLE_WRITE_DATA;
-				break;
+			if (GETAVAILABLEBYTESCOUNT(*pOutputBuffer) == 0) {
+				DISABLE_WRITE_DATA;
 			}
-		}
-
-		if (pOutputBuffer == NULL) {
+		} else {
 			DISABLE_WRITE_DATA;
 		}
 	}
