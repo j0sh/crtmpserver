@@ -23,6 +23,9 @@
 
 #include "common.h"
 
+/*!
+	IO Handler types.
+*/
 typedef enum _IOHandlerType {
 	IOHT_ACCEPTOR,
 	IOHT_TCP_CONNECTOR,
@@ -47,14 +50,40 @@ private:
 public:
 	IOHandler(int32_t inboundFd, int32_t outboundFd, IOHandlerType type);
 	virtual ~IOHandler();
+
+	/*!
+		@brief Returns the id of the IO handler.
+	*/
 	uint32_t GetId();
+
+	/*!
+		@brief Returns the id of the inbound file descriptor
+	*/
 	int32_t GetInboundFd();
+
+	/*!
+		@brief Returns the id of the outbound file descriptor
+	*/
 	int32_t GetOutboundFd();
+
 	IOHandlerType GetType();
+
+	/*!
+		@brief Sets the protocol for the IO handler
+	*/
 	void SetProtocol(BaseProtocol *pPotocol);
+
+	/*!
+		@brief Gets the protocol of the IO handler
+	*/
 	BaseProtocol *GetProtocol();
 	virtual bool SignalOutputData() = 0;
 	virtual bool OnEvent(select_event &event) = 0;
+
+	/*!
+		@brief Returns the string value of the IO handler type
+		@param type: Type of IO handler. E.g. acceptor, tct carrier, udp carrier, etc.
+	*/
 	static string IOHTToString(IOHandlerType type);
 	virtual operator string() = 0;
 	virtual void GetStats(Variant &info) = 0;

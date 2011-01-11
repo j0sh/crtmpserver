@@ -36,85 +36,83 @@ public:
 			uint64_t type, string name);
 	virtual ~BaseOutStream();
 
-	/*
-	 * Returns the stream capabilities. Specifically, codec and codec related info
-	 * */
+	/*!
+		@brief Returns the stream capabilities. Specifically, codec and codec related info
+	*/
 	virtual StreamCapabilities * GetCapabilities();
 
-	/*
-	 * The networking layer signaled the availability for sending data
-	 * */
+	/*!
+		@brief The networking layer signaled the availability for sending data
+	*/
 	virtual void ReadyForSend();
 
-	/*
-	 * pInStream - the in-stream where we want to attach
-	 * reverseLink - if true, pInStream::Link will be called internally
-	 *               this is used to break the infinite calls.
-	 * */
+	/*!
+		@brief Links an in-stream to this stream
+		@param pInStream - the in-stream where we want to attach
+		@param reverseLink - if true, pInStream::Link will be called internally this is used to break the infinite calls.
+	*/
 	virtual bool Link(BaseInStream *pInStream, bool reverseLink = true);
 
-	/*
-	 * reverseUnLink - if true, pInStream::UnLink will be called internally
-	 *               this is used to break the infinite calls
-	 * */
+	/*!
+		@brief Unlinks an in-stream to this stream
+		@param reverseUnLink - if true, pInStream::UnLink will be called internally this is used to break the infinite calls
+	*/
 	virtual bool UnLink(bool reverseUnLink = true);
 
-	/*
-	 * Returns true if this stream is linked to an inbound stream. Otherwise
-	 * returns false
-	 * */
+	/*!
+		@brief Returns true if this stream is linked to an inbound stream. Otherwise, returns false
+	*/
 	bool IsLinked();
 
-	/*
-	 * Returns the feder of this stream
-	 * */
+	/*!
+		@brief Returns the feeder of this stream
+	*/
 	BaseInStream *GetInStream();
 
-	/*
-	 * This will return information about the stream
-	 * */
+	/*!
+		@brief  This will return information about the stream
+	*/
 	virtual void GetStats(Variant &info);
 
-	/*
-	 * This will start the feeding process
-	 * absoluteTimestamp - the timestamp where we want to seek
-	 *                     before start the feeding process
-	 * */
+	/*!
+		@brief This will start the feeding process
+		@param absoluteTimestamp - the timestamp where we want to seek before start the feeding process
+	*/
 	virtual bool Play(double absoluteTimestamp, double length);
 
-	/*
-	 * This will pause the feeding process
-	 * */
+	/*!
+		@brief This will pause the feeding process
+	*/
 	virtual bool Pause();
 
-	/*
-	 * This will resume the feeding process
-	 * */
+	/*!
+		@brief This will resume the feeding process
+	*/
 	virtual bool Resume();
 
-	/*
-	 * This will seek to the specified point in time.
-	 * */
+	/*!
+		@brief This will seek to the specified point in time.
+	*/
 	virtual bool Seek(double absoluteTimestamp);
 
-	/*
-	 * This will stop the feeding process
-	 * */
+	/*!
+		@brief This will stop the feeding process
+	*/
 	virtual bool Stop();
 
-	/*
-	 * Called after the link is complete
-	 * */
+	/*!
+		@brief Called after the link is complete
+	*/
 	virtual void SignalAttachedToInStream() = 0;
 
-	/*
-	 * Called after the link is broken
-	 * */
+	/*!
+		@brief Called after the link is broken
+	*/
 	virtual void SignalDetachedFromInStream() = 0;
 
-	/*
-	 * Called when the feeder finished the work
-	 * */
+	/*!
+		@brief Called when the feeder finished the work
+	*/
 	virtual void SignalStreamCompleted() = 0;
 };
 

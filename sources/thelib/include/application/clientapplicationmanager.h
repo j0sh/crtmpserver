@@ -33,16 +33,32 @@ private:
     static map<string, BaseClientApplication *> _applicationsByName;
     static BaseClientApplication *_pDefaultApplication;
 public:
+	/*!
+		@brief Deletes applications registered to the base client application
+	*/
     static void Shutdown();
+
+	/*!
+		@brief Registers the application using its id, name, and/or alias
+	*/
     static bool RegisterApplication(BaseClientApplication *pClientApplication);
     static void UnRegisterApplication(BaseClientApplication *pClientApplication);
+	/*!
+		@brief Gets the default application based on what was indicated in the configuration file
+	*/
     static BaseClientApplication *GetDefaultApplication();
+
+	/*!
+		@brief Returns the application name in string form
+	*/
     static BaseClientApplication *FindAppByName(string appName);
-    static BaseClientApplication *FindAppById(uint32_t id);
+    
+	/*!
+		@brief Returns the application's id
+	*/
+	static BaseClientApplication *FindAppById(uint32_t id);
     static map<uint32_t, BaseClientApplication *> GetAllApplications();
 };
 
 
 #endif	/* _CLIENTAPPLICATIONMANAGER_H */
-
-

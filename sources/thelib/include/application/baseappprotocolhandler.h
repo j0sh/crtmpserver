@@ -36,9 +36,18 @@ public:
 	BaseAppProtocolHandler(Variant &configuration);
 	virtual ~BaseAppProtocolHandler();
 
+	/*!
+		@brief Sets the application.
+	*/
 	void SetApplication(BaseClientApplication *pApplication);
+	/*!
+		@brief Sets the pointer to the application.
+	*/
 	BaseClientApplication *GetApplication();
 
+	/*!
+		Gets the porotocl handler of the application.
+	*/
 	BaseAppProtocolHandler * GetProtocolHandler(uint64_t protocolType);
 
 	virtual bool PullExternalStream(URI uri, Variant streamConfig);

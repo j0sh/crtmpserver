@@ -41,8 +41,19 @@ public:
 	BaseMediaDocument(Variant &metadata);
 	virtual ~BaseMediaDocument();
 
+	/*!
+		@brief This functions do things like opening the media file, building frames, saving the meta, etc.
+	*/
 	bool Process();
+
+	/*!
+		@brief Returns the meta data
+	*/
 	Variant GetMetadata();
+
+	/*!
+		@brief Returns the media file
+	*/
 	MediaFile &GetMediaFile();
 protected:
 	static bool CompareFrames(const MediaFrame &frame1, const MediaFrame &frame2);

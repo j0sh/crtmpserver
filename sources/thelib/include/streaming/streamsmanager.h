@@ -39,9 +39,9 @@ public:
 	StreamsManager(BaseClientApplication *pApplication);
 	virtual ~StreamsManager();
 
-	/*
-	 * returns an unique id to be used inside newly created streams
-	 * */
+	/*!
+		@brief Returns an unique id to be used inside newly created streams
+	*/
 	uint32_t GenerateUniqueId();
 
 	/*
@@ -51,85 +51,81 @@ public:
 	void UnRegisterStream(BaseStream *pStream);
 	void UnRegisterStreams(uint32_t protocolId);
 
-	/*
-	 * Returns the entire collection of streams
-	 * */
+	/*!
+		@brief Returns the entire collection of streams
+	*/
 	map<uint32_t, BaseStream *> GetAllStreams();
 
-	/*
-	 * Returns all the outbound streams waiting for a inbound stream called
-	 * streamName who has the type inboundStreamType
-	 * */
+	/*!
+		@brief Returns all the outbound streams waiting for a inbound stream called
+		@param streamName who has the type inboundStreamType
+	*/
 	map<uint32_t, BaseOutStream *> GetWaitingSubscribers(string streamName,
 			uint64_t inboundStreamType);
 
-	/*
-	 * Find streams by name
-	 * name - the complete/partial name to search for
-	 * partial - if true, it will match all streams that begins with name
-	 *           otherwise it will exactly search for that name
-	 * */
+	/*!
+		@brief Find streams by name
+		@param name - the complete/partial name to search for
+		@param partial - if true, it will match all streams that begins with name otherwise it will exactly search for that name
+	*/
 	map<uint32_t, BaseStream *> FindByName(string name, bool partial = false);
 
-	/*
-	 * Find streams by type
-	 * type - the complete/mask type to search for
-	 * partial - if true, type is considered a mask
-	 * */
+	/*!
+		@brief Find streams by type
+		@param type - the complete/mask type to search for
+		@param partial - if true, type is considered a mask
+	*/
 	map<uint32_t, BaseStream *> FindByType(uint64_t type, bool partial = false);
 
-	/*
-	 * Find streams by type and by name
-	 * type - the complete/mask type to search for
-	 * name - the complete/partial name to search for
-	 * partialType - if true, type is considered a mask
-	 * partialName - if true, it will match all streams that begins with name
-	 *               otherwise it will exactly search for that name
-	 * */
+	/*!
+		@brief Find streams by type and by name
+		@param type - the complete/mask type to search for
+		@param name - the complete/partial name to search for
+		@param partialType - if true, type is considered a mask
+		@param partialName - if true, it will match all streams that begins with name otherwise it will exactly search for that name
+	*/
 	map<uint32_t, BaseStream *> FindByTypeByName(uint64_t type, string name,
 			bool partialType = false, bool partialName = false);
 
-	/*
-	 * Find all the streams belonging to a protocol
-	 * protocolId - the protocol that owns the result streams
-	 * */
+	/*!
+		@brief Find all the streams belonging to a protocol
+		@param protocolId - the protocol that owns the result streams
+	*/
 	map<uint32_t, BaseStream *> FindByProtocolId(uint32_t protocolId);
 
-	/*
-	 * Find all the streams belonging to a protocol with a certain type
-	 * protocolId - the protocol that owns the result streams
-	 * type - the complete/mask type to search for
-	 * partial - if true, type is considered a mask
-	 * */
+	/*!
+		@brief Find all the streams belonging to a protocol with a certain type
+		@param protocolId - the protocol that owns the result streams
+		@param type - the complete/mask type to search for
+		@param partial - if true, type is considered a mask
+	*/
 	map<uint32_t, BaseStream *> FindByProtocolIdByType(uint32_t protocolId,
 			uint64_t type, bool partial = false);
 
-	/*
-	 * Find all the streams belonging to a protocol with a certain name
-	 * protocolId - the protocol that owns the result streams
-	 * name - the complete/partial name to search for
-	 * partial - if true, it will match all streams that begins with name
-	 *           otherwise it will exactly search for that name
-	 * */
+	/*!
+		@brief Find all the streams belonging to a protocol with a certain name
+		@param protocolId - the protocol that owns the result streams
+		@param name - the complete/partial name to search for
+		@param partial - if true, it will match all streams that begins with name otherwise it will exactly search for that name
+	*/
 	map<uint32_t, BaseStream *> FindByProtocolIdByName(uint32_t protocolId,
 			string name, bool partial = false);
 
-	/*
-	 * Find all the streams belonging to a protocol with a certain type and name
-	 * protocolId - the protocol that owns the result streams
-	 * type - the complete/mask type to search for
-	 * name - the complete/partial name to search for
-	 * partialType - if true, type is considered a mask
-	 * partialName - if true, it will match all streams that begins with name
-	 *               otherwise it will exactly search for that name
-	 * */
+	/*!
+		@brief Find all the streams belonging to a protocol with a certain type and name
+		@param protocolId - the protocol that owns the result streams
+		@param type - the complete/mask type to search for
+		@param name - the complete/partial name to search for
+		@param partialType - if true, type is considered a mask
+		@param partialName - if true, it will match all streams that begins with name otherwise it will exactly search for that name
+	*/
 	map<uint32_t, BaseStream *> FindByProtocolIdByTypeByName(uint32_t protocolId,
 			uint64_t type, string name, bool partialType = false,
 			bool partialName = false);
 
-	/*
-	 * Returns the stream with the uniqe id specified by uniqueId
-	 * */
+	/*!
+		@brief Returns the stream with the uniqe id specified by uniqueId
+	*/
 	BaseStream * FindByUniqueId(uint32_t uniqueId);
 };
 

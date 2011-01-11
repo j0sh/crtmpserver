@@ -78,55 +78,53 @@ public:
 			uint64_t type, string name);
 	virtual ~BaseInFileStream();
 
-	/*
-	 * Returns the stream capabilities. Specifically, codec and codec related info
-	 * */
+	/*!
+	  @brief Returns the stream capabilities. Specifically, codec and codec related info
+	*/
 	virtual StreamCapabilities * GetCapabilities();
 
-	/*
-	 * Extracts the complete metadata from partial metadata
-	 * metaData - the partial metadata containing at least the media file name
-	 * */
+	/*!
+		@brief Extracts the complete metadata from partial metadata
+		@param metaData - the partial metadata containing at least the media file name
+	*/
 	static bool ResolveCompleteMetadata(Variant &metaData);
 
-	/*
-	 * This will initialize the stream internally.
-	 * clientSideBufferLength - the client side buffer length expressed in seconds
-	 * */
+	/*!
+		@brief This will initialize the stream internally.
+		@param clientSideBufferLength - the client side buffer length expressed in seconds
+	*/
 	bool Initialize(int32_t clientSideBufferLength);
 
-	/*
-	 * Called when a play command was issued
-	 * absoluteTimestamp - the timestamp where we want to seek
-	 *                     before start the feeding process
-	 * */
+	/*!
+		@brief Called when a play command was issued
+		@param absoluteTimestamp - the timestamp where we want to seek before start the feeding process
+	*/
 	virtual bool SignalPlay(double &absoluteTimestamp, double &length);
 
-	/*
-	 * Called when a pasue command was issued
-	 * */
+	/*!
+		@brief Called when a pasue command was issued
+	*/
 	virtual bool SignalPause();
 
-	/*
-	 * Called when a resume command was issued
-	 * */
+	/*!
+		@brief Called when a resume command was issued
+	*/
 	virtual bool SignalResume();
 
-	/*
-	 * Called when a seek command was issued
-	 * absoluteTimestamp - the
-	 * */
+	/*!
+		@brief Called when a seek command was issued
+		@param absoluteTimestamp - the
+	*/
 	virtual bool SignalSeek(double &absoluteTimestamp);
 
-	/*
-	 * Called when a stop command was issued
-	 * */
+	/*!
+		@brief Called when a stop command was issued
+	*/
 	virtual bool SignalStop();
 
-	/*
-	 * This is called by the framework. The networking layer signaled the
-	 * availability for sending data
-	 * */
+	/*!
+		@brief This is called by the framework. The networking layer signaled the availability for sending data
+	*/
 	virtual void ReadyForSend();
 
 protected:
@@ -134,26 +132,24 @@ protected:
 			IOBuffer &buffer) = 0;
 	virtual bool FeedMetaData(FileClass *pFile, MediaFrame &mediaFrame) = 0;
 private:
-	/*
-	 * This will seek to the specified point in time.
-	 * absoluteTimestamp - the timestamp where we want to seek
-	 *                     before start the feeding process
-	 * */
+	/*!
+		@brief This will seek to the specified point in time.
+		@param absoluteTimestamp - the timestamp where we want to seek before start the feeding process
+	*/
 	bool InternalSeek(double &absoluteTimestamp);
 
-	/*
-	 * This is the function that will actually do the feeding.
-	 * It is called by the framework and it must deliver one frame at a time
-	 * to all subscribers
-	 * */
+	/*!
+		@brief This is the function that will actually do the feeding.
+		@discussion It is called by the framework and it must deliver one frame at a time to all subscribers
+	*/
 	virtual bool Feed();
 
-	/*
-	 * GetFile function will open a file and will cache it if is a regular file.
-	 * If the file is mmap based file, it will NOT cache it
-	 * ReleaseFile will do the opposite: It will close the file if the references
-	 * count will reach 0. This always happens in case of mmap file
-	 * */
+	/*!
+		@brief GetFile function will open a file and will cache it if is a regular file.
+		@discussion If the file is mmap based file, it will NOT cache it
+		ReleaseFile will do the opposite: It will close the file if the references
+		count will reach 0. This always happens in case of mmap file
+	*/
 #ifdef HAS_MMAP
 	static MmapFile* GetFile(string filePath, uint32_t windowSize);
 	static void ReleaseFile(MmapFile *pFile);
@@ -162,10 +158,9 @@ private:
 	static void ReleaseFile(File *pFile);
 #endif /* HAS_MMAP */
 
-	/*
-	 * This function will ensure that the codec packets are sent.
-	 * Also it preserves the current timings and frame index
-	 */
+	/*!
+		@brief This function will ensure that the codec packets are sent. Also it preserves the current timings and frame index
+	*/
 	bool SendCodecs();
 };
 

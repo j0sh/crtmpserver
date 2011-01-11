@@ -44,28 +44,60 @@ public:
 	BaseClientApplication(Variant &configuration);
 	virtual ~BaseClientApplication();
 
+	/*!
+		@brief Returns the application's id. The id is auto-generated in the constructor
+	*/
 	uint32_t GetId();
+
+	/*!
+		@brief Returns the name of the application, taken from the configuration file.
+	*/
 	string GetName();
+
+	/*!
+		@brief Returns the variant that contains the configuration information about the application.
+	*/
 	Variant GetConfiguration();
+
+	/*!
+		@brief Returns the alias of the application from the configuration file
+	*/
 	vector<string> GetAliases();
+
+	/*!
+		@brief Returns the boolean that tells if the application is the default application.
+	*/
 	bool IsDefault();
 	StreamsManager *GetStreamsManager();
 
 	virtual bool Initialize();
+
+	/*!
+		@brief Registers this application to the BaseAppProtocolHandler.
+	*/
 	void RegisterAppProtocolHandler(uint64_t protocolType,
 			BaseAppProtocolHandler *pAppProtocolHandler);
+	/*!
+		@brief Erases this application to the BaseAppProtocolHandler by setting it to NULL.
+	*/
 	void UnRegisterAppProtocolHandler(uint64_t protocolType);
 
 	BaseAppProtocolHandler *GetProtocolHandler(BaseProtocol *pProtocol);
 	BaseAppProtocolHandler *GetProtocolHandler(uint64_t protocolType);
 	virtual BaseAppProtocolHandler *GetProtocolHandler(string &scheme);
 
-	/*
-	 * This is called bt the framework when an outbound connection faild to connect
+	/*!
+	 * @brief This is called bt the framework when an outbound connection faild to connect
 	 * */
 	virtual bool OutboundConnectionFailed(Variant &customParameters);
 
+	/*!
+		@brief Registers the protocol to the client application
+	*/
 	virtual void RegisterProtocol(BaseProtocol *pProtocol);
+	/*!
+		@brief Erases the protocol to the client application
+	*/
 	virtual void UnRegisterProtocol(BaseProtocol *pProtocol);
 
 	virtual void SignalStreamRegistered(BaseStream *pStream);
@@ -75,6 +107,9 @@ public:
 	virtual bool PullExternalStream(Variant streamConfig);
 	virtual bool PushLocalStream(Variant streamConfig);
 
+	/*!
+		@brief Deletes all active protocols and IOHandlers bound to the application.
+	*/
 	static void Shutdown(BaseClientApplication *pApplication);
 };
 
