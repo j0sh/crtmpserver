@@ -294,9 +294,11 @@ void IOBuffer::ReadFromRepeat(uint8_t byte, uint32_t size) {
 bool IOBuffer::WriteToTCPFd(int32_t fd, uint32_t size, int32_t &sentAmount) {
 	SANITY_INPUT_BUFFER;
 	bool result = true;
+	//FINEST("BEFORE: _published: %d; _consumed: %d; amount: %d", _published, _consumed, _published - _consumed);
 	sentAmount = send(fd, (char *) (_pBuffer + _consumed),
-			_published - _consumed, MSG_NOSIGNAL);
-	//size > _published - _consumed ? _published - _consumed : size,
+			//_published - _consumed,
+			size > _published - _consumed ? _published - _consumed : size,
+			MSG_NOSIGNAL);
 	int err = LASTSOCKETERROR;
 
 	if (sentAmount < 0) {
@@ -313,6 +315,9 @@ bool IOBuffer::WriteToTCPFd(int32_t fd, uint32_t size, int32_t &sentAmount) {
 	if (result)
 		Recycle();
 	SANITY_INPUT_BUFFER;
+
+	//FINEST("AFTER: _published: %d; _consumed: %d; amount: %d", _published, _consumed, _published - _consumed);
+
 	return result;
 }
 
@@ -336,23 +341,28 @@ bool IOBuffer::WriteToStdio(int32_t fd, uint32_t size) {
 	if (result)
 		Recycle();
 	SANITY_INPUT_BUFFER;
+
 	return result;
 }
 
 uint32_t IOBuffer::GetMinChunkSize() {
+
 	return _minChunkSize;
 }
 
 void IOBuffer::SetMinChunkSize(uint32_t minChunkSize) {
+
 	assert(minChunkSize > 0 && minChunkSize < 16 * 1024 * 1024);
 	_minChunkSize = minChunkSize;
 }
 
 uint32_t IOBuffer::GetCurrentWritePosition() {
+
 	return _published;
 }
 
 uint8_t *IOBuffer::GetPointer() {
+
 	return _pBuffer;
 }
 
@@ -361,6 +371,7 @@ bool IOBuffer::Ignore(uint32_t size) {
 	_consumed += size;
 	Recycle();
 	SANITY_INPUT_BUFFER;
+
 	return true;
 }
 
@@ -369,6 +380,7 @@ bool IOBuffer::IgnoreAll() {
 	_consumed = _published;
 	Recycle();
 	SANITY_INPUT_BUFFER;
+
 	return true;
 }
 
@@ -380,6 +392,7 @@ bool IOBuffer::MoveData() {
 		_consumed = 0;
 	}
 	SANITY_INPUT_BUFFER;
+
 	return true;
 }
 
@@ -429,6 +442,7 @@ bool IOBuffer::EnsureSize(uint32_t expected) {
 	//7. Update the size
 	_size = _published + expected;
 	SANITY_INPUT_BUFFER;
+
 	return true;
 }
 
@@ -479,15 +493,18 @@ string IOBuffer::ToString(uint32_t startIndex, uint32_t limit) {
 		ss << address << "  " << part1 << " " << part2 << " " << hr << endl;
 	}
 	SANITY_INPUT_BUFFER;
+
 	return ss.str();
 }
 
 IOBuffer::operator string() {
+
 	return ToString(0, 0);
 }
 
 void IOBuffer::Cleanup() {
 	if (_pBuffer != NULL) {
+
 		delete[] _pBuffer;
 		_pBuffer = NULL;
 	}
