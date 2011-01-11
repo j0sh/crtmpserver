@@ -34,13 +34,12 @@ if (!_writeDataEnabled) { \
 
 #define DISABLE_WRITE_DATA \
 if (_writeDataEnabled) { \
-    _writeDataEnabled = false; \
-    IOHandlerManager::DisableWriteData(this); \
-    _pProtocol->ReadyForSend(); \
-} \
-/*else { \
-    FINEST("Write data already disabled"); \
-}*/
+	_pProtocol->ReadyForSend(); \
+	if(_pProtocol->GetOutputBuffer()==NULL) {\
+		_writeDataEnabled = false; \
+		IOHandlerManager::DisableWriteData(this); \
+	} \
+}
 
 TCPCarrier::TCPCarrier(int32_t fd)
 : IOHandler(fd, fd, IOHT_TCP_CARRIER) {
@@ -55,6 +54,10 @@ TCPCarrier::TCPCarrier(int32_t fd)
 	GetEndpointsInfo();
 	_rx = 0;
 	_tx = 0;
+	//	uint32_t sendBufferSize = 1024 * 1024;
+	//	if (setsockopt(fd, SOL_SOCKET, SO_SNDBUF, &sendBufferSize, sizeof (uint32_t)) != 0) {
+	//		ASSERT("Unable to determine the send buffer size");
+	//	}
 }
 
 TCPCarrier::~TCPCarrier() {
@@ -86,7 +89,8 @@ bool TCPCarrier::OnEvent(struct kevent &event) {
 		{
 			IOBuffer *pOutputBuffer = NULL;
 
-			while ((pOutputBuffer = _pProtocol->GetOutputBuffer()) != NULL) {
+			if ((pOutputBuffer = _pProtocol->GetOutputBuffer()) != NULL) {
+				//uint32_t initial = GETAVAILABLEBYTESCOUNT(*pOutputBuffer);
 				//FINEST("Try to send buffer:\n%s", STR(*pOutputBuffer));
 				if (!pOutputBuffer->WriteToTCPFd(event.ident, event.data, writeAmount)) {
 					FATAL("Unable to send data. %s:%d -> %s:%d",
@@ -96,12 +100,17 @@ bool TCPCarrier::OnEvent(struct kevent &event) {
 					return false;
 				}
 				_tx += writeAmount;
-				if (GETAVAILABLEBYTESCOUNT(*pOutputBuffer) > 0) {
-					ENABLE_WRITE_DATA;
-					break;
+				if (GETAVAILABLEBYTESCOUNT(*pOutputBuffer) == 0) {
+					DISABLE_WRITE_DATA;
 				}
-			}
-			if (pOutputBuffer == NULL) {
+				//				else {
+				//					FINEST("Advertised: %d; sent: %d; initial :%d; leftovers: %d;",
+				//							event.data,
+				//							writeAmount,
+				//							initial,
+				//							GETAVAILABLEBYTESCOUNT(*pOutputBuffer));
+				//				}
+			} else {
 				DISABLE_WRITE_DATA;
 			}
 			return true;
