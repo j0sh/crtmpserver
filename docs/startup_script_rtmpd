@@ -1,0 +1,69 @@
+#!/bin/bash
+#
+#       /etc/rc.d/init.d/rtmpserver
+# rtmpserver      This shell script takes care of starting and stopping
+#               rtmpserver
+#
+# Author: Brian Jones jonesy@cs.princeton.edu
+#
+# chkconfig: 2345 13 87
+# description: rtmpserver is the C-RTMP-Server Service daemon.
+
+# Source function library.
+. /etc/init.d/functions
+
+ROOTDIR=/usr/local
+BINDIR=$ROOTDIR/rtmpserver
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:$BINDIR
+DAEMON=rtmpserver
+DAEMON_ARGS=$BINDIR/rtmpserver.lua
+NAME=rtmpserver
+DESC=rtmpserver
+PIDFILE=/var/run/$NAME.pid
+
+start() {
+        echo -n "Starting rtmpserver Server: "
+        if [ -f $PIDFILE ]; then
+                PID=`cat $PIDFILE`
+                echo rtmpserver already running: $PID
+                exit 2;
+        else
+                cd $BINDIR
+                daemon $DAEMON $DAEMON_ARGS
+                RETVAL=$?
+                echo
+                [ $RETVAL -eq 0 ] && touch /var/lock/subsys/rtmpserver
+                return $RETVAL
+        fi
+
+}
+
+stop() {
+        echo -n "Shutting down rtmpserver Server: "
+        #echo
+        killproc rtmpserver
+        echo
+        rm -f /var/lock/subsys/rtmpserver
+        return 0
+}
+
+case "$1" in
+    start)
+        start
+        ;;
+    stop)
+        stop
+        ;;
+    status)
+        status rtmpserver
+        ;;
+    restart)
+        stop
+        start
+        ;;
+    *)
+        echo "Usage:  {start|stop|status|restart}"
+        exit 1
+        ;;
+esac
+exit $?
