@@ -50,14 +50,14 @@ TCPCarrier::TCPCarrier(int32_t fd)
 	_nearIp = "";
 	_nearPort = 0;
 	socklen_t sz = sizeof (int);
-	_sendBufferSize = 0;
-	if (getsockopt(fd, SOL_SOCKET, SO_SNDBUF, &_sendBufferSize, &sz) != 0) {
-		ASSERT("Unable to determine the send buffer size");
-	}
-	_recvBufferSize = 0;
-	if (getsockopt(fd, SOL_SOCKET, SO_RCVBUF, &_recvBufferSize, &sz) != 0) {
-		ASSERT("Unable to determine the recv buffer size");
-	}
+	_sendBufferSize = 1024;
+	//	if (getsockopt(fd, SOL_SOCKET, SO_SNDBUF, &_sendBufferSize, &sz) != 0) {
+	//		ASSERT("Unable to determine the send buffer size");
+	//	}
+	_recvBufferSize = 1024 * 256;
+	//	if (getsockopt(fd, SOL_SOCKET, SO_RCVBUF, &_recvBufferSize, &sz) != 0) {
+	//		ASSERT("Unable to determine the recv buffer size");
+	//	}
 	GetEndpointsInfo();
 	_rx = 0;
 	_tx = 0;

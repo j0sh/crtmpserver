@@ -152,6 +152,10 @@ bool SetFdReuseAddress(int32_t fd) {
 		FATAL("Unable to reuse address");
 		return false;
 	}
+	if (setsockopt(fd, SOL_SOCKET, SO_REUSEPORT, (char *) & one, sizeof (one)) != 0) {
+		FATAL("Unable to reuse port");
+		return false;
+	}
 	return true;
 }
 
