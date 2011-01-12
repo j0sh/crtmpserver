@@ -1,0 +1,5 @@
+/Applications/VLC.app/Contents/MacOS/VLC -I dummy /tmp/lg.mp4 --sout='#rtp{dst=10.0.1.2,port=1234,sdp=rtsp://0.0.0.0:8080/test.sdp}'
+
+/Applications/VLC.app/Contents/MacOS/VLC -I dummy /tmp/lg.mp4 --sout='#transcode{soverlay,ab=42,samplerate=44100,channels=1,acodec=mp4a,vcodec=h264,width=320,height=180,vfilter="canvas{width=320,height=180,aspect=16:9}",fps=25,vb=200,venc=x264{vbv-bufsize=500,partitions=all,level=12,no-cabac,subme=7,threads=4,ref=2,mixed-refs=1,bframes=0,min-keyint=1,keyint=50,trellis=2,direct=auto,qcomp=0.0,qpmax=51}}:gather:rtp{dst=10.0.1.2,port=1234,sdp=rtsp://0.0.0.0:8080/test.sdp}'
+
+
