@@ -1,0 +1,8 @@
+
+export cross=/home/shiretu/work/hisi/hisi-linux/x86-arm/gcc-3.4.3-uClibc-0.9.28/usr/bin/arm-hismall-linux-
+
+./Configure no-threads shared --prefix=/home/shiretu/work/hisi/openssl-dist --openssldir=/home/shiretu/work/hisi/openssl-dist no-asm linux-armv4
+
+SHARED_LDFLAGS = -Wl,-rpath,"\$$$$ORIGIN"
+make CC="${cross}gcc" AR="${cross}ar r" RANLIB="${cross}ranlib"
+
