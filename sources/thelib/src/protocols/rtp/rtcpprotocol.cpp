@@ -37,6 +37,8 @@ RTCPProtocol::RTCPProtocol()
 	_ssrc = rand();
 	_ssrc ^= GetId();
 	_validLastAddress = false;
+	//	_lastNtpMicroseconds = 0;
+	//	_lastRtpTimestamp = 0;
 }
 
 RTCPProtocol::~RTCPProtocol() {
@@ -70,10 +72,111 @@ bool RTCPProtocol::SignalInputData(IOBuffer &buffer, sockaddr_in *pPeerAddress) 
 
 	//1. Parse the SR
 	uint8_t *pBuffer = GETIBPOINTER(buffer);
-	uint32_t length = GETAVAILABLEBYTESCOUNT(buffer);
-	if (length < 16)
+	uint32_t bufferLength = GETAVAILABLEBYTESCOUNT(buffer);
+	if (bufferLength < 16)
 		return true;
 
+	//	//uint8_t V = pBuffer[0] >> 6;
+	//	//bool P = ((pBuffer[0] >> 5)&0x01) == 1;
+	//	//uint8_t RC = pBuffer[0]&0x1f;
+	//	uint8_t PT = pBuffer[1];
+	//	uint16_t len = ENTOHSP(pBuffer + 2);
+	//	len = (len + 1)*4;
+	//	if (len > bufferLength) {
+	//		WARN("Invalid RTCP packet length: len %d; bufferLength: %d", len, bufferLength);
+	//		buffer.IgnoreAll();
+	//		return true;
+	//	}
+	//	//uint32_t ssrc = ENTOHLP(pBuffer + 4);
+	//	//	FINEST("V: %u; P: %u; RC: %u; PT: %u; len: %u; ssrc: %u; bufferLength: %u",
+	//	//			V, P, RC, PT, len, ssrc, bufferLength);
+	//
+	//	switch (PT) {
+	//		case 200: //SR
+	//		{
+	//			if (len < 28) {
+	//				WARN("Invalid RTCP packet length: %d", len);
+	//				buffer.IgnoreAll();
+	//				return true;
+	//			}
+	//			uint32_t ntpSec = ENTOHLP(pBuffer + 8) - 2208988800;
+	//			uint32_t ntpFrac = ENTOHLP(pBuffer + 12);
+	//			uint64_t ntpMicroseconds = (uint32_t) (((double) ntpFrac / (double) (0x100000000LL))*1000000.0);
+	//			ntpMicroseconds += ((uint64_t) ntpSec)*1000000;
+	//			uint32_t rtpTimestamp = ENTOHLP(pBuffer + 16);
+	//			uint32_t senderPacketCount = ENTOHLP(pBuffer + 20);
+	//			uint32_t senderOctetCount = ENTOHLP(pBuffer + 24);
+	//			string msg = "";
+	//			msg += format("              ntp: %u.%d\n", ntpSec,
+	//					(uint32_t) (((double) ntpFrac / (double) (0x100000000LL))*1000000.0));
+	//			msg += format("  ntpMicroseconds: %llu\n", ntpMicroseconds);
+	//			msg += format("     rtpTimestamp: %u\n", rtpTimestamp);
+	//			msg += format("senderPacketCount: %u\n", senderPacketCount);
+	//			msg += format(" senderOctetCount: %u\n", senderOctetCount);
+	//			if (_lastNtpMicroseconds != 0) {
+	//				uint64_t ntpDiff = ntpMicroseconds - _lastNtpMicroseconds;
+	//				uint64_t rtpDiff = rtpTimestamp - _lastRtpTimestamp;
+	//				double r = (double) rtpDiff / (double) ntpDiff * 1000000.0;
+	//				msg += format("          ntpDiff: %llu (%.2f)\n", ntpDiff, (double) ntpDiff / 1000000.0);
+	//				msg += format("          rtpDiff: %llu\n", rtpDiff);
+	//				msg += format("                r: %.4f\n", r);
+	//			}
+	//			_lastNtpMicroseconds = ntpMicroseconds;
+	//			_lastRtpTimestamp = rtpTimestamp;
+	//			//			if (_isAudio) {
+	//			//				FINEST("\n%s", STR(msg));
+	//			//			} else {
+	//			//				WARN("\n%s", STR(msg));
+	//			//			}
+	//			break;
+	//			//uint64_t ntp = ENTOHLLP(pBuffer + 8);
+	//		}
+	//		default:
+	//		{
+	//			WARN("Unknown packet type: %d", PT);
+	//			buffer.IgnoreAll();
+	//			return true;
+	//		}
+	//	}
+	//
+	//	/*
+	//			0                   1                   2                   3
+	//			0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+	//		   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+	//	header |V=2|P|    RC   |   PT=SR=200   |             length            |
+	//		   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+	//		   |                         SSRC of sender                        |
+	//		   +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
+	//	sender |              NTP timestamp, most significant word             |
+	//	info   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+	//		   |             NTP timestamp, least significant word             |
+	//		   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+	//		   |                         RTP timestamp                         |
+	//		   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+	//		   |                     sender's packet count                     |
+	//		   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+	//		   |                      sender's octet count                     |
+	//		   +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
+	//	report |                 SSRC_1 (SSRC of first source)                 |
+	//	block  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+	//	  1    | fraction lost |       cumulative number of packets lost       |
+	//		   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+	//		   |           extended highest sequence number received           |
+	//		   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+	//		   |                      interarrival jitter                      |
+	//		   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+	//		   |                         last SR (LSR)                         |
+	//		   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+	//		   |                   delay since last SR (DLSR)                  |
+	//		   +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
+	//	report |                 SSRC_2 (SSRC of second source)                |
+	//	block  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+	//	  2    :                               ...                             :
+	//		   +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
+	//		   |                  profile-specific extensions                  |
+	//		   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+	//	 */
+	//
 	if (pBuffer[1] != 200)
 		return true;
 
@@ -99,53 +202,6 @@ bool RTCPProtocol::SignalInputData(IOBuffer &buffer, sockaddr_in *pPeerAddress) 
 bool RTCPProtocol::SignalInputData(IOBuffer &buffer) {
 	return SignalInputData(buffer, &_lastAddress);
 }
-
-//bool RTCPProtocol::SendRR(sockaddr_in &address) {
-//	//	//1. prepare the buffer
-//	//	uint32_t ssrc;
-//	//	uint32_t seq;
-//	//	_pConnectivity->GetSSRCAndSeq(GetId(), ssrc, seq);
-//	//	//FINEST("ssrc: %08x", ssrc);
-//	//	EHTONLP(_buff + 8, ssrc); //SSRC_1 (SSRC of first source)
-//	//	EHTONLP(_buff + 16, seq); //extended highest sequence number received
-//	//	EHTONLP(_buff + 24, _lsr); //last SR (LSR)
-//	//
-//	//	//2. send it
-//	//	if (!_pConnectivity->SendRTP(address, GetId(), _buff, 32)) {
-//	//		FATAL("Unable to send RR");
-//	//		if (_pConnectivity != NULL) {
-//	//			_pConnectivity->EnqueueForDelete();
-//	//			_pConnectivity = NULL;
-//	//		}
-//	//	}
-//	//
-//	//	//3. Done
-//	//	return true;
-//
-//	NYI;
-//	return true;
-//	/*
-//			0                   1                   2                   3
-//			0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-//		   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-//	header |V=2|P|    RC   |   PT=RR=201   |             length            |0
-//		   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-//		   |                     SSRC of packet sender                     |4
-//		   +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
-//	report |                 SSRC_1 (SSRC of first source)                 |8
-//	block  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-//	  1    | fraction lost |       cumulative number of packets lost       |12
-//		   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-//		   |           extended highest sequence number received           |16
-//		   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-//		   |                      interarrival jitter                      |20
-//		   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-//		   |                         last SR (LSR)                         |24
-//		   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-//		   |                   delay since last SR (DLSR)                  |28
-//		   +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
-//	 */
-//}
 
 uint32_t RTCPProtocol::GetLastSenderReport() {
 	return _lsr;

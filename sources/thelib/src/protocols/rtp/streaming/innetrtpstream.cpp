@@ -33,10 +33,12 @@ InNetRTPStream::InNetRTPStream(BaseProtocol *pProtocol,
 	_lastVideoTs = 0;
 	_lastAudioTs = 0;
 
+	int i = 0;
 	if (AAC.length() != 0) {
 		_capabilities.InitAudioAAC(
 				(uint8_t *) STR(AAC),
 				AAC.length());
+		i++;
 	}
 
 	if ((SPS.length() != 0) && (PPS.length() != 0)) {
@@ -45,7 +47,9 @@ InNetRTPStream::InNetRTPStream(BaseProtocol *pProtocol,
 				SPS.length(),
 				(uint8_t *) STR(PPS),
 				PPS.length());
+		i++;
 	}
+	_avStream = (i == 2);
 }
 
 InNetRTPStream::~InNetRTPStream() {
@@ -164,6 +168,13 @@ bool InNetRTPStream::FeedData(uint8_t *pData, uint32_t dataLength,
 				absoluteTimestamp - lastTs,
 				isAudio);
 		return true;
+	}
+	if (_avStream) {
+		if (((_lastAudioTs == 0) || (_lastVideoTs == 0))
+				|| (_lastVideoTs == 0)) {
+			lastTs = absoluteTimestamp;
+			return true;
+		}
 	}
 	LinkedListNode<BaseOutStream *> *pTemp = _pOutStreams;
 	if (lastTs == 0) {

@@ -35,6 +35,8 @@ private:
 	bool _isAudio;
 	uint32_t _ssrc;
 	bool _validLastAddress;
+	//	uint64_t _lastNtpMicroseconds;
+	//	uint32_t _lastRtpTimestamp;
 public:
 	RTCPProtocol();
 	virtual ~RTCPProtocol();

@@ -33,6 +33,7 @@ private:
 	double _lastVideoTs;
 	double _lastAudioTs;
 	StreamCapabilities _capabilities;
+	bool _avStream;
 public:
 	InNetRTPStream(BaseProtocol *pProtocol, StreamsManager *pStreamsManager,
 			string name, string SPS, string PPS, string AAC);

@@ -973,8 +973,8 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokeOnBWDone(BaseRTMPProtocol *pFrom,
 
 bool BaseRTMPAppProtocolHandler::ProcessInvokeGeneric(BaseRTMPProtocol *pFrom,
 		Variant & request) {
-	WARN("Default implementation of ProcessInvokeGeneric: Request:\n%s",
-			STR(request.ToString()));
+	WARN("Default implementation of ProcessInvokeGeneric: Request: %s",
+			STR(M_INVOKE_FUNCTION(request)));
 
 	return true;
 }
