@@ -49,7 +49,7 @@ TCPCarrier::TCPCarrier(int32_t fd)
 	memset(&_nearAddress, 0, sizeof (sockaddr_in));
 	_nearIp = "";
 	_nearPort = 0;
-	socklen_t sz = sizeof (int);
+	//socklen_t sz = sizeof (int);
 	_sendBufferSize = 1024;
 	//	if (getsockopt(fd, SOL_SOCKET, SO_SNDBUF, &_sendBufferSize, &sz) != 0) {
 	//		ASSERT("Unable to determine the send buffer size");
