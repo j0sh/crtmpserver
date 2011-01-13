@@ -26,6 +26,9 @@
 #include "protocols/rtmp/basertmpappprotocolhandler.h"
 #include "application/clientapplicationmanager.h"
 
+//#define DEBUG_HANDSHAKE(...) FINEST(__VA_ARGS__)
+#define DEBUG_HANDSHAKE(...)
+
 OutboundRTMPProtocol::OutboundRTMPProtocol()
 : BaseRTMPProtocol(PT_OUTBOUND_RTMP) {
 	_pClientPublicKey = NULL;
@@ -34,6 +37,7 @@ OutboundRTMPProtocol::OutboundRTMPProtocol()
 	_pKeyIn = NULL;
 	_pKeyOut = NULL;
 	_pDHWrapper = NULL;
+	_usedScheme = 0;
 }
 
 OutboundRTMPProtocol::~OutboundRTMPProtocol() {
@@ -84,6 +88,7 @@ bool OutboundRTMPProtocol::PerformHandshake(IOBuffer &buffer) {
 
 			bool encrypted = (VariantType) _customParameters[CONF_PROTOCOL] == V_STRING &&
 					_customParameters[CONF_PROTOCOL] == CONF_PROTOCOL_OUTBOUND_RTMPE;
+			_usedScheme = encrypted ? 1 : 0;
 
 			if (!PerformHandshakeStage2(buffer, encrypted)) {
 				FATAL("Unable to handshake");
@@ -172,13 +177,11 @@ bool OutboundRTMPProtocol::SignalProtocolCreated(BaseProtocol *pProtocol,
 }
 
 bool OutboundRTMPProtocol::PerformHandshakeStage1(bool encrypted) {
-	//FINEST("PHS1: 1. Put the protocol type");
-	if (encrypted)
-		_outputBuffer.ReadFromByte(6);
-	else
-		_outputBuffer.ReadFromByte(3);
+	DEBUG_HANDSHAKE("PHS1:  1. Put the protocol type. Connection is%sencrypted",
+			encrypted ? " " : " NOT ");
+	_outputBuffer.ReadFromByte(encrypted ? 6 : 3);
 
-	//FINEST("PHS1: 2. Prepare the buffer");
+	DEBUG_HANDSHAKE("PHS1:  2. Prepare the buffer");
 	if (_pOutputBuffer == NULL) {
 		_pOutputBuffer = new uint8_t[1536];
 	} else {
@@ -186,33 +189,33 @@ bool OutboundRTMPProtocol::PerformHandshakeStage1(bool encrypted) {
 		_pOutputBuffer = new uint8_t[1536];
 	}
 
-	//FINEST("PHS1: 3. Randomize the buffer");
+	DEBUG_HANDSHAKE("PHS1:  3. Randomize the buffer");
 	for (uint32_t i = 0; i < 1536; i++) {
 		_pOutputBuffer[i] = rand() % 256;
 		//_pOutputBuffer[i] = 0;
 	}
 
-	//FINEST("PHS1: 4. Put the uptime. In our case, 0.");
-	EHTONLP(_pOutputBuffer, (uint32_t) time(NULL));
+	DEBUG_HANDSHAKE("PHS1:  4. Put the uptime. In our case, 0.");
+	EHTONLP(_pOutputBuffer, 0);
 
-	//FINEST("PHS1: 5. Put the flash version. We impersonate with 9.0.124.2");
-	EHTONLP(_pOutputBuffer + 4, 0);
-	//	_pOutputBuffer[4] = 9;
-	//	_pOutputBuffer[5] = 0;
-	//	_pOutputBuffer[6] = 124;
-	//	_pOutputBuffer[7] = 2;
+	DEBUG_HANDSHAKE("PHS1:  5. Put the flash version. We impersonate with 9.0.124.2");
+	//EHTONLP(_pOutputBuffer + 4, 0);
+	_pOutputBuffer[4] = 9;
+	_pOutputBuffer[5] = 0;
+	_pOutputBuffer[6] = 124;
+	_pOutputBuffer[7] = 2;
 
-	uint32_t clientDHOffset = GetDHOffset(_pOutputBuffer, 0);
-	//FINEST("PHS1: 6. Get the DH public key position: %d", clientDHOffset);
+	uint32_t clientDHOffset = GetDHOffset(_pOutputBuffer, _usedScheme);
+	DEBUG_HANDSHAKE("PHS1:  6. Get the DH public key position: %d", clientDHOffset);
 
-	//FINEST("PHS1: 7. Generate the DH public/private key");
+	DEBUG_HANDSHAKE("PHS1:  7. Generate the DH public/private key");
 	_pDHWrapper = new DHWrapper(1024);
 	if (!_pDHWrapper->Initialize()) {
 		FATAL("Unable to initialize DH wrapper");
 		return false;
 	}
 
-	//FINEST("PHS1: 8. Get the public key and store it in the buffer at %d and _pClientPublicKey for later use", clientDHOffset);
+	DEBUG_HANDSHAKE("PHS1:  8. Get the public key and store it in the buffer at %d and _pClientPublicKey for later use", clientDHOffset);
 	if (!_pDHWrapper->CopyPublicKey(_pOutputBuffer + clientDHOffset, 128)) {
 		FATAL("Couldn't write public key!");
 		return false;
@@ -221,38 +224,39 @@ bool OutboundRTMPProtocol::PerformHandshakeStage1(bool encrypted) {
 	memcpy(_pClientPublicKey, _pOutputBuffer + clientDHOffset, 128);
 
 
-	uint32_t clientDigestOffset = GetDigestOffset(_pOutputBuffer, 0);
-	//FINEST("PHS1: 9.Compute the final digest offset: %d", clientDigestOffset);
+	uint32_t clientDigestOffset = GetDigestOffset(_pOutputBuffer, _usedScheme);
+	DEBUG_HANDSHAKE("PHS1:  9. Compute the final digest offset: %d", clientDigestOffset);
 
-	//FINEST("PHS1: 10. Generate the digest from pBuffer EXCLUDING the digest portion.");
+	DEBUG_HANDSHAKE("PHS1: 10. Generate the digest from pBuffer EXCLUDING the digest portion.");
 	uint8_t *pTempBuffer = new uint8_t[1536 - 32];
 	memcpy(pTempBuffer, _pOutputBuffer, clientDigestOffset);
 	memcpy(pTempBuffer + clientDigestOffset, _pOutputBuffer + clientDigestOffset + 32,
 			1536 - clientDigestOffset - 32);
 
-	//FINEST("PHS1: 11. Generate the hash");
+	DEBUG_HANDSHAKE("PHS1: 11. Generate the hash");
 	uint8_t *pTempHash = new uint8_t[512];
 	HMACsha256(pTempBuffer, 1536 - 32, genuineFPKey, 30, pTempHash);
 
-	//FINEST("PHS1: 12. put the bytes at %d offset. Also save them for later use", clientDigestOffset);
+	DEBUG_HANDSHAKE("PHS1: 12. put the bytes at %d offset. Also save them for later use", clientDigestOffset);
 	memcpy(_pOutputBuffer + clientDigestOffset, pTempHash, 32);
 	_pClientDigest = new uint8_t[32];
 	memcpy(_pClientDigest, pTempHash, 32);
 
 
-	//FINEST("PHS1: 13. cleanup the temp buffers");
+	DEBUG_HANDSHAKE("PHS1: 13. cleanup the temp buffers");
 	delete[] pTempBuffer;
 	delete[] pTempHash;
 
-	//FINEST("PHS1: 14. Put the buffer on the outputBuffer");
+	DEBUG_HANDSHAKE("PHS1: 14. Put the buffer on the outputBuffer");
 	_outputBuffer.ReadFromBuffer(_pOutputBuffer, 1536);
+	_outputBuffer222.ReadFromBuffer(_pOutputBuffer, 1536);
 	//FINEST("InputBuffer:\n%s", STR(_outputBuffer));
 
-	//FINEST("PHS1: 15. delete the buffer");
+	DEBUG_HANDSHAKE("PHS1: 15. delete the buffer");
 	delete[] _pOutputBuffer;
 	_pOutputBuffer = NULL;
 
-	//FINEST("PHS1: 16. Signal the protocol stack that we have outbound data");
+	DEBUG_HANDSHAKE("PHS1: 16. Signal the protocol stack that we have outbound data");
 	if (_pFarProtocol != NULL) {
 		if (!_pFarProtocol->EnqueueForOutbound()) {
 			FATAL("Unable to signal output data");
@@ -260,7 +264,7 @@ bool OutboundRTMPProtocol::PerformHandshakeStage1(bool encrypted) {
 		}
 	}
 
-	//FINEST("PHS1: 17. Move to the next stage of the handshake");
+	DEBUG_HANDSHAKE("PHS1: 17. Move to the next stage of the handshake");
 	_rtmpState = RTMP_STATE_CLIENT_REQUEST_SENT;
 
 	return true;
@@ -269,23 +273,23 @@ bool OutboundRTMPProtocol::PerformHandshakeStage1(bool encrypted) {
 bool OutboundRTMPProtocol::VerifyServer(IOBuffer & inputBuffer) {
 	uint8_t *pBuffer = GETIBPOINTER(inputBuffer) + 1;
 
-	uint32_t serverDigestPos = GetDigestOffset(pBuffer, 0);
-	//FINEST("VS: 1. Compute server digest offset: %d", serverDigestPos);
+	uint32_t serverDigestPos = GetDigestOffset(pBuffer, _usedScheme);
+	DEBUG_HANDSHAKE("VS:  1. Compute server digest offset: %d", serverDigestPos);
 
-	//FINEST("VS: 2. Prepare the buffer");
+	DEBUG_HANDSHAKE("VS:  2. Prepare the buffer");
 	uint8_t *pTempBuffer = new uint8_t[1536 - 32];
 	memcpy(pTempBuffer, pBuffer, serverDigestPos);
 	memcpy(pTempBuffer + serverDigestPos, pBuffer + serverDigestPos + 32,
 			1536 - serverDigestPos - 32);
 
-	//FINEST("VS: 3. Compute the digest");
+	DEBUG_HANDSHAKE("VS:  3. Compute the digest");
 	uint8_t * pDigest = new uint8_t[512];
 	HMACsha256(pTempBuffer, 1536 - 32, genuineFMSKey, 36, pDigest);
 
-	//FINEST("VS: 3. Compare the results");
+	DEBUG_HANDSHAKE("VS:  3. Compare the results");
 	int result = memcmp(pDigest, pBuffer + serverDigestPos, 32);
 
-	//FINEST("VS: 4. Cleanup");
+	DEBUG_HANDSHAKE("VS:  4. Cleanup");
 	delete[] pTempBuffer;
 	delete[] pDigest;
 
@@ -294,21 +298,21 @@ bool OutboundRTMPProtocol::VerifyServer(IOBuffer & inputBuffer) {
 		return false;
 	}
 
-	//FINEST("VS: 5. Advance the server response to the next chunk");
+	DEBUG_HANDSHAKE("VS:  5. Advance the server response to the next chunk");
 	pBuffer = pBuffer + 1536;
 
-	//FINEST("VS: 6. Compute the chalange");
+	DEBUG_HANDSHAKE("VS:  6. Compute the chalange");
 	uint8_t * pChallange = new uint8_t[512];
 	HMACsha256(_pClientDigest, 32, genuineFMSKey, 68, pChallange);
 
-	//FINEST("VS: 7. Compute the second digest");
+	DEBUG_HANDSHAKE("VS:  7. Compute the second digest");
 	pDigest = new uint8_t[512];
 	HMACsha256(pBuffer, 1536 - 32, pChallange, 32, pDigest);
 
-	//FINEST("VS: 8. Compare the results");
+	DEBUG_HANDSHAKE("VS:  8. Compare the results");
 	result = memcmp(pDigest, pBuffer + 1536 - 32, 32);
 
-	//FINEST("VS: 9. Cleanup");
+	DEBUG_HANDSHAKE("VS:  9. Cleanup");
 	delete[] pChallange;
 	delete[] pDigest;
 
@@ -317,7 +321,7 @@ bool OutboundRTMPProtocol::VerifyServer(IOBuffer & inputBuffer) {
 		return false;
 	}
 
-	//FINEST("VS: 10. Server is verified");
+	DEBUG_HANDSHAKE("VS: 10. Server is verified");
 
 	return true;
 }
@@ -333,10 +337,10 @@ bool OutboundRTMPProtocol::PerformHandshakeStage2(IOBuffer &inputBuffer,
 
 	uint8_t *pBuffer = GETIBPOINTER(inputBuffer) + 1;
 
-	uint32_t serverDHOffset = GetDHOffset(pBuffer, 0);
-	//FINEST("PHS2: 1. get the serverDHOffset: %d", serverDHOffset);
+	uint32_t serverDHOffset = GetDHOffset(pBuffer, _usedScheme);
+	DEBUG_HANDSHAKE("PHS2:  1. get the serverDHOffset: %d", serverDHOffset);
 
-	//FINEST("PHS2: 2. compute the secret key");
+	DEBUG_HANDSHAKE("PHS2:  2. compute the secret key");
 	if (_pDHWrapper == NULL) {
 		FATAL("dh wrapper not initialized");
 		return false;
@@ -364,19 +368,21 @@ bool OutboundRTMPProtocol::PerformHandshakeStage2(IOBuffer &inputBuffer,
 				_pKeyIn,
 				_pKeyOut);
 
-		//FINEST("PHS2: 3. bring the keys to correct cursor");
+		DEBUG_HANDSHAKE("PHS2:  3. bring the keys to correct cursor");
 		uint8_t data[1536];
 		RC4(_pKeyIn, 1536, data, data);
 		RC4(_pKeyOut, 1536, data, data);
+	} else {
+		DEBUG_HANDSHAKE("PHS2:  3. No encryptio, so no key exchange");
 	}
 
 	delete _pDHWrapper;
 	_pDHWrapper = NULL;
 
-	//FINEST("PHS2: 4. Get server digest offset");
-	uint32_t serverDigestOffset = GetDigestOffset(pBuffer, 0);
+	DEBUG_HANDSHAKE("PHS2:  4. Get server digest offset");
+	uint32_t serverDigestOffset = GetDigestOffset(pBuffer, _usedScheme);
 
-	//FINEST("PHS2: 5. Prepare the response buffer");
+	DEBUG_HANDSHAKE("PHS2:  5. Prepare the response buffer");
 	if (_pOutputBuffer == NULL) {
 		_pOutputBuffer = new uint8_t[1536];
 	} else {
@@ -384,34 +390,34 @@ bool OutboundRTMPProtocol::PerformHandshakeStage2(IOBuffer &inputBuffer,
 		_pOutputBuffer = new uint8_t[1536];
 	}
 
-	//FINEST("PHS2: 6. Randomize the response");
+	DEBUG_HANDSHAKE("PHS2:  6. Randomize the response");
 	for (uint32_t i = 0; i < 1536; i++) {
 		_pOutputBuffer[i] = rand() % 256;
 	}
 
-	//FINEST("PHS2: 7. Compute the challange");
+	DEBUG_HANDSHAKE("PHS2:  7. Compute the challange");
 	uint8_t * pChallangeKey = new uint8_t[512];
 	HMACsha256(pBuffer + serverDigestOffset, 32, genuineFPKey, 62, pChallangeKey);
 
-	//FINEST("PHS2: 8. Compute the client digest");
+	DEBUG_HANDSHAKE("PHS2:  8. Compute the client digest");
 	uint8_t * pDigest = new uint8_t[512];
 	HMACsha256(_pOutputBuffer, 1536 - 32, pChallangeKey, 32, pDigest);
 
-	//FINEST("PHS2: 9. Put the digest where it belongs");
+	DEBUG_HANDSHAKE("PHS2:  9. Put the digest where it belongs");
 	memcpy(_pOutputBuffer + 1536 - 32, pDigest, 32);
 
-	//FINEST("PHS2: 10. Cleanup");
+	DEBUG_HANDSHAKE("PHS2: 10. Cleanup");
 	delete[] pChallangeKey;
 	delete[] pDigest;
 
-	//FINEST("PHS2: 11. Put the buffer on the outputBuffer");
+	DEBUG_HANDSHAKE("PHS2: 11. Put the buffer on the outputBuffer");
 	_outputBuffer.ReadFromBuffer(_pOutputBuffer, 1536);
 
-	//FINEST("PHS2: 12. delete the buffer");
+	DEBUG_HANDSHAKE("PHS2: 12. delete the buffer");
 	delete[] _pOutputBuffer;
 	_pOutputBuffer = NULL;
 
-	//FINEST("PHS2: 13. Go to the next stage in the handshake");
+	DEBUG_HANDSHAKE("PHS2: 13. Go to the next stage in the handshake");
 	_rtmpState = RTMP_STATE_DONE;
 
 	return true;
