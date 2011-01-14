@@ -27,6 +27,7 @@ class TCPCarrier
 : public IOHandler {
 private:
 	bool _writeDataEnabled;
+	bool _enableWriteDataCalled;
 	sockaddr_in _farAddress;
 	string _farIp;
 	uint16_t _farPort;

@@ -27,15 +27,18 @@
 if (!_writeDataEnabled) { \
     _writeDataEnabled = true; \
     IOHandlerManager::EnableWriteData(this); \
-}
-
+} \
+_enableWriteDataCalled=true;
 
 #define DISABLE_WRITE_DATA \
 if (_writeDataEnabled) { \
+	_enableWriteDataCalled=false; \
 	_pProtocol->ReadyForSend(); \
-	if(_pProtocol->GetOutputBuffer()==NULL) {\
-		_writeDataEnabled = false; \
-		IOHandlerManager::DisableWriteData(this); \
+	if(!_enableWriteDataCalled) { \
+		if(_pProtocol->GetOutputBuffer()==NULL) {\
+			_writeDataEnabled = false; \
+			IOHandlerManager::DisableWriteData(this); \
+		} \
 	} \
 }
 
@@ -43,6 +46,7 @@ TCPCarrier::TCPCarrier(int32_t fd)
 : IOHandler(fd, fd, IOHT_TCP_CARRIER) {
 	IOHandlerManager::EnableReadData(this);
 	_writeDataEnabled = false;
+	_enableWriteDataCalled = false;
 	memset(&_farAddress, 0, sizeof (sockaddr_in));
 	_farIp = "";
 	_farPort = 0;
