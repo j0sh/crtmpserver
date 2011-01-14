@@ -25,6 +25,9 @@
 
 class BaseOutStream;
 
+/*!
+	@class BaseInStream
+*/
 class DLLEXP BaseInStream
 : public BaseStream {
 private:
@@ -39,6 +42,10 @@ public:
 
 	vector<BaseOutStream *> GetOutStreams();
 
+	/*!
+		@brief Returns information about the stream
+		@param info
+	*/
 	virtual void GetStats(Variant &info);
 
 	/*!
@@ -73,6 +80,7 @@ public:
 
 	/*!
 		@brief This will seek to the specified point in time.
+		@param absoluteTimestamp
 	*/
 	virtual bool Seek(double absoluteTimestamp);
 

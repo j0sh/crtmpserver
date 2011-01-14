@@ -71,12 +71,14 @@ public:
 
 	/*!
 		@brief  This will return information about the stream
+		@param info
 	*/
 	virtual void GetStats(Variant &info);
 
 	/*!
 		@brief This will start the feeding process
-		@param absoluteTimestamp - the timestamp where we want to seek before start the feeding process
+		@param absoluteTimestamp - the timestamp where we want to seek before start the feeding process\
+		@param length
 	*/
 	virtual bool Play(double absoluteTimestamp, double length);
 
@@ -92,6 +94,7 @@ public:
 
 	/*!
 		@brief This will seek to the specified point in time.
+		@param absoluteTimestamp
 	*/
 	virtual bool Seek(double absoluteTimestamp);
 

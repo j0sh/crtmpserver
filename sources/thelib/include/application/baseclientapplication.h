@@ -29,6 +29,9 @@ class BaseProtocol;
 class BaseAppProtocolHandler;
 class BaseStream;
 
+/*!
+	@brief
+*/
 class DLLEXP BaseClientApplication {
 private:
 	static uint32_t _idGenerator;
@@ -74,11 +77,14 @@ public:
 
 	/*!
 		@brief Registers this application to the BaseAppProtocolHandler.
+		@protocolType - Type of protocol
+		@pAppProtocolHandler
 	*/
 	void RegisterAppProtocolHandler(uint64_t protocolType,
 			BaseAppProtocolHandler *pAppProtocolHandler);
 	/*!
 		@brief Erases this application to the BaseAppProtocolHandler by setting it to NULL.
+		@param protocolType - Type of protocol
 	*/
 	void UnRegisterAppProtocolHandler(uint64_t protocolType);
 
@@ -87,20 +93,33 @@ public:
 	virtual BaseAppProtocolHandler *GetProtocolHandler(string &scheme);
 
 	/*!
-	 * @brief This is called bt the framework when an outbound connection faild to connect
-	 * */
+		@brief This is called bt the framework when an outbound connection failed to connect
+		@param customParameters
+	*/
 	virtual bool OutboundConnectionFailed(Variant &customParameters);
 
 	/*!
 		@brief Registers the protocol to the client application
+		@param pProtocol
 	*/
 	virtual void RegisterProtocol(BaseProtocol *pProtocol);
+
 	/*!
 		@brief Erases the protocol to the client application
+		@param pProtocol
 	*/
 	virtual void UnRegisterProtocol(BaseProtocol *pProtocol);
 
+	/*!
+		@brief Displays the registered stream's ID, type, and name in the logs 
+		@param pStream
+	*/
 	virtual void SignalStreamRegistered(BaseStream *pStream);
+
+	/*!
+		@brief Displays the unregistered stream's ID, type, and name in the logs 
+		@param pStream
+	*/
 	virtual void SignalStreamUnRegistered(BaseStream *pStream);
 
 	virtual bool PullExternalStreams();
@@ -109,6 +128,7 @@ public:
 
 	/*!
 		@brief Deletes all active protocols and IOHandlers bound to the application.
+		@param pApplication
 	*/
 	static void Shutdown(BaseClientApplication *pApplication);
 };

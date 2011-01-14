@@ -27,6 +27,9 @@
 class StreamsManager;
 class BaseProtocol;
 
+/*!
+	@class BaseStream
+*/
 class DLLEXP BaseStream {
 protected:
 	StreamsManager *_pStreamsManager;
@@ -69,10 +72,16 @@ public:
 		@brief Returns the name of this stream. This is setup-once
 	*/
 	string GetName();
+
+	/*!
+		@brief Sets the name of the stream
+		@param name - Name of stream in string format
+	*/
 	void SetName(string name);
 
 	/*!
 		@brief This will return information about the stream
+		@param info
 	*/
 	virtual void GetStats(Variant &info);
 
@@ -110,6 +119,7 @@ public:
 
 	/*!
 		@brief  will seek to the specified point in time.
+		@param absoluteTimestamp
 	*/
 	virtual bool Seek(double absoluteTimestamp) = 0;
 
@@ -122,6 +132,7 @@ public:
 	/*!
 		@brief Called when a play command was issued
 		@param absoluteTimestamp - the timestamp where we want to seek before start the feeding process
+		@param length
 	*/
 	virtual bool SignalPlay(double &absoluteTimestamp, double &length) = 0;
 
@@ -137,7 +148,7 @@ public:
 
 	/*!
 		@brief Called when a seek command was issued
-		@param absoluteTimestamp - the
+		@param absoluteTimestamp
 	*/
 	virtual bool SignalSeek(double &absoluteTimestamp) = 0;
 
@@ -152,7 +163,7 @@ public:
 		@param processedLength - if pData is only partial data, this shows the numbers of bytes processed so far, excluding pData
 		@param totalLength - if pData is only partial data, this shows the total number of bytes inside the current packet
 		@param isAudio - true if pData is audio data, false if pData is video data
-		@discussion Rulles:
+		@discussion Rules:
 			dataLength+processedLength<=totalLength
 			dataLength<=totalLength
 			processedLength<=totalLength

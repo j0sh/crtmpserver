@@ -38,6 +38,9 @@ typedef enum _IOHandlerType {
 
 class BaseProtocol;
 
+/*!
+	@class IOHandler
+*/
 class DLLEXP IOHandler {
 protected:
 	static uint32_t _idGenerator;
@@ -66,10 +69,14 @@ public:
 	*/
 	int32_t GetOutboundFd();
 
+	/*!
+		@brief Returns the IOHandler type
+	*/
 	IOHandlerType GetType();
 
 	/*!
 		@brief Sets the protocol for the IO handler
+		@param pProtocol
 	*/
 	void SetProtocol(BaseProtocol *pPotocol);
 

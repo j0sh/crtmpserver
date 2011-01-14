@@ -30,6 +30,9 @@ typedef BaseClientApplication * (*GetStaticApplication_t)(Variant);
 typedef BaseClientApplication * (*GetApplication_t)(Variant configuration);
 typedef void (*ReleaseApplication_t)(BaseClientApplication * pApplication);
 
+/*!
+	@class ConfigFile
+*/
 class DLLEXP ConfigFile {
 private:
 

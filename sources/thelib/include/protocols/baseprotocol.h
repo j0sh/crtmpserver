@@ -80,6 +80,7 @@ public:
 
 	/*! 
 		@brief Sets the far protocol
+		@param pProtocol
 	*/
 	void SetFarProtocol(BaseProtocol *pProtocol);
 
@@ -95,6 +96,7 @@ public:
 
 	/*!
 		@brief Sets the near protocol
+		@param pProtocol
 	*/
 	void SetNearProtocol(BaseProtocol *pProtocol);
 
@@ -156,6 +158,7 @@ public:
 
 	/*!
 		@brief This will return complete information about all protocols in the current stack, including the carrier if available.
+		@param info
 	*/
 	void GetStackStats(Variant &info);
 
@@ -168,6 +171,7 @@ public:
 
 	/*!
 		@brief This is called to initialize internal resources specific to each protocol. This is called before adding the protocol to the stack.
+		@param parameters
 	*/
 	virtual bool Initialize(Variant &parameters);
 
@@ -178,6 +182,7 @@ public:
 
 	/*!
 		@brief Enqueues the protocol to the delete queue if there is no outstanding outbound data.
+		@param fromFarSide
 	*/
 	virtual void GracefullyEnqueueForDelete(bool fromFarSide = true);
 
@@ -188,6 +193,7 @@ public:
 
 	/*!
 		@brief Sets the IO Handler of the protocol chain.
+		@param pCarrier
 	*/
 	virtual void SetIOHandler(IOHandler *pCarrier);
 
@@ -213,6 +219,7 @@ public:
 
 	/*! 
 		@brief Enqueue the current protocol stack for timed event
+		@param seconds
 	*/
 	virtual bool EnqueueForTimeEvent(uint32_t seconds);
 
@@ -228,29 +235,34 @@ public:
 
 	/*!
 	*	@brief This is invoked from various parts of the project to signal inter-protocol events. 
-	*          For example, you enqueue a DNS request and you want to be informed
-	*		   when the request is done and the results are available. 
-	*		   It will always bubble up towards the near protocol
+		@param event
+	*   @discussion For example, you enqueue a DNS request and you want to be informed when the request is done and the results are available. It will always bubble up towards the near protocol
 	*/
 	virtual void SignalInterProtocolEvent(Variant &event);
 
 	/*!
 		@brief Sets the protocol's application
+		@param application
 	*/
 	virtual void SetApplication(BaseClientApplication *pApplication);
 
 	/*!
 		@brief This is called by the framework when data is available for processing, when making use of connection-less protocols
+		@param buffer
+		@param pPeerAddress
 	*/
 	virtual bool SignalInputData(IOBuffer &buffer, sockaddr_in *pPeerAddress);
 
 	/*!
 		@brief This is called by the framework when data is available for processing, directly from the network i/o layer
+		@brief recvAmount
+		@param pPeerAddress
 	*/
 	virtual bool SignalInputData(int32_t recvAmount, sockaddr_in *pPeerAddress);
 
 	/*!
 		@brief This will return a Variant containing various statistic information. This should be overriden if more/less info is desired
+		@param info
 	*/
 	virtual void GetStats(Variant &info);
 
@@ -260,24 +272,28 @@ public:
 
 	/*!
 		@brief Should return true if this protocol can be linked with a far protocol of type 'type'. Otherwise should return false
+		@param type
 		@discussion This function must be implemented by the class that inherits this class
 	*/
 	virtual bool AllowFarProtocol(uint64_t type) = 0;
 
 	/*!
 		@brief Should return true if this protocol can be linked with a near protocol of type 'type'. Otherwise should return false
+		@param type
 		@discussion This function must be implemented by the class that inherits this class
 	*/
 	virtual bool AllowNearProtocol(uint64_t type) = 0;
 
 	/*!
 		@brief This is called by the framework when data is available for processing, directly from the network i/o layer
+		@param recvAmount
 		@discussion This function must be implemented by the class that inherits this class
 	*/
 	virtual bool SignalInputData(int32_t recvAmount) = 0;
 
 	/*!
 		@brief This is called by the framework when data is available for processing, from the underlaying protocol (NOT i/o layer)
+		@param buffer
 		@discussion This function must be implemented by the class that inherits this class
 	*/
 	virtual bool SignalInputData(IOBuffer &buffer) = 0;

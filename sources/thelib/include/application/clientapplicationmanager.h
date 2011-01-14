@@ -26,7 +26,9 @@
 #include "application/baseclientapplication.h"
 
 class BaseClientApplication;
-
+/*!
+	@brief
+*/
 class DLLEXP ClientApplicationManager {
 private:
     static map<uint32_t, BaseClientApplication *> _applicationsById;
@@ -40,9 +42,15 @@ public:
 
 	/*!
 		@brief Registers the application using its id, name, and/or alias
+		@param pClientApplication
 	*/
     static bool RegisterApplication(BaseClientApplication *pClientApplication);
-    static void UnRegisterApplication(BaseClientApplication *pClientApplication);
+    
+	/*!
+		@brief Erases the application using its id, name, and/or alias
+		@param pClientApplication
+	*/
+	static void UnRegisterApplication(BaseClientApplication *pClientApplication);
 	/*!
 		@brief Gets the default application based on what was indicated in the configuration file
 	*/
@@ -50,13 +58,19 @@ public:
 
 	/*!
 		@brief Returns the application name in string form
+		@param appName
 	*/
     static BaseClientApplication *FindAppByName(string appName);
     
 	/*!
 		@brief Returns the application's id
+		@param id
 	*/
 	static BaseClientApplication *FindAppById(uint32_t id);
+
+	/*!
+		@brief Returns all applications by id.
+	*/
     static map<uint32_t, BaseClientApplication *> GetAllApplications();
 };
 

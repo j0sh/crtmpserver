@@ -27,6 +27,9 @@ class BaseStream;
 class BaseOutStream;
 class BaseClientApplication;
 
+/*!
+	@class StreamsManager
+*/
 class DLLEXP StreamsManager {
 private:
 	BaseClientApplication *_pApplication;
@@ -44,11 +47,22 @@ public:
 	*/
 	uint32_t GenerateUniqueId();
 
-	/*
-	 * (Un)Registers a stream to the streams manager
-	 * */
+	/*!
+		@brief Registers the stream to the streams manager
+		@param pStream
+	*/
 	bool RegisterStream(BaseStream *pStream);
+	
+	/*!
+		@brief Erases the stream to the streams manager
+		@param pStream
+	*/
 	void UnRegisterStream(BaseStream *pStream);
+
+	/*!
+		@brief Erases the stream to the streams manager using the protocol ID.
+		@param protocolId
+	*/
 	void UnRegisterStreams(uint32_t protocolId);
 
 	/*!
@@ -59,6 +73,7 @@ public:
 	/*!
 		@brief Returns all the outbound streams waiting for a inbound stream called
 		@param streamName who has the type inboundStreamType
+		@param inboundStreamType
 	*/
 	map<uint32_t, BaseOutStream *> GetWaitingSubscribers(string streamName,
 			uint64_t inboundStreamType);
@@ -125,6 +140,7 @@ public:
 
 	/*!
 		@brief Returns the stream with the uniqe id specified by uniqueId
+		@param uniqueId
 	*/
 	BaseStream * FindByUniqueId(uint32_t uniqueId);
 };

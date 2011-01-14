@@ -31,6 +31,10 @@
 #define FileClass File
 #endif
 
+/*!
+	@class BaseInFileStream
+	@brief
+*/
 class DLLEXP BaseInFileStream
 : public BaseInStream {
 private:
@@ -113,7 +117,7 @@ public:
 
 	/*!
 		@brief Called when a seek command was issued
-		@param absoluteTimestamp - the
+		@param absoluteTimestamp
 	*/
 	virtual bool SignalSeek(double &absoluteTimestamp);
 
