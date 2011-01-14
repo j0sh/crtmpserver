@@ -83,6 +83,23 @@ bool InboundSSLProtocol::InitGlobalContext(Variant &parameters) {
 		//6. disable client certificate authentication
 		SSL_CTX_set_verify(_pGlobalSSLContext, SSL_VERIFY_NONE, NULL);
 
+		//7. Lock on the RC4-SHA. Apparently, the latest and the greatest flash plugin
+		//only works with this little fucker
+		WARN("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		WARN("!!! This is an ugly hack which deactivates !!!");
+		WARN("!!! all the ciphers inside OpenSSL and     !!!");
+		WARN("!!! only keeps RC4-SHA. If you don't use   !!!");
+		WARN("!!! InboundSSLProtocol inside other stuff, !!!");
+		WARN("!!! you can safely ignore this             !!!");
+		WARN("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		if (SSL_CTX_set_cipher_list(_pGlobalSSLContext, "!DEFAULT:RC4-SHA") == 0) {
+			FATAL("Unable to select the RC4-SHA cipher. Error was: %s",
+					STR(GetSSLErrors()));
+			SSL_CTX_free(_pGlobalSSLContext);
+			_pGlobalSSLContext = NULL;
+			return false;
+		}
+
 		//7. Store the global context for later usage
 		_pGlobalContexts[hash] = _pGlobalSSLContext;
 		INFO("SSL server context initialized");
