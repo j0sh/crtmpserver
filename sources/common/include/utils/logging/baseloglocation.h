@@ -42,6 +42,7 @@ public:
 
 	/*!
 		@brief Sets the level of logging
+		@param level - Level of logging
 	*/
 	void SetLevel(int32_t level);
 
@@ -52,6 +53,7 @@ public:
 
 	/*!
 		@brief Sets the name of the type of log message
+		@param name
 	*/
 	void SetName(string name);
 
