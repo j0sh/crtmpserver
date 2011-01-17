@@ -52,18 +52,17 @@ void OutboundHTTPProtocol::Host(string host) {
 	_host = host;
 }
 
+bool OutboundHTTPProtocol::EnqueueForOutbound() {
+	SetOutboundHeader(HTTP_HEADERS_HOST, _host);
+	return BaseHTTPProtocol::EnqueueForOutbound();
+}
+
 bool OutboundHTTPProtocol::Is200OK() {
 	return _headers[HTTP_FIRST_LINE][HTTP_STATUS_CODE] == HTTP_STATUS_CODE_200;
 }
 
 string OutboundHTTPProtocol::GetOutputFirstLine() {
 	return format("%s %s HTTP/1.1", STR(_method), STR(_document));
-}
-
-Variant OutboundHTTPProtocol::GetOutputHTTPHeaders() {
-	Variant result;
-	result[HTTP_HEADERS_HOST] = _host;
-	return result;
 }
 
 bool OutboundHTTPProtocol::ParseFirstLine(string &line, Variant &firstLineHeader) {
@@ -75,7 +74,7 @@ bool OutboundHTTPProtocol::ParseFirstLine(string &line, Variant &firstLineHeader
 	}
 
 	if ((parts[0] != HTTP_VERSION_1_1)
-		&&(parts[0] != HTTP_VERSION_1_0)) {
+			&& (parts[0] != HTTP_VERSION_1_0)) {
 		FATAL("Http version not supported: %s", STR(parts[0]));
 		return false;
 	}
@@ -96,6 +95,11 @@ bool OutboundHTTPProtocol::ParseFirstLine(string &line, Variant &firstLineHeader
 	firstLineHeader[HTTP_STATUS_CODE] = parts[1];
 	firstLineHeader[HTTP_STATUS_CODE_REASON] = reason;
 
+	return true;
+}
+
+bool OutboundHTTPProtocol::Authenticate() {
+	WARN("No auth required");
 	return true;
 }
 #endif /* HAS_PROTOCOL_HTTP */

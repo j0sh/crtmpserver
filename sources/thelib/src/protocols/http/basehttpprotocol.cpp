@@ -38,6 +38,9 @@ BaseHTTPProtocol::BaseHTTPProtocol(uint64_t protocolType)
 	_disconnectAfterTransfer = false;
 	_sessionDecodedBytesCount = 0;
 	_decodedBytesCount = 0;
+	_hasAuth = false;
+	_outboundHeaders.IsArray(false);
+	_continueAfterParseHeaders = true;
 }
 
 BaseHTTPProtocol::~BaseHTTPProtocol() {
@@ -86,42 +89,37 @@ bool BaseHTTPProtocol::EnqueueForOutbound() {
 		bufferLength = GETAVAILABLEBYTESCOUNT(*pBuffer);
 	}
 
-	//2. Get the HTTP headers
-	Variant headers = GetOutputHTTPHeaders();
-	if (headers != V_MAP && headers != V_NULL) {
-		FATAL("Invalid HTTP headers:\n%s", STR(headers.ToString()));
-		return false;
-	}
-
 	//3. add or replace X-Powered-By attribute
-	headers[HTTP_HEADERS_X_POWERED_BY] = HTTP_HEADERS_X_POWERED_BY_US;
+	_outboundHeaders[HTTP_HEADERS_X_POWERED_BY] = HTTP_HEADERS_X_POWERED_BY_US;
 
 	//4. add or replace the Server attribute
 	if (GetType() == PT_INBOUND_HTTP) {
-		headers[HTTP_HEADERS_SERVER] = HTTP_HEADERS_SERVER_US;
+		_outboundHeaders[HTTP_HEADERS_SERVER] = HTTP_HEADERS_SERVER_US;
 	}
 
 	//5. Get rid of the Content-Length attribute and add it only if necessary
-	headers.RemoveKey(HTTP_HEADERS_CONTENT_LENGTH);
+	_outboundHeaders.RemoveKey(HTTP_HEADERS_CONTENT_LENGTH);
 	if (bufferLength > 0) {
-		headers[HTTP_HEADERS_CONTENT_LENGTH] = format("%d", bufferLength);
+		_outboundHeaders[HTTP_HEADERS_CONTENT_LENGTH] = format("%d", bufferLength);
 	}
 
 	//6. Get rid of Transfer-Encoding attribute
-	headers.RemoveKey(HTTP_HEADERS_TRANSFER_ENCODING);
+	_outboundHeaders.RemoveKey(HTTP_HEADERS_TRANSFER_ENCODING);
 
 	//7. Write the first line of the request/response
 	_outputBuffer.ReadFromString(GetOutputFirstLine() + "\r\n");
 
 	//8. Write the headers and the final '\r\n'
 
-	FOR_MAP(headers, string, Variant, i) {
+	FOR_MAP(_outboundHeaders, string, Variant, i) {
 		if (MAP_VAL(i) != V_STRING) {
-			FATAL("Invalid HTTP headers:\n%s", STR(headers.ToString()));
+			FATAL("Invalid HTTP headers:\n%s", STR(_outboundHeaders.ToString()));
 			return false;
 		}
 		_outputBuffer.ReadFromString(format("%s: %s\r\n", STR(MAP_KEY(i)), STR(MAP_VAL(i))));
 	}
+	_outboundHeaders.Reset();
+	_outboundHeaders.IsArray(false);
 	_outputBuffer.ReadFromString("\r\n");
 
 	//9. Write the actual content if necessary
@@ -149,6 +147,9 @@ bool BaseHTTPProtocol::SignalInputData(IOBuffer &buffer) {
 			return false;
 		}
 	}
+
+	if (!_continueAfterParseHeaders)
+		return true;
 
 	//2. Are we still in the "get headers state"? If so, wait for more data
 	if (_state != HTTP_STATE_PAYLOAD) {
@@ -218,6 +219,10 @@ bool BaseHTTPProtocol::TransferCompleted() {
 
 Variant BaseHTTPProtocol::GetHeaders() {
 	return _headers;
+}
+
+void BaseHTTPProtocol::SetOutboundHeader(string name, string value) {
+	_outboundHeaders[name] = value;
 }
 
 string BaseHTTPProtocol::DumpState() {
@@ -338,7 +343,7 @@ bool BaseHTTPProtocol::ParseHeaders(IOBuffer& buffer) {
 	_state = HTTP_STATE_PAYLOAD;
 	buffer.Ignore(headersSize + 4);
 
-	return true;
+	return Authenticate();
 }
 
 bool BaseHTTPProtocol::HandleChunkedContent(IOBuffer &buffer) {

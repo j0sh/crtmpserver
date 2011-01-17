@@ -40,6 +40,9 @@ protected:
 	bool _autoFlush;
 	IOBuffer _outputBuffer;
 	IOBuffer _inputBuffer;
+	bool _hasAuth;
+	Variant _outboundHeaders;
+	bool _continueAfterParseHeaders;
 public:
 	BaseHTTPProtocol(uint64_t protocolType);
 	virtual ~BaseHTTPProtocol();
@@ -63,10 +66,12 @@ public:
 	bool TransferCompleted();
 	Variant GetHeaders();
 	bool Flush();
+
+	void SetOutboundHeader(string name, string value);
 protected:
 	virtual string GetOutputFirstLine() = 0;
-	virtual Variant GetOutputHTTPHeaders() = 0;
 	virtual bool ParseFirstLine(string &line, Variant &headers) = 0;
+	virtual bool Authenticate() = 0;
 private:
 	string DumpState();
 	bool ParseHeaders(IOBuffer &buffer);

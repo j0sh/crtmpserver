@@ -28,13 +28,19 @@ class InboundHTTPProtocol
 : public BaseHTTPProtocol {
 private:
 	Variant _requestHeaders;
+	uint16_t _statusCode;
 public:
 	InboundHTTPProtocol();
 	virtual ~InboundHTTPProtocol();
 
+	void SetStatusCode(uint16_t statusCode);
+
+	virtual bool Initialize(Variant &parameters);
 	virtual string GetOutputFirstLine();
-	virtual Variant GetOutputHTTPHeaders();
 	virtual bool ParseFirstLine(string &line, Variant &headers);
+	virtual bool Authenticate();
+private:
+	bool SendAuthRequired(Variant &auth);
 };
 
 
