@@ -425,7 +425,6 @@
           <itemPath>../../../../sources/thelib/src/protocols/rtmp/inboundhttp4rtmp.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/protocols/rtmp/inboundrtmpprotocol.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/protocols/rtmp/inboundrtmpsdiscriminatorprotocol.cpp</itemPath>
-          <itemPath>../../../../sources/thelib/src/protocols/rtmp/newfile</itemPath>
           <itemPath>../../../../sources/thelib/src/protocols/rtmp/outboundrtmpprotocol.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/protocols/rtmp/rtmpeprotocol.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/protocols/rtmp/rtmpprotocolserializer.cpp</itemPath>
