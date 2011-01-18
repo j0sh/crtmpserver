@@ -58,6 +58,7 @@ typedef struct DLLEXP _Header {
     } hf;
     bool readCompleted;
     bool isAbsolute;
+	bool skip4bytes;
 
     bool Read(uint32_t channelId, uint8_t type, IOBuffer &buffer,
             uint32_t availableBytes);

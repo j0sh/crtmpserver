@@ -49,6 +49,7 @@ bool Header::Read(uint32_t channelId, uint8_t type, IOBuffer &buffer,
 			H_SI(*this) = ntosi(H_SI(*this));
 
 			if (hf.s.ts == 0x00ffffff) {
+				skip4bytes = true;
 				if (availableBytes < 15) {
 					readCompleted = false;
 					return true;
@@ -57,6 +58,7 @@ bool Header::Read(uint32_t channelId, uint8_t type, IOBuffer &buffer,
 				readCompleted = true;
 				return buffer.Ignore(15);
 			} else {
+				skip4bytes = false;
 				readCompleted = true;
 				return buffer.Ignore(11);
 			}
@@ -73,6 +75,7 @@ bool Header::Read(uint32_t channelId, uint8_t type, IOBuffer &buffer,
 			hf.s.ml = ENTOHL(hf.s.ml)&0x00ffffff; //----MARKED-LONG---
 
 			if (hf.s.ts == 0x00ffffff) {
+				skip4bytes = true;
 				if (availableBytes < 11) {
 					readCompleted = false;
 					return true;
@@ -81,6 +84,7 @@ bool Header::Read(uint32_t channelId, uint8_t type, IOBuffer &buffer,
 				readCompleted = true;
 				return buffer.Ignore(11);
 			} else {
+				skip4bytes = false;
 				readCompleted = true;
 				return buffer.Ignore(7);
 			}
@@ -96,6 +100,7 @@ bool Header::Read(uint32_t channelId, uint8_t type, IOBuffer &buffer,
 			hf.s.ts = ENTOHL(hf.s.ts)&0x00ffffff; //----MARKED-LONG---
 
 			if (hf.s.ts == 0x00ffffff) {
+				skip4bytes = true;
 				if (availableBytes < 7) {
 					readCompleted = false;
 					return true;
@@ -104,6 +109,7 @@ bool Header::Read(uint32_t channelId, uint8_t type, IOBuffer &buffer,
 				readCompleted = true;
 				return buffer.Ignore(7);
 			} else {
+				skip4bytes = false;
 				readCompleted = true;
 				return buffer.Ignore(3);
 			}
@@ -111,7 +117,7 @@ bool Header::Read(uint32_t channelId, uint8_t type, IOBuffer &buffer,
 		case HT_CONTINUATION:
 		{
 			isAbsolute = false;
-			if (hf.s.ts == 0x00ffffff) {
+			if (skip4bytes) {
 				if (availableBytes < 4) {
 					readCompleted = false;
 					return true;
@@ -319,7 +325,11 @@ bool Header::Write(IOBuffer &buffer) {
 		}
 		case HT_CONTINUATION:
 		{
-			//FINEST("Output buffer: %s", STR(buffer));
+			if (hf.s.ts >= 0x00ffffff) {
+				uint32_t temp = EHTONL(hf.s.ts); //----MARKED-LONG---
+				buffer.ReadFromBuffer((uint8_t *) & temp, 4);
+				hf.s.ts = ENTOHL(temp); //----MARKED-LONG---
+			}
 			return true;
 		}
 		default:

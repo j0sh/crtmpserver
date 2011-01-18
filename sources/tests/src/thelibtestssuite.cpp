@@ -105,6 +105,7 @@ do { \
     TS_ASSERT(H_MT(h) == 0x07); \
     TS_ASSERT(H_SI(h) == 0x0b0a0908); \
     TS_ASSERT(H_IA(h) == ia); \
+	TS_ASSERT(GETAVAILABLEBYTESCOUNT(buffer)==0); \
 } while (0)
 
 #define HEADER_WRITE_TEST(h,ciSize, ci, buff, type, ia, ts) \
