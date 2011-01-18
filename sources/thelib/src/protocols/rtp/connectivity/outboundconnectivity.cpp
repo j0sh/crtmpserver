@@ -106,6 +106,9 @@ OutboundConnectivity::OutboundConnectivity()
 	_message.msg_namelen = sizeof (sockaddr_in);
 
 	_startupTime = 0;
+
+	_hasAudio = false;
+	_hasVideo = false;
 }
 
 OutboundConnectivity::~OutboundConnectivity() {
@@ -166,6 +169,16 @@ uint16_t OutboundConnectivity::GetLastAudioSequence() {
 
 uint32_t OutboundConnectivity::GetLastAudioRTPTimestamp() {
 	return _audioRtpTs;
+}
+
+void OutboundConnectivity::HasAudio(bool value) {
+	_hasAudio = value;
+	_pOutStream->HasAudioVideo(_hasAudio, _hasVideo);
+}
+
+void OutboundConnectivity::HasVideo(bool value) {
+	_hasVideo = value;
+	_pOutStream->HasAudioVideo(_hasAudio, _hasVideo);
 }
 
 void OutboundConnectivity::RegisterUDPVideoClient(uint32_t protocolId,
@@ -330,23 +343,6 @@ bool OutboundConnectivity::InitializePorts(int32_t &dataFd, uint16_t &dataPort,
 	}
 
 bool OutboundConnectivity::FeedVideoDataUDP(msghdr &message) {
-	//	uint32_t packetRtp = ENTOHLP((uint8_t *) message.msg_iov[0].iov_base + 4);
-	//	if ((((uint8_t *) message.msg_iov[0].iov_base)[1] >> 7) != 0) {
-	//		//		FINEST("packetRtp: %d (%08x) %02x%02x%02x%02x %.2f %c",
-	//		//				packetRtp,
-	//		//				packetRtp,
-	//		//				((uint8_t *) message.msg_iov[0].iov_base)[4],
-	//		//				((uint8_t *) message.msg_iov[0].iov_base)[5],
-	//		//				((uint8_t *) message.msg_iov[0].iov_base)[6],
-	//		//				((uint8_t *) message.msg_iov[0].iov_base)[7],
-	//		//				(double) packetRtp / 90000.0,
-	//		//				((((uint8_t *) message.msg_iov[0].iov_base)[1] >> 7) != 0) ? '*' : ' ');
-	//		if (____last == packetRtp) {
-	//			WARN("Skip packet");
-	//			return true;
-	//		}
-	//		____last = packetRtp;
-	//	}
 	RTP_SEND_MESSAGE(_videoDataFd, _udpVideoDataClients, message);
 	_videoPacketsCount++;
 	COMPUTE_BYTES_COUNT(message, _videoBytesCount);
@@ -408,26 +404,6 @@ bool OutboundConnectivity::CreateRTCPPacket_mystyle(uint8_t *pDest, uint8_t *pSr
 		uint32_t ssrc, uint32_t rate, uint32_t packetsCount, uint32_t bytesCount,
 		bool isAudio) {
 
-	/*
-	 0                   1                   2                   3
-	 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-	+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-	|V=2|P|    RC   |   PT=SR=200   |             length            | header
-	+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-	|                         SSRC of sender                        |
-	+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
-	|              NTP timestamp, most significant word             | sender
-	+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+ info
-	|             NTP timestamp, least significant word             |
-	+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-	|                         RTP timestamp                         |
-	+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-	|                     sender's packet count                     |
-	+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-	|                      sender's octet count                     |
-	+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
-	 */
-
 	//1. V,P,RC
 	pDest[0] = 0x80;
 
@@ -480,21 +456,6 @@ bool OutboundConnectivity::CreateRTCPPacket_mystyle(uint8_t *pDest, uint8_t *pSr
 	//8. sender's octet count
 	EHTONLP(pDest + 24, bytesCount);
 
-	FINEST("-----%s-----", isAudio ? "AUDIO" : "VIDEO");
-	FINEST("_startupTime: %.2f", _startupTime);
-	FINEST("currentTime: %.2f", currentTime);
-	FINEST("currentTime - _startupTime: %.2f (%.4f)",
-			currentTime - _startupTime,
-			(currentTime - _startupTime) / (double) CLOCKS_PER_SECOND);
-	FINEST("rate: %d", rate);
-	FINEST("rtpDouble: %.2f", rtpDouble);
-	FINEST("firstRtp: %d", firstRtp);
-	FINEST("rtp: %d", rtp);
-	uint32_t packetRtp = ENTOHLP(pSrc + 4);
-	FINEST("packetRtp: %d", packetRtp);
-	FINEST("diff: %d; (%.4f s)", packetRtp - rtp, ((double) packetRtp - rtp) / (double) rate);
-	FINEST("---------------");
-
 	return true;
 }
 
@@ -513,26 +474,6 @@ bool OutboundConnectivity::CreateRTCPPacket_mystyle_only_once(uint8_t *pDest, ui
 bool OutboundConnectivity::CreateRTCPPacket_live555style(uint8_t *pDest, uint8_t *pSrc,
 		uint32_t ssrc, uint32_t rate, uint32_t packetsCount, uint32_t bytesCount,
 		bool isAudio) {
-
-	/*
-	 0                   1                   2                   3
-	 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-	+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-	|V=2|P|    RC   |   PT=SR=200   |             length            | header
-	+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-	|                         SSRC of sender                        |
-	+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
-	|              NTP timestamp, most significant word             | sender
-	+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+ info
-	|             NTP timestamp, least significant word             |
-	+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-	|                         RTP timestamp                         |
-	+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-	|                     sender's packet count                     |
-	+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-	|                      sender's octet count                     |
-	+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
-	 */
 
 	//1. V,P,RC
 	pDest[0] = 0x80;

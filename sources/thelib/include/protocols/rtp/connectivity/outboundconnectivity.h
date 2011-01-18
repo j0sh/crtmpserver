@@ -56,6 +56,9 @@ private:
 	BaseOutNetRTPUDPStream *_pOutStream;
 	msghdr _message;
 	double _startupTime;
+
+	bool _hasAudio;
+	bool _hasVideo;
 public:
 	OutboundConnectivity();
 	virtual ~OutboundConnectivity();
@@ -72,6 +75,8 @@ public:
 	uint32_t GetLastVideoRTPTimestamp();
 	uint16_t GetLastAudioSequence();
 	uint32_t GetLastAudioRTPTimestamp();
+	void HasAudio(bool value);
+	void HasVideo(bool value);
 
 	void RegisterUDPVideoClient(uint32_t protocolId, sockaddr_in &data,
 			sockaddr_in &rtcp);

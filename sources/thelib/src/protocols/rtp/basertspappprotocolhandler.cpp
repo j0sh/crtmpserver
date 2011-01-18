@@ -397,10 +397,12 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPRequestSetupOutbound(RTSPProtocol *pF
 		pFrom->GetCustomParameters()["audioDataPortNumber"] = dataPortNumber;
 		pFrom->GetCustomParameters()["audioRtcpPortNumber"] = rtcpPortNumber;
 		pFrom->GetCustomParameters()["audioTrackUri"] = requestHeaders[RTSP_FIRST_LINE][RTSP_URL];
+		pOutboundConnectivity->HasAudio(true);
 	} else {
 		pFrom->GetCustomParameters()["videoDataPortNumber"] = dataPortNumber;
 		pFrom->GetCustomParameters()["videoRtcpPortNumber"] = rtcpPortNumber;
 		pFrom->GetCustomParameters()["videoTrackUri"] = requestHeaders[RTSP_FIRST_LINE][RTSP_URL];
+		pOutboundConnectivity->HasVideo(true);
 	}
 
 	//10. Create a session
@@ -590,7 +592,7 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPRequestPlay(RTSPProtocol *pFrom,
 	}
 	if (pFrom->GetCustomParameters().HasKey("audioTrackId")) {
 		rtpInfoAudio = format("url=%s;seq=%u;rtptime=%u",
-				STR(pFrom->GetCustomParameters()["videoTrackUri"]),
+				STR(pFrom->GetCustomParameters()["audioTrackId"]),
 				pOutboundConnectivity->GetLastAudioSequence(),
 				0);
 		//pOutboundConnectivity->GetLastAudioRTPTimestamp());
@@ -1016,7 +1018,6 @@ string BaseRTSPAppProtocolHandler::GetAudioTrack(RTSPProtocol *pFrom,
 		result += format("a=fmtp:96 streamtype=5; profile-level-id=15; mode=AAC-hbr; %s; SizeLength=13; IndexLength=3; IndexDeltaLength=3;\r\n",
 				STR(pCapabilities->aac.GetRTSPFmtpConfig()));
 	} else {
-
 		WARN("Unsupported audio codec: %s", STR(tagToString(pCapabilities->audioCodecId)));
 	}
 	return result;

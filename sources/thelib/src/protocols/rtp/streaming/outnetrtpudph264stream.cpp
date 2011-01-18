@@ -26,8 +26,6 @@
 #include "protocols/rtp/connectivity/outboundconnectivity.h"
 
 #define MAX_RTP_PACKET_SIZE 1350
-//#define RTP_BIG_CHUNK
-#define RTP_NORMAL
 
 OutNetRTPUDPH264Stream::OutNetRTPUDPH264Stream(BaseProtocol *pProtocol,
 		StreamsManager *pStreamsManager, string name)
@@ -76,69 +74,50 @@ OutNetRTPUDPH264Stream::~OutNetRTPUDPH264Stream() {
 bool OutNetRTPUDPH264Stream::FeedDataVideo(uint8_t *pData, uint32_t dataLength,
 		uint32_t processedLength, uint32_t totalLength,
 		double absoluteTimestamp, bool isAudio) {
-
-#ifdef RTP_NORMAL
-	return FeedDataVideoFUA(pData, dataLength, processedLength, totalLength,
-			absoluteTimestamp);
-#endif
-
-#ifdef RTP_BIG_CHUNK
-#define RTP_BIG_CHUNK_SIZE 5000
-	if (processedLength == 0) {
-		uint32_t tempProcessed = 0;
-		uint32_t tempTotalLength = GETAVAILABLEBYTESCOUNT(_videoBuffer);
-		while (GETAVAILABLEBYTESCOUNT(_videoBuffer) > 0) {
-			uint32_t size = GETAVAILABLEBYTESCOUNT(_videoBuffer);
-			size = size > RTP_BIG_CHUNK_SIZE ? RTP_BIG_CHUNK_SIZE : size;
-			if (!FeedDataVideo(GETIBPOINTER(_videoBuffer),
-					size,
-					tempProcessed, tempTotalLength,
-					absoluteTimestamp, isAudio)) {
-				return false;
-			}
-			tempProcessed += size;
-			_videoBuffer.Ignore(size);
-		}
-	}
-	_videoBuffer.ReadFromBuffer(pData, dataLength);
-#endif
-
-#ifdef RTP_COMPLETE_PACKETS
-	if (processedLength == 0) {
-		if (GETAVAILABLEBYTESCOUNT(_videoBuffer) > 0) {
-			if (!FeedDataVideo(GETIBPOINTER(_videoBuffer),
-					GETAVAILABLEBYTESCOUNT(_videoBuffer),
-					0, GETAVAILABLEBYTESCOUNT(_videoBuffer),
-					absoluteTimestamp, isAudio)) {
-				ASSERT("_videoBuffer:\n%s", STR(_videoBuffer));
-			}
+	if (_pInStream->GetType() == ST_IN_NET_RTMP) {
+		if (processedLength == 0) {
+			if (pData[1] != 1)
+				return true;
 			_videoBuffer.IgnoreAll();
 		}
-	}
-	_videoBuffer.ReadFromBuffer(pData, dataLength);
-#endif
-
-#ifdef RTP_NORMAL_CHECKSUM
-	FeedDataVideo(pData, dataLength, processedLength, totalLength,
-			absoluteTimestamp, isAudio);
-	if (processedLength == 0) {
-		if (GETAVAILABLEBYTESCOUNT(_videoBuffer) > 0) {
-			_videoBuffer.Ignore(9);
-			_orig = md5(string((char *) GETIBPOINTER(_videoBuffer),
-					GETAVAILABLEBYTESCOUNT(_videoBuffer)), true);
-			if (_copy != "") {
-				if (_copy != _orig) {
-					ASSERT("oooops!")
+		_videoBuffer.ReadFromBuffer(pData, dataLength);
+		if (dataLength + processedLength == totalLength) {
+			//Last chunk. Do the damage
+			pData = GETIBPOINTER(_videoBuffer);
+			uint32_t dataLength = GETAVAILABLEBYTESCOUNT(_videoBuffer);
+			if (dataLength < 9) {
+				WARN("Bogus packet");
+				return true;
+			}
+			pData += 5;
+			dataLength -= 5;
+			uint32_t chunkSize = 0;
+			uint32_t tsIncrement = 0;
+			while (dataLength >= 4) {
+				chunkSize = ENTOHLP(pData);
+				if (chunkSize > (dataLength - 4)) {
+					WARN("Bogus packet");
+					return true;
 				}
-				FINEST("_orig: %s; _copy: %s", STR(_orig), STR(_copy));
+				pData += 4;
+				dataLength -= 4;
+				if (chunkSize == 0)
+					continue;
+				if (!FeedDataVideoFUA(pData, chunkSize, 0, chunkSize,
+						absoluteTimestamp + (double) tsIncrement / 90000.00)) {
+					FATAL("Unable to feed data");
+					return false;
+				}
+				//tsIncrement++;
+				pData += chunkSize;
+				dataLength -= chunkSize;
 			}
-			_videoBuffer.IgnoreAll();
 		}
+		return true;
+	} else {
+		return FeedDataVideoFUA(pData, dataLength, processedLength, totalLength,
+				absoluteTimestamp);
 	}
-	_videoBuffer.ReadFromBuffer(pData, dataLength);
-#endif
-
-	return true;
 }
 
 bool OutNetRTPUDPH264Stream::FeedDataAudio(uint8_t *pData, uint32_t dataLength,
@@ -171,25 +150,13 @@ void OutNetRTPUDPH264Stream::SignalAttachedToInStream() {
 bool OutNetRTPUDPH264Stream::FeedDataVideoFUA(uint8_t *pData, uint32_t dataLength,
 		uint32_t processedLength, uint32_t totalLength,
 		double absoluteTimestamp) {
-	if (_pInStream->GetType() == ST_IN_NET_RTMP) {
-		if (processedLength == 0) {
-			if (pData[1] != 1)
-				return true;
-			pData += 9;
-			dataLength -= 9;
-		} else {
-			processedLength -= 9;
-		}
-		totalLength -= 9;
-	} else {
-		if (
-				//				(NALU_TYPE(pData[0]) != NALU_TYPE_SPS)
-				//				&& (NALU_TYPE(pData[0]) != NALU_TYPE_PPS)
-				(NALU_TYPE(pData[0]) != NALU_TYPE_SLICE)
-				&& (NALU_TYPE(pData[0]) != NALU_TYPE_IDR)) {
-			//FINEST("ignoring absoluteTimestamp: %.2f; %s", absoluteTimestamp, STR(NALUToString(pData[0])));
-			return true;
-		}
+	if (
+			//				(NALU_TYPE(pData[0]) != NALU_TYPE_SPS)
+			//				&& (NALU_TYPE(pData[0]) != NALU_TYPE_PPS)
+			(NALU_TYPE(pData[0]) != NALU_TYPE_SLICE)
+			&& (NALU_TYPE(pData[0]) != NALU_TYPE_IDR)) {
+		//FINEST("ignoring absoluteTimestamp: %.2f; %s", absoluteTimestamp, STR(NALUToString(pData[0])));
+		return true;
 	}
 
 	//	if (processedLength == 0 && NALU_TYPE(pData[0]) == NALU_TYPE_IDR) {
@@ -235,9 +202,6 @@ bool OutNetRTPUDPH264Stream::FeedDataVideoFUA(uint8_t *pData, uint32_t dataLengt
 			_videoData.msg_iov[0].iov_len = 14;
 
 			if (processedLength + sentAmount == 0) {
-#ifdef RTP_NORMAL_CHECKSUM
-				_videoBufferCopy.ReadFromBuffer(pData, chunkSize);
-#endif
 				//6. First chunk
 				((uint8_t *) _videoData.msg_iov[0].iov_base)[12] = (pData[0]&0xe0) | NALU_TYPE_FUA;
 				((uint8_t *) _videoData.msg_iov[0].iov_base)[13] = (pData[0]&0x1f) | 0x80;
@@ -245,19 +209,10 @@ bool OutNetRTPUDPH264Stream::FeedDataVideoFUA(uint8_t *pData, uint32_t dataLengt
 				_videoData.msg_iov[1].iov_len = chunkSize - 1;
 			} else {
 				if (processedLength + sentAmount + chunkSize == totalLength) {
-#ifdef RTP_NORMAL_CHECKSUM
-					_videoBufferCopy.ReadFromBuffer(pData, chunkSize);
-					_copy = md5(string((char *) GETIBPOINTER(_videoBufferCopy),
-							GETAVAILABLEBYTESCOUNT(_videoBufferCopy)), true);
-					_videoBufferCopy.IgnoreAll();
-#endif
 					//7. Last chunk
 					((uint8_t *) _videoData.msg_iov[0].iov_base)[13] &= 0x1f;
 					((uint8_t *) _videoData.msg_iov[0].iov_base)[13] |= 0x40;
 				} else {
-#ifdef RTP_NORMAL_CHECKSUM
-					_videoBufferCopy.ReadFromBuffer(pData, chunkSize);
-#endif
 					//8. Middle chunk
 					((uint8_t *) _videoData.msg_iov[0].iov_base)[13] &= 0x1f;
 				}

@@ -33,6 +33,8 @@ protected:
 	OutboundConnectivity *_pConnectivity;
 	uint16_t _videoCounter;
 	uint16_t _audioCounter;
+	bool _hasAudio;
+	bool _hasVideo;
 public:
 	BaseOutNetRTPUDPStream(BaseProtocol *pProtocol,
 			StreamsManager *pStreamsManager, string name);
@@ -40,6 +42,7 @@ public:
 
 	OutboundConnectivity *GetConnectivity();
 	void SetConnectivity(OutboundConnectivity *pConnectivity);
+	void HasAudioVideo(bool hasAudio, bool hasVideo);
 
 	uint32_t SSRC();
 	uint16_t VideoCounter();

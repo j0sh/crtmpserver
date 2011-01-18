@@ -45,6 +45,11 @@ void BaseOutNetRTPUDPStream::SetConnectivity(OutboundConnectivity *pConnectivity
 	_pConnectivity = pConnectivity;
 }
 
+void BaseOutNetRTPUDPStream::HasAudioVideo(bool hasAudio, bool hasVideo) {
+	_hasAudio = hasAudio;
+	_hasVideo = hasVideo;
+}
+
 uint32_t BaseOutNetRTPUDPStream::SSRC() {
 	return _ssrc;
 }
@@ -93,12 +98,21 @@ void BaseOutNetRTPUDPStream::SignalStreamCompleted() {
 bool BaseOutNetRTPUDPStream::FeedData(uint8_t *pData, uint32_t dataLength,
 		uint32_t processedLength, uint32_t totalLength,
 		double absoluteTimestamp, bool isAudio) {
-	if (isAudio)
-		return FeedDataAudio(pData, dataLength, processedLength, totalLength,
-			absoluteTimestamp, isAudio);
-	else
-		return FeedDataVideo(pData, dataLength, processedLength, totalLength,
-			absoluteTimestamp, isAudio);
+	if (isAudio) {
+		if (_hasAudio) {
+			return FeedDataAudio(pData, dataLength, processedLength, totalLength,
+					absoluteTimestamp, isAudio);
+		} else {
+			return true;
+		}
+	} else {
+		if (_hasVideo) {
+			return FeedDataVideo(pData, dataLength, processedLength, totalLength,
+					absoluteTimestamp, isAudio);
+		} else {
+			return true;
+		}
+	}
 }
 
 #endif /* HAS_PROTOCOL_RTP */

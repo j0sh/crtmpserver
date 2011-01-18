@@ -27,11 +27,6 @@ class DLLEXP OutNetRTPUDPH264Stream
 : public BaseOutNetRTPUDPStream {
 private:
 	IOBuffer _videoBuffer;
-#ifdef RTP_NORMAL_CHECKSUM
-	IOBuffer _videoBufferCopy;
-	string _orig;
-	string _copy;
-#endif
 	msghdr _videoData;
 	uint8_t *_pSPS;
 	uint32_t _SPSLen;
