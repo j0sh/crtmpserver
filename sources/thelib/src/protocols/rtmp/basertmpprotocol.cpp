@@ -690,7 +690,12 @@ bool BaseRTMPProtocol::ProcessBytes(IOBuffer &buffer) {
 						//but it needs to be replaced with other means of detecting
 						//the type of stream. Calling a function for each packet
 						//is not a nice thing to do
-						if (_streams[H_SI(header)]->GetType() == ST_IN_NET_RTMP) {
+						if (H_SI(header) >= MAX_STREAMS_COUNT) {
+							FATAL("Incorrect stream index");
+							return false;
+						}
+						if ((_streams[H_SI(header)] != NULL)
+								&& (_streams[H_SI(header)]->GetType() == ST_IN_NET_RTMP)) {
 							if (!((InNetRTMPStream *) _streams[H_SI(header)])->FeedData(
 									GETIBPOINTER(buffer), //pData,
 									tempSize, //dataLength,
@@ -733,7 +738,12 @@ bool BaseRTMPProtocol::ProcessBytes(IOBuffer &buffer) {
 						_selectedChannel = -1;
 
 						//TODO: see the todo in the video case
-						if (_streams[H_SI(header)]->GetType() == ST_IN_NET_RTMP) {
+						if (H_SI(header) >= MAX_STREAMS_COUNT) {
+							FATAL("Incorrect stream index");
+							return false;
+						}
+						if ((_streams[H_SI(header)] != NULL)
+								&& (_streams[H_SI(header)]->GetType() == ST_IN_NET_RTMP)) {
 							if (!((InNetRTMPStream *) _streams[H_SI(header)])->FeedData(
 									GETIBPOINTER(buffer), //pData,
 									tempSize, //dataLength,
