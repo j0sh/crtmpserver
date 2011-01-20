@@ -81,7 +81,7 @@ bool Initialize() {
 	pLogLocation->SetLevel(_FINEST_);
     Logger::AddLogLocation(pLogLocation);
 
-    gRs.pConfigFile = new ConfigFile();
+    gRs.pConfigFile = new ConfigFile(NULL);
 	string configFilePath = gRs.configPath/*"C:\\rtmpd-clean\\builders\\VS2010\\Debug\\rtmpserver.lua"*/;
 	INFO("configFilePath=%s",gRs.configPath);
     string fileName;
