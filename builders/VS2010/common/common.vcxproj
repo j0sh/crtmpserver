@@ -52,7 +52,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>..\..\..\sources\common\include;..\..\..\3rdparty\lua-dev;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>LITTLE_ENDIAN_BYTE_ALIGNED;NET_SELECT;HAS_LUA;HAS_PROTOCOL_HTTP;HAS_PROTOCOL_RTMP;HAS_PROTOCOL_RTP;HAS_PROTOCOL_LIVEFLV;HAS_PROTOCOL_TS;HAS_PROTOCOL_VAR;HAS_MEDIA_MP3;HAS_MEDIA_MP4;HAS_MEDIA_FLV;WIN32;_DEBUG;_WINDOWS;_USRDLL;COMMON_EXPORTS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>LITTLE_ENDIAN_BYTE_ALIGNED;NET_SELECT;HAS_LUA;HAS_PROTOCOL_HTTP;HAS_PROTOCOL_RTMP;HAS_PROTOCOL_RTP;HAS_PROTOCOL_LIVEFLV;HAS_PROTOCOL_TS;HAS_PROTOCOL_VAR;HAS_MEDIA_MP3;HAS_MEDIA_MP4;HAS_MEDIA_FLV;HAS_MEDIA_MKV;VM_LUA;WIN32;_DEBUG;_WINDOWS;_USRDLL;COMMON_EXPORTS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -81,7 +81,7 @@
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <AdditionalIncludeDirectories>..\..\..\sources\common\include;..\..\..\3rdparty\lua-dev;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>LITTLE_ENDIAN_BYTE_ALIGNED;NET_SELECT;HAS_LUA;HAS_PROTOCOL_HTTP;HAS_PROTOCOL_RTMP;HAS_PROTOCOL_RTP;HAS_PROTOCOL_LIVEFLV;HAS_PROTOCOL_TS;HAS_PROTOCOL_VAR;HAS_MEDIA_MP3;HAS_MEDIA_MP4;HAS_MEDIA_FLV;WIN32;NDEBUG;_WINDOWS;_USRDLL;COMMON_EXPORTS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>LITTLE_ENDIAN_BYTE_ALIGNED;NET_SELECT;HAS_LUA;HAS_PROTOCOL_HTTP;HAS_PROTOCOL_RTMP;HAS_PROTOCOL_RTP;HAS_PROTOCOL_LIVEFLV;HAS_PROTOCOL_TS;HAS_PROTOCOL_VAR;HAS_MEDIA_MP3;HAS_MEDIA_MP4;HAS_MEDIA_FLV;HAS_MEDIA_MKV;VM_LUA;WIN32;NDEBUG;_WINDOWS;_USRDLL;COMMON_EXPORTS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
@@ -112,6 +112,8 @@
     <ClInclude Include="..\..\..\sources\common\include\common.h" />
     <ClInclude Include="..\..\..\sources\common\include\defines.h" />
     <ClInclude Include="..\..\..\sources\common\include\platform\baseplatform.h" />
+    <ClInclude Include="..\..\..\sources\common\include\platform\linux\linuxplatform.h" />
+    <ClInclude Include="..\..\..\sources\common\include\platform\linux\max.h" />
     <ClInclude Include="..\..\..\sources\common\include\platform\platform.h" />
     <ClInclude Include="..\..\..\sources\common\include\platform\windows\max.h" />
     <ClInclude Include="..\..\..\sources\common\include\platform\windows\win32platform.h" />
@@ -134,6 +136,7 @@
     <ClInclude Include="..\..\..\sources\common\include\utils\misc\misc.h" />
     <ClInclude Include="..\..\..\sources\common\include\utils\misc\mmapfile.h" />
     <ClInclude Include="..\..\..\sources\common\include\utils\misc\timersmanager.h" />
+    <ClInclude Include="..\..\..\sources\common\include\utils\misc\uri.h" />
     <ClInclude Include="..\..\..\sources\common\include\utils\misc\variant.h" />
     <ClInclude Include="..\..\..\sources\common\include\utils\misc\variantmap.h" />
     <ClInclude Include="..\..\..\sources\common\include\utils\tinyxml\tinyxml.h" />
@@ -158,6 +161,7 @@
     <ClCompile Include="..\..\..\sources\common\src\utils\misc\file.cpp" />
     <ClCompile Include="..\..\..\sources\common\src\utils\misc\mmapfile.cpp" />
     <ClCompile Include="..\..\..\sources\common\src\utils\misc\timersmanager.cpp" />
+    <ClCompile Include="..\..\..\sources\common\src\utils\misc\uri.cpp" />
     <ClCompile Include="..\..\..\sources\common\src\utils\misc\variant.cpp" />
     <ClCompile Include="..\..\..\sources\common\src\utils\tinyxml\tinyxml.cpp" />
     <ClCompile Include="..\..\..\sources\common\src\utils\tinyxml\tinyxmlerror.cpp" />

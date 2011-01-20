@@ -153,6 +153,12 @@
     <Filter Include="Source Files\protocols\ssl">
       <UniqueIdentifier>{1f31908f-47a3-4e55-931b-86d0628ae501}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\mediaformats\mkv">
+      <UniqueIdentifier>{b5a5c373-d999-401d-9def-fb1927589bbb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\mediaformats\mkv">
+      <UniqueIdentifier>{f9fa69ae-c8b0-4f23-8beb-457e527b46af}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\sources\thelib\src\application\baseappprotocolhandler.cpp">
@@ -568,6 +574,39 @@
     </ClCompile>
     <ClCompile Include="..\..\..\sources\thelib\src\protocols\ssl\outboundsslprotocol.cpp">
       <Filter>Source Files\protocols\ssl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mkv\baseelement.cpp">
+      <Filter>Source Files\mediaformats\mkv</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mkv\binaryelement.cpp">
+      <Filter>Source Files\mediaformats\mkv</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mkv\boxelement.cpp">
+      <Filter>Source Files\mediaformats\mkv</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mkv\dummyelement.cpp">
+      <Filter>Source Files\mediaformats\mkv</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mkv\floatelement.cpp">
+      <Filter>Source Files\mediaformats\mkv</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mkv\intelement.cpp">
+      <Filter>Source Files\mediaformats\mkv</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mkv\mkvdocument.cpp">
+      <Filter>Source Files\mediaformats\mkv</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mkv\stringelement.cpp">
+      <Filter>Source Files\mediaformats\mkv</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\netio\select\inboundnamedpipecarrier.cpp">
+      <Filter>Source Files\netio\select</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\streaming\streamcapabilities.cpp">
+      <Filter>Source Files\streaming</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\inboundrtmpsdiscriminatorprotocol.cpp">
+      <Filter>Source Files\protocols\rtmp</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1023,6 +1062,42 @@
     </ClInclude>
     <ClInclude Include="..\..\..\sources\thelib\include\protocols\ssl\outboundsslprotocol.h">
       <Filter>Header Files\protocols\ssl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mediafile.h">
+      <Filter>Header Files\mediaformats</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mkv\baseelement.h">
+      <Filter>Header Files\mediaformats\mkv</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mkv\binaryelement.h">
+      <Filter>Header Files\mediaformats\mkv</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mkv\boxelement.h">
+      <Filter>Header Files\mediaformats\mkv</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mkv\elementdummy.h">
+      <Filter>Header Files\mediaformats\mkv</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mkv\elementids.h">
+      <Filter>Header Files\mediaformats\mkv</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mkv\floatelement.h">
+      <Filter>Header Files\mediaformats\mkv</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mkv\intelement.h">
+      <Filter>Header Files\mediaformats\mkv</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mkv\mkvdocument.h">
+      <Filter>Header Files\mediaformats\mkv</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mkv\stringelement.h">
+      <Filter>Header Files\mediaformats\mkv</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\netio\select\inboundnamedpipecarrier.h">
+      <Filter>Header Files\netio\select</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\inboundrtmpsdiscriminatorprotocol.h">
+      <Filter>Header Files\protocols\rtmp</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

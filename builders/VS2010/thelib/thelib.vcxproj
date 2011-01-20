@@ -52,7 +52,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>..\..\..\sources\common\include;..\..\..\sources\thelib\include;..\..\..\3rdparty\lua-dev;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>LITTLE_ENDIAN_BYTE_ALIGNED;NET_SELECT;HAS_LUA;HAS_PROTOCOL_HTTP;HAS_PROTOCOL_RTMP;HAS_PROTOCOL_RTP;HAS_PROTOCOL_LIVEFLV;HAS_PROTOCOL_TS;HAS_PROTOCOL_VAR;HAS_MEDIA_MP3;HAS_MEDIA_MP4;HAS_MEDIA_FLV;WIN32;_DEBUG;_WINDOWS;_USRDLL;THELIB_EXPORTS;_CRT_SECURE_NO_WARNINGS;CreateRTCPPacket=CreateRTCPPacket_mystyle;FeedDataAudioMPEG4Generic=FeedDataAudioMPEG4Generic_one_by_one;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>LITTLE_ENDIAN_BYTE_ALIGNED;NET_SELECT;HAS_LUA;HAS_PROTOCOL_HTTP;HAS_PROTOCOL_RTMP;HAS_PROTOCOL_RTP;HAS_PROTOCOL_LIVEFLV;HAS_PROTOCOL_TS;HAS_PROTOCOL_VAR;HAS_MEDIA_MP3;HAS_MEDIA_MP4;HAS_MEDIA_FLV;HAS_MEDIA_MKV;VM_LUA;HandleTSVideoData=HandleVideoData_version3;CreateRTCPPacket=CreateRTCPPacket_mystyle_only_once;FeedDataAudioMPEG4Generic=FeedDataAudioMPEG4Generic_one_by_one;WIN32;_DEBUG;_WINDOWS;_USRDLL;THELIB_EXPORTS;_CRT_SECURE_NO_WARNINGS;CreateRTCPPacket=CreateRTCPPacket_mystyle;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -78,7 +78,7 @@
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <AdditionalIncludeDirectories>..\..\..\sources\common\include;..\..\..\sources\thelib\include;..\..\..\3rdparty\lua-dev;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>LITTLE_ENDIAN_BYTE_ALIGNED;NET_SELECT;HAS_LUA;HAS_PROTOCOL_HTTP;HAS_PROTOCOL_RTMP;HAS_PROTOCOL_RTP;HAS_PROTOCOL_LIVEFLV;HAS_PROTOCOL_TS;HAS_PROTOCOL_VAR;HAS_MEDIA_MP3;HAS_MEDIA_MP4;HAS_MEDIA_FLV;WIN32;_WINDOWS;_USRDLL;THELIB_EXPORTS;_CRT_SECURE_NO_WARNINGS;CreateRTCPPacket=CreateRTCPPacket_mystyle;FeedDataAudioMPEG4Generic=FeedDataAudioMPEG4Generic_one_by_one;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>LITTLE_ENDIAN_BYTE_ALIGNED;NET_SELECT;HAS_LUA;HAS_PROTOCOL_HTTP;HAS_PROTOCOL_RTMP;HAS_PROTOCOL_RTP;HAS_PROTOCOL_LIVEFLV;HAS_PROTOCOL_TS;HAS_PROTOCOL_VAR;HAS_MEDIA_MP3;HAS_MEDIA_MP4;HAS_MEDIA_FLV;HAS_MEDIA_MKV;VM_LUA;HandleTSVideoData=HandleVideoData_version3;CreateRTCPPacket=CreateRTCPPacket_mystyle_only_once;FeedDataAudioMPEG4Generic=FeedDataAudioMPEG4Generic_one_by_one;WIN32;_WINDOWS;_USRDLL;THELIB_EXPORTS;_CRT_SECURE_NO_WARNINGS;CreateRTCPPacket=CreateRTCPPacket_mystyle;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
@@ -112,6 +112,15 @@
     <ClCompile Include="..\..\..\sources\thelib\src\application\baseclientapplication.cpp" />
     <ClCompile Include="..\..\..\sources\thelib\src\application\clientapplicationmanager.cpp" />
     <ClCompile Include="..\..\..\sources\thelib\src\configuration\configfile.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mkv\baseelement.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mkv\binaryelement.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mkv\boxelement.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mkv\dummyelement.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mkv\floatelement.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mkv\intelement.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mkv\mkvdocument.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mkv\stringelement.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\netio\select\inboundnamedpipecarrier.cpp" />
     <ClCompile Include="..\..\..\sources\thelib\src\netio\select\iohandler.cpp" />
     <ClCompile Include="..\..\..\sources\thelib\src\netio\select\iohandlermanager.cpp" />
     <ClCompile Include="..\..\..\sources\thelib\src\netio\select\iotimer.cpp" />
@@ -124,6 +133,7 @@
     <ClCompile Include="..\..\..\sources\thelib\src\protocols\defaultprotocolfactory.cpp" />
     <ClCompile Include="..\..\..\sources\thelib\src\protocols\protocolfactorymanager.cpp" />
     <ClCompile Include="..\..\..\sources\thelib\src\protocols\protocolmanager.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\inboundrtmpsdiscriminatorprotocol.cpp" />
     <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\streaming\outfilertmpflvstream.cpp" />
     <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtp\basertpappprotocolhandler.cpp" />
     <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtp\basertspappprotocolhandler.cpp" />
@@ -245,6 +255,7 @@
     <ClCompile Include="..\..\..\sources\thelib\src\streaming\baseoutstream.cpp" />
     <ClCompile Include="..\..\..\sources\thelib\src\streaming\basestream.cpp" />
     <ClCompile Include="..\..\..\sources\thelib\src\streaming\nalutypes.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\streaming\streamcapabilities.cpp" />
     <ClCompile Include="..\..\..\sources\thelib\src\streaming\streamsmanager.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -252,7 +263,18 @@
     <ClInclude Include="..\..\..\sources\thelib\include\application\baseclientapplication.h" />
     <ClInclude Include="..\..\..\sources\thelib\include\application\clientapplicationmanager.h" />
     <ClInclude Include="..\..\..\sources\thelib\include\configuration\configfile.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mediafile.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mkv\baseelement.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mkv\binaryelement.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mkv\boxelement.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mkv\elementdummy.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mkv\elementids.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mkv\floatelement.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mkv\intelement.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mkv\mkvdocument.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mkv\stringelement.h" />
     <ClInclude Include="..\..\..\sources\thelib\include\netio\netio.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\netio\select\inboundnamedpipecarrier.h" />
     <ClInclude Include="..\..\..\sources\thelib\include\netio\select\iohandler.h" />
     <ClInclude Include="..\..\..\sources\thelib\include\netio\select\iohandlermanager.h" />
     <ClInclude Include="..\..\..\sources\thelib\include\netio\select\iotimer.h" />
@@ -267,6 +289,7 @@
     <ClInclude Include="..\..\..\sources\thelib\include\protocols\protocolfactorymanager.h" />
     <ClInclude Include="..\..\..\sources\thelib\include\protocols\protocolmanager.h" />
     <ClInclude Include="..\..\..\sources\thelib\include\protocols\protocoltypes.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\inboundrtmpsdiscriminatorprotocol.h" />
     <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\streaming\outfilertmpflvstream.h" />
     <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtp\basertpappprotocolhandler.h" />
     <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtp\basertspappprotocolhandler.h" />
