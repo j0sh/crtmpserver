@@ -399,7 +399,7 @@ bool BaseInFileStream::Feed() {
 		return false;
 	}
 
-	//5. Skip on metadata
+	//5. Take care of metadata
 	if (_currentFrame.type == MEDIAFRAME_TYPE_DATA) {
 		_currentFrameIndex++;
 		if (!FeedMetaData(_pFile, _currentFrame)) {
@@ -441,8 +441,13 @@ bool BaseInFileStream::Feed() {
 	//11. Increment the frame index
 	_currentFrameIndex++;
 
-	//12. Done
-	return true;
+	//12. Done. We either feed again if frame length was 0
+	//or just return true
+	if(_currentFrame.length==0) {
+		return Feed();
+	} else {
+		return true;
+	}
 }
 
 #ifdef HAS_MMAP
