@@ -68,9 +68,6 @@ void InNetRTPStream::ReadyForSend() {
 }
 
 void InNetRTPStream::SignalOutStreamAttached(BaseOutStream *pOutStream) {
-	if (TAG_KIND_OF(pOutStream->GetType(), ST_OUT_NET_RTMP)) {
-		((BaseOutNetRTMPStream *) pOutStream)->CanDropFrames(true);
-	}
 	if (_lastVideoTs != 0) {
 		if (!pOutStream->FeedData(
 				_capabilities.avc._pSPS,
@@ -117,6 +114,7 @@ void InNetRTPStream::SignalOutStreamAttached(BaseOutStream *pOutStream) {
 #ifdef HAS_PROTOCOL_RTMP
 	if (TAG_KIND_OF(pOutStream->GetType(), ST_OUT_NET_RTMP)) {
 		((BaseRTMPProtocol *) pOutStream->GetProtocol())->TrySetOutboundChunkSize(4 * 1024 * 1024);
+		((BaseOutNetRTMPStream *) pOutStream)->SetFeederChunkSize(4 * 1024 * 1024);
 		((BaseOutNetRTMPStream *) pOutStream)->CanDropFrames(true);
 	}
 #endif /* HAS_PROTOCOL_RTMP */
@@ -169,13 +167,6 @@ bool InNetRTPStream::FeedData(uint8_t *pData, uint32_t dataLength,
 				isAudio);
 		return true;
 	}
-	if (_avStream) {
-		if (((_lastAudioTs == 0) || (_lastVideoTs == 0))
-				|| (_lastVideoTs == 0)) {
-			lastTs = absoluteTimestamp;
-			return true;
-		}
-	}
 	LinkedListNode<BaseOutStream *> *pTemp = _pOutStreams;
 	if (lastTs == 0) {
 		lastTs = absoluteTimestamp;
@@ -187,6 +178,11 @@ bool InNetRTPStream::FeedData(uint8_t *pData, uint32_t dataLength,
 		}
 	}
 	lastTs = absoluteTimestamp;
+	if (_avStream) {
+		if ((_lastAudioTs == 0) || (_lastVideoTs == 0)) {
+			return true;
+		}
+	}
 	pTemp = _pOutStreams;
 	while (pTemp != NULL) {
 		if (!pTemp->info->IsEnqueueForDelete()) {
