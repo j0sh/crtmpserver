@@ -140,6 +140,10 @@
           <itemPath>../../../../sources/thelib/include/protocols/liveflv/inboundliveflvprotocol.h</itemPath>
           <itemPath>../../../../sources/thelib/include/protocols/liveflv/innetliveflvstream.h</itemPath>
         </logicalFolder>
+        <logicalFolder name="rtmfp" displayName="rtmfp" projectFiles="true">
+          <itemPath>../../../../sources/thelib/include/protocols/rtmfp/basertmfpappprotocolhandler.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/protocols/rtmfp/basertmfpprotocol.h</itemPath>
+        </logicalFolder>
         <logicalFolder name="rtmp" displayName="rtmp" projectFiles="true">
           <logicalFolder name="messagefactories"
                          displayName="messagefactories"
@@ -387,6 +391,11 @@
           <itemPath>../../../../sources/thelib/src/protocols/liveflv/inboundliveflvprotocol.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/protocols/liveflv/innetliveflvstream.cpp</itemPath>
         </logicalFolder>
+        <logicalFolder name="rtmfp" displayName="rtmfp" projectFiles="true">
+          <itemPath>../../../../sources/thelib/src/protocols/rtmfp/basertmfpappprotocolhandler.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/protocols/rtmfp/basertmfpprotocol.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/protocols/rtmfp/newfile</itemPath>
+        </logicalFolder>
         <logicalFolder name="rtmp" displayName="rtmp" projectFiles="true">
           <logicalFolder name="messagefactories"
                          displayName="messagefactories"
@@ -548,6 +557,7 @@
             <Elem>FeedDataAudioMPEG4Generic=FeedDataAudioMPEG4Generic_one_by_one</Elem>
             <Elem>HAS_MEDIA_MKV</Elem>
             <Elem>HAS_PROTOCOL_CLI</Elem>
+            <Elem>HAS_PROTOCOL_RTMFP</Elem>
           </preprocessorList>
         </ccTool>
         <linkerTool>

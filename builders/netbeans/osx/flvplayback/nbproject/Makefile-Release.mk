@@ -33,6 +33,7 @@ OBJECTDIR=build/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
+	${OBJECTDIR}/_ext/482292139/rtmfpappprotocolhandler.o \
 	${OBJECTDIR}/_ext/482292139/flvplaybackapplication.o \
 	${OBJECTDIR}/_ext/482292139/flvplayback.o \
 	${OBJECTDIR}/_ext/482292139/liveflvappprotocolhandler.o \
@@ -69,6 +70,11 @@ LDLIBSOPTIONS=-L../common/dist/Release/GNU-MacOSX -lcommon -L../thelib/../Releas
 ../Release/GNU-MacOSX/applications/flvplayback/libflvplayback.dylib: ${OBJECTFILES}
 	${MKDIR} -p ../Release/GNU-MacOSX/applications/flvplayback
 	${LINK.cc} -dynamiclib -install_name libflvplayback.dylib -o ../${CND_CONF}/${CND_PLATFORM}/applications/flvplayback/libflvplayback.dylib -fPIC ${OBJECTFILES} ${LDLIBSOPTIONS} 
+
+${OBJECTDIR}/_ext/482292139/rtmfpappprotocolhandler.o: ../../../../sources/applications/flvplayback/src/rtmfpappprotocolhandler.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/482292139
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_TS -DHAS_LUA -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/flvplayback/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/482292139/rtmfpappprotocolhandler.o ../../../../sources/applications/flvplayback/src/rtmfpappprotocolhandler.cpp
 
 ${OBJECTDIR}/_ext/482292139/flvplaybackapplication.o: ../../../../sources/applications/flvplayback/src/flvplaybackapplication.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/482292139
