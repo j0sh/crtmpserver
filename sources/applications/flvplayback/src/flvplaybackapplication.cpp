@@ -20,6 +20,7 @@
 #include "flvplaybackapplication.h"
 #include "protocols/protocoltypes.h"
 #include "protocols/rtmp/basertmpprotocol.h"
+#include "rtmfpappprotocolhandler.h"
 #include "rtmpappprotocolhandler.h"
 #include "liveflvappprotocolhandler.h"
 #include "tsappprotocolhandler.h"
@@ -34,6 +35,9 @@ FLVPlaybackApplication::FLVPlaybackApplication(Variant &configuration)
 #ifdef HAS_PROTOCOL_RTMP
 	_pRTMPHandler = NULL;
 #endif /* HAS_PROTOCOL_RTMP */
+#ifdef HAS_PROTOCOL_RTMFP
+	_pRTMFPHandler = NULL;
+#endif /* HAS_PROTOCOL_RTMFP */
 #ifdef HAS_PROTOCOL_LIVEFLV
 	_pLiveFLV = NULL;
 #endif /* HAS_PROTOCOL_LIVEFLV */
@@ -53,6 +57,11 @@ FLVPlaybackApplication::~FLVPlaybackApplication() {
 	if (_pRTMPHandler != NULL)
 		delete _pRTMPHandler;
 #endif /* HAS_PROTOCOL_RTMP */
+#ifdef HAS_PROTOCOL_RTMFP
+	UnRegisterAppProtocolHandler(PT_INBOUND_RTMFP);
+	if (_pRTMFPHandler != NULL)
+		delete _pRTMFPHandler;
+#endif /* HAS_PROTOCOL_RTMFP */
 #ifdef HAS_PROTOCOL_LIVEFLV
 	UnRegisterAppProtocolHandler(PT_INBOUND_LIVE_FLV);
 	if (_pLiveFLV != NULL)
@@ -83,6 +92,10 @@ bool FLVPlaybackApplication::Initialize() {
 	RegisterAppProtocolHandler(PT_INBOUND_RTMPS_DISC, _pRTMPHandler);
 	RegisterAppProtocolHandler(PT_OUTBOUND_RTMP, _pRTMPHandler);
 #endif /* HAS_PROTOCOL_RTMP */
+#ifdef HAS_PROTOCOL_RTMFP
+	_pRTMFPHandler = new RTMFPAppProtocolHandler(_configuration);
+	RegisterAppProtocolHandler(PT_INBOUND_RTMFP, _pRTMFPHandler);
+#endif /* HAS_PROTOCOL_RTMFP */
 #ifdef HAS_PROTOCOL_LIVEFLV
 	_pLiveFLV = new LiveFLVAppProtocolHandler(_configuration);
 	RegisterAppProtocolHandler(PT_INBOUND_LIVE_FLV, _pLiveFLV);
