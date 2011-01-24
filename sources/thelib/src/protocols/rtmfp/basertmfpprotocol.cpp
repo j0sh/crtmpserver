@@ -22,7 +22,7 @@
 
 #include "protocols/rtmfp/basertmfpprotocol.h"
 #include "protocols/protocoltypes.h"
-#include "netio/kqueue/udpcarrier.h"
+#include "netio/netio.h"
 #include "protocols/http/basehttpprotocol.h"
 #include "protocols/rtmp/outboundrtmpprotocol.h"
 

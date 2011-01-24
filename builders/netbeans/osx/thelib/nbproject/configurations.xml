@@ -394,7 +394,6 @@
         <logicalFolder name="rtmfp" displayName="rtmfp" projectFiles="true">
           <itemPath>../../../../sources/thelib/src/protocols/rtmfp/basertmfpappprotocolhandler.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/protocols/rtmfp/basertmfpprotocol.cpp</itemPath>
-          <itemPath>../../../../sources/thelib/src/protocols/rtmfp/newfile</itemPath>
         </logicalFolder>
         <logicalFolder name="rtmp" displayName="rtmp" projectFiles="true">
           <logicalFolder name="messagefactories"

@@ -47,9 +47,9 @@ namespace app_flvplayback {
 #ifdef HAS_PROTOCOL_RTMP
 		RTMPAppProtocolHandler *_pRTMPHandler;
 #endif /* HAS_PROTOCOL_RTMP */
-#ifdef HAS_PROTOCOL_RTMP
+#ifdef HAS_PROTOCOL_RTMFP
 		RTMFPAppProtocolHandler *_pRTMFPHandler;
-#endif /* HAS_PROTOCOL_RTMP */
+#endif /* HAS_PROTOCOL_RTMFP */
 #ifdef HAS_PROTOCOL_LIVEFLV
 		LiveFLVAppProtocolHandler *_pLiveFLV;
 #endif /* HAS_PROTOCOL_LIVEFLV */
