@@ -132,6 +132,11 @@ configuration=
 			{
 				{
 					ip="0.0.0.0",
+					port=1935,
+					protocol="inboundRtmfp"
+				},
+				{
+					ip="0.0.0.0",
 					port=6666,
 					protocol="inboundLiveFlv",
 					waitForMetadata=true,
