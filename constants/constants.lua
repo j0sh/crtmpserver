@@ -20,6 +20,9 @@ CONF_PROTOCOL_OUTBOUND_RTMPT="outboundRtmpt",
 CONF_PROTOCOL_OUTBOUND_RTMPE="outboundRtmpe",
 CONF_PROTOCOL_INBOUND_RTMPS="inboundRtmps",
 
+-- RTMFP protocols
+CONF_PROTOCOL_INBOUND_RTMFP="inboundRtmfp",
+
 -- Async DNS protocols
 CONF_PROTOCOL_INBOUND_DNS="inboundDns",
 CONF_PROTOCOL_OUTBOUND_DNS="outboundDns",
