@@ -446,6 +446,12 @@ bool IOBuffer::EnsureSize(uint32_t expected) {
 	return true;
 }
 
+string IOBuffer::DumpBuffer(uint8_t *pBuffer, uint32_t length) {
+	IOBuffer temp;
+	temp.ReadFromBuffer(pBuffer, length);
+	return temp.ToString();
+}
+
 string IOBuffer::ToString(uint32_t startIndex, uint32_t limit) {
 	SANITY_INPUT_BUFFER;
 	string allowedCharacters = " 1234567890-=qwertyuiop[]asdfghjkl;'\\`zxcvbnm";
