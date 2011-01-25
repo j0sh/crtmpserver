@@ -1645,6 +1645,30 @@ bool Variant::SerializeToJSON(string &result) {
 	return true;
 }
 
+bool Variant::DeserializeFromCmdLineArgs(uint32_t count, char **pArguments,
+		Variant &result) {
+	if (count < 1) {
+		FATAL("Inavlid parameters count");
+		return false;
+	}
+	result.Reset();
+	result["program"] = pArguments[0];
+	result["arguments"].IsArray(false);
+	for (uint32_t i = 1; i < count; i++) {
+		string keyValue = pArguments[i];
+		string::size_type separatorPos = string::npos;
+		if ((separatorPos = keyValue.find('=')) == string::npos) {
+			result["arguments"][keyValue] = (bool)true;
+		} else {
+			string key = keyValue.substr(0, separatorPos);
+			string value = keyValue.substr(separatorPos + 1,
+					keyValue.size() - separatorPos);
+			result["arguments"][key] = value;
+		}
+	}
+	return true;
+}
+
 TiXmlElement *Variant::SerializeToXmlElement(string &name) {
 	TiXmlElement *pResult = NULL;
 	switch (_type) {

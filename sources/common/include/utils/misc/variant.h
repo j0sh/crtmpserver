@@ -204,6 +204,9 @@ public:
 
 	static bool DeserializeFromJSON(string &raw, Variant &result, uint32_t &start);
 	bool SerializeToJSON(string &result);
+
+	static bool DeserializeFromCmdLineArgs(uint32_t count, char **pArguments,
+			Variant &result);
 private:
 	TiXmlElement *SerializeToXmlElement(string &name);
 	static bool DeserializeFromBin(uint8_t *pBuffer, uint32_t bufferSize,
