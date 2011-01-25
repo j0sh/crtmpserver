@@ -37,8 +37,8 @@ uint8_t BaseRTMFPProtocol::_serverCert[64] = {
 	0x9C, 0x38, 0x18, 0xB3, 0xEF, 0x12, 0x06, 0x2A
 };
 
-BaseRTMFPProtocol::BaseRTMFPProtocol()
-: BaseProtocol(PT_INBOUND_RTMFP) {
+BaseRTMFPProtocol::BaseRTMFPProtocol(uint64_t type)
+: BaseProtocol(type) {
 
 }
 
@@ -239,6 +239,26 @@ void BaseRTMFPProtocol::ProcessSession(RTMFPSession *pSession, IOBuffer &buffer)
 
 	//5. Read message type
 	uint8_t type = pBuffer[6];
+	bool E = (type & 0x80) != 0;
+	bool S = (type & 0x40) != 0;
+	bool r1 = (type & 0x20) != 0;
+	bool r2 = (type & 0x10) != 0;
+	bool I = (type & 0x08) != 0;
+	bool R = (type & 0x04) != 0;
+	bool t = (type & 0x02) != 0;
+	bool T = (type & 0x01) != 0;
+	FINEST("BITS: %d %d %d %d %d %d %d %d",
+			E, S, r1, r2, I, R, t, T);
+	FINEST("E Timestamp Echo Valid: %d", E);
+	FINEST("S Startup: %d", S);
+	FINEST("R1 Reserved1: %d", r1);
+	FINEST("R2 Reserved2: %d", r2);
+	FINEST("I Initiator Mark: %d", I);
+	FINEST("R Responder Mark: %d", R);
+	FINEST("t Time Critical Reverse Notification: %d", t);
+	FINEST("T Time Critical Forward Notification: %d", T);
+	FINEST("type: %02x E: %d; S: %d; b1: %d; b2: %d; I: %d; R: %d; t: %d; T: %d",
+			type, E, S, r1, r2, I, R, t, T);
 
 	//6. Read the timestamp
 	uint16_t timestamp = ENTOHSP(pBuffer + 7);

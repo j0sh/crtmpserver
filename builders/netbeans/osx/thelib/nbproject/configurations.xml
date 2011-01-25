@@ -143,6 +143,8 @@
         <logicalFolder name="rtmfp" displayName="rtmfp" projectFiles="true">
           <itemPath>../../../../sources/thelib/include/protocols/rtmfp/basertmfpappprotocolhandler.h</itemPath>
           <itemPath>../../../../sources/thelib/include/protocols/rtmfp/basertmfpprotocol.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/protocols/rtmfp/inboundrtmfpprotocol.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/protocols/rtmfp/outboundrtmfpprotocol.h</itemPath>
         </logicalFolder>
         <logicalFolder name="rtmp" displayName="rtmp" projectFiles="true">
           <logicalFolder name="messagefactories"
@@ -394,6 +396,8 @@
         <logicalFolder name="rtmfp" displayName="rtmfp" projectFiles="true">
           <itemPath>../../../../sources/thelib/src/protocols/rtmfp/basertmfpappprotocolhandler.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/protocols/rtmfp/basertmfpprotocol.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/protocols/rtmfp/inboundrtmfpprotocol.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/protocols/rtmfp/outboundrtmfpprotocol.cpp</itemPath>
         </logicalFolder>
         <logicalFolder name="rtmp" displayName="rtmp" projectFiles="true">
           <logicalFolder name="messagefactories"

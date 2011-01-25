@@ -141,7 +141,7 @@ private:
 	OutputBuffer _outputBuffer;
 	static uint8_t _serverCert[64];
 public:
-	BaseRTMFPProtocol();
+	BaseRTMFPProtocol(uint64_t type);
 	virtual ~BaseRTMFPProtocol();
 
 	virtual bool Initialize(Variant &parameters);

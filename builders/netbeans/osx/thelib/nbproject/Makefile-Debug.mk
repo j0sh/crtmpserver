@@ -94,6 +94,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/1636055853/baseoutstream.o \
 	${OBJECTDIR}/_ext/1826042562/basevariantappprotocolhandler.o \
 	${OBJECTDIR}/_ext/1210522057/ignoredatom.o \
+	${OBJECTDIR}/_ext/1625581042/inboundrtmfpprotocol.o \
 	${OBJECTDIR}/_ext/1054419429/inboundconnectivity.o \
 	${OBJECTDIR}/_ext/1210522057/atommoov.o \
 	${OBJECTDIR}/_ext/1124563255/basesslprotocol.o \
@@ -108,6 +109,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/517913122/tsadaptationfield.o \
 	${OBJECTDIR}/_ext/1124578851/inboundjsoncliprotocol.o \
 	${OBJECTDIR}/_ext/1210522056/mp3document.o \
+	${OBJECTDIR}/_ext/1625581042/outboundrtmfpprotocol.o \
 	${OBJECTDIR}/_ext/1210521968/floatelement.o \
 	${OBJECTDIR}/_ext/772217591/udpcarrier.o \
 	${OBJECTDIR}/_ext/1210522057/atomstss.o \
@@ -536,6 +538,11 @@ ${OBJECTDIR}/_ext/1210522057/ignoredatom.o: ../../../../sources/thelib/src/media
 	${RM} $@.d
 	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_VAR -DHAS_PROTOCOL_LIVEFLV -DHAS_MEDIA_MP4 -DHAS_MEDIA_MP3 -DHAS_MEDIA_FLV -DHAS_MEDIA_MKV -DCreateRTCPPacket=CreateRTCPPacket_none -DFeedDataAudioMPEG4Generic=FeedDataAudioMPEG4Generic_one_by_one -DHAS_MEDIA_MKV -DHAS_PROTOCOL_CLI -DHAS_PROTOCOL_RTMFP -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1210522057/ignoredatom.o ../../../../sources/thelib/src/mediaformats/mp4/ignoredatom.cpp
 
+${OBJECTDIR}/_ext/1625581042/inboundrtmfpprotocol.o: ../../../../sources/thelib/src/protocols/rtmfp/inboundrtmfpprotocol.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1625581042
+	${RM} $@.d
+	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_VAR -DHAS_PROTOCOL_LIVEFLV -DHAS_MEDIA_MP4 -DHAS_MEDIA_MP3 -DHAS_MEDIA_FLV -DHAS_MEDIA_MKV -DCreateRTCPPacket=CreateRTCPPacket_none -DFeedDataAudioMPEG4Generic=FeedDataAudioMPEG4Generic_one_by_one -DHAS_MEDIA_MKV -DHAS_PROTOCOL_CLI -DHAS_PROTOCOL_RTMFP -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1625581042/inboundrtmfpprotocol.o ../../../../sources/thelib/src/protocols/rtmfp/inboundrtmfpprotocol.cpp
+
 ${OBJECTDIR}/_ext/1054419429/inboundconnectivity.o: ../../../../sources/thelib/src/protocols/rtp/connectivity/inboundconnectivity.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1054419429
 	${RM} $@.d
@@ -605,6 +612,11 @@ ${OBJECTDIR}/_ext/1210522056/mp3document.o: ../../../../sources/thelib/src/media
 	${MKDIR} -p ${OBJECTDIR}/_ext/1210522056
 	${RM} $@.d
 	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_VAR -DHAS_PROTOCOL_LIVEFLV -DHAS_MEDIA_MP4 -DHAS_MEDIA_MP3 -DHAS_MEDIA_FLV -DHAS_MEDIA_MKV -DCreateRTCPPacket=CreateRTCPPacket_none -DFeedDataAudioMPEG4Generic=FeedDataAudioMPEG4Generic_one_by_one -DHAS_MEDIA_MKV -DHAS_PROTOCOL_CLI -DHAS_PROTOCOL_RTMFP -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1210522056/mp3document.o ../../../../sources/thelib/src/mediaformats/mp3/mp3document.cpp
+
+${OBJECTDIR}/_ext/1625581042/outboundrtmfpprotocol.o: ../../../../sources/thelib/src/protocols/rtmfp/outboundrtmfpprotocol.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1625581042
+	${RM} $@.d
+	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_VAR -DHAS_PROTOCOL_LIVEFLV -DHAS_MEDIA_MP4 -DHAS_MEDIA_MP3 -DHAS_MEDIA_FLV -DHAS_MEDIA_MKV -DCreateRTCPPacket=CreateRTCPPacket_none -DFeedDataAudioMPEG4Generic=FeedDataAudioMPEG4Generic_one_by_one -DHAS_MEDIA_MKV -DHAS_PROTOCOL_CLI -DHAS_PROTOCOL_RTMFP -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1625581042/outboundrtmfpprotocol.o ../../../../sources/thelib/src/protocols/rtmfp/outboundrtmfpprotocol.cpp
 
 ${OBJECTDIR}/_ext/1210521968/floatelement.o: ../../../../sources/thelib/src/mediaformats/mkv/floatelement.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1210521968
