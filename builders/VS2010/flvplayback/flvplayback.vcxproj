@@ -124,6 +124,7 @@ mkdir "$(OutDir)applications\$(ProjectName)\mediaFolder"
     <ClCompile Include="..\..\..\sources\applications\flvplayback\src\flvplayback.cpp" />
     <ClCompile Include="..\..\..\sources\applications\flvplayback\src\flvplaybackapplication.cpp" />
     <ClCompile Include="..\..\..\sources\applications\flvplayback\src\liveflvappprotocolhandler.cpp" />
+    <ClCompile Include="..\..\..\sources\applications\flvplayback\src\rtmfpappprotocolhandler.cpp" />
     <ClCompile Include="..\..\..\sources\applications\flvplayback\src\rtmpappprotocolhandler.cpp" />
     <ClCompile Include="..\..\..\sources\applications\flvplayback\src\rtpappprotocolhandler.cpp" />
     <ClCompile Include="..\..\..\sources\applications\flvplayback\src\rtspappprotocolhandler.cpp" />
@@ -133,6 +134,7 @@ mkdir "$(OutDir)applications\$(ProjectName)\mediaFolder"
     <ClInclude Include="..\..\..\sources\applications\flvplayback\include\flvplayback.h" />
     <ClInclude Include="..\..\..\sources\applications\flvplayback\include\flvplaybackapplication.h" />
     <ClInclude Include="..\..\..\sources\applications\flvplayback\include\liveflvappprotocolhandler.h" />
+    <ClInclude Include="..\..\..\sources\applications\flvplayback\include\rtmfpappprotocolhandler.h" />
     <ClInclude Include="..\..\..\sources\applications\flvplayback\include\rtmpappprotocolhandler.h" />
     <ClInclude Include="..\..\..\sources\applications\flvplayback\include\rtpappprotocolhandler.h" />
     <ClInclude Include="..\..\..\sources\applications\flvplayback\include\rtspappprotocolhandler.h" />
