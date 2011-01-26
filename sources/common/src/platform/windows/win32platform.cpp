@@ -275,19 +275,23 @@ bool SetFdNonBlock(int32_t fd) {
 }
 
 bool SetFdNoSIGPIPE(int32_t fd) {
-	NYIR;
+	//NYIR;
+	return true;
 }
 
 bool SetFdKeepAlive(int32_t fd) {
-	NYIR;
+	//NYIR;
+	return true;
 }
 
 bool SetFdNoNagle(int32_t fd) {
-	NYIR;
+	//NYIR;
+	return true;
 }
 
 bool SetFdReuseAddress(int32_t fd) {
-	NYIR;
+	//NYIR;
+	return true;
 }
 
 bool SetFdOptions(int32_t fd) {
