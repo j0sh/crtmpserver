@@ -17,6 +17,7 @@
  *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifdef HAS_PROTOCOL_RTMFP
 #include "protocols/rtmfp/inboundrtmfpprotocol.h"
 
 InboundRTMFPProtocol::InboundRTMFPProtocol()
@@ -26,3 +27,4 @@ InboundRTMFPProtocol::InboundRTMFPProtocol()
 
 InboundRTMFPProtocol::~InboundRTMFPProtocol() {
 }
+#endif /* HAS_PROTOCOL_RTMFP */
