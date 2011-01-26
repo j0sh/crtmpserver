@@ -35,8 +35,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tests", "tests\tests.vcxpro
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "win32service", "win32service\win32service.vcxproj", "{F7940524-EDAB-40AC-B0FC-C0289E08C61C}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "trafficdissector", "trafficdissector\trafficdissector.vcxproj", "{1EEF18A9-FF57-4CB0-9743-6006E0C97E99}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -99,10 +97,6 @@ Global
 		{F7940524-EDAB-40AC-B0FC-C0289E08C61C}.Debug|Win32.Build.0 = Debug|Win32
 		{F7940524-EDAB-40AC-B0FC-C0289E08C61C}.Release|Win32.ActiveCfg = Release|Win32
 		{F7940524-EDAB-40AC-B0FC-C0289E08C61C}.Release|Win32.Build.0 = Release|Win32
-		{1EEF18A9-FF57-4CB0-9743-6006E0C97E99}.Debug|Win32.ActiveCfg = Debug|Win32
-		{1EEF18A9-FF57-4CB0-9743-6006E0C97E99}.Debug|Win32.Build.0 = Debug|Win32
-		{1EEF18A9-FF57-4CB0-9743-6006E0C97E99}.Release|Win32.ActiveCfg = Release|Win32
-		{1EEF18A9-FF57-4CB0-9743-6006E0C97E99}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
