@@ -31,6 +31,8 @@ UDPCarrier::UDPCarrier(int32_t fd)
 	memset(&_nearAddress, 0, sizeof (sockaddr_in));
 	_nearIp = "";
 	_nearPort = 0;
+	uint64_t _rx;
+	uint64_t _tx;
 }
 
 UDPCarrier::~UDPCarrier() {
@@ -50,7 +52,7 @@ bool UDPCarrier::OnEvent(select_event &event) {
 				FATAL("Unable to read data");
 				return false;
 			}
-
+			_rx += recvAmount;
 			return _pProtocol->SignalInputData(recvAmount, &_peerAddress);
 		}
 		case SET_WRITE:

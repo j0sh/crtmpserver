@@ -33,6 +33,8 @@ UDPCarrier::UDPCarrier(int32_t fd)
 	memset(&_nearAddress, 0, sizeof (sockaddr_in));
 	_nearIp = "";
 	_nearPort = 0;
+	uint64_t _rx;
+	uint64_t _tx;
 }
 
 UDPCarrier::~UDPCarrier() {
@@ -56,6 +58,7 @@ bool UDPCarrier::OnEvent(struct epoll_event &event) {
 			FATAL("Connection closed");
 			return false;
 		}
+		_rx += recvBytes;
 
 		if (!_pProtocol->SignalInputData(recvBytes, &_peerAddress)) {
 			FATAL("Unable to signal data available");

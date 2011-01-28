@@ -33,6 +33,8 @@ private:
 	sockaddr_in _nearAddress;
 	string _nearIp;
 	uint16_t _nearPort;
+	uint64_t _rx;
+	uint64_t _tx;
 public:
 	UDPCarrier(int32_t fd);
 	virtual ~UDPCarrier();
