@@ -33,8 +33,8 @@ UDPCarrier::UDPCarrier(int32_t fd)
 	memset(&_nearAddress, 0, sizeof (sockaddr_in));
 	_nearIp = "";
 	_nearPort = 0;
-	uint64_t _rx;
-	uint64_t _tx;
+	_rx=0;
+	_tx=0;
 }
 
 UDPCarrier::~UDPCarrier() {
