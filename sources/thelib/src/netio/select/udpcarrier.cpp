@@ -76,7 +76,15 @@ UDPCarrier::operator string() {
 }
 
 void UDPCarrier::GetStats(Variant &info) {
-
+	if (!GetEndpointsInfo()) {
+		FATAL("Unable to get endpoints info");
+		info = "unable to get endpoints info";
+		return;
+	}
+	info["type"] = "IOHT_UDP_CARRIER";
+	info["nearIP"] = _nearIp;
+	info["nearPort"] = _nearPort;
+	info["rx"] = _rx;
 }
 
 string UDPCarrier::GetFarEndpointAddress() {

@@ -94,6 +94,22 @@ bool RTSPProtocol::SignalInputData(int32_t recvAmount) {
 	NYIR;
 }
 
+void RTSPProtocol::GetStats(Variant &info) {
+	BaseProtocol::GetStats(info);
+	info["streams"].IsArray(true);
+	Variant si;
+	if (GetApplication() != NULL) {
+		StreamsManager *pStreamsManager = GetApplication()->GetStreamsManager();
+		map<uint32_t, BaseStream*> streams = pStreamsManager->FindByProtocolId(GetId());
+
+		FOR_MAP(streams, uint32_t, BaseStream *, i) {
+			si.Reset();
+			MAP_VAL(i)->GetStats(si);
+			info["streams"].PushToArray(si);
+		}
+	}
+}
+
 SDP &RTSPProtocol::GetInboundSDP() {
 	return _inboundSDP;
 }

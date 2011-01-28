@@ -41,6 +41,7 @@ public:
 			string streamName, string mode = "live");
 	static Variant GetInvokePlay(uint32_t channelId, uint32_t streamId,
 			string streamName, double start, double length);
+	static Variant GetInvokeFCSubscribe(string streamName);
 
 	//management responses
 	static Variant GetInvokeCreateStreamResult(Variant &request,

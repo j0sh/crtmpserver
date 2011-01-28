@@ -83,7 +83,7 @@ void UDPCarrier::GetStats(Variant &info) {
 		info = "unable to get endpoints info";
 		return;
 	}
-	info["type"] = "IOHT_TCP_CARRIER";
+	info["type"] = "IOHT_UDP_CARRIER";
 	info["nearIP"] = _nearIp;
 	info["nearPort"] = _nearPort;
 	info["rx"] = _rx;

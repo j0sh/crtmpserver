@@ -999,6 +999,8 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokeResult(BaseRTMPProtocol *pFrom,
 		return ProcessInvokeConnectResult(pFrom, request, response);
 	} else if (functionName == RM_INVOKE_FUNCTION_CREATESTREAM) {
 		return ProcessInvokeCreateStreamResult(pFrom, request, response);
+	} else if (functionName == RM_INVOKE_FUNCTION_FCSUBSCRIBE) {
+		return ProcessInvokeFCSubscribeResult(pFrom, request, response);
 	} else {
 		FATAL("Invoke result not yet implemented: Request:\n%s\nResponse:\n%s",
 				STR(request.ToString()),
@@ -1035,6 +1037,20 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokeConnectResult(BaseRTMPProtocol *pF
 	if (M_INVOKE_PARAM(response, 1)["code"] != "NetConnection.Connect.Success") {
 		FATAL("Connect failed:\n%s", STR(response.ToString()));
 		return false;
+	}
+
+	if (NeedsToPullExternalStream(pFrom)) {
+		Variant &parameters = pFrom->GetCustomParameters()["customParameters"]["externalStreamConfig"];
+		Variant params;
+		params.PushToArray(Variant());
+		params.PushToArray(parameters["uri"]["document"]);
+
+		Variant FCSubscribeRequest = StreamMessageFactory::GetInvokeFCSubscribe(
+				parameters["uri"]["document"]);
+		if (!SendRTMPMessage(pFrom, FCSubscribeRequest, true)) {
+			FATAL("Unable to send request:\n%s", STR(FCSubscribeRequest.ToString()));
+			return false;
+		}
 	}
 
 	//3. Create the createStream request
@@ -1125,6 +1141,11 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokeCreateStreamResult(BaseRTMPProtoco
 	}
 
 	//9. Done
+	return true;
+}
+
+bool BaseRTMPAppProtocolHandler::ProcessInvokeFCSubscribeResult(BaseRTMPProtocol *pFrom,
+		Variant &request, Variant &response) {
 	return true;
 }
 
