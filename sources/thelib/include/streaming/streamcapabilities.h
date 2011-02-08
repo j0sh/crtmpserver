@@ -29,6 +29,9 @@ struct _VIDEO_AVC {
 	uint8_t *_pPPS;
 	uint16_t _ppsLength;
 	uint32_t _rate;
+	Variant _SPSInfo;
+	uint32_t _width;
+	uint32_t _height;
 
 	DLLEXP _VIDEO_AVC();
 	DLLEXP virtual ~_VIDEO_AVC();

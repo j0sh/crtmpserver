@@ -25,10 +25,158 @@ _VIDEO_AVC::_VIDEO_AVC() {
 	_spsLength = 0;
 	_pPPS = NULL;
 	_ppsLength = 0;
+	_width = 0;
+	_height = 0;
 }
 
 _VIDEO_AVC::~_VIDEO_AVC() {
 	Clear();
+}
+
+//#define DUMP_VAL(name,type,length) if(length!=0) FINEST("% 8s %50 s: % 4.0f; l: % 2u; ba: % 4u",#type,name,(double)v[name],length,ba.AvailableBits()); else WARN("% 8s %50 s: % 4.0f; l: % 2u; ba: % 4u",#type,name,(double)v[name],length,ba.AvailableBits());
+#define DUMP_VAL(name,type,length)
+
+#define READ_INT(name,type,length) v[name]=(type)ba.ReadBits<type>(length); DUMP_VAL(name,type,length);
+#define READ_UEG(name) v[name]=(uint64_t)ba.ReadExpGolomb(); DUMP_VAL(name,uint64_t,0);
+#define READ_SEG(name) v[name]=(int64_t)ba.ReadExpGolomb(); DUMP_VAL(name,int64_t,0);
+#define READ_BOOL(name) v[name]=(bool)(ba.ReadBits<bool>(1)); DUMP_VAL(name,bool,1);
+
+bool ReadSPSVUIHRD(BitArray &ba, Variant &v) {
+	//E.1.2 HRD parameters syntax
+	//14496-10.pdf 268/280
+	READ_UEG("cpb_cnt_minus1");
+	READ_INT("bit_rate_scale", uint8_t, 4);
+	READ_INT("cpb_size_scale", uint8_t, 4);
+	for (uint64_t i = 0; i <= (uint64_t) v["cpb_cnt_minus1"]; i++) {
+		v["bit_rate_value_minus1"].PushToArray((uint64_t) ba.ReadExpGolomb());
+		v["cpb_size_value_minus1"].PushToArray((uint64_t) ba.ReadExpGolomb());
+		if (ba.AvailableBits() < 1) {
+			FATAL("Not enough bits available: wanted: %u; got: %u", 1, ba.AvailableBits());
+			return false;
+		}
+		v["cbr_flag"].PushToArray((bool)ba.ReadBits<bool>(1));
+	}
+	READ_INT("initial_cpb_removal_delay_length_minus1", uint8_t, 5);
+	READ_INT("cpb_removal_delay_length_minus1", uint8_t, 5);
+	READ_INT("dpb_output_delay_length_minus1", uint8_t, 5);
+	READ_INT("time_offset_length", uint8_t, 5);
+	return true;
+}
+
+bool ReadSPSVUI(BitArray &ba, Variant &v) {
+	//E.1.1 VUI parameters syntax
+	//14496-10.pdf 267/280
+	READ_BOOL("aspect_ratio_info_present_flag");
+	if ((bool)v["aspect_ratio_info_present_flag"]) {
+		READ_INT("aspect_ratio_idc", uint8_t, 8);
+		if ((uint8_t) v["aspect_ratio_idc"] == 255) {
+			READ_INT("sar_width", uint16_t, 16);
+			READ_INT("sar_height", uint16_t, 16);
+		}
+	}
+	READ_BOOL("overscan_info_present_flag");
+	if ((bool)v["overscan_info_present_flag"])
+		READ_BOOL("overscan_appropriate_flag");
+	READ_BOOL("video_signal_type_present_flag");
+	if ((bool)v["video_signal_type_present_flag"]) {
+		READ_INT("video_format", uint8_t, 3);
+		READ_BOOL("video_full_range_flag");
+		READ_BOOL("colour_description_present_flag");
+		if ((bool)v["colour_description_present_flag"]) {
+			READ_INT("colour_primaries", uint8_t, 8);
+			READ_INT("transfer_characteristics", uint8_t, 8);
+			READ_INT("matrix_coefficients", uint8_t, 8);
+		}
+	}
+	READ_BOOL("chroma_loc_info_present_flag");
+	if ((bool)v["chroma_loc_info_present_flag"]) {
+		READ_UEG("chroma_sample_loc_type_top_field");
+		READ_UEG("chroma_sample_loc_type_bottom_field");
+	}
+	READ_BOOL("timing_info_present_flag");
+	if ((bool)v["timing_info_present_flag"]) {
+		READ_INT("num_units_in_tick", uint32_t, 32);
+		READ_INT("time_scale", uint32_t, 32);
+		READ_BOOL("fixed_frame_rate_flag");
+	}
+	READ_BOOL("nal_hrd_parameters_present_flag");
+	if ((bool)v["nal_hrd_parameters_present_flag"]) {
+		if (!ReadSPSVUIHRD(ba, v["nal_hrd"])) {
+			FATAL("Unable to read VUIHRD");
+			return false;
+		}
+	}
+	READ_BOOL("vcl_hrd_parameters_present_flag");
+	if ((bool)v["vcl_hrd_parameters_present_flag"]) {
+		if (!ReadSPSVUIHRD(ba, v["vcl_hrd"])) {
+			FATAL("Unable to read VUIHRD");
+			return false;
+		}
+	}
+	if (((bool)v["nal_hrd_parameters_present_flag"])
+			|| ((bool)v["vcl_hrd_parameters_present_flag"]))
+		READ_BOOL("low_delay_hrd_flag");
+	READ_BOOL("pic_struct_present_flag");
+	READ_BOOL("bitstream_restriction_flag");
+	if ((bool)v["bitstream_restriction_flag"]) {
+		READ_BOOL("motion_vectors_over_pic_boundaries_flag");
+		READ_UEG("max_bytes_per_pic_denom");
+		READ_UEG("max_bits_per_mb_denom");
+		READ_UEG("log2_max_mv_length_horizontal");
+		READ_UEG("log2_max_mv_length_vertical");
+		READ_UEG("num_reorder_frames");
+		READ_UEG("max_dec_frame_buffering");
+	}
+	return true;
+}
+
+bool ReadSPS(BitArray &ba, Variant &v) {
+	//7.3.2.1 Sequence parameter set RBSP syntax
+	//14496-10.pdf 43/280
+	FINEST("ba: %d", ba.AvailableBits());
+	READ_INT("profile_idc", uint8_t, 8);
+	READ_BOOL("constraint_set0_flag");
+	READ_BOOL("constraint_set1_flag");
+	READ_BOOL("constraint_set2_flag");
+	READ_INT("reserved_zero_5bits", uint8_t, 5);
+	READ_INT("level_idc", uint8_t, 8);
+	READ_UEG("seq_parameter_set_id");
+	READ_UEG("log2_max_frame_num_minus4");
+	READ_UEG("pic_order_cnt_type");
+	if ((uint64_t) v["pic_order_cnt_type"] == 0) {
+		READ_UEG("log2_max_pic_order_cnt_lsb_minus4");
+	} else if ((uint64_t) v["pic_order_cnt_type"] == 1) {
+		READ_BOOL("delta_pic_order_always_zero_flag");
+		READ_SEG("offset_for_non_ref_pic");
+		READ_SEG("offset_for_top_to_bottom_field");
+		READ_UEG("num_ref_frames_in_pic_order_cnt_cycle");
+		for (uint64_t i = 0; i < (uint64_t) v["num_ref_frames_in_pic_order_cnt_cycle"]; i++) {
+			v["offset_for_ref_frame"].PushToArray((int64_t) ba.ReadExpGolomb());
+		}
+	}
+	READ_UEG("num_ref_frames");
+	READ_BOOL("gaps_in_frame_num_value_allowed_flag");
+	READ_UEG("pic_width_in_mbs_minus1");
+	READ_UEG("pic_height_in_map_units_minus1");
+	READ_BOOL("frame_mbs_only_flag");
+	if (!((bool)v["frame_mbs_only_flag"]))
+		READ_BOOL("mb_adaptive_frame_field_flag");
+	READ_BOOL("direct_8x8_inference_flag");
+	READ_BOOL("frame_cropping_flag");
+	if ((bool)v["frame_cropping_flag"]) {
+		READ_UEG("frame_crop_left_offset");
+		READ_UEG("frame_crop_right_offset");
+		READ_UEG("frame_crop_top_offset");
+		READ_UEG("frame_crop_bottom_offset");
+	}
+	READ_BOOL("vui_parameters_present_flag");
+	if ((bool)v["vui_parameters_present_flag"]) {
+		if (!ReadSPSVUI(ba, v["vui_parameters"])) {
+			FATAL("Unable to read VUI");
+			return false;
+		}
+	}
+	return true;
 }
 
 bool _VIDEO_AVC::Init(uint8_t *pSPS, uint32_t spsLength, uint8_t *pPPS,
@@ -44,7 +192,19 @@ bool _VIDEO_AVC::Init(uint8_t *pSPS, uint32_t spsLength, uint8_t *pPPS,
 
 	_rate = 90000;
 
-	//FINEST("H264 codec:\n%s", STR(*this));
+	BitArray ba;
+	ba.ReadFromBuffer(_pSPS + 1, _spsLength - 1);
+
+	if (!ReadSPS(ba, _SPSInfo)) {
+		WARN("Unable to parse SPS");
+	} else {
+		_SPSInfo.Compact();
+		_width = ((uint32_t) _SPSInfo["pic_width_in_mbs_minus1"] + 1)*16;
+		_height = ((uint32_t) _SPSInfo["pic_height_in_map_units_minus1"] + 1)*16;
+	}
+
+	FINEST("\n%s", STR(*this));
+
 	return true;
 }
 
@@ -66,7 +226,8 @@ _VIDEO_AVC::operator string() {
 	string result;
 	result += format("_spsLength: %d\n", _spsLength);
 	result += format("_ppsLength: %d\n", _ppsLength);
-	result += format("_rate: %d", _rate);
+	result += format("_rate: %d\n", _rate);
+	result += format("WxH: %ux%u", _width, _height);
 	return result;
 }
 
