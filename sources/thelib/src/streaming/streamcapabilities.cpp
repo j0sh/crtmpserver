@@ -133,7 +133,7 @@ bool ReadSPSVUI(BitArray &ba, Variant &v) {
 bool ReadSPS(BitArray &ba, Variant &v) {
 	//7.3.2.1 Sequence parameter set RBSP syntax
 	//14496-10.pdf 43/280
-	FINEST("ba: %d", ba.AvailableBits());
+	//FINEST("ba: %d", ba.AvailableBits());
 	READ_INT("profile_idc", uint8_t, 8);
 	READ_BOOL("constraint_set0_flag");
 	READ_BOOL("constraint_set1_flag");
@@ -182,7 +182,7 @@ bool ReadSPS(BitArray &ba, Variant &v) {
 bool ReadPPS(BitArray &ba, Variant &v) {
 	//7.3.2.2 Picture parameter set RBSP syntax
 	//14496-10.pdf 44/280
-	FINEST("ba: %d", ba.AvailableBits());
+	//FINEST("ba: %d", ba.AvailableBits());
 	READ_UEG("pic_parameter_set_id");
 	READ_UEG("seq_parameter_set_id");
 	READ_BOOL("entropy_coding_mode_flag");

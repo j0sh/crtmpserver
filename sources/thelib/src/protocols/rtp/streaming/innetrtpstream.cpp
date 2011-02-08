@@ -25,6 +25,7 @@
 #include "protocols/baseprotocol.h"
 #include "protocols/rtmp/basertmpprotocol.h"
 #include "protocols/rtmp/streaming/baseoutnetrtmpstream.h"
+#include "streaming/packetqueue.h"
 
 InNetRTPStream::InNetRTPStream(BaseProtocol *pProtocol,
 		StreamsManager *pStreamsManager, string name, string SPS, string PPS, string AAC)
@@ -151,53 +152,92 @@ bool InNetRTPStream::SignalStop() {
 bool InNetRTPStream::FeedData(uint8_t *pData, uint32_t dataLength,
 		uint32_t processedLength, uint32_t totalLength,
 		double absoluteTimestamp, bool isAudio) {
-	double &lastTs = isAudio ? _lastAudioTs : _lastVideoTs;
+	vector<Packet *> packets = _packetQueue.PushPacket(pData, dataLength,
+			absoluteTimestamp, isAudio);
 
-	if ((-1.0 < (lastTs * 100.00 - absoluteTimestamp * 100.00))
-			&& ((lastTs * 100.00 - absoluteTimestamp * 100.00) < 1.00)) {
-		absoluteTimestamp = lastTs;
-	}
+	for (uint32_t i = 0; i < packets.size(); i++) {
+		double &lastTs = isAudio ? _lastAudioTs : _lastVideoTs;
 
-	if (lastTs * 100.00 > absoluteTimestamp * 100.00) {
-		WARN("Back time on %s. ATS: %.08f LTS: %.08f; D: %.8f; isAudio: %d",
-				STR(GetName()),
-				absoluteTimestamp,
-				lastTs,
-				absoluteTimestamp - lastTs,
-				isAudio);
-		return true;
-	}
-	LinkedListNode<BaseOutStream *> *pTemp = _pOutStreams;
-	if (lastTs == 0) {
-		lastTs = absoluteTimestamp;
+		LinkedListNode<BaseOutStream *> *pTemp = _pOutStreams;
+		if (lastTs == 0) {
+			lastTs = packets[i]->ts;
+			while (pTemp != NULL) {
+				if (!pTemp->info->IsEnqueueForDelete()) {
+					SignalOutStreamAttached(pTemp->info);
+				}
+				pTemp = pTemp->pPrev;
+			}
+		}
+		lastTs = packets[i]->ts;
+		pTemp = _pOutStreams;
 		while (pTemp != NULL) {
 			if (!pTemp->info->IsEnqueueForDelete()) {
-				SignalOutStreamAttached(pTemp->info);
+				if (!pTemp->info->FeedData(
+						GETIBPOINTER(packets[i]->buffer),
+						GETAVAILABLEBYTESCOUNT(packets[i]->buffer),
+						0,
+						GETAVAILABLEBYTESCOUNT(packets[i]->buffer),
+						packets[i]->ts,
+						packets[i]->isAudio)) {
+					WARN("Unable to feed OS: %p", pTemp->info);
+					pTemp->info->EnqueueForDelete();
+					if (GetProtocol() == pTemp->info->GetProtocol()) {
+						return false;
+					}
+				}
 			}
 			pTemp = pTemp->pPrev;
 		}
 	}
-	lastTs = absoluteTimestamp;
-	if (_avStream) {
-		if ((_lastAudioTs == 0) || (_lastVideoTs == 0)) {
-			return true;
-		}
-	}
-	pTemp = _pOutStreams;
-	while (pTemp != NULL) {
-		if (!pTemp->info->IsEnqueueForDelete()) {
-			if (!pTemp->info->FeedData(pData, dataLength, processedLength, totalLength,
-					absoluteTimestamp, isAudio)) {
-				WARN("Unable to feed OS: %p", pTemp->info);
-				pTemp->info->EnqueueForDelete();
-				if (GetProtocol() == pTemp->info->GetProtocol()) {
-					return false;
-				}
-			}
-		}
-		pTemp = pTemp->pPrev;
-	}
 	return true;
+
+	//	double &lastTs = isAudio ? _lastAudioTs : _lastVideoTs;
+	//
+	//	if ((-1.0 < (lastTs * 100.00 - absoluteTimestamp * 100.00))
+	//			&& ((lastTs * 100.00 - absoluteTimestamp * 100.00) < 1.00)) {
+	//		absoluteTimestamp = lastTs;
+	//	}
+	//
+	//	if (lastTs * 100.00 > absoluteTimestamp * 100.00) {
+	//		WARN("Back time on %s. ATS: %.08f LTS: %.08f; D: %.8f; isAudio: %d",
+	//				STR(GetName()),
+	//				absoluteTimestamp,
+	//				lastTs,
+	//				absoluteTimestamp - lastTs,
+	//				isAudio);
+	//		return true;
+	//	}
+	//	LinkedListNode<BaseOutStream *> *pTemp = _pOutStreams;
+	//	if (lastTs == 0) {
+	//		lastTs = absoluteTimestamp;
+	//		while (pTemp != NULL) {
+	//			if (!pTemp->info->IsEnqueueForDelete()) {
+	//				SignalOutStreamAttached(pTemp->info);
+	//			}
+	//			pTemp = pTemp->pPrev;
+	//		}
+	//	}
+	//	lastTs = absoluteTimestamp;
+	//	if (_avStream) {
+	//		if ((_lastAudioTs == 0) || (_lastVideoTs == 0)) {
+	//			return true;
+	//		}
+	//	}
+	//	pTemp = _pOutStreams;
+	//	while (pTemp != NULL) {
+	//		if (!pTemp->info->IsEnqueueForDelete()) {
+	//			if (!pTemp->info->FeedData(pData, dataLength, processedLength, totalLength,
+	//					absoluteTimestamp, isAudio)) {
+	//				WARN("Unable to feed OS: %p", pTemp->info);
+	//				pTemp->info->EnqueueForDelete();
+	//				if (GetProtocol() == pTemp->info->GetProtocol()) {
+	//					return false;
+	//				}
+	//			}
+	//		}
+	//		pTemp = pTemp->pPrev;
+	//	}
+	//	return true;
 }
 
 bool InNetRTPStream::FeedVideoData(uint8_t *pData, uint32_t dataLength,
@@ -325,16 +365,18 @@ bool InNetRTPStream::FeedAudioData(uint8_t *pData, uint32_t dataLength,
 		} else {
 			chunkSize = dataLength - cursor;
 		}
+		//		FINEST("chunkSize: %d; dataLength: %d; diff: %d", chunkSize, dataLength,
+		//				dataLength - chunkSize);
 		ts = (double) (rtpHeader._timestamp + i * 1024) / (double) _capabilities.aac._sampleRate * 1000.00;
 		if ((cursor + chunkSize) > dataLength) {
 			FATAL("Unable to feed data: cursor: %d; chunkSize: %d; dataLength: %d; chunksCount: %d",
 					cursor, chunkSize, dataLength, chunksCount);
 			return false;
 		}
-		if (!FeedData(pData + cursor,
-				chunkSize,
+		if (!FeedData(pData + cursor - 2,
+				chunkSize + 2,
 				0,
-				chunkSize,
+				chunkSize + 2,
 				ts, true)) {
 			FATAL("Unable to feed data");
 			return false;

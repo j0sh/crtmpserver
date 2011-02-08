@@ -48,6 +48,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/1215912322/innetrtpstream.o \
 	${OBJECTDIR}/_ext/517913122/pidtypes.o \
 	${OBJECTDIR}/_ext/1210522057/atomctts.o \
+	${OBJECTDIR}/_ext/1636055853/packetqueue.o \
 	${OBJECTDIR}/_ext/1636055853/baseoutnetstream.o \
 	${OBJECTDIR}/_ext/1054419429/baseconnectivity.o \
 	${OBJECTDIR}/_ext/31226533/infilertmpflvstream.o \
@@ -307,6 +308,11 @@ ${OBJECTDIR}/_ext/1210522057/atomctts.o: ../../../../sources/thelib/src/mediafor
 	${MKDIR} -p ${OBJECTDIR}/_ext/1210522057
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_VAR -DHAS_PROTOCOL_LIVEFLV -DHAS_MEDIA_MP4 -DHAS_MEDIA_MP3 -DHAS_MEDIA_FLV -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1210522057/atomctts.o ../../../../sources/thelib/src/mediaformats/mp4/atomctts.cpp
+
+${OBJECTDIR}/_ext/1636055853/packetqueue.o: ../../../../sources/thelib/src/streaming/packetqueue.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1636055853
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_VAR -DHAS_PROTOCOL_LIVEFLV -DHAS_MEDIA_MP4 -DHAS_MEDIA_MP3 -DHAS_MEDIA_FLV -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1636055853/packetqueue.o ../../../../sources/thelib/src/streaming/packetqueue.cpp
 
 ${OBJECTDIR}/_ext/1636055853/baseoutnetstream.o: ../../../../sources/thelib/src/streaming/baseoutnetstream.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1636055853

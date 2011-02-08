@@ -105,9 +105,6 @@ bool OutNetRTMP4TSStream::FeedAudioData(uint8_t *pData, uint32_t dataLength,
 	}
 
 	if (_inboundStreamIsRTP) {
-		pData -= 2;
-		dataLength += 2;
-
 		pData[0] = 0xaf;
 		pData[1] = 0x01;
 

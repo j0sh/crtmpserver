@@ -23,6 +23,7 @@
 #define	_INNETRTPSTREAM_H
 
 #include "streaming/baseinnetstream.h"
+#include "streaming/packetqueue.h"
 #include "protocols/rtp/rtpheader.h"
 
 class DLLEXP InNetRTPStream
@@ -34,6 +35,7 @@ private:
 	double _lastAudioTs;
 	StreamCapabilities _capabilities;
 	bool _avStream;
+	PacketQueue _packetQueue;
 public:
 	InNetRTPStream(BaseProtocol *pProtocol, StreamsManager *pStreamsManager,
 			string name, string SPS, string PPS, string AAC);
