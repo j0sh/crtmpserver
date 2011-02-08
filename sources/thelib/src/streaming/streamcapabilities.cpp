@@ -179,6 +179,51 @@ bool ReadSPS(BitArray &ba, Variant &v) {
 	return true;
 }
 
+bool ReadPPS(BitArray &ba, Variant &v) {
+	//7.3.2.2 Picture parameter set RBSP syntax
+	//14496-10.pdf 44/280
+	FINEST("ba: %d", ba.AvailableBits());
+	READ_UEG("pic_parameter_set_id");
+	READ_UEG("seq_parameter_set_id");
+	READ_BOOL("entropy_coding_mode_flag");
+	READ_BOOL("pic_order_present_flag");
+	READ_SEG("num_slice_groups_minus1");
+	if ((int64_t) v["num_slice_groups_minus1"] > 0) {
+		READ_UEG("slice_group_map_type");
+		if ((int64_t) v["slice_group_map_type"] == 0) {
+			for (int64_t i = 0; i < (int64_t) v["num_slice_groups_minus1"]; i++) {
+				v["run_length_minus1"].PushToArray((uint64_t) ba.ReadExpGolomb());
+			}
+		} else if ((int64_t) v["slice_group_map_type"] == 2) {
+			for (int64_t i = 0; i < (int64_t) v["num_slice_groups_minus1"]; i++) {
+				v["top_left"].PushToArray((uint64_t) ba.ReadExpGolomb());
+				v["bottom_right"].PushToArray((uint64_t) ba.ReadExpGolomb());
+			}
+		} else if (((int64_t) v["slice_group_map_type"] == 3)
+				|| ((int64_t) v["slice_group_map_type"] == 4)
+				|| ((int64_t) v["slice_group_map_type"] == 5)) {
+			READ_BOOL("slice_group_change_direction_flag");
+			READ_UEG("slice_group_change_rate_minus1");
+		} else if ((int64_t) v["slice_group_map_type"] == 6) {
+			READ_UEG("pic_size_in_map_units_minus1");
+			for (uint64_t i = 0; i <= (uint64_t) v["pic_size_in_map_units_minus1"]; i++) {
+				v["slice_group_id"].PushToArray((int64_t) ba.ReadExpGolomb());
+			}
+		}
+	}
+	READ_UEG("num_ref_idx_l0_active_minus1");
+	READ_UEG("num_ref_idx_l1_active_minus1");
+	READ_BOOL("weighted_pred_flag");
+	READ_INT("weighted_bipred_idc", uint8_t, 2);
+	READ_SEG("pic_init_qp_minus26");
+	READ_SEG("pic_init_qs_minus26");
+	READ_SEG("chroma_qp_index_offset");
+	READ_BOOL("deblocking_filter_control_present_flag");
+	READ_BOOL("constrained_intra_pred_flag");
+	READ_BOOL("redundant_pic_cnt_present_flag");
+	return true;
+}
+
 bool _VIDEO_AVC::Init(uint8_t *pSPS, uint32_t spsLength, uint8_t *pPPS,
 		uint32_t ppsLength) {
 	Clear();
@@ -192,16 +237,26 @@ bool _VIDEO_AVC::Init(uint8_t *pSPS, uint32_t spsLength, uint8_t *pPPS,
 
 	_rate = 90000;
 
-	BitArray ba;
-	ba.ReadFromBuffer(_pSPS + 1, _spsLength - 1);
+	BitArray spsBa;
+	spsBa.ReadFromBuffer(_pSPS + 1, _spsLength - 1);
 
-	if (!ReadSPS(ba, _SPSInfo)) {
+	if (!ReadSPS(spsBa, _SPSInfo)) {
 		WARN("Unable to parse SPS");
 	} else {
 		_SPSInfo.Compact();
 		_width = ((uint32_t) _SPSInfo["pic_width_in_mbs_minus1"] + 1)*16;
 		_height = ((uint32_t) _SPSInfo["pic_height_in_map_units_minus1"] + 1)*16;
+		//FINEST("_SPSInfo:\n%s", STR(_SPSInfo.ToString()));
 	}
+
+	BitArray ppsBa;
+	ppsBa.ReadFromBuffer(_pPPS + 1, _ppsLength - 1);
+	if (!ReadPPS(ppsBa, _PPSInfo)) {
+		WARN("Unable to read PPS info");
+	}
+	//	else {
+	//		FINEST("_PPSInfo:\n%s", STR(_PPSInfo.ToString()));
+	//	}
 
 	FINEST("\n%s", STR(*this));
 

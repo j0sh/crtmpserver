@@ -30,6 +30,7 @@ struct _VIDEO_AVC {
 	uint16_t _ppsLength;
 	uint32_t _rate;
 	Variant _SPSInfo;
+	Variant _PPSInfo;
 	uint32_t _width;
 	uint32_t _height;
 
