@@ -123,6 +123,9 @@ bool InboundJSONCLIProtocol::ParseCommand(string &command) {
 	//2. Replace the '\ ' escape sequence
 	replace(command, "\\ ", "_#space#_");
 
+	//2. Replace the '\=' escape sequence
+	replace(command, "\\=", "_#equal#_");
+
 	//3. Append "cmd=" in front of the command
 	command = "cmd=" + command;
 
@@ -142,10 +145,12 @@ bool InboundJSONCLIProtocol::ParseCommand(string &command) {
 		key = lowercase(MAP_KEY(i));
 		replace(key, "_#space#_", " ");
 		replace(key, "_#slash#_", "\\");
+		replace(key, "_#equal#_", "=");
 
 		value = MAP_VAL(i);
 		replace(value, "_#space#_", " ");
 		replace(value, "_#slash#_", "\\");
+		replace(value, "_#equal#_", "=");
 
 		list.clear();
 		split(value, ",", list);

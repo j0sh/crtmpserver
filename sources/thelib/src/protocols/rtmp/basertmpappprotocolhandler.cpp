@@ -195,6 +195,7 @@ bool BaseRTMPAppProtocolHandler::InboundMessageAvailable(BaseRTMPProtocol *pFrom
 
 bool BaseRTMPAppProtocolHandler::InboundMessageAvailable(BaseRTMPProtocol *pFrom,
 		Variant &request) {
+	//FINEST("request:\n%s", STR(request.ToString()));
 
 	//1. Perform authentication
 	Variant &parameters = pFrom->GetCustomParameters();
@@ -218,7 +219,9 @@ bool BaseRTMPAppProtocolHandler::InboundMessageAvailable(BaseRTMPProtocol *pFrom
 		}
 		case PT_OUTBOUND_RTMP:
 		{
-			NYIR;
+			authState["stage"] = "authenticated";
+			authState["canPublish"] = (bool)true;
+			break;
 		}
 		default:
 		{
@@ -1051,7 +1054,52 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokeConnectResult(BaseRTMPProtocol *pF
 
 	//2. See if the result is OK or not
 	if (M_INVOKE_FUNCTION(response) != RM_INVOKE_FUNCTION_RESULT) {
-		FATAL("Connect failed:\n%s", STR(response.ToString()));
+		if ((M_INVOKE_FUNCTION(response) != RM_INVOKE_FUNCTION_ERROR)
+				|| (M_INVOKE_PARAMS(response) != V_MAP)
+				|| (M_INVOKE_PARAMS(response).MapSize() < 2)
+				|| (M_INVOKE_PARAM(response, 1) != V_MAP)
+				|| (!M_INVOKE_PARAM(response, 1).HasKey("level"))
+				|| (M_INVOKE_PARAM(response, 1)["level"] != V_STRING)
+				|| (M_INVOKE_PARAM(response, 1)["level"] != "error")
+				|| (!M_INVOKE_PARAM(response, 1).HasKey("code"))
+				|| (M_INVOKE_PARAM(response, 1)["code"] != V_STRING)
+				|| (M_INVOKE_PARAM(response, 1)["code"] != "NetConnection.Connect.Rejected")
+				|| (!M_INVOKE_PARAM(response, 1).HasKey("description"))
+				|| (M_INVOKE_PARAM(response, 1)["description"] != V_STRING)
+				|| (M_INVOKE_PARAM(response, 1)["description"] == "")
+				) {
+			FATAL("Connect failed:\n%s", STR(response.ToString()));
+			return false;
+		}
+		string description = M_INVOKE_PARAM(response, 1)["description"];
+		vector<string> parts;
+		split(description, "?", parts);
+		if (parts.size() != 2) {
+			FATAL("Connect failed:\n%s", STR(response.ToString()));
+			return false;
+		}
+		description = parts[1];
+		map<string, string> params = mapping(description, "&", "=", true);
+		if ((!MAP_HAS1(params, "reason"))
+				|| (!MAP_HAS1(params, "user"))
+				|| (!MAP_HAS1(params, "salt"))
+				|| (!MAP_HAS1(params, "challenge"))
+				|| (!MAP_HAS1(params, "opaque"))
+				|| (params["reason"] != "needauth")
+				) {
+			FATAL("Connect failed:\n%s", STR(response.ToString()));
+			return false;
+		}
+
+		Variant &customParameters = pFrom->GetCustomParameters();
+		Variant &streamConfig = NeedsToPullExternalStream(pFrom)
+				? customParameters["customParameters"]["externalStreamConfig"]
+				: customParameters["customParameters"]["localStreamConfig"];
+
+		FOR_MAP(params, string, string, i) {
+			streamConfig["auth"][MAP_KEY(i)] = MAP_VAL(i);
+		}
+
 		return false;
 	}
 	if (M_INVOKE_PARAM(response, 1) != V_MAP) {
@@ -1322,9 +1370,9 @@ bool BaseRTMPAppProtocolHandler::AuthenticateInboundAdobe(BaseRTMPProtocol *pFro
 				string str1 = user + _adobeAuthSalt + password;
 				string hash1 = b64(md5(str1, false));
 				string str2 = hash1 + opaque + challenge;
-				string hash2 = b64(md5(str2, false));
+				string wanted = b64(md5(str2, false));
 
-				if (response == hash2) {
+				if (response == wanted) {
 					authState["stage"] = "authenticated";
 					authState["canPublish"] = (bool)true;
 					WARN("User `%s` authenticated", STR(user));
@@ -1733,82 +1781,24 @@ bool BaseRTMPAppProtocolHandler::NeedsToPushLocalStream(BaseRTMPProtocol *pFrom)
 bool BaseRTMPAppProtocolHandler::PullExternalStream(BaseRTMPProtocol *pFrom) {
 	//1. Get the stream configuration and the URI from it
 	Variant &streamConfig = pFrom->GetCustomParameters()["customParameters"]["externalStreamConfig"];
-	URI uri;
-	if (!URI::FromVariant(streamConfig["uri"], uri)) {
-		FATAL("Unable to parse uri:\n%s", STR(streamConfig["uri"]));
-		return false;
-	}
 
-	//2. get the application name
-	string appName = uri.documentPath;
-	if (appName != "") {
-		if (appName[0] == '/')
-			appName = appName.substr(1, appName.size() - 1);
-	}
-	if (appName != "") {
-		if (appName[appName.size() - 1] == '/')
-			appName = appName.substr(0, appName.size() - 1);
-	}
-	if (appName == "") {
-		FATAL("Invalid uri: %s", STR(uri.fullUri));
-		return false;
-	}
-
-	//3. Compute tcUrl: rtmp://host/appName
-	string tcUrl = format("%s://%s%s/%s",
-			STR(uri.scheme),
-			STR(uri.host),
-			STR(uri.port == 1935 ? "" : format(":%d", uri.port)),
-			STR(appName));
-
-	//4. Get the user agent
-	string userAgent = "";
-	if (streamConfig["emulateUserAgent"] == V_STRING) {
-		userAgent = (string) streamConfig["emulateUserAgent"];
-	}
-	if (userAgent == "") {
-		userAgent = HTTP_HEADERS_SERVER_US;
-	}
-
-	//5. Get swfUrl and pageUrl
-	string swfUrl = "";
-	if (streamConfig["swfUrl"] == V_STRING) {
-		swfUrl = (string) streamConfig["swfUrl"];
-	}
-	string pageUrl = "";
-	if (streamConfig["pageUrl"] == V_STRING) {
-		pageUrl = (string) streamConfig["pageUrl"];
-	}
-
-	//6. Prepare the connect request
-	Variant connectRequest = ConnectionMessageFactory::GetInvokeConnect(
-			appName, //string appName
-			tcUrl, //string tcUrl
-			3191, //double audioCodecs
-			239, //double capabilities
-			userAgent, //string flashVer
-			false, //bool fPad
-			pageUrl, //string pageUrl
-			swfUrl, //string swfUrl
-			252, //double videoCodecs
-			1, //double videoFunction
-			0 //double objectEncoding
-			);
-
-	//7. Send it
-	if (!SendRTMPMessage(pFrom, connectRequest, true)) {
-		FATAL("Unable to send request:\n%s", STR(connectRequest.ToString()));
-		return false;
-	}
-
-	return true;
+	//2. Issue the connect invoke
+	return ConnectForPullPush(pFrom, "uri", streamConfig);
 }
 
 bool BaseRTMPAppProtocolHandler::PushLocalStream(BaseRTMPProtocol *pFrom) {
 	//1. Get the stream configuration and the URI from it
 	Variant &streamConfig = pFrom->GetCustomParameters()["customParameters"]["localStreamConfig"];
+
+	//2. Issue the connect invoke
+	return ConnectForPullPush(pFrom, "targetUri", streamConfig);
+}
+
+bool BaseRTMPAppProtocolHandler::ConnectForPullPush(BaseRTMPProtocol *pFrom,
+		string uriPath, Variant &streamConfig) {
+	//FINEST("streamConfig:\n%s", STR(streamConfig.ToString()));
 	URI uri;
-	if (!URI::FromVariant(streamConfig["targetUri"], uri)) {
+	if (!URI::FromVariant(streamConfig[uriPath], uri)) {
 		FATAL("Unable to parse uri:\n%s", STR(streamConfig["targetUri"]));
 		return false;
 	}
@@ -1826,6 +1816,26 @@ bool BaseRTMPAppProtocolHandler::PushLocalStream(BaseRTMPProtocol *pFrom) {
 	if (appName == "") {
 		FATAL("Invalid uri: %s", STR(uri.fullUri));
 		return false;
+	}
+	if (uri.userName != "") {
+		if (streamConfig.HasKey("auth")) {
+			string user = uri.userName;
+			string password = uri.password;
+			string salt = streamConfig["auth"]["salt"];
+			string opaque = streamConfig["auth"]["opaque"];
+			string challenge = streamConfig["auth"]["challenge"];
+			string response = b64(md5(b64(md5(user + salt + password, false)) + opaque + challenge, false));
+			appName = appName + "?authmod=adobe"
+					+ "&user=" + uri.userName
+					+ "&challenge=" + challenge
+					+ "&opaque=" + opaque
+					+ "&salt=" + salt
+					+ "&response=" + response;
+			streamConfig["emulateUserAgent"] = "FMLE/3.0 (compatible; FMSc/1.0)";
+		} else {
+			appName = appName + "?authmod=adobe&user=" + uri.userName;
+			streamConfig["emulateUserAgent"] = "FMLE/3.0 (compatible; FMSc/1.0)";
+		}
 	}
 
 	//3. Compute tcUrl: rtmp://host/appName

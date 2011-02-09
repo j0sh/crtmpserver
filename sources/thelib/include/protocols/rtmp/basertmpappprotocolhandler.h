@@ -255,6 +255,11 @@ private:
 	 * Initiate the stream pushing sequence: connect->createStream->Publish
 	 * */
 	bool PushLocalStream(BaseRTMPProtocol *pFrom);
+
+	/*
+	 * Send the initial connect invoke
+	 * */
+	bool ConnectForPullPush(BaseRTMPProtocol *pFrom, string uriPath, Variant &config);
 };
 
 
