@@ -49,11 +49,6 @@ class InFileRTMPStream;
 class InNetRTMPStream;
 class BaseRTMPAppProtocolHandler;
 
-#define AS_AUTHENTICATING 0
-#define AS_AUTHENTICATED 1
-#define AS_NO_NEED_FOR_AUTHENTICATION 2
-#define AS_FAILED 3
-
 class DLLEXP BaseRTMPProtocol
 : public BaseProtocol {
 protected:
@@ -74,7 +69,6 @@ protected:
 	vector<uint32_t> _channelsPool;
 	LinkedListNode<BaseOutNetRTMPStream *> *_pSignaledRTMPOutNetStream;
 	map<InFileRTMPStream *, InFileRTMPStream *> _inFileStreams;
-	uint8_t _authStage;
 	uint64_t _rxInvokes;
 	uint64_t _txInvokes;
 public:
@@ -98,8 +92,6 @@ public:
 	bool SendRawData(uint8_t *pData, uint32_t length);
 
 	void SetWinAckSize(uint32_t winAckSize);
-	uint8_t GetAuthStage();
-	void SetAuthStage(uint8_t authStage);
 
 	uint32_t GetOutboundChunkSize();
 	bool SetInboundChunkSize(uint32_t chunkSize);

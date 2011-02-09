@@ -40,11 +40,27 @@ BaseRTMPAppProtocolHandler::BaseRTMPAppProtocolHandler(Variant &configuration)
 	_seekGranularity = (uint32_t) ((double) configuration[CONF_APPLICATION_SEEKGRANULARITY]*1000);
 	_mediaFolder = (string) configuration[CONF_APPLICATION_MEDIAFOLDER];
 	if (_configuration.HasKey(CONF_APPLICATION_AUTH)) {
-		_authMethod = STR(_configuration[CONF_APPLICATION_AUTH][CONF_APPLICATION_AUTH_TYPE]);
+		if ((!_configuration[CONF_APPLICATION_AUTH].HasKey(CONF_APPLICATION_AUTH_TYPE))
+				|| (_configuration[CONF_APPLICATION_AUTH][CONF_APPLICATION_AUTH_TYPE] != V_STRING)
+				|| (_configuration[CONF_APPLICATION_AUTH][CONF_APPLICATION_AUTH_TYPE] != CONF_APPLICATION_AUTH_TYPE_ADOBE)
+				|| (!_configuration[CONF_APPLICATION_AUTH].HasKey(CONF_APPLICATION_AUTH_ENCODER_AGENTS))
+				|| (_configuration[CONF_APPLICATION_AUTH][CONF_APPLICATION_AUTH_ENCODER_AGENTS] != V_MAP)
+				|| (_configuration[CONF_APPLICATION_AUTH][CONF_APPLICATION_AUTH_ENCODER_AGENTS].MapSize() == 0)
+				|| (!_configuration[CONF_APPLICATION_AUTH].HasKey(CONF_APPLICATION_AUTH_USERS_FILE))
+				|| (_configuration[CONF_APPLICATION_AUTH][CONF_APPLICATION_AUTH_USERS_FILE] != V_STRING)
+				|| (!fileExists(_configuration[CONF_APPLICATION_AUTH][CONF_APPLICATION_AUTH_USERS_FILE]))
+				) {
+			WARN("Invalid authentication configuration");
+			_authMethod = "";
+		} else {
+			_adobeAuthSalt = generateRandomString(32);
+			_adobeAuthSettings = _configuration[CONF_APPLICATION_AUTH];
+			_authMethod = (string) _configuration[CONF_APPLICATION_AUTH][CONF_APPLICATION_AUTH_TYPE];
+		}
 	} else {
 		_authMethod = "";
 	}
-	_adobeAuthSalt = generateRandomString(32);
+
 	if ((bool)configuration[CONF_APPLICATION_GENERATE_META_FILES]) {
 		GenerateMetaFiles();
 	}
@@ -156,10 +172,10 @@ bool BaseRTMPAppProtocolHandler::OutboundConnectionEstablished(
 	return false;
 }
 
-bool BaseRTMPAppProtocolHandler::Authenticate(BaseRTMPProtocol *pFrom,
-		Variant &request) {
+bool BaseRTMPAppProtocolHandler::AuthenticateInbound(BaseRTMPProtocol *pFrom,
+		Variant &request, Variant &authState) {
 	if (_authMethod == CONF_APPLICATION_AUTH_TYPE_ADOBE) {
-		return AuthenticateAdobe(pFrom, request);
+		return AuthenticateInboundAdobe(pFrom, request, authState);
 	} else {
 		FATAL("Auth scheme not supported: %s", STR(_authMethod));
 		return false;
@@ -180,28 +196,40 @@ bool BaseRTMPAppProtocolHandler::InboundMessageAvailable(BaseRTMPProtocol *pFrom
 bool BaseRTMPAppProtocolHandler::InboundMessageAvailable(BaseRTMPProtocol *pFrom,
 		Variant &request) {
 
-	//Test to see if we have authentication
-	if (_authMethod != "") {
-		//Test to see if the connection is authenticated
-		if ((pFrom->GetAuthStage() != AS_AUTHENTICATED) &&
-				(pFrom->GetAuthStage() != AS_NO_NEED_FOR_AUTHENTICATION)) {
+	//1. Perform authentication
+	Variant &parameters = pFrom->GetCustomParameters();
+	if (!parameters.HasKey("authState"))
+		parameters["authState"].IsArray(false);
+	Variant &authState = parameters["authState"];
 
-			//authenticate
-			if (!Authenticate(pFrom, request)) {
-				FATAL("Unable to authenticate");
-				return false;
+	switch (pFrom->GetType()) {
+		case PT_INBOUND_RTMP:
+		{
+			if (_authMethod != "") {
+				if (!AuthenticateInbound(pFrom, request, authState)) {
+					FATAL("Unable to authenticate");
+					return false;
+				}
+			} else {
+				authState["stage"] = "authenticated";
+				authState["canPublish"] = (bool)true;
 			}
-
-			//stil needs authenticating
-			if (pFrom->GetAuthStage() == AS_AUTHENTICATING) {
-				return true;
-			}
-
-			//auth failed
-			if (pFrom->GetAuthStage() == AS_FAILED) {
-				return false;
-			}
+			break;
 		}
+		case PT_OUTBOUND_RTMP:
+		{
+			NYIR;
+		}
+		default:
+		{
+			WARN("Invalid protocol type");
+			return false;
+		}
+	}
+
+	if (authState["stage"] == "failed") {
+		WARN("Authentication failed");
+		return false;
 	}
 
 	switch ((uint8_t) VH_MT(request)) {
@@ -523,20 +551,20 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokeCreateStream(BaseRTMPProtocol *pFr
 
 bool BaseRTMPAppProtocolHandler::ProcessInvokePublish(BaseRTMPProtocol *pFrom,
 		Variant &request) {
-	//1. Check to see if we are allowed to create inbound streams
-	if (_authMethod != "") {
-		if (pFrom->GetAuthStage() != AS_AUTHENTICATED) {
-			WARN("This connection is not authenticated");
-			return false;
-		}
-	}
-
-	//2. gather the required data from the request
+	//1. gather the required data from the request
 	if (M_INVOKE_PARAM(request, 1) != V_STRING) {
 		FATAL("Invalid request:\n%s", STR(request.ToString()));
 		return false;
 	}
 	string streamName = M_INVOKE_PARAM(request, 1);
+
+	//2. Check to see if we are allowed to create inbound streams
+	if (!(bool)pFrom->GetCustomParameters()["authState"]["canPublish"]) {
+		Variant response = StreamMessageFactory::GetInvokeOnStatusStreamPublishBadName(request, streamName);
+		return pFrom->SendMessage(response);
+	}
+
+
 	bool recording = (M_INVOKE_PARAM(request, 2) == RM_INVOKE_PARAMS_PUBLISH_TYPERECORD);
 	bool appending = (M_INVOKE_PARAM(request, 2) == RM_INVOKE_PARAMS_PUBLISH_TYPEAPPEND);
 	FINEST("Try to publish stream %s.%s",
@@ -1149,18 +1177,29 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokeFCSubscribeResult(BaseRTMPProtocol
 	return true;
 }
 
-bool BaseRTMPAppProtocolHandler::AuthenticateAdobe(BaseRTMPProtocol *pFrom, Variant & request) {
-	//    FINEST("_configuration:\n%s", STR(_configuration.ToString()));
-	//    FINEST("request:\n%s", STR(request.ToString()));
-	if (pFrom->GetAuthStage() != AS_AUTHENTICATING) {
+bool BaseRTMPAppProtocolHandler::AuthenticateInboundAdobe(BaseRTMPProtocol *pFrom,
+		Variant & request, Variant &authState) {
+
+	//	FINEST("_configuration:\n%s", STR(_configuration.ToString()));
+	//	FINEST("request:\n%s", STR(request.ToString()));
+
+	if (!authState.HasKey("stage"))
+		authState["stage"] = "inProgress";
+	//FINEST("authState:\n%s", STR(authState.ToString()));
+
+	if (authState["stage"] == "authenticated") {
+		return true;
+	}
+
+	if (authState["stage"] != "inProgress") {
 		FATAL("This protocol in not in the authenticating mode");
 		return false;
 	}
 
 	//1. Validate the type of request
 	if ((uint8_t) VH_MT(request) != RM_HEADER_MESSAGETYPE_INVOKE) {
-		FATAL("This is not an invoke");
-		return false;
+		FINEST("This is not an invoke. Wait for it...");
+		return true;
 	}
 
 	//2. Validate the invoke function name
@@ -1171,40 +1210,48 @@ bool BaseRTMPAppProtocolHandler::AuthenticateAdobe(BaseRTMPProtocol *pFrom, Vari
 
 	//3. Pick up the first param in the invoke
 	Variant connectParams = M_INVOKE_PARAM(request, 0);
-	if ((VariantType) connectParams != V_MAP) {
+	if (connectParams != V_MAP) {
 		FATAL("first invoke param must be a map");
 		return false;
 	}
 
 	//4. pick up the agent name
-	Variant flashVer = connectParams[RM_INVOKE_PARAMS_CONNECT_FLASHVER];
-	if ((VariantType) flashVer != V_STRING) {
-		FATAL("%s must be a string", RM_INVOKE_PARAMS_CONNECT_FLASHVER);
-		return false;
+	if ((!connectParams.HasKey(RM_INVOKE_PARAMS_CONNECT_FLASHVER))
+			|| (connectParams[RM_INVOKE_PARAMS_CONNECT_FLASHVER] != V_STRING)) {
+		WARN("Incorrect user agent");
+		authState["stage"] = "authenticated";
+		authState["canPublish"] = (bool)false;
+		return true;
+	}
+	string flashVer = (string) connectParams[RM_INVOKE_PARAMS_CONNECT_FLASHVER];
+
+	//5. Do we have a list of encoder agents?
+	_adobeAuthSettings = _configuration[CONF_APPLICATION_AUTH];
+
+	//6. test the flash ver against the allowed encoder agents
+	if (!_adobeAuthSettings[CONF_APPLICATION_AUTH_ENCODER_AGENTS].HasKey(flashVer)) {
+		WARN("This agent is not on the list of allowed encoders: `%s`", STR(flashVer));
+		authState["stage"] = "authenticated";
+		authState["canPublish"] = (bool)false;
+		return true;
 	}
 
-	//5. test the flash ver against the allowed encoder agents
-	if (_configuration[CONF_APPLICATION_AUTH].HasKey(CONF_APPLICATION_AUTH_ENCODER_AGENTS)) {
-		if (!_configuration[CONF_APPLICATION_AUTH][CONF_APPLICATION_AUTH_ENCODER_AGENTS].HasKey(flashVer)) {
-			WARN("This agent is not on the list of allowed encoders: `%s`", STR(flashVer));
-			pFrom->SetAuthStage(AS_NO_NEED_FOR_AUTHENTICATION);
-			return true;
-		}
-	} else {
-		WARN("Application %s has adobe authentication activated but no list of encoders",
-				STR(GetApplication()->GetName()));
+	//7. pick up the tcUrl from the first param
+	if ((!connectParams.HasKey(RM_INVOKE_PARAMS_CONNECT_APP))
+			|| (connectParams[RM_INVOKE_PARAMS_CONNECT_APP] != V_STRING)) {
+		WARN("Incorrect app url");
+		authState["stage"] = "authenticated";
+		authState["canPublish"] = (bool)false;
+		return true;
 	}
-
-	//6. pick up the tcUrl from the first param
-	Variant appUrl = connectParams[RM_INVOKE_PARAMS_CONNECT_APP];
-	if ((VariantType) appUrl != V_STRING) {
-		FATAL("%s must be a string", RM_INVOKE_PARAMS_CONNECT_APP);
-		return false;
-	}
+	string appUrl = (string) connectParams[RM_INVOKE_PARAMS_CONNECT_APP];
 	//FINEST("appUrl: %s", STR(appUrl));
 
+	//8. Split the URI into parts
 	vector<string> appUrlParts;
 	split(appUrl, "?", appUrlParts);
+
+	//9. Based on the parts count, we are in a specific stage
 	switch (appUrlParts.size()) {
 		case 1:
 		{
@@ -1226,32 +1273,50 @@ bool BaseRTMPAppProtocolHandler::AuthenticateAdobe(BaseRTMPProtocol *pFrom, Vari
 
 			pFrom->GracefullyEnqueueForDelete();
 			return true;
-			break;
 		}
 		case 2:
 		{
-			//map<string, string> params = mapping("k1=gigi&k2=gigel==&k3=albala&k4=&k5=123", "&", "=");
 			map<string, string> params = mapping(appUrlParts[1], "&", "=", false);
 			if ((!MAP_HAS1(params, "authmod")) || (!MAP_HAS1(params, "user"))) {
-				FATAL("Invalid appUrl: %s", STR(appUrl));
-				return false;
+				WARN("Invalid appUrl: %s", STR(appUrl));
+				authState["stage"] = "authenticated";
+				authState["canPublish"] = (bool)false;
+				return true;
 			}
+
 			//            FOR_MAP(params, string, string, i) {
 			//                FINEST("%s: `%s`", STR(MAP_KEY(i)), STR(MAP_VAL(i)));
 			//            }
 
+			string user = params["user"];
 
-			if (MAP_HAS1(params, "challenge") &&
-					MAP_HAS1(params, "response") &&
-					MAP_HAS1(params, "opaque")) {
-				string user = params["user"];
+			if (MAP_HAS1(params, "challenge")
+					&& MAP_HAS1(params, "response")
+					&& MAP_HAS1(params, "opaque")) {
 				string challenge = params["challenge"];
 				string response = params["response"];
 				string opaque = params["opaque"];
 				string password = GetAuthPassword(user);
 				if (password == "") {
-					FATAL("Not a valid user: %s", STR(user));
-					return false;
+					WARN("No such user: `%s`", STR(user));
+					Variant response = ConnectionMessageFactory::GetInvokeConnectError(request,
+							//"[ AccessManager.Reject ] : [ authmod=adobe ] : ?reason=nosuchuser&opaque=nQoAAA==");
+							"[ AccessManager.Reject ] : [ authmod=adobe ] : ?reason=authfailed&opaque=vgoAAA==");
+					if (!pFrom->SendMessage(response)) {
+						FATAL("Unable to send message");
+						return false;
+					}
+					//FINEST("response:\n%s", STR(response.ToString()));
+
+					response = ConnectionMessageFactory::GetInvokeClose();
+					if (!pFrom->SendMessage(response)) {
+						FATAL("Unable to send message");
+						return false;
+					}
+					//FINEST("response:\n%s", STR(response.ToString()));
+
+					pFrom->GracefullyEnqueueForDelete();
+					return true;
 				}
 
 				string str1 = user + _adobeAuthSalt + password;
@@ -1260,16 +1325,33 @@ bool BaseRTMPAppProtocolHandler::AuthenticateAdobe(BaseRTMPProtocol *pFrom, Vari
 				string hash2 = b64(md5(str2, false));
 
 				if (response == hash2) {
-					pFrom->SetAuthStage(AS_AUTHENTICATED);
+					authState["stage"] = "authenticated";
+					authState["canPublish"] = (bool)true;
+					WARN("User `%s` authenticated", STR(user));
 					return true;
 				} else {
-					FATAL("Auth failed: s1: `%s`; h1: `%s`; s2: `%s`; h2: `%s`",
-							STR(str1), STR(hash1), STR(str2), STR(hash2));
-					pFrom->SetAuthStage(AS_FAILED);
-					return false;
+					WARN("Invalid password for user `%s`", STR(user));
+					//					FATAL("Auth failed: s1: `%s`; h1: `%s`; s2: `%s`; h2: `%s`",
+					//							STR(str1), STR(hash1), STR(str2), STR(hash2));
+					Variant response = ConnectionMessageFactory::GetInvokeConnectError(request,
+							"[ AccessManager.Reject ] : [ authmod=adobe ] : ?reason=authfailed&opaque=vgoAAA==");
+					if (!pFrom->SendMessage(response)) {
+						FATAL("Unable to send message");
+						return false;
+					}
+					//FINEST("response:\n%s", STR(response.ToString()));
+
+					response = ConnectionMessageFactory::GetInvokeClose();
+					if (!pFrom->SendMessage(response)) {
+						FATAL("Unable to send message");
+						return false;
+					}
+					//FINEST("response:\n%s", STR(response.ToString()));
+
+					pFrom->GracefullyEnqueueForDelete();
+					return true;
 				}
 			} else {
-				string user = params["user"];
 				string challenge = generateRandomString(6) + "==";
 				string opaque = challenge;
 				string description = "[ AccessManager.Reject ] : [ authmod=adobe ] : ?reason=needauth&user=%s&salt=%s&challenge=%s&opaque=%s";
@@ -1294,7 +1376,6 @@ bool BaseRTMPAppProtocolHandler::AuthenticateAdobe(BaseRTMPProtocol *pFrom, Vari
 				pFrom->GracefullyEnqueueForDelete();
 				return true;
 			}
-			break;
 		}
 		default:
 		{
@@ -1302,8 +1383,6 @@ bool BaseRTMPAppProtocolHandler::AuthenticateAdobe(BaseRTMPProtocol *pFrom, Vari
 			return false;
 		}
 	}
-
-	ASSERT("We should not be here");
 }
 
 string BaseRTMPAppProtocolHandler::GetAuthPassword(string user) {

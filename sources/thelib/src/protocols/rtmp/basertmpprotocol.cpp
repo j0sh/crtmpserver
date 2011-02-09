@@ -82,7 +82,6 @@ BaseRTMPProtocol::BaseRTMPProtocol(uint64_t protocolType)
 		ADD_VECTOR_END(_channelsPool, i);
 
 	_pSignaledRTMPOutNetStream = NULL;
-	_authStage = AS_AUTHENTICATING;
 	_rxInvokes = 0;
 	_txInvokes = 0;
 }
@@ -107,6 +106,7 @@ BaseRTMPProtocol::~BaseRTMPProtocol() {
 }
 
 bool BaseRTMPProtocol::Initialize(Variant &parameters) {
+	GetCustomParameters() = parameters;
 	return true;
 }
 
@@ -256,14 +256,6 @@ void BaseRTMPProtocol::SetWinAckSize(uint32_t winAckSize) {
 	_nextReceivedBytesCountReport -= _winAckSize;
 	_winAckSize = winAckSize;
 	_nextReceivedBytesCountReport += _winAckSize;
-}
-
-uint8_t BaseRTMPProtocol::GetAuthStage() {
-	return _authStage;
-}
-
-void BaseRTMPProtocol::SetAuthStage(uint8_t authStage) {
-	_authStage = authStage;
 }
 
 uint32_t BaseRTMPProtocol::GetOutboundChunkSize() {

@@ -29,6 +29,7 @@ PacketQueue::~PacketQueue() {
 	_allPackets.clear();
 	_queue.clear();
 	_free.clear();
+	_initialBuffer = 64 * 1024;
 }
 
 vector<Packet *> PacketQueue::PushPacket(uint8_t *pData, uint32_t dataLength,
@@ -64,6 +65,8 @@ Packet *PacketQueue::GetPacket(uint8_t *pData, uint32_t dataLength,
 	} else {
 		//FINEST("new");
 		pPacket = new Packet;
+		pPacket->buffer.ReadFromRepeat(0, _initialBuffer);
+		pPacket->buffer.IgnoreAll();
 		ADD_VECTOR_END(_allPackets, pPacket);
 	}
 	pPacket->buffer.IgnoreAll();

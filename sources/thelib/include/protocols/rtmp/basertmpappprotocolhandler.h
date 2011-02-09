@@ -46,6 +46,7 @@ protected:
 	bool _keyframeSeek;
 	int32_t _clientSideBuffer;
 	uint32_t _seekGranularity;
+	Variant _adobeAuthSettings;
 public:
 	BaseRTMPAppProtocolHandler(Variant &configuration);
 	virtual ~BaseRTMPAppProtocolHandler();
@@ -91,7 +92,8 @@ public:
 	 * pFrom - the connection requesting authentication
 	 * request - full connect request
 	 * */
-	virtual bool Authenticate(BaseRTMPProtocol *pFrom, Variant &request);
+	virtual bool AuthenticateInbound(BaseRTMPProtocol *pFrom, Variant &request,
+			Variant &authState);
 
 	/*
 	 * This is called by the framework when outstanding data is ready for processing
@@ -177,7 +179,8 @@ protected:
 	/*
 	 * Adobe authentication method used by FMLE.
 	 * */
-	virtual bool AuthenticateAdobe(BaseRTMPProtocol *pFrom, Variant &request);
+	virtual bool AuthenticateInboundAdobe(BaseRTMPProtocol *pFrom, Variant &request,
+			Variant &authState);
 
 	/*
 	 * This will return the password assigned to the specified user

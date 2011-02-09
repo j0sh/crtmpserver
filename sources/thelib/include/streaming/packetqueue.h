@@ -33,6 +33,7 @@ private:
 	vector<Packet *> _allPackets;
 	vector<Packet *> _free;
 	map<double, vector<Packet *> > _queue;
+	uint32_t _initialBuffer;
 public:
 	PacketQueue();
 	virtual ~PacketQueue();
