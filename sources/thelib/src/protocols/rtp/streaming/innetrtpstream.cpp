@@ -51,6 +51,10 @@ InNetRTPStream::InNetRTPStream(BaseProtocol *pProtocol,
 		i++;
 	}
 	_avStream = (i == 2);
+	_audioPacketsCount = 0;
+	_audioBytesCount = 0;
+	_videoPacketsCount = 0;
+	_videoBytesCount = 0;
 }
 
 InNetRTPStream::~InNetRTPStream() {
@@ -296,6 +300,8 @@ bool InNetRTPStream::FeedVideoData(uint8_t *pData, uint32_t dataLength,
 				//				FINEST("NALU_TYPE_FUA feed; s: %d",
 				//						GETAVAILABLEBYTESCOUNT(_currentNalu));
 				//				FINEST("--------------");
+				_videoPacketsCount++;
+				_videoBytesCount += GETAVAILABLEBYTESCOUNT(_currentNalu);
 				if (!FeedData(GETIBPOINTER(_currentNalu),
 						GETAVAILABLEBYTESCOUNT(_currentNalu), 0,
 						GETAVAILABLEBYTESCOUNT(_currentNalu),
@@ -320,6 +326,8 @@ bool InNetRTPStream::FeedVideoData(uint8_t *pData, uint32_t dataLength,
 				_counter = 0;
 				return true;
 			}
+			_videoPacketsCount++;
+			_videoBytesCount += length;
 			if (!FeedData(pData + index,
 					length, 0,
 					length,
@@ -373,6 +381,8 @@ bool InNetRTPStream::FeedAudioData(uint8_t *pData, uint32_t dataLength,
 					cursor, chunkSize, dataLength, chunksCount);
 			return false;
 		}
+		_audioPacketsCount++;
+		_audioBytesCount += chunkSize;
 		if (!FeedData(pData + cursor - 2,
 				chunkSize + 2,
 				0,
@@ -386,5 +396,13 @@ bool InNetRTPStream::FeedAudioData(uint8_t *pData, uint32_t dataLength,
 	}
 
 	return true;
+}
+
+void InNetRTPStream::GetStats(Variant &info) {
+	BaseInNetStream::GetStats(info);
+	info["audio"]["bytesCount"] = _audioBytesCount;
+	info["audio"]["packetsCount"] = _audioPacketsCount;
+	info["video"]["bytesCount"] = _videoBytesCount;
+	info["video"]["packetsCount"] = _videoPacketsCount;
 }
 #endif /* HAS_PROTOCOL_RTP */

@@ -36,6 +36,10 @@ private:
 	StreamCapabilities _capabilities;
 	bool _avStream;
 	PacketQueue _packetQueue;
+	uint32_t _audioPacketsCount;
+	uint32_t _audioBytesCount;
+	uint32_t _videoPacketsCount;
+	uint32_t _videoBytesCount;
 public:
 	InNetRTPStream(BaseProtocol *pProtocol, StreamsManager *pStreamsManager,
 			string name, string SPS, string PPS, string AAC);
@@ -58,6 +62,7 @@ public:
 			RTPHeader &rtpHeader);
 	virtual bool FeedAudioData(uint8_t *pData, uint32_t dataLength,
 			RTPHeader &rtpHeader);
+	virtual void GetStats(Variant &info);
 };
 
 #endif	/* _INNETRTPSTREAM_H */
