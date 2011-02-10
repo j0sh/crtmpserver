@@ -240,58 +240,5 @@ bool OutNetRTMP4TSStream::FeedVideoData(uint8_t *pData, uint32_t dataLength,
 		}
 	}
 }
-
-Variant OutNetRTMP4TSStream::SPSToVariant() {
-	//	Variant result;
-	//	BitArray ba;
-	//	ba.ReadFromBuffer(GETIBPOINTER(_SPS), GETAVAILABLEBYTESCOUNT(_SPS));
-	//	ba.ReadBits<uint8_t > (8);
-	//	result["00_profile_idc"] = ba.ReadBits<uint8_t > (8);
-	//	result["01_constraint_set0_flag"] = ba.ReadBits<bool>(1);
-	//	result["02_constraint_set1_flag"] = ba.ReadBits<bool>(1);
-	//	result["03_constraint_set2_flag"] = ba.ReadBits<bool>(1);
-	//	result["04_reserved_zero_5bits"] = ba.ReadBits<uint8_t > (5);
-	//	result["05_level_idc"] = ba.ReadBits<uint8_t > (8);
-	//	result["06_seq_parameter_set_id"] = ba.ReadExpGolomb();
-	//	result["07_log2_max_frame_num_minus4"] = ba.ReadExpGolomb();
-	//	result["08_pic_order_cnt_type"] = ba.ReadExpGolomb();
-	//	if ((uint32_t) result["08_pic_order_cnt_type"] == 0) {
-	//		result["09_log2_max_pic_order_cnt_lsb_minus4"] = ba.ReadExpGolomb();
-	//	} else if ((uint32_t) result["08_pic_order_cnt_type"] == 1) {
-	//		result["10_delta_pic_order_always_zero_flag"] = ba.ReadBits<bool>(1);
-	//		result["11_offset_for_non_ref_pic"] = (int32_t) ba.ReadExpGolomb();
-	//		result["12_offset_for_top_to_bottom_field"] = (int32_t) ba.ReadExpGolomb();
-	//		result["13_num_ref_frames_in_pic_order_cnt_cycle"] = ba.ReadExpGolomb();
-	//		for (uint32_t i = 0; i < (uint32_t) result["13_num_ref_frames_in_pic_order_cnt_cycle"]; i++)
-	//			result["14_offset_for_ref_frame"].PushToArray((int32_t) ba.ReadExpGolomb());
-	//	}
-	//	result["15_num_ref_frames"] = ba.ReadExpGolomb();
-	//	result["16_gaps_in_frame_num_value_allowed_flag"] = ba.ReadBits<bool>(1);
-	//	result["17_pic_width_in_mbs_minus1"] = ba.ReadExpGolomb();
-	//	result["18_pic_height_in_map_units_minus1"] = ba.ReadExpGolomb();
-	//	result["19_frame_mbs_only_flag"] = ba.ReadBits<bool>(1);
-	//	if (!(bool)result["19_frame_mbs_only_flag"])
-	//		result["20_mb_adaptive_frame_field_flag"] = ba.ReadBits<bool>(1);
-	//	result["21_direct_8x8_inference_flag"] = ba.ReadBits<bool>(1);
-	//	result["22_frame_cropping_flag"] = ba.ReadBits<bool>(1);
-	//	if ((bool)result["22_frame_cropping_flag"]) {
-	//		result["23_frame_crop_left_offset"] = ba.ReadExpGolomb();
-	//		result["24_frame_crop_right_offset"] = ba.ReadExpGolomb();
-	//		result["25_frame_crop_top_offset"] = ba.ReadExpGolomb();
-	//		result["26_frame_crop_bottom_offset"] = ba.ReadExpGolomb();
-	//	}
-	//	result["27_vui_parameters_present_flag"] = ba.ReadBits<bool>(1);
-	//	//if( (bool)result["00_vui_parameters_present_flag"] )
-	//	//vui_parameters( )
-	//	//rbsp_trailing_bits( )
-	//
-	//	return result;
-	return Variant();
-}
-
-Variant OutNetRTMP4TSStream::PPSToVariant() {
-	Variant result;
-	return result;
-}
 #endif /* HAS_PROTOCOL_RTMP */
 

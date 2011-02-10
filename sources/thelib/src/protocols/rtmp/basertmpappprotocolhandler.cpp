@@ -1804,7 +1804,7 @@ bool BaseRTMPAppProtocolHandler::ConnectForPullPush(BaseRTMPProtocol *pFrom,
 	}
 
 	//2. get the application name
-	string appName = uri.fullDocumentPath;
+	string appName = uri.documentPath;
 	if (appName != "") {
 		if (appName[0] == '/')
 			appName = appName.substr(1, appName.size() - 1);
@@ -1878,7 +1878,7 @@ bool BaseRTMPAppProtocolHandler::ConnectForPullPush(BaseRTMPProtocol *pFrom,
 			1, //double videoFunction
 			0 //double objectEncoding
 			);
-
+	
 	//7. Send it
 	if (!SendRTMPMessage(pFrom, connectRequest, true)) {
 		FATAL("Unable to send request:\n%s", STR(connectRequest.ToString()));

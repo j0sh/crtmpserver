@@ -153,9 +153,12 @@ bool InNetRTPStream::SignalStop() {
 	return true;
 }
 
+#define FRAME_REORDER
+
 bool InNetRTPStream::FeedData(uint8_t *pData, uint32_t dataLength,
 		uint32_t processedLength, uint32_t totalLength,
 		double absoluteTimestamp, bool isAudio) {
+#ifdef FRAME_REORDER
 	vector<Packet *> packets = _packetQueue.PushPacket(pData, dataLength,
 			absoluteTimestamp, isAudio);
 
@@ -194,54 +197,55 @@ bool InNetRTPStream::FeedData(uint8_t *pData, uint32_t dataLength,
 		}
 	}
 	return true;
+#else
+	double &lastTs = isAudio ? _lastAudioTs : _lastVideoTs;
 
-	//	double &lastTs = isAudio ? _lastAudioTs : _lastVideoTs;
-	//
-	//	if ((-1.0 < (lastTs * 100.00 - absoluteTimestamp * 100.00))
-	//			&& ((lastTs * 100.00 - absoluteTimestamp * 100.00) < 1.00)) {
-	//		absoluteTimestamp = lastTs;
-	//	}
-	//
-	//	if (lastTs * 100.00 > absoluteTimestamp * 100.00) {
-	//		WARN("Back time on %s. ATS: %.08f LTS: %.08f; D: %.8f; isAudio: %d",
-	//				STR(GetName()),
-	//				absoluteTimestamp,
-	//				lastTs,
-	//				absoluteTimestamp - lastTs,
-	//				isAudio);
-	//		return true;
-	//	}
-	//	LinkedListNode<BaseOutStream *> *pTemp = _pOutStreams;
-	//	if (lastTs == 0) {
-	//		lastTs = absoluteTimestamp;
-	//		while (pTemp != NULL) {
-	//			if (!pTemp->info->IsEnqueueForDelete()) {
-	//				SignalOutStreamAttached(pTemp->info);
-	//			}
-	//			pTemp = pTemp->pPrev;
-	//		}
-	//	}
-	//	lastTs = absoluteTimestamp;
-	//	if (_avStream) {
-	//		if ((_lastAudioTs == 0) || (_lastVideoTs == 0)) {
-	//			return true;
-	//		}
-	//	}
-	//	pTemp = _pOutStreams;
-	//	while (pTemp != NULL) {
-	//		if (!pTemp->info->IsEnqueueForDelete()) {
-	//			if (!pTemp->info->FeedData(pData, dataLength, processedLength, totalLength,
-	//					absoluteTimestamp, isAudio)) {
-	//				WARN("Unable to feed OS: %p", pTemp->info);
-	//				pTemp->info->EnqueueForDelete();
-	//				if (GetProtocol() == pTemp->info->GetProtocol()) {
-	//					return false;
-	//				}
-	//			}
-	//		}
-	//		pTemp = pTemp->pPrev;
-	//	}
-	//	return true;
+	if ((-1.0 < (lastTs * 100.00 - absoluteTimestamp * 100.00))
+			&& ((lastTs * 100.00 - absoluteTimestamp * 100.00) < 1.00)) {
+		absoluteTimestamp = lastTs;
+	}
+
+	if (lastTs * 100.00 > absoluteTimestamp * 100.00) {
+		WARN("Back time on %s. ATS: %.08f LTS: %.08f; D: %.8f; isAudio: %d",
+				STR(GetName()),
+				absoluteTimestamp,
+				lastTs,
+				absoluteTimestamp - lastTs,
+				isAudio);
+		return true;
+	}
+	LinkedListNode<BaseOutStream *> *pTemp = _pOutStreams;
+	if (lastTs == 0) {
+		lastTs = absoluteTimestamp;
+		while (pTemp != NULL) {
+			if (!pTemp->info->IsEnqueueForDelete()) {
+				SignalOutStreamAttached(pTemp->info);
+			}
+			pTemp = pTemp->pPrev;
+		}
+	}
+	lastTs = absoluteTimestamp;
+	if (_avStream) {
+		if ((_lastAudioTs == 0) || (_lastVideoTs == 0)) {
+			return true;
+		}
+	}
+	pTemp = _pOutStreams;
+	while (pTemp != NULL) {
+		if (!pTemp->info->IsEnqueueForDelete()) {
+			if (!pTemp->info->FeedData(pData, dataLength, processedLength, totalLength,
+					absoluteTimestamp, isAudio)) {
+				WARN("Unable to feed OS: %p", pTemp->info);
+				pTemp->info->EnqueueForDelete();
+				if (GetProtocol() == pTemp->info->GetProtocol()) {
+					return false;
+				}
+			}
+		}
+		pTemp = pTemp->pPrev;
+	}
+	return true;
+#endif /* FRAME_REORDER */
 }
 
 bool InNetRTPStream::FeedVideoData(uint8_t *pData, uint32_t dataLength,
@@ -256,7 +260,7 @@ bool InNetRTPStream::FeedVideoData(uint8_t *pData, uint32_t dataLength,
 		return true;
 	} else {
 		if (_counter + 1 != GET_RTP_SEQ(rtpHeader)) {
-			//WARN("Missing packet");
+			WARN("Missing packet");
 			_currentNalu.IgnoreAll();
 			_counter = 0;
 			return true;

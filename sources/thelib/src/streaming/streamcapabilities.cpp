@@ -36,36 +36,72 @@ _VIDEO_AVC::~_VIDEO_AVC() {
 //#define DUMP_VAL(name,type,length) if(length!=0) FINEST("% 8s %50 s: % 4.0f; l: % 2u; ba: % 4u",#type,name,(double)v[name],length,ba.AvailableBits()); else WARN("% 8s %50 s: % 4.0f; l: % 2u; ba: % 4u",#type,name,(double)v[name],length,ba.AvailableBits());
 #define DUMP_VAL(name,type,length)
 
-#define READ_INT(name,type,length) v[name]=(type)ba.ReadBits<type>(length); DUMP_VAL(name,type,length);
-#define READ_UEG(name) v[name]=(uint64_t)ba.ReadExpGolomb(); DUMP_VAL(name,uint64_t,0);
-#define READ_SEG(name) v[name]=(int64_t)ba.ReadExpGolomb(); DUMP_VAL(name,int64_t,0);
-#define READ_BOOL(name) v[name]=(bool)(ba.ReadBits<bool>(1)); DUMP_VAL(name,bool,1);
+#define CHECK_BA_LIMITS(name,length) \
+if(ba.AvailableBits()<length) { \
+	FATAL("Unable to read `"name"` value. Not enough bits. Wanted: %d; Have: %d", length,ba.AvailableBits()); \
+	return false; \
+}
+
+#define READ_INT(name,type,length) \
+{ \
+	CHECK_BA_LIMITS(name,length); \
+	v[name]=(type)ba.ReadBits<type>(length); \
+	DUMP_VAL(name,type,length); \
+}
+#define READ_EG(name,type) \
+{ \
+	uint64_t ___value___=0; \
+	if(!ba.ReadExpGolomb(___value___)) { \
+		FATAL("Unable to read `"name"` value"); \
+		return false; \
+	} \
+	v[name]=(type)___value___; \
+	DUMP_VAL(name,type,0); \
+}
+
+#define READ_BOOL(name) \
+{ \
+	CHECK_BA_LIMITS(name,1); \
+	v[name]=(bool)(ba.ReadBits<bool>(1)); \
+	DUMP_VAL(name,bool,1); \
+}
 
 bool ReadSPSVUIHRD(BitArray &ba, Variant &v) {
 	//E.1.2 HRD parameters syntax
 	//14496-10.pdf 268/280
-	READ_UEG("cpb_cnt_minus1");
+	//FINEST("------BEGIN VUI HRD------");
+	READ_EG("cpb_cnt_minus1", uint64_t);
 	READ_INT("bit_rate_scale", uint8_t, 4);
 	READ_INT("cpb_size_scale", uint8_t, 4);
 	for (uint64_t i = 0; i <= (uint64_t) v["cpb_cnt_minus1"]; i++) {
-		v["bit_rate_value_minus1"].PushToArray((uint64_t) ba.ReadExpGolomb());
-		v["cpb_size_value_minus1"].PushToArray((uint64_t) ba.ReadExpGolomb());
-		if (ba.AvailableBits() < 1) {
-			FATAL("Not enough bits available: wanted: %u; got: %u", 1, ba.AvailableBits());
+		uint64_t val = 0;
+		if (!ba.ReadExpGolomb(val)) {
+			FATAL("Unable to read bit_rate_value_minus1 value");
 			return false;
 		}
+		v["bit_rate_value_minus1"].PushToArray(val);
+
+		if (!ba.ReadExpGolomb(val)) {
+			FATAL("Unable to read cpb_size_value_minus1 value");
+			return false;
+		}
+		v["cpb_size_value_minus1"].PushToArray(val);
+
+		CHECK_BA_LIMITS("cbr_flag", 1);
 		v["cbr_flag"].PushToArray((bool)ba.ReadBits<bool>(1));
 	}
 	READ_INT("initial_cpb_removal_delay_length_minus1", uint8_t, 5);
 	READ_INT("cpb_removal_delay_length_minus1", uint8_t, 5);
 	READ_INT("dpb_output_delay_length_minus1", uint8_t, 5);
 	READ_INT("time_offset_length", uint8_t, 5);
+	//FINEST("------END VUI HRD------");
 	return true;
 }
 
 bool ReadSPSVUI(BitArray &ba, Variant &v) {
 	//E.1.1 VUI parameters syntax
 	//14496-10.pdf 267/280
+	//FINEST("------BEGIN VUI------");
 	READ_BOOL("aspect_ratio_info_present_flag");
 	if ((bool)v["aspect_ratio_info_present_flag"]) {
 		READ_INT("aspect_ratio_idc", uint8_t, 8);
@@ -90,8 +126,8 @@ bool ReadSPSVUI(BitArray &ba, Variant &v) {
 	}
 	READ_BOOL("chroma_loc_info_present_flag");
 	if ((bool)v["chroma_loc_info_present_flag"]) {
-		READ_UEG("chroma_sample_loc_type_top_field");
-		READ_UEG("chroma_sample_loc_type_bottom_field");
+		READ_EG("chroma_sample_loc_type_top_field", uint64_t);
+		READ_EG("chroma_sample_loc_type_bottom_field", uint64_t);
 	}
 	READ_BOOL("timing_info_present_flag");
 	if ((bool)v["timing_info_present_flag"]) {
@@ -120,13 +156,14 @@ bool ReadSPSVUI(BitArray &ba, Variant &v) {
 	READ_BOOL("bitstream_restriction_flag");
 	if ((bool)v["bitstream_restriction_flag"]) {
 		READ_BOOL("motion_vectors_over_pic_boundaries_flag");
-		READ_UEG("max_bytes_per_pic_denom");
-		READ_UEG("max_bits_per_mb_denom");
-		READ_UEG("log2_max_mv_length_horizontal");
-		READ_UEG("log2_max_mv_length_vertical");
-		READ_UEG("num_reorder_frames");
-		READ_UEG("max_dec_frame_buffering");
+		READ_EG("max_bytes_per_pic_denom", uint64_t);
+		READ_EG("max_bits_per_mb_denom", uint64_t);
+		READ_EG("log2_max_mv_length_horizontal", uint64_t);
+		READ_EG("log2_max_mv_length_vertical", uint64_t);
+		READ_EG("num_reorder_frames", uint64_t);
+		READ_EG("max_dec_frame_buffering", uint64_t);
 	}
+	//FINEST("------END VUI------");
 	return true;
 }
 
@@ -134,40 +171,46 @@ bool ReadSPS(BitArray &ba, Variant &v) {
 	//7.3.2.1 Sequence parameter set RBSP syntax
 	//14496-10.pdf 43/280
 	//FINEST("ba: %d", ba.AvailableBits());
+	//FINEST("------BEGIN SPS------");
 	READ_INT("profile_idc", uint8_t, 8);
 	READ_BOOL("constraint_set0_flag");
 	READ_BOOL("constraint_set1_flag");
 	READ_BOOL("constraint_set2_flag");
 	READ_INT("reserved_zero_5bits", uint8_t, 5);
 	READ_INT("level_idc", uint8_t, 8);
-	READ_UEG("seq_parameter_set_id");
-	READ_UEG("log2_max_frame_num_minus4");
-	READ_UEG("pic_order_cnt_type");
+	READ_EG("seq_parameter_set_id", uint64_t);
+	READ_EG("log2_max_frame_num_minus4", uint64_t);
+	READ_EG("pic_order_cnt_type", uint64_t);
 	if ((uint64_t) v["pic_order_cnt_type"] == 0) {
-		READ_UEG("log2_max_pic_order_cnt_lsb_minus4");
+		READ_EG("log2_max_pic_order_cnt_lsb_minus4", uint64_t);
 	} else if ((uint64_t) v["pic_order_cnt_type"] == 1) {
 		READ_BOOL("delta_pic_order_always_zero_flag");
-		READ_SEG("offset_for_non_ref_pic");
-		READ_SEG("offset_for_top_to_bottom_field");
-		READ_UEG("num_ref_frames_in_pic_order_cnt_cycle");
+		READ_EG("offset_for_non_ref_pic", int64_t);
+		READ_EG("offset_for_top_to_bottom_field", int64_t);
+		READ_EG("num_ref_frames_in_pic_order_cnt_cycle", uint64_t);
 		for (uint64_t i = 0; i < (uint64_t) v["num_ref_frames_in_pic_order_cnt_cycle"]; i++) {
-			v["offset_for_ref_frame"].PushToArray((int64_t) ba.ReadExpGolomb());
+			uint64_t val = 0;
+			if (!ba.ReadExpGolomb(val)) {
+				FATAL("Unable to read offset_for_ref_frame value");
+				return false;
+			}
+			v["offset_for_ref_frame"].PushToArray((int64_t) val);
 		}
 	}
-	READ_UEG("num_ref_frames");
+	READ_EG("num_ref_frames", uint64_t);
 	READ_BOOL("gaps_in_frame_num_value_allowed_flag");
-	READ_UEG("pic_width_in_mbs_minus1");
-	READ_UEG("pic_height_in_map_units_minus1");
+	READ_EG("pic_width_in_mbs_minus1", uint64_t);
+	READ_EG("pic_height_in_map_units_minus1", uint64_t);
 	READ_BOOL("frame_mbs_only_flag");
 	if (!((bool)v["frame_mbs_only_flag"]))
 		READ_BOOL("mb_adaptive_frame_field_flag");
 	READ_BOOL("direct_8x8_inference_flag");
 	READ_BOOL("frame_cropping_flag");
 	if ((bool)v["frame_cropping_flag"]) {
-		READ_UEG("frame_crop_left_offset");
-		READ_UEG("frame_crop_right_offset");
-		READ_UEG("frame_crop_top_offset");
-		READ_UEG("frame_crop_bottom_offset");
+		READ_EG("frame_crop_left_offset", uint64_t);
+		READ_EG("frame_crop_right_offset", uint64_t);
+		READ_EG("frame_crop_top_offset", uint64_t);
+		READ_EG("frame_crop_bottom_offset", uint64_t);
 	}
 	READ_BOOL("vui_parameters_present_flag");
 	if ((bool)v["vui_parameters_present_flag"]) {
@@ -176,6 +219,7 @@ bool ReadSPS(BitArray &ba, Variant &v) {
 			return false;
 		}
 	}
+	//FINEST("------END SPS------");
 	return true;
 }
 
@@ -183,41 +227,61 @@ bool ReadPPS(BitArray &ba, Variant &v) {
 	//7.3.2.2 Picture parameter set RBSP syntax
 	//14496-10.pdf 44/280
 	//FINEST("ba: %d", ba.AvailableBits());
-	READ_UEG("pic_parameter_set_id");
-	READ_UEG("seq_parameter_set_id");
+	READ_EG("pic_parameter_set_id", uint64_t);
+	READ_EG("seq_parameter_set_id", uint64_t);
 	READ_BOOL("entropy_coding_mode_flag");
 	READ_BOOL("pic_order_present_flag");
-	READ_SEG("num_slice_groups_minus1");
+	READ_EG("num_slice_groups_minus1", int64_t);
 	if ((int64_t) v["num_slice_groups_minus1"] > 0) {
-		READ_UEG("slice_group_map_type");
+		READ_EG("slice_group_map_type", uint64_t);
 		if ((int64_t) v["slice_group_map_type"] == 0) {
 			for (int64_t i = 0; i < (int64_t) v["num_slice_groups_minus1"]; i++) {
-				v["run_length_minus1"].PushToArray((uint64_t) ba.ReadExpGolomb());
+				uint64_t val = 0;
+				if (!ba.ReadExpGolomb(val)) {
+					FATAL("Unable to read run_length_minus1 value");
+					return false;
+				}
+				v["run_length_minus1"].PushToArray(val);
 			}
 		} else if ((int64_t) v["slice_group_map_type"] == 2) {
 			for (int64_t i = 0; i < (int64_t) v["num_slice_groups_minus1"]; i++) {
-				v["top_left"].PushToArray((uint64_t) ba.ReadExpGolomb());
-				v["bottom_right"].PushToArray((uint64_t) ba.ReadExpGolomb());
+				uint64_t val = 0;
+				if (!ba.ReadExpGolomb(val)) {
+					FATAL("Unable to read top_left value");
+					return false;
+				}
+				v["top_left"].PushToArray(val);
+
+				if (!ba.ReadExpGolomb(val)) {
+					FATAL("Unable to read bottom_right value");
+					return false;
+				}
+				v["bottom_right"].PushToArray(val);
 			}
 		} else if (((int64_t) v["slice_group_map_type"] == 3)
 				|| ((int64_t) v["slice_group_map_type"] == 4)
 				|| ((int64_t) v["slice_group_map_type"] == 5)) {
 			READ_BOOL("slice_group_change_direction_flag");
-			READ_UEG("slice_group_change_rate_minus1");
+			READ_EG("slice_group_change_rate_minus1", uint64_t);
 		} else if ((int64_t) v["slice_group_map_type"] == 6) {
-			READ_UEG("pic_size_in_map_units_minus1");
+			READ_EG("pic_size_in_map_units_minus1", uint64_t);
 			for (uint64_t i = 0; i <= (uint64_t) v["pic_size_in_map_units_minus1"]; i++) {
-				v["slice_group_id"].PushToArray((int64_t) ba.ReadExpGolomb());
+				uint64_t val = 0;
+				if (!ba.ReadExpGolomb(val)) {
+					FATAL("Unable to read slice_group_id value");
+					return false;
+				}
+				v["slice_group_id"].PushToArray((int64_t) val);
 			}
 		}
 	}
-	READ_UEG("num_ref_idx_l0_active_minus1");
-	READ_UEG("num_ref_idx_l1_active_minus1");
+	READ_EG("num_ref_idx_l0_active_minus1", uint64_t);
+	READ_EG("num_ref_idx_l1_active_minus1", uint64_t);
 	READ_BOOL("weighted_pred_flag");
 	READ_INT("weighted_bipred_idc", uint8_t, 2);
-	READ_SEG("pic_init_qp_minus26");
-	READ_SEG("pic_init_qs_minus26");
-	READ_SEG("chroma_qp_index_offset");
+	READ_EG("pic_init_qp_minus26", int64_t);
+	READ_EG("pic_init_qs_minus26", int64_t);
+	READ_EG("chroma_qp_index_offset", int64_t);
 	READ_BOOL("deblocking_filter_control_present_flag");
 	READ_BOOL("constrained_intra_pred_flag");
 	READ_BOOL("redundant_pic_cnt_present_flag");
@@ -258,7 +322,7 @@ bool _VIDEO_AVC::Init(uint8_t *pSPS, uint32_t spsLength, uint8_t *pPPS,
 	//		FINEST("_PPSInfo:\n%s", STR(_PPSInfo.ToString()));
 	//	}
 
-	FINEST("\n%s", STR(*this));
+	//FINEST("\n%s", STR(*this));
 
 	return true;
 }

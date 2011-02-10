@@ -34,6 +34,8 @@ private:
 	vector<Packet *> _free;
 	map<double, vector<Packet *> > _queue;
 	uint32_t _initialBuffer;
+	double _startVideo;
+	double _startAudio;
 public:
 	PacketQueue();
 	virtual ~PacketQueue();

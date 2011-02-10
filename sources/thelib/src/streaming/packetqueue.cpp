@@ -20,6 +20,8 @@
 #include "streaming/packetqueue.h"
 
 PacketQueue::PacketQueue() {
+	_startAudio = -1;
+	_startVideo = -1;
 }
 
 PacketQueue::~PacketQueue() {
@@ -34,6 +36,13 @@ PacketQueue::~PacketQueue() {
 
 vector<Packet *> PacketQueue::PushPacket(uint8_t *pData, uint32_t dataLength,
 		double absoluteTimestamp, bool isAudio) {
+	double &start = isAudio ? _startAudio : _startVideo;
+	if ((_startAudio == -1)
+			|| (_startVideo == -1)) {
+		start = absoluteTimestamp;
+		return vector<Packet *>();
+	}
+	absoluteTimestamp -= start;
 	//FINEST("isAudio: %d; _lastIsAudio: %d", isAudio, _lastIsAudio);
 	if (dataLength == 0)
 		return vector<Packet *>();
@@ -41,7 +50,7 @@ vector<Packet *> PacketQueue::PushPacket(uint8_t *pData, uint32_t dataLength,
 	Packet *pPacket = GetPacket(pData, dataLength, absoluteTimestamp, isAudio);
 	ADD_VECTOR_END(_queue[absoluteTimestamp], pPacket);
 
-	if (_queue.size() < 10) {
+	if (_queue.size() < 100) {
 		return vector<Packet *>();
 	}
 	vector<Packet *> result = MAP_VAL(_queue.begin());

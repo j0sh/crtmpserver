@@ -48,8 +48,6 @@ public:
 private:
 	bool FeedAudioData(uint8_t *pData, uint32_t dataLength, double absoluteTimestamp);
 	bool FeedVideoData(uint8_t *pData, uint32_t dataLength, double absoluteTimestamp);
-	Variant SPSToVariant();
-	Variant PPSToVariant();
 };
 
 
