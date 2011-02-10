@@ -129,15 +129,26 @@ public:
 		return GETAVAILABLEBYTESCOUNT(*this)*8 - _cursor;
 	}
 
-	uint64_t ReadExpGolomb() {
+	bool ReadExpGolomb(uint64_t &value) {
+		value = 1;
 		uint32_t zeroBitsCount = 0;
-		while (!ReadBits<bool>(1))
+		while (true) {
+			if (AvailableBits() == 0) {
+				return false;
+			}
+			if (ReadBits<bool>(1)) {
+				break;
+			}
 			zeroBitsCount++;
-		uint32_t value = 1;
+		}
+		if (AvailableBits() < zeroBitsCount) {
+			return false;
+		}
 		for (uint32_t i = 0; i < zeroBitsCount; i++) {
 			value = ((value << 1) | (ReadBits<uint8_t > (1)));
 		}
-		return value - 1;
+		value = value - 1;
+		return true;
 	}
 };
 

@@ -99,7 +99,7 @@ bool OutboundHTTPProtocol::ParseFirstLine(string &line, Variant &firstLineHeader
 }
 
 bool OutboundHTTPProtocol::Authenticate() {
-	WARN("No auth required");
+	//WARN("No auth required");
 	return true;
 }
 #endif /* HAS_PROTOCOL_HTTP */

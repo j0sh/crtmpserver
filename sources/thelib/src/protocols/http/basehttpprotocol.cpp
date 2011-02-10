@@ -347,8 +347,6 @@ bool BaseHTTPProtocol::ParseHeaders(IOBuffer& buffer) {
 }
 
 bool BaseHTTPProtocol::HandleChunkedContent(IOBuffer &buffer) {
-
-
 	//2. We cycle until we don't have any complete chunks anymore
 	//or we hit the 0 bytes chunks (end of chunked content)
 	uint8_t *pBuffer = NULL;
@@ -424,16 +422,17 @@ bool BaseHTTPProtocol::HandleChunkedContent(IOBuffer &buffer) {
 
 		if (chunkSize != 0) {
 			//11. Make the copy
+			_contentLength += chunkSize;
 			_inputBuffer.ReadFromBuffer(GETIBPOINTER(buffer) + chunkSizeString.size() - 2 + 2, chunkSize);
-
-			//12. Call the near protocol
-			if (!_pNearProtocol->SignalInputData(_inputBuffer)) {
-				FATAL("Unable to call the next protocol in stack");
-				return false;
-			}
 		} else {
 			//12. This was the last chunk (0 bytes size)
 			_lastChunk = true;
+		}
+
+		//12. Call the near protocol
+		if (!_pNearProtocol->SignalInputData(_inputBuffer)) {
+			FATAL("Unable to call the next protocol in stack");
+			return false;
 		}
 
 		//13. Ignore the bytes from the input buffer
