@@ -26,6 +26,12 @@ struct Packet {
 	IOBuffer buffer;
 	double ts;
 	bool isAudio;
+	Packet(){
+		ts=0;
+		isAudio=false;
+	}
+	virtual ~Packet(){
+	}
 };
 
 class PacketQueue {
