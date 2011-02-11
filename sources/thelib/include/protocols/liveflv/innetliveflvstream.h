@@ -32,7 +32,7 @@ private:
 	IOBuffer _audioCodecInit;
 	double _lastAudioTime;
 	Variant _lastStreamMessage;
-	StreamCapabilities *_pStreamCapabilities;
+	StreamCapabilities _streamCapabilities;
 public:
 	InNetLiveFLVStream(BaseProtocol *pProtocol, StreamsManager *pStreamsManager,
 			string name);
@@ -55,6 +55,9 @@ public:
 	bool SendStreamMessage(Variant &completeMessage, bool persistent);
 	bool SendStreamMessage(string functionName, Variant &parameters,
 			bool persistent);
+private:
+	bool InitializeAudioCapabilities(uint8_t *pData, uint32_t length);
+	bool InitializeVideoCapabilities(uint8_t *pData, uint32_t length);
 };
 
 

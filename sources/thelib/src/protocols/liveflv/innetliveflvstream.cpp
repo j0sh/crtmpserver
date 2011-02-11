@@ -30,19 +30,15 @@ InNetLiveFLVStream::InNetLiveFLVStream(BaseProtocol *pProtocol,
 : BaseInNetStream(pProtocol, pStreamsManager, ST_IN_NET_LIVEFLV, name) {
 	_lastVideoTime = 0;
 	_lastAudioTime = 0;
-	_pStreamCapabilities = NULL;
+	_streamCapabilities.Clear();
 }
 
 InNetLiveFLVStream::~InNetLiveFLVStream() {
-	if (_pStreamCapabilities != NULL) {
-		delete _pStreamCapabilities;
-		_pStreamCapabilities = NULL;
-	}
+
 }
 
 StreamCapabilities * InNetLiveFLVStream::GetCapabilities() {
-	NYI;
-	return NULL;
+	return &_streamCapabilities;
 }
 
 bool InNetLiveFLVStream::FeedData(uint8_t *pData, uint32_t dataLength,
@@ -53,20 +49,21 @@ bool InNetLiveFLVStream::FeedData(uint8_t *pData, uint32_t dataLength,
 		if ((processedLength == 0) && //beginning of a packet
 				(pData[0] >> 4) == 10 && //AAC content
 				(pData[1] == 0)) {// AAC sequence header
-			_audioCodecInit.IgnoreAll();
-			_audioCodecInit.ReadFromBuffer(pData, dataLength);
-			FINEST("Cached the audio codec initialization: %d",
-					GETAVAILABLEBYTESCOUNT(_audioCodecInit));
+			if (!InitializeAudioCapabilities(pData, dataLength)) {
+				FATAL("Unable to initialize audio capabilities");
+				return false;
+			}
 		}
 		_lastAudioTime = absoluteTimestamp;
 	} else {
 		if ((processedLength == 0) && //beginning of a packet
 				(pData[0] == 0x17) && //h264 content, keyframe
 				(pData[1] == 0)) {// AVC sequence header
-			_videoCodecInit.IgnoreAll();
-			_videoCodecInit.ReadFromBuffer(pData, dataLength);
-			FINEST("Cached the video codec initialization: %d",
-					GETAVAILABLEBYTESCOUNT(_videoCodecInit));
+			if (!InitializeVideoCapabilities(pData, dataLength)) {
+				FATAL("Unable to initialize audio capabilities");
+				return false;
+			}
+
 		}
 		_lastVideoTime = absoluteTimestamp;
 	}
@@ -190,5 +187,43 @@ bool InNetLiveFLVStream::SendStreamMessage(string functionName, Variant &paramet
 			functionName, parameters);
 
 	return SendStreamMessage(message, persistent);
+}
+
+bool InNetLiveFLVStream::InitializeAudioCapabilities(uint8_t *pData, uint32_t length) {
+	if (length < 4) {
+		FATAL("Invalid length");
+		return false;
+	}
+	_audioCodecInit.IgnoreAll();
+	_audioCodecInit.ReadFromBuffer(pData, length);
+	if (!_streamCapabilities.InitAudioAAC(pData + 2, length - 2)) {
+		FATAL("InitAudioAAC failed");
+		return false;
+	}
+	FINEST("Cached the AAC audio codec initialization: %d",
+			GETAVAILABLEBYTESCOUNT(_audioCodecInit));
+	return true;
+}
+
+bool InNetLiveFLVStream::InitializeVideoCapabilities(uint8_t *pData, uint32_t length) {
+	if (length == 0)
+		return false;
+
+	_videoCodecInit.IgnoreAll();
+	_videoCodecInit.ReadFromBuffer(pData, length);
+	uint8_t *pSPS = pData + 13;
+	uint32_t spsLength = ENTOHSP(pData + 11);
+	uint8_t *pPPS = pData + 13 + spsLength + 3;
+	uint32_t ppsLength = ENTOHSP(pData
+			+ 13 + spsLength + 1);
+	if (!_streamCapabilities.InitVideoH264(pSPS, spsLength, pPPS, ppsLength)) {
+		FATAL("InitVideoH264 failed");
+		return false;
+	}
+
+	FINEST("Cached the h264 video codec initialization: %d",
+			GETAVAILABLEBYTESCOUNT(_videoCodecInit));
+
+	return true;
 }
 #endif /* HAS_PROTOCOL_LIVEFLV */

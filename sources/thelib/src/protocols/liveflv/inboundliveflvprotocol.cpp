@@ -25,6 +25,7 @@
 #include "netio/netio.h"
 #include "protocols/liveflv/innetliveflvstream.h"
 #include "protocols/rtmp/amf0serializer.h"
+#include "streaming/baseoutstream.h"
 
 InboundLiveFLVProtocol::InboundLiveFLVProtocol()
 : BaseProtocol(PT_INBOUND_LIVE_FLV) {
@@ -235,6 +236,20 @@ bool InboundLiveFLVProtocol::InitializeStream(string streamName) {
 
 	_pStream = new InNetLiveFLVStream(this,
 			GetApplication()->GetStreamsManager(), streamName);
+
+	//6. Get the list of waiting subscribers
+	map<uint32_t, BaseOutStream *> subscribedOutStreams =
+			GetApplication()->GetStreamsManager()->GetWaitingSubscribers(
+			streamName, _pStream->GetType());
+	FINEST("subscribedOutStreams count: %d", subscribedOutStreams.size());
+
+
+	//7. Bind the waiting subscribers
+
+	FOR_MAP(subscribedOutStreams, uint32_t, BaseOutStream *, i) {
+		BaseOutStream *pBaseOutStream = MAP_VAL(i);
+		pBaseOutStream->Link(_pStream);
+	}
 	return true;
 }
 #endif /* HAS_PROTOCOL_LIVEFLV */
