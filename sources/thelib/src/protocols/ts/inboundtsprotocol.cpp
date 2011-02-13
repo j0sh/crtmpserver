@@ -27,6 +27,8 @@
 #include "protocols/ts/tsadaptationfield.h"
 #include "protocols/ts/basetsappprotocolhandler.h"
 #include "protocols/ts/innettsstream.h"
+#include "protocols/ts/tsboundscheck.h"
+#include "protocols/rtmp/header_le_ba.h"
 
 InboundTSProtocol::InboundTSProtocol()
 : BaseProtocol(PT_INBOUND_TS) {
@@ -41,19 +43,39 @@ InboundTSProtocol::InboundTSProtocol()
 	pPAT->payload.pStream = NULL;
 	_pidMapping[0] = pPAT;
 
+	//3. Setup CAT table
+	PIDDescriptor *pCAT = new PIDDescriptor;
+	pCAT->type = PID_TYPE_CAT;
+	pCAT->pid = 1;
+	pCAT->payload.crc = 0;
+	pCAT->payload.pStream = NULL;
+	_pidMapping[1] = pCAT;
 
+	//4. Setup TSDT table
+	PIDDescriptor *pTSDT = new PIDDescriptor;
+	pTSDT->type = PID_TYPE_TSDT;
+	pTSDT->pid = 2;
+	pTSDT->payload.crc = 0;
+	pTSDT->payload.pStream = NULL;
+	_pidMapping[2] = pTSDT;
 
-	//3. Setup the NULL pid
+	//5. Setup reserved tables
+	for (uint16_t i = 3; i < 16; i++) {
+		PIDDescriptor *pReserved = new PIDDescriptor;
+		pReserved->type = PID_TYPE_RESERVED;
+		pReserved->pid = i;
+		pReserved->payload.crc = 0;
+		pReserved->payload.pStream = NULL;
+		_pidMapping[i] = pReserved;
+	}
+
+	//6. Setup the NULL pid
 	PIDDescriptor *pNULL = new PIDDescriptor;
 	pNULL->type = PID_TYPE_NULL;
 	pNULL->pid = 0x1fff;
 	pNULL->payload.crc = 0;
 	pNULL->payload.pStream = NULL;
 	_pidMapping[0x1fff] = pNULL;
-
-	//TODO. Also take care of some other reserved pids presented here:
-	//iso13818-1.pdf page 37/174
-	//Table 2-3 – PID table
 
 	_pProtocolHandler = NULL;
 	_chunkSizeDetectionCount = 0;
@@ -117,11 +139,7 @@ bool InboundTSProtocol::SignalInputData(IOBuffer &buffer) {
 			return true;
 		}
 
-		TSPacketHeader packetHeader;
-		if (!packetHeader.Read(buffer)) {
-			FATAL("Unable to read packet");
-			return false;
-		}
+		uint32_t packetHeader = ENTOHLP(GETIBPOINTER(buffer));
 
 		if (!ProcessPacket(packetHeader, buffer, _chunkSize)) {
 			FATAL("Unable to process packet:\n%s", STR(buffer));
@@ -205,27 +223,31 @@ bool InboundTSProtocol::DetermineChunkSize(IOBuffer &buffer) {
 	return true;
 }
 
-bool InboundTSProtocol::ProcessPacket(TSPacketHeader &packetHeader,
+bool InboundTSProtocol::ProcessPacket(uint32_t packetHeader,
 		IOBuffer &buffer, uint32_t maxCursor) {
+	//1. Get the PID descriptor or create it if absent
 	PIDDescriptor *pPIDDescriptor = NULL;
-	if (MAP_HAS1(_pidMapping, packetHeader._header.data.pid)) {
-		pPIDDescriptor = _pidMapping[packetHeader._header.data.pid];
+	if (MAP_HAS1(_pidMapping, TS_TRANSPORT_PACKET_PID(packetHeader))) {
+		pPIDDescriptor = _pidMapping[TS_TRANSPORT_PACKET_PID(packetHeader)];
 	} else {
 		pPIDDescriptor = new PIDDescriptor;
 		pPIDDescriptor->type = PID_TYPE_UNKNOWN;
-		pPIDDescriptor->pid = packetHeader._header.data.pid;
+		pPIDDescriptor->pid = TS_TRANSPORT_PACKET_PID(packetHeader);
 		_pidMapping[pPIDDescriptor->pid] = pPIDDescriptor;
 	}
 
+	//2. Skip the transport packet structure
 	uint8_t *pBuffer = GETIBPOINTER(buffer);
 	uint32_t cursor = 4;
 
-	if (packetHeader.HasAdaptationField()) {
-		if (!_tsAdaptationField.Read(pBuffer, cursor, maxCursor)) {
-			FATAL("Unable to read adaptation field");
-			return false;
-		}
-		//FINEST("_tsAdaptationField:\n%s", STR(_tsAdaptationField));
+	if (TS_TRANSPORT_PACKET_HAS_ADAPTATION_FIELD(packetHeader)) {
+		CHECK_BOUNDS(1);
+		CHECK_BOUNDS(pBuffer[cursor]);
+		cursor += pBuffer[cursor] + 1;
+	}
+	if (!TS_TRANSPORT_PACKET_HAS_PAYLOAD(packetHeader)) {
+		//WARN("No payload here!");
+		return true;
 	}
 
 	switch (pPIDDescriptor->type) {
@@ -241,18 +263,19 @@ bool InboundTSProtocol::ProcessPacket(TSPacketHeader &packetHeader,
 		case PID_TYPE_AUDIOSTREAM:
 		{
 			return pPIDDescriptor->payload.pStream->FeedData(pBuffer + cursor,
-					_chunkSize - cursor, packetHeader.IsPayloadStart(), true);
-			//            return pPIDDescriptor->payload.pAudioStream->FeedData(
-			//                    &_tsAdaptationField, pBuffer + cursor, _chunkSize - cursor,
-			//                    packetHeader.IsPayloadStart());
+					_chunkSize - cursor,
+					TS_TRANSPORT_PACKET_IS_PAYLOAD_START(packetHeader), true);
 		}
 		case PID_TYPE_VIDEOSTREAM:
 		{
 			return pPIDDescriptor->payload.pStream->FeedData(pBuffer + cursor,
-					_chunkSize - cursor, packetHeader.IsPayloadStart(), false);
-			//            return pPIDDescriptor->payload.pVideoStream->FeedData(
-			//                    &_tsAdaptationField, pBuffer + cursor, _chunkSize - cursor,
-			//                    packetHeader.IsPayloadStart());
+					_chunkSize - cursor,
+					TS_TRANSPORT_PACKET_IS_PAYLOAD_START(packetHeader), false);
+		}
+		case PID_TYPE_RESERVED:
+		{
+			WARN("This PID should not be used because is reserved according to iso13818-1.pdf", pPIDDescriptor->pid);
+			return true;
 		}
 		case PID_TYPE_UNKNOWN:
 		{
@@ -266,20 +289,26 @@ bool InboundTSProtocol::ProcessPacket(TSPacketHeader &packetHeader,
 		}
 		default:
 		{
-			WARN("PID type not implemented: %d", pPIDDescriptor->type);
+			WARN("PID type not implemented: %d. Pid number: %d",
+					pPIDDescriptor->type, pPIDDescriptor->pid);
 			return false;
 		}
 	}
 }
 
-bool InboundTSProtocol::ProcessPidTypePAT(TSPacketHeader &packetHeader,
+bool InboundTSProtocol::ProcessPidTypePAT(uint32_t packetHeader,
 		PIDDescriptor &pidDescriptor, uint8_t *pBuffer, uint32_t &cursor,
 		uint32_t maxCursor) {
+	//1. Advance the pointer field
+	if (TS_TRANSPORT_PACKET_IS_PAYLOAD_START(packetHeader)) {
+		CHECK_BOUNDS(1);
+		CHECK_BOUNDS(pBuffer[cursor]);
+		cursor += pBuffer[cursor] + 1;
+	}
 
 	//1. Get the crc from the packet and compare it with the last crc.
 	//if it is the same, ignore this packet
-	uint32_t crc = TSPacketPAT::PeekCRC(pBuffer, cursor,
-			packetHeader.IsPayloadStart(), maxCursor);
+	uint32_t crc = TSPacketPAT::PeekCRC(pBuffer, cursor, maxCursor);
 	if (crc == 0) {
 		FATAL("Unable to read crc");
 		return false;
@@ -290,12 +319,11 @@ bool InboundTSProtocol::ProcessPidTypePAT(TSPacketHeader &packetHeader,
 
 	//2. read the packet
 	TSPacketPAT packetPAT;
-	if (!packetPAT.Read(pBuffer, cursor,
-			packetHeader.IsPayloadStart(), maxCursor)) {
+	if (!packetPAT.Read(pBuffer, cursor, maxCursor)) {
 		FATAL("Unable to read PAT");
 		return false;
 	}
-	FINEST("packetPAT:\n%s", STR(packetPAT));
+	//FINEST("packetPAT:\n%s", STR(packetPAT));
 
 	//3. Store the crc
 	pidDescriptor.payload.crc = packetPAT.GetCRC();
@@ -322,14 +350,19 @@ bool InboundTSProtocol::ProcessPidTypePAT(TSPacketHeader &packetHeader,
 	return true;
 }
 
-bool InboundTSProtocol::ProcessPidTypePMT(TSPacketHeader &packetHeader,
+bool InboundTSProtocol::ProcessPidTypePMT(uint32_t packetHeader,
 		PIDDescriptor &pidDescriptor, uint8_t *pBuffer, uint32_t &cursor,
 		uint32_t maxCursor) {
+	//1. Advance the pointer field
+	if (TS_TRANSPORT_PACKET_IS_PAYLOAD_START(packetHeader)) {
+		CHECK_BOUNDS(1);
+		CHECK_BOUNDS(pBuffer[cursor]);
+		cursor += pBuffer[cursor] + 1;
+	}
 
 	//1. Get the crc from the packet and compare it with the last crc.
 	//if it is the same, ignore this packet. Also test if we have a protocol handler
-	uint32_t crc = TSPacketPMT::PeekCRC(pBuffer, cursor,
-			packetHeader.IsPayloadStart(), maxCursor);
+	uint32_t crc = TSPacketPMT::PeekCRC(pBuffer, cursor, maxCursor);
 	if (crc == 0) {
 		FATAL("Unable to read crc");
 		return false;
@@ -337,7 +370,6 @@ bool InboundTSProtocol::ProcessPidTypePMT(TSPacketHeader &packetHeader,
 	if (pidDescriptor.payload.crc == crc) {
 		return true;
 	}
-	FINEST("crc: %08x != %08x", pidDescriptor.payload.crc, crc);
 	if (_pProtocolHandler == NULL) {
 		FATAL("This protocol is not yet registered with a protocol handler");
 		return false;
@@ -345,11 +377,11 @@ bool InboundTSProtocol::ProcessPidTypePMT(TSPacketHeader &packetHeader,
 
 	//2. read the packet
 	TSPacketPMT packetPMT;
-	if (!packetPMT.Read(pBuffer, cursor,
-			packetHeader.IsPayloadStart(), maxCursor)) {
+	if (!packetPMT.Read(pBuffer, cursor, maxCursor)) {
 		FATAL("Unable to read PAT");
 		return false;
 	}
+	//FINEST("packetPMT:\n%s", STR(packetPMT));
 
 	//3. Store the CRC
 	pidDescriptor.payload.crc = packetPMT.GetCRC();

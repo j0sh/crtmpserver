@@ -89,11 +89,7 @@ public:
 private:
 	bool HandleAudioData(uint8_t *pRawBuffer, uint32_t rawBufferLength,
 			double timestamp, bool packetStart);
-	bool HandleVideoData_version1(uint8_t *pRawBuffer, uint32_t rawBufferLength,
-			double timestamp, bool packetStart);
-	bool HandleVideoData_version2(uint8_t *pRawBuffer, uint32_t rawBufferLength,
-			double timestamp, bool packetStart);
-	bool HandleVideoData_version3(uint8_t *pRawBuffer, uint32_t rawBufferLength,
+	bool HandleVideoData(uint8_t *pRawBuffer, uint32_t rawBufferLength,
 			double timestamp, bool packetStart);
 	bool ProcessNal(double timestamp);
 	void InitializeVideoCapabilities(uint8_t *pData, uint32_t length);

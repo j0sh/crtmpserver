@@ -22,25 +22,25 @@
 #ifdef HAS_PROTOCOL_TS
 #include "protocols/ts/pidtypes.h"
 
-string GetPIDTypeString(PIDType pidType) {
-	switch (pidType) {
-		case PID_TYPE_UNKNOWN:
-			return "PID_TYPE_UNKNOWN";
-		case PID_TYPE_PAT:
-			return "PID_TYPE_PAT";
-		case PID_TYPE_PMT:
-			return "PID_TYPE_PMT";
-		case PID_TYPE_NIT:
-			return "PID_TYPE_NIT";
-		case PID_TYPE_AUDIOSTREAM:
-			return "PID_TYPE_AUDIOSTREAM";
-		case PID_TYPE_VIDEOSTREAM:
-			return "PID_TYPE_VIDEOSTREAM";
-		case PID_TYPE_NULL:
-			return "PID_TYPE_NULL";
-		default:
-			return format("#unknown(%d)#", pidType);
-	}
-}
+//string GetPIDTypeString(PIDType pidType) {
+//	switch (pidType) {
+//		case PID_TYPE_UNKNOWN:
+//			return "PID_TYPE_UNKNOWN";
+//		case PID_TYPE_PAT:
+//			return "PID_TYPE_PAT";
+//		case PID_TYPE_PMT:
+//			return "PID_TYPE_PMT";
+//		case PID_TYPE_NIT:
+//			return "PID_TYPE_NIT";
+//		case PID_TYPE_AUDIOSTREAM:
+//			return "PID_TYPE_AUDIOSTREAM";
+//		case PID_TYPE_VIDEOSTREAM:
+//			return "PID_TYPE_VIDEOSTREAM";
+//		case PID_TYPE_NULL:
+//			return "PID_TYPE_NULL";
+//		default:
+//			return format("#unknown(%d)#", pidType);
+//	}
+//}
 #endif	/* HAS_PROTOCOL_TS */
 

@@ -25,59 +25,43 @@
 #include "common.h"
 
 //iso13818-1.pdf page 61/174
-//2.4.4.3	Program association Table
+//Table 2-25 – Program association section
 
 class TSPacketPAT {
 private:
+	//fields
 	uint8_t _tableId;
-
-	union {
-
-		struct {
-			uint32_t sectionLength : 12;
-			uint32_t reserved2 : 2;
-			uint32_t reserved1 : 1;
-			uint32_t sectionSyntaxIndicator : 1;
-		} s;
-		uint16_t raw;
-	} _u1;
+	bool _sectionSyntaxIndicator;
+	bool _reserved1;
+	uint8_t _reserved2;
+	uint16_t _sectionLength;
 	uint16_t _transportStreamId;
-
-	union {
-
-		struct {
-			uint32_t currentNextIndicator : 1;
-			uint32_t versionNumber : 5;
-			uint32_t reserved3 : 2;
-		} s;
-		uint8_t raw;
-	} _u2;
+	uint8_t _reserved3;
+	uint8_t _versionNumber;
+	bool _currentNextIndicator;
 	uint8_t _sectionNumber;
 	uint8_t _lastSectionNumber;
+	uint32_t _crc;
 
+	//internal variables
 	uint32_t _patStart;
 	uint32_t _patLength;
 	uint32_t _entriesCount;
-
 	map<uint16_t, uint16_t> _networkPids;
 	map<uint16_t, uint16_t> _programPids;
-
-	uint32_t _crc;
-
 public:
 	TSPacketPAT();
 	virtual ~TSPacketPAT();
 
 	operator string();
 
-	bool Read(uint8_t *pBuffer, uint32_t &cursor, bool hasPointerField, uint32_t maxCursor);
+	bool Read(uint8_t *pBuffer, uint32_t &cursor, uint32_t maxCursor);
 
 	map<uint16_t, uint16_t> &GetPMTs();
 	map<uint16_t, uint16_t> &GetNITs();
 	uint32_t GetCRC();
 
-	static uint32_t PeekCRC(uint8_t *pBuffer, uint32_t cursor,
-			bool hasPointerField, uint32_t maxCursor);
+	static uint32_t PeekCRC(uint8_t *pBuffer, uint32_t cursor, uint32_t maxCursor);
 };
 
 #endif	/* _TSPACKETPAT_H */

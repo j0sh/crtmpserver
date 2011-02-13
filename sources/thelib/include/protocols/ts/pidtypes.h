@@ -24,17 +24,24 @@
 
 #include "common.h"
 
+//iso13818-1 page 37/174
+//Table 2-3 – PID table
+//WARN: This are not the values from the table. This are types-over-types
+
 typedef enum _PIDType {
-	PID_TYPE_UNKNOWN = 0x00,
+	PID_TYPE_UNKNOWN,
 	PID_TYPE_PAT,
 	PID_TYPE_PMT,
 	PID_TYPE_NIT,
+	PID_TYPE_CAT,
+	PID_TYPE_TSDT,
+	PID_TYPE_RESERVED,
 	PID_TYPE_AUDIOSTREAM,
 	PID_TYPE_VIDEOSTREAM,
 	PID_TYPE_NULL
 } PIDType;
 
-DLLEXP string GetPIDTypeString(PIDType pidType);
+//DLLEXP string GetPIDTypeString(PIDType pidType);
 
 #endif	/* _PIDTYPES_H */
 #endif	/* HAS_PROTOCOL_TS */

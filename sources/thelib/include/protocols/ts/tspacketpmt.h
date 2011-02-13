@@ -48,55 +48,58 @@ typedef struct _TSStreamInfo {
 	uint16_t elementaryPID;
 	uint16_t esInfoLength;
 	vector<StreamDescriptor> esDescriptors;
+
+	string toString(int32_t indent) {
+		string result = format("%sstreamType: %02x; elementaryPID: %d; esInfoLength: %d; descriptors count: %d\n",
+				STR(string(indent, '\t')),
+				streamType, elementaryPID, esInfoLength, esDescriptors.size());
+		for (uint32_t i = 0; i < esDescriptors.size(); i++) {
+			result += format("%s%s", STR(string(indent + 1, '\t')), STR(esDescriptors[i]));
+			if (i != esDescriptors.size() - 1)
+				result += "\n";
+		}
+		return result;
+	}
 } TSStreamInfo;
+
+//iso13818-1.pdf page 64/174
+//Table 2-28 – Transport Stream program map section
 
 class TSPacketPMT {
 private:
+	//fields
 	uint8_t _tableId;
-
-	union {
-
-		struct {
-			uint32_t sectionLength : 12;
-			uint32_t reserved2 : 2;
-			uint32_t reserved1 : 1;
-			uint32_t sectionSyntaxIndicator : 1;
-		} s;
-		uint16_t raw;
-	} _u1;
-
+	bool _sectionSyntaxIndicator;
+	bool _reserved1;
+	uint8_t _reserved2;
+	uint16_t _sectionLength;
 	uint16_t _programNumber;
-
-	union {
-
-		struct {
-			uint32_t currentNextIndicator : 1;
-			uint32_t versionNumber : 5;
-			uint32_t reserved3 : 2;
-		} s;
-		uint8_t raw;
-	} _u2;
-
+	uint8_t _reserved3;
+	uint8_t _versionNumber;
+	bool _currentNextIndicator;
 	uint8_t _sectionNumber;
 	uint8_t _lastSectionNumber;
-	uint16_t _pcrPID;
+	uint8_t _reserved4;
+	uint16_t _pcrPid;
+	uint8_t _reserved5;
 	uint16_t _programInfoLength;
+	uint32_t _crc;
+
+	//internal variables
 	vector<StreamDescriptor> _programInfoDescriptors;
 	map<uint16_t, TSStreamInfo> _streams;
-	uint32_t _crc;
 public:
 	TSPacketPMT();
 	virtual ~TSPacketPMT();
 
-	Variant GetVariant();
 	operator string();
 
-	uint16_t GetProgramPID();
+	uint16_t GetProgramNumber();
 	uint32_t GetCRC();
 	map<uint16_t, TSStreamInfo> & GetStreamsInfo();
 
-	bool Read(uint8_t *pBuffer, uint32_t &cursor, bool hasPointerField, uint32_t maxCursor);
-	static uint32_t PeekCRC(uint8_t *pBuffer, uint32_t cursor, bool hasPointerField, uint32_t maxCursor);
+	bool Read(uint8_t *pBuffer, uint32_t &cursor, uint32_t maxCursor);
+	static uint32_t PeekCRC(uint8_t *pBuffer, uint32_t cursor, uint32_t maxCursor);
 };
 
 

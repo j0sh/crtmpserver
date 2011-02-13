@@ -88,8 +88,8 @@ bool InNetTSStream::FeedData(uint8_t *pData, uint32_t length, bool packetStart,
 		if (length >= 8) {
 			uint32_t pesHeaderLength = pData[8];
 			if (pesHeaderLength + 9 > length) {
-				FATAL("Not enough data");
-				return false;
+				WARN("Not enough data");
+				return true;
 			}
 
 			//compute the time:
@@ -150,15 +150,15 @@ bool InNetTSStream::FeedData(uint8_t *pData, uint32_t length, bool packetStart,
 			length -= (9 + pesHeaderLength);
 
 		} else {
-			FATAL("Not enoght data");
-			return false;
+			WARN("Not enoght data");
+			return true;
 		}
 	}
 
 	if (isAudio)
 		return HandleAudioData(pData, length, ptsTime - deltaTime, packetStart);
 	else
-		return HandleTSVideoData(pData, length, ptsTime - deltaTime, packetStart);
+		return HandleVideoData(pData, length, ptsTime - deltaTime, packetStart);
 }
 
 bool InNetTSStream::FeedData(uint8_t *pData, uint32_t dataLength,
@@ -294,101 +294,7 @@ bool InNetTSStream::HandleAudioData(uint8_t *pRawBuffer, uint32_t rawBufferLengt
 	return true;
 }
 
-bool InNetTSStream::HandleVideoData_version1(uint8_t *pBuffer, uint32_t length,
-		double timestamp, bool packetStart) {
-	//1. Store the data inside our buffer
-	_currentNal.ReadFromBuffer(pBuffer, length);
-
-	//2. Get the size of our buffer
-	uint32_t size = GETAVAILABLEBYTESCOUNT(_currentNal);
-	if (size < 13)
-		return true;
-
-	//3. Get the raw pointer
-	uint8_t *pNalBuffer = GETIBPOINTER(_currentNal);
-
-	//4. Cycle through the buffer and detect nals
-	while (_cursor < size - 4) {
-		//5. Read the current position
-		uint32_t test = ENTOHLP((pNalBuffer + _cursor));
-		if (test == 1) {
-			//6. This is the beginning of a new NALU. Process it
-			//if it has some data inside it
-			if (_cursor > 0) {
-				if (!ProcessNal(timestamp)) {
-					FATAL("Unable to process NALU");
-					return false;
-				}
-			}
-
-			//8. Ignore what we've just processed
-			_currentNal.Ignore(_cursor + 4);
-
-			//9. Optimize the NALU buffer
-			_currentNal.MoveData();
-
-			//10. Reposition the cursor
-			_cursor = 0;
-
-			//11. Update the size and the buffer pointer
-			pNalBuffer = GETIBPOINTER(_currentNal);
-			size = GETAVAILABLEBYTESCOUNT(_currentNal);
-			if (size < 4)
-				break;
-		} else {
-			//12. We are in the middle of a NAL
-			_cursor++;
-		}
-	}
-
-	return true;
-}
-
-bool InNetTSStream::HandleVideoData_version2(uint8_t *pBuffer, uint32_t length,
-		double timestamp, bool packetStart) {
-	//1. Store the data inside our buffer
-	_currentNal.ReadFromBuffer(pBuffer, length);
-
-	uint32_t size = GETAVAILABLEBYTESCOUNT(_currentNal);
-	if (size < 4)
-		return true;
-
-	uint8_t *pNalBuffer = GETIBPOINTER(_currentNal);
-
-	_cursor = 0;
-	if (_firstNAL) {
-		while (_cursor < size - 4) {
-			if (ENTOHLP(pNalBuffer + _cursor) == 1) {
-				_currentNal.Ignore(_cursor + 4);
-				_firstNAL = false;
-				_cursor += 4;
-				break;
-			}
-			_cursor++;
-		}
-	}
-
-	while (_cursor < size - 4) {
-		if (ENTOHLP(pNalBuffer + _cursor) == 1) {
-			if (!ProcessNal(timestamp)) {
-				FATAL("Unable to process NALU");
-				return false;
-			}
-			_currentNal.Ignore(_cursor + 4);
-			pNalBuffer = GETIBPOINTER(_currentNal);
-			size = GETAVAILABLEBYTESCOUNT(_currentNal);
-			_cursor = 0;
-			if (size < 4)
-				break;
-		} else {
-			_cursor++;
-		}
-	}
-
-	return true;
-}
-
-bool InNetTSStream::HandleVideoData_version3(uint8_t *pBuffer, uint32_t length,
+bool InNetTSStream::HandleVideoData(uint8_t *pBuffer, uint32_t length,
 		double timestamp, bool packetStart) {
 	//1. Store the data inside our buffer
 	_currentNal.ReadFromBuffer(pBuffer, length);
@@ -474,7 +380,6 @@ bool InNetTSStream::ProcessNal(double timestamp) {
 			_cursor,
 			timestamp,
 			false);
-	return true;
 }
 
 void InNetTSStream::InitializeVideoCapabilities(uint8_t *pData, uint32_t length) {

@@ -55,7 +55,6 @@ private:
 	uint32_t _chunkSizeDetectionCount;
 	uint32_t _chunkSize;
 	map<uint16_t, PIDDescriptor *> _pidMapping;
-	TSAdaptationField _tsAdaptationField;
 	BaseTSAppProtocolHandler *_pProtocolHandler;
 	bool _stepByStep;
 public:
@@ -75,11 +74,12 @@ public:
 private:
 	void FreePidDescriptor(PIDDescriptor *pPIDDescriptor);
 	bool DetermineChunkSize(IOBuffer &buffer);
-	bool ProcessPacket(TSPacketHeader &packetHeader, IOBuffer &buffer, uint32_t maxCursor);
-	bool ProcessPidTypePAT(TSPacketHeader &packetHeader,
-			PIDDescriptor &pidDescriptor, uint8_t *pBuffer, uint32_t &cursor, uint32_t maxCursor);
-	bool ProcessPidTypePMT(TSPacketHeader &packetHeader,
-			PIDDescriptor &pidDescriptor, uint8_t *pBuffer, uint32_t &cursor, uint32_t maxCursor);
+	bool ProcessPacket(uint32_t packetHeader, IOBuffer &buffer, uint32_t maxCursor);
+	bool ProcessPidTypePAT(uint32_t packetHeader,
+			PIDDescriptor &pidDescriptor, uint8_t *pBuffer, uint32_t &cursor,
+			uint32_t maxCursor);
+	bool ProcessPidTypePMT(uint32_t packetHeader, PIDDescriptor &pidDescriptor,
+			uint8_t *pBuffer, uint32_t &cursor, uint32_t maxCursor);
 };
 
 

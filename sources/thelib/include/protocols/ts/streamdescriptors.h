@@ -68,49 +68,53 @@ typedef struct _StreamDescriptor {
 	uint8_t type;
 	uint8_t length;
 
-	union {
+	//	union {
+	//
+	//		struct {
+	//			uint8_t data[188];
+	//		} userPrivate;
+	//
+	//		struct {
+	//			//ISO13818-1 Table 2-40 : Video stream descriptor (82/174)
+	//			//DESCRIPTOR_TYPE_VIDEO
+	//			bool multipleFrameFate;
+	//			uint8_t frameRateCode;
+	//			bool MPEG1Only;
+	//			bool constrainedParameter;
+	//			bool stillPicture;
+	//			uint8_t profileAndLevelIndication;
+	//			uint8_t chromaFormat;
+	//			bool frameRateExtension;
+	//		} video;
+	//
+	//		struct {
+	//			//ISO13818-1 Table 2-45 : Registration descriptor (84/174)
+	//			//DESCRIPTOR_TYPE_REGISTRATION
+	//			uint32_t formatIdentifier;
+	//			uint8_t additionalInfoLength;
+	//			uint8_t additionalInfo[188];
+	//		} registration;
+	//
+	//		struct {
+	//			//ISO13818-1 Table 2-46 : Registration descriptor (85/174)
+	//			//DESCRIPTOR_TYPE_DATA_STREAM_ALIGNMENT
+	//			uint8_t alignmentType;
+	//		} dataStreamAlignment;
+	//
+	//		struct {
+	//			//ISO13818-1 Table 2-52 : ISO 639 language descriptor (88/174)
+	//			//DESCRIPTOR_TYPE_ISO_639_LANGUAGE
+	//
+	//			struct {
+	//				uint8_t languageCode[3];
+	//				uint8_t audioType;
+	//			} definition[47];
+	//		} iso639Language;
+	//	} info;
 
-		struct {
-			uint8_t data[188];
-		} userPrivate;
-
-		struct {
-			//ISO13818-1 Table 2-40 : Video stream descriptor (82/174)
-			//DESCRIPTOR_TYPE_VIDEO
-			bool multipleFrameFate;
-			uint8_t frameRateCode;
-			bool MPEG1Only;
-			bool constrainedParameter;
-			bool stillPicture;
-			uint8_t profileAndLevelIndication;
-			uint8_t chromaFormat;
-			bool frameRateExtension;
-		} video;
-
-		struct {
-			//ISO13818-1 Table 2-45 : Registration descriptor (84/174)
-			//DESCRIPTOR_TYPE_REGISTRATION
-			uint32_t formatIdentifier;
-			uint8_t additionalInfoLength;
-			uint8_t additionalInfo[188];
-		} registration;
-
-		struct {
-			//ISO13818-1 Table 2-46 : Registration descriptor (85/174)
-			//DESCRIPTOR_TYPE_DATA_STREAM_ALIGNMENT
-			uint8_t alignmentType;
-		} dataStreamAlignment;
-
-		struct {
-			//ISO13818-1 Table 2-52 : ISO 639 language descriptor (88/174)
-			//DESCRIPTOR_TYPE_ISO_639_LANGUAGE
-
-			struct {
-				uint8_t languageCode[3];
-				uint8_t audioType;
-			} definition[47];
-		} iso639Language;
-	} info;
+	operator string() {
+		return format("type: %d; length: %d", type, length);
+	};
 } StreamDescriptor;
 
 bool ReadStreamDescriptor(StreamDescriptor &descriptor,

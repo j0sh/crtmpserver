@@ -21,6 +21,7 @@
 #ifdef HAS_PROTOCOL_TS
 #include "protocols/ts/tspacketpmt.h"
 #include "protocols/ts/tsboundscheck.h"
+#include "protocols/rtmp/header_le_ba.h"
 
 TSPacketPMT::TSPacketPMT() {
 
@@ -29,39 +30,39 @@ TSPacketPMT::TSPacketPMT() {
 TSPacketPMT::~TSPacketPMT() {
 }
 
-Variant TSPacketPMT::GetVariant() {
-	Variant result;
-	result["tableId"] = _tableId;
-
-	result["sectionLength"] = _u1.s.sectionLength;
-	result["reserved2"] = _u1.s.reserved2;
-	result["reserved1"] = _u1.s.reserved1;
-	result["sectionSyntaxIndicator"] = _u1.s.sectionSyntaxIndicator;
-	result["programNumber"] = _programNumber;
-	result["currentNextIndicator"] = _u2.s.currentNextIndicator;
-	result["versionNumber"] = _u2.s.versionNumber;
-	result["reserved3"] = _u2.s.reserved3;
-	result["sectionNumber"] = _sectionNumber;
-	result["lastSectionNumber"] = _lastSectionNumber;
-	result["pcrPID"] = _pcrPID;
-	result["programInfoLength"] = _programInfoLength;
+TSPacketPMT::operator string() {
+	string result = "";
+	result += format("tableId:                %d\n", _tableId);
+	result += format("sectionSyntaxIndicator: %d\n", _sectionSyntaxIndicator);
+	result += format("reserved1:              %d\n", _reserved1);
+	result += format("reserved2:              %d\n", _reserved2);
+	result += format("sectionLength:          %d\n", _sectionLength);
+	result += format("programNumber:          %d\n", _programNumber);
+	result += format("reserved3:              %d\n", _reserved3);
+	result += format("versionNumber:          %d\n", _versionNumber);
+	result += format("currentNextIndicator:   %d\n", _currentNextIndicator);
+	result += format("sectionNumber:          %d\n", _sectionNumber);
+	result += format("lastSectionNumber:      %d\n", _lastSectionNumber);
+	result += format("reserved4:              %d\n", _reserved4);
+	result += format("pcrPid:                 %d\n", _pcrPid);
+	result += format("reserved5:              %d\n", _reserved5);
+	result += format("programInfoLength:      %d\n", _programInfoLength);
+	result += format("crc:                    %08x\n", _crc);
+	result += format("descriptors count:      %d\n", _programInfoDescriptors.size());
+	for (uint32_t i = 0; i < _programInfoDescriptors.size(); i++) {
+		result += format("\t%s", STR(_programInfoDescriptors[i]));
+		if (i != _programInfoDescriptors.size() - 1)
+			result += "\n";
+	}
+	result += format("streams count:          %d\n", _streams.size());
 
 	FOR_MAP(_streams, uint16_t, TSStreamInfo, i) {
-		string key = format("stream %d", MAP_KEY(i));
-		result[key]["streamType"] = MAP_VAL(i).streamType;
-		result[key]["elementaryPID"] = MAP_VAL(i).elementaryPID;
-		result[key]["esInfoLength"] = MAP_VAL(i).esInfoLength;
+		result += format("\t%d: %s\n", MAP_KEY(i), STR(MAP_VAL(i).toString(1)));
 	}
-
-	result["crc"] = _crc;
 	return result;
 }
 
-TSPacketPMT::operator string() {
-	return GetVariant().ToString();
-}
-
-uint16_t TSPacketPMT::GetProgramPID() {
+uint16_t TSPacketPMT::GetProgramNumber() {
 	return _programNumber;
 }
 
@@ -73,32 +74,34 @@ map<uint16_t, TSStreamInfo> & TSPacketPMT::GetStreamsInfo() {
 	return _streams;
 }
 
-bool TSPacketPMT::Read(uint8_t *pBuffer, uint32_t &cursor, bool hasPointerField,
-		uint32_t maxCursor) {
-	//1. Position where we should
-	if (hasPointerField) {
-		CHECK_BOUNDS(1);
-		CHECK_BOUNDS(pBuffer[cursor] + 1);
-		cursor += pBuffer[cursor] + 1;
-	}
-
-	//2. Read table id
+bool TSPacketPMT::Read(uint8_t *pBuffer, uint32_t &cursor, uint32_t maxCursor) {
+	//1. Read table id
 	CHECK_BOUNDS(1);
 	_tableId = pBuffer[cursor++];
+	if (_tableId != 2) {
+		FATAL("Invalid table id");
+		return false;
+	}
 
-	//3. read section length and syntax indicator
+	//2. read section length and syntax indicator
 	CHECK_BOUNDS(2);
-	_u1.raw = ENTOHSP((pBuffer + cursor)); //----MARKED-SHORT----
+	_sectionSyntaxIndicator = (pBuffer[cursor]&0x80) != 0;
+	_reserved1 = (pBuffer[cursor]&0x40) != 0;
+	_reserved2 = (pBuffer[cursor] >> 4)&0x03;
+	_sectionLength = ENTOHSP((pBuffer + cursor))&0x0fff;
 	cursor += 2;
 
 	//5. Read transport stream id
 	CHECK_BOUNDS(2);
-	_programNumber = ENTOHSP((pBuffer + cursor)); //----MARKED-SHORT----
+	_programNumber = ENTOHSP((pBuffer + cursor));
 	cursor += 2;
 
 	//6. read current next indicator and version
 	CHECK_BOUNDS(1);
-	_u2.raw = pBuffer[cursor++];
+	_reserved3 = pBuffer[cursor] >> 6;
+	_versionNumber = (pBuffer[cursor] >> 1)&0x1f;
+	_currentNextIndicator = (pBuffer[cursor]&0x01) != 0;
+	cursor++;
 
 	//7. read section number
 	CHECK_BOUNDS(1);
@@ -107,16 +110,15 @@ bool TSPacketPMT::Read(uint8_t *pBuffer, uint32_t &cursor, bool hasPointerField,
 	//8. read last section number
 	CHECK_BOUNDS(1);
 	_lastSectionNumber = pBuffer[cursor++];
+
 	//9. read PCR PID
 	CHECK_BOUNDS(2);
-	_pcrPID = ENTOHSP((pBuffer + cursor)); //----MARKED-SHORT----
-	_pcrPID &= 0x1fff;
+	_pcrPid = ENTOHSP((pBuffer + cursor))&0x1fff; //----MARKED-SHORT----
 	cursor += 2;
 
 	//10. read the program info length
 	CHECK_BOUNDS(2);
-	_programInfoLength = ENTOHSP((pBuffer + cursor)); //----MARKED-SHORT----
-	_programInfoLength &= 0x0fff;
+	_programInfoLength = ENTOHSP((pBuffer + cursor))&0x0fff; //----MARKED-SHORT----
 	cursor += 2;
 
 	//11. Read the descriptors
@@ -134,7 +136,7 @@ bool TSPacketPMT::Read(uint8_t *pBuffer, uint32_t &cursor, bool hasPointerField,
 	}
 
 	//13. Compute the streams info boundries
-	uint8_t streamsInfoLength = (uint8_t) (_u1.s.sectionLength - 9 - _programInfoLength - 4);
+	uint8_t streamsInfoLength = (uint8_t) (_sectionLength - 9 - _programInfoLength - 4);
 	uint8_t streamsInfoCursor = 0;
 
 	//14. Read the streams info
@@ -186,23 +188,14 @@ bool TSPacketPMT::Read(uint8_t *pBuffer, uint32_t &cursor, bool hasPointerField,
 	return true;
 }
 
-uint32_t TSPacketPMT::PeekCRC(uint8_t *pBuffer, uint32_t cursor,
-		bool hasPointerField, uint32_t maxCursor) {
-	//1. Ignore the pointer field
-	if (hasPointerField) {
-		CHECK_BOUNDS(1);
-		CHECK_BOUNDS(pBuffer[cursor] + 1);
-		cursor += pBuffer[cursor] + 1;
-	}
-
+uint32_t TSPacketPMT::PeekCRC(uint8_t *pBuffer, uint32_t cursor, uint32_t maxCursor) {
 	//2. ignore table id
 	CHECK_BOUNDS(1);
 	cursor++;
 
 	//3. read section length
 	CHECK_BOUNDS(2);
-	uint16_t length = ENTOHSP((pBuffer + cursor)); //----MARKED-SHORT----
-	length &= 0x0fff;
+	uint16_t length = ENTOHSP((pBuffer + cursor))&0x0fff; //----MARKED-SHORT----
 	cursor += 2;
 
 	//4. Move to the crc position

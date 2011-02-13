@@ -23,14 +23,24 @@
 #include "protocols/ts/tsboundscheck.h"
 
 TSPacketPAT::TSPacketPAT() {
+	//fields
 	_tableId = 0;
-	_u1.raw = 0;
+	_sectionSyntaxIndicator = false;
+	_reserved1 = false;
+	_reserved2 = 0;
+	_sectionLength = 0;
 	_transportStreamId = 0;
-	_u2.raw = 0;
+	_reserved3 = 0;
+	_versionNumber = 0;
+	_currentNextIndicator = false;
 	_sectionNumber = 0;
 	_lastSectionNumber = 0;
-	_entriesCount = 0;
 	_crc = 0;
+
+	//internal variables
+	_patStart = 0;
+	_patLength = 0;
+	_entriesCount = 0;
 }
 
 TSPacketPAT::~TSPacketPAT() {
@@ -39,16 +49,17 @@ TSPacketPAT::~TSPacketPAT() {
 TSPacketPAT::operator string() {
 	string result = "";
 	result += format("tableId:                %d\n", _tableId);
-	result += format("sectionLength:          %d\n", _u1.s.sectionLength);
-	result += format("reserved2:              %d\n", _u1.s.reserved2);
-	result += format("reserved1:              %d\n", _u1.s.reserved1);
-	result += format("sectionSyntaxIndicator: %d\n", _u1.s.sectionSyntaxIndicator);
+	result += format("sectionSyntaxIndicator: %d\n", _sectionSyntaxIndicator);
+	result += format("reserved1:              %d\n", _reserved1);
+	result += format("reserved2:              %d\n", _reserved2);
+	result += format("sectionLength:          %d\n", _sectionLength);
 	result += format("transportStreamId:      %d\n", _transportStreamId);
-	result += format("currentNextIndicator:   %d\n", _u2.s.currentNextIndicator);
-	result += format("versionNumber:          %d\n", _u2.s.versionNumber);
-	result += format("reserved3:              %d\n", _u2.s.reserved3);
+	result += format("reserved3:              %d\n", _reserved3);
+	result += format("versionNumber:          %d\n", _versionNumber);
+	result += format("currentNextIndicator:   %d\n", _currentNextIndicator);
 	result += format("sectionNumber:          %d\n", _sectionNumber);
 	result += format("lastSectionNumber:      %d\n", _lastSectionNumber);
+	result += format("crc:                    %08x\n", _crc);
 	result += format("entriesCount:           %d\n", _entriesCount);
 	result += format("NIT count:              %d\n", _networkPids.size());
 	if (_networkPids.size() > 0) {
@@ -64,47 +75,40 @@ TSPacketPAT::operator string() {
 			result += format("\tPMT %d: %d\n", MAP_KEY(i), MAP_VAL(i));
 		}
 	}
-	result += format("crc:                    %08x", _crc);
-
-
 	return result;
 }
 
-bool TSPacketPAT::Read(uint8_t *pBuffer, uint32_t &cursor, bool hasPointerField,
-		uint32_t maxCursor) {
-	//    FINEST("%02x %02x %02x %02x %02x",
-	//            pBuffer[cursor],
-	//            pBuffer[cursor + 1],
-	//            pBuffer[cursor + 2],
-	//            pBuffer[cursor + 3],
-	//            pBuffer[cursor + 4]);
-	//1. Position on the right place
-	if (hasPointerField) {
-		CHECK_BOUNDS(1);
-		CHECK_BOUNDS(pBuffer[cursor] + 1);
-		cursor += pBuffer[cursor] + 1;
-	}
-
-	//2. Read table id
+bool TSPacketPAT::Read(uint8_t *pBuffer, uint32_t &cursor, uint32_t maxCursor) {
+	//1. Read table id
 	CHECK_BOUNDS(1);
 	_tableId = pBuffer[cursor++];
+	if (_tableId != 0) {
+		FATAL("Invalid table id");
+		return false;
+	}
 
-	//3. read section length and syntax indicator
+	//2. read section length and syntax indicator
 	CHECK_BOUNDS(2);
-	_u1.raw = ENTOHSP((pBuffer + cursor)); //----MARKED-SHORT----
+	_sectionSyntaxIndicator = (pBuffer[cursor]&0x80) != 0;
+	_reserved1 = (pBuffer[cursor]&0x40) != 0;
+	_reserved2 = (pBuffer[cursor] >> 4)&0x03;
+	_sectionLength = ENTOHSP((pBuffer + cursor))&0x0fff;
 	cursor += 2;
 
 	//4. Compute entries count
-	_entriesCount = (_u1.s.sectionLength - 9) / 4;
+	_entriesCount = (_sectionLength - 9) / 4;
 
 	//5. Read transport stream id
 	CHECK_BOUNDS(2);
-	_transportStreamId = ENTOHSP((pBuffer + cursor)); //----MARKED-SHORT----
+	_transportStreamId = ENTOHSP((pBuffer + cursor));
 	cursor += 2;
 
 	//6. read current next indicator and version
 	CHECK_BOUNDS(1);
-	_u2.raw = pBuffer[cursor++];
+	_reserved3 = pBuffer[cursor] >> 6;
+	_versionNumber = (pBuffer[cursor] >> 1)&0x1f;
+	_currentNextIndicator = (pBuffer[cursor]&0x01) != 0;
+	cursor++;
 
 	//7. read section number
 	CHECK_BOUNDS(1);
@@ -131,13 +135,11 @@ bool TSPacketPAT::Read(uint8_t *pBuffer, uint32_t &cursor, bool hasPointerField,
 			_networkPids[programNumber] = temp;
 		else
 			_programPids[programNumber] = temp;
-
-		//FINEST("PN: %d; ID: %d", programNumber, temp);
 	}
 
 	//10. read the CRC
 	CHECK_BOUNDS(4);
-	_crc = ENTOHLP((pBuffer + cursor)); //----MARKED-LONG---
+	_crc = ENTOHLP((pBuffer + cursor));
 	cursor += 4;
 
 	//12. done
@@ -159,15 +161,8 @@ uint32_t TSPacketPAT::GetCRC() {
 	return _crc;
 }
 
-uint32_t TSPacketPAT::PeekCRC(uint8_t *pBuffer, uint32_t cursor,
-		bool hasPointerField, uint32_t maxCursor) {
-	if (hasPointerField) {
-		CHECK_BOUNDS(1);
-		CHECK_BOUNDS(pBuffer[cursor] + 1);
-		cursor += pBuffer[cursor] + 1;
-	}
-
-	//2. ignore table id
+uint32_t TSPacketPAT::PeekCRC(uint8_t *pBuffer, uint32_t cursor, uint32_t maxCursor) {
+	//1. ignore table id
 	CHECK_BOUNDS(1);
 	cursor++;
 
