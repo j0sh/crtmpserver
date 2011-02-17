@@ -97,8 +97,8 @@ public:
 	bool SetInboundChunkSize(uint32_t chunkSize);
 	void TrySetOutboundChunkSize(uint32_t chunkSize);
 
+	BaseStream * GetRTMPStream(uint32_t rtmpStreamId);
 	bool CloseStream(uint32_t streamId, bool createNeutralStream);
-
 	RTMPStream * CreateNeutralStream(uint32_t &streamId);
 	InNetRTMPStream * CreateINS(uint32_t channelId, uint32_t streamId, string streamName);
 	BaseOutNetRTMPStream * CreateONS(uint32_t streamId, string streamName,

@@ -293,6 +293,14 @@ void BaseRTMPProtocol::TrySetOutboundChunkSize(uint32_t chunkSize) {
 	}
 }
 
+BaseStream * BaseRTMPProtocol::GetRTMPStream(uint32_t rtmpStreamId) {
+	if (rtmpStreamId == 0 || rtmpStreamId >= MAX_STREAMS_COUNT) {
+		FATAL("Invalid stream id: %d", rtmpStreamId);
+		return false;
+	}
+	return _streams[rtmpStreamId];
+}
+
 bool BaseRTMPProtocol::CloseStream(uint32_t streamId, bool createNeutralStream) {
 	//FINEST("-----bool BaseRTMPProtocol::CloseStream: %d", streamId);
 	//1. Validate request
