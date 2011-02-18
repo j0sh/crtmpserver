@@ -214,6 +214,7 @@ bool BaseRTMPAppProtocolHandler::InboundMessageAvailable(BaseRTMPProtocol *pFrom
 			} else {
 				authState["stage"] = "authenticated";
 				authState["canPublish"] = (bool)true;
+				authState["canOverrideStreamName"] = (bool)false;
 			}
 			break;
 		}
@@ -221,6 +222,7 @@ bool BaseRTMPAppProtocolHandler::InboundMessageAvailable(BaseRTMPProtocol *pFrom
 		{
 			authState["stage"] = "authenticated";
 			authState["canPublish"] = (bool)true;
+			authState["canOverrideStreamName"] = (bool)false;
 			break;
 		}
 		default:
@@ -574,11 +576,30 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokePublish(BaseRTMPProtocol *pFrom,
 			STR(streamName), (recording || appending) ? " Also record/append it" : "");
 
 	//3. Test to see if this stream name is already published somewhere
-	if (GetApplication()->GetStreamsManager()->FindByTypeByName(
-			ST_IN_NET_RTMP, streamName, false, false).size() > 0) {
-		Variant response = StreamMessageFactory::GetInvokeOnStatusStreamPublishBadName(
-				request, streamName);
-		return pFrom->SendMessage(response);
+	map<uint32_t, BaseStream *> existingStreams =
+			GetApplication()->GetStreamsManager()->FindByTypeByName(
+			ST_IN_NET_RTMP, streamName, false, false);
+	if (existingStreams.size() > 0) {
+		if (!(bool)pFrom->GetCustomParameters()["authState"]["canOverrideStreamName"]) {
+			WARN("Unable to override stream because this connection doesn't have the rights");
+			Variant response = StreamMessageFactory::GetInvokeOnStatusStreamPublishBadName(
+					request, streamName);
+			return pFrom->SendMessage(response);
+		} else {
+
+			FOR_MAP(existingStreams, uint32_t, BaseStream *, i) {
+				InNetRTMPStream *pTempStream = (InNetRTMPStream *) MAP_VAL(i);
+				if (pTempStream->GetProtocol() != NULL) {
+					WARN("Overriding stream R%d:U%d with name %s from connection %d",
+							pTempStream->GetRTMPStreamId(),
+							pTempStream->GetUniqueId(),
+							STR(pTempStream->GetName()),
+							pTempStream->GetProtocol()->GetId());
+					((BaseRTMPProtocol *) pTempStream->GetProtocol())->CloseStream(
+							pTempStream->GetRTMPStreamId(), true);
+				}
+			}
+		}
 	}
 
 	//4. Create the network inbound stream
@@ -1269,6 +1290,7 @@ bool BaseRTMPAppProtocolHandler::AuthenticateInboundAdobe(BaseRTMPProtocol *pFro
 		WARN("Incorrect user agent");
 		authState["stage"] = "authenticated";
 		authState["canPublish"] = (bool)false;
+		authState["canOverrideStreamName"] = (bool)false;
 		return true;
 	}
 	string flashVer = (string) connectParams[RM_INVOKE_PARAMS_CONNECT_FLASHVER];
@@ -1281,6 +1303,7 @@ bool BaseRTMPAppProtocolHandler::AuthenticateInboundAdobe(BaseRTMPProtocol *pFro
 		WARN("This agent is not on the list of allowed encoders: `%s`", STR(flashVer));
 		authState["stage"] = "authenticated";
 		authState["canPublish"] = (bool)false;
+		authState["canOverrideStreamName"] = (bool)false;
 		return true;
 	}
 
@@ -1290,6 +1313,7 @@ bool BaseRTMPAppProtocolHandler::AuthenticateInboundAdobe(BaseRTMPProtocol *pFro
 		WARN("Incorrect app url");
 		authState["stage"] = "authenticated";
 		authState["canPublish"] = (bool)false;
+		authState["canOverrideStreamName"] = (bool)false;
 		return true;
 	}
 	string appUrl = (string) connectParams[RM_INVOKE_PARAMS_CONNECT_APP];
@@ -1329,6 +1353,7 @@ bool BaseRTMPAppProtocolHandler::AuthenticateInboundAdobe(BaseRTMPProtocol *pFro
 				WARN("Invalid appUrl: %s", STR(appUrl));
 				authState["stage"] = "authenticated";
 				authState["canPublish"] = (bool)false;
+				authState["canOverrideStreamName"] = (bool)false;
 				return true;
 			}
 
@@ -1375,6 +1400,7 @@ bool BaseRTMPAppProtocolHandler::AuthenticateInboundAdobe(BaseRTMPProtocol *pFro
 				if (response == wanted) {
 					authState["stage"] = "authenticated";
 					authState["canPublish"] = (bool)true;
+					authState["canOverrideStreamName"] = (bool)true;
 					WARN("User `%s` authenticated", STR(user));
 					return true;
 				} else {
@@ -1878,7 +1904,7 @@ bool BaseRTMPAppProtocolHandler::ConnectForPullPush(BaseRTMPProtocol *pFrom,
 			1, //double videoFunction
 			0 //double objectEncoding
 			);
-	
+
 	//7. Send it
 	if (!SendRTMPMessage(pFrom, connectRequest, true)) {
 		FATAL("Unable to send request:\n%s", STR(connectRequest.ToString()));
