@@ -207,17 +207,17 @@ configuration=
 			seekGranularity=1.5, --in seconds, between 0.1 and 600
 			clientSideBuffer=12, --in seconds, between 5 and 30
 			--generateMetaFiles=true, --this will generate seek/meta files on application startup
-			--authentication=
-			--{
-			--	type="adobe",
-			--	encoderAgents=
-			--	{
-			--		"FMLE/3.0 (compatible; FMSc/1.0)",
-			--		"my 3rd party encoder",
-			--		"some other encoder",
-			--	}
-			--	--usersFile="users.lua",
-			--}
+			--[[authentication=
+			{
+				type="adobe",
+				encoderAgents=
+				{
+					"FMLE/3.0 (compatible; FMSc/1.0)",
+					"my 3rd party encoder",
+					"some other encoder",
+				},
+				usersFile="users.lua",
+			}]]--
 		},
 		{
 			name="samplefactory",

@@ -85,15 +85,20 @@ bool RTMPAppProtocolHandler::ProcessInvokeConnect(BaseRTMPProtocol *pFrom,
 	//7. Set the new application inside the connection
 	pFrom->SetApplication(pApp);
 
+	//8. Remove any authentication state so it will be
+	//constructed by the target RTMP handler
+	Variant &parameters = pFrom->GetCustomParameters();
+	if ((parameters == V_MAP) && (parameters.HasKey("authState")))
+		parameters.RemoveKey("authState");
 
-	//8. Pass the control over
+	//9. Pass the control over
 	return pHandler->InboundMessageAvailable(pFrom, request);
 }
 
 bool RTMPAppProtocolHandler::OutboundConnectionEstablished(
 		OutboundRTMPProtocol *pFrom) {
 	//1. Get the parameters
-	Variant parameters = pFrom->GetCustomParameters();
+	Variant &parameters = pFrom->GetCustomParameters();
 
 	//2. Test them a little bit
 	if ((VariantType) parameters[CONF_APPLICATION_NAME] != V_STRING) {

@@ -48,14 +48,25 @@ BaseRTMPAppProtocolHandler::BaseRTMPAppProtocolHandler(Variant &configuration)
 				|| (_configuration[CONF_APPLICATION_AUTH][CONF_APPLICATION_AUTH_ENCODER_AGENTS].MapSize() == 0)
 				|| (!_configuration[CONF_APPLICATION_AUTH].HasKey(CONF_APPLICATION_AUTH_USERS_FILE))
 				|| (_configuration[CONF_APPLICATION_AUTH][CONF_APPLICATION_AUTH_USERS_FILE] != V_STRING)
-				|| (!fileExists(_configuration[CONF_APPLICATION_AUTH][CONF_APPLICATION_AUTH_USERS_FILE]))
+				|| (_configuration[CONF_APPLICATION_AUTH][CONF_APPLICATION_AUTH_USERS_FILE] == "")
 				) {
 			WARN("Invalid authentication configuration");
 			_authMethod = "";
 		} else {
-			_adobeAuthSalt = generateRandomString(32);
-			_adobeAuthSettings = _configuration[CONF_APPLICATION_AUTH];
-			_authMethod = (string) _configuration[CONF_APPLICATION_AUTH][CONF_APPLICATION_AUTH_TYPE];
+			string usersFile = _configuration[CONF_APPLICATION_AUTH][CONF_APPLICATION_AUTH_USERS_FILE];
+			if (usersFile[0] != '/') {
+				usersFile = (string) _configuration[CONF_APPLICATION_DIRECTORY] + usersFile;
+				_configuration[CONF_APPLICATION_AUTH][CONF_APPLICATION_AUTH_USERS_FILE] = usersFile;
+			}
+			if (!fileExists(_configuration[CONF_APPLICATION_AUTH][CONF_APPLICATION_AUTH_USERS_FILE])) {
+				WARN("Invalid authentication configuration. Missing users file: %s",
+						STR(_configuration[CONF_APPLICATION_AUTH][CONF_APPLICATION_AUTH_USERS_FILE]));
+				_authMethod = "";
+			} else {
+				_adobeAuthSalt = generateRandomString(32);
+				_adobeAuthSettings = _configuration[CONF_APPLICATION_AUTH];
+				_authMethod = (string) _configuration[CONF_APPLICATION_AUTH][CONF_APPLICATION_AUTH_TYPE];
+			}
 		}
 	} else {
 		_authMethod = "";
