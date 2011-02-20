@@ -45,6 +45,7 @@ private:
 public:
 	PacketQueue();
 	virtual ~PacketQueue();
+	void HasAudioVideo(bool hasAudio, bool hasVideo);
 	vector<Packet *> PushPacket(uint8_t *pData, uint32_t dataLength,
 			double absoluteTimestamp, bool isAudio);
 private:

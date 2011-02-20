@@ -122,19 +122,20 @@ bool InboundRTPProtocol::SignalInputData(IOBuffer &buffer,
 
 	//6. Detect rollover and adjust the timestamp
 	if (_rtpHeader._timestamp < _lastTimestamp) {
-		FINEST("Possible roll over: _rtpHeader._timestamp: %016llx; _lastTimestamp: %016llx",
-				_rtpHeader._timestamp, _lastTimestamp);
+		//		FINEST("Possible roll over: _rtpHeader._timestamp: %016llx; _lastTimestamp: %016llx",
+		//				_rtpHeader._timestamp, _lastTimestamp);
 		if ((((_rtpHeader._timestamp & 0x80000000) >> 31) == 0)
 				&& (((_lastTimestamp & 0x80000000) >> 31) == 1)) {
 			_timestampRollover++;
 			_lastTimestamp = _rtpHeader._timestamp;
 			WARN("Roll over on %d; _timestampRollover: %d", GetId(), _timestampRollover);
-		} else {
-			WARN("Bogus timestamp. current ts: %016llx; last ts: %016llx",
-					_rtpHeader._timestamp, _lastTimestamp);
-			buffer.IgnoreAll();
-			return true;
 		}
+		//		else {
+		//			WARN("Bogus timestamp. current ts: %016llx; last ts: %016llx",
+		//					_rtpHeader._timestamp, _lastTimestamp);
+		//			buffer.IgnoreAll();
+		//			return true;
+		//		}
 	} else {
 		_lastTimestamp = _rtpHeader._timestamp;
 	}

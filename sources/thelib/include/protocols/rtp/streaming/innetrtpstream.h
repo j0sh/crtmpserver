@@ -34,7 +34,8 @@ private:
 	double _lastVideoTs;
 	double _lastAudioTs;
 	StreamCapabilities _capabilities;
-	bool _avStream;
+	bool _hasAudio;
+	bool _hasVideo;
 	PacketQueue _packetQueue;
 	uint32_t _audioPacketsCount;
 	uint32_t _audioBytesCount;

@@ -22,7 +22,7 @@
 PacketQueue::PacketQueue() {
 	_startAudio = -1;
 	_startVideo = -1;
-	_initialBuffer = 64 * 1024;	
+	_initialBuffer = 64 * 1024;
 }
 
 PacketQueue::~PacketQueue() {
@@ -32,6 +32,11 @@ PacketQueue::~PacketQueue() {
 	_allPackets.clear();
 	_queue.clear();
 	_free.clear();
+}
+
+void PacketQueue::HasAudioVideo(bool hasAudio, bool hasVideo) {
+	_startAudio = hasAudio ? -1 : 0;
+	_startVideo = hasVideo ? -1 : 0;
 }
 
 vector<Packet *> PacketQueue::PushPacket(uint8_t *pData, uint32_t dataLength,

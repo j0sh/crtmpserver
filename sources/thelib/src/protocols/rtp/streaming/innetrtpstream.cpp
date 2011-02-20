@@ -34,23 +34,25 @@ InNetRTPStream::InNetRTPStream(BaseProtocol *pProtocol,
 	_lastVideoTs = 0;
 	_lastAudioTs = 0;
 
-	int i = 0;
+	_hasAudio = false;
 	if (AAC.length() != 0) {
 		_capabilities.InitAudioAAC(
 				(uint8_t *) STR(AAC),
 				AAC.length());
-		i++;
+		_hasAudio = true;
 	}
 
+	_hasVideo = false;
 	if ((SPS.length() != 0) && (PPS.length() != 0)) {
 		_capabilities.InitVideoH264(
 				(uint8_t *) STR(SPS),
 				SPS.length(),
 				(uint8_t *) STR(PPS),
 				PPS.length());
-		i++;
+		_hasVideo = true;
 	}
-	_avStream = (i == 2);
+
+	_packetQueue.HasAudioVideo(_hasAudio, _hasVideo);
 	_audioPacketsCount = 0;
 	_audioBytesCount = 0;
 	_videoPacketsCount = 0;
@@ -225,7 +227,7 @@ bool InNetRTPStream::FeedData(uint8_t *pData, uint32_t dataLength,
 		}
 	}
 	lastTs = absoluteTimestamp;
-	if (_avStream) {
+	if (_hasAudio && _hasVideo) {
 		if ((_lastAudioTs == 0) || (_lastVideoTs == 0)) {
 			return true;
 		}
