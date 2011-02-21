@@ -1,0 +1,25 @@
+--- CMakeLists.txt.orig	2011-02-21 16:54:55.231093495 +0200
++++ CMakeLists.txt	2011-02-21 16:59:44.806592804 +0200
+@@ -2,17 +2,18 @@
+ PROJECT(common)
+ 
+ #make the list with all the source files
+-FILE(GLOB_RECURSE SOURCES "../../../sources/common/src/*.cpp" )
++FILE(GLOB_RECURSE SOURCES "src/*.cpp" )
+ 
+ #prepare the include directories
+ INCLUDE_DIRECTORIES(
+ 	${OPENSSL_INCLUDE_PATH}
+-	../../../3rdparty/lua-dev
+-	../../../sources/common/include
++	../lua/src
++	../common/include
+ 	)
+ 
+ #create THE library
+ ADD_LIBRARY(common SHARED ${SOURCES})
+ TARGET_LINK_LIBRARIES(common lua ${OPENSSL_LIBRARY_PATH} ${CRYPTO_LIBRARY_PATH})
+-ADD_PRECOMPILED_HEADER(common ../../../sources/common/include/common.h) 
++ADD_PRECOMPILED_HEADER(common ../common/include/common.h) 
+ 
++INSTALL(TARGETS common LIBRARY DESTINATION lib)

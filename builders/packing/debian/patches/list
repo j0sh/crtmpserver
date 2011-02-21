@@ -1,0 +1,14 @@
+CMakeLists.txt CMakeLists.txt.patch
+lua/CMakeLists.txt lua_CMakeLists.txt.patch
+common/CMakeLists.txt common_CMakeLists.txt.patch
+thelib/CMakeLists.txt thelib_CMakeLists.txt.patch
+rtmpserver/CMakeLists.txt rtmpserver_CMakeLists.txt.patch
+rtmpserver/rtmpserver.lua rtmpserver_rtmpserver.lua.patch
+applications/proxypublish/CMakeLists.txt applications_proxypublish_CMakeLists.txt.patch
+applications/flvplayback/CMakeLists.txt applications_flvplayback_CMakeLists.txt.patch
+applications/stresstest/CMakeLists.txt applications_stresstest_CMakeLists.txt.patch
+applications/vptests/CMakeLists.txt applications_vptests_CMakeLists.txt.patch
+applications/admin/CMakeLists.txt applications_admin_CMakeLists.txt.patch
+applications/applestreamingclient/CMakeLists.txt applications_applestreamingclient_CMakeLists.txt.patch
+applications/appselector/CMakeLists.txt applications_appselector_CMakeLists.txt.patch
+applications/samplefactory/CMakeLists.txt applications_samplefactory_CMakeLists.txt.patch

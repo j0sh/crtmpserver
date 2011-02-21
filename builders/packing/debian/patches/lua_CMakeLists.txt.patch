@@ -1,0 +1,19 @@
+--- CMakeLists.txt.orig	2011-02-21 16:54:55.223091942 +0200
++++ CMakeLists.txt	2011-02-21 17:10:31.471090793 +0200
+@@ -17,13 +17,14 @@
+ 
+ 
+ #make the list with all the source files
+-FILE(GLOB_RECURSE SOURCES "../../../3rdparty/lua-dev/*.c" )
++FILE(GLOB_RECURSE SOURCES "src/*.c" )
+ 
+ #prepare the include directories
+ INCLUDE_DIRECTORIES(
+-	../../../3rdparty/lua-dev/
++	src/
+ 	)
+ 
+ #create THE library
+ ADD_LIBRARY(lua SHARED ${SOURCES})
+ 
++INSTALL(TARGETS lua LIBRARY DESTINATION lib)

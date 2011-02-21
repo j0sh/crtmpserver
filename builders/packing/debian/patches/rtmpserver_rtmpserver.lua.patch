@@ -1,0 +1,67 @@
+--- rtmpserver.lua.orig	2011-02-21 18:40:44.910593798 +0200
++++ rtmpserver.lua	2011-02-21 18:39:36.022594699 +0200
+@@ -74,7 +74,7 @@
+ 			-- the complete path to the library. This is optional. If not provided, 
+ 			-- the server will try to load the library from here
+ 			-- <rootDirectory>/<name>/lib<name>.{so|dll|dylib}
+-			-- library="/some/path/to/some/shared/library.so"
++			library="/usr/lib/rtmpd/libappselector.so",
+ 			
+ 			-- Tells the server to validate the clien's handshake before going further. 
+ 			-- It is optional, defaulted to true
+@@ -119,6 +119,7 @@
+ 			description="FLV Playback Sample",
+ 			name="flvplayback",
+ 			protocol="dynamiclinklibrary",
++			library="/usr/lib/rtmpd/libflvplayback.so",
+ 			aliases=
+ 			{
+ 				"simpleLive",
+@@ -223,6 +224,7 @@
+ 			name="samplefactory",
+ 			description="asdsadasdsa",
+ 			protocol="dynamiclinklibrary",
++			library="/usr/lib/rtmpd/libsamplefactory.so",
+ 			aliases=
+ 			{
+ 				"httpOutboundTest"
+@@ -242,6 +244,7 @@
+ 			name="vptests",
+ 			description="Variant protocol tests",
+ 			protocol="dynamiclinklibrary",
++			library="/usr/lib/rtmpd/libvptests.so",
+ 			aliases=
+ 			{
+ 				"vptests_alias1",
+@@ -263,6 +266,7 @@
+ 			name="admin",
+ 			description="Application for administering",
+ 			protocol="dynamiclinklibrary",
++			library="/usr/lib/rtmpd/libadmin.so",
+ 			aliases=
+ 			{
+ 				"admin_alias1",
+@@ -285,6 +289,7 @@
+ 			name="proxypublish",
+ 			description="Application for forwarding streams to another RTMP server",
+ 			protocol="dynamiclinklibrary",
++			library="/usr/lib/rtmpd/libproxypublish.so",
+ 			acceptors =
+ 			{
+ 				{	
+@@ -327,6 +332,7 @@
+ 			name="stresstest",
+ 			description="Application for stressing a streaming server",
+ 			protocol="dynamiclinklibrary",
++			library="/usr/lib/rtmpd/libstresstest.so",
+ 			targetServer="localhost",
+ 			targetApp="vod",
+ 			active=false,
+@@ -350,6 +356,7 @@
+ 			name="applestreamingclient",
+ 			description="Apple Streaming Client",
+ 			protocol="dynamiclinklibrary",
++			library="/usr/lib/rtmpd/libapplestreamingclient.so",
+ 			--[[acceptors = 
+ 			{
+ 				{
