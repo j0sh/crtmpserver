@@ -29,8 +29,7 @@
 
 struct RunningStatus {
 	// startup parameters
-	int argc;
-	char **argv;
+	Variant commandLine;
 
 	//Configuration file
 	ConfigFile *pConfigFile;
@@ -50,6 +49,10 @@ void ConfRereadSignalHandler(void);
 bool Initialize();
 void Run();
 void Cleanup();
+void PrintHelp();
+void PrintVersion();
+void NormalizeCommandLine(string configFile);
+bool ApplyGID();
 
 RunningStatus gRs = {0};
 
@@ -62,8 +65,26 @@ int main(int argc, char **argv) {
 	InitNetworking();
 
 	//1. Pick up the startup parameters and hold them inside the running status
-	gRs.argc = argc;
-	gRs.argv = argv;
+	if (argc < 2) {
+		cout << "Invalid command line. Use --help" << endl;
+		return -1;
+	}
+
+	if (!Variant::DeserializeFromCmdLineArgs(argc, argv, gRs.commandLine)) {
+		PrintHelp();
+		return -1;
+	}
+	NormalizeCommandLine(argc >= 3 ? (argv[argc - 1]) : "");
+
+	if ((bool)gRs.commandLine["arguments"]["--help"]) {
+		PrintHelp();
+		return 0;
+	}
+
+	if ((bool)gRs.commandLine["arguments"]["--version"]) {
+		PrintVersion();
+		return 0;
+	}
 
 	do {
 		//2. Reset the run flag
@@ -87,40 +108,33 @@ int main(int argc, char **argv) {
 bool Initialize() {
 	Logger::Init();
 
-	if (gRs.argc < 2) {
-		printf("Usage: %s [--use-implicit-console-appender] <config_file_path>\n", gRs.argv[0]);
-		printf("\n--use-implicit-console-appender  use this switch to add a default console\n");
-		printf("appender. Used when you are not sure about the logeAppenders section in the config file\n");
-		return false;
+	if ((bool)gRs.commandLine["arguments"]["--use-implicit-console-appender"]) {
+		ConsoleLogLocation * pLogLocation = new ConsoleLogLocation(false);
+		pLogLocation->SetLevel(_FINEST_);
+		Logger::AddLogLocation(pLogLocation);
 	}
 
-	for (int i = 1; i < gRs.argc - 1; i++) {
-		if (string(gRs.argv[i]) == "--use-implicit-console-appender") {
-			ConsoleLogLocation *pLogLocation = new ConsoleLogLocation(false);
-			pLogLocation->SetLevel(_FINEST_);
-			Logger::AddLogLocation(pLogLocation);
-		}
-	}
-
-	INFO("Reading configuration from %s", gRs.argv[gRs.argc - 1]);
+	INFO("Reading configuration from %s", STR(gRs.commandLine["arguments"]["configFile"]));
 #ifdef COMPILE_STATIC
 	gRs.pConfigFile = new ConfigFile(SpawnApplication);
 #else
 	gRs.pConfigFile = new ConfigFile(NULL);
 #endif
-	string configFilePath = gRs.argv[gRs.argc - 1];
+	string configFilePath = gRs.commandLine["arguments"]["configFile"];
 	string fileName;
 	string extension;
 	splitFileName(configFilePath, fileName, extension);
 
 	if (lowercase(extension) == "xml") {
-		if (!gRs.pConfigFile->LoadXmlFile(configFilePath)) {
+		if (!gRs.pConfigFile->LoadXmlFile(configFilePath,
+				(bool)gRs.commandLine["arguments"]["--daemon"])) {
 			FATAL("Unable to load file %s", STR(configFilePath));
 			return false;
 		}
 	} else if (lowercase(extension) == "lua") {
 #ifdef HAS_LUA
-		if (!gRs.pConfigFile->LoadLuaFile(configFilePath)) {
+		if (!gRs.pConfigFile->LoadLuaFile(configFilePath,
+				(bool)gRs.commandLine["arguments"]["--daemon"])) {
 			FATAL("Unable to load file %s", STR(configFilePath));
 			return false;
 		}
@@ -197,6 +211,10 @@ bool Initialize() {
 }
 
 void Run() {
+	if (!ApplyGID()) {
+		FATAL("Unable to apply user id");
+		exit(-1);
+	}
 	INFO("\n%s", STR(gRs.pConfigFile->GetServicesInfo()));
 	INFO("GO! GO! GO! (%d)", getpid());
 	while (IOHandlerManager::Pulse()) {
@@ -238,6 +256,57 @@ void QuitSignalHandler(void) {
 void ConfRereadSignalHandler(void) {
 	gRs.run = true;
 	IOHandlerManager::SignalShutdown();
+}
+
+void PrintHelp() {
+	cout << "Usage: \n" << (string) gRs.commandLine["program"] << " [OPTIONS] [config_file_path]" << endl << endl;
+	cout << "OPTIONS:" << endl;
+	cout << "    --help" << endl;
+	cout << "      Prints this help and exit\n" << endl;
+	cout << "    --version" << endl;
+	cout << "      Prints the version and exit.\n" << endl;
+	cout << "    --use-implicit-console-appender" << endl;
+	cout << "      Adds a console log appender." << endl;
+	cout << "      Particulary useful when the server starts and stops immediatly." << endl;
+	cout << "      Allows you to see if something is wrong with the config file\n" << endl;
+	cout << "    --daemon" << endl;
+	cout << "      Overrides the daemon setting inside the config file and forces" << endl;
+	cout << "      the server to start in daemon mode.\n" << endl;
+	cout << "    --uid=<uid>" << endl;
+	cout << "      Run the process with the specified user id\n" << endl;
+}
+
+void PrintVersion() {
+#ifndef RTMPSERVER_VERSION
+#define RTMPSERVER_VERSION "(version not available)"
+#endif
+	cout << HTTP_HEADERS_SERVER_US << " version " << RTMPSERVER_VERSION << endl;
+}
+
+void NormalizeCommandLine(string configFile) {
+	gRs.commandLine["arguments"]["configFile"] = configFile;
+	gRs.commandLine["arguments"].RemoveKey(configFile);
+	gRs.commandLine["arguments"]["--help"] = (bool)gRs.commandLine["arguments"].HasKey("--help");
+	gRs.commandLine["arguments"]["--version"] = (bool)gRs.commandLine["arguments"].HasKey("--version");
+	gRs.commandLine["arguments"]["--use-implicit-console-appender"] = (bool)gRs.commandLine["arguments"].HasKey("--use-implicit-console-appender");
+	gRs.commandLine["arguments"]["--daemon"] = (bool)gRs.commandLine["arguments"].HasKey("--daemon");
+	if (gRs.commandLine["arguments"].HasKey("--uid")) {
+		gRs.commandLine["arguments"]["--uid"] = (uint32_t) atoi(STR(gRs.commandLine["arguments"]["--uid"]));
+	} else {
+		gRs.commandLine["arguments"]["--uid"] = (uint32_t) 0;
+	}
+}
+
+bool ApplyGID() {
+#ifndef WIN32
+	if ((uint32_t) gRs.commandLine["arguments"]["--uid"] != 0) {
+		if (setuid((uid_t) gRs.commandLine["arguments"]["--uid"]) != 0) {
+			FATAL("Unable to set UID");
+			return false;
+		}
+	}
+#endif
+	return true;
 }
 
 #ifdef COMPILE_STATIC

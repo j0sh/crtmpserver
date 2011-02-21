@@ -40,43 +40,51 @@ ConfigFile::~ConfigFile() {
 
 #ifdef HAS_LUA
 
-bool ConfigFile::LoadLuaFile(string path) {
+bool ConfigFile::LoadLuaFile(string path, bool forceDaemon) {
 	InitServiceInfo();
 	if (!ReadLuaFile(path, CONF_CONFIGURATION, _configuration)) {
 		_listeningSockets.clear();
 		FATAL("Unable to read configuration file: %s", STR(path));
 		return false;
 	}
+	if (forceDaemon)
+		_configuration[CONF_DAEMON] = (bool)true;
 	return true;
 }
 
-bool ConfigFile::LoadLuaString(string script) {
+bool ConfigFile::LoadLuaString(string script, bool forceDaemon) {
 	InitServiceInfo();
 	if (!ReadLuaString(script, CONF_CONFIGURATION, _configuration)) {
 		FATAL("Unable to read configuration script: %s", STR(script));
 		return false;
 	}
+	if (forceDaemon)
+		_configuration[CONF_DAEMON] = (bool)true;
 	return true;
 }
 #endif /* HAS_LUA */
 
-bool ConfigFile::LoadXmlFile(string path) {
+bool ConfigFile::LoadXmlFile(string path, bool forceDaemon) {
 	InitServiceInfo();
 	if (!Variant::DeserializeFromXmlFile(path, _configuration)) {
 		_listeningSockets.clear();
 		FATAL("Unable to read configuration file: %s", STR(path));
 		return false;
 	}
+	if (forceDaemon)
+		_configuration[CONF_DAEMON] = (bool)true;
 	return true;
 }
 
-bool ConfigFile::LoadXmlString(string xmlContent) {
+bool ConfigFile::LoadXmlString(string xmlContent, bool forceDaemon) {
 	InitServiceInfo();
 	if (!Variant::DeserializeFromXml(xmlContent, _configuration)) {
 		_listeningSockets.clear();
 		FATAL("Unable to read configuration:\n%s", STR(xmlContent));
 		return false;
 	}
+	if (forceDaemon)
+		_configuration[CONF_DAEMON] = (bool)true;
 	return true;
 }
 

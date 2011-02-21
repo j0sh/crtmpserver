@@ -32,7 +32,7 @@ typedef void (*ReleaseApplication_t)(BaseClientApplication * pApplication);
 
 /*!
 	@class ConfigFile
-*/
+ */
 class DLLEXP ConfigFile {
 private:
 
@@ -58,41 +58,41 @@ public:
 	/*!
 		@brief Loads the lua configuration file.
 		@param path: The true path to the lua configuration file.
-	*/
-	bool LoadLuaFile(string path);
-	bool LoadLuaString(string script);
+	 */
+	bool LoadLuaFile(string path, bool forceDaemon);
+	bool LoadLuaString(string script, bool forceDaemon);
 #endif /* HAS_LUA */
 	/*!
 		@brief Loads the xml configuration file.
 		@param path: The true path to the xml configuration file.
-	*/
-	bool LoadXmlFile(string path);
-	bool LoadXmlString(string xmlContent);
+	 */
+	bool LoadXmlFile(string path, bool forceDaemon);
+	bool LoadXmlString(string xmlContent, bool forceDaemon);
 	/*!
 		@brief Fetches the logAppenders attribute in the configuration file. 
-	*/
+	 */
 	bool ConfigureLogAppenders();
 
 	/*!
 		@brief Fetches the dnsResolver attribute in the configuration file. It also gets the parameters of the dns resolver like its port, ip, etc.
-	*/
+	 */
 	bool ConfigureDNSResolver();
 
 	/*!
 		@brief Fetches the applications attribute in the configuration file. 
-	*/
+	 */
 	bool ConfigureApplications();
 
 	/*!
 		@brief Fetches the isDaemon attribute in the configuration file.
-	*/
+	 */
 	bool IsDaemon();
 	string GetServicesInfo();
 
 	/*!
 		@brief Serializes the file into an XML format.
 		@param path: True path of the file to be serialized to XML.
-	*/
+	 */
 	bool SaveXML(string path);
 private:
 

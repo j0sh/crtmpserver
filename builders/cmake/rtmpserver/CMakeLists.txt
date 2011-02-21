@@ -8,6 +8,8 @@ INCLUDE_DIRECTORIES(
 	../../../sources/thelib/include
         )
 
+EXECUTE_PROCESS(COMMAND svnversion -n ../../sources OUTPUT_VARIABLE TEMP_FRAMEWORK_VER)
+ADD_DEFINITIONS(-DRTMPSERVER_VERSION="0.${TEMP_FRAMEWORK_VER}")
 ADD_EXECUTABLE(rtmpserver ../../../sources/rtmpserver/src/rtmpserver.cpp)
 TARGET_LINK_LIBRARIES(rtmpserver thelib ${OPENSSL_LIBRARY_PATH} ${CRYPTO_LIBRARY_PATH})
 
