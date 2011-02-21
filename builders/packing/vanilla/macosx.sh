@@ -1,7 +1,7 @@
 #!/bin/sh
 
 #define platform variables
-SRC_DIR=..
+SRC_DIR=../../cmake
 DST_DIR=/tmp/rtmpserver
 LIBPREFIX=lib
 LIBSUFFIX=.dylib
@@ -24,7 +24,7 @@ fi
 mkdir -p $TMP_DIR
 
 #create the list of libraries needed by the server
-for i in `find $SRC_DIR -type d -depth 1|sed "s/^\.\.\///"`
+for i in `find $SRC_DIR -type d -depth 1|sed "s/^\.\.\/\.\.\/cmake\///"`
 do
 	if [ ! -f "$SRC_DIR/$i/$LIBPREFIX$i$LIBSUFFIX" ]
 	then
@@ -35,7 +35,7 @@ done
 
 
 #create the list of available applications
-for i in `find $SRC_DIR/applications -type d -depth 1|sed "s/^\.\.\/applications\///"`
+for i in `find $SRC_DIR/applications -type d -depth 1|sed "s/^\.\.\/\.\.\/cmake\/applications\///"`
 do
 	if [ ! -f "$SRC_DIR/applications/$i/$LIBPREFIX$i$LIBSUFFIX" ]
 	then
