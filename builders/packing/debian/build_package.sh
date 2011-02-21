@@ -27,15 +27,15 @@ copyProject() {
 }
 
 echo "Fetch current sources from svn"
-svn co --username "anonymous" --password "" $SVNPATH $ORIGPATH 2>&1 >$LOGFILE
+svn co --username "anonymous" --password "" $SVNPATH $ORIGPATH 
 result=$?
 if [ $result != 0 ] 
 then
 	echo "fail to fetch sources"
 	exit $result
 fi
-
-DEBPATH="rtmpd-0.`svnversion -n ${ORIGPATH}/sources`"
+SVERSION=`svnversion -n ${ORIGPATH}/sources`
+DEBPATH="rtmpd-0.${SVERSION}"
 
 echo "Build debian structures"
 if [ -d $DEBPATH ]
@@ -116,7 +116,7 @@ cd $DEBPATH
 dpkg-buildpackage -rfakeroot -us -uc
 
 echo " All done"
-echo "If no errors displayed you can easy install rtmpd via 'sudo dpkg -i *.deb'"
+echo "If no errors displayed you can easy install rtmpd via 'sudo dpkg -i rtmpd_0.${SVERSION}-1_`dpkg-architecture -qDEB_BUILD_ARCH_CPU | tr -d '\n'`.deb'"
 echo "After this you can run rtmpd directly or via init script(not complete yet)"
 echo
 echo "All errors and wishes please sent me to e-mail: jet@jet.kiev.ua or"
