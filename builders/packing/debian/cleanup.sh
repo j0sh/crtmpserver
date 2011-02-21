@@ -1,3 +1,4 @@
 #!/bin/sh
 
-rm -rf rtmpd* 
+rm -rf rtmpd* *.log
+ 
