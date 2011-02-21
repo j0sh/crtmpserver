@@ -1841,7 +1841,7 @@ bool BaseRTMPAppProtocolHandler::ConnectForPullPush(BaseRTMPProtocol *pFrom,
 	}
 
 	//2. get the application name
-	string appName = uri.documentPath;
+	string appName = uri.document;
 	if (appName != "") {
 		if (appName[0] == '/')
 			appName = appName.substr(1, appName.size() - 1);

@@ -74,7 +74,7 @@ int main(int argc, char **argv) {
 		PrintHelp();
 		return -1;
 	}
-	NormalizeCommandLine(argc >= 3 ? (argv[argc - 1]) : "");
+	NormalizeCommandLine(argc >= 2 ? (argv[argc - 1]) : "");
 
 	if ((bool)gRs.commandLine["arguments"]["--help"]) {
 		PrintHelp();
