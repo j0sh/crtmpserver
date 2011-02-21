@@ -74,7 +74,10 @@ int main(int argc, char **argv) {
 		PrintHelp();
 		return -1;
 	}
-	NormalizeCommandLine(argc >= 2 ? (argv[argc - 1]) : "");
+	string configFile = argv[argc - 1];
+	if (configFile.find("--") == 0)
+		configFile = "";
+	NormalizeCommandLine(configFile);
 
 	if ((bool)gRs.commandLine["arguments"]["--help"]) {
 		PrintHelp();
