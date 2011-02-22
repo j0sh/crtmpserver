@@ -3,7 +3,7 @@
 APPNAME=$1
 APP_DESC=$2
 
-if [ -z $APPNAME -o -z $APP_DESC ]
+if [ -z "$APPNAME" -o -z "$APP_DESC" ]
 then
 	echo "Usage:";
 	echo "./initapp <CamelCaseAppName> <app_desc>"
@@ -20,8 +20,8 @@ PROJECT_GUID=""
 
 initVars()
 {
-	APPNAME_LC=`echo $APPNAME|tr "[:upper:]" "[:lower:]"`;
-	APPNAME_UC=`echo $APPNAME|tr "[:lower:]" "[:upper:]"`;
+	APPNAME_LC=`echo "$APPNAME" |tr "[:upper:]" "[:lower:]"`;
+	APPNAME_UC=`echo "$APPNAME" |tr "[:lower:]" "[:upper:]"`;
 	HEADERS_GUID=`uuidgen`;
 	SOURCES_GUID=`uuidgen`;
 	PROJECT_GUID=`uuidgen`;
@@ -46,9 +46,9 @@ doWildcardReplacements()
 	mkdir -p $(doStrReplacements $DSTDIR)
 	
 	for fileName in `ls $SRCDIR/$WILDCARD`; do
-		targetFileName=$(doStrReplacements ${DSTDIR})"/"$(doStrReplacements $(basename "${fileName}"))
-		echo " $fileName $targetFileName"
-		doFileReplacements $fileName $targetFileName
+		targetFileName=$(doStrReplacements "${DSTDIR}")"/"$(doStrReplacements $(basename "${fileName}"))
+#		echo " $fileName $targetFileName"
+		doFileReplacements "$fileName" "$targetFileName"
 	done
 }
 
@@ -86,12 +86,13 @@ updateServerConfig()
 
 	>/tmp/final
 	
-	while read line; do
-		if [ `expr "$line" : "--#INSERTION_MARKER#"` -eq 0 ]
+	while line=$(line);
+	do
+		if [ ! `expr "$line" : ".*--#INSERTION_MARKER#.*"` -eq 0 ]
 		then
 			cat /tmp/rtmpserver.lua >>/tmp/final
 		else
-			echo $line>>/tmp/final;
+			echo "$line">>/tmp/final;
 		fi
 	done < ../builders/cmake/rtmpserver/rtmpserver.lua
 
