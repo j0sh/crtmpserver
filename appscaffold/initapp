@@ -3,13 +3,13 @@
 APPNAME=$1
 APP_DESC=$2
 
-if [[ $APPNAME == "" || $APP_DESC == "" ]]
+if [ -z $APPNAME -o -z $APP_DESC ]
 then
 	echo "Usage:";
 	echo "./initapp <CamelCaseAppName> <app_desc>"
 	echo "Eg:";
 	echo "./initapp MyNewApp \"This is my new app\""
-	exit;
+	exit 1;
 fi
 
 APPNAME_LC=""
@@ -18,7 +18,7 @@ HEADERS_GUID=""
 SOURCES_GUID=""
 PROJECT_GUID=""
 
-function initVars()
+initVars()
 {
 	APPNAME_LC=`echo $APPNAME|tr "[:upper:]" "[:lower:]"`;
 	APPNAME_UC=`echo $APPNAME|tr "[:lower:]" "[:upper:]"`;
@@ -27,17 +27,17 @@ function initVars()
 	PROJECT_GUID=`uuidgen`;
 }
 
-function doStrReplacements()
+doStrReplacements()
 {
 	echo `echo $1|sed "s/#PROJECT_GUID#/$PROJECT_GUID/g"|sed "s/#SOURCES_GUID#/$SOURCES_GUID/g"|sed "s/#HEADERS_GUID#/$HEADERS_GUID/g"|sed "s/#APPNAME#/$APPNAME/g"|sed "s/#APPNAME_LC#/$APPNAME_LC/g"|sed "s/#APPNAME_UC#/$APPNAME_UC/g"|sed "s/#APP_DESC#/$APP_DESC/g"`;
 }
 
-function doFileReplacements()
+doFileReplacements()
 {
 	cat $1|sed "s/#PROJECT_GUID#/$PROJECT_GUID/g"|sed "s/#SOURCES_GUID#/$SOURCES_GUID/g"|sed "s/#HEADERS_GUID#/$HEADERS_GUID/g"|sed "s/#APPNAME#/$APPNAME/g"|sed "s/#APPNAME_LC#/$APPNAME_LC/g"|sed "s/#APPNAME_UC#/$APPNAME_UC/g"|sed "s/#APP_DESC#/$APP_DESC/g">$2;
 }
 
-function doWildcardReplacements
+doWildcardReplacements()
 {
 	SRCDIR=$1
 	WILDCARD=$2
@@ -46,24 +46,25 @@ function doWildcardReplacements
 	mkdir -p $(doStrReplacements $DSTDIR)
 	
 	for fileName in `ls $SRCDIR/$WILDCARD`; do
-		targetFileName=$(doStrReplacements "$DSTDIR/${fileName:${#SRCDIR}+1:${#fileName}}")
+		targetFileName=$(doStrReplacements ${DSTDIR})"/"$(doStrReplacements $(basename "${fileName}"))
+		echo " $fileName $targetFileName"
 		doFileReplacements $fileName $targetFileName
 	done
 }
 
-function createSources()
+createSources()
 {
 	doWildcardReplacements "templates/sources" "*.h" "../sources/applications/#APPNAME_LC#/include"
 	doWildcardReplacements "templates/sources" "*.cpp" "../sources/applications/#APPNAME_LC#/src"
 }
 
-function createCMakeProj()
+createCMakeProj()
 {
 	doWildcardReplacements "templates/builders/cmake" "*.txt" "../builders/cmake/applications/#APPNAME_LC#"
 	echo "ADD_SUBDIRECTORY($APPNAME_LC $APPNAME_LC)">>../builders/cmake/applications/CMakeLists.txt
 }
 
-function createNBOSXProj()
+createNBOSXProj()
 {
 	doWildcardReplacements "templates/builders/netbeans/osx" "*.nb" "../builders/netbeans/osx/#APPNAME_LC#"
 	doWildcardReplacements "templates/builders/netbeans/osx/nbproject" "*.mk" "../builders/netbeans/osx/#APPNAME_LC#/nbproject"
@@ -74,33 +75,28 @@ function createNBOSXProj()
         doWildcardReplacements "templates/builders/netbeans/osx/nbproject/private" "*.properties" "../builders/netbeans/osx/#APPNAME_LC#/nbproject/private"
 }
 
-function createWin32Proj()
+createWin32Proj()
 {
-	doWildcardReplacements "templates/builders/VS2008" "*.vcproj" "../builders/VS2008/#APPNAME_LC#"
+	doWildcardReplacements "templates/builders/VS2010" "*.vcproj" "../builders/VS2010/#APPNAME_LC#"
 }
 
-function updateServerConfig()
+updateServerConfig()
 {
-	OLD_IFS=$IFS;
-	IFS=$'\n';
-
 	doWildcardReplacements "templates" "rtmpserver.lua" "/tmp"
 
 	>/tmp/final
 	
-	for line in `cat ../builders/cmake/rtmpserver/rtmpserver.lua`; do
-		if [[ "$line" =~ .*--#INSERTION_MARKER#.* ]]
+	while read line; do
+		if [ `expr "$line" : "--#INSERTION_MARKER#"` -eq 0 ]
 		then
 			cat /tmp/rtmpserver.lua >>/tmp/final
 		else
 			echo $line>>/tmp/final;
 		fi
-	done
+	done < ../builders/cmake/rtmpserver/rtmpserver.lua
 
 	mv /tmp/final ../builders/cmake/rtmpserver/rtmpserver.lua
 	rm /tmp/rtmpserver.lua
-
-	IFS=$OLD_IFS;
 }
 
 echo "Initialize variables..."
