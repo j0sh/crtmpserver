@@ -9,6 +9,26 @@ PATCHDIR="patches"
 PATCHLIST="list"
 STARTPWD=`pwd`
 
+test_package() {
+	RES=`dpkg-query -W -f='\${Status}' $1 2>/dev/null`
+	R=$?
+	if [ $R -eq 1 ] 
+	then 
+		echo "Package $1 is required but not installed"
+		echo "You can install it using command like"
+		echo "sudo apt-get install $1"
+		exit 1
+	fi
+	if [ `expr "$RES" : "^install"` -eq 0 ]
+	then
+		echo "Package $1 is required but not installed"
+		echo "You can install it using command like"
+		echo "sudo apt-get install $1"
+		echo "***********************"
+		exit 1
+	fi                                                                                                                                                            
+}
+
 copyProject() {
 	if [ -z "$1" ]
 	then
@@ -26,22 +46,54 @@ copyProject() {
 	cp -r $ORIGPATH/sources/$1/* $DEBPATH/$1
 }
 
-echo "Fetch current sources from svn"
-svn co --username "anonymous" --password "" $SVNPATH $ORIGPATH 
-result=$?
-if [ $result != 0 ] 
+echo "Check for dependencies"
+test_package "g++"
+test_package "gcc"
+test_package "cmake"
+test_package "dh-make"
+test_package "libssl-dev"
+test_package "fakeroot"
+test_package "dpkg-dev"
+test_package "subversion"
+
+read -p "Do you want to use exists sources?(y/n): " answer
+if [ "$answer" = "y" ]
 then
-	echo "fail to fetch sources"
-	exit $result
+	if [ -d ../../../sources -a -d ../../cmake ]
+	then
+		echo "$ORIGPATH change to ../../../"
+		ORIGPATH="../../.."
+	else
+		read -p "Please specify path to source tree: " path
+		if [ -d $path/sources -a -d $path/builders/cmake ]
+		then
+			ORIGPATH=$path
+		else
+			echo "Wrong path"
+			echo "Exiting...."
+			exit 1
+		fi
+	fi
+
+else
+	echo "Fetch current sources from svn"
+	svn co --username "anonymous" --password "" $SVNPATH $ORIGPATH 
+	result=$?
+	if [ $result != 0 ] 
+	then
+		echo "fail to fetch sources"
+		exit $result
+	fi
 fi
+
 SVERSION=`svnversion -n ${ORIGPATH}/sources`
 DEBPATH="rtmpd-0.${SVERSION}"
 
 echo "Build debian structures"
 if [ -d $DEBPATH ]
 then
-	read -p "Debian build directory $DEBPATH already exists. Remove?(y/n): "
-	if [ $REPLY == "y" ]
+	read -p "Debian build directory $DEBPATH already exists. Remove?(y/n): " answer
+	if [ $answer="y" ]
 	then
 		rm -rf $DEBPATH
 	else
