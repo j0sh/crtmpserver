@@ -1,5 +1,14 @@
---- rtmpserver.lua.orig	2011-02-21 18:40:44.910593798 +0200
-+++ rtmpserver.lua	2011-02-21 18:39:36.022594699 +0200
+--- rtmpserver.lua.orig	2011-02-22 18:56:09.518594913 +0200
++++ rtmpserver.lua	2011-02-22 18:56:34.070594610 +0200
+@@ -49,7 +49,7 @@
+ 			type="file",
+ 			level=6,
+ 			-- the file where the log messages are going to land
+-			fileName="/tmp/rtmpserver.log"
++			fileName="/var/log/rtmpd/rtmpserver.log"
+ 		}
+ 	},
+ 	
 @@ -74,7 +74,7 @@
  			-- the complete path to the library. This is optional. If not provided, 
  			-- the server will try to load the library from here

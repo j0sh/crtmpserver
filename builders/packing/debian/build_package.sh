@@ -167,9 +167,9 @@ cd $DEBPATH/debian
 rm -f *.ex control copyright README.Debian README.source rtmpd.doc-base.EX
 cd $STARTPWD 
 cp -vf debian/* $DEBPATH/debian
-export CMAKE_VERBOSE_MAKEFILE=FALSE
+echo "DEB_CMAKE_NORMAL_ARGS ?= -DCMAKE_VERBOSE_MAKEFILE=FALSE" >> $DEBPATH/debian/rules
 
-############ Build debina package
+############ Build debian package
 cd $DEBPATH
 dpkg-buildpackage -rfakeroot -us -uc
 R=$?
@@ -179,12 +179,14 @@ then
 	exit $R
 fi
 
-echo " All done"
-echo "If no errors displayed you can easy install rtmpd via 'sudo dpkg -i rtmpd_0.${SVERSION}-1_`dpkg-architecture -qDEB_BUILD_ARCH_CPU | tr -d '\n'`.deb'"
-echo "After this you can run rtmpd directly or via init script(not complete yet)"
+echo "********************************************************************"
+echo "All done!!!"
+echo "You can easy install rtmpd via 'sudo dpkg -i rtmpd_0.${SVERSION}-1_`dpkg-architecture -qDEB_BUILD_ARCH_CPU | tr -d '\n'`.deb'"
+echo "After this you can run rtmpd directly or via init script"
 echo
 echo "All errors and wishes please sent me to e-mail: jet@jet.kiev.ua or"
 echo "report via Google group(http://groups.google.com/group/c-rtmp-server/topics)"
+echo "********************************************************************"
 
 exit 0
 

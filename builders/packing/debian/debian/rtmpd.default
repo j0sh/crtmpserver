@@ -1,0 +1,8 @@
+#!/bin/sh
+# Defaults for rtmpd initscript
+# sourced by /etc/init.d/rtmpd
+
+# Additional options that are passed to the Daemon.
+RTMPD_ENABLED=yes
+DAEMON_CONF=" /etc/rtmpd/rtmpserver.lua "
+DAEMON_OPTS=" --daemon "

@@ -1,0 +1,26 @@
+#!/bin/sh
+
+set -e
+
+USER="rtmpd"
+GROUP="$USER"
+HOME="/var/lib/rtmpd"
+
+if ! getent group $GROUP >/dev/null
+then
+    addgroup --system $GROUP >/dev/null
+fi
+
+if ! getent passwd $USER >/dev/null
+then
+    adduser \
+    --system \
+    --disabled-login \
+    --ingroup $GROUP \
+    --home $HOME \
+    --gecos "$USER server" \
+    --shell /bin/false \
+    $USER  >/dev/null
+fi
+
+#DEBHELPER#
