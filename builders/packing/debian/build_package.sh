@@ -158,14 +158,26 @@ done < $PATCHDIR/$PATCHLIST
 echo "************ Hit <ENTER> here *****************"
 cd $DEBPATH
 dh_make -c gpl3 -e jet@jet.kiev.ua -s -p rtmpd --createorig
-cd debian
+cd ../
+if [ ! -f "rtmpd_0.${SVERSION}.orig.tar.gz" ] 
+then
+	tar -czpf rtmpd_0.${SVERSION}.orig.tar.gz rtmpd-0.${SVERSION}.orig/*
+fi
+cd $DEBPATH/debian
 rm -f *.ex control copyright README.Debian README.source rtmpd.doc-base.EX
 cd $STARTPWD 
 cp -vf debian/* $DEBPATH/debian
+export CMAKE_VERBOSE_MAKEFILE=FALSE
 
 ############ Build debina package
 cd $DEBPATH
 dpkg-buildpackage -rfakeroot -us -uc
+R=$?
+if [ $R -ne 0 ] 
+then 
+	echo "Build failed"
+	exit $R
+fi
 
 echo " All done"
 echo "If no errors displayed you can easy install rtmpd via 'sudo dpkg -i rtmpd_0.${SVERSION}-1_`dpkg-architecture -qDEB_BUILD_ARCH_CPU | tr -d '\n'`.deb'"
