@@ -14,7 +14,8 @@ fi
 
 adduser --no-create-home --shell /bin/sh --disabled-password --gecos "C++ RTMP Server" crtmpserver
 for i in `find /opt/crtmpserver/applications -type d -name mediaFolder`; do chown -R crtmpserver:crtmpserver $i;done
-
+chmod 755 /etc/init.d/crtmpserver
+chown root:root /etc/init.d/crtmpserver
 exit $?
 
 
