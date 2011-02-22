@@ -698,6 +698,8 @@ bool ConfigFile::ConfigureApplication(Variant &node) {
 						OPEN_LIBRARY_ERROR);
 				return false;
 			}
+		} else {
+			_libDescriptor.libHandler = NULL;
 		}
 
 		if (node.HasKey(CONF_APPLICATION_ALIASES) && node[CONF_APPLICATION_ALIASES] != V_NULL) {
@@ -794,7 +796,9 @@ bool ConfigFile::ConfigureApplication(Variant &node) {
 
 		INFO("%s", STR(message));
 
-		ADD_VECTOR_END(_libraryHandlers, _libDescriptor.libHandler);
+		if (_libDescriptor.libHandler != NULL) {
+			ADD_VECTOR_END(_libraryHandlers, _libDescriptor.libHandler);
+		}
 
 		return true;
 	} else {
