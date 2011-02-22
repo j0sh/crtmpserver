@@ -53,6 +53,8 @@
 #include <vector>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <string.h>
+#include <stdarg.h>
 using namespace std;
 
 
