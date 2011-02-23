@@ -4,6 +4,8 @@ PROJECT(appselector)
 #make the list with all the source files
 FILE(GLOB_RECURSE SOURCES "../../../../sources/applications/appselector/src/*.cpp" )
 
+SET(CMAKE_INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/${CRTMPSERVER_ROOT}/${PROJECT_NAME}")
+
 #prepare the include directories
 INCLUDE_DIRECTORIES(
 	${OPENSSL_INCLUDE_PATH}
@@ -16,4 +18,5 @@ INCLUDE_DIRECTORIES(
 #create THE library
 ADD_LIBRARY(appselector SHARED ${SOURCES})
 TARGET_LINK_LIBRARIES(appselector thelib)
+INSTALL(TARGETS ${PROJECT_NAME} LIBRARY DESTINATION ${CRTMPSERVER_ROOT}/${PROJECT_NAME})
 

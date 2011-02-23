@@ -4,6 +4,8 @@ PROJECT(stresstest)
 #make the list with all the source files
 FILE(GLOB_RECURSE SOURCES "../../../../sources/applications/stresstest/src/*.cpp" )
 
+SET(CMAKE_INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/${CRTMPSERVER_ROOT}/${PROJECT_NAME}")
+
 #prepare the include directories
 INCLUDE_DIRECTORIES(
 	../../../../3rdparty/lua-dev
@@ -15,4 +17,5 @@ INCLUDE_DIRECTORIES(
 #create THE library
 ADD_LIBRARY(stresstest SHARED ${SOURCES})
 TARGET_LINK_LIBRARIES(stresstest thelib)
+INSTALL(TARGETS ${PROJECT_NAME} LIBRARY DESTINATION ${CRTMPSERVER_ROOT}/${PROJECT_NAME})
 
