@@ -26,7 +26,7 @@ test_package() {
 		echo "sudo apt-get install $1"
 		echo "***********************"
 		exit 1
-	fi                                                                                                                                                            
+	fi
 }
 
 copyProject() {

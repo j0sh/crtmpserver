@@ -29,7 +29,7 @@ RTMPD_ENABLED=no
 . /lib/init/vars.sh
 . /lib/lsb/init-functions
 
-UID=`getent passwd $RTMPDUSER | cut -d":" -f3`
+UID=$(getent passwd $RTMPDUSER | cut -d":" -f3)
 UID_ARG=" --uid=$UID "
 
 do_start()
