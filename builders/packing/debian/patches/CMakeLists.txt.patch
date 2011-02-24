@@ -1,6 +1,6 @@
 --- CMakeLists.txt.orig	2011-02-21 15:44:33.990593316 +0200
 +++ CMakeLists.txt	2011-02-21 15:43:42.426592369 +0200
-@@ -126,12 +126,12 @@
+@@ -137,12 +137,12 @@
  #SET(CMAKE_VERBOSE_MAKEFILE TRUE)
  
  #generate defines.h
@@ -17,7 +17,7 @@
  
  
  #ADD_DEFINITIONS(-DHAS_SAFE_LOGGER)
-@@ -143,7 +143,7 @@
+@@ -154,7 +154,7 @@
  #ADD_SUBDIRECTORY(androidapplestreaming androidapplestreaming)
  
  ADD_DEFINITIONS(-DVM_LUA)

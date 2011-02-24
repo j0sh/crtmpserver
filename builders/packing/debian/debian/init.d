@@ -1,6 +1,6 @@
 #!/bin/sh
 ### BEGIN INIT INFO
-# Provides:          rtmpd
+# Provides:          crtmpserver
 # Required-Start:    $network $local_fs
 # Required-Stop:
 # Default-Start:     2 3 4 5
@@ -13,14 +13,14 @@
 
 PATH=/sbin:/usr/sbin:/bin:/usr/bin
 DESC="C++ RTMP Server"
-NAME=rtmpd
-DAEMON=/usr/bin/rtmpd
+NAME=crtmpserver
+DAEMON=/usr/sbin/crtmpserver
 DAEMON_ARGS=" --daemon "
-DAEMON_CONF="/etc/rtmpd/rtmpserver.lua"
+DAEMON_CONF="/etc/crtmpserver/rtmpserver.lua"
+DAEMON_USER=crtmpserver
 PIDFILE=/var/run/$NAME.pid
 SCRIPTNAME=/etc/init.d/$NAME
-RTMPDUSER=rtmpd
-RTMPD_ENABLED=no
+ENABLED=no
 
 [ -x $DAEMON ] || exit 0
 
@@ -29,7 +29,7 @@ RTMPD_ENABLED=no
 . /lib/init/vars.sh
 . /lib/lsb/init-functions
 
-UID=$(getent passwd $RTMPDUSER | cut -d":" -f3)
+UID=$(getent passwd ${DAEMON_USER} | cut -d":" -f3)
 UID_ARG=" --uid=$UID "
 
 do_start()

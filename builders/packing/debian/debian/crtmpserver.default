@@ -3,6 +3,7 @@
 # sourced by /etc/init.d/rtmpd
 
 # Additional options that are passed to the Daemon.
-RTMPD_ENABLED=yes
-DAEMON_CONF=" /etc/rtmpd/rtmpserver.lua "
+ENABLED=yes
+DAEMON_CONF=" /etc/crtmpserver/rtmpserver.lua "
 DAEMON_OPTS=" --daemon "
+DAEMON_USER=crtmpserver

@@ -1,11 +1,13 @@
 --- ./flvplayback/CMakeLists.txt.orig	2011-02-21 17:14:43.531092850 +0200
 +++ ./flvplayback/CMakeLists.txt	2011-02-11 15:36:21.000000000 +0200
-@@ -2,18 +2,19 @@
+@@ -2,17 +2,17 @@
  PROJECT(flvplayback)
  
  #make the list with all the source files
 -FILE(GLOB_RECURSE SOURCES "../../../../sources/applications/flvplayback/src/*.cpp" )
 +FILE(GLOB_RECURSE SOURCES "src/*.cpp" )
+ 
+ SET(CMAKE_INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/${CRTMPSERVER_ROOT}/${PROJECT_NAME}")
  
  #prepare the include directories
  INCLUDE_DIRECTORIES(
@@ -21,7 +23,3 @@
  	)
  
  #create THE library
- ADD_LIBRARY(flvplayback SHARED ${SOURCES})
- TARGET_LINK_LIBRARIES(flvplayback thelib)
- 
-+INSTALL(TARGETS flvplayback LIBRARY DESTINATION lib/rtmpd)

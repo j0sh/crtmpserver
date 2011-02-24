@@ -1,4 +1,4 @@
 #!/bin/sh
 
-rm -rf rtmpd* *.log
+rm -rf crtmp* *.log
  

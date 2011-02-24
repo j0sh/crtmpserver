@@ -1,0 +1,20 @@
+#!/bin/sh
+
+set -e
+
+USER="crtmpserver"
+GROUP="$USER"
+
+chown $USER:$GROUP /var/lib/crtmpserver
+chown $USER:$GROUP /var/log/crtmpserver
+
+if [ -x "/etc/init.d/crtmpserver" ]; then
+	update-rc.d crtmpserver defaults >/dev/null
+	if [ -x "`which invoke-rc.d 2>/dev/null`" ]; then
+		invoke-rc.d crtmpserver start || exit $?
+	else
+		/etc/init.d/crtmpserver start || exit $?
+	fi
+fi
+
+#DEBHELPER# 

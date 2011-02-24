@@ -1,8 +1,8 @@
 #!/bin/sh
 
 SVNPATH="https://rtmpd.com/crtmpserver/trunk"
-ORIGPATH="rtmpd-original"
-DEBPATH="rtmpd-`date +%Y%m%d`"
+ORIGPATH="crtmpserver-original"
+DEBPATH="crtmpserver-`date +%Y%m%d`"
 LOGFILE="install.log"
 APPS="admin applestreamingclient appselector flvplayback proxypublish samplefactory stresstest vptests"
 PATCHDIR="patches"
@@ -87,7 +87,7 @@ else
 fi
 
 SVERSION=`svnversion -n ${ORIGPATH}/sources`
-DEBPATH="rtmpd-0.${SVERSION}"
+DEBPATH="crtmpserver-0.${SVERSION}"
 
 echo "Build debian structures"
 if [ -d $DEBPATH ]
@@ -149,25 +149,26 @@ done
 echo "Patching files"
 while read pfile fpatch
 do
-	echo -n " ...$pfile"
-	patch "$DEBPATH/$pfile" "$PATCHDIR/$fpatch" > /dev/null
-	echo "...done"
+	if ! expr $pfile : "^#">/dev/null
+	then
+		echo -n " ..."
+		patch "$DEBPATH/$pfile" "$PATCHDIR/$fpatch" 
+	fi
 done < $PATCHDIR/$PATCHLIST
 
 ############ Prepare debian sources
 echo "************ Hit <ENTER> here *****************"
 cd $DEBPATH
-dh_make -c gpl3 -e jet@jet.kiev.ua -s -p rtmpd --createorig
+dh_make -c gpl3 -e jet@jet.kiev.ua -s -p crtmpserver --createorig
 cd ../
-if [ ! -f "rtmpd_0.${SVERSION}.orig.tar.gz" ] 
+if [ ! -f "crtmpserver_0.${SVERSION}.orig.tar.gz" ] 
 then
-	tar -czpf rtmpd_0.${SVERSION}.orig.tar.gz rtmpd-0.${SVERSION}.orig/*
+	tar -czpf crtmpserver_0.${SVERSION}.orig.tar.gz crtmpserver-0.${SVERSION}.orig/*
 fi
 cd $DEBPATH/debian
-rm -f *.ex control copyright README.Debian README.source rtmpd.doc-base.EX
+rm -f *.ex control copyright README.Debian README.source crtmpserver.doc-base.EX
 cd $STARTPWD 
 cp -vf debian/* $DEBPATH/debian
-echo "DEB_CMAKE_NORMAL_ARGS ?= -DCMAKE_VERBOSE_MAKEFILE=FALSE" >> $DEBPATH/debian/rules
 
 ############ Build debian package
 cd $DEBPATH
@@ -179,10 +180,11 @@ then
 	exit $R
 fi
 
+echo
 echo "********************************************************************"
 echo "All done!!!"
-echo "You can easy install rtmpd via 'sudo dpkg -i rtmpd_0.${SVERSION}-1_`dpkg-architecture -qDEB_BUILD_ARCH_CPU | tr -d '\n'`.deb'"
-echo "After this you can run rtmpd directly or via init script"
+echo "You can easy install crtmpserver via 'sudo dpkg -i crtmpserver_0.${SVERSION}-1_`dpkg-architecture -qDEB_BUILD_ARCH_CPU | tr -d '\n'`.deb'"
+echo "After this you can run crtmpserver directly or via init script"
 echo
 echo "All errors and wishes please sent me to e-mail: jet@jet.kiev.ua or"
 echo "report via Google group(http://groups.google.com/group/c-rtmp-server/topics)"

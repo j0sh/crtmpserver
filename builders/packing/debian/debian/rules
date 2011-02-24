@@ -1,0 +1,14 @@
+#!/usr/bin/make -f
+
+#export DH_VERBOSE=1
+
+DEB_BUILDDIR = obj-$(DEB_BUILD_GNU_TYPE)
+
+%:
+	dh $@ 
+
+override_dh_auto_configure:
+	mkdir -p $(DEB_BUILDDIR)
+	cd $(DEB_BUILDDIR) && cmake .. -DCRTMPSERVER_INSTALL_PREFIX=/usr -DCMAKE_VERBOSE_MAKEFILE=OFF
+
+

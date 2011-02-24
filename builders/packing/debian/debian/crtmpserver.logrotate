@@ -1,0 +1,13 @@
+/var/log/crtmpserver/*.log {
+	daily
+	missingok
+	rotate 52
+	compress
+	delaycompress
+	notifempty
+	create 640 crtmpserver adm
+	sharedscripts
+	postrotate
+		[ ! -f /var/run/crtmpserver.pid ] || kill -USR1 `cat /var/run/crtmpserver.pid`
+	endscript
+}

@@ -2,9 +2,9 @@
 
 set -e
 
-USER="rtmpd"
+USER="crtmpserver"
 GROUP="$USER"
-HOME="/var/lib/rtmpd"
+HOME="/var/lib/crtmpserver"
 
 if ! getent group $GROUP >/dev/null
 then
@@ -18,7 +18,7 @@ then
     --disabled-login \
     --ingroup $GROUP \
     --home $HOME \
-    --gecos "$USER server" \
+    --gecos "$USER" \
     --shell /bin/false \
     $USER  >/dev/null
 fi

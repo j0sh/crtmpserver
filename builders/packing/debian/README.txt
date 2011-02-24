@@ -8,7 +8,7 @@ Content:
 ================================================================================
   This is packing tool. It can create valid debian package for debian-based OS 
 (Debian, Ubuntu and so on). As result, after building you got single file named
-rtmpd-<VERSION>_<ARCH>.deb. This file(package) can be easy installed. 
+crtmpserver-<VERSION>_<ARCH>.deb. This file(package) can be easy installed. 
 
 
 2. How I can build package ?
@@ -22,11 +22,11 @@ clean this directory without any question. So do not forget to copy package.
 ================================================================================
   To install package you need system administrator privileges. Command is next:
 
-	dpkg -i rtmpd-<VERSION>_<ARCH>.deb
+	dpkg -i crtmpserver-<VERSION>_<ARCH>.deb
 
-After this RTMPD will be installed in yout system. To remove RTMPD run next:
+After this crtmpserver will be installed in yout system. To remove crtmpserver run next:
 
-	dpkg -P rtmpd
+	dpkg -P crtmpserver
 
 4. How I can build package using existing sources with my applications ?
 ================================================================================
