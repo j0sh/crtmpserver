@@ -149,7 +149,7 @@ ENDIF(EXISTS ../../sources/common/include/defines.h)
 ADD_SUBDIRECTORY(lua lua)
 ADD_SUBDIRECTORY(common common)
 ADD_SUBDIRECTORY(thelib thelib)
-ADD_SUBDIRECTORY(rtmpserver rtmpserver)
+ADD_SUBDIRECTORY(crtmpserver crtmpserver)
 ADD_SUBDIRECTORY(applications applications)
 #ADD_SUBDIRECTORY(androidapplestreaming androidapplestreaming)
 

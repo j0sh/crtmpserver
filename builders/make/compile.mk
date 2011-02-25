@@ -1,25 +1,23 @@
 #  Copyright (c) 2010,
 #  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
 #
-#  This file is part of crtmpserver.
-#  crtmpserver is free software: you can redistribute it and/or modify
+#  This file is part of ccrtmpserver.
+#  ccrtmpserver is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
 #  the Free Software Foundation, either version 3 of the License, or
 #  (at your option) any later version.
 #
-#  crtmpserver is distributed in the hope that it will be useful,
+#  ccrtmpserver is distributed in the hope that it will be useful,
 #  but WITHOUT ANY WARRANTY; without even the implied warranty of
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #  GNU General Public License for more details.
 #
 #  You should have received a copy of the GNU General Public License
-#  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
+#  along with ccrtmpserver.  If not, see <http://www.gnu.org/licenses/>.
 
 #toolchain paths
-CC=$(TOOLCHAIN_BASE)$(TOOLCHAIN_PREFIX)gcc
-CXX=$(TOOLCHAIN_BASE)$(TOOLCHAIN_PREFIX)g++
-AR=$(TOOLCHAIN_BASE)$(TOOLCHAIN_PREFIX)ar
-STRIP=$(TOOLCHAIN_BASE)$(TOOLCHAIN_PREFIX)strip
+CCOMPILER?=$(TOOLCHAIN_BASE)$(TOOLCHAIN_PREFIX)gcc
+CXXCOMPILER?=$(TOOLCHAIN_BASE)$(TOOLCHAIN_PREFIX)g++
 
 #output settings
 OUTPUT_BASE = ./output
@@ -81,82 +79,67 @@ TESTS_LIBS=$(THELIB_LIBS) -L$(OUTPUT_DYNAMIC) -lthelib
 TESTS_SRCS=$(shell find $(PROJECT_BASE_PATH)/sources/tests/src -type f -name "*.cpp")
 TESTS_OBJS=$(TESTS_SRCS:.cpp=.tests.o)
 
-#rtmpserver
-RTMPSERVER_INCLUDE=$(THELIB_INCLUDE) -I$(PROJECT_BASE_PATH)/sources/rtmpserver/include
-RTMPSERVER_LIBS=$(THELIB_LIBS) -L$(OUTPUT_DYNAMIC) -lthelib
-RTMPSERVER_SRCS=$(shell find $(PROJECT_BASE_PATH)/sources/rtmpserver/src -type f -name "*.cpp")
-RTMPSERVER_OBJS_DYNAMIC=$(RTMPSERVER_SRCS:.cpp=.rtmpserver_dynamic.o)
-RTMPSERVER_OBJS_STATIC=$(RTMPSERVER_SRCS:.cpp=.rtmpserver_static.o)
+#crtmpserver
+CRTMPSERVER_INCLUDE=$(THELIB_INCLUDE) -I$(PROJECT_BASE_PATH)/sources/crtmpserver/include
+CRTMPSERVER_LIBS=$(THELIB_LIBS) -L$(OUTPUT_DYNAMIC) -lthelib
+CRTMPSERVER_SRCS=$(shell find $(PROJECT_BASE_PATH)/sources/crtmpserver/src -type f -name "*.cpp")
+CRTMPSERVER_OBJS_DYNAMIC=$(CRTMPSERVER_SRCS:.cpp=.crtmpserver_dynamic.o)
+CRTMPSERVER_OBJS_STATIC=$(CRTMPSERVER_SRCS:.cpp=.crtmpserver_static.o)
 
 #targets
-all: create_output_dirs lua common thelib applications tests rtmpserver
-	@echo ----------- DONE!!!
+all: create_output_dirs lua common thelib applications tests crtmpserver
 
 include apps.mk
 
 create_output_dirs:
-	@echo ----------- Creating output directory
 	@mkdir -p $(OUTPUT_STATIC)
 	@mkdir -p $(OUTPUT_DYNAMIC)
-	@echo -----------
 
 lua: create_output_dirs $(LUA_OBJS)
-	@echo ----------- linking shared lua
-	$(CC) -shared -o $(call dynamic_lib_name,lua,) $(call dynamic_lib_flags,lua) $(LUA_OBJS)
-	@echo -----------
+	$(CCOMPILER) -shared -o $(call dynamic_lib_name,lua,) $(call dynamic_lib_flags,lua) $(LUA_OBJS)
 
 %.lua.o: %.c
-	$(CC) $(COMPILE_FLAGS) -c $< -o $@
+	$(CCOMPILER) $(COMPILE_FLAGS) -c $< -o $@
 	
 common: lua $(COMMON_OBJS)
-	@echo ----------- linking shared common
-	$(CXX) -shared $(COMMON_LIBS) -o $(call dynamic_lib_name,common,) $(call dynamic_lib_flags,common) $(COMMON_OBJS)
-	@echo -----------
+	$(CXXCOMPILER) -shared $(COMMON_LIBS) -o $(call dynamic_lib_name,common,) $(call dynamic_lib_flags,common) $(COMMON_OBJS)
 
 %.common.o: %.cpp
-	$(CXX) $(COMPILE_FLAGS) $(DEFINES) $(COMMON_INCLUDE) -c $< -o $@
+	$(CXXCOMPILER) $(COMPILE_FLAGS) $(DEFINES) $(COMMON_INCLUDE) -c $< -o $@
 
 thelib: common $(THELIB_OBJS)
-	@echo ----------- linking shared thelib
-	$(CXX) -shared $(THELIB_LIBS) -o $(call dynamic_lib_name,thelib,) $(call dynamic_lib_flags,thelib) $(THELIB_OBJS)
-	@echo -----------
+	$(CXXCOMPILER) -shared $(THELIB_LIBS) -o $(call dynamic_lib_name,thelib,) $(call dynamic_lib_flags,thelib) $(THELIB_OBJS)
 
 %.thelib.o: %.cpp
-	$(CXX) $(COMPILE_FLAGS) $(DEFINES) $(THELIB_INCLUDE) -c $< -o $@
+	$(CXXCOMPILER) $(COMPILE_FLAGS) $(DEFINES) $(THELIB_INCLUDE) -c $< -o $@
 
 tests: thelib $(TESTS_OBJS)
-	@echo ----------- linking dynamic tests
-	$(CXX)  $(TESTS_LIBS) -o $(call dynamic_exec_name,tests,) $(call dynamic_exec_flags,tests) $(TESTS_OBJS)
-	@echo ----------- linking static tests
-	$(CXX)  $(SSL_LIB) -o $(call static_exec_name,tests) $(call static_exec_flags,tests) \
+	$(CXXCOMPILER)  $(TESTS_LIBS) -o $(call dynamic_exec_name,tests,) $(call dynamic_exec_flags,tests) $(TESTS_OBJS)
+	$(CXXCOMPILER)  $(SSL_LIB) -o $(call static_exec_name,tests) $(call static_exec_flags,tests) \
 		$(TESTS_OBJS) \
 		$(LUA_OBJS) \
 		$(COMMON_OBJS) \
 		$(THELIB_OBJS)
-	@echo -----------
 
 %.tests.o: %.cpp
-	$(CXX) $(COMPILE_FLAGS) $(DEFINES) $(TESTS_INCLUDE) -c $< -o $@
+	$(CXXCOMPILER) $(COMPILE_FLAGS) $(DEFINES) $(TESTS_INCLUDE) -c $< -o $@
 
-rtmpserver: applications $(RTMPSERVER_OBJS_DYNAMIC) $(RTMPSERVER_OBJS_STATIC)
-	@echo ----------- linking dynamic rtmpserver
-	$(CXX) $(RTMPSERVER_LIBS) -o $(call dynamic_exec_name,rtmpserver,) $(call dynamic_exec_flags,rtmpserver) $(RTMPSERVER_OBJS_DYNAMIC)
-	@echo ----------- linking static rtmpserver
-	$(CXX) $(SSL_LIB) -o $(call static_exec_name,rtmpserver,) $(call static_exec_flags,rtmpserver) \
-		$(RTMPSERVER_OBJS_STATIC) \
+crtmpserver: applications $(CRTMPSERVER_OBJS_DYNAMIC) $(CRTMPSERVER_OBJS_STATIC)
+	$(CXXCOMPILER) $(CRTMPSERVER_LIBS) -o $(call dynamic_exec_name,crtmpserver,) $(call dynamic_exec_flags,crtmpserver) $(CRTMPSERVER_OBJS_DYNAMIC)
+	$(CXXCOMPILER) $(SSL_LIB) -o $(call static_exec_name,crtmpserver,) $(call static_exec_flags,crtmpserver) \
+		$(CRTMPSERVER_OBJS_STATIC) \
 		$(LUA_OBJS) \
 		$(COMMON_OBJS) \
 		$(THELIB_OBJS) \
 		$(ALL_APPS_OBJS)
-	@cp $(PROJECT_BASE_PATH)/builders/cmake/rtmpserver/rtmpserver.lua $(OUTPUT_DYNAMIC)
-	@cp $(PROJECT_BASE_PATH)/builders/cmake/rtmpserver/rtmpserver.lua $(OUTPUT_STATIC)
-	@echo -----------
+	@cp $(PROJECT_BASE_PATH)/builders/cmake/crtmpserver/crtmpserver.lua $(OUTPUT_DYNAMIC)
+	@cp $(PROJECT_BASE_PATH)/builders/cmake/crtmpserver/crtmpserver.lua $(OUTPUT_STATIC)
 
-%.rtmpserver_dynamic.o: %.cpp
-	$(CXX) $(COMPILE_FLAGS) $(DEFINES) $(RTMPSERVER_INCLUDE) -c $< -o $@
+%.crtmpserver_dynamic.o: %.cpp
+	$(CXXCOMPILER) $(COMPILE_FLAGS) $(DEFINES) $(CRTMPSERVER_INCLUDE) -c $< -o $@
 
-%.rtmpserver_static.o: %.cpp
-	$(CXX) $(COMPILE_FLAGS) -DCOMPILE_STATIC $(ACTIVE_APPS) $(DEFINES) $(RTMPSERVER_INCLUDE) -c $< -o $@
+%.crtmpserver_static.o: %.cpp
+	$(CXXCOMPILER) $(COMPILE_FLAGS) -DCOMPILE_STATIC $(ACTIVE_APPS) $(DEFINES) $(CRTMPSERVER_INCLUDE) -c $< -o $@
 
 clean:
 	@rm -rfv $(OUTPUT_BASE)
