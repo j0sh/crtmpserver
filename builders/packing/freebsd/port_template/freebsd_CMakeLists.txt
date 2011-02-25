@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 2.6)
+PROJECT(freebsd)
+
+INSTALL(FILES ../crtmpserver/crtmpserver.lua DESTINATION etc RENAME crtmpserver.lua.sample)
+INSTALL(FILES ../../../man/crtmpserver.1 DESTINATION man/man1)
+
