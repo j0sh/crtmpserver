@@ -49,7 +49,7 @@ configuration=
 			type="file",
 			level=6,
 			-- the file where the log messages are going to land
-			fileName="/tmp/rtmpserver.log"
+			fileName="/tmp/crtmpserver.log"
 		}
 	},
 	
