@@ -10,6 +10,8 @@
 # Environment
 MKDIR=mkdir
 CP=cp
+GREP=grep
+NM=nm
 CCADMIN=CCadmin
 RANLIB=ranlib
 CC=gcc
@@ -31,7 +33,8 @@ OBJECTDIR=build/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
-	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/sources/rtmpserver/src/rtmpserver.o
+	${OBJECTDIR}/_ext/802483657/crtmpserver.o
+
 
 # C Compiler Flags
 CFLAGS=
@@ -51,7 +54,7 @@ LDLIBSOPTIONS=-L../common/dist/Release/GNU-MacOSX -lcommon -L../thelib/../Releas
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	${MAKE}  -f nbproject/Makefile-Release.mk ../Release/GNU-MacOSX/rtmpserver
+	"${MAKE}"  -f nbproject/Makefile-Release.mk ../Release/GNU-MacOSX/rtmpserver
 
 ../Release/GNU-MacOSX/rtmpserver: ../common/dist/Release/GNU-MacOSX/libcommon.dylib
 
@@ -61,10 +64,10 @@ LDLIBSOPTIONS=-L../common/dist/Release/GNU-MacOSX -lcommon -L../thelib/../Releas
 	${MKDIR} -p ../Release/GNU-MacOSX
 	${LINK.cc} -L/opt/local/lib -llua -o ../${CND_CONF}/${CND_PLATFORM}/rtmpserver ${OBJECTFILES} ${LDLIBSOPTIONS} 
 
-${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/sources/rtmpserver/src/rtmpserver.o: nbproject/Makefile-${CND_CONF}.mk ../../../../sources/rtmpserver/src/rtmpserver.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/sources/rtmpserver/src
+${OBJECTDIR}/_ext/802483657/crtmpserver.o: ../../../../sources/crtmpserver/src/crtmpserver.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/802483657
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/sources/rtmpserver/src/rtmpserver.o ../../../../sources/rtmpserver/src/rtmpserver.cpp
+	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/802483657/crtmpserver.o ../../../../sources/crtmpserver/src/crtmpserver.cpp
 
 # Subprojects
 .build-subprojects:
