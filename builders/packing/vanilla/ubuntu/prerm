@@ -1,7 +1,0 @@
-#!/bin/sh
-
-#kill'em all
-killall -9 rtmpserver
-
-exit 0
-
