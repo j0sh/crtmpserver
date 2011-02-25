@@ -59,7 +59,7 @@ echo "Done"
 #zip and upload
 echo -n "Create $PORT_VERSIONED_NAME.tar.gz and upload it... "
 (cd $OUTPUT_DIR; tar -czf $PORT_VERSIONED_NAME.tar.gz $PORT_VERSIONED_NAME/)
-scp $OUTPUT_DIR/$PORT_VERSIONED_NAME.tar.gz root@rtmpd.com:/usr/local/www/freebsd.rtmpd.com/
+scp $OUTPUT_DIR/$PORT_VERSIONED_NAME.tar.gz $1
 echo "Done"
 
 #Create the Makefile
