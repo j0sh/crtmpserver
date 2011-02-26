@@ -156,9 +156,9 @@ do
 	fi
 done < $PATCHDIR/$PATCHLIST
 
-############ Change pathes
-echo "Fix pathes"
-find ${DEBPATH} -name CMakeLists.txt -type f -exec sed -r -i -f fix_pathes.sed {} \;
+############ Change paths
+echo "Fix paths"
+find ${DEBPATH} -name CMakeLists.txt -type f -exec sed -r -i -f fix_paths.sed {} \;
 
 ############ Prepare debian sources
 echo "************ Hit <ENTER> here *****************"
