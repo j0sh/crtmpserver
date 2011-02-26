@@ -86,8 +86,8 @@ else
 	fi
 fi
 
-SVERSION=`svnversion -n ${ORIGPATH}/sources`
-DEBPATH="crtmpserver-0.${SVERSION}"
+SVER="0.`svnversion -n ${ORIGPATH}/sources`"
+DEBPATH="crtmpserver-${SVER}"
 
 echo "Build debian structures"
 if [ -d $DEBPATH ]
@@ -131,9 +131,9 @@ echo "Processing thelib"
 copyProject "thelib"
 
 ############# rtmpserver
-echo "Processing rtmpserver"
-copyProject "rtmpserver"
-cp $ORIGPATH/builders/cmake/rtmpserver/rtmpserver.lua $DEBPATH/rtmpserver
+echo "Processing crtmpserver"
+copyProject "crtmpserver"
+cp $ORIGPATH/builders/cmake/crtmpserver/crtmpserver.lua $DEBPATH/crtmpserver
 
 ############ applications ##################
 echo "Processing applications"
@@ -156,23 +156,29 @@ do
 	fi
 done < $PATCHDIR/$PATCHLIST
 
+############ Change pathes
+echo "Fix pathes"
+find ${DEBPATH} -name CMakeLists.txt -type f -exec sed -r -i -f fix_pathes.sed {} \;
+
 ############ Prepare debian sources
 echo "************ Hit <ENTER> here *****************"
 cd $DEBPATH
 dh_make -c gpl3 -e jet@jet.kiev.ua -s -p crtmpserver --createorig
 cd ../
-if [ ! -f "crtmpserver_0.${SVERSION}.orig.tar.gz" ] 
+if [ ! -f "crtmpserver_${SVER}.orig.tar.gz" ] 
 then
-	tar -czpf crtmpserver_0.${SVERSION}.orig.tar.gz crtmpserver-0.${SVERSION}.orig/*
+	tar -czpf crtmpserver_${SVER}.orig.tar.gz crtmpserver-${SVER}.orig/*
 fi
 cd $DEBPATH/debian
 rm -f *.ex control copyright README.Debian README.source crtmpserver.doc-base.EX
 cd $STARTPWD 
 cp -vf debian/* $DEBPATH/debian
+cp -vf $ORIGPATH/man/crtmpserver.1 $DEBPATH/debian
 
 ############ Build debian package
 cd $DEBPATH
-dpkg-buildpackage -rfakeroot -us -uc
+export SVER
+dpkg-buildpackage -rfakeroot -us -uc -b
 R=$?
 if [ $R -ne 0 ] 
 then 
@@ -183,7 +189,7 @@ fi
 echo
 echo "********************************************************************"
 echo "All done!!!"
-echo "You can easy install crtmpserver via 'sudo dpkg -i crtmpserver_0.${SVERSION}-1_`dpkg-architecture -qDEB_BUILD_ARCH_CPU | tr -d '\n'`.deb'"
+echo "You can easy install crtmpserver via 'sudo dpkg -i crtmpserver_${SVER}-1_`dpkg-architecture -qDEB_BUILD_ARCH_CPU | tr -d '\n'`.deb'"
 echo "After this you can run crtmpserver directly or via init script"
 echo
 echo "All errors and wishes please sent me to e-mail: jet@jet.kiev.ua or"

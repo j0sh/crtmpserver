@@ -4,6 +4,6 @@
 
 # Additional options that are passed to the Daemon.
 ENABLED=yes
-DAEMON_CONF=" /etc/crtmpserver/rtmpserver.lua "
+DAEMON_CONF=" /etc/crtmpserver/crtmpserver.lua "
 DAEMON_OPTS=" --daemon "
 DAEMON_USER=crtmpserver
