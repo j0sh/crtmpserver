@@ -56,7 +56,7 @@ do_stop()
 	RETVAL="$?"
 	[ "$RETVAL" = 2 ] && return 2
 
-	start-stop-daemon --stop --quiet --oknodo --retry=0/30/KILL/5 --exec $DAEMON
+	start-stop-daemon --stop --quiet --oknodo --retry=INT/30/KILL/5 --exec $DAEMON
 	[ "$?" = 2 ] && return 2
 
 	rm -f $PIDFILE
