@@ -133,7 +133,9 @@ bool parseURI(string stringUri, URI &uri) {
 
 	uri.documentPath = "/";
 	for (uint32_t i = 3; i < components.size() - 1; i++) {
-		uri.documentPath += components[i] + "/";
+		uri.documentPath += components[i];
+		if (i != components.size() - 2)
+			uri.documentPath += "/";
 	}
 	LOG_URI_SPLIT("uri.documentPath: %s", STR(uri.documentPath));
 

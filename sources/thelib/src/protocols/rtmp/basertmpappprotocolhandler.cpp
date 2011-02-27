@@ -943,6 +943,15 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokeOnStatus(BaseRTMPProtocol *pFrom,
 			FATAL("Unable to create stream");
 			return false;
 		}
+
+		map<uint32_t, BaseOutStream *> waitingSubscribers =
+				GetApplication()->GetStreamsManager()->GetWaitingSubscribers(
+				pStream->GetName(),
+				pStream->GetType());
+
+		FOR_MAP(waitingSubscribers, uint32_t, BaseOutStream *, i) {
+			pStream->Link(MAP_VAL(i));
+		}
 	} else {
 		if (M_INVOKE_PARAM(request, 1)["code"] != "NetStream.Publish.Start") {
 			WARN("onStatus message ignored:\n%s", STR(request.ToString()));
@@ -1841,14 +1850,12 @@ bool BaseRTMPAppProtocolHandler::ConnectForPullPush(BaseRTMPProtocol *pFrom,
 	}
 
 	//2. get the application name
-	string appName = uri.document;
+	string appName = uri.documentPath;
+	if (appName == "/")
+		appName = uri.document;
 	if (appName != "") {
 		if (appName[0] == '/')
 			appName = appName.substr(1, appName.size() - 1);
-	}
-	if (appName != "") {
-		if (appName[appName.size() - 1] == '/')
-			appName = appName.substr(0, appName.size() - 1);
 	}
 	if (appName == "") {
 		FATAL("Invalid uri: %s", STR(uri.fullUri));
