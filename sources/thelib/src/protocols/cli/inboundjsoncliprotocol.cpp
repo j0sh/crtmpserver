@@ -128,6 +128,7 @@ bool InboundJSONCLIProtocol::ParseCommand(string &command) {
 
 	//3. Append "cmd=" in front of the command
 	command = "cmd=" + command;
+	INFO("command: `%s`",STR(command));
 
 	//4. create the map
 	map<string, string> rawMap = mapping(command, " ", "=", true);
