@@ -17,12 +17,12 @@ ENDIF(CMAKE_SYSTEM_NAME MATCHES "FreeBSD" OR CMAKE_SYSTEM_NAME MATCHES "OpenBSD"
 
 
 #make the list with all the source files
-FILE(GLOB_RECURSE SOURCES "../../../3rdparty/lua-dev/*.c" )
+FILE(GLOB_RECURSE SOURCES "${CRTMPSERVER_3RDPARTY_ROOT}/lua-dev/*.c" )
 
 #prepare the include directories
 INCLUDE_DIRECTORIES(
-	../../../3rdparty/lua-dev/
-	)
+	${LUA_INCLUDE_PATH}
+)
 
 #create THE library
 ADD_LIBRARY(lua SHARED ${SOURCES})

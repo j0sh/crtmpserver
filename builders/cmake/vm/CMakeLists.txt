@@ -2,15 +2,15 @@ cmake_minimum_required(VERSION 2.6)
 PROJECT(vm)
 
 #make the list with all the source files
-FILE(GLOB_RECURSE SOURCES "../../../sources/vm/src/*.cpp" )
+FILE(GLOB_RECURSE SOURCES "${CRTMPSERVER_SOURCES_ROOT}/vm/src/*.cpp" )
 
 #prepare the include directories
 INCLUDE_DIRECTORIES(
 	${OPENSSL_INCLUDE_PATH}
 	${V8_INCLUDE_PATH}
-	../../../3rdparty/lua-dev
-	../../../sources/common/include
-	../../../sources/vm/include
+	${LUA_INCLUDE_PATH}
+	${CRTMPSERVER_SOURCES_ROOT}/common/include
+	${CRTMPSERVER_SOURCES_ROOT}/vm/include
 	)
 
 

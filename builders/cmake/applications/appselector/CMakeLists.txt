@@ -2,17 +2,17 @@ cmake_minimum_required(VERSION 2.6)
 PROJECT(appselector)
 
 #make the list with all the source files
-FILE(GLOB_RECURSE SOURCES "../../../../sources/applications/appselector/src/*.cpp" )
+FILE(GLOB_RECURSE SOURCES "${CRTMPSERVER_SOURCES_ROOT}/applications/appselector/src/*.cpp" )
 
 SET(CMAKE_INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/${CRTMPSERVER_ROOT}/${PROJECT_NAME}")
 
 #prepare the include directories
 INCLUDE_DIRECTORIES(
 	${OPENSSL_INCLUDE_PATH}
-	../../../../3rdparty/lua-dev
-	../../../../sources/common/include
-	../../../../sources/thelib/include
-	../../../../sources/applications/appselector/include
+	${LUA_INCLUDE_PATH}
+	${CRTMPSERVER_SOURCES_ROOT}/common/include
+	${CRTMPSERVER_SOURCES_ROOT}/thelib/include
+	${CRTMPSERVER_SOURCES_ROOT}/applications/appselector/include
 	)
 
 #create THE library

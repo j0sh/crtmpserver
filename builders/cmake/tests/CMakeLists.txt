@@ -2,15 +2,15 @@ cmake_minimum_required(VERSION 2.6.3)
 PROJECT(tests)
 
 #make the list with all the source files
-FILE(GLOB_RECURSE SOURCES "../../../sources/tests/src/*.cpp" )
+FILE(GLOB_RECURSE SOURCES "${CRTMPSERVER_SOURCES_ROOT}/tests/src/*.cpp" )
 
 
 INCLUDE_DIRECTORIES(
 	${OPENSSL_INCLUDE_PATH}
-	../../../3rdparty/lua-dev
-	../../../sources/common/include
-	../../../sources/thelib/include
-	../../../sources/tests/include
+	${LUA_INCLUDE_PATH}
+	${CRTMPSERVER_SOURCES_ROOT}/common/include
+	${CRTMPSERVER_SOURCES_ROOT}/thelib/include
+	${CRTMPSERVER_SOURCES_ROOT}/tests/include
 )
 
 ADD_EXECUTABLE(tests  ${SOURCES})

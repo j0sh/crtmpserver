@@ -25,7 +25,7 @@ MACRO(ADD_PRECOMPILED_HEADER _targetName _input )
 	GET_FILENAME_COMPONENT(_name ${_input} NAME)
 
 	#locate the file
-	SET(_source "${CMAKE_CURRENT_SOURCE_DIR}/${_input}")
+	SET(_source "${_input}")
 	
 	#compute the output directory
 	SET(_outdir "${CMAKE_CURRENT_BINARY_DIR}/${_name}.gch")

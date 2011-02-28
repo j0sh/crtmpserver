@@ -2,15 +2,15 @@ cmake_minimum_required(VERSION 2.6.3)
 PROJECT(trafficdissector)
 
 #make the list with all the source files
-FILE(GLOB_RECURSE SOURCES "../../../sources/trafficdissector/src/*.cpp" )
+FILE(GLOB_RECURSE SOURCES "${CRTMPSERVER_SOURCES_ROOT}/trafficdissector/src/*.cpp" )
 
 
 INCLUDE_DIRECTORIES(
 	${OPENSSL_INCLUDE_PATH}
-	../../../3rdparty/lua-dev
-	../../../sources/common/include
-	../../../sources/thelib/include
-	../../../sources/trafficdissector/include
+	${LUA_INCLUDE_PATH}
+	${CRTMPSERVER_SOURCES_ROOT}/common/include
+	${CRTMPSERVER_SOURCES_ROOT}/thelib/include
+	${CRTMPSERVER_SOURCES_ROOT}/trafficdissector/include
 )
 
 ADD_EXECUTABLE(trafficdissector ${SOURCES})
