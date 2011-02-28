@@ -11,7 +11,7 @@ INCLUDE_DIRECTORIES(
 
 ADD_EXECUTABLE(androidapplestreaming
 	${CRTMPSERVER_SOURCES_ROOT}/androidapplestreaming/src/api.cpp
-	${CRTMPSERVER_SOURCES_ROOT}/sources/androidapplestreaming/src/variantconnection.cpp
+	${CRTMPSERVER_SOURCES_ROOT}/androidapplestreaming/src/variantconnection.cpp
 	${CRTMPSERVER_SOURCES_ROOT}/androidapplestreaming/src/main.cpp)
 TARGET_LINK_LIBRARIES(androidapplestreaming thelib applestreamingclient ${OPENSSL_LIBRARY_PATH} ${CRYPTO_LIBRARY_PATH})
 
