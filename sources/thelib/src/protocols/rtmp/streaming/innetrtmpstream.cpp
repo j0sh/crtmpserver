@@ -37,6 +37,15 @@ InNetRTMPStream::InNetRTMPStream(BaseProtocol *pProtocol,
 	_lastVideoTime = 0;
 	_lastAudioTime = 0;
 	_pOutFileRTMPFLVStream = NULL;
+
+	_audioPacketsCount = 0;
+	_audioDroppedPacketsCount = 0;
+	_audioBytesCount = 0;
+	_audioDroppedBytesCount = 0;
+	_videoPacketsCount = 0;
+	_videoDroppedPacketsCount = 0;
+	_videoBytesCount = 0;
+	_videoDroppedBytesCount = 0;
 }
 
 InNetRTMPStream::~InNetRTMPStream() {
@@ -58,6 +67,18 @@ bool InNetRTMPStream::IsCompatibleWithType(uint64_t type) {
 	return TAG_KIND_OF(type, ST_OUT_NET_RTMP_4_RTMP)
 			|| TAG_KIND_OF(type, ST_OUT_FILE_RTMP)
 			|| TAG_KIND_OF(type, ST_OUT_NET_RTP);
+}
+
+void InNetRTMPStream::GetStats(Variant &info) {
+	BaseInNetStream::GetStats(info);
+	info["audio"]["packetsCount"] = _audioPacketsCount;
+	info["audio"]["droppedPacketsCount"] = (uint32_t) 0;
+	info["audio"]["bytesCount"] = _audioBytesCount;
+	info["audio"]["droppedBytesCount"] = (uint32_t) 0;
+	info["video"]["packetsCount"] = _videoPacketsCount;
+	info["video"]["droppedPacketsCount"] = (uint32_t) 0;
+	info["video"]["bytesCount"] = _videoBytesCount;
+	info["video"]["droppedBytesCount"] = (uint32_t) 0;
 }
 
 uint32_t InNetRTMPStream::GetRTMPStreamId() {
@@ -225,6 +246,8 @@ bool InNetRTMPStream::FeedData(uint8_t *pData, uint32_t dataLength,
 		uint32_t processedLength, uint32_t totalLength,
 		double absoluteTimestamp, bool isAudio) {
 	if (isAudio) {
+		_audioPacketsCount++;
+		_audioBytesCount += dataLength;
 		if ((processedLength == 0) //beginning of a packet
 				&& ((pData[0] >> 4) == 10) //AAC content
 				&& (pData[1] == 0) // AAC sequence header
@@ -236,6 +259,8 @@ bool InNetRTMPStream::FeedData(uint8_t *pData, uint32_t dataLength,
 		}
 		_lastAudioTime = absoluteTimestamp;
 	} else {
+		_videoPacketsCount++;
+		_videoBytesCount += dataLength;
 		if ((processedLength == 0) //beginning of a packet
 				&& (pData[0] == 0x17) //0x10 - key frame, 0x07 h264 content
 				&& (pData[1] == 0) //AVC sequence header

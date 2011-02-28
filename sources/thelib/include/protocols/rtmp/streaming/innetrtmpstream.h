@@ -42,6 +42,15 @@ private:
 	Variant _lastStreamMessage;
 	OutFileRTMPFLVStream *_pOutFileRTMPFLVStream;
 	StreamCapabilities _streamCapabilities;
+
+	uint64_t _audioPacketsCount;
+	uint64_t _audioDroppedPacketsCount;
+	uint64_t _audioBytesCount;
+	uint64_t _audioDroppedBytesCount;
+	uint64_t _videoPacketsCount;
+	uint64_t _videoDroppedPacketsCount;
+	uint64_t _videoBytesCount;
+	uint64_t _videoDroppedBytesCount;
 public:
 	InNetRTMPStream(BaseProtocol *pProtocol, StreamsManager *pStreamsManager,
 			string name, uint32_t rtmpStreamId, uint32_t chunkSize,
@@ -51,6 +60,7 @@ public:
 
 	virtual void ReadyForSend();
 	virtual bool IsCompatibleWithType(uint64_t type);
+	virtual void GetStats(Variant &info);
 
 	uint32_t GetRTMPStreamId();
 	uint32_t GetChunkSize();
