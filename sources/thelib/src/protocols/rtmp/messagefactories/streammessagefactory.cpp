@@ -176,6 +176,29 @@ Variant StreamMessageFactory::GetInvokeOnStatusStreamPublished(uint32_t channelI
 			timeStamp, isAbsolute, requestId, result);
 }
 
+Variant StreamMessageFactory::GetInvokeOnStatusStreamPlayFailed(Variant &request,
+		string streamName) {
+	return GetInvokeOnStatusStreamPlayFailed(
+			VH_CI(request),
+			VH_SI(request),
+			M_INVOKE_ID(request),
+			streamName);
+}
+
+Variant StreamMessageFactory::GetInvokeOnStatusStreamPlayFailed(uint32_t channelId,
+		uint32_t streamId, double requestId, string streamName) {
+	Variant result;
+
+	result[RM_INVOKE_PARAMS_ONSTATUS_LEVEL] = RM_INVOKE_PARAMS_RESULT_LEVEL_ERROR;
+	result[RM_INVOKE_PARAMS_ONSTATUS_CODE] = "NetStream.Play.Failed";
+	result[RM_INVOKE_PARAMS_ONSTATUS_DESCRIPTION] = format("Fail to play %s", STR(streamName));
+	result[RM_INVOKE_PARAMS_ONSTATUS_DETAILS] = streamName;
+	result[RM_INVOKE_PARAMS_ONSTATUS_CLIENTID] = "";
+
+	return GenericMessageFactory::GetInvokeOnStatus(channelId, streamId,
+			0, false, requestId, result);
+}
+
 Variant StreamMessageFactory::GetInvokeOnStatusStreamPlayReset(uint32_t channelId,
 		uint32_t streamId, double timeStamp, bool isAbsolute,
 		double requestId, string description, string details, string clientId) {

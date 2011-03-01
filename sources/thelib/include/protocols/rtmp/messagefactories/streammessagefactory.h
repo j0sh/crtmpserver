@@ -63,6 +63,10 @@ public:
 			uint32_t streamId, double timeStamp, bool isAbsolute,
 			double requestId, string level, string code, string description,
 			string details, string clientId);
+	static Variant GetInvokeOnStatusStreamPlayFailed(Variant &request,
+			string streamName);
+	static Variant GetInvokeOnStatusStreamPlayFailed(uint32_t channelId,
+			uint32_t streamId, double requestId, string streamName);
 	static Variant GetInvokeOnStatusStreamPlayReset(uint32_t channelId,
 			uint32_t streamId, double timeStamp, bool isAbsolute,
 			double requestId, string description, string details, string clientId);
