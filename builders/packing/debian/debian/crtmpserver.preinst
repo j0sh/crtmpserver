@@ -3,7 +3,7 @@
 set -e
 
 USER="crtmpserver"
-GROUP="$USER"
+GROUP="adm"
 HOME="/var/lib/crtmpserver"
 
 if ! getent group $GROUP >/dev/null

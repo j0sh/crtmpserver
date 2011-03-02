@@ -87,7 +87,7 @@ else
 fi
 
 SVER="0.`svnversion -n ${ORIGPATH}/sources`"
-DEBPATH="crtmpserver-${SVER}"
+DEBPATH="`pwd`/crtmpserver-${SVER}"
 
 echo "Build debian structures"
 if [ -d $DEBPATH ]
@@ -145,17 +145,6 @@ do
 	copyProject "applications/$app"
 done
 
-############ Patching
-echo "Patching files"
-while read pfile fpatch
-do
-	if ! expr $pfile : "^#">/dev/null
-	then
-		echo -n " ..."
-		patch "$DEBPATH/$pfile" "$PATCHDIR/$fpatch" 
-	fi
-done < $PATCHDIR/$PATCHLIST
-
 ############ Change paths
 echo "Fix paths"
 find ${DEBPATH} -name CMakeLists.txt -type f -exec sed -r -i -f fix_paths.sed {} \;
@@ -172,12 +161,13 @@ fi
 cd $DEBPATH/debian
 rm -f *.ex control copyright README.Debian README.source crtmpserver.doc-base.EX
 cd $STARTPWD 
-cp -vf debian/* $DEBPATH/debian
+cp -vrf debian/* $DEBPATH/debian
 cp -vf $ORIGPATH/man/crtmpserver.1 $DEBPATH/debian
 
 ############ Build debian package
+dpkg-source -b $DEBPATH
 cd $DEBPATH
-export SVER
+export SVER DEBPATH
 dpkg-buildpackage -rfakeroot -us -uc -b
 R=$?
 if [ $R -ne 0 ] 

@@ -1,0 +1,15 @@
+Description: disable vm, tests and vmtests.
+
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -160,7 +160,7 @@
+ #ADD_SUBDIRECTORY(androidapplestreaming androidapplestreaming)
+ 
+ ADD_DEFINITIONS(-DVM_LUA)
+-ADD_SUBDIRECTORY(vm vm)
+-ADD_SUBDIRECTORY(vmtests vmtests)
+-ADD_SUBDIRECTORY(tests)
++#ADD_SUBDIRECTORY(vm vm)
++#ADD_SUBDIRECTORY(vmtests vmtests)
++#ADD_SUBDIRECTORY(tests)
+ 

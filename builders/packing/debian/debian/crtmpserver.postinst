@@ -3,7 +3,7 @@
 set -e
 
 USER="crtmpserver"
-GROUP="$USER"
+GROUP="adm"
 
 chown $USER:$GROUP /var/lib/crtmpserver
 chown $USER:$GROUP /var/log/crtmpserver
