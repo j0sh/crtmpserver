@@ -16,5 +16,3 @@ if [ -x "/etc/init.d/crtmpserver" ]; then
 		/etc/init.d/crtmpserver start || exit $?
 	fi
 fi
-
-#DEBHELPER# 

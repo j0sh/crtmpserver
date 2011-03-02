@@ -1,0 +1,32 @@
+Description: change lua source dir name in cmake find module
+
+--- a/cmake_find_modules/Find_lua.cmake
++++ b/cmake_find_modules/Find_lua.cmake
+@@ -27,8 +27,8 @@
+ 	MESSAGE(STATUS "Looking for lua headers - found")
+ ELSE(LUA_INCLUDE_PATH_)
+ 	SET(LUA_FOUND 0)
+-	SET(LUA_INCLUDE_PATH "${CRTMPSERVER_3RDPARTY_ROOT}/lua-dev")
+-	MESSAGE(STATUS "Looking for lua headers - not found. Defaulting to ${CRTMPSERVER_3RDPARTY_ROOT}/lua-dev")
++	SET(LUA_INCLUDE_PATH "${CRTMPSERVER_3RDPARTY_ROOT}/lua/src")
++	MESSAGE(STATUS "Looking for lua headers - not found. Defaulting to ${CRTMPSERVER_3RDPARTY_ROOT}/lua/src")
+ ENDIF(LUA_INCLUDE_PATH_)
+ 
+ IF(LUA_FOUND)
+@@ -39,13 +39,13 @@
+ 	ELSE(LUA_LIBRARY_PATH_)
+ 		SET(LUA_FOUND 0 CACHE STRING "Set to 1 if lua is found, 0 otherwise")
+ 		SET(LUA_LIBRARY_PATH "lua")
+-		SET(LUA_INCLUDE_PATH "${CRTMPSERVER_3RDPARTY_ROOT}/lua-dev")
+-		MESSAGE(STATUS "Looking for lua library - not found. Lua library will be compiled from ${CRTMPSERVER_3RDPARTY_ROOT}/lua-dev")
++		SET(LUA_INCLUDE_PATH "${CRTMPSERVER_3RDPARTY_ROOT}/lua")
++		MESSAGE(STATUS "Looking for lua library - not found. Lua library will be compiled from ${CRTMPSERVER_3RDPARTY_ROOT}/lua/src")
+ 	ENDIF(LUA_LIBRARY_PATH_)
+ ELSE(LUA_FOUND)
+ 	SET(LUA_FOUND 0 CACHE STRING "Set to 1 if lua is found, 0 otherwise")
+ 	SET(LUA_LIBRARY_PATH "lua")
+-	MESSAGE(STATUS "Looking for lua library - not found. Lua library will be compiled from ${CRTMPSERVER_3RDPARTY_ROOT}/lua-dev")
++	MESSAGE(STATUS "Looking for lua library - not found. Lua library will be compiled from ${CRTMPSERVER_3RDPARTY_ROOT}/lua/src")
+ ENDIF(LUA_FOUND)
+ 
+ #MESSAGE("final LUA_FOUND: ${LUA_FOUND}")
