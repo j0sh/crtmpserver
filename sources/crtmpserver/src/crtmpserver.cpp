@@ -52,7 +52,7 @@ void Cleanup();
 void PrintHelp();
 void PrintVersion();
 void NormalizeCommandLine(string configFile);
-bool ApplyGID();
+bool ApplyUIDGID();
 
 RunningStatus gRs = {0};
 
@@ -214,7 +214,7 @@ bool Initialize() {
 }
 
 void Run() {
-	if (!ApplyGID()) {
+	if (!ApplyUIDGID()) {
 		FATAL("Unable to apply user id");
 		exit(-1);
 	}
@@ -277,6 +277,8 @@ void PrintHelp() {
 	cout << "      the server to start in daemon mode.\n" << endl;
 	cout << "    --uid=<uid>" << endl;
 	cout << "      Run the process with the specified user id\n" << endl;
+	cout << "    --gid=<gid>" << endl;
+	cout << "      Run the process with the specified group id\n" << endl;
 }
 
 void PrintVersion() {
@@ -298,10 +300,21 @@ void NormalizeCommandLine(string configFile) {
 	} else {
 		gRs.commandLine["arguments"]["--uid"] = (uint32_t) 0;
 	}
+	if (gRs.commandLine["arguments"].HasKey("--gid")) {
+		gRs.commandLine["arguments"]["--gid"] = (uint32_t) atoi(STR(gRs.commandLine["arguments"]["--gid"]));
+	} else {
+		gRs.commandLine["arguments"]["--gid"] = (uint32_t) 0;
+	}
 }
 
-bool ApplyGID() {
+bool ApplyUIDGID() {
 #ifndef WIN32
+	if ((uint32_t) gRs.commandLine["arguments"]["--gid"] != 0) {
+		if (setgid((uid_t) gRs.commandLine["arguments"]["--gid"]) != 0) {
+			FATAL("Unable to set GID");
+			return false;
+		}
+	}
 	if ((uint32_t) gRs.commandLine["arguments"]["--uid"] != 0) {
 		if (setuid((uid_t) gRs.commandLine["arguments"]["--uid"]) != 0) {
 			FATAL("Unable to set UID");
