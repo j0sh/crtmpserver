@@ -34,7 +34,7 @@ private:
 	Variant _metadata;
 	vector<MediaFrame> binaryHeaders;
 
-	uint8_t _framerate;
+	double _framerate;
 	uint32_t aux_plus_vidlen;
 	uint8_t num_aux;
 	uint16_t audio_len;

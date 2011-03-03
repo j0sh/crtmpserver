@@ -227,3 +227,4 @@ bool InFileRTMPNSVStream::BuildFrameHeaders(FileClass *pFile, MediaFrame &mediaF
 	return true;
 }
 #endif /* HAS_PROTOCOL_RTMP */
+

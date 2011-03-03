@@ -253,7 +253,7 @@ bool NSVDocument::ReadPayLoadData() {
 					video_frame.start = _mediaFile.Cursor() + 4;
 					video_frame.length = aux_plus_vidlen - auxLength - 4;
 					video_frame.deltaTime = 0;
-					video_frame.absoluteTime = (double) _videoSamplesCount / (double) _framerate * 1000.0;
+					video_frame.absoluteTime = (double) _videoSamplesCount / _framerate * 1000.0;
 					video_frame.compositionOffset = 0;
 					video_frame.isBinaryHeader = false;
 					video_frame.isKeyFrame = false;
