@@ -30,6 +30,7 @@
 #include "protocols/rtmp/streaming/baseoutnetrtmpstream.h"
 #include "protocols/rtmp/streaming/infilertmpmp3stream.h"
 #include "protocols/rtmp/streaming/infilertmpmp4stream.h"
+#include "protocols/rtmp/streaming/infilertmpnsvstream.h"
 #include "streaming/streamstypes.h"
 
 InFileRTMPStream::InFileRTMPStream(BaseProtocol *pProtocol,
@@ -76,6 +77,9 @@ InFileRTMPStream *InFileRTMPStream::GetInstance(BaseRTMPProtocol *pRTMPProtocol,
                 pStreamsManager, metadata[META_SERVER_FULL_PATH]);
     } else if (metadata[META_MEDIA_TYPE] == MEDIA_TYPE_MP3) {
         pResult = new InFileRTMPMP3Stream((BaseProtocol *) pRTMPProtocol,
+                pStreamsManager, metadata[META_SERVER_FULL_PATH]);
+    } else if (metadata[META_MEDIA_TYPE] == MEDIA_TYPE_NSV) {
+        pResult = new InFileRTMPNSVStream((BaseProtocol *) pRTMPProtocol,
                 pStreamsManager, metadata[META_SERVER_FULL_PATH]);
     } else if (metadata[META_MEDIA_TYPE] == MEDIA_TYPE_MP4 ||
             metadata[META_MEDIA_TYPE] == MEDIA_TYPE_M4A ||

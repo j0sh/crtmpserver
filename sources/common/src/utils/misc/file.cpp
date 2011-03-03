@@ -196,7 +196,7 @@ bool File::ReadI24(int32_t *pValue, bool networkOrder) {
 	if (networkOrder)
 		*pValue = ENTOHL(*pValue) >> 8; //----MARKED-LONG---
 	else
-		*pValue = *pValue << 8;
+		*pValue = ((*pValue) << 8) >> 8;
 	return true;
 }
 

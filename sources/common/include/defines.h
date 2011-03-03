@@ -385,7 +385,7 @@
 #define MEDIA_TYPE_M4V_LEN 3
 #define MEDIA_TYPE_META "meta"
 #define MEDIA_TYPE_META_LEN 4
-#define MEDIA_TYPE_MKV "nsv"
+#define MEDIA_TYPE_MKV "mkv"
 #define MEDIA_TYPE_MKV_LEN 3
 #define MEDIA_TYPE_MOV "mov"
 #define MEDIA_TYPE_MOV_LEN 3
@@ -393,6 +393,8 @@
 #define MEDIA_TYPE_MP3_LEN 3
 #define MEDIA_TYPE_MP4 "mp4"
 #define MEDIA_TYPE_MP4_LEN 3
+#define MEDIA_TYPE_NSV "nsv"
+#define MEDIA_TYPE_NSV_LEN 3
 #define MEDIA_TYPE_SEEK "seek"
 #define MEDIA_TYPE_SEEK_LEN 4
 #define MEDIA_TYPE_TS "ts"

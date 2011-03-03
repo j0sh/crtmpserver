@@ -28,6 +28,7 @@
 #include "mediaformats/mp3/mp3document.h"
 #include "mediaformats/mp4/mp4document.h"
 #include "mediaformats/mkv/mkvdocument.h"
+#include "mediaformats/nsv/nsvdocument.h"
 
 #ifndef HAS_MMAP
 map<string, pair<uint32_t, File *> > BaseInFileStream::_fileCache;
@@ -125,7 +126,13 @@ bool BaseInFileStream::ResolveCompleteMetadata(Variant &metaData) {
 	else if (metaData[META_MEDIA_TYPE] == MEDIA_TYPE_MKV) {
 		pDocument = new MKVDocument(metaData);
 	}
-#endif
+#endif /* HAS_MEDIA_MKV */
+#ifdef HAS_MEDIA_NSV
+	else if (metaData[META_MEDIA_TYPE] == MEDIA_TYPE_NSV) {
+		pDocument = new NSVDocument(metaData);
+	}
+#endif /* HAS_MEDIA_NSV */
+
 	else {
 		FATAL("File type not supported yet. Partial metadata:\n%s",
 				STR(metaData.ToString()));
@@ -443,7 +450,7 @@ bool BaseInFileStream::Feed() {
 
 	//12. Done. We either feed again if frame length was 0
 	//or just return true
-	if(_currentFrame.length==0) {
+	if (_currentFrame.length == 0) {
 		return Feed();
 	} else {
 		return true;

@@ -33,6 +33,7 @@
 #define ST_IN_FILE_RTMP_FLV		MAKE_TAG6('I','F','R','F','L','V')
 #define ST_IN_FILE_RTMP_MP3		MAKE_TAG6('I','F','R','M','P','3')
 #define ST_IN_FILE_RTMP_MP4		MAKE_TAG6('I','F','R','M','P','4')
+#define ST_IN_FILE_RTMP_NSV		MAKE_TAG6('I','F','R','N','S','V')
 #define ST_OUT					MAKE_TAG1('O')
 #define ST_OUT_NET				MAKE_TAG2('O','N')
 #define ST_OUT_NET_RTMP			MAKE_TAG3('O','N','R')
