@@ -109,7 +109,7 @@ string MKVDocument::GetHierarchyString() {
 	}
 	result += "\n</mkv>";
 	File f;
-	f.Initialize("/tmp/test.xml");
+	f.Initialize("/tmp/test.xml",FILE_OPEN_MODE_TRUNCATE);
 	f.WriteBuffer((uint8_t *) STR(result), result.length());
 	return result;
 }

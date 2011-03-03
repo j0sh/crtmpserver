@@ -23,6 +23,12 @@
 
 #include "platform/platform.h"
 
+enum FILE_OPEN_MODE {
+	FILE_OPEN_MODE_READ,
+	FILE_OPEN_MODE_TRUNCATE,
+	FILE_OPEN_MODE_APPEND
+};
+
 class DLLEXP File {
 private:
 	fstream _file;
@@ -36,7 +42,7 @@ public:
 
 	//Init
 	bool Initialize(string path);
-	bool Initialize(string path, bool truncate, bool append);
+	bool Initialize(string path, FILE_OPEN_MODE mode);
 	void Close();
 
 	//info

@@ -22,12 +22,12 @@
 
 #include "common.h"
 
-#define MediaFile File
-
-//#ifdef HAS_MMAP
-//#define MediaFile MmapFile
-//#else
 //#define MediaFile File
-//#endif /* HAS_MMAP */
+
+#ifdef HAS_MMAP
+#define MediaFile MmapFile
+#else
+#define MediaFile File
+#endif /* HAS_MMAP */
 
 #endif	/* _MEDIAFILE_H */

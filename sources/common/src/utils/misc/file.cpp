@@ -34,29 +34,40 @@ File::~File() {
 }
 
 bool File::Initialize(string path) {
-	return Initialize(path, false, false);
+	return Initialize(path, FILE_OPEN_MODE_READ);
 }
 
-bool File::Initialize(string path, bool truncate, bool append) {
+bool File::Initialize(string path, FILE_OPEN_MODE mode) {
 	_path = path;
-	_truncate = truncate;
-	_append = append;
-
-	ios_base::openmode openMode = ios_base::in | ios_base::out | ios_base::binary;
-
-	if (fileExists(_path)) {
-		//FINEST("File %s exists",STR(path));
-		if (_append) {
-			//FINEST("File %s will be appended",STR(path));
-			openMode |= ios_base::app;
+	ios_base::openmode openMode = ios_base::binary;
+	switch (mode) {
+		case FILE_OPEN_MODE_READ:
+		{
+			openMode |= ios_base::in;
+			break;
 		}
-		if (_truncate) {
-			//FINEST("File %s will be truncated",STR(path));
+		case FILE_OPEN_MODE_TRUNCATE:
+		{
+			openMode |= ios_base::in;
+			openMode |= ios_base::out;
 			openMode |= ios_base::trunc;
+			break;
 		}
-	} else {
-		//FINEST("File %s will be truncated anyway...",STR(path));
-		openMode |= ios_base::trunc;
+		case FILE_OPEN_MODE_APPEND:
+		{
+			openMode |= ios_base::in;
+			openMode |= ios_base::out;
+			if (fileExists(_path))
+				openMode |= ios_base::app;
+			else
+				openMode |= ios_base::trunc;
+			break;
+		}
+		default:
+		{
+			FATAL("Invalid open mode");
+			return false;
+		}
 	}
 
 	_file.open(STR(_path), openMode);

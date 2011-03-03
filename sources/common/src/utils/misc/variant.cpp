@@ -1426,7 +1426,7 @@ bool Variant::SerializeToBinFile(string fileName) {
 	}
 
 	File file;
-	if (!file.Initialize(fileName, true, false)) {
+	if (!file.Initialize(fileName, FILE_OPEN_MODE_TRUNCATE)) {
 		FATAL("Unable to open file %s", STR(fileName));
 		return false;
 	}
@@ -1487,7 +1487,7 @@ bool Variant::SerializeToXmlFile(string fileName) {
 	}
 
 	File file;
-	if (!file.Initialize(fileName, true, false)) {
+	if (!file.Initialize(fileName, FILE_OPEN_MODE_TRUNCATE)) {
 		FATAL("Unable to open file %s", STR(fileName));
 		return false;
 	}

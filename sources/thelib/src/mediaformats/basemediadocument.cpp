@@ -115,7 +115,7 @@ bool BaseMediaDocument::SaveSeekFile() {
 	File seekFile;
 
 	//1. Open the file
-	if (!seekFile.Initialize(_seekFilePath, true, false)) {
+	if (!seekFile.Initialize(_seekFilePath, FILE_OPEN_MODE_TRUNCATE)) {
 		FATAL("Unable to open seeking file %s", STR(_seekFilePath));
 		return false;
 	}
