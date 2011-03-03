@@ -490,6 +490,10 @@ bool ConfigFile::ValidateApplication(Variant &node) {
 		return false;
 	}
 
+	if (!ValidateBoolean(node, CONF_APPLICATION_RENAMEBADFILES, false)) {
+		return false;
+	}
+
 	if (!ValidateInteger(node, CONF_APPLICATION_CLIENTSIDEBUFFER, false, 0, 30)) {
 		return false;
 	}
@@ -734,6 +738,10 @@ bool ConfigFile::ConfigureApplication(Variant &node) {
 
 		if (node[CONF_APPLICATION_KEYFRAMESEEK] == V_NULL) {
 			node[CONF_APPLICATION_KEYFRAMESEEK] = (bool)true;
+		}
+
+		if (node[CONF_APPLICATION_RENAMEBADFILES] == V_NULL) {
+			node[CONF_APPLICATION_RENAMEBADFILES] = (bool)true;
 		}
 
 		if (node[CONF_APPLICATION_SEEKGRANULARITY] == V_NULL) {

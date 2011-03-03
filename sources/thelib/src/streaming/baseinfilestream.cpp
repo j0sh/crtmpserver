@@ -143,8 +143,13 @@ bool BaseInFileStream::ResolveCompleteMetadata(Variant &metaData) {
 	if (!pDocument->Process()) {
 		FATAL("Unable to process document");
 		delete pDocument;
-		MoveFile(metaData[META_SERVER_FULL_PATH],
-				(string) metaData[META_SERVER_FULL_PATH] + ".bad");
+		if ((bool)metaData[CONF_APPLICATION_RENAMEBADFILES]) {
+			MoveFile(metaData[META_SERVER_FULL_PATH],
+					(string) metaData[META_SERVER_FULL_PATH] + ".bad");
+		} else {
+			WARN("File %s will not be renamed",
+					STR(metaData[META_SERVER_FULL_PATH]));
+		}
 		return false;
 	}
 

@@ -207,6 +207,7 @@ configuration=
 			seekGranularity=1.5, --in seconds, between 0.1 and 600
 			clientSideBuffer=12, --in seconds, between 5 and 30
 			--generateMetaFiles=true, --this will generate seek/meta files on application startup
+			--renameBadFiles=false,
 			--[[authentication=
 			{
 				type="adobe",

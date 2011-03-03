@@ -39,6 +39,7 @@ BaseRTMPAppProtocolHandler::BaseRTMPAppProtocolHandler(Variant &configuration)
 	_clientSideBuffer = (int32_t) configuration[CONF_APPLICATION_CLIENTSIDEBUFFER];
 	_seekGranularity = (uint32_t) ((double) configuration[CONF_APPLICATION_SEEKGRANULARITY]*1000);
 	_mediaFolder = (string) configuration[CONF_APPLICATION_MEDIAFOLDER];
+	_renameBadFiles = (bool)configuration[CONF_APPLICATION_RENAMEBADFILES];
 	if (_configuration.HasKey(CONF_APPLICATION_AUTH)) {
 		if ((!_configuration[CONF_APPLICATION_AUTH].HasKey(CONF_APPLICATION_AUTH_TYPE))
 				|| (_configuration[CONF_APPLICATION_AUTH][CONF_APPLICATION_AUTH_TYPE] != V_STRING)
@@ -1533,6 +1534,7 @@ Variant BaseRTMPAppProtocolHandler::GetMetaData(string streamName,
 	result[CONF_APPLICATION_KEYFRAMESEEK] = (bool)_keyframeSeek;
 	result[CONF_APPLICATION_CLIENTSIDEBUFFER] = (int32_t) _clientSideBuffer;
 	result[CONF_APPLICATION_SEEKGRANULARITY] = _seekGranularity;
+	result[CONF_APPLICATION_RENAMEBADFILES] = (bool)_renameBadFiles;
 
 	//2.Determine the media type
 	vector<string> parts;

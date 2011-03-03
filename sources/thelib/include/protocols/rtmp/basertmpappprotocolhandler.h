@@ -37,6 +37,7 @@ protected:
 	RTMPProtocolSerializer _rtmpProtocolSerializer;
 	SOManager _soManager;
 	bool _validateHandshake;
+	bool _renameBadFiles;
 	string _mediaFolder;
 	map<uint32_t, BaseRTMPProtocol *> _connections;
 	map<uint32_t, uint32_t> _nextInvokeId;
