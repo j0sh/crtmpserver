@@ -22,7 +22,7 @@ $ make
 
 And finally run the server (stay in the cmake dir)
 
-$ ./rtmpserver/rtmpserver ./rtmpserver/rtmpserver.lua
+$ ./crtmpserver/crtmpserver ./crtmpserver/crtmpserver.lua
 
 Notice that I've used CamelCase notation. You can use whatever
 notation you want, but I suggest to use CamelCase because is

@@ -82,7 +82,7 @@ createWin32Proj()
 
 updateServerConfig()
 {
-	doWildcardReplacements "templates" "rtmpserver.lua" "/tmp"
+	doWildcardReplacements "templates" "crtmpserver.lua" "/tmp"
 
 	>/tmp/final
 	
@@ -90,14 +90,14 @@ updateServerConfig()
 	do
 		if [ ! `expr "$line" : ".*--#INSERTION_MARKER#.*"` -eq 0 ]
 		then
-			cat /tmp/rtmpserver.lua >>/tmp/final
+			cat /tmp/crtmpserver.lua >>/tmp/final
 		else
 			echo "$line">>/tmp/final;
 		fi
-	done < ../builders/cmake/rtmpserver/rtmpserver.lua
+	done < ../builders/cmake/crtmpserver/crtmpserver.lua
 
-	mv /tmp/final ../builders/cmake/rtmpserver/rtmpserver.lua
-	rm /tmp/rtmpserver.lua
+	mv /tmp/final ../builders/cmake/crtmpserver/crtmpserver.lua
+	rm /tmp/crtmpserver.lua
 }
 
 echo "Initialize variables..."
