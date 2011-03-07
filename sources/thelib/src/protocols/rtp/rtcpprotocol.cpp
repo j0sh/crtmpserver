@@ -99,7 +99,7 @@ bool RTCPProtocol::SignalInputData(IOBuffer &buffer, sockaddr_in *pPeerAddress) 
 				buffer.IgnoreAll();
 				return true;
 			}
-			uint32_t ntpSec = ENTOHLP(pBuffer + 8) - 2208988800;
+			uint32_t ntpSec = ENTOHLP(pBuffer + 8) - 2208988800UL;
 			uint32_t ntpFrac = ENTOHLP(pBuffer + 12);
 			uint64_t ntpMicroseconds = (uint32_t) (((double) ntpFrac / (double) (0x100000000LL))*1000000.0);
 			ntpMicroseconds += ((uint64_t) ntpSec)*1000000;
