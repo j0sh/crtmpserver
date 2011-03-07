@@ -386,7 +386,7 @@ bool IOBuffer::IgnoreAll() {
 
 bool IOBuffer::MoveData() {
 	SANITY_INPUT_BUFFER;
-	if (_published - _consumed < _consumed) {
+	if (_published - _consumed <= _consumed) {
 		memcpy(_pBuffer, _pBuffer + _consumed, _published - _consumed);
 		_published = _published - _consumed;
 		_consumed = 0;

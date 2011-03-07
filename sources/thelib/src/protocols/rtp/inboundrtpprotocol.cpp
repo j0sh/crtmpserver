@@ -32,10 +32,12 @@ InboundRTPProtocol::InboundRTPProtocol()
 	memset(&_rtpHeader, 0, sizeof (_rtpHeader));
 	_lastSeq = 0;
 	_seqRollOver = 0;
-	_lastTimestamp = 0;
-	_timestampRollover = 0;
 	_isAudio = false;
 	_packetsCount = 0;
+#ifdef RTP_DETECT_ROLLOVER
+	_lastTimestamp = 0;
+	_timestampRollover = 0;
+#endif
 }
 
 InboundRTPProtocol::~InboundRTPProtocol() {
@@ -75,28 +77,12 @@ bool InboundRTPProtocol::SignalInputData(IOBuffer &buffer,
 		return true;
 	}
 
-	//	FINEST("%02x-%02x-%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x",
-	//			pBuffer[0],
-	//			pBuffer[1],
-	//			pBuffer[2],
-	//			pBuffer[3],
-	//			pBuffer[4],
-	//			pBuffer[5],
-	//			pBuffer[6],
-	//			pBuffer[7],
-	//			pBuffer[8],
-	//			pBuffer[9],
-	//			pBuffer[10],
-	//			pBuffer[11],
-	//			pBuffer[12],
-	//			pBuffer[13],
-	//			pBuffer[14],
-	//			pBuffer[15]);
-
-	//3. Get the RTP header parts that we are interested in and advance the buffer
+	//3. Get the RTP header parts that we are interested in
 	_rtpHeader._flags = ENTOHLP(pBuffer);
 	_rtpHeader._timestamp = ENTOHLP(pBuffer + 4);
 	_rtpHeader._ssrc = ENTOHLP(pBuffer + 8);
+
+	//4. Advance the sequence roll-over counter if necessary
 	if (GET_RTP_SEQ(_rtpHeader) < _lastSeq) {
 		if ((_lastSeq - GET_RTP_SEQ(_rtpHeader)) > (0xffff >> 2)) {
 			_seqRollOver++;
@@ -110,17 +96,19 @@ bool InboundRTPProtocol::SignalInputData(IOBuffer &buffer,
 	} else {
 		_lastSeq = GET_RTP_SEQ(_rtpHeader);
 	}
-	//FINEST("ES: %04x-%04x - %08x", _seqRollOver, _lastSeq, GetExtendedSeq());
+
+	//5. Do we have enough data?
 	if (length < ((uint32_t) 12 + GET_RTP_CC(_rtpHeader)*4 + 1)) {
 		buffer.IgnoreAll();
 		return true;
 	}
 
-	//4. Skip the RTP header
+	//6. Skip the RTP header
 	pBuffer += 12 + GET_RTP_CC(_rtpHeader)*4;
 	length -= 12 + GET_RTP_CC(_rtpHeader)*4;
 
-	//6. Detect rollover and adjust the timestamp
+	//7. Detect rollover and adjust the timestamp
+#ifdef RTP_DETECT_ROLLOVER
 	if (_rtpHeader._timestamp < _lastTimestamp) {
 		//		FINEST("Possible roll over: _rtpHeader._timestamp: %016llx; _lastTimestamp: %016llx",
 		//				_rtpHeader._timestamp, _lastTimestamp);
@@ -148,6 +136,7 @@ bool InboundRTPProtocol::SignalInputData(IOBuffer &buffer,
 	//		msg += format("(%016llx)", _rtpHeader._timestamp);
 	//		FINEST(STR(msg));
 	//	}
+#endif
 
 	//5. Feed the data to the stream
 	if (_pInStream != NULL) {

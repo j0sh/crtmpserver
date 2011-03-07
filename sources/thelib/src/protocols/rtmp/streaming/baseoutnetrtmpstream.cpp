@@ -870,7 +870,9 @@ void BaseOutNetRTMPStream::FixTimeBase() {
 		uint64_t attachedStreamType = _pInStream->GetType();
 		if ((TAG_KIND_OF(attachedStreamType, ST_IN_FILE_RTMP))
 				|| (TAG_KIND_OF(attachedStreamType, ST_IN_NET_RTMP))
-				|| (TAG_KIND_OF(attachedStreamType, ST_IN_NET_LIVEFLV))) {
+				|| (TAG_KIND_OF(attachedStreamType, ST_IN_NET_LIVEFLV))
+				|| (TAG_KIND_OF(attachedStreamType, ST_IN_NET_RTP))
+				) {
 			//RTMP streams are having the same time base for audio and video
 			_pDeltaAudioTime = &_deltaAudioTime;
 			_pDeltaVideoTime = &_deltaAudioTime;

@@ -25,15 +25,10 @@
 #include "protocols/baseprotocol.h"
 #include "protocols/rtmp/basertmpprotocol.h"
 #include "protocols/rtmp/streaming/baseoutnetrtmpstream.h"
-#include "streaming/packetqueue.h"
 
 InNetRTPStream::InNetRTPStream(BaseProtocol *pProtocol,
 		StreamsManager *pStreamsManager, string name, string SPS, string PPS, string AAC)
 : BaseInNetStream(pProtocol, pStreamsManager, ST_IN_NET_RTP, name) {
-	_counter = 0;
-	_lastVideoTs = 0;
-	_lastAudioTs = 0;
-
 	_hasAudio = false;
 	if (AAC.length() != 0) {
 		_capabilities.InitAudioAAC(
@@ -52,11 +47,21 @@ InNetRTPStream::InNetRTPStream(BaseProtocol *pProtocol,
 		_hasVideo = true;
 	}
 
-	_packetQueue.HasAudioVideo(_hasAudio, _hasVideo);
+	_audioSequence = 0;
 	_audioPacketsCount = 0;
+	_audioDroppedPacketsCount = 0;
 	_audioBytesCount = 0;
+	_audioNTP = 0;
+	_audioRTP = 0;
+	_lastAudioTs = 0;
+
+	_videoSequence = 0;
 	_videoPacketsCount = 0;
+	_videoDroppedPacketsCount = 0;
 	_videoBytesCount = 0;
+	_videoNTP = 0;
+	_videoRTP = 0;
+	_lastVideoTs = 0;
 }
 
 InNetRTPStream::~InNetRTPStream() {
@@ -75,49 +80,25 @@ void InNetRTPStream::ReadyForSend() {
 }
 
 void InNetRTPStream::SignalOutStreamAttached(BaseOutStream *pOutStream) {
-	if (_lastVideoTs != 0) {
-		if (!pOutStream->FeedData(
-				_capabilities.avc._pSPS,
-				_capabilities.avc._spsLength,
-				0,
-				_capabilities.avc._spsLength,
-				_lastVideoTs,
-				false)) {
-			FATAL("Unable to feed stream");
-			if (pOutStream->GetProtocol() != NULL) {
-				pOutStream->GetProtocol()->EnqueueForDelete();
+	if (_hasVideo && _hasAudio) {
+		if ((_lastVideoTs != 0) && (_lastAudioTs != 0)) {
+			if (_lastVideoTs < _lastAudioTs) {
+				FeedVideoCodecSetup(pOutStream);
+				FeedAudioCodecSetup(pOutStream);
+			} else {
+				FeedAudioCodecSetup(pOutStream);
+				FeedVideoCodecSetup(pOutStream);
 			}
 		}
-		if (!pOutStream->FeedData(
-				_capabilities.avc._pPPS,
-				_capabilities.avc._ppsLength,
-				0,
-				_capabilities.avc._ppsLength,
-				_lastVideoTs,
-				false)) {
-			FATAL("Unable to feed stream");
-			if (pOutStream->GetProtocol() != NULL) {
-				pOutStream->GetProtocol()->EnqueueForDelete();
-			}
+	} else {
+		if (_lastVideoTs != 0) {
+			FeedVideoCodecSetup(pOutStream);
+		}
+		if (_lastAudioTs != 0) {
+			FeedAudioCodecSetup(pOutStream);
 		}
 	}
-	if (_lastAudioTs != 0) {
-		uint8_t *pTemp = new uint8_t[_capabilities.aac._aacLength + 2];
-		memcpy(pTemp + 2, _capabilities.aac._pAAC, _capabilities.aac._aacLength);
-		if (!pOutStream->FeedData(
-				pTemp + 2,
-				_capabilities.aac._aacLength,
-				0,
-				_capabilities.aac._aacLength,
-				_lastAudioTs,
-				true)) {
-			FATAL("Unable to feed stream");
-			if (pOutStream->GetProtocol() != NULL) {
-				pOutStream->GetProtocol()->EnqueueForDelete();
-			}
-		}
-		delete[] pTemp;
-	}
+
 #ifdef HAS_PROTOCOL_RTMP
 	if (TAG_KIND_OF(pOutStream->GetType(), ST_OUT_NET_RTMP)) {
 		((BaseRTMPProtocol *) pOutStream->GetProtocol())->TrySetOutboundChunkSize(4 * 1024 * 1024);
@@ -155,51 +136,19 @@ bool InNetRTPStream::SignalStop() {
 	return true;
 }
 
-#define FRAME_REORDER
-
 bool InNetRTPStream::FeedData(uint8_t *pData, uint32_t dataLength,
 		uint32_t processedLength, uint32_t totalLength,
 		double absoluteTimestamp, bool isAudio) {
-#ifdef FRAME_REORDER
-	vector<Packet *> packets = _packetQueue.PushPacket(pData, dataLength,
-			absoluteTimestamp, isAudio);
-
-	for (uint32_t i = 0; i < packets.size(); i++) {
-		double &lastTs = isAudio ? _lastAudioTs : _lastVideoTs;
-
-		LinkedListNode<BaseOutStream *> *pTemp = _pOutStreams;
-		if (lastTs == 0) {
-			lastTs = packets[i]->ts;
-			while (pTemp != NULL) {
-				if (!pTemp->info->IsEnqueueForDelete()) {
-					SignalOutStreamAttached(pTemp->info);
-				}
-				pTemp = pTemp->pPrev;
-			}
+	if (_hasAudio && _hasVideo) {
+		if ((_audioNTP == 0) || (_videoNTP == 0)) {
+			return true;
 		}
-		lastTs = packets[i]->ts;
-		pTemp = _pOutStreams;
-		while (pTemp != NULL) {
-			if (!pTemp->info->IsEnqueueForDelete()) {
-				if (!pTemp->info->FeedData(
-						GETIBPOINTER(packets[i]->buffer),
-						GETAVAILABLEBYTESCOUNT(packets[i]->buffer),
-						0,
-						GETAVAILABLEBYTESCOUNT(packets[i]->buffer),
-						packets[i]->ts,
-						packets[i]->isAudio)) {
-					WARN("Unable to feed OS: %p", pTemp->info);
-					pTemp->info->EnqueueForDelete();
-					if (GetProtocol() == pTemp->info->GetProtocol()) {
-						return false;
-					}
-				}
-			}
-			pTemp = pTemp->pPrev;
-		}
+		double &ntp = isAudio ? _audioNTP : _videoNTP;
+		double &rtp = isAudio ? _audioRTP : _videoRTP;
+		absoluteTimestamp = ntp + absoluteTimestamp - rtp;
+		//FINEST("%c %.2f", isAudio ? 'A' : 'V', absoluteTimestamp);
 	}
-	return true;
-#else
+
 	double &lastTs = isAudio ? _lastAudioTs : _lastVideoTs;
 
 	if ((-1.0 < (lastTs * 100.00 - absoluteTimestamp * 100.00))
@@ -247,27 +196,30 @@ bool InNetRTPStream::FeedData(uint8_t *pData, uint32_t dataLength,
 		pTemp = pTemp->pPrev;
 	}
 	return true;
-#endif /* FRAME_REORDER */
 }
 
 bool InNetRTPStream::FeedVideoData(uint8_t *pData, uint32_t dataLength,
 		RTPHeader &rtpHeader) {
 	//1. Check the counter first
-	if (_counter == 0) {
+	if (_videoSequence == 0) {
 		//this is the first packet. Make sure we start with a M packet
 		if (!GET_RTP_M(rtpHeader)) {
 			return true;
 		}
-		_counter = GET_RTP_SEQ(rtpHeader);
+		_videoSequence = GET_RTP_SEQ(rtpHeader);
 		return true;
 	} else {
-		if (_counter + 1 != GET_RTP_SEQ(rtpHeader)) {
-			WARN("Missing packet");
+		if ((uint16_t) (_videoSequence + 1) != (uint16_t) GET_RTP_SEQ(rtpHeader)) {
+			WARN("Missing video packet. Wanted: %d; got: %d on stream: %s",
+					(uint16_t) (_videoSequence + 1),
+					(uint16_t) GET_RTP_SEQ(rtpHeader),
+					STR(GetName()));
 			_currentNalu.IgnoreAll();
-			_counter = 0;
+			_videoDroppedPacketsCount++;
+			_videoSequence = 0;
 			return true;
 		} else {
-			_counter++;
+			_videoSequence++;
 		}
 	}
 
@@ -287,7 +239,7 @@ bool InNetRTPStream::FeedVideoData(uint8_t *pData, uint32_t dataLength,
 			if ((pData[1] >> 7) == 0) {
 				WARN("Bogus nalu");
 				_currentNalu.IgnoreAll();
-				_counter = 0;
+				_videoSequence = 0;
 				return true;
 			}
 			pData[1] = (pData[0]&0xe0) | (pData[1]&0x1f);
@@ -329,7 +281,7 @@ bool InNetRTPStream::FeedVideoData(uint8_t *pData, uint32_t dataLength,
 			if (index + length > dataLength) {
 				WARN("Bogus STAP-A");
 				_currentNalu.IgnoreAll();
-				_counter = 0;
+				_videoSequence = 0;
 				return true;
 			}
 			_videoPacketsCount++;
@@ -347,15 +299,34 @@ bool InNetRTPStream::FeedVideoData(uint8_t *pData, uint32_t dataLength,
 	} else {
 		WARN("invalid NAL: %s", STR(NALUToString(naluType)));
 		_currentNalu.IgnoreAll();
-		_counter = 0;
+		_videoSequence = 0;
 		return true;
 	}
 }
 
-//double ____last = 0;
-
 bool InNetRTPStream::FeedAudioData(uint8_t *pData, uint32_t dataLength,
 		RTPHeader &rtpHeader) {
+	if (_audioSequence == 0) {
+		//this is the first packet. Make sure we start with a M packet
+		if (!GET_RTP_M(rtpHeader)) {
+			return true;
+		}
+		_audioSequence = GET_RTP_SEQ(rtpHeader);
+		return true;
+	} else {
+		if ((uint16_t) (_audioSequence + 1) != (uint16_t) GET_RTP_SEQ(rtpHeader)) {
+			WARN("Missing audio packet. Wanted: %d; got: %d on stream: %s",
+					(uint16_t) (_audioSequence + 1),
+					(uint16_t) GET_RTP_SEQ(rtpHeader),
+					STR(GetName()));
+			_audioDroppedPacketsCount++;
+			_audioSequence = 0;
+			return true;
+		} else {
+			_audioSequence++;
+		}
+	}
+
 	//1. Compute chunks count
 	uint16_t chunksCount = ENTOHSP(pData);
 	if ((chunksCount % 16) != 0) {
@@ -381,6 +352,7 @@ bool InNetRTPStream::FeedAudioData(uint8_t *pData, uint32_t dataLength,
 		}
 		//		FINEST("chunkSize: %d; dataLength: %d; diff: %d", chunkSize, dataLength,
 		//				dataLength - chunkSize);
+		//FINEST("rtpHeader._timestamp: %llu", rtpHeader._timestamp);
 		ts = (double) (rtpHeader._timestamp + i * 1024) / (double) _capabilities.aac._sampleRate * 1000.00;
 		if ((cursor + chunkSize) > dataLength) {
 			FATAL("Unable to feed data: cursor: %d; chunkSize: %d; dataLength: %d; chunksCount: %d",
@@ -408,7 +380,68 @@ void InNetRTPStream::GetStats(Variant &info) {
 	BaseInNetStream::GetStats(info);
 	info["audio"]["bytesCount"] = _audioBytesCount;
 	info["audio"]["packetsCount"] = _audioPacketsCount;
+	info["audio"]["droppedPacketsCount"] = _audioDroppedPacketsCount;
 	info["video"]["bytesCount"] = _videoBytesCount;
 	info["video"]["packetsCount"] = _videoPacketsCount;
+	info["video"]["droppedPacketsCount"] = _videoDroppedPacketsCount;
 }
+
+void InNetRTPStream::ReportSR(uint64_t ntpMicroseconds, uint32_t rtpTimestamp,
+		bool isAudio) {
+	if (isAudio) {
+		_audioNTP = (double) ntpMicroseconds / 1000.0;
+		_audioRTP = (double) rtpTimestamp / (double) _capabilities.aac._sampleRate * 1000.0;
+		//WARN("Audio resync");
+	} else {
+		_videoNTP = (double) ntpMicroseconds / 1000.0;
+		_videoRTP = (double) rtpTimestamp / (double) _capabilities.avc._rate * 1000.0;
+		//WARN("Video resync");
+	}
+}
+
+void InNetRTPStream::FeedVideoCodecSetup(BaseOutStream* pOutStream) {
+	if (!pOutStream->FeedData(
+			_capabilities.avc._pSPS,
+			_capabilities.avc._spsLength,
+			0,
+			_capabilities.avc._spsLength,
+			_lastVideoTs,
+			false)) {
+		FATAL("Unable to feed stream");
+		if (pOutStream->GetProtocol() != NULL) {
+			pOutStream->GetProtocol()->EnqueueForDelete();
+		}
+	}
+	if (!pOutStream->FeedData(
+			_capabilities.avc._pPPS,
+			_capabilities.avc._ppsLength,
+			0,
+			_capabilities.avc._ppsLength,
+			_lastVideoTs,
+			false)) {
+		FATAL("Unable to feed stream");
+		if (pOutStream->GetProtocol() != NULL) {
+			pOutStream->GetProtocol()->EnqueueForDelete();
+		}
+	}
+}
+
+void InNetRTPStream::FeedAudioCodecSetup(BaseOutStream* pOutStream) {
+	uint8_t *pTemp = new uint8_t[_capabilities.aac._aacLength + 2];
+	memcpy(pTemp + 2, _capabilities.aac._pAAC, _capabilities.aac._aacLength);
+	if (!pOutStream->FeedData(
+			pTemp + 2,
+			_capabilities.aac._aacLength,
+			0,
+			_capabilities.aac._aacLength,
+			_lastAudioTs,
+			true)) {
+		FATAL("Unable to feed stream");
+		if (pOutStream->GetProtocol() != NULL) {
+			pOutStream->GetProtocol()->EnqueueForDelete();
+		}
+	}
+	delete[] pTemp;
+}
+
 #endif /* HAS_PROTOCOL_RTP */

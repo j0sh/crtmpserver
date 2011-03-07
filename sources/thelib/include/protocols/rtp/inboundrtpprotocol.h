@@ -27,6 +27,8 @@
 class InNetRTPStream;
 class InboundConnectivity;
 
+//#define RTP_DETECT_ROLLOVER
+
 class DLLEXP InboundRTPProtocol
 : public BaseProtocol {
 private:
@@ -36,10 +38,12 @@ private:
 	InboundConnectivity *_pConnectivity;
 	uint16_t _lastSeq;
 	uint16_t _seqRollOver;
-	uint64_t _lastTimestamp;
-	uint64_t _timestampRollover;
 	bool _isAudio;
 	uint32_t _packetsCount;
+#ifdef RTP_DETECT_ROLLOVER
+	uint64_t _lastTimestamp;
+	uint64_t _timestampRollover;
+#endif
 public:
 	InboundRTPProtocol();
 	virtual ~InboundRTPProtocol();

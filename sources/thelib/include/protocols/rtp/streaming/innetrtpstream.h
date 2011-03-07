@@ -23,24 +23,31 @@
 #define	_INNETRTPSTREAM_H
 
 #include "streaming/baseinnetstream.h"
-#include "streaming/packetqueue.h"
 #include "protocols/rtp/rtpheader.h"
 
 class DLLEXP InNetRTPStream
 : public BaseInNetStream {
 private:
-	uint16_t _counter;
-	IOBuffer _currentNalu;
-	double _lastVideoTs;
-	double _lastAudioTs;
 	StreamCapabilities _capabilities;
+
 	bool _hasAudio;
-	bool _hasVideo;
-	PacketQueue _packetQueue;
+	uint16_t _audioSequence;
 	uint32_t _audioPacketsCount;
+	uint32_t _audioDroppedPacketsCount;
 	uint32_t _audioBytesCount;
+	double _audioNTP;
+	double _audioRTP;
+	double _lastAudioTs;
+
+	bool _hasVideo;
+	IOBuffer _currentNalu;
+	uint16_t _videoSequence;
 	uint32_t _videoPacketsCount;
+	uint32_t _videoDroppedPacketsCount;
 	uint32_t _videoBytesCount;
+	double _videoNTP;
+	double _videoRTP;
+	double _lastVideoTs;
 public:
 	InNetRTPStream(BaseProtocol *pProtocol, StreamsManager *pStreamsManager,
 			string name, string SPS, string PPS, string AAC);
@@ -64,6 +71,11 @@ public:
 	virtual bool FeedAudioData(uint8_t *pData, uint32_t dataLength,
 			RTPHeader &rtpHeader);
 	virtual void GetStats(Variant &info);
+
+	void ReportSR(uint64_t ntpMicroseconds, uint32_t rtpTimestamp, bool isAudio);
+private:
+	void FeedVideoCodecSetup(BaseOutStream *pOutStream);
+	void FeedAudioCodecSetup(BaseOutStream *pOutStream);
 };
 
 #endif	/* _INNETRTPSTREAM_H */

@@ -26,11 +26,13 @@ struct Packet {
 	IOBuffer buffer;
 	double ts;
 	bool isAudio;
-	Packet(){
-		ts=0;
-		isAudio=false;
+
+	Packet() {
+		ts = 0;
+		isAudio = false;
 	}
-	virtual ~Packet(){
+
+	virtual ~Packet() {
 	}
 };
 
@@ -40,8 +42,12 @@ private:
 	vector<Packet *> _free;
 	map<double, vector<Packet *> > _queue;
 	uint32_t _initialBuffer;
-	double _startVideo;
+
+	bool _hasAudio;
 	double _startAudio;
+
+	bool _hasVideo;
+	double _startVideo;
 public:
 	PacketQueue();
 	virtual ~PacketQueue();

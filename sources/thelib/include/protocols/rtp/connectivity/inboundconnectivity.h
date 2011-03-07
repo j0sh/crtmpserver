@@ -63,8 +63,7 @@ public:
 	string GetAudioClientPorts();
 	string GetVideoClientPorts();
 	bool SendRR(bool isAudio);
-	//	bool SendRTP(sockaddr_in &address, uint32_t rtpId,
-	//			uint8_t *pBuffer, uint32_t length);
+	void ReportSR(uint64_t ntpMicroseconds, uint32_t rtpTimestamp, bool isAudio);
 private:
 	bool InitializeUDP(Variant &videoTrack, Variant &audioTrack);
 	bool InitializeTCP(Variant &videoTrack, Variant &audioTrack);

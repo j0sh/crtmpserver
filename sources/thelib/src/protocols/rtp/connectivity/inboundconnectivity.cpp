@@ -290,6 +290,12 @@ bool InboundConnectivity::SendRR(bool isAudio) {
 	return true;
 }
 
+void InboundConnectivity::ReportSR(uint64_t ntpMicroseconds, uint32_t rtpTimestamp, bool isAudio) {
+	if (_pInStream != NULL) {
+		_pInStream->ReportSR(ntpMicroseconds, rtpTimestamp, isAudio);
+	}
+}
+
 bool InboundConnectivity::InitializeUDP(Variant &videoTrack, Variant & audioTrack) {
 	//3. Create all protocols
 	Variant dummy;

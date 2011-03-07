@@ -34,7 +34,7 @@
 
 typedef struct DLLEXP _RTPHeader {
 	uint32_t _flags;
-	uint64_t _timestamp;
+	uint32_t _timestamp;
 	uint32_t _ssrc;
 	//we are not interested in this yet
 	//vector<uint32_t> _csrc;
