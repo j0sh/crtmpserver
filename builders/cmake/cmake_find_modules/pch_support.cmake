@@ -38,7 +38,7 @@ MACRO(ADD_PRECOMPILED_HEADER _targetName _input )
 
 	#get the compiler flags
 	STRING(TOUPPER "CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE}" _flags_var_name)
-	SET(_compiler_FLAGS ${${_flags_var_name}})
+	SET(_compiler_FLAGS ${CMAKE_CXX_FLAGS} ${${_flags_var_name}})
 
 	#get the list of include directories for the current project and compute the new version of compiler flags by
 	#appinding -I

@@ -50,8 +50,8 @@ echo -n "Create the pkg-plist... "
 	cd $OUTPUT_DIR/tmp; \
 	echo "@stopdaemon crtmpserver" >$OUTPUT_DIR/pkg-plist
 	cat $PORT_TEMPLATE/conf.pkg-plist >>$OUTPUT_DIR/pkg-plist
-	find . -type f|sed "s/^\.\/\(.*\)$/\1/"|grep -v "\.sample"|grep -v "/man" >> $OUTPUT_DIR/pkg-plist; \
-	find . -d -type d -exec echo @dirrmtry {} \; |sed "s/^@\(.*\) \.\/\(.*\)$/@\1 \2/"|grep -v "\.$" >> $OUTPUT_DIR/pkg-plist; \
+	find . -type f|sed "s/^\.\/\(.*\)$/\1/"|grep -v "\.sample"|grep -v "/man"|grep -v "crtmpserver.lua" >> $OUTPUT_DIR/pkg-plist; \
+	find . -d -type d -exec echo @dirrmtry {} \; |sed "s/^@\(.*\) \.\/\(.*\)$/@\1 \2/"|grep -v "\.$"|grep -v "lib$"|grep -v "sbin$"|grep -v "etc$"|grep -v "man1$"|grep -v "man$" >> $OUTPUT_DIR/pkg-plist; \
 )
 rm -rf $OUTPUT_DIR/tmp
 echo "Done"

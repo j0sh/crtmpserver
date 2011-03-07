@@ -5,6 +5,7 @@ FIND_PATH(LUA_INCLUDE_PATH_
 	PATHS
 		/usr/include
 		/usr/local/include
+		/usr/local/include/lua51
 		/sw/include
 		/opt/local/include
 		NO_DEFAULT_PATH)
@@ -17,6 +18,8 @@ FIND_LIBRARY(LUA_LIBRARY_PATH_
 		/usr/lib
 		/usr/local/lib64
 		/usr/local/lib
+		/usr/local/lib64/lua51
+		/usr/local/lib/lua51
 		/sw/lib
 		/opt/local/lib
 		NO_DEFAULT_PATH)
