@@ -22,19 +22,19 @@ ENDIF(CMAKE_COMPILER_IS_GNUCXX)
 
 MACRO(ADD_PRECOMPILED_HEADER _targetName _input )
 	#get the file name (no path)
-	GET_FILENAME_COMPONENT(_name ${_input} NAME)
+	GET_FILENAME_COMPONENT(_name ${_input} NAME_WE)
 
 	#locate the file
 	SET(_source "${_input}")
 	
 	#compute the output directory
-	SET(_outdir "${CMAKE_CURRENT_BINARY_DIR}/${_name}.gch")
+	SET(_outdir "${CMAKE_BINARY_DIR}/precompiled.gch/${CMAKE_BUILD_TYPE}.c++")
 
 	#create the output directory
 	MAKE_DIRECTORY(${_outdir})
 
 	#compute the output file
-	SET(_output "${_outdir}/${CMAKE_BUILD_TYPE}.c++")
+	SET(_output "${_outdir}/${_name}.gch")
 
 	#get the compiler flags
 	STRING(TOUPPER "CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE}" _flags_var_name)
@@ -62,12 +62,12 @@ MACRO(ADD_PRECOMPILED_HEADER _targetName _input )
 	)
         
 	#add a new target to the project
-	ADD_CUSTOM_TARGET(${_targetName}_gch DEPENDS ${_output})
-	ADD_DEPENDENCIES(${_targetName} ${_targetName}_gch)
+	ADD_CUSTOM_TARGET(${_targetName}_${_name}_gch DEPENDS ${_output})
+	ADD_DEPENDENCIES(${_targetName} ${_targetName}_${_name}_gch)
 	IF(CMAKE_SYSTEM_NAME MATCHES "OpenBSD")
-		SET_TARGET_PROPERTIES(${_targetName} PROPERTIES COMPILE_FLAGS "-include ${_name}")
+		SET_TARGET_PROPERTIES(${_targetName} PROPERTIES COMPILE_FLAGS "-I${_outdir} -include ${_name}")
 	ELSE (CMAKE_SYSTEM_NAME MATCHES "OpenBSD")
-		SET_TARGET_PROPERTIES(${_targetName} PROPERTIES COMPILE_FLAGS "-include ${_name} -Winvalid-pch")
+		SET_TARGET_PROPERTIES(${_targetName} PROPERTIES COMPILE_FLAGS "-I${_outdir} -include ${_name} -Winvalid-pch")
 	ENDIF(CMAKE_SYSTEM_NAME MATCHES "OpenBSD")
 ENDMACRO(ADD_PRECOMPILED_HEADER)
 
