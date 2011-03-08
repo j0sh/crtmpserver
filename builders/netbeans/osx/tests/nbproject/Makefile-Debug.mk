@@ -17,19 +17,21 @@ RANLIB=ranlib
 CC=gcc
 CCC=g++
 CXX=g++
-FC=
+FC=gfortran
 AS=as
+PROC=proc
 
 # Macros
 CND_PLATFORM=GNU-MacOSX
 CND_CONF=Debug
 CND_DISTDIR=dist
+CND_BUILDDIR=build
 
 # Include project Makefile
 include Makefile.nb
 
 # Object Directory
-OBJECTDIR=build/${CND_CONF}/${CND_PLATFORM}
+OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
@@ -58,13 +60,13 @@ LDLIBSOPTIONS=
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	"${MAKE}"  -f nbproject/Makefile-Debug.mk dist/Debug/GNU-MacOSX/libtests.a
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libtests.a
 
-dist/Debug/GNU-MacOSX/libtests.a: ${OBJECTFILES}
-	${MKDIR} -p dist/Debug/GNU-MacOSX
-	${RM} dist/Debug/GNU-MacOSX/libtests.a
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libtests.a: ${OBJECTFILES}
+	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
+	${RM} ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libtests.a
 	${AR} -rv ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libtests.a ${OBJECTFILES} 
-	$(RANLIB) dist/Debug/GNU-MacOSX/libtests.a
+	$(RANLIB) ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libtests.a
 
 ${OBJECTDIR}/_ext/2055716895/basetestssuite.o: ../../../../sources/tests/src/basetestssuite.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/2055716895
@@ -96,8 +98,8 @@ ${OBJECTDIR}/_ext/2055716895/commontestssuite.o: ../../../../sources/tests/src/c
 
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
-	${RM} -r build/Debug
-	${RM} dist/Debug/GNU-MacOSX/libtests.a
+	${RM} -r ${CND_BUILDDIR}/${CND_CONF}
+	${RM} ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libtests.a
 
 # Subprojects
 .clean-subprojects:

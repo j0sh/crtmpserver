@@ -17,19 +17,21 @@ RANLIB=ranlib
 CC=gcc
 CCC=g++
 CXX=g++
-FC=
+FC=gfortran
 AS=as
+PROC=proc
 
 # Macros
 CND_PLATFORM=GNU-MacOSX
 CND_CONF=Debug
 CND_DISTDIR=dist
+CND_BUILDDIR=build
 
 # Include project Makefile
 include Makefile.nb
 
 # Object Directory
-OBJECTDIR=build/${CND_CONF}/${CND_PLATFORM}
+OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
@@ -59,14 +61,14 @@ LDLIBSOPTIONS=-L../thelib/../Debug/GNU-MacOSX -lthelib -L../common/dist/Debug/GN
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	"${MAKE}"  -f nbproject/Makefile-Debug.mk ../Debug/GNU-MacOSX/applications/proxypublish/libproxypublish.dylib
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ../${CND_CONF}/${CND_PLATFORM}/applications/proxypublish/libproxypublish.dylib
 
-../Debug/GNU-MacOSX/applications/proxypublish/libproxypublish.dylib: ../thelib/../Debug/GNU-MacOSX/libthelib.dylib
+../${CND_CONF}/${CND_PLATFORM}/applications/proxypublish/libproxypublish.dylib: ../thelib/../Debug/GNU-MacOSX/libthelib.dylib
 
-../Debug/GNU-MacOSX/applications/proxypublish/libproxypublish.dylib: ../common/dist/Debug/GNU-MacOSX/libcommon.dylib
+../${CND_CONF}/${CND_PLATFORM}/applications/proxypublish/libproxypublish.dylib: ../common/dist/Debug/GNU-MacOSX/libcommon.dylib
 
-../Debug/GNU-MacOSX/applications/proxypublish/libproxypublish.dylib: ${OBJECTFILES}
-	${MKDIR} -p ../Debug/GNU-MacOSX/applications/proxypublish
+../${CND_CONF}/${CND_PLATFORM}/applications/proxypublish/libproxypublish.dylib: ${OBJECTFILES}
+	${MKDIR} -p ../${CND_CONF}/${CND_PLATFORM}/applications/proxypublish
 	${LINK.cc} -dynamiclib -install_name libproxypublish.dylib -o ../${CND_CONF}/${CND_PLATFORM}/applications/proxypublish/libproxypublish.dylib -fPIC ${OBJECTFILES} ${LDLIBSOPTIONS} 
 
 ${OBJECTDIR}/_ext/1106680373/rtpappprotocolhandler.o: ../../../../sources/applications/proxypublish/src/rtpappprotocolhandler.cpp 
@@ -106,8 +108,8 @@ ${OBJECTDIR}/_ext/1106680373/rtmpappprotocolhandler.o: ../../../../sources/appli
 
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
-	${RM} -r build/Debug
-	${RM} ../Debug/GNU-MacOSX/applications/proxypublish/libproxypublish.dylib
+	${RM} -r ${CND_BUILDDIR}/${CND_CONF}
+	${RM} ../${CND_CONF}/${CND_PLATFORM}/applications/proxypublish/libproxypublish.dylib
 
 # Subprojects
 .clean-subprojects:

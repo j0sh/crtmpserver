@@ -1,18 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configurationDescriptor version="69">
-  <logicalFolder name="root" displayName="root" projectFiles="true">
+<configurationDescriptor version="79">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
-                   projectFiles="true"
-                   kind="SOURCE_LOGICAL_FOLDER">
+                   projectFiles="true">
       <itemPath>../../../../sources/androidapplestreaming/include/api.h</itemPath>
       <itemPath>../../../../sources/androidapplestreaming/include/jniwrapper.h</itemPath>
       <itemPath>../../../../sources/androidapplestreaming/include/variantconnection.h</itemPath>
     </logicalFolder>
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
-                   projectFiles="true"
-                   kind="SOURCE_LOGICAL_FOLDER">
+                   projectFiles="true">
       <itemPath>../../../../sources/androidapplestreaming/src/api.cpp</itemPath>
       <itemPath>../../../../sources/androidapplestreaming/src/jniwrapper.cpp</itemPath>
       <itemPath>../../../../sources/androidapplestreaming/src/main.cpp</itemPath>
@@ -34,9 +32,8 @@
   <confs>
     <conf name="Debug" type="2">
       <toolsSet>
-        <developmentServer>localhost</developmentServer>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
         <compilerSet>GNU|GNU</compilerSet>
-        <platform>4</platform>
       </toolsSet>
       <compileType>
         <ccTool>
@@ -57,9 +54,8 @@
     </conf>
     <conf name="Release" type="2">
       <toolsSet>
-        <developmentServer>localhost</developmentServer>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
         <compilerSet>GNU|GNU</compilerSet>
-        <platform>4</platform>
       </toolsSet>
       <compileType>
         <cTool>

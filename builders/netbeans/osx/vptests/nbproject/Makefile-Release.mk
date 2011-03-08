@@ -17,19 +17,21 @@ RANLIB=ranlib
 CC=gcc
 CCC=g++
 CXX=g++
-FC=
+FC=gfortran
 AS=as
+PROC=proc
 
 # Macros
 CND_PLATFORM=GNU-MacOSX
 CND_CONF=Release
 CND_DISTDIR=dist
+CND_BUILDDIR=build
 
 # Include project Makefile
 include Makefile.nb
 
 # Object Directory
-OBJECTDIR=build/${CND_CONF}/${CND_PLATFORM}
+OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
@@ -57,14 +59,14 @@ LDLIBSOPTIONS=-L../common/dist/Release/GNU-MacOSX -lcommon -L../thelib/../Releas
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	"${MAKE}"  -f nbproject/Makefile-Release.mk ../Release/GNU-MacOSX/applications/vptests/libvptests.dylib
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ../${CND_CONF}/${CND_PLATFORM}/applications/vptests/libvptests.dylib
 
-../Release/GNU-MacOSX/applications/vptests/libvptests.dylib: ../common/dist/Release/GNU-MacOSX/libcommon.dylib
+../${CND_CONF}/${CND_PLATFORM}/applications/vptests/libvptests.dylib: ../common/dist/Release/GNU-MacOSX/libcommon.dylib
 
-../Release/GNU-MacOSX/applications/vptests/libvptests.dylib: ../thelib/../Release/GNU-MacOSX/libthelib.dylib
+../${CND_CONF}/${CND_PLATFORM}/applications/vptests/libvptests.dylib: ../thelib/../Release/GNU-MacOSX/libthelib.dylib
 
-../Release/GNU-MacOSX/applications/vptests/libvptests.dylib: ${OBJECTFILES}
-	${MKDIR} -p ../Release/GNU-MacOSX/applications/vptests
+../${CND_CONF}/${CND_PLATFORM}/applications/vptests/libvptests.dylib: ${OBJECTFILES}
+	${MKDIR} -p ../${CND_CONF}/${CND_PLATFORM}/applications/vptests
 	${LINK.cc} -dynamiclib -install_name libvptests.dylib -o ../${CND_CONF}/${CND_PLATFORM}/applications/vptests/libvptests.dylib -fPIC ${OBJECTFILES} ${LDLIBSOPTIONS} 
 
 ${OBJECTDIR}/_ext/573837895/vptestsapplication.o: ../../../../sources/applications/vptests/src/vptestsapplication.cpp 
@@ -94,8 +96,8 @@ ${OBJECTDIR}/_ext/573837895/variantappprotocolhandler.o: ../../../../sources/app
 
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
-	${RM} -r build/Release
-	${RM} ../Release/GNU-MacOSX/applications/vptests/libvptests.dylib
+	${RM} -r ${CND_BUILDDIR}/${CND_CONF}
+	${RM} ../${CND_CONF}/${CND_PLATFORM}/applications/vptests/libvptests.dylib
 
 # Subprojects
 .clean-subprojects:

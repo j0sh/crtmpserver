@@ -17,19 +17,21 @@ RANLIB=ranlib
 CC=gcc
 CCC=g++
 CXX=g++
-FC=
+FC=gfortran
 AS=as
+PROC=proc
 
 # Macros
 CND_PLATFORM=GNU-MacOSX
 CND_CONF=Release
 CND_DISTDIR=dist
+CND_BUILDDIR=build
 
 # Include project Makefile
 include Makefile.nb
 
 # Object Directory
-OBJECTDIR=build/${CND_CONF}/${CND_PLATFORM}
+OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
@@ -56,14 +58,14 @@ LDLIBSOPTIONS=-L../common/dist/Release/GNU-MacOSX -lcommon -L../thelib/../Releas
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	"${MAKE}"  -f nbproject/Makefile-Release.mk ../Release/GNU-MacOSX/applications/stresstest/libstresstest.dylib
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ../${CND_CONF}/${CND_PLATFORM}/applications/stresstest/libstresstest.dylib
 
-../Release/GNU-MacOSX/applications/stresstest/libstresstest.dylib: ../common/dist/Release/GNU-MacOSX/libcommon.dylib
+../${CND_CONF}/${CND_PLATFORM}/applications/stresstest/libstresstest.dylib: ../common/dist/Release/GNU-MacOSX/libcommon.dylib
 
-../Release/GNU-MacOSX/applications/stresstest/libstresstest.dylib: ../thelib/../Release/GNU-MacOSX/libthelib.dylib
+../${CND_CONF}/${CND_PLATFORM}/applications/stresstest/libstresstest.dylib: ../thelib/../Release/GNU-MacOSX/libthelib.dylib
 
-../Release/GNU-MacOSX/applications/stresstest/libstresstest.dylib: ${OBJECTFILES}
-	${MKDIR} -p ../Release/GNU-MacOSX/applications/stresstest
+../${CND_CONF}/${CND_PLATFORM}/applications/stresstest/libstresstest.dylib: ${OBJECTFILES}
+	${MKDIR} -p ../${CND_CONF}/${CND_PLATFORM}/applications/stresstest
 	${LINK.cc} -dynamiclib -install_name libstresstest.dylib -o ../${CND_CONF}/${CND_PLATFORM}/applications/stresstest/libstresstest.dylib -fPIC ${OBJECTFILES} ${LDLIBSOPTIONS} 
 
 ${OBJECTDIR}/_ext/1256058352/stresstestapplication.o: ../../../../sources/applications/stresstest/src/stresstestapplication.cpp 
@@ -88,8 +90,8 @@ ${OBJECTDIR}/_ext/1256058352/rtmpappprotocolhandler.o: ../../../../sources/appli
 
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
-	${RM} -r build/Release
-	${RM} ../Release/GNU-MacOSX/applications/stresstest/libstresstest.dylib
+	${RM} -r ${CND_BUILDDIR}/${CND_CONF}
+	${RM} ../${CND_CONF}/${CND_PLATFORM}/applications/stresstest/libstresstest.dylib
 
 # Subprojects
 .clean-subprojects:

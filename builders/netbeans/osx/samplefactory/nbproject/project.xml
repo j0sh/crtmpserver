@@ -13,6 +13,20 @@
                 <make-dep-project>../thelib</make-dep-project>
                 <make-dep-project>../common</make-dep-project>
             </make-dep-projects>
+            <sourceRootList>
+                <sourceRootElem>../../../sources/applications/samplefactory/include</sourceRootElem>
+                <sourceRootElem>../../../sources/applications/samplefactory/src</sourceRootElem>
+            </sourceRootList>
+            <confList>
+                <confElem>
+                    <name>Debug</name>
+                    <type>2</type>
+                </confElem>
+                <confElem>
+                    <name>Release</name>
+                    <type>2</type>
+                </confElem>
+            </confList>
         </data>
     </configuration>
 </project>

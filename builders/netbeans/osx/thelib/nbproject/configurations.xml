@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configurationDescriptor version="69">
-  <logicalFolder name="root" displayName="root" projectFiles="true">
+<configurationDescriptor version="79">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
@@ -76,6 +76,10 @@
           <itemPath>../../../../sources/thelib/include/mediaformats/mp4/mp4document.h</itemPath>
           <itemPath>../../../../sources/thelib/include/mediaformats/mp4/versionedatom.h</itemPath>
           <itemPath>../../../../sources/thelib/include/mediaformats/mp4/versionedboxatom.h</itemPath>
+        </logicalFolder>
+        <logicalFolder name="nsv" displayName="nsv" projectFiles="true">
+          <itemPath>../../../../sources/thelib/include/mediaformats/nsv/mp3media.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/mediaformats/nsv/nsvdocument.h</itemPath>
         </logicalFolder>
         <itemPath>../../../../sources/thelib/include/mediaformats/basemediadocument.h</itemPath>
         <itemPath>../../../../sources/thelib/include/mediaformats/mediafile.h</itemPath>
@@ -244,6 +248,7 @@
         <itemPath>../../../../sources/thelib/include/protocols/defaultprotocolfactory.h</itemPath>
         <itemPath>../../../../sources/thelib/include/protocols/protocolfactorymanager.h</itemPath>
         <itemPath>../../../../sources/thelib/include/protocols/protocolmanager.h</itemPath>
+        <itemPath>../../../../sources/thelib/include/protocols/protocols.h</itemPath>
         <itemPath>../../../../sources/thelib/include/protocols/protocoltypes.h</itemPath>
         <itemPath>../../../../sources/thelib/include/protocols/tcpprotocol.h</itemPath>
         <itemPath>../../../../sources/thelib/include/protocols/udpprotocol.h</itemPath>
@@ -338,6 +343,10 @@
           <itemPath>../../../../sources/thelib/src/mediaformats/mp4/mp4document.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/mediaformats/mp4/versionedatom.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/mediaformats/mp4/versionedboxatom.cpp</itemPath>
+        </logicalFolder>
+        <logicalFolder name="nsv" displayName="nsv" projectFiles="true">
+          <itemPath>../../../../sources/thelib/src/mediaformats/nsv/mp3media.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/mediaformats/nsv/nsvdocument.cpp</itemPath>
         </logicalFolder>
         <itemPath>../../../../sources/thelib/src/mediaformats/basemediadocument.cpp</itemPath>
       </logicalFolder>
@@ -533,9 +542,8 @@
   <confs>
     <conf name="Debug" type="2">
       <toolsSet>
-        <developmentServer>localhost</developmentServer>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
         <compilerSet>GNU|GNU</compilerSet>
-        <platform>4</platform>
       </toolsSet>
       <compileType>
         <ccTool>
@@ -563,6 +571,7 @@
             <Elem>HAS_MEDIA_MKV</Elem>
             <Elem>HAS_PROTOCOL_CLI</Elem>
             <Elem>HAS_PROTOCOL_RTMFP</Elem>
+            <Elem>HAS_MEDIA_NSV</Elem>
           </preprocessorList>
         </ccTool>
         <linkerTool>
@@ -587,9 +596,8 @@
     </conf>
     <conf name="Release" type="2">
       <toolsSet>
-        <developmentServer>localhost</developmentServer>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
         <compilerSet>GNU|GNU</compilerSet>
-        <platform>4</platform>
       </toolsSet>
       <compileType>
         <cTool>

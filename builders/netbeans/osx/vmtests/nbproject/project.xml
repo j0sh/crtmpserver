@@ -13,6 +13,20 @@
                 <make-dep-project>../vm</make-dep-project>
                 <make-dep-project>../common</make-dep-project>
             </make-dep-projects>
+            <sourceRootList>
+                <sourceRootElem>../../../../sources/vmtests/include</sourceRootElem>
+                <sourceRootElem>../../../../sources/vmtests/src</sourceRootElem>
+            </sourceRootList>
+            <confList>
+                <confElem>
+                    <name>Debug</name>
+                    <type>1</type>
+                </confElem>
+                <confElem>
+                    <name>Release</name>
+                    <type>1</type>
+                </confElem>
+            </confList>
         </data>
     </configuration>
 </project>

@@ -9,7 +9,8 @@ TOP=`pwd`
 CND_PLATFORM=GNU-MacOSX
 CND_CONF=Release
 CND_DISTDIR=dist
-TMPDIR=build/${CND_CONF}/${CND_PLATFORM}/tmp-packaging
+CND_BUILDDIR=build
+NBTMPDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}/tmp-packaging
 TMPDIRNAME=tmp-packaging
 OUTPUT_PATH=${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libvm.dylib
 OUTPUT_BASENAME=libvm.dylib
@@ -53,22 +54,22 @@ function copyFileToTmpDir
 # Setup
 cd "${TOP}"
 mkdir -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/package
-rm -rf ${TMPDIR}
-mkdir -p ${TMPDIR}
+rm -rf ${NBTMPDIR}
+mkdir -p ${NBTMPDIR}
 
 # Copy files and create directories and links
 cd "${TOP}"
-makeDirectory ${TMPDIR}/libvm.dylib/lib
-copyFileToTmpDir "${OUTPUT_PATH}" "${TMPDIR}/${PACKAGE_TOP_DIR}lib/${OUTPUT_BASENAME}" 0644
+makeDirectory "${NBTMPDIR}/libvm.dylib/lib"
+copyFileToTmpDir "${OUTPUT_PATH}" "${NBTMPDIR}/${PACKAGE_TOP_DIR}lib/${OUTPUT_BASENAME}" 0644
 
 
 # Generate tar file
 cd "${TOP}"
 rm -f ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/package/libvm.dylib.tar
-cd ${TMPDIR}
+cd ${NBTMPDIR}
 tar -vcf ../../../../${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/package/libvm.dylib.tar *
 checkReturnCode
 
 # Cleanup
 cd "${TOP}"
-rm -rf ${TMPDIR}
+rm -rf ${NBTMPDIR}

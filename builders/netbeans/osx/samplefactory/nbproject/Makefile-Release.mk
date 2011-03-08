@@ -10,34 +10,39 @@
 # Environment
 MKDIR=mkdir
 CP=cp
+GREP=grep
+NM=nm
 CCADMIN=CCadmin
 RANLIB=ranlib
 CC=gcc
 CCC=g++
 CXX=g++
-FC=
+FC=gfortran
 AS=as
+PROC=proc
 
 # Macros
 CND_PLATFORM=GNU-MacOSX
 CND_CONF=Release
 CND_DISTDIR=dist
+CND_BUILDDIR=build
 
 # Include project Makefile
 include Makefile.nb
 
 # Object Directory
-OBJECTDIR=build/${CND_CONF}/${CND_PLATFORM}
+OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
-	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/sources/applications/samplefactory/src/samplefactoryapplication.o \
-	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/sources/applications/samplefactory/src/dbaccessprotocol.o \
-	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/sources/applications/samplefactory/src/rtmpappprotocolhandler.o \
-	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/sources/applications/samplefactory/src/controller.o \
-	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/sources/applications/samplefactory/src/samplefactory.o \
-	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/sources/applications/samplefactory/src/protocolfactory.o \
-	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/sources/applications/samplefactory/src/dbaccessprotocolhandler.o
+	${OBJECTDIR}/_ext/1702679040/controller.o \
+	${OBJECTDIR}/_ext/1702679040/rtmpappprotocolhandler.o \
+	${OBJECTDIR}/_ext/1702679040/samplefactory.o \
+	${OBJECTDIR}/_ext/1702679040/samplefactoryapplication.o \
+	${OBJECTDIR}/_ext/1702679040/protocolfactory.o \
+	${OBJECTDIR}/_ext/1702679040/dbaccessprotocolhandler.o \
+	${OBJECTDIR}/_ext/1702679040/dbaccessprotocol.o
+
 
 # C Compiler Flags
 CFLAGS=
@@ -57,50 +62,50 @@ LDLIBSOPTIONS=-L../common/dist/Release/GNU-MacOSX -lcommon -L../thelib/../Releas
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	${MAKE}  -f nbproject/Makefile-Release.mk ../Release/GNU-MacOSX/applications/samplefactory/libsamplefactory.dylib
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ../${CND_CONF}/${CND_PLATFORM}/applications/samplefactory/libsamplefactory.dylib
 
-../Release/GNU-MacOSX/applications/samplefactory/libsamplefactory.dylib: ../common/dist/Release/GNU-MacOSX/libcommon.dylib
+../${CND_CONF}/${CND_PLATFORM}/applications/samplefactory/libsamplefactory.dylib: ../common/dist/Release/GNU-MacOSX/libcommon.dylib
 
-../Release/GNU-MacOSX/applications/samplefactory/libsamplefactory.dylib: ../thelib/../Release/GNU-MacOSX/libthelib.dylib
+../${CND_CONF}/${CND_PLATFORM}/applications/samplefactory/libsamplefactory.dylib: ../thelib/../Release/GNU-MacOSX/libthelib.dylib
 
-../Release/GNU-MacOSX/applications/samplefactory/libsamplefactory.dylib: ${OBJECTFILES}
-	${MKDIR} -p ../Release/GNU-MacOSX/applications/samplefactory
+../${CND_CONF}/${CND_PLATFORM}/applications/samplefactory/libsamplefactory.dylib: ${OBJECTFILES}
+	${MKDIR} -p ../${CND_CONF}/${CND_PLATFORM}/applications/samplefactory
 	${LINK.cc} -dynamiclib -install_name libsamplefactory.dylib -o ../${CND_CONF}/${CND_PLATFORM}/applications/samplefactory/libsamplefactory.dylib -fPIC ${OBJECTFILES} ${LDLIBSOPTIONS} 
 
-${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/sources/applications/samplefactory/src/samplefactoryapplication.o: nbproject/Makefile-${CND_CONF}.mk ../../../../sources/applications/samplefactory/src/samplefactoryapplication.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/sources/applications/samplefactory/src
+${OBJECTDIR}/_ext/1702679040/controller.o: ../../../../sources/applications/samplefactory/src/controller.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1702679040
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/samplefactory/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/sources/applications/samplefactory/src/samplefactoryapplication.o ../../../../sources/applications/samplefactory/src/samplefactoryapplication.cpp
+	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/samplefactory/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1702679040/controller.o ../../../../sources/applications/samplefactory/src/controller.cpp
 
-${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/sources/applications/samplefactory/src/dbaccessprotocol.o: nbproject/Makefile-${CND_CONF}.mk ../../../../sources/applications/samplefactory/src/dbaccessprotocol.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/sources/applications/samplefactory/src
+${OBJECTDIR}/_ext/1702679040/rtmpappprotocolhandler.o: ../../../../sources/applications/samplefactory/src/rtmpappprotocolhandler.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1702679040
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/samplefactory/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/sources/applications/samplefactory/src/dbaccessprotocol.o ../../../../sources/applications/samplefactory/src/dbaccessprotocol.cpp
+	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/samplefactory/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1702679040/rtmpappprotocolhandler.o ../../../../sources/applications/samplefactory/src/rtmpappprotocolhandler.cpp
 
-${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/sources/applications/samplefactory/src/rtmpappprotocolhandler.o: nbproject/Makefile-${CND_CONF}.mk ../../../../sources/applications/samplefactory/src/rtmpappprotocolhandler.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/sources/applications/samplefactory/src
+${OBJECTDIR}/_ext/1702679040/samplefactory.o: ../../../../sources/applications/samplefactory/src/samplefactory.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1702679040
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/samplefactory/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/sources/applications/samplefactory/src/rtmpappprotocolhandler.o ../../../../sources/applications/samplefactory/src/rtmpappprotocolhandler.cpp
+	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/samplefactory/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1702679040/samplefactory.o ../../../../sources/applications/samplefactory/src/samplefactory.cpp
 
-${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/sources/applications/samplefactory/src/controller.o: nbproject/Makefile-${CND_CONF}.mk ../../../../sources/applications/samplefactory/src/controller.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/sources/applications/samplefactory/src
+${OBJECTDIR}/_ext/1702679040/samplefactoryapplication.o: ../../../../sources/applications/samplefactory/src/samplefactoryapplication.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1702679040
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/samplefactory/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/sources/applications/samplefactory/src/controller.o ../../../../sources/applications/samplefactory/src/controller.cpp
+	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/samplefactory/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1702679040/samplefactoryapplication.o ../../../../sources/applications/samplefactory/src/samplefactoryapplication.cpp
 
-${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/sources/applications/samplefactory/src/samplefactory.o: nbproject/Makefile-${CND_CONF}.mk ../../../../sources/applications/samplefactory/src/samplefactory.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/sources/applications/samplefactory/src
+${OBJECTDIR}/_ext/1702679040/protocolfactory.o: ../../../../sources/applications/samplefactory/src/protocolfactory.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1702679040
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/samplefactory/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/sources/applications/samplefactory/src/samplefactory.o ../../../../sources/applications/samplefactory/src/samplefactory.cpp
+	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/samplefactory/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1702679040/protocolfactory.o ../../../../sources/applications/samplefactory/src/protocolfactory.cpp
 
-${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/sources/applications/samplefactory/src/protocolfactory.o: nbproject/Makefile-${CND_CONF}.mk ../../../../sources/applications/samplefactory/src/protocolfactory.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/sources/applications/samplefactory/src
+${OBJECTDIR}/_ext/1702679040/dbaccessprotocolhandler.o: ../../../../sources/applications/samplefactory/src/dbaccessprotocolhandler.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1702679040
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/samplefactory/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/sources/applications/samplefactory/src/protocolfactory.o ../../../../sources/applications/samplefactory/src/protocolfactory.cpp
+	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/samplefactory/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1702679040/dbaccessprotocolhandler.o ../../../../sources/applications/samplefactory/src/dbaccessprotocolhandler.cpp
 
-${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/sources/applications/samplefactory/src/dbaccessprotocolhandler.o: nbproject/Makefile-${CND_CONF}.mk ../../../../sources/applications/samplefactory/src/dbaccessprotocolhandler.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/sources/applications/samplefactory/src
+${OBJECTDIR}/_ext/1702679040/dbaccessprotocol.o: ../../../../sources/applications/samplefactory/src/dbaccessprotocol.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1702679040
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/samplefactory/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/sources/applications/samplefactory/src/dbaccessprotocolhandler.o ../../../../sources/applications/samplefactory/src/dbaccessprotocolhandler.cpp
+	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/samplefactory/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1702679040/dbaccessprotocol.o ../../../../sources/applications/samplefactory/src/dbaccessprotocol.cpp
 
 # Subprojects
 .build-subprojects:
@@ -109,8 +114,8 @@ ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/sources/applications/samplefac
 
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
-	${RM} -r build/Release
-	${RM} ../Release/GNU-MacOSX/applications/samplefactory/libsamplefactory.dylib
+	${RM} -r ${CND_BUILDDIR}/${CND_CONF}
+	${RM} ../${CND_CONF}/${CND_PLATFORM}/applications/samplefactory/libsamplefactory.dylib
 
 # Subprojects
 .clean-subprojects:

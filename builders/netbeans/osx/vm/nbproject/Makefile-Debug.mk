@@ -10,29 +10,34 @@
 # Environment
 MKDIR=mkdir
 CP=cp
+GREP=grep
+NM=nm
 CCADMIN=CCadmin
 RANLIB=ranlib
 CC=gcc
 CCC=g++
 CXX=g++
-FC=
+FC=gfortran
 AS=as
+PROC=proc
 
 # Macros
 CND_PLATFORM=GNU-MacOSX
 CND_CONF=Debug
 CND_DISTDIR=dist
+CND_BUILDDIR=build
 
 # Include project Makefile
 include Makefile.nb
 
 # Object Directory
-OBJECTDIR=build/${CND_CONF}/${CND_PLATFORM}
+OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
-	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/sources/vm/src/basevm.o \
-	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/all/trunk/sources/vm/src/vmlua/basevmlua.o
+	${OBJECTDIR}/_ext/910696451/basevm.o \
+	${OBJECTDIR}/_ext/491298005/basevmlua.o
+
 
 # C Compiler Flags
 CFLAGS=
@@ -52,23 +57,23 @@ LDLIBSOPTIONS=-L../common/dist/Debug/GNU-MacOSX -lcommon
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	${MAKE}  -f nbproject/Makefile-Debug.mk dist/Debug/GNU-MacOSX/libvm.dylib
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libvm.dylib
 
-dist/Debug/GNU-MacOSX/libvm.dylib: ../common/dist/Debug/GNU-MacOSX/libcommon.dylib
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libvm.dylib: ../common/dist/Debug/GNU-MacOSX/libcommon.dylib
 
-dist/Debug/GNU-MacOSX/libvm.dylib: ${OBJECTFILES}
-	${MKDIR} -p dist/Debug/GNU-MacOSX
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libvm.dylib: ${OBJECTFILES}
+	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
 	${LINK.cc} ../../../../3rdparty/v8/libv8.a -dynamiclib -install_name libvm.dylib -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libvm.dylib -fPIC ${OBJECTFILES} ${LDLIBSOPTIONS} 
 
-${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/sources/vm/src/basevm.o: nbproject/Makefile-${CND_CONF}.mk ../../../../sources/vm/src/basevm.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/sources/vm/src
+${OBJECTDIR}/_ext/910696451/basevm.o: ../../../../sources/vm/src/basevm.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/910696451
 	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DVM_LUA -I../../../../sources/common/include -I../../../../sources/vm/include -I../../../../3rdparty/v8/include -I/opt/local/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/sources/vm/src/basevm.o ../../../../sources/vm/src/basevm.cpp
+	$(COMPILE.cc) -g -DOSX -DVM_LUA -I../../../../sources/common/include -I../../../../sources/vm/include -I../../../../3rdparty/v8/include -I/opt/local/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/910696451/basevm.o ../../../../sources/vm/src/basevm.cpp
 
-${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/all/trunk/sources/vm/src/vmlua/basevmlua.o: nbproject/Makefile-${CND_CONF}.mk ../../../../sources/vm/src/vmlua/basevmlua.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/all/trunk/sources/vm/src/vmlua
+${OBJECTDIR}/_ext/491298005/basevmlua.o: ../../../../sources/vm/src/vmlua/basevmlua.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/491298005
 	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DVM_LUA -I../../../../sources/common/include -I../../../../sources/vm/include -I../../../../3rdparty/v8/include -I/opt/local/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/all/trunk/sources/vm/src/vmlua/basevmlua.o ../../../../sources/vm/src/vmlua/basevmlua.cpp
+	$(COMPILE.cc) -g -DOSX -DVM_LUA -I../../../../sources/common/include -I../../../../sources/vm/include -I../../../../3rdparty/v8/include -I/opt/local/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/491298005/basevmlua.o ../../../../sources/vm/src/vmlua/basevmlua.cpp
 
 # Subprojects
 .build-subprojects:
@@ -76,8 +81,8 @@ ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/all/trunk/sources/vm/s
 
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
-	${RM} -r build/Debug
-	${RM} dist/Debug/GNU-MacOSX/libvm.dylib
+	${RM} -r ${CND_BUILDDIR}/${CND_CONF}
+	${RM} ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libvm.dylib
 
 # Subprojects
 .clean-subprojects:

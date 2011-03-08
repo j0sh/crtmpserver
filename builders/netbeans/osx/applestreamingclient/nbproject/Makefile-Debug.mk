@@ -17,19 +17,21 @@ RANLIB=ranlib
 CC=gcc
 CCC=g++
 CXX=g++
-FC=
+FC=gfortran
 AS=as
+PROC=proc
 
 # Macros
 CND_PLATFORM=GNU-MacOSX
 CND_CONF=Debug
 CND_DISTDIR=dist
+CND_BUILDDIR=build
 
 # Include project Makefile
 include Makefile.nb
 
 # Object Directory
-OBJECTDIR=build/${CND_CONF}/${CND_PLATFORM}
+OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
@@ -80,14 +82,14 @@ LDLIBSOPTIONS=-L../thelib/../Debug/GNU-MacOSX -lthelib -L../common/dist/Debug/GN
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	"${MAKE}"  -f nbproject/Makefile-Debug.mk ../Debug/GNU-MacOSX/applications/applestreamingclient/libapplestreamingclient.dylib
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ../${CND_CONF}/${CND_PLATFORM}/applications/applestreamingclient/libapplestreamingclient.dylib
 
-../Debug/GNU-MacOSX/applications/applestreamingclient/libapplestreamingclient.dylib: ../thelib/../Debug/GNU-MacOSX/libthelib.dylib
+../${CND_CONF}/${CND_PLATFORM}/applications/applestreamingclient/libapplestreamingclient.dylib: ../thelib/../Debug/GNU-MacOSX/libthelib.dylib
 
-../Debug/GNU-MacOSX/applications/applestreamingclient/libapplestreamingclient.dylib: ../common/dist/Debug/GNU-MacOSX/libcommon.dylib
+../${CND_CONF}/${CND_PLATFORM}/applications/applestreamingclient/libapplestreamingclient.dylib: ../common/dist/Debug/GNU-MacOSX/libcommon.dylib
 
-../Debug/GNU-MacOSX/applications/applestreamingclient/libapplestreamingclient.dylib: ${OBJECTFILES}
-	${MKDIR} -p ../Debug/GNU-MacOSX/applications/applestreamingclient
+../${CND_CONF}/${CND_PLATFORM}/applications/applestreamingclient/libapplestreamingclient.dylib: ${OBJECTFILES}
+	${MKDIR} -p ../${CND_CONF}/${CND_PLATFORM}/applications/applestreamingclient
 	${LINK.cc} -dynamiclib -install_name libapplestreamingclient.dylib -o ../${CND_CONF}/${CND_PLATFORM}/applications/applestreamingclient/libapplestreamingclient.dylib -fPIC ${OBJECTFILES} ${LDLIBSOPTIONS} 
 
 ${OBJECTDIR}/_ext/53446657/scheduletimerprotocol.o: ../../../../sources/applications/applestreamingclient/src/protocols/timer/scheduletimerprotocol.cpp 
@@ -232,8 +234,8 @@ ${OBJECTDIR}/_ext/1372139511/inboundaesprotocol.o: ../../../../sources/applicati
 
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
-	${RM} -r build/Debug
-	${RM} ../Debug/GNU-MacOSX/applications/applestreamingclient/libapplestreamingclient.dylib
+	${RM} -r ${CND_BUILDDIR}/${CND_CONF}
+	${RM} ../${CND_CONF}/${CND_PLATFORM}/applications/applestreamingclient/libapplestreamingclient.dylib
 
 # Subprojects
 .clean-subprojects:

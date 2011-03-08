@@ -10,29 +10,34 @@
 # Environment
 MKDIR=mkdir
 CP=cp
+GREP=grep
+NM=nm
 CCADMIN=CCadmin
 RANLIB=ranlib
 CC=gcc
 CCC=g++
 CXX=g++
-FC=
+FC=gfortran
 AS=as
+PROC=proc
 
 # Macros
 CND_PLATFORM=GNU-MacOSX
 CND_CONF=Release
 CND_DISTDIR=dist
+CND_BUILDDIR=build
 
 # Include project Makefile
 include Makefile.nb
 
 # Object Directory
-OBJECTDIR=build/${CND_CONF}/${CND_PLATFORM}
+OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
-	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/sources/vmtests/src/main.o \
-	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/sources/vmtests/src/testvmlua.o
+	${OBJECTDIR}/_ext/1218434808/main.o \
+	${OBJECTDIR}/_ext/1218434808/testvmlua.o
+
 
 # C Compiler Flags
 CFLAGS=
@@ -52,25 +57,25 @@ LDLIBSOPTIONS=-L../common/dist/Release/GNU-MacOSX -lcommon -L../vm/dist/Release/
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	${MAKE}  -f nbproject/Makefile-Release.mk dist/Release/GNU-MacOSX/vmtests
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/vmtests
 
-dist/Release/GNU-MacOSX/vmtests: ../common/dist/Release/GNU-MacOSX/libcommon.dylib
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/vmtests: ../common/dist/Release/GNU-MacOSX/libcommon.dylib
 
-dist/Release/GNU-MacOSX/vmtests: ../vm/dist/Release/GNU-MacOSX/libvm.dylib
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/vmtests: ../vm/dist/Release/GNU-MacOSX/libvm.dylib
 
-dist/Release/GNU-MacOSX/vmtests: ${OBJECTFILES}
-	${MKDIR} -p dist/Release/GNU-MacOSX
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/vmtests: ${OBJECTFILES}
+	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
 	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/vmtests ${OBJECTFILES} ${LDLIBSOPTIONS} 
 
-${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/sources/vmtests/src/main.o: nbproject/Makefile-${CND_CONF}.mk ../../../../sources/vmtests/src/main.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/sources/vmtests/src
+${OBJECTDIR}/_ext/1218434808/main.o: ../../../../sources/vmtests/src/main.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1218434808
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -DOSX -DVM_LUA -I../../../../sources/common/include -I../../../../sources/vm/include -I../../../../sources/vmtests/include -I../../../../3rdparty/v8/include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/sources/vmtests/src/main.o ../../../../sources/vmtests/src/main.cpp
+	$(COMPILE.cc) -O2 -DOSX -DVM_LUA -I../../../../sources/common/include -I../../../../sources/vm/include -I../../../../sources/vmtests/include -I../../../../3rdparty/v8/include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1218434808/main.o ../../../../sources/vmtests/src/main.cpp
 
-${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/sources/vmtests/src/testvmlua.o: nbproject/Makefile-${CND_CONF}.mk ../../../../sources/vmtests/src/testvmlua.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/sources/vmtests/src
+${OBJECTDIR}/_ext/1218434808/testvmlua.o: ../../../../sources/vmtests/src/testvmlua.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1218434808
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -DOSX -DVM_LUA -I../../../../sources/common/include -I../../../../sources/vm/include -I../../../../sources/vmtests/include -I../../../../3rdparty/v8/include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/sources/vmtests/src/testvmlua.o ../../../../sources/vmtests/src/testvmlua.cpp
+	$(COMPILE.cc) -O2 -DOSX -DVM_LUA -I../../../../sources/common/include -I../../../../sources/vm/include -I../../../../sources/vmtests/include -I../../../../3rdparty/v8/include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1218434808/testvmlua.o ../../../../sources/vmtests/src/testvmlua.cpp
 
 # Subprojects
 .build-subprojects:
@@ -79,8 +84,8 @@ ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/_DOTDOT/_DOTDOT/sources/vmtests/src/testvmlua.
 
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
-	${RM} -r build/Release
-	${RM} dist/Release/GNU-MacOSX/vmtests
+	${RM} -r ${CND_BUILDDIR}/${CND_CONF}
+	${RM} ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/vmtests
 
 # Subprojects
 .clean-subprojects:

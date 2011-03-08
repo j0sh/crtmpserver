@@ -1,38 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configurationDescriptor version="69">
-  <logicalFolder name="root" displayName="root" projectFiles="true">
+<configurationDescriptor version="79">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
       <logicalFolder name="platform" displayName="platform" projectFiles="true">
-        <logicalFolder name="android"
-                       displayName="android"
-                       projectFiles="true"
-                       kind="SOURCE_LOGICAL_FOLDER">
+        <logicalFolder name="android" displayName="android" projectFiles="true">
           <itemPath>../../../../sources/common/include/platform/android/androidplatform.h</itemPath>
           <itemPath>../../../../sources/common/include/platform/android/max.h</itemPath>
         </logicalFolder>
-        <logicalFolder name="endianess"
-                       displayName="endianess"
-                       projectFiles="true"
-                       kind="SOURCE_LOGICAL_FOLDER">
+        <logicalFolder name="endianess" displayName="endianess" projectFiles="true">
           <itemPath>../../../../sources/common/include/platform/endianess/big_endian_byte_aligned.h</itemPath>
           <itemPath>../../../../sources/common/include/platform/endianess/big_endian_short_aligned.h</itemPath>
           <itemPath>../../../../sources/common/include/platform/endianess/endianness.h</itemPath>
           <itemPath>../../../../sources/common/include/platform/endianess/little_endian_byte_aligned.h</itemPath>
           <itemPath>../../../../sources/common/include/platform/endianess/little_endian_short_aligned.h</itemPath>
         </logicalFolder>
-        <logicalFolder name="freebsd"
-                       displayName="freebsd"
-                       projectFiles="true"
-                       kind="SOURCE_LOGICAL_FOLDER">
+        <logicalFolder name="freebsd" displayName="freebsd" projectFiles="true">
           <itemPath>../../../../sources/common/include/platform/freebsd/freebsdplatform.h</itemPath>
           <itemPath>../../../../sources/common/include/platform/freebsd/max.h</itemPath>
         </logicalFolder>
-        <logicalFolder name="linux"
-                       displayName="linux"
-                       projectFiles="true"
-                       kind="SOURCE_LOGICAL_FOLDER">
+        <logicalFolder name="linux" displayName="linux" projectFiles="true">
           <itemPath>../../../../sources/common/include/platform/linux/linuxplatform.h</itemPath>
           <itemPath>../../../../sources/common/include/platform/linux/max.h</itemPath>
         </logicalFolder>
@@ -40,22 +28,13 @@
           <itemPath>../../../../sources/common/include/platform/openbsd/max.h</itemPath>
           <itemPath>../../../../sources/common/include/platform/openbsd/openbsdplatform.h</itemPath>
         </logicalFolder>
-        <logicalFolder name="osx"
-                       displayName="osx"
-                       projectFiles="true"
-                       kind="SOURCE_LOGICAL_FOLDER">
+        <logicalFolder name="osx" displayName="osx" projectFiles="true">
           <itemPath>../../../../sources/common/include/platform/osx/osxplatform.h</itemPath>
         </logicalFolder>
-        <logicalFolder name="solaris"
-                       displayName="solaris"
-                       projectFiles="true"
-                       kind="SOURCE_LOGICAL_FOLDER">
+        <logicalFolder name="solaris" displayName="solaris" projectFiles="true">
           <itemPath>../../../../sources/common/include/platform/solaris/solarisplatform.h</itemPath>
         </logicalFolder>
-        <logicalFolder name="windows"
-                       displayName="windows"
-                       projectFiles="true"
-                       kind="SOURCE_LOGICAL_FOLDER">
+        <logicalFolder name="windows" displayName="windows" projectFiles="true">
           <itemPath>../../../../sources/common/include/platform/windows/max.h</itemPath>
           <itemPath>../../../../sources/common/include/platform/windows/win32platform.h</itemPath>
         </logicalFolder>
@@ -63,19 +42,13 @@
         <itemPath>../../../../sources/common/include/platform/platform.h</itemPath>
       </logicalFolder>
       <logicalFolder name="utils" displayName="utils" projectFiles="true">
-        <logicalFolder name="buffering"
-                       displayName="buffering"
-                       projectFiles="true"
-                       kind="SOURCE_LOGICAL_FOLDER">
+        <logicalFolder name="buffering" displayName="buffering" projectFiles="true">
           <itemPath>../../../../sources/common/include/utils/buffering/bitarray.h</itemPath>
           <itemPath>../../../../sources/common/include/utils/buffering/buffering.h</itemPath>
           <itemPath>../../../../sources/common/include/utils/buffering/iobuffer.h</itemPath>
           <itemPath>../../../../sources/common/include/utils/buffering/multiconsumerbuffer.h</itemPath>
         </logicalFolder>
-        <logicalFolder name="logging"
-                       displayName="logging"
-                       projectFiles="true"
-                       kind="SOURCE_LOGICAL_FOLDER">
+        <logicalFolder name="logging" displayName="logging" projectFiles="true">
           <itemPath>../../../../sources/common/include/utils/logging/baseloglocation.h</itemPath>
           <itemPath>../../../../sources/common/include/utils/logging/consoleloglocation.h</itemPath>
           <itemPath>../../../../sources/common/include/utils/logging/fileloglocation.h</itemPath>
@@ -83,22 +56,13 @@
           <itemPath>../../../../sources/common/include/utils/logging/logger.h</itemPath>
           <itemPath>../../../../sources/common/include/utils/logging/logging.h</itemPath>
         </logicalFolder>
-        <logicalFolder name="lua"
-                       displayName="lua"
-                       projectFiles="true"
-                       kind="SOURCE_LOGICAL_FOLDER">
+        <logicalFolder name="lua" displayName="lua" projectFiles="true">
           <itemPath>../../../../sources/common/include/utils/lua/luautils.h</itemPath>
         </logicalFolder>
-        <logicalFolder name="mempool"
-                       displayName="mempool"
-                       projectFiles="true"
-                       kind="SOURCE_LOGICAL_FOLDER">
+        <logicalFolder name="mempool" displayName="mempool" projectFiles="true">
           <itemPath>../../../../sources/common/include/utils/mempool/mempool.h</itemPath>
         </logicalFolder>
-        <logicalFolder name="misc"
-                       displayName="misc"
-                       projectFiles="true"
-                       kind="SOURCE_LOGICAL_FOLDER">
+        <logicalFolder name="misc" displayName="misc" projectFiles="true">
           <itemPath>../../../../sources/common/include/utils/misc/crypto.h</itemPath>
           <itemPath>../../../../sources/common/include/utils/misc/dhgroups.h</itemPath>
           <itemPath>../../../../sources/common/include/utils/misc/file.h</itemPath>
@@ -110,10 +74,7 @@
           <itemPath>../../../../sources/common/include/utils/misc/variant.h</itemPath>
           <itemPath>../../../../sources/common/include/utils/misc/variantmap.h</itemPath>
         </logicalFolder>
-        <logicalFolder name="tinyxml"
-                       displayName="tinyxml"
-                       projectFiles="true"
-                       kind="SOURCE_LOGICAL_FOLDER">
+        <logicalFolder name="tinyxml" displayName="tinyxml" projectFiles="true">
           <itemPath>../../../../sources/common/include/utils/tinyxml/tinyxml.h</itemPath>
         </logicalFolder>
         <itemPath>../../../../sources/common/include/utils/utils.h</itemPath>
@@ -125,45 +86,27 @@
                    displayName="Source Files"
                    projectFiles="true">
       <logicalFolder name="platform" displayName="platform" projectFiles="true">
-        <logicalFolder name="android"
-                       displayName="android"
-                       projectFiles="true"
-                       kind="SOURCE_LOGICAL_FOLDER">
+        <logicalFolder name="android" displayName="android" projectFiles="true">
           <itemPath>../../../../sources/common/src/platform/android/androidplatform.cpp</itemPath>
           <itemPath>../../../../sources/common/src/platform/android/timegm.cpp</itemPath>
         </logicalFolder>
-        <logicalFolder name="freebsd"
-                       displayName="freebsd"
-                       projectFiles="true"
-                       kind="SOURCE_LOGICAL_FOLDER">
+        <logicalFolder name="freebsd" displayName="freebsd" projectFiles="true">
           <itemPath>../../../../sources/common/src/platform/freebsd/freebsdplatform.cpp</itemPath>
         </logicalFolder>
-        <logicalFolder name="linux"
-                       displayName="linux"
-                       projectFiles="true"
-                       kind="SOURCE_LOGICAL_FOLDER">
+        <logicalFolder name="linux" displayName="linux" projectFiles="true">
           <itemPath>../../../../sources/common/src/platform/linux/linuxplatform.cpp</itemPath>
         </logicalFolder>
         <logicalFolder name="openbsd" displayName="openbsd" projectFiles="true">
           <itemPath>../../../../sources/common/src/platform/openbsd/openbsdplatform.cpp</itemPath>
         </logicalFolder>
-        <logicalFolder name="osx"
-                       displayName="osx"
-                       projectFiles="true"
-                       kind="SOURCE_LOGICAL_FOLDER">
+        <logicalFolder name="osx" displayName="osx" projectFiles="true">
           <itemPath>../../../../sources/common/src/platform/osx/osxplatform.cpp</itemPath>
         </logicalFolder>
-        <logicalFolder name="solaris"
-                       displayName="solaris"
-                       projectFiles="true"
-                       kind="SOURCE_LOGICAL_FOLDER">
+        <logicalFolder name="solaris" displayName="solaris" projectFiles="true">
           <itemPath>../../../../sources/common/src/platform/solaris/solarisplatform.cpp</itemPath>
           <itemPath>../../../../sources/common/src/platform/solaris/timegm.cpp</itemPath>
         </logicalFolder>
-        <logicalFolder name="windows"
-                       displayName="windows"
-                       projectFiles="true"
-                       kind="SOURCE_LOGICAL_FOLDER">
+        <logicalFolder name="windows" displayName="windows" projectFiles="true">
           <itemPath>../../../../sources/common/src/platform/windows/strncasecmp.cpp</itemPath>
           <itemPath>../../../../sources/common/src/platform/windows/strptime.cpp</itemPath>
           <itemPath>../../../../sources/common/src/platform/windows/timegm.cpp</itemPath>
@@ -172,39 +115,24 @@
         <itemPath>../../../../sources/common/src/platform/baseplatform.cpp</itemPath>
       </logicalFolder>
       <logicalFolder name="utils" displayName="utils" projectFiles="true">
-        <logicalFolder name="buffering"
-                       displayName="buffering"
-                       projectFiles="true"
-                       kind="SOURCE_LOGICAL_FOLDER">
+        <logicalFolder name="buffering" displayName="buffering" projectFiles="true">
           <itemPath>../../../../sources/common/src/utils/buffering/iobuffer.cpp</itemPath>
           <itemPath>../../../../sources/common/src/utils/buffering/multiconsumerbuffer.cpp</itemPath>
         </logicalFolder>
-        <logicalFolder name="logging"
-                       displayName="logging"
-                       projectFiles="true"
-                       kind="SOURCE_LOGICAL_FOLDER">
+        <logicalFolder name="logging" displayName="logging" projectFiles="true">
           <itemPath>../../../../sources/common/src/utils/logging/baseloglocation.cpp</itemPath>
           <itemPath>../../../../sources/common/src/utils/logging/consoleloglocation.cpp</itemPath>
           <itemPath>../../../../sources/common/src/utils/logging/fileloglocation.cpp</itemPath>
           <itemPath>../../../../sources/common/src/utils/logging/logcatloglocation.cpp</itemPath>
           <itemPath>../../../../sources/common/src/utils/logging/logger.cpp</itemPath>
         </logicalFolder>
-        <logicalFolder name="lua"
-                       displayName="lua"
-                       projectFiles="true"
-                       kind="SOURCE_LOGICAL_FOLDER">
+        <logicalFolder name="lua" displayName="lua" projectFiles="true">
           <itemPath>../../../../sources/common/src/utils/lua/luautils.cpp</itemPath>
         </logicalFolder>
-        <logicalFolder name="mempool"
-                       displayName="mempool"
-                       projectFiles="true"
-                       kind="SOURCE_LOGICAL_FOLDER">
+        <logicalFolder name="mempool" displayName="mempool" projectFiles="true">
           <itemPath>../../../../sources/common/src/utils/mempool/mempool.cpp</itemPath>
         </logicalFolder>
-        <logicalFolder name="misc"
-                       displayName="misc"
-                       projectFiles="true"
-                       kind="SOURCE_LOGICAL_FOLDER">
+        <logicalFolder name="misc" displayName="misc" projectFiles="true">
           <itemPath>../../../../sources/common/src/utils/misc/crypto.cpp</itemPath>
           <itemPath>../../../../sources/common/src/utils/misc/file.cpp</itemPath>
           <itemPath>../../../../sources/common/src/utils/misc/mmapfile.cpp</itemPath>
@@ -212,10 +140,7 @@
           <itemPath>../../../../sources/common/src/utils/misc/uri.cpp</itemPath>
           <itemPath>../../../../sources/common/src/utils/misc/variant.cpp</itemPath>
         </logicalFolder>
-        <logicalFolder name="tinyxml"
-                       displayName="tinyxml"
-                       projectFiles="true"
-                       kind="SOURCE_LOGICAL_FOLDER">
+        <logicalFolder name="tinyxml" displayName="tinyxml" projectFiles="true">
           <itemPath>../../../../sources/common/src/utils/tinyxml/tinyxml.cpp</itemPath>
           <itemPath>../../../../sources/common/src/utils/tinyxml/tinyxmlerror.cpp</itemPath>
           <itemPath>../../../../sources/common/src/utils/tinyxml/tinyxmlparser.cpp</itemPath>
@@ -238,9 +163,8 @@
   <confs>
     <conf name="Debug" type="2">
       <toolsSet>
-        <developmentServer>localhost</developmentServer>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
         <compilerSet>GNU|GNU</compilerSet>
-        <platform>4</platform>
       </toolsSet>
       <compileType>
         <ccTool>
@@ -261,9 +185,8 @@
     </conf>
     <conf name="Release" type="2">
       <toolsSet>
-        <developmentServer>localhost</developmentServer>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
         <compilerSet>GNU|GNU</compilerSet>
-        <platform>4</platform>
       </toolsSet>
       <compileType>
         <cTool>
