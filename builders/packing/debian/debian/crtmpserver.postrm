@@ -2,7 +2,4 @@
 
 set -e
 
-if [ "$1" = "purge" ] ; then
-	update-rc.d crtmpserver remove >/dev/null
-	rmdir /var/lib/crtmpserver
-fi
+#DEBHELPER#

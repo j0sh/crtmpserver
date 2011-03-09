@@ -1,4 +1,3 @@
-#!/bin/sh
 # Defaults for rtmpd initscript
 # sourced by /etc/init.d/rtmpd
 

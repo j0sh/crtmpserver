@@ -2,11 +2,5 @@
 
 set -e
 
-if [ -x "/etc/init.d/crtmpserver" ]; then
-	if [ -x "`which invoke-rc.d 2>/dev/null`" ]; then
-		invoke-rc.d crtmpserver stop || exit $?
-	else
-		/etc/init.d/crtmpserver stop || exit $?
-	fi
-fi
+#DEBHELPER#
 

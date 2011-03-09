@@ -1,8 +1,8 @@
 #!/bin/sh
 ### BEGIN INIT INFO
 # Provides:          crtmpserver
-# Required-Start:    $network $local_fs
-# Required-Stop:
+# Required-Start:    $network $local_fs $remote_fs
+# Required-Stop:     $remote_fs
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
 # Short-Description: C++ RTMP/RTSP streaming server
@@ -100,6 +100,9 @@ case "$1" in
 		log_end_msg 1
 		;;
 	esac
+	;;
+  force-reload)
+	restart
 	;;
   *)
 	echo "Usage: $SCRIPTNAME {start|stop|status|restart}" >&2
