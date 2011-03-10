@@ -24,7 +24,7 @@ The compilation procedure should be finished within few minutes.
 
 After you compiled the package, it's time to test it. Run the following command:
 
-./rtmpserver/rtmpserver rtmpserver/rtmpserver.lua
+./crtmpserver/crtmpserver crtmpserver/crtmpserver.lua
 
 If everything goes well, you'll get on your console a table with IP's, ports, protocols, and application names
 If you see this table, then crtmpserver  is working.
@@ -65,14 +65,22 @@ If you see the video, then everything works well.
 
 Installing crtmpserver:
 
-* Go to the directory crtmpserver/cmake/packing/
-* Run the following command: ./linux.sh
-* You will find in /tmp a directory called: rtmpserver
-* Move the rtmpserver to whatever location you want (/opt or /usr/local for example)
-* After you moved the directory, cd into it and do: ./run.sh   (this will start the crtmpserver)
+* Go to the directory crtmpserver/cmake
+* Run the following command: cmake -DCRTMPSERVER_INSTALL_PREFIX=<path> (for example /usr/local/crtmpserver)
+* After previous command done start build project with command: make
+* After build comlete run command: make install
+* After install you has installed crtmpserver in <path>(in our case /usr/local/crtmpserver)
+* Now you can start crtmpserver with command: 
+	sudo <path>/sbin/crtmpserver --uid=<UID> <path>/etc/crtmpserver.lua
+  in our case:
+	sudo /usr/local/crtmpserver/sbin/crtmpserver --uid=<UID> /usr/local/crtmpserver/etc/crtmpserver.lua
+
+Also look into builders/packing directory. There are several OS specific builders.
+* in directory "debian" builder for Debian, also can be used for Ubuntu and other distributions based on debian
+* in directory "freebsd" builder(port) for FreeBSD
 
 crtmpserver settings
-* All crtmpserver settings are located in a detailed file calle: rtmpserver.lua
+* All crtmpserver settings are located in a detailed file calle: crtmpserver.lua
 
 Support/Help:
 If you're lookingo for assistance with crtmpserver, feel free to join us at:
@@ -80,7 +88,7 @@ http://groups.google.com/group/c-rtmp-server
 
 Credits:
 * crtmpserver written by: Gavriloaie Eugen-Andrei
-* Documentation (this file): Hetz Ben Hamo
+* Documentation (this file): Hetz Ben Hamo, Andriy Beregovenko
 * TinyXML: Lee Thomason
 * lua: Roberto Ierusalimschy, Waldemar Celes, Luiz Henrique de Figueiredo
 * Performance: Vlad Galu
