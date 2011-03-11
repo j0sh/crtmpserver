@@ -54,7 +54,9 @@ bool RTMPAppProtocolHandler::ProcessGetAvailableFlvs(BaseRTMPProtocol *pFrom, Va
 	parameters.PushToArray(Variant());
 
 	vector<string> files;
-	if (!ListFolder(_configuration[CONF_APPLICATION_MEDIAFOLDER], files)) {
+	if (!ListFolder(_configuration[CONF_APPLICATION_MEDIAFOLDER],
+			_configuration[CONF_APPLICATION_MEDIAFOLDER],
+			files)) {
 		FATAL("Unable to list folder %s",
 				STR(_configuration[CONF_APPLICATION_MEDIAFOLDER]));
 		return false;

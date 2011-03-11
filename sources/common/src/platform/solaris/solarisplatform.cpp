@@ -356,17 +356,35 @@ string normalizePath(string base, string file) {
 	}
 }
 
-bool ListFolder(string path, vector<string> &result) {
+bool ListFolder(string root, string path, vector<string> &result) {
+	if (path == "")
+		return true;
+	if (path[path.size() - 1] == '/')
+		path = path.substr(0, path.size() - 1);
 	DIR *pDir = NULL;
 	pDir = opendir(STR(path));
 	if (pDir == NULL) {
-		FATAL("Unable to open folder: %s", STR(path));
+		int err = errno;
+		FATAL("Unable to open folder: %s %d %s", STR(path), err, strerror(err));
 		return false;
 	}
 
 	struct dirent *pDirent;
+	struct stat entryStat = {0};
 	while ((pDirent = readdir(pDir)) != NULL) {
-		ADD_VECTOR_END(result, pDirent->d_name);
+		string entry = pDirent->d_name;
+		if (entry == "." || entry == "..") {
+			continue;
+		}
+		entry = path + "/" + entry;
+		if (stat(STR(entry), &entryStat) != 0) {
+			FINEST("%d %s", errno, strerror(errno));
+			continue;
+		}
+		ADD_VECTOR_END(result, entry.substr(root.size(), -1));
+		if (entryStat.st_mode & S_IFDIR) {
+			ListFolder(root, entry, result);
+		}
 	}
 
 	closedir(pDir);

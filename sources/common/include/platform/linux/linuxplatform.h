@@ -164,7 +164,7 @@ map<string, string> mapping(string str, string separator1, string separator2, bo
 void splitFileName(string fileName, string &name, string &extension, char separator = '.');
 double GetFileModificationDate(string path);
 string normalizePath(string base, string file);
-bool ListFolder(string path, vector<string> &result);
+bool ListFolder(string root, string path, vector<string> &result);
 bool MoveFile(string src, string dst);
 void InstallQuitSignal(SignalFnc pQuitSignalFnc);
 void InstallConfRereadSignal(SignalFnc pConfRereadSignalFnc);

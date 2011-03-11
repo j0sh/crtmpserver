@@ -307,7 +307,9 @@ bool BaseRTMPAppProtocolHandler::InboundMessageAvailable(BaseRTMPProtocol *pFrom
 
 void BaseRTMPAppProtocolHandler::GenerateMetaFiles() {
 	vector<string> files;
-	if (!ListFolder(_configuration[CONF_APPLICATION_MEDIAFOLDER], files)) {
+	if (!ListFolder(_configuration[CONF_APPLICATION_MEDIAFOLDER],
+			_configuration[CONF_APPLICATION_MEDIAFOLDER],
+			files)) {
 		FATAL("Unable to list folder %s",
 				STR(_configuration[CONF_APPLICATION_MEDIAFOLDER]));
 		return;
