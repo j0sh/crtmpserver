@@ -69,7 +69,7 @@ public:
 	virtual ~MmapFile();
 
 	//init
-	bool Initialize(string path, uint32_t windowSize = 1024 * 1024 * 4);
+	bool Initialize(string path, uint32_t windowSize, bool exclusive);
 
 	//info
 	uint64_t Size();

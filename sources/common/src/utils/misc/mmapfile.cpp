@@ -155,7 +155,7 @@ MmapPointer::operator string() {
 
 //#define MIN_MMAP_WINDOW_SIZE 1024*512
 
-bool MmapFile::Initialize(string path, uint32_t windowSize) {
+bool MmapFile::Initialize(string path, uint32_t windowSize, bool exclusive) {
 	//    if (windowSize < MIN_MMAP_WINDOW_SIZE) {
 	//        FATAL("window size must be at least %u bytes", MIN_MMAP_WINDOW_SIZE);
 	//        _failed = true;
@@ -173,11 +173,23 @@ bool MmapFile::Initialize(string path, uint32_t windowSize) {
 		__FileInfo__ fi = {0};
 
 		//2. Open the file
-		fi.fd = open(STR(_path), O_RDONLY);
+		if (exclusive) {
+			fi.fd = open(STR(_path), O_RDWR);
+		} else {
+			fi.fd = open(STR(_path), O_RDONLY);
+		}
 		if (fi.fd <= 0) {
 			FATAL("Unable to open file %s: %d: %s", STR(_path), errno, strerror(errno));
 			_failed = true;
 			return false;
+		}
+		if (exclusive) {
+			if (lockf(fi.fd, F_TLOCK, 0) != 0) {
+				FATAL("Unable to lock file %s: %d: %s", STR(_path), errno, strerror(errno));
+				_failed = true;
+				close(fi.fd);
+				return false;
+			}
 		}
 
 		//2. Get its size

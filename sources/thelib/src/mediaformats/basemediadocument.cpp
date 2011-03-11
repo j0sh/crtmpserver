@@ -42,10 +42,17 @@ bool BaseMediaDocument::Process() {
 	_seekGranularity = (uint32_t) _metadata[CONF_APPLICATION_SEEKGRANULARITY];
 
 	//1. Open the media file
+#ifdef HAS_MMAP
+	if (!_mediaFile.Initialize(_mediaFilePath, 4 * 1024 * 1024, true)) {
+		FATAL("Unable to open media file: %s", STR(_mediaFilePath));
+		return false;
+	}
+#else
 	if (!_mediaFile.Initialize(_mediaFilePath)) {
 		FATAL("Unable to open media file: %s", STR(_mediaFilePath));
 		return false;
 	}
+#endif
 
 	//4. Read the document
 	if (!ParseDocument()) {
