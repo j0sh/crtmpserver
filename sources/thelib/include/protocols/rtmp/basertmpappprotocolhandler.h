@@ -39,6 +39,7 @@ protected:
 	bool _validateHandshake;
 	bool _renameBadFiles;
 	string _mediaFolder;
+	bool _externSeekGenerator;
 	map<uint32_t, BaseRTMPProtocol *> _connections;
 	map<uint32_t, uint32_t> _nextInvokeId;
 	map<uint32_t, map<uint32_t, Variant > > _resultMessageTracking;
@@ -112,6 +113,10 @@ public:
 	 * */
 	virtual bool InboundMessageAvailable(BaseRTMPProtocol *pFrom, Variant &request);
 
+	/*
+	 * This will generate all the meta and seek files inside the mediaFolder
+	 * */
+	void GenerateMetaFiles();
 protected:
 	/*
 	 * The following list of functions are called when the corresponding
@@ -229,11 +234,6 @@ private:
 	bool TryLinkToFileStream(BaseRTMPProtocol *pFrom, uint32_t streamId,
 			Variant &metadata, string streamName, double startTime,
 			double length, bool &linked);
-
-	/*
-	 * This will generate all the meta and seek files inside the mediaFolder
-	 * */
-	void GenerateMetaFiles();
 
 	/*
 	 * This will return true if the connection is an outbound connection

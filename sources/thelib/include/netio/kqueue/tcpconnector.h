@@ -148,6 +148,8 @@ public:
 			if (err != EINPROGRESS) {
 				FATAL("Unable to connect to %s:%d (%d) (%s)", STR(_ip), _port, err,
 						strerror(err));
+				T::SignalProtocolCreated(NULL, _customParameters);
+				_closeSocket = true;
 				return false;
 			}
 		}

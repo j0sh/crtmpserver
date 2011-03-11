@@ -104,6 +104,8 @@ bool ConfigFile::ConfigureLogAppenders() {
 	return true;
 }
 
+#ifdef HAS_PROTOCOL_DNS
+
 bool ConfigFile::ConfigureDNSResolver() {
 	if (!ValidateDNSResolver()) {
 		FATAL("Unable to validate DNS resolver");
@@ -129,6 +131,7 @@ bool ConfigFile::ConfigureDNSResolver() {
 
 	return true;
 }
+#endif /* HAS_PROTOCOL_DNS */
 
 bool ConfigFile::ConfigureApplications() {
 	if (!ValidateApplications()) {
@@ -494,6 +497,10 @@ bool ConfigFile::ValidateApplication(Variant &node) {
 		return false;
 	}
 
+	if (!ValidateBoolean(node, CONF_APPLICATION_EXTERNSEEKGENERATOR, false)) {
+		return false;
+	}
+
 	if (!ValidateInteger(node, CONF_APPLICATION_CLIENTSIDEBUFFER, false, 0, 30)) {
 		return false;
 	}
@@ -744,6 +751,10 @@ bool ConfigFile::ConfigureApplication(Variant &node) {
 			node[CONF_APPLICATION_RENAMEBADFILES] = (bool)true;
 		}
 
+		if (node[CONF_APPLICATION_EXTERNSEEKGENERATOR] == V_NULL) {
+			node[CONF_APPLICATION_EXTERNSEEKGENERATOR] = (bool)false;
+		}
+
 		if (node[CONF_APPLICATION_SEEKGRANULARITY] == V_NULL) {
 			node[CONF_APPLICATION_SEEKGRANULARITY] = (double) 1;
 		}
@@ -769,6 +780,11 @@ bool ConfigFile::ConfigureApplication(Variant &node) {
 			return false;
 		}
 
+		if (!ClientApplicationManager::RegisterApplication(pApplication)) {
+			FATAL("Unable to register application %s", STR(node.ToString()));
+			return false;
+		}
+
 		if (!pApplication->Initialize()) {
 			FATAL("Unable to initialize the application: %s", STR(node.ToString()));
 			return false;
@@ -780,11 +796,6 @@ bool ConfigFile::ConfigureApplication(Variant &node) {
 						STR(node[CONF_APPLICATION_NAME]));
 				return false;
 			}
-		}
-
-		if (!ClientApplicationManager::RegisterApplication(pApplication)) {
-			FATAL("Unable to register application %s", STR(node.ToString()));
-			return false;
 		}
 
 		string message = format("Application \"%s\"",

@@ -97,6 +97,8 @@ StreamCapabilities * BaseInFileStream::GetCapabilities() {
 }
 
 bool BaseInFileStream::ResolveCompleteMetadata(Variant &metaData) {
+	if ((bool)metaData[CONF_APPLICATION_EXTERNSEEKGENERATOR])
+		return false;
 	//1. Create the document
 	BaseMediaDocument *pDocument = NULL;
 	if (false) {
@@ -140,6 +142,7 @@ bool BaseInFileStream::ResolveCompleteMetadata(Variant &metaData) {
 	}
 
 	//2. Process the document
+	FINEST("Processing file %s", STR(metaData[META_SERVER_FULL_PATH]));
 	if (!pDocument->Process()) {
 		FATAL("Unable to process document");
 		delete pDocument;

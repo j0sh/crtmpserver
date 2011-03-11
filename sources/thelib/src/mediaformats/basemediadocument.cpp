@@ -89,6 +89,12 @@ bool BaseMediaDocument::Process() {
 				(double) _mediaFile.Size() / (double) totalSeconds / 1024.00 * 8.0);
 	}
 
+	MoveFile(_seekFilePath + ".tmp", _seekFilePath);
+	MoveFile(_metaFilePath + ".tmp", _metaFilePath);
+
+	chmod(STR(_seekFilePath), S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
+	chmod(STR(_metaFilePath), S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
+
 	return true;
 }
 
@@ -115,7 +121,7 @@ bool BaseMediaDocument::SaveSeekFile() {
 	File seekFile;
 
 	//1. Open the file
-	if (!seekFile.Initialize(_seekFilePath, FILE_OPEN_MODE_TRUNCATE)) {
+	if (!seekFile.Initialize(_seekFilePath + ".tmp", FILE_OPEN_MODE_TRUNCATE)) {
 		FATAL("Unable to open seeking file %s", STR(_seekFilePath));
 		return false;
 	}
@@ -215,5 +221,5 @@ bool BaseMediaDocument::SaveMetaFile() {
 	_metadata[META_RTMP_META]["duration"] = (double) _metadata[META_FILE_DURATION] / 1000.00;
 
 	//FINEST("metadata:\n%s", STR(metadata.ToString()));
-	return _metadata.SerializeToBinFile(_metaFilePath);
+	return _metadata.SerializeToBinFile(_metaFilePath + ".tmp");
 }

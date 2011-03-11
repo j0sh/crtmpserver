@@ -17,7 +17,7 @@
  *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
+#ifdef HAS_PROTOCOL_DNS
 #ifndef _INBOUNDDNSRESOLVERPROTOCOL_H
 #define	_INBOUNDDNSRESOLVERPROTOCOL_H
 
@@ -44,5 +44,4 @@ private:
 
 
 #endif	/* _INBOUNDDNSRESOLVERPROTOCOL_H */
-
-
+#endif /* HAS_PROTOCOL_DNS */

@@ -57,8 +57,10 @@ vector<uint64_t> DefaultProtocolFactory::HandledProtocols() {
 	ADD_VECTOR_END(result, PT_UDP);
 	ADD_VECTOR_END(result, PT_INBOUND_SSL);
 	ADD_VECTOR_END(result, PT_OUTBOUND_SSL);
+#ifdef HAS_PROTOCOL_DNS
 	ADD_VECTOR_END(result, PT_INBOUND_DNS);
 	ADD_VECTOR_END(result, PT_OUTBOUND_DNS);
+#endif /* HAS_PROTOCOL_DNS */
 	ADD_VECTOR_END(result, PT_TIMER);
 #ifdef HAS_PROTOCOL_TS
 	ADD_VECTOR_END(result, PT_INBOUND_TS);
@@ -105,8 +107,10 @@ vector<uint64_t> DefaultProtocolFactory::HandledProtocols() {
 
 vector<string> DefaultProtocolFactory::HandledProtocolChains() {
 	vector<string> result;
+#ifdef HAS_PROTOCOL_DNS
 	ADD_VECTOR_END(result, CONF_PROTOCOL_INBOUND_DNS);
 	ADD_VECTOR_END(result, CONF_PROTOCOL_OUTBOUND_DNS);
+#endif /* HAS_PROTOCOL_DNS */
 #ifdef HAS_PROTOCOL_RTMP
 	ADD_VECTOR_END(result, CONF_PROTOCOL_INBOUND_RTMP);
 	ADD_VECTOR_END(result, CONF_PROTOCOL_OUTBOUND_RTMP);
@@ -160,13 +164,18 @@ vector<string> DefaultProtocolFactory::HandledProtocolChains() {
 
 vector<uint64_t> DefaultProtocolFactory::ResolveProtocolChain(string name) {
 	vector<uint64_t> result;
-	if (name == CONF_PROTOCOL_INBOUND_DNS) {
+	if (false) {
+
+	}
+#ifdef HAS_PROTOCOL_DNS
+	else if (name == CONF_PROTOCOL_INBOUND_DNS) {
 		ADD_VECTOR_END(result, PT_TCP);
 		ADD_VECTOR_END(result, PT_INBOUND_DNS);
 	} else if (name == CONF_PROTOCOL_OUTBOUND_DNS) {
 		ADD_VECTOR_END(result, PT_TCP);
 		ADD_VECTOR_END(result, PT_OUTBOUND_DNS);
 	}
+#endif /* HAS_PROTOCOL_DNS */
 #ifdef HAS_PROTOCOL_RTMP
 	else if (name == CONF_PROTOCOL_INBOUND_RTMP) {
 		ADD_VECTOR_END(result, PT_TCP);
@@ -305,12 +314,14 @@ BaseProtocol *DefaultProtocolFactory::SpawnProtocol(uint64_t type, Variant &para
 		case PT_OUTBOUND_SSL:
 			pResult = new OutboundSSLProtocol();
 			break;
+#ifdef HAS_PROTOCOL_DNS
 		case PT_INBOUND_DNS:
 			pResult = new InboundDNSResolverProtocol();
 			break;
 		case PT_OUTBOUND_DNS:
 			pResult = new OutboundDNSResolverProtocol();
 			break;
+#endif /* HAS_PROTOCOL_DNS */
 #ifdef HAS_PROTOCOL_RTMP
 		case PT_INBOUND_RTMP:
 			pResult = new InboundRTMPProtocol();

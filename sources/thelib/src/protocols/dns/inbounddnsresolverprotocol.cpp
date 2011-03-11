@@ -17,7 +17,7 @@
  *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
+#ifdef HAS_PROTOCOL_DNS
 #include "protocols/dns/inbounddnsresolverprotocol.h"
 #include "protocols/http/basehttpprotocol.h"
 
@@ -108,5 +108,4 @@ bool InboundDNSResolverProtocol::SendResponse(Variant &response) {
 	_outputBuffer.ReadFromString(rawRequest);
 	return EnqueueForOutbound();
 }
-
-
+#endif /* HAS_PROTOCOL_DNS */

@@ -145,6 +145,8 @@ public:
 			if (err != SOCKERROR_CONNECT_IN_PROGRESS) {
 				FATAL("Unable to connect to %s:%d (%d) (%s)", STR(_ip), _port, err,
 						strerror(err));
+				T::SignalProtocolCreated(NULL, _customParameters);
+				_closeSocket = true;
 				return false;
 			}
 		}

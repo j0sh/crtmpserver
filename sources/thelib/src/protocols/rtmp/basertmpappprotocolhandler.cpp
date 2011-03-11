@@ -40,6 +40,7 @@ BaseRTMPAppProtocolHandler::BaseRTMPAppProtocolHandler(Variant &configuration)
 	_seekGranularity = (uint32_t) ((double) configuration[CONF_APPLICATION_SEEKGRANULARITY]*1000);
 	_mediaFolder = (string) configuration[CONF_APPLICATION_MEDIAFOLDER];
 	_renameBadFiles = (bool)configuration[CONF_APPLICATION_RENAMEBADFILES];
+	_externSeekGenerator = (bool)configuration[CONF_APPLICATION_EXTERNSEEKGENERATOR];
 	if (_configuration.HasKey(CONF_APPLICATION_AUTH)) {
 		if ((!_configuration[CONF_APPLICATION_AUTH].HasKey(CONF_APPLICATION_AUTH_TYPE))
 				|| (_configuration[CONF_APPLICATION_AUTH][CONF_APPLICATION_AUTH_TYPE] != V_STRING)
@@ -301,6 +302,54 @@ bool BaseRTMPAppProtocolHandler::InboundMessageAvailable(BaseRTMPProtocol *pFrom
 					STR(request.ToString()));
 			return false;
 		}
+	}
+}
+
+void BaseRTMPAppProtocolHandler::GenerateMetaFiles() {
+	vector<string> files;
+	if (!ListFolder(_configuration[CONF_APPLICATION_MEDIAFOLDER], files)) {
+		FATAL("Unable to list folder %s",
+				STR(_configuration[CONF_APPLICATION_MEDIAFOLDER]));
+		return;
+	}
+
+	string file, name, extension;
+
+	FOR_VECTOR_ITERATOR(string, files, i) {
+		file = VECTOR_VAL(i);
+
+		splitFileName(file, name, extension);
+		extension = lowercase(extension);
+
+		if (extension != MEDIA_TYPE_FLV
+				&& extension != MEDIA_TYPE_MP3
+				&& extension != MEDIA_TYPE_MP4
+				&& extension != MEDIA_TYPE_M4A
+				&& extension != MEDIA_TYPE_M4V
+				&& extension != MEDIA_TYPE_MOV
+				&& extension != MEDIA_TYPE_F4V
+				&& extension != MEDIA_TYPE_NSV)
+			continue;
+		string flashName = "";
+		if (extension == MEDIA_TYPE_FLV) {
+			flashName = name;
+		} else if (extension == MEDIA_TYPE_MP3) {
+			flashName = extension + ":" + name;
+		} else if (extension == MEDIA_TYPE_NSV) {
+			flashName = extension + ":" + name;
+		} else {
+			if (extension == MEDIA_TYPE_MP4
+					|| extension == MEDIA_TYPE_M4A
+					|| extension == MEDIA_TYPE_M4V
+					|| extension == MEDIA_TYPE_MOV
+					|| extension == MEDIA_TYPE_F4V) {
+				flashName = MEDIA_TYPE_MP4":" + name + "." + extension;
+			} else {
+				flashName = extension + ":" + name + "." + extension;
+			}
+		}
+
+		GetMetaData(flashName, true);
 	}
 }
 
@@ -1535,6 +1584,7 @@ Variant BaseRTMPAppProtocolHandler::GetMetaData(string streamName,
 	result[CONF_APPLICATION_CLIENTSIDEBUFFER] = (int32_t) _clientSideBuffer;
 	result[CONF_APPLICATION_SEEKGRANULARITY] = _seekGranularity;
 	result[CONF_APPLICATION_RENAMEBADFILES] = (bool)_renameBadFiles;
+	result[CONF_APPLICATION_EXTERNSEEKGENERATOR] = (bool)_externSeekGenerator;
 
 	//2.Determine the media type
 	vector<string> parts;
@@ -1581,7 +1631,8 @@ Variant BaseRTMPAppProtocolHandler::GetMetaData(string streamName,
 	//7. Load the rest of the metadata from a cache or load it from file and
 	//cache it after that
 	string metaPath = (string) result[META_SERVER_FULL_PATH] + "."MEDIA_TYPE_META;
-	if (fileExists(metaPath)) {
+	string seekPath = (string) result[META_SERVER_FULL_PATH] + "."MEDIA_TYPE_SEEK;
+	if (fileExists(metaPath) && fileExists(seekPath)) {
 		if (GetFileModificationDate(metaPath) >= GetFileModificationDate(result[META_SERVER_FULL_PATH])) {
 			if (!Variant::DeserializeFromXmlFile(metaPath, result)) {
 				WARN("Unable to deserialize the meta file %s. Rebuilding it", STR(metaPath));
@@ -1738,56 +1789,6 @@ bool BaseRTMPAppProtocolHandler::TryLinkToFileStream(BaseRTMPProtocol *pFrom,
 	//6. Done
 	linked = true;
 	return true;
-}
-
-void BaseRTMPAppProtocolHandler::GenerateMetaFiles() {
-	vector<string> files;
-	if (!ListFolder(_configuration[CONF_APPLICATION_MEDIAFOLDER], files)) {
-		FATAL("Unable to list folder %s",
-				STR(_configuration[CONF_APPLICATION_MEDIAFOLDER]));
-		return;
-	}
-
-	string file, name, extension;
-
-	FOR_VECTOR_ITERATOR(string, files, i) {
-		file = VECTOR_VAL(i);
-
-		splitFileName(file, name, extension);
-		extension = lowercase(extension);
-
-		if (extension != MEDIA_TYPE_FLV
-				&& extension != MEDIA_TYPE_MP3
-				&& extension != MEDIA_TYPE_MP4
-				&& extension != MEDIA_TYPE_M4A
-				&& extension != MEDIA_TYPE_M4V
-				&& extension != MEDIA_TYPE_MOV
-				&& extension != MEDIA_TYPE_F4V
-				&& extension != MEDIA_TYPE_TS
-				&& extension != MEDIA_TYPE_NSV)
-			continue;
-		string flashName = "";
-		if (extension == MEDIA_TYPE_FLV) {
-			flashName = name;
-		} else if (extension == MEDIA_TYPE_MP3) {
-			flashName = extension + ":" + name;
-		} else if (extension == MEDIA_TYPE_NSV) {
-			flashName = extension + ":" + name;
-		} else {
-			if (extension == MEDIA_TYPE_MP4
-					|| extension == MEDIA_TYPE_M4A
-					|| extension == MEDIA_TYPE_M4V
-					|| extension == MEDIA_TYPE_MOV
-					|| extension == MEDIA_TYPE_F4V) {
-				flashName = MEDIA_TYPE_MP4":" + name + "." + extension;
-			} else {
-				flashName = extension + ":" + name + "." + extension;
-			}
-		}
-
-		FINEST("Parsing `%s`", STR(flashName));
-		GetMetaData(flashName, true);
-	}
 }
 
 bool BaseRTMPAppProtocolHandler::NeedsToPullExternalStream(

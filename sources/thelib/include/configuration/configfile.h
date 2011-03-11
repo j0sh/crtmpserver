@@ -73,10 +73,12 @@ public:
 	 */
 	bool ConfigureLogAppenders();
 
+#ifdef HAS_PROTOCOL_DNS
 	/*!
 		@brief Fetches the dnsResolver attribute in the configuration file. It also gets the parameters of the dns resolver like its port, ip, etc.
 	 */
 	bool ConfigureDNSResolver();
+#endif /* HAS_PROTOCOL_DNS */
 
 	/*!
 		@brief Fetches the applications attribute in the configuration file. 

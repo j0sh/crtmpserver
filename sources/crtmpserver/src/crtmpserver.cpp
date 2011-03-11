@@ -192,11 +192,13 @@ bool Initialize() {
 	INFO("Initialize I/O handlers manager: %s", NETWORK_REACTOR);
 	IOHandlerManager::Initialize();
 
+#ifdef  HAS_PROTOCOL_DNS 
 	INFO("Initialize DNS resolver");
 	if (!gRs.pConfigFile->ConfigureDNSResolver()) {
 		FATAL("Unable to configure DNS resolver");
 		return false;
 	}
+#endif /* HAS_PROTOCOL_DNS */
 
 	INFO("Initialize applications");
 	if (!gRs.pConfigFile->ConfigureApplications()) {

@@ -7,25 +7,6 @@ configuration=
 	daemon=false,
 	-- the OS's path separator. Used in composing paths
 	pathSeparator="/",
-	-- this is the async DNS resolver. This is a "clinet" connection
-	-- to the server.
-	dnsResolver=
-	{
-		-- the DNS resolver will connect to ip:port.
-		-- Whe a request of resolving a domain is made, instead of
-		-- using gethostbyname, we will pass that request to ip:port
-		-- This way, the request is async. Of course, it can be looped back
-		ip="127.0.0.1",
-		port=9311,
-		acceptors = 
-		{
-			{
-				ip="0.0.0.0",
-				port=9311,
-				protocol="inboundDns"
-			},	
-		}
-	},
 
 	-- this is the place where all the logging facilities are setted up
 	-- you can add/remove any number of locations

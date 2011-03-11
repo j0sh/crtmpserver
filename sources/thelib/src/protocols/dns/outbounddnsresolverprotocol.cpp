@@ -17,8 +17,7 @@
  *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
+#ifdef HAS_PROTOCOL_DNS
 #include "protocols/dns/outbounddnsresolverprotocol.h"
 #include "protocols/protocolfactorymanager.h"
 #include "netio/netio.h"
@@ -207,5 +206,4 @@ bool OutboundDNSResolverProtocol::HandleResponse(Variant &response) {
 
 	return true;
 }
-
-
+#endif /* HAS_PROTOCOL_DNS */
