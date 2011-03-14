@@ -43,7 +43,14 @@ copyProject() {
 	fi
 
 	cp $ORIGPATH/builders/cmake/$1/CMakeLists.txt $DEBPATH/$1
-	cp -r $ORIGPATH/sources/$1/* $DEBPATH/$1
+	if [ -d "$ORIGPATH/sources/$1/include" ]; then 
+		mkdir -p $DEBPATH/$1/include
+		cp -r $ORIGPATH/sources/$1/include/* $DEBPATH/$1/include
+	fi
+	if [ -d "$ORIGPATH/sources/$1/src" ]; then
+		mkdir -p $DEBPATH/$1/src
+		cp -r $ORIGPATH/sources/$1/src/* $DEBPATH/$1/src
+	fi
 }
 
 echo "Check for dependencies"
@@ -74,7 +81,7 @@ then
 			exit 1
 		fi
 	fi
-
+	SVER="0.`svnversion -n ${ORIGPATH}/sources | tr -d 'M|S|P'`"
 else
 	echo "Fetch current sources from svn"
 	svn co --username "anonymous" --password "" $SVNPATH $ORIGPATH 
@@ -84,9 +91,10 @@ else
 		echo "fail to fetch sources"
 		exit $result
 	fi
+	SVER="0.`svnversion -n ${ORIGPATH}/sources | tr -d 'M|S|P'`"
+	find $ORIGPATH -name '.svn' -type d -exec rm -rf {} \;  2>/dev/null
 fi
 
-SVER="0.`svnversion -n ${ORIGPATH}/sources | tr -d 'M|S|P'`"
 DEBPATH="`pwd`/crtmpserver-${SVER}"
 
 echo "Build debian structures"
