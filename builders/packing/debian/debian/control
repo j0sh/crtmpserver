@@ -5,8 +5,6 @@ Maintainer: Andriy Beregovenko <jet@jet.kiev.ua>
 Build-Depends: debhelper (>= 7.0.50~), cmake, libssl-dev
 Standards-Version: 3.9.1
 Homepage: http://www.rtmpd.com
-#Vcs-Git: git://git.debian.org/collab-maint/rtmpd.git
-#Vcs-Browser: http://git.debian.org/?p=collab-maint/rtmpd.git;a=summary
 
 Package: crtmpserver
 Architecture: any

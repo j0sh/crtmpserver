@@ -1,38 +1,78 @@
-This work was packaged for Debian by Andriy Beregovenko <jet@jet.kiev.ua> on
-Fri, 11 Feb 2011 13:10:07 +0200
+Format: http://dep.debian.net/deps/dep5
+Upstream-Name: crtmpserver
+Source: http://www.rtmpd.com
 
-It was downloaded from http://www.rtmpd.com
+Files: *
+Copyright: 2010-2011 Gavriloaie Eugen-Andrei (shiretu@gmail.com) 
+License: GPL-3.0+ with OpenSSL exception
 
-Upstream Author(s):
+Files: debian/*
+Copyright: 2011 Andriy Beregovenko <jet@jet.kiev.ua>
+License: GPL-3.0+
 
-    Gavriloaie Eugen-Andrei <shiretu@gmail.com>
-    Lee Thomason
-    Roberto Ierusalimschy
-    Waldemar Celes
-    Luiz Henrique de Figueiredo
-    Kungliga Tekniska Högskolan
-    Vlad Galu
-    Mircea Danila Dumitrescu
+Files: lua/src/*
+Copyright: 1994-2008 Lua.org, PUC-Rio
+License: MIT
 
-Copyright:
-    Copyright (c) 2010, Gavriloaie Eugen-Andrei (shiretu@gmail.com) 
+Files: common/src/utils/tinyxml/* common/include/utils/tinyxml/*
+Copyright: 2000-2006 Lee Thomason
+License: zlib
 
-License:
+License: GPL-3.0+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+ .
+ This package is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ .
+ You should have received a copy of the GNU General Public License
+ along with this program. If not, see <http://www.gnu.org/licenses/>.
+ .
+ On Debian systems, the complete text of the GNU General
+ Public License version 3 can be found in "/usr/share/common-licenses/GPL-3".
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+#and is licensed under the GPL version 3, see above.
 
-    This package is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+License: MIT
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+ .
+ The above copyright notice and this permission notice shall be included in
+ all copies or substantial portions of the Software.
+ .
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ THE SOFTWARE.
 
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see <http://www.gnu.org/licenses/>.
-
-The Debian packaging is (C) 2011, Andriy Beregovenko <jet@jet.kiev.ua> and
-is licensed under the GPL version 3, see above.
-
+License: zlib
+ This software is provided 'as-is', without any express or implied
+ warranty. In no event will the authors be held liable for any
+ damages arising from the use of this software.
+ .
+ Permission is granted to anyone to use this software for any
+ purpose, including commercial applications, and to alter it and
+ redistribute it freely, subject to the following restrictions:
+ .                                                                                                                                                            
+ 1. The origin of this software must not be misrepresented; you must
+ not claim that you wrote the original software. If you use this
+ software in a product, an acknowledgment in the product documentation
+ would be appreciated but is not required.
+ .
+ 2. Altered source versions must be plainly marked as such, and
+ must not be misrepresented as being the original software.
+ .
+ 3. This notice may not be removed or altered from any source
+ distribution.
 

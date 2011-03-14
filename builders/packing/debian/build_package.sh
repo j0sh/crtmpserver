@@ -151,6 +151,7 @@ find ${DEBPATH} -name CMakeLists.txt -type f -exec sed -r -i -f fix_paths.sed {}
 
 ############ Prepare debian sources
 echo "************ Hit <ENTER> here *****************"
+find $DEBPATH -name '.svn' -type d -exec rm -rf {} \;
 cd $DEBPATH
 dh_make -c gpl3 -e jet@jet.kiev.ua -s -p crtmpserver --createorig
 cd ../
