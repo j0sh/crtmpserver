@@ -1,0 +1,21 @@
+Description: use system lua(lua 5.1)
+
+--- a/cmake_find_modules/Find_lua.cmake
++++ b/cmake_find_modules/Find_lua.cmake
+@@ -3,6 +3,7 @@
+ 	NAMES
+ 		lualib.h
+ 	PATHS
++		/usr/include/lua5.1
+ 		/usr/include
+ 		/usr/local/include
+ 		/usr/local/include/lua51
+@@ -12,7 +13,7 @@
+ 
+ FIND_LIBRARY(LUA_LIBRARY_PATH_
+ 	NAMES
+-		lua
++		lua5.1
+ 	PATHS
+ 		/usr/lib64
+ 		/usr/lib

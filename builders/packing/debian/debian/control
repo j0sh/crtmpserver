@@ -2,13 +2,13 @@ Source: crtmpserver
 Section: utils
 Priority: optional
 Maintainer: Andriy Beregovenko <jet@jet.kiev.ua>
-Build-Depends: debhelper (>= 7.0.50~), cmake, libssl-dev
+Build-Depends: quilt, debhelper (>= 7.0.50~), cmake, libssl-dev, liblua5.1-0-dev
 Standards-Version: 3.9.1
 Homepage: http://www.rtmpd.com
 
 Package: crtmpserver
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, openssl
+Depends: ${shlibs:Depends}, ${misc:Depends}, openssl, liblua5.1-0
 Pre-Depends: adduser
 Description: High performance RTMP/RTSP streaming server
  crtmpserver is a high performance streaming server able to stream

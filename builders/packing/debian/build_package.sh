@@ -123,13 +123,6 @@ echo "Processing cmake_find_modules"
 mkdir -p "$DEBPATH/cmake_find_modules"
 cp $ORIGPATH/builders/cmake/cmake_find_modules/* "$DEBPATH/cmake_find_modules"
 
-############# LUA
-echo "Processing lua"
-mkdir -p "$DEBPATH/lua"
-cp $ORIGPATH/builders/cmake/lua/CMakeLists.txt $DEBPATH/lua
-mkdir -p "$DEBPATH/lua/src"
-cp $ORIGPATH/3rdparty/lua-dev/* $DEBPATH/lua/src
-
 ############# Common
 echo "Processing common"
 copyProject "common"
@@ -168,7 +161,7 @@ then
 	tar -czpf crtmpserver_${SVER}.orig.tar.gz crtmpserver-${SVER}.orig/*
 fi
 cd $DEBPATH/debian
-rm -f *.ex control copyright README.Debian README.source crtmpserver.doc-base.EX
+rm -f *.ex control copyright README.Debian README.source crtmpserver.doc-base.EX docs
 cd $STARTPWD 
 cp -vrf debian/* $DEBPATH/debian
 cp -vf $ORIGPATH/man/crtmpserver.1 $DEBPATH/debian
