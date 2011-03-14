@@ -573,7 +573,7 @@ bool ConfigFile::ValidateDNSResolver() {
 		}
 		struct in_addr temp;
 		if (inet_aton(STR(_configuration[CONF_DNSRESOLVER][CONF_IP]), &temp) != 1) {
-			FATAL("Unable to translate %s into a valid IP adress",
+			FATAL("Unable to translate %s into a valid IP address",
 					CONF_DNSRESOLVER"."CONF_IP);
 			return false;
 		}

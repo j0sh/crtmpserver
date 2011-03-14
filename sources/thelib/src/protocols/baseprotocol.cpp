@@ -390,12 +390,12 @@ void BaseProtocol::SetApplication(BaseClientApplication *pApplication) {
 }
 
 bool BaseProtocol::SignalInputData(IOBuffer &buffer, sockaddr_in *pPeerAddress) {
-	WARN("This should be overriden. Protocol type is %s", STR(tagToString(_type)));
+	WARN("This should be overridden. Protocol type is %s", STR(tagToString(_type)));
 	return SignalInputData(buffer);
 }
 
 bool BaseProtocol::SignalInputData(int32_t recvAmount, sockaddr_in *pPeerAddress) {
-	WARN("This should be overriden: %s", STR(tagToString(_type)));
+	WARN("This should be overridden: %s", STR(tagToString(_type)));
 	return SignalInputData(recvAmount);
 }
 

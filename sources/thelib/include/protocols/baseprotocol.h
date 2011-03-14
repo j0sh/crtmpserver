@@ -261,7 +261,7 @@ public:
 	virtual bool SignalInputData(int32_t recvAmount, sockaddr_in *pPeerAddress);
 
 	/*!
-		@brief This will return a Variant containing various statistic information. This should be overriden if more/less info is desired
+		@brief This will return a Variant containing various statistic information. This should be overridden if more/less info is desired
 		@param info
 	*/
 	virtual void GetStats(Variant &info);

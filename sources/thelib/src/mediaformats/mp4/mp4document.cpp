@@ -276,7 +276,7 @@ BaseAtom * MP4Document::ReadAtom(BaseAtom *pParentAtom) {
 bool MP4Document::ParseDocument() {
 
 	if (!_mediaFile.SeekBegin()) {
-		FATAL("Unable to seek to the begining of file");
+		FATAL("Unable to seek to the beginning of file");
 		return false;
 	}
 

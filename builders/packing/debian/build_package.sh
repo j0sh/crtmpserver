@@ -86,7 +86,7 @@ else
 	fi
 fi
 
-SVER="0.`svnversion -n ${ORIGPATH}/sources`"
+SVER="0.`svnversion -n ${ORIGPATH}/sources | tr -d 'M|S|P'`"
 DEBPATH="`pwd`/crtmpserver-${SVER}"
 
 echo "Build debian structures"

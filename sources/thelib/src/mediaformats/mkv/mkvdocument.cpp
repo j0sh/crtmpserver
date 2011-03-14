@@ -43,7 +43,7 @@ MKVDocument::~MKVDocument() {
 bool MKVDocument::ParseDocument() {
 	//1. Seek to begin
 	if (!_mediaFile.SeekBegin()) {
-		FATAL("Unable to seek to the begining of file");
+		FATAL("Unable to seek to the beginning of file");
 		return false;
 	}
 
