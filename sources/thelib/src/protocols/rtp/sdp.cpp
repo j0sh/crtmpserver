@@ -495,7 +495,8 @@ bool SDP::ParseSDPLineO(Variant &result, string line) {
 
 bool SDP::ParseSDPLineP(Variant &result, string line) {
 	result.Reset();
-	NYIR;
+    result = line;
+    return true;
 }
 
 bool SDP::ParseSDPLineR(Variant &result, string line) {
