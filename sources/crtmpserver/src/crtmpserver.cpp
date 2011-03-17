@@ -250,6 +250,9 @@ void Cleanup() {
 	delete gRs.pConfigFile;
 	gRs.pConfigFile = NULL;
 
+	WARN("Doing final OpenSSL cleanup");
+	CleanupSSL();
+
 	WARN("Shutting down the logger leaving you in the dark. Bye bye... :(");
 	Logger::Free(true);
 }

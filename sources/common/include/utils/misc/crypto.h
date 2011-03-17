@@ -31,6 +31,8 @@
 #include <openssl/bio.h>
 #include <openssl/hmac.h>
 #include <openssl/aes.h>
+#include <openssl/engine.h>
+#include <openssl/conf.h>
 
 /*!
 	@class DHWrapper
@@ -94,6 +96,7 @@ DLLEXP string b64(uint8_t *pBuffer, uint32_t length);
 DLLEXP string unb64(string source);
 DLLEXP string unb64(uint8_t *pBuffer, uint32_t length);
 DLLEXP string unhex(string source);
+DLLEXP void CleanupSSL();
 
 #endif /* _CRYPTO_H */
 
