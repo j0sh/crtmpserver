@@ -88,6 +88,10 @@ typedef long long int int64_t;
 #define GET_PROC_ADDRESS(libHandler, procName) GetProcAddress((libHandler), (procName))
 #define FREE_LIBRARY(libHandler) FreeLibrary((libHandler))
 #define SRAND() srand(time(NULL));
+#define S_IRUSR S_IREAD
+#define S_IWUSR S_IWRITE
+#define S_IRGRP 0000
+#define S_IWGRP 0000
 
 
 #define gmtime_r(_p_time_t, _p_struct_tm) *(_p_struct_tm) = *gmtime(_p_time_t);
