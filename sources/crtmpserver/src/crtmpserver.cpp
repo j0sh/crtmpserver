@@ -45,7 +45,7 @@ struct RunningStatus {
 
 	RunningStatus() {
 		pConfigFile = NULL;
-		pProtocolFactory == NULL;
+		pProtocolFactory = NULL;
 		run = false;
 		daemon = false;
 	}
