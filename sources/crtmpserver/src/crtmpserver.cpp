@@ -42,6 +42,13 @@ struct RunningStatus {
 
 	//is this a daemon already?
 	bool daemon;
+
+	RunningStatus() {
+		pConfigFile = NULL;
+		pProtocolFactory == NULL;
+		run = false;
+		daemon = false;
+	}
 };
 
 void QuitSignalHandler(void);
@@ -54,7 +61,7 @@ void PrintVersion();
 void NormalizeCommandLine(string configFile);
 bool ApplyUIDGID();
 
-RunningStatus gRs = {0};
+RunningStatus gRs;
 
 #ifdef COMPILE_STATIC
 BaseClientApplication *SpawnApplication(Variant configuration);
