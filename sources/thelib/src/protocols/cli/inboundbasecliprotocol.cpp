@@ -54,6 +54,7 @@ bool InboundBaseCLIProtocol::AllowFarProtocol(uint64_t type) {
 
 bool InboundBaseCLIProtocol::AllowNearProtocol(uint64_t type) {
 	ASSERT("Operation not supported");
+	return false;
 }
 
 IOBuffer * InboundBaseCLIProtocol::GetOutputBuffer() {
@@ -64,6 +65,7 @@ IOBuffer * InboundBaseCLIProtocol::GetOutputBuffer() {
 
 bool InboundBaseCLIProtocol::SignalInputData(int32_t recvAmount) {
 	ASSERT("Operation not supported");
+	return false;
 }
 
 bool InboundBaseCLIProtocol::ProcessMessage(Variant &message) {

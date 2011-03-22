@@ -280,17 +280,29 @@ bool SetFdNoSIGPIPE(int32_t fd) {
 }
 
 bool SetFdKeepAlive(int32_t fd) {
-	//NYIR;
+	BOOL value = TRUE;
+	if (setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, (char *)&value, sizeof(BOOL)) == SOCKET_ERROR) {
+		FATAL("Error #%d", WSAGetLastError());
+		return false;
+	}
 	return true;
 }
 
 bool SetFdNoNagle(int32_t fd) {
-	//NYIR;
+	BOOL value = TRUE;
+	if (setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, (char *)&value, sizeof(BOOL)) == SOCKET_ERROR) {
+		FATAL("Error #%d", WSAGetLastError());
+		return false;
+	}
 	return true;
 }
 
 bool SetFdReuseAddress(int32_t fd) {
-	//NYIR;
+	BOOL value = TRUE;
+	if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (char *)&value, sizeof(BOOL)) == SOCKET_ERROR) {
+		FATAL("Error #%d", WSAGetLastError());
+		return false;
+	}
 	return true;
 }
 
@@ -383,7 +395,7 @@ string normalizePath(string base, string file) {
 	}
 }
 
-bool ListFolder(string path, vector<string> &result) {
+bool ListFolder(string root, string path, vector<string> &result) {
 	WIN32_FIND_DATA ffd;
 	//LARGE_INTEGER filesize;
 	TCHAR szDir[MAX_PATH];
@@ -423,7 +435,7 @@ bool ListFolder(string path, vector<string> &result) {
 			continue;
 
 		if (ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
-			WARN("Subdirectorylisting not implemented");
+			WARN("Subdirectory listing not implemented");
 		} else {
 			//filesize.LowPart = ffd.nFileSizeLow;
 			//filesize.HighPart = ffd.nFileSizeHigh;

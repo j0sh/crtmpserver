@@ -25,7 +25,7 @@
 
 class BaseProtocol;
 
-class BaseCLIAppProtocolHandler
+class DLLEXP BaseCLIAppProtocolHandler
 : public BaseAppProtocolHandler {
 public:
 	BaseCLIAppProtocolHandler(Variant &configuration);

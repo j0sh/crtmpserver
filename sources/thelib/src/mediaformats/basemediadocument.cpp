@@ -18,6 +18,13 @@
  */
 
 #include "mediaformats/basemediadocument.h"
+#ifdef WIN32
+#define SEEK_FILE_PERM	(S_IREAD|S_IWRITE)
+#define META_FILE_PERM	(S_IREAD|S_IWRITE)
+#elif
+#define SEEK_FILE_PERM	(S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP)
+#define META_FILE_PERM	(S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP)
+#endif
 
 BaseMediaDocument::BaseMediaDocument(Variant &metadata) {
 	_audioSamplesCount = 0;
@@ -99,9 +106,8 @@ bool BaseMediaDocument::Process() {
 	MoveFile(_seekFilePath + ".tmp", _seekFilePath);
 	MoveFile(_metaFilePath + ".tmp", _metaFilePath);
 
-	chmod(STR(_seekFilePath), S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
-	chmod(STR(_metaFilePath), S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
-
+	chmod(STR(_seekFilePath), SEEK_FILE_PERM);
+	chmod(STR(_metaFilePath), META_FILE_PERM);
 	return true;
 }
 

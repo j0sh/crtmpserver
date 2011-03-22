@@ -165,7 +165,7 @@ DLLEXP map<string, string> mapping(string str, string separator1, string separat
 DLLEXP void splitFileName(string fileName, string &name, string &extension, char separator = '.');
 DLLEXP double GetFileModificationDate(string path);
 DLLEXP string normalizePath(string base, string file);
-DLLEXP bool ListFolder(string path, vector<string> &result);
+DLLEXP bool ListFolder(string root, string path, vector<string> &result);
 DLLEXP bool MoveFile(string src, string dst);
 DLLEXP void InstallQuitSignal(SignalFnc pQuitSignalFnc);
 DLLEXP void InstallConfRereadSignal(SignalFnc pConfRereadSignalFnc);
