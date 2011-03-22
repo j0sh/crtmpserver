@@ -54,11 +54,7 @@ void PrintVersion();
 void NormalizeCommandLine(string configFile);
 bool ApplyUIDGID();
 
-#ifdef WIN32
-RunningStatus gRs;
-#elif
 RunningStatus gRs = {0};
-#endif
 
 #ifdef COMPILE_STATIC
 BaseClientApplication *SpawnApplication(Variant configuration);
