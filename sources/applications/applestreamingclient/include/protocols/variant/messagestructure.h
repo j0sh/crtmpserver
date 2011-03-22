@@ -97,7 +97,7 @@
 #define ASC_RES(v)						(v)["response"]
 #ifdef INCLUDE_DEBUG_LOCATIONS
 #define ASC_RES_DEBUG_FILE(v)			ASC_RES(v)["debug"]["fileName"]=__FILE__
-#define ASC_RES_DEBUG_LINE_NUMBER(v)	ASC_RES(v)["debug"]["lineNumber"]=__LINE__
+#define ASC_RES_DEBUG_LINE_NUMBER(v)	ASC_RES(v)["debug"]["lineNumber"]=(uint32_t)__LINE__
 #else
 #define ASC_RES_DEBUG_FILE(v)
 #define ASC_RES_DEBUG_LINE_NUMBER(v)

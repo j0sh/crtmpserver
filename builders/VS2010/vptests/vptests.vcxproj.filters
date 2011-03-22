@@ -23,6 +23,9 @@
     <ClCompile Include="..\..\..\sources\applications\vptests\src\vptestsapplication.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\dummy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\sources\applications\vptests\include\rtmpappprotocolhandler.h">

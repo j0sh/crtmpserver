@@ -87,7 +87,7 @@ typedef long long int int64_t;
 #define OPEN_LIBRARY_ERROR "OPEN_LIBRARY_ERROR NOT IMPLEMENTED YET"
 #define GET_PROC_ADDRESS(libHandler, procName) GetProcAddress((libHandler), (procName))
 #define FREE_LIBRARY(libHandler) FreeLibrary((libHandler))
-#define SRAND() srand(time(NULL));
+#define SRAND() srand((uint32_t)time(NULL));
 #define S_IRUSR S_IREAD
 #define S_IWUSR S_IWRITE
 #define S_IRGRP 0000
@@ -114,8 +114,8 @@ do { \
 #define GETCUSTOMNTP(result,value) \
 do { \
 	struct timeval tv; \
-	tv.tv_sec=value/CLOCKS_PER_SECOND; \
-	tv.tv_usec=value-tv.tv_sec*CLOCKS_PER_SECOND; \
+	tv.tv_sec=(long)(value/CLOCKS_PER_SECOND); \
+	tv.tv_usec=(long)(value-tv.tv_sec*CLOCKS_PER_SECOND); \
 	result=(((uint64_t)tv.tv_sec + 2208988800U)<<32)|((((uint32_t)tv.tv_usec) << 12) + (((uint32_t)tv.tv_usec) << 8) - ((((uint32_t)tv.tv_usec) * 1825) >> 5)); \
 }while (0);
 

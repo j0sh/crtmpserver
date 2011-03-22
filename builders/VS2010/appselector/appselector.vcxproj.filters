@@ -23,6 +23,9 @@
     <ClCompile Include="..\..\..\sources\applications\appselector\src\rtmpappprotocolhandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\dummy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\sources\applications\appselector\include\appselector.h">

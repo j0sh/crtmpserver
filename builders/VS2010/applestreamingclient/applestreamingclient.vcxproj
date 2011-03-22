@@ -42,33 +42,36 @@
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>C:\OpenSSL-Win32\include;$(IncludePath)</IncludePath>
     <LibraryPath>C:\OpenSSL-Win32\lib;$(LibraryPath)</LibraryPath>
+    <OutDir>$(OutDir)applications\$(ProjectName)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>C:\OpenSSL-Win32\include;$(IncludePath)</IncludePath>
     <LibraryPath>C:\OpenSSL-Win32\lib;$(LibraryPath)</LibraryPath>
+    <OutDir>$(OutDir)applications\$(ProjectName)\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>LITTLE_ENDIAN_BYTE_ALIGNED;NET_SELECT;HAS_LUA;HAS_PROTOCOL_HTTP;HAS_PROTOCOL_RTMP;HAS_PROTOCOL_RTP;HAS_PROTOCOL_LIVEFLV;HAS_PROTOCOL_TS;HAS_PROTOCOL_VAR;HAS_MEDIA_MP3;HAS_MEDIA_MP4;HAS_MEDIA_FLV;HAS_MEDIA_MKV;VM_LUA;WIN32;_DEBUG;_WINDOWS;_USRDLL;APPLESTREAMINGCLIENT_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>LITTLE_ENDIAN_BYTE_ALIGNED;NET_SELECT;HAS_LUA;HAS_PROTOCOL_HTTP;HAS_PROTOCOL_RTMP;HAS_PROTOCOL_RTP;HAS_PROTOCOL_LIVEFLV;HAS_PROTOCOL_TS;HAS_PROTOCOL_VAR;HAS_MEDIA_MP3;HAS_MEDIA_MP4;HAS_MEDIA_FLV;VM_LUA;WIN32;_DEBUG;_WINDOWS;_USRDLL;APPLESTREAMINGCLIENT_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\..\..\sources\applications\applestreamingclient\include;..\..\..\sources\common\include;..\..\..\sources\thelib\include;..\..\..\3rdparty\lua-dev;</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4996;4251</DisableSpecificWarnings>
+      <ForcedIncludeFiles>common.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <PrecompiledHeaderFile>common.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <OutputFile>$(OutDir)applications\$(ProjectName)\$(ProjectName).dll</OutputFile>
+      <OutputFile>$(OutDir)\$(ProjectName).dll</OutputFile>
       <AdditionalLibraryDirectories>
       </AdditionalLibraryDirectories>
       <AdditionalDependencies>libeay32.lib;ssleay32.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>rd /Q /S "$(OutDir)applications\$(ProjectName)\mediaFolder"
-mkdir "$(OutDir)applications\$(ProjectName)\mediaFolder"
+      <Command>rd /Q /S "$(OutDir)\mediaFolder"
+mkdir "$(OutDir)\mediaFolder"
 </Command>
       <Message>Create the media folder</Message>
     </PostBuildEvent>
@@ -76,28 +79,29 @@ mkdir "$(OutDir)applications\$(ProjectName)\mediaFolder"
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>LITTLE_ENDIAN_BYTE_ALIGNED;NET_SELECT;HAS_LUA;HAS_PROTOCOL_HTTP;HAS_PROTOCOL_RTMP;HAS_PROTOCOL_RTP;HAS_PROTOCOL_LIVEFLV;HAS_PROTOCOL_TS;HAS_PROTOCOL_VAR;HAS_MEDIA_MP3;HAS_MEDIA_MP4;HAS_MEDIA_FLV;HAS_MEDIA_MKV;VM_LUA;WIN32;NDEBUG;_WINDOWS;_USRDLL;APPLESTREAMINGCLIENT_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>LITTLE_ENDIAN_BYTE_ALIGNED;NET_SELECT;HAS_LUA;HAS_PROTOCOL_HTTP;HAS_PROTOCOL_RTMP;HAS_PROTOCOL_RTP;HAS_PROTOCOL_LIVEFLV;HAS_PROTOCOL_TS;HAS_PROTOCOL_VAR;HAS_MEDIA_MP3;HAS_MEDIA_MP4;HAS_MEDIA_FLV;VM_LUA;WIN32;NDEBUG;_WINDOWS;_USRDLL;APPLESTREAMINGCLIENT_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\..\..\sources\applications\applestreamingclient\include;..\..\..\sources\common\include;..\..\..\sources\thelib\include;..\..\..\3rdparty\lua-dev;</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4996;4251</DisableSpecificWarnings>
+      <PrecompiledHeaderFile>common.h</PrecompiledHeaderFile>
+      <ForcedIncludeFiles>common.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <OutputFile>$(OutDir)applications\$(ProjectName)\$(ProjectName).dll</OutputFile>
+      <OutputFile>$(OutDir)\$(ProjectName).dll</OutputFile>
       <AdditionalLibraryDirectories>
       </AdditionalLibraryDirectories>
       <AdditionalDependencies>libeay32.lib;ssleay32.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>rd /Q /S "$(OutDir)applications\$(ProjectName)\mediaFolder"
-mkdir "$(OutDir)applications\$(ProjectName)\mediaFolder"
+      <Command>rd /Q /S "$(OutDir)\mediaFolder"
+mkdir "$(OutDir)\mediaFolder"
 </Command>
       <Message>Create the media folder</Message>
     </PostBuildEvent>
@@ -156,6 +160,10 @@ mkdir "$(OutDir)applications\$(ProjectName)\mediaFolder"
     <ClCompile Include="..\..\..\sources\applications\applestreamingclient\src\protocols\ts\tsappprotocolhandler.cpp" />
     <ClCompile Include="..\..\..\sources\applications\applestreamingclient\src\protocols\variant\variantappprotocolhandler.cpp" />
     <ClCompile Include="..\..\..\sources\applications\applestreamingclient\src\speedcomputer.cpp" />
+    <ClCompile Include="..\dummy.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\common\common.vcxproj">

@@ -35,6 +35,9 @@
     <ClCompile Include="..\..\..\sources\applications\flvplayback\src\rtmfpappprotocolhandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\dummy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\sources\applications\flvplayback\include\flvplayback.h">

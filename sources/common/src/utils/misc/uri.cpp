@@ -103,7 +103,7 @@ bool parseURI(string stringUri, URI &uri) {
 		int32_t port = atoi(STR(hostComponents[1]));
 		if ((port <= 0) || (port > 65535))
 			return false;
-		uri.port = port;
+		uri.port = (uint16_t) port;
 	} else {
 		return false;
 	}

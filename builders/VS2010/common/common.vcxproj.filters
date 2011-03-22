@@ -226,5 +226,8 @@
     <ClCompile Include="..\..\..\sources\common\src\utils\misc\uri.cpp">
       <Filter>Source Files\utils\misc</Filter>
     </ClCompile>
+    <ClCompile Include="..\dummy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

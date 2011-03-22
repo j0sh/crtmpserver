@@ -20,6 +20,9 @@
     <ClCompile Include="..\..\..\sources\applications\admin\src\rtmpappprotocolhandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\dummy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\sources\applications\admin\include\admin.h">

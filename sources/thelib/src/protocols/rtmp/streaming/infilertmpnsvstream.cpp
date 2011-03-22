@@ -110,7 +110,9 @@ bool InFileRTMPNSVStream::BuildFrame(FileClass *pFile, MediaFrame &mediaFrame,
 			//FINEST("length : %08x", mediaFrame.length);
 			// need help here...
 			buffer.ReadFromRepeat(0, 4);
-			EHTONLP((GETIBPOINTER(buffer) + 5), mediaFrame.length);
+			uint32_t frameLength=0;
+			EHTONLP((GETIBPOINTER(buffer) + 5), frameLength);
+			mediaFrame.length=frameLength;
 
 			//buffer.ReadFromBuffer((uint8_t *) &mediaFrame.length, 4);
 			//            string str = format("%02x %02x %02x %02x %02x",
@@ -175,7 +177,11 @@ bool InFileRTMPNSVStream::BuildFrameHeaders(FileClass *pFile, MediaFrame &mediaF
 	//FINEST(" buffer: \n%s", STR(pbuf));
 
 	uint8_t *pData = GETIBPOINTER(pbuf);
-	uint32_t dataLength = mediaFrame.length;
+	if(mediaFrame.length>=0x100000000LL){
+		FATAL("Invalid frame length");
+		return false;
+	}
+	uint32_t dataLength = (uint32_t)mediaFrame.length;
 	//FINEST("%02x - %s", (uint8_t) NALU_TYPE(pData[0]), STR(NALUToString((uint8_t) pData[0])));
 
 	switch (NALU_TYPE(pData[0])) {

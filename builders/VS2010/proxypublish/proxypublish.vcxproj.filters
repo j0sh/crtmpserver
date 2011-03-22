@@ -53,5 +53,8 @@
     <ClCompile Include="..\..\..\sources\applications\proxypublish\src\rtspappprotocolhandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\dummy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

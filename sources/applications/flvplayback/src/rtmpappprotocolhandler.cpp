@@ -78,7 +78,6 @@ bool RTMPAppProtocolHandler::ProcessGetAvailableFlvs(BaseRTMPProtocol *pFrom, Va
 				&& extension != MEDIA_TYPE_MOV
 				&& extension != MEDIA_TYPE_F4V
 				&& extension != MEDIA_TYPE_TS
-				&& extension != MEDIA_TYPE_MKV
 				&& extension != MEDIA_TYPE_NSV)
 			continue;
 		string flashName = "";

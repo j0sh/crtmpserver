@@ -248,7 +248,7 @@ void CommonTestsSuite::test_Endianess() {
 	TS_ASSERT(ui64 == 0x08090a0b0c0d0e0fLL);
 
 	char *pTempBuffer = new char[64 + 8];
-	char rawDouble[] = {0x40, 0x5E, 0xDD, 0x2F, 0x1A, 0x9F, 0xBE, 0x77};
+	unsigned char rawDouble[] = {0x40, 0x5E, 0xDD, 0x2F, 0x1A, 0x9F, 0xBE, 0x77};
 	double tempDoubleVal = 0;
 	for (int i = 0; i <= 64; i++) {
 		memset(pTempBuffer, 0, i);

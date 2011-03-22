@@ -291,11 +291,18 @@ bool ReadPPS(BitArray &ba, Variant &v) {
 bool _VIDEO_AVC::Init(uint8_t *pSPS, uint32_t spsLength, uint8_t *pPPS,
 		uint32_t ppsLength) {
 	Clear();
-	_spsLength = spsLength;
+	if((spsLength<=0)
+		||(spsLength>65535)
+		||(ppsLength<=0)
+		||(ppsLength>65535)){
+			FATAL("Invalid SPS/PPS lengths");
+			return false;
+	}
+	_spsLength = (uint16_t)spsLength;
 	_pSPS = new uint8_t[_spsLength];
 	memcpy(_pSPS, pSPS, _spsLength);
 
-	_ppsLength = ppsLength;
+	_ppsLength = (uint16_t)ppsLength;
 	_pPPS = new uint8_t[_ppsLength];
 	memcpy(_pPPS, pPPS, _ppsLength);
 

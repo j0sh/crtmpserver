@@ -34,7 +34,7 @@ private:
 
 	bool _spsAvailable;
 	uint8_t *_pSPSPPS;
-	uint8_t _SPSPPSLength;
+	uint32_t _SPSPPSLength;
 	uint32_t _PPSStart;
 
 	IOBuffer _metadataBuffer;

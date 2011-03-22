@@ -27,7 +27,6 @@
 #include "mediaformats/flv/flvdocument.h"
 #include "mediaformats/mp3/mp3document.h"
 #include "mediaformats/mp4/mp4document.h"
-#include "mediaformats/mkv/mkvdocument.h"
 #include "mediaformats/nsv/nsvdocument.h"
 
 #ifndef HAS_MMAP
@@ -124,11 +123,6 @@ bool BaseInFileStream::ResolveCompleteMetadata(Variant &metaData) {
 		pDocument = new MP4Document(metaData);
 	}
 #endif /* HAS_MEDIA_MP4 */
-#ifdef HAS_MEDIA_MKV
-	else if (metaData[META_MEDIA_TYPE] == MEDIA_TYPE_MKV) {
-		pDocument = new MKVDocument(metaData);
-	}
-#endif /* HAS_MEDIA_MKV */
 #ifdef HAS_MEDIA_NSV
 	else if (metaData[META_MEDIA_TYPE] == MEDIA_TYPE_NSV) {
 		pDocument = new NSVDocument(metaData);

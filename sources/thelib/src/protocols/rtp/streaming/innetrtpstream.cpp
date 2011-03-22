@@ -348,7 +348,7 @@ bool InNetRTPStream::FeedAudioData(uint8_t *pData, uint32_t dataLength,
 		if (i != (uint32_t) (chunksCount - 1)) {
 			chunkSize = (ENTOHSP(pData + 2 + 2 * i)) >> 3;
 		} else {
-			chunkSize = dataLength - cursor;
+			chunkSize = (uint16_t) (dataLength - cursor);
 		}
 		//		FINEST("chunkSize: %d; dataLength: %d; diff: %d", chunkSize, dataLength,
 		//				dataLength - chunkSize);
