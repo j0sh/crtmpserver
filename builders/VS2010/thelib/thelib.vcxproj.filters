@@ -641,6 +641,9 @@
     <ClCompile Include="..\..\..\sources\thelib\src\protocols\cli\inboundjsoncliprotocol.cpp">
       <Filter>Source Files\protocols\cli</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\streaming\infilertmpnsvstream.cpp">
+      <Filter>Source Files\protocols\rtmp\streaming</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\sources\thelib\include\application\baseappprotocolhandler.h">
@@ -1152,6 +1155,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmfp\outboundrtmfpprotocol.h">
       <Filter>Header Files\protocols\rtmfp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\streaming\infilertmpnsvstream.h">
+      <Filter>Header Files\protocols\rtmp\streaming</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

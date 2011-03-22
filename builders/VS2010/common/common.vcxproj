@@ -112,8 +112,6 @@
     <ClInclude Include="..\..\..\sources\common\include\common.h" />
     <ClInclude Include="..\..\..\sources\common\include\defines.h" />
     <ClInclude Include="..\..\..\sources\common\include\platform\baseplatform.h" />
-    <ClInclude Include="..\..\..\sources\common\include\platform\linux\linuxplatform.h" />
-    <ClInclude Include="..\..\..\sources\common\include\platform\linux\max.h" />
     <ClInclude Include="..\..\..\sources\common\include\platform\platform.h" />
     <ClInclude Include="..\..\..\sources\common\include\platform\windows\max.h" />
     <ClInclude Include="..\..\..\sources\common\include\platform\windows\win32platform.h" />

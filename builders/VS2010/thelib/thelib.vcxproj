@@ -52,7 +52,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>..\..\..\sources\common\include;..\..\..\sources\thelib\include;..\..\..\3rdparty\lua-dev;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>LITTLE_ENDIAN_BYTE_ALIGNED;NET_SELECT;HAS_LUA;HAS_PROTOCOL_HTTP;HAS_PROTOCOL_RTMP;HAS_PROTOCOL_RTP;HAS_PROTOCOL_LIVEFLV;HAS_PROTOCOL_TS;HAS_PROTOCOL_VAR;HAS_MEDIA_MP3;HAS_MEDIA_MP4;HAS_MEDIA_FLV;HAS_MEDIA_MKV;VM_LUA;HandleTSVideoData=HandleVideoData_version3;CreateRTCPPacket=CreateRTCPPacket_mystyle_only_once;FeedDataAudioMPEG4Generic=FeedDataAudioMPEG4Generic_one_by_one;WIN32;_DEBUG;_WINDOWS;_USRDLL;THELIB_EXPORTS;_CRT_SECURE_NO_WARNINGS;CreateRTCPPacket=CreateRTCPPacket_mystyle;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>LITTLE_ENDIAN_BYTE_ALIGNED;NET_SELECT;HAS_LUA;HAS_PROTOCOL_HTTP;HAS_PROTOCOL_RTMP;HAS_PROTOCOL_RTP;HAS_PROTOCOL_LIVEFLV;HAS_PROTOCOL_TS;HAS_PROTOCOL_VAR;HAS_PROTOCOL_CLI;HAS_MEDIA_MP3;HAS_MEDIA_MP4;HAS_MEDIA_FLV;HAS_MEDIA_MKV;VM_LUA;HandleTSVideoData=HandleVideoData_version3;CreateRTCPPacket=CreateRTCPPacket_mystyle_only_once;FeedDataAudioMPEG4Generic=FeedDataAudioMPEG4Generic_one_by_one;WIN32;_DEBUG;_WINDOWS;_USRDLL;THELIB_EXPORTS;_CRT_SECURE_NO_WARNINGS;CreateRTCPPacket=CreateRTCPPacket_mystyle;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -141,6 +141,7 @@
     <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmfp\inboundrtmfpprotocol.cpp" />
     <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmfp\outboundrtmfpprotocol.cpp" />
     <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\inboundrtmpsdiscriminatorprotocol.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\streaming\infilertmpnsvstream.cpp" />
     <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\streaming\outfilertmpflvstream.cpp" />
     <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtp\basertpappprotocolhandler.cpp" />
     <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtp\basertspappprotocolhandler.cpp" />
@@ -304,6 +305,7 @@
     <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmfp\inboundrtmfpprotocol.h" />
     <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmfp\outboundrtmfpprotocol.h" />
     <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\inboundrtmpsdiscriminatorprotocol.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\streaming\infilertmpnsvstream.h" />
     <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\streaming\outfilertmpflvstream.h" />
     <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtp\basertpappprotocolhandler.h" />
     <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtp\basertspappprotocolhandler.h" />

@@ -63,9 +63,6 @@
     <Filter Include="Source Files\utils\tinyxml">
       <UniqueIdentifier>{83bbeba2-034b-4638-a08a-721cef082d38}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\platform\linux">
-      <UniqueIdentifier>{0fcf722d-d3cd-4503-804d-64196b29bdbb}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\sources\common\include\platform\windows\max.h">
@@ -157,12 +154,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\sources\common\include\utils\misc\uri.h">
       <Filter>Header Files\utils\misc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\common\include\platform\linux\linuxplatform.h">
-      <Filter>Header Files\platform\linux</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\common\include\platform\linux\max.h">
-      <Filter>Header Files\platform\linux</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
