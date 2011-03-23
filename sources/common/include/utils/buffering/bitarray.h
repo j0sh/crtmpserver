@@ -105,7 +105,7 @@ public:
 			//                    _cursor, currentCursor, currentByteIndex, currentBitIndex, currentByte);
 
 
-			result = ((result << 1) | ((currentByte >> (7 - currentBitIndex))&0x01))!=0;
+			result = (result << 1) | ((currentByte >> (7 - currentBitIndex))&0x01);
 		}
 
 
