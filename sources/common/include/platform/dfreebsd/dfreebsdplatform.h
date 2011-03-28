@@ -95,6 +95,7 @@ using namespace std;
 #define MAP_NOCACHE 0
 #define MAP_NOEXTEND 0
 #define NOTE_USECONDS 0
+#define FD_COPY(src,dst) memcpy(dst,src,sizeof(fd_set));
 #define SRAND() srand(time(NULL));
 
 #define CLOCKS_PER_SECOND 1000000L
