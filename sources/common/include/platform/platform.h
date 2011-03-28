@@ -45,6 +45,12 @@
 #define Platform OpenBSDPlatform
 #endif /* OPENBSD */
 
+#ifdef DFREEBSD
+#include "platform/dfreebsd/max.h"
+#include "platform/dfreebsd/dfreebsdplatform.h"
+#define Platform DFreeBSDPlatform
+#endif /* DFREEBSD */
+
 #ifdef SOLARIS
 #include "platform/solaris/solarisplatform.h"
 #define Platform SolarisPlatform
