@@ -120,7 +120,7 @@ bool RTSPProtocol::SignalInputData(IOBuffer &buffer) {
 			case RTSP_STATE_HEADERS:
 			{
 				if (!ParseHeaders(buffer)) {
-					FATAL("Unable to read response headers");
+					FATAL("Unable to read headers");
 					return false;
 				}
 				if (_state != RTSP_STATE_PAYLOAD) {
@@ -569,12 +569,19 @@ bool RTSPProtocol::ParseFirstLine(string &line) {
 bool RTSPProtocol::HandleRTSPMessage(IOBuffer &buffer) {
 	//1. Get the content
 	if (_contentLength > 0) {
-		if (GETAVAILABLEBYTESCOUNT(buffer) < _contentLength) {
-			WARN("Not enough data");
+		if (_contentLength > 1024 * 1024) {
+			FATAL("Bogus content length: %u", _contentLength);
+			return false;
+		}
+		uint32_t chunkLength = _contentLength - _inboundContent.size();
+		chunkLength = GETAVAILABLEBYTESCOUNT(buffer) < chunkLength ?
+				GETAVAILABLEBYTESCOUNT(buffer) : chunkLength;
+		_inboundContent += string((char *) GETIBPOINTER(buffer), chunkLength);
+		buffer.Ignore(chunkLength);
+		if (_inboundContent.size() < _contentLength) {
+			FINEST("Not enough data. Wanted: %u; got: %u", _contentLength, _inboundContent.size());
 			return true;
 		}
-		_inboundContent = string((char *) GETIBPOINTER(buffer), _contentLength);
-		buffer.Ignore(_contentLength);
 	}
 
 	bool result;
