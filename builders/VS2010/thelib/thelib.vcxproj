@@ -188,8 +188,6 @@
     <ClCompile Include="..\..\..\sources\thelib\src\protocols\ts\innettsstream.cpp" />
     <ClCompile Include="..\..\..\sources\thelib\src\protocols\ts\pidtypes.cpp" />
     <ClCompile Include="..\..\..\sources\thelib\src\protocols\ts\streamdescriptors.cpp" />
-    <ClCompile Include="..\..\..\sources\thelib\src\protocols\ts\tsadaptationfield.cpp" />
-    <ClCompile Include="..\..\..\sources\thelib\src\protocols\ts\tspacketheader.cpp" />
     <ClCompile Include="..\..\..\sources\thelib\src\protocols\ts\tspacketpat.cpp" />
     <ClCompile Include="..\..\..\sources\thelib\src\protocols\ts\tspacketpmt.cpp" />
     <ClCompile Include="..\..\..\sources\thelib\src\protocols\liveflv\baseliveflvappprotocolhandler.cpp" />
@@ -352,7 +350,6 @@
     <ClInclude Include="..\..\..\sources\thelib\include\protocols\ts\innettsstream.h" />
     <ClInclude Include="..\..\..\sources\thelib\include\protocols\ts\pidtypes.h" />
     <ClInclude Include="..\..\..\sources\thelib\include\protocols\ts\streamdescriptors.h" />
-    <ClInclude Include="..\..\..\sources\thelib\include\protocols\ts\tsadaptationfield.h" />
     <ClInclude Include="..\..\..\sources\thelib\include\protocols\ts\tsboundscheck.h" />
     <ClInclude Include="..\..\..\sources\thelib\include\protocols\ts\tspacketheader.h" />
     <ClInclude Include="..\..\..\sources\thelib\include\protocols\ts\tspacketpat.h" />

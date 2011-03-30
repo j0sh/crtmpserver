@@ -320,12 +320,6 @@
     <ClCompile Include="..\..\..\sources\thelib\src\protocols\ts\streamdescriptors.cpp">
       <Filter>Source Files\protocols\ts</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\protocols\ts\tsadaptationfield.cpp">
-      <Filter>Source Files\protocols\ts</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\protocols\ts\tspacketheader.cpp">
-      <Filter>Source Files\protocols\ts</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\sources\thelib\src\protocols\ts\tspacketpat.cpp">
       <Filter>Source Files\protocols\ts</Filter>
     </ClCompile>
@@ -788,9 +782,6 @@
       <Filter>Header Files\protocols\ts</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\sources\thelib\include\protocols\ts\streamdescriptors.h">
-      <Filter>Header Files\protocols\ts</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\protocols\ts\tsadaptationfield.h">
       <Filter>Header Files\protocols\ts</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\sources\thelib\include\protocols\ts\tsboundscheck.h">
