@@ -89,9 +89,6 @@
     <ClInclude Include="..\..\..\sources\common\include\utils\buffering\iobuffer.h">
       <Filter>Header Files\utils\buffering</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\sources\common\include\utils\buffering\multiconsumerbuffer.h">
-      <Filter>Header Files\utils\buffering</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\sources\common\include\utils\logging\baseloglocation.h">
       <Filter>Header Files\utils\logging</Filter>
     </ClInclude>
@@ -173,9 +170,6 @@
       <Filter>Source Files\platform\windows</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\sources\common\src\utils\buffering\iobuffer.cpp">
-      <Filter>Source Files\utils\buffering</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\common\src\utils\buffering\multiconsumerbuffer.cpp">
       <Filter>Source Files\utils\buffering</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\sources\common\src\utils\logging\baseloglocation.cpp">

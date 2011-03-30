@@ -119,7 +119,6 @@
     <ClInclude Include="..\..\..\sources\common\include\utils\buffering\bitarray.h" />
     <ClInclude Include="..\..\..\sources\common\include\utils\buffering\buffering.h" />
     <ClInclude Include="..\..\..\sources\common\include\utils\buffering\iobuffer.h" />
-    <ClInclude Include="..\..\..\sources\common\include\utils\buffering\multiconsumerbuffer.h" />
     <ClInclude Include="..\..\..\sources\common\include\utils\logging\baseloglocation.h" />
     <ClInclude Include="..\..\..\sources\common\include\utils\logging\consoleloglocation.h" />
     <ClInclude Include="..\..\..\sources\common\include\utils\logging\fileloglocation.h" />
@@ -148,7 +147,6 @@
     <ClCompile Include="..\..\..\sources\common\src\platform\windows\timegm.cpp" />
     <ClCompile Include="..\..\..\sources\common\src\platform\windows\win32platform.cpp" />
     <ClCompile Include="..\..\..\sources\common\src\utils\buffering\iobuffer.cpp" />
-    <ClCompile Include="..\..\..\sources\common\src\utils\buffering\multiconsumerbuffer.cpp" />
     <ClCompile Include="..\..\..\sources\common\src\utils\logging\baseloglocation.cpp" />
     <ClCompile Include="..\..\..\sources\common\src\utils\logging\consoleloglocation.cpp" />
     <ClCompile Include="..\..\..\sources\common\src\utils\logging\fileloglocation.cpp" />
