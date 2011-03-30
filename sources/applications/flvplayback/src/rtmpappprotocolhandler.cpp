@@ -99,10 +99,6 @@ bool RTMPAppProtocolHandler::ProcessGetAvailableFlvs(BaseRTMPProtocol *pFrom, Va
 			}
 		}
 
-
-		//        FINEST("Parsing `%s`", STR(flashName));
-		//        Variant v = GetMetaData(flashName, true);
-		//        if (v != V_NULL)
 		parameters[(uint32_t) 1].PushToArray(flashName);
 	}
 
@@ -120,37 +116,6 @@ bool RTMPAppProtocolHandler::ProcessGetAvailableFlvs(BaseRTMPProtocol *pFrom, Va
 }
 
 bool RTMPAppProtocolHandler::ProcessInsertMetadata(BaseRTMPProtocol *pFrom, Variant &request) {
-	//STREAMING REFACTORING
-	//    //FINEST("request:\n%s", STR(request.ToString()));
-	//
-	//    //1. Get the stream name
-	//    if ((VariantType) M_INVOKE_PARAM(request, 1) != V_STRING)
-	//        return true;
-	//    string streamName = M_INVOKE_PARAM(request, 1);
-	//
-	//    //2. Get the stream
-	//    vector<BaseOutboundStream *> streams = FindOSByName(streamName);
-	//    BaseInboundStream *pInboundStream = NULL;
-	//
-	//    FOR_VECTOR(streams, i) {
-	//        if (streams[i]->GetProtocol()->GetId() == pFrom->GetId()) {
-	//            pInboundStream = streams[i]->GetInboundStream();
-	//            break;
-	//        }
-	//    }
-	//    if (pInboundStream == NULL) {
-	//        FINEST("This stream is not yet bound");
-	//        return true;
-	//    }
-	//    if (pInboundStream->IsEnqueueForDelete()) {
-	//        FINEST("This stream will be deleted soon");
-	//        return true;
-	//    }
-	//
-	//    //3. Prepare the FlexStreamSend message
-	//    Variant params;
-	//    params.PushToArray(M_INVOKE_PARAM(request, 2));
-	//    return pInboundStream->SendStreamMessage("onMetaData", params);
 	NYIR;
 }
 #endif /* HAS_PROTOCOL_RTMP */

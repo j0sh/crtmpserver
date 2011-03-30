@@ -83,10 +83,6 @@ bool ProxyPublishApplication::Initialize() {
 		FATAL("Invalid targetServers");
 		return false;
 	}
-	//	if (_configuration["targetServers"].MapSize() == 0) {
-	//		FATAL("Invalid targetServers");
-	//		return false;
-	//	}
 
 	FOR_MAP(_configuration["targetServers"], string, Variant, i) {
 		Variant &target = MAP_VAL(i);

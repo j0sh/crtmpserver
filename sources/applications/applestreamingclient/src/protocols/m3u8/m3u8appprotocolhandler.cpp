@@ -44,5 +44,4 @@ void M3U8AppProtocolHandler::RegisterProtocol(BaseProtocol *pProtocol) {
 }
 
 void M3U8AppProtocolHandler::UnRegisterProtocol(BaseProtocol *pProtocol) {
-	//FINEST("UnRegister %s", STR(*pProtocol));
 }

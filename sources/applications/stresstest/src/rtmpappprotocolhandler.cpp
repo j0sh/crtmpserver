@@ -52,8 +52,6 @@ void RTMPAppProtocolHandler::SpawnConnections() {
 	if (_activeConnections >= numberOfConnections)
 		return;
 	bool randomAccessStreams = (bool)_configuration["randomAccessStreams"];
-	//    FINEST("targetServer: %s, targetApp: %s; numberOfConnections: %d; randomAccessStreams: %d",
-	//            STR(targetServer), STR(targetApp), numberOfConnections, randomAccessStreams);
 	string streamName = GetStreamName(_activeConnections, randomAccessStreams);
 
 	string fullUri = format("rtmp://%s/%s/%s",

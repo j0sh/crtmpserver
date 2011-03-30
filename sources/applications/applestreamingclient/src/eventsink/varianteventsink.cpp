@@ -49,14 +49,6 @@ bool VariantEventSink::SignalStreamRegistered(string streamName) {
 
 bool VariantEventSink::SignalStreamUnRegistered(string streamName) {
 	_streamNames.erase(streamName);
-	//#ifdef ANDROID
-	//	Variant message;
-	//	message["eventtype"] = "streamNameUnRegistered";
-	//	message["streamName"] = GetRTSPHost() + streamName;
-	//	return CallJava(message);
-	//#else
-	//	return true;
-	//#endif
 	return true;
 }
 

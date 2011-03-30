@@ -63,7 +63,6 @@ bool FineTimer::SignalInputData(int32_t recvAmount) {
 }
 
 bool FineTimer::SignalInputData(IOBuffer &buffer) {
-	//FINEST("SIGNALED");
 	buffer.IgnoreAll();
 
 	FOR_MAP(_contextIds, uint32_t, uint32_t, i) {

@@ -49,21 +49,17 @@ bool BaseFeeder::Init(string fileName, MonitorRTMPProtocol *pFlash2Server,
 
 bool BaseFeeder::Feed(const uint8_t *pBuffer, uint32_t length, uint8_t type) {
 	if (length == 0) {
-		//FINEST("Ignoring this call....");
 		return true;
 	}
 
 
 	if (type == DATA_TYPE_SERVER2CLIENT) {
-		//FINEST("_server2ClientBin: %d", _server2ClientBin.Cursor());
 		_server2ClientBin.WriteBuffer(pBuffer, length);
 		_server2ClientBin.Flush();
 	} else {
-		//FINEST("_client2ServerBin: %d", _client2ServerBin.Cursor());
 		_client2ServerBin.WriteBuffer(pBuffer, length);
 		_client2ServerBin.Flush();
 	}
-	//FINEST("_allBin: %d", _allBin.Cursor());
 	_allBin.WriteBuffer(pBuffer, length);
 	_allBin.Flush();
 	switch (type) {

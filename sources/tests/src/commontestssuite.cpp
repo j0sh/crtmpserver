@@ -317,7 +317,6 @@ void CommonTestsSuite::test_Endianess() {
 }
 
 void CommonTestsSuite::test_isNumeric() {
-	//bool isNumeric(string value);
 	TS_ASSERT(!isNumeric(""));
 	TS_ASSERT(!isNumeric(" "));
 	TS_ASSERT(!isNumeric("sdfsdfsd"));
@@ -336,7 +335,6 @@ void CommonTestsSuite::test_isNumeric() {
 	TS_ASSERT(isNumeric("-1234"));
 	TS_ASSERT(isNumeric("-2147483647"));
 	TS_ASSERT(isNumeric("-2147483648"));
-	//TS_ASSERT(isNumeric("1234"));
 }
 
 void CommonTestsSuite::test_lowercase() {
@@ -575,36 +573,6 @@ void CommonTestsSuite::test_split() {
 	TS_ASSERT(parts.size() == 1);
 	TS_ASSERT(parts[0] == "");
 }
-
-//void CommonTests::test_nameValue() {
-//    string key, value;
-//    string line;
-//
-//    line = "key=value";
-//
-//    nameValue(line, "=", key, value);
-//    TS_ASSERT(key == "key");
-//    TS_ASSERT(value == "value");
-//
-//    nameValue(line, "K", key, value);
-//    TS_ASSERT(key == "");
-//    TS_ASSERT(value == "");
-//
-//    line = "key=";
-//    nameValue(line, "=", key, value);
-//    TS_ASSERT(key == "key");
-//    TS_ASSERT(value == "");
-//
-//    line = "=value";
-//    nameValue(line, "=", key, value);
-//    TS_ASSERT(key == "");
-//    TS_ASSERT(value == "value");
-//
-//    line = "=";
-//    nameValue(line, "=", key, value);
-//    TS_ASSERT(key == "");
-//    TS_ASSERT(value == "");
-//}
 
 void CommonTestsSuite::test_mapping() {
 	string line = "name1=value1;name2=value2;=value3;name4=;";

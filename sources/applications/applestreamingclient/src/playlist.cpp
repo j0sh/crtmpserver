@@ -36,7 +36,6 @@ void Playlist::Clear() {
 	_buffer.IgnoreAll();
 	_lastMediaSequence = 0;
 	_pLastKeyUri = NULL;
-	//_customData.Reset();
 	_items.clear();
 	_itemMediaSequences.clear();
 	_itemKeyUris.clear();
@@ -53,9 +52,6 @@ void Playlist::SetPlaylistUri(string playlistUri) {
 	string dummy;
 	splitFileName(_playlistUri, _partialUri, dummy, '/');
 	_partialUri += "/";
-	//	ASSERT("\nplaylistUri: %s\n_partialUri: %s",
-	//			STR(_playlistUri),
-	//			STR(_partialUri));
 }
 
 string Playlist::GetPlaylistUri() {
@@ -86,7 +82,6 @@ void Playlist::Parse(uint32_t skipCount) {
 		lineLength = i - lineStart;
 		if (lineLength != 0) {
 			pLine = (char *) (pBuffer + lineStart);
-			//_lines.push_back(pair<char *, uint32_t > (pLine, length));
 		}
 		lineStart = i + 1;
 
@@ -106,20 +101,17 @@ void Playlist::Parse(uint32_t skipCount) {
 					if (strstr(pLine, "#EXT-X-MEDIA-SEQUENCE:") == pLine) {
 						//8. We have it
 						_lastMediaSequence = atoi(pLine + 22);
-						//printf("pLine: %s; _mediaSequence: %u\n", pLine, _mediaSequence);
 					}
 				} else if (pLine[10] == ':') {
 					//9. We have a possible winner for EXT-X-KEY
 					//now the offort of strstr is motivated
 					if (strstr(pLine, "#EXT-X-KEY:") == pLine) {
 						//10. We have it
-						//printf("\n\n\npLine: %s; \n", pLine);
 						_pLastKeyUri = strstr(pLine, "URI=\"");
 						if (_pLastKeyUri != NULL) {
 							_pLastKeyUri += 5;
 							strstr(_pLastKeyUri, "\"")[0] = 0;
 						}
-						//printf("_pKeyUri: %s\n", _pKeyUri);
 					}
 				}
 			}
@@ -143,17 +135,6 @@ void Playlist::Parse(uint32_t skipCount) {
 			item.clear();
 		}
 	}
-
-	//    for (map<uint32_t, vector<char *> >::iterator i = _items.begin(); i != _items.end(); i++) {
-	//        printf("--\n");
-	//        for (uint32_t j = 0; j < MAP_VAL(i).size(); j++) {
-	//            printf("%u - %s - %s - %s\n",
-	//                    _itemMediaSequences[MAP_KEY(i)],
-	//                    _itemUris[MAP_KEY(i)],
-	//                    _itemKeyUris[MAP_KEY(i)],
-	//                    MAP_VAL(i)[j]);
-	//        }
-	//    }
 }
 
 bool Playlist::ParseBandwidthInfo() {

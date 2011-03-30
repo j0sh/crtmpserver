@@ -70,7 +70,6 @@ bool MonitorRTMPProtocol::PerformHandshakeClient(IOBuffer &buffer) {
 		case HSS_UNDEF:
 		{
 			if (GETAVAILABLEBYTESCOUNT(buffer) < 1537) {
-				//FINEST("Not enough data for handshake: %d", GETAVAILABLEBYTESCOUNT(*pInputBuffer));
 				return true;
 			}
 			if (!buffer.Ignore(1537)) {
@@ -83,7 +82,6 @@ bool MonitorRTMPProtocol::PerformHandshakeClient(IOBuffer &buffer) {
 		case HSS_HS:
 		{
 			if (GETAVAILABLEBYTESCOUNT(buffer) < 1536) {
-				//FINEST("Not enough data for handshake: %d", GETAVAILABLEBYTESCOUNT(*pInputBuffer));
 				return true;
 			}
 			if (!buffer.Ignore(1536)) {
@@ -107,7 +105,6 @@ bool MonitorRTMPProtocol::PerformHandshakeServer(IOBuffer &buffer) {
 		case HSS_UNDEF:
 		{
 			if (GETAVAILABLEBYTESCOUNT(buffer) < 3073) {
-				//FINEST("Not enough data for handshake: %d", GETAVAILABLEBYTESCOUNT(*pInputBuffer));
 				return true;
 			}
 			if (!buffer.Ignore(3073)) {

@@ -51,7 +51,6 @@ bool DBAccessProtocol::SignalInputData(IOBuffer &buffer) {
 	string str((char *) GETIBPOINTER(buffer), GETAVAILABLEBYTESCOUNT(buffer));
 	FINEST("str: %s", STR(str));
 	buffer.IgnoreAll();
-	//FINEST("buffer:\n%s", STR(buffer));
 	return true;
 }
 

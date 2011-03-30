@@ -70,7 +70,6 @@ bool InboundKeyProtocol::SignalInputData(IOBuffer &buffer) {
 	string temp = string((char *) GETIBPOINTER(buffer),
 			GETAVAILABLEBYTESCOUNT(buffer));
 	buffer.IgnoreAll();
-	//FINEST("\nencKey: %s\npasswd: %s", STR(temp), STR(_keyPassword));
 
 	//6. Unbase64 the encrypted key
 	string encryptedKey = unb64(temp);
@@ -92,11 +91,6 @@ bool InboundKeyProtocol::SignalInputData(IOBuffer &buffer) {
 	unsigned char finalKey[16];
 	unsigned char iv[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 	AES_cbc_encrypt((unsigned char *) STR(encryptedKey), finalKey, 16, &decKey, iv, AES_DECRYPT);
-	//	FINEST("\n%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x",
-	//			finalKey[0], finalKey[1], finalKey[2], finalKey[3],
-	//			finalKey[4], finalKey[5], finalKey[6], finalKey[7],
-	//			finalKey[8], finalKey[9], finalKey[10], finalKey[11],
-	//			finalKey[12], finalKey[13], finalKey[14], finalKey[15]);
 
 	//9. Store the key inside parameters
 	Variant &parameters = GetCustomParameters();

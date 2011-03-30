@@ -261,35 +261,24 @@ bool ClientContext::StartProcessing() {
 	pScheduleTimer->AddJob(job, true);
 #endif /* HAS_MS_TIMER */
 
-	//	job["type"] = "testJNICallback";
-	//	pScheduleTimer->AddJob(job, true);
-
 	//6. Start the master M3U8 fetching
 	return FetchMasterPlaylist();
 }
 
 bool ClientContext::StartFeeding() {
 	if (GETAVAILABLEBYTESCOUNT(_avData) > _maxAVBufferSize) {
-		//		WARN("Plenty of data available: wanted at most %d bytes. Have %d bytes",
-		//				_maxAVBufferSize, GETAVAILABLEBYTESCOUNT(_avData));
 		return EnqueueStartFeeding();
 	}
 	//1. Wait for all playlists
 	if (_parsedChildPlaylistsCount < _childPlaylists.size()) {
-		//		FINEST("Waiting for the rest of the playlists. Got: %d; Wanted: %d",
-		//				_parsedChildPlaylistsCount, _childPlaylists.size());
 		return true;
 	}
 
 	//2. Get the optimal bandwidth
 	uint32_t optimalBw = GetOptimalBw();
-	//FINEST("optimalBw: %d", optimalBw);
 
 	//3. Get the corresponding playlist
 	Playlist *pPlaylist = _childPlaylists[optimalBw];
-
-	//	if (_currentItemIndex == 0)
-	//		_currentItemIndex = pPlaylist->GetItemsCount() / 2 + 10;
 
 	//4. Is this the last item in the playlis?
 	string uri = pPlaylist->GetItemUri(_currentSequence);
@@ -403,8 +392,6 @@ bool ClientContext::ConsumeAVBuffer() {
 	}
 
 	//6. Feed
-	//	FINEST("BEFORE: wallClockDelta: %.2f; GetFeedTime: %.2f",
-	//			wallClockDelta, pStream->GetFeedTime());
 	while ((wallClockDelta + 1000 > (pStream->GetFeedTime() - _firstFeedTime)) &&
 			(GETAVAILABLEBYTESCOUNT(_avData) > 8192)) {
 		if (!pTS->SignalInputData(_avData)) {
@@ -412,8 +399,6 @@ bool ClientContext::ConsumeAVBuffer() {
 			return false;
 		}
 	}
-	//	FINEST(" AFTER: wallClockDelta: %.2f; GetFeedTime: %.2f",
-	//			wallClockDelta, pStream->GetFeedTime());
 
 	//7. Done
 	return true;
@@ -423,7 +408,6 @@ uint32_t ClientContext::GetOptimalBw() {
 	if (_optimalBw == 0) {
 		_optimalBw = MAP_KEY(_childPlaylists.begin());
 	}
-	//_optimalBw = 800000;
 	return _optimalBw;
 }
 
@@ -434,9 +418,6 @@ bool ClientContext::ParseConnectingString() {
 		FATAL("Invalid master m3u8 URL: %s", STR(_rawConnectingString));
 		return false;
 	}
-	//	for (uint32_t i = 0; i < parts.size(); i++) {
-	//		FINEST("%d: %s", i, STR(parts[i]));
-	//	}
 
 	if (parts[0] == "") {
 		FATAL("Invalid master m3u8 URL: %s", STR(_rawConnectingString));
@@ -550,7 +531,6 @@ bool ClientContext::SignalAESKeyAvailable(Variant &parameters) {
 	string itemUri = parameters["payload"]["itemUri"];
 	uint32_t bw = parameters["payload"]["bw"];
 	uint64_t iv = _currentSequence;
-	//FINEST("itemUri: %s; bw: %d; key: %s", STR(itemUri), bw, STR(key));
 
 	return FetchTS(itemUri, bw, key, iv);
 }
@@ -570,53 +550,12 @@ bool ClientContext::SignalTSChunkComplete(uint32_t bw) {
 }
 
 bool ClientContext::SignalSpeedDetected(double instantAmount, double instantTime) {
-	//	//	FINEST("instantAmount: %.2f; instantTime: %.8f; Speed: %.2f KB/s",
-	//	//			instantAmount, instantTime, instantAmount / instantTime / 1024);
-	//	_pSpeedComputer->PushAmount(instantAmount, instantTime);
-	//	double meanSpeed = _pSpeedComputer->GetMeanSpeed();
-	//
-	//	uint32_t before = _optimalBw;
-	//	meanSpeed *= 8.0;
-	//	//	if (((aaa++) % 200) == 0) {
-	//	//		double ms = meanSpeed / 1024.00 / 8;
-	//	//		string um = "KB/s";
-	//	//		if (ms > 1024) {
-	//	//			ms = ms / 1024.00;
-	//	//			um = "MB/s";
-	//	//		}
-	//	//		//FINEST("Speed: %.2f %s", ms, STR(um));
-	//	//	}
-	//
-	//	_optimalBw = MAP_KEY(_childPlaylists.begin());
-	//
-	//	FOR_MAP(_childPlaylists, uint32_t, Playlist *, i) {
-	//		uint32_t testBandwidth = MAP_KEY(i);
-	//		//FINEST("meanSpeed: %.2f; testBandwidth: %.2f", meanSpeed, testBandwidth);
-	//		if (meanSpeed > testBandwidth) {
-	//			_optimalBw = testBandwidth;
-	//		}
-	//	}
-	//	if (before != _optimalBw) {
-	//		if (before < _optimalBw) {
-	//			if (GETAVAILABLEBYTESCOUNT(_avData) < _maxAVBufferSize / 3) {
-	//				_optimalBw = before;
-	//			} else {
-	//				INFO("BW changed: before: %d; after: %d; speed: %.3f",
-	//						before, _optimalBw, meanSpeed);
-	//			}
-	//		} else {
-	//			INFO("BW changed: before: %d; after: %d; speed: %.3f",
-	//					before, _optimalBw, meanSpeed);
-	//		}
-	//	}
-
 	return true;
 }
 
 bool ClientContext::SignalAVDataAvailable(IOBuffer &buffer) {
 	_avData.ReadFromBuffer(GETIBPOINTER(buffer), GETAVAILABLEBYTESCOUNT(buffer));
 	buffer.IgnoreAll();
-	//FINEST("%d bytes available", GETAVAILABLEBYTESCOUNT(_avData));
 	return true;
 }
 

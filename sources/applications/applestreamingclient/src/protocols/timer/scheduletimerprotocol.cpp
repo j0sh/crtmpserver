@@ -34,12 +34,10 @@ ScheduleTimerProtocol::~ScheduleTimerProtocol() {
 }
 
 bool ScheduleTimerProtocol::TimePeriodElapsed() {
-	//FINEST(" B: IQ: %d; RQ: %d", _pInputQueue->size(), _pRunningQueue->size());
 	//1. First, switch te queues
 	vector<Variant> *pTemp = _pInputQueue;
 	_pInputQueue = _pRunningQueue;
 	_pRunningQueue = pTemp;
-	//FINEST("A1: IQ: %d; RQ: %d", _pInputQueue->size(), _pRunningQueue->size());
 
 	//2. Get the context
 	ClientContext *pContext = ClientContext::GetContext(_contextId, 0, 0);
@@ -61,7 +59,6 @@ bool ScheduleTimerProtocol::TimePeriodElapsed() {
 
 	//4. Clear the running queue
 	_pRunningQueue->clear();
-	//FINEST("A2: IQ: %d; RQ: %d", _pInputQueue->size(), _pRunningQueue->size());
 
 	//5. Done
 	return true;

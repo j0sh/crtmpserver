@@ -86,9 +86,6 @@ void SpeedComputer::UpdateEntries() {
 		_totalTransferTime -= _entries[0].second;
 		_entries.erase(_entries.begin());
 	}
-
-	//    FINEST("size: %d; _totalAmount: %.2f; _totalTransferTime: %.2f; S: %.2fKB/s",
-	//            _entries.size(), _totalAmount, _totalTransferTime, GetMeanSpeed() / 1024);
 }
 
 double SpeedComputer::CurrentHistoryLength() {

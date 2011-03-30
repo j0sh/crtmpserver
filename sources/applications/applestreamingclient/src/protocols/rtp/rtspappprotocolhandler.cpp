@@ -35,42 +35,10 @@ RTSPAppProtocolHandler::~RTSPAppProtocolHandler() {
 
 void RTSPAppProtocolHandler::RegisterProtocol(BaseProtocol *pProtocol) {
 	BaseRTSPAppProtocolHandler::RegisterProtocol(pProtocol);
-	//	vector<uint32_t> contextIds = ClientContext::GetContextIds();
-	//	for (uint32_t i = 0; i < contextIds.size(); i++) {
-	//		FINEST("Inspecting context id: %d", contextIds[i]);
-	//		ClientContext *pContext = GetContext(contextIds[i],
-	//				pProtocol->GetType());
-	//		if (pContext == NULL) {
-	//			WARN("Context id %d is NULL", contextIds[i]);
-	//			continue;
-	//		}
-	//		if (pContext->EventSink()->GetType() != EVENT_SYNC_VARIANT) {
-	//			WARN("Context id %d is not Variant friendly", contextIds[i]);
-	//			continue;
-	//		}
-	//		VariantEventSink *pSink = (VariantEventSink *) pContext->EventSink();
-	//		vector<string> streams = pSink->GetStreamNames();
-	//		for (uint32_t j = 0; j < streams.size(); j++) {
-	//			FINEST("Adding stream %s", STR(streams[j]));
-	//			pProtocol->GetCustomParameters()["customStreamName"] = streams[j];
-	//			return;
-	//		}
-	//	}
-	//	pProtocol->EnqueueForDelete();
 }
 
 bool RTSPAppProtocolHandler::HandleRTSPRequest(RTSPProtocol *pFrom,
 		Variant &requestHeaders, string &content) {
-	//	string uri = requestHeaders[RTSP_FIRST_LINE][RTSP_URL];
-	//	string streamName = "";
-	//	if (!pFrom->GetCustomParameters().HasKey("initialStreamName")) {
-	//		streamName = GetStreamName(uri);
-	//		pFrom->GetCustomParameters()["initialStreamName"] = streamName;
-	//	} else {
-	//		streamName = (string) pFrom->GetCustomParameters()["initialStreamName"];
-	//	}
-	//	replace(uri, streamName, pFrom->GetCustomParameters()["customStreamName"]);
-	//	requestHeaders[RTSP_FIRST_LINE][RTSP_URL] = uri;
 	return BaseRTSPAppProtocolHandler::HandleRTSPRequest(pFrom, requestHeaders,
 			content);
 }
