@@ -145,7 +145,6 @@ bool BaseSSLProtocol::SignalInputData(IOBuffer &buffer) {
 			return false;
 		}
 		if (!_sslHandshakeCompleted) {
-			//WARN("SSL handshake not completed yet");
 			return true;
 		}
 	}

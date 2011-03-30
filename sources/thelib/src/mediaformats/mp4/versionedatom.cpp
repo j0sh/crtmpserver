@@ -35,13 +35,11 @@ bool VersionedAtom::Read() {
 		FATAL("Unable to read version");
 		return false;
 	}
-	//FINEST("_version: %d", _version);
 
 	if (!ReadArray(_flags, 3)) {
 		FATAL("Unable to read flags");
 		return false;
 	}
-	//FINEST("_flags: %02x %02x %02x", _flags[0], _flags[1], _flags[2]);
 
 	return ReadData();
 }

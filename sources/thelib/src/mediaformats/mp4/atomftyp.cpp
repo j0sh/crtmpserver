@@ -34,13 +34,11 @@ bool AtomFTYP::Read() {
 		FATAL("Unable to read major brand");
 		return false;
 	}
-	//FINEST("_majorBrand: %s(%u)", STR(U32TOS(_majorBrand)), _majorBrand);
 
 	if (!ReadUInt32(_minorVersion, false)) {
 		FATAL("Unable to read minor version");
 		return false;
 	}
-	//FINEST("_minorVersion: %s(%u)", STR(U32TOS(_minorVersion)), _minorVersion);
 
 	for (uint64_t i = 16; i < _size; i += 4) {
 		uint32_t val = 0;
@@ -49,7 +47,6 @@ bool AtomFTYP::Read() {
 			return false;
 		}
 		ADD_VECTOR_END(_compatibleBrands, val);
-		//FINEST("_compatibleBrand: %s(%u)", STR(U32TOS(val)), val);
 	}
 	return true;
 }

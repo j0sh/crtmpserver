@@ -68,67 +68,50 @@ bool BaseInStream::Link(BaseOutStream *pOutStream, bool reverseLink) {
 				STR(tagToString(pOutStream->GetType())));
 		return false;
 	}
-	//    FINEST("BaseInStream::Link: this: %u; pOutStream: %u; reverseLink: %d",
-	//            GetUniqueId(), pOutStream->GetUniqueId(), reverseLink);
 	if (MAP_HAS1(_linkedStreams, pOutStream->GetUniqueId())) {
 		WARN("BaseInStream::Link: This stream is already linked");
 		return true;
 	}
-	//FINEST("BaseInStream::Link: Linking...");
 	_pOutStreams = AddLinkedList(_pOutStreams, pOutStream, true);
 	_linkedStreams[pOutStream->GetUniqueId()] = pOutStream;
 
 	if (reverseLink) {
-		//FINEST("BaseInStream::Link: Reverse linking...");
 		if (!pOutStream->Link(this, false)) {
 			FATAL("BaseInStream::Link: Unable to reverse link");
 			//TODO: here we must remove the link from _pOutStreams and _linkedStreams
 			NYIA;
 		}
-		//FINEST("BaseInStream::Link: Done reverse link");
 	}
-	//FINEST("BaseInStream::Link: Signal OutStreamAttached");
 	SignalOutStreamAttached(pOutStream);
-	//FINEST("BaseInStream::Link: Done");
 	return true;
 }
 
 bool BaseInStream::UnLink(BaseOutStream *pOutStream, bool reverseUnLink) {
-	//    FINEST("BaseInStream::UnLink: this: %u; pOutStream: %u; reverseUnLink: %d",
-	//            GetUniqueId(), pOutStream->GetUniqueId(), reverseUnLink);
 	if (!MAP_HAS1(_linkedStreams, pOutStream->GetUniqueId())) {
 		WARN("BaseInStream::UnLink: This stream is not linked");
 		return true;
 	}
 
-	//FINEST("BaseInStream::UnLink: UnLinking...");
 	_linkedStreams.erase(pOutStream->GetUniqueId());
 	LinkedListNode<BaseOutStream *> *pTemp = _pOutStreams;
 	while (pTemp != NULL) {
 		if (pTemp->info->GetUniqueId() == pOutStream->GetUniqueId()) {
 			_pOutStreams = RemoveLinkedList<BaseOutStream *>(pTemp);
-			//FINEST("BaseInStream::UnLink: Stream unlinked from the list");
 			break;
 		}
 		pTemp = pTemp->pPrev;
 	}
 
 	if (reverseUnLink) {
-		//FINEST("BaseInStream::UnLink: Reverse unLinking...");
 		if (!pOutStream->UnLink(false)) {
 			FATAL("BaseInStream::UnLink: Unable to reverse unLink");
 			//TODO: what are we going to do here???
 			NYIA;
 		}
-		//FINEST("BaseInStream::UnLink: Done reverse unLink");
 	}
-	//    FINEST("BaseInStream::UnLink: _canCallOutStreamDetached: %d",
-	//            _canCallOutStreamDetached);
 	if (_canCallOutStreamDetached) {
-		//FINEST("BaseInStream::UnLink: Signal OutStreamDetached");
 		SignalOutStreamDetached(pOutStream);
 	}
-	//FINEST("BaseInStream::UnLink: Done");
 	return true;
 }
 

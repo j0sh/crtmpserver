@@ -210,17 +210,6 @@ bool IOHandlerManager::Pulse() {
 bool IOHandlerManager::UpdateFdSets(int32_t fd) {
 	uint8_t state = 0;
 
-	//    string str = "";
-	//    for (map<int32_t, map<uint32_t, uint8_t> >::iterator i = _fdState.begin();
-	//            i != _fdState.end(); i++) {
-	//        str += format("fd: %d\n", MAP_KEY(i));
-	//
-	//        FOR_MAP(MAP_VAL(i), uint32_t, uint8_t, j) {
-	//            str += format("\thandler: %d; flags: %d\n", MAP_KEY(j), MAP_VAL(j));
-	//        }
-	//    }
-	//    FINEST("str:\n%s", STR(str));
-
 	FOR_MAP(_fdState[fd], uint32_t, uint8_t, i) {
 		state |= MAP_VAL(i);
 	}

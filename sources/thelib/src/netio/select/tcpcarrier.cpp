@@ -68,9 +68,7 @@ TCPCarrier::TCPCarrier(int32_t fd)
 }
 
 TCPCarrier::~TCPCarrier() {
-	//FINEST("Delete tcp carrier %p", this);
 	CLOSE_SOCKET(_inboundFd);
-	//FINEST("Done delete tcp carrier %p", this);
 }
 
 bool TCPCarrier::OnEvent(select_event &event) {
@@ -98,7 +96,6 @@ bool TCPCarrier::OnEvent(select_event &event) {
 			IOBuffer *pOutputBuffer = NULL;
 
 			while ((pOutputBuffer = _pProtocol->GetOutputBuffer()) != NULL) {
-				//FINEST("Try to send buffer:\n%s", STR(*pOutputBuffer));
 				if (!pOutputBuffer->WriteToTCPFd(_outboundFd,
 						_sendBufferSize, writeAmount)) {
 					FATAL("Unable to send data. %s:%d -> %s:%d",
@@ -207,7 +204,6 @@ bool TCPCarrier::GetEndpointsInfo() {
 	}
 	_nearIp = format("%s", inet_ntoa(((sockaddr_in *) & _nearAddress)->sin_addr));
 	_nearPort = ENTOHS(((sockaddr_in *) & _nearAddress)->sin_port); //----MARKED-SHORT----
-	//FINEST("_nearAddress: %s; _nearPort: %d", STR(_nearAddress), _nearPort);
 	return true;
 }
 

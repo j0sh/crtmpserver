@@ -211,7 +211,6 @@ bool BaseInFileStream::Initialize(int32_t clientSideBufferLength) {
 		FATAL("Unable to read the frames count");
 		return false;
 	}
-	//FINEST("_totalFrames: %u", _totalFrames);
 
 	//5. Set the client side buffer length
 	_clientSideBufferLength = clientSideBufferLength;
@@ -228,7 +227,6 @@ bool BaseInFileStream::SignalPlay(double &absoluteTimestamp, double &length) {
 	//0. fix absoluteTimestamp and length
 	absoluteTimestamp = absoluteTimestamp < 0 ? 0 : absoluteTimestamp;
 	//TODO: implement the limit playback
-	//length = length < 0 ? _totalDuration : length;
 
 	//1. Seek to the correct point
 	if (!InternalSeek(absoluteTimestamp)) {
@@ -383,9 +381,6 @@ bool BaseInFileStream::Feed() {
 	//2. Determine if the client has enough data on the buffer and continue
 	//or stay put
 	uint32_t elapsedTime = (uint32_t) (time(NULL) - _startFeedingTime);
-	//    FINEST("tst: %d; et: %d; diff: %d",
-	//            _totalSentTime, elapsedTime,
-	//            (int32_t) _totalSentTime - (int32_t) elapsedTime);
 	if ((int32_t) _totalSentTime - (int32_t) elapsedTime >= _clientSideBufferLength) {
 		return true;
 	}
@@ -493,7 +488,6 @@ File* BaseInFileStream::GetFile(string filePath, uint32_t windowSize) {
 	} else {
 		pResult = _fileCache[filePath].second;
 		_fileCache[filePath].first++;
-		//FINEST("+Count: %d", _fileCache[filePath].first);
 	}
 	return pResult;
 }
@@ -524,7 +518,6 @@ bool BaseInFileStream::SendCodecs() {
 		FATAL("Unable to read frame from seeking file");
 		return false;
 	}
-	//FINEST("frame1: %s", STR(frame1));
 
 	//2. Read the second frame
 	MediaFrame frame2;
@@ -536,7 +529,6 @@ bool BaseInFileStream::SendCodecs() {
 		FATAL("Unable to read frame from seeking file");
 		return false;
 	}
-	//FINEST("frame2: %s", STR(frame2));
 
 	//3. Read the current frame to pickup the timestamp from it
 	MediaFrame currentFrame;
@@ -548,12 +540,10 @@ bool BaseInFileStream::SendCodecs() {
 		FATAL("Unable to read frame from seeking file");
 		return false;
 	}
-	//FINEST("currentFrame: %s", STR(currentFrame));
 
 	//4. Is the first frame a codec setup?
 	//If not, the second is not a codec setup for sure
 	if (!frame1.isBinaryHeader) {
-		//FINEST("frame1 is not binary header");
 		_audioVideoCodecsSent = true;
 		return true;
 	}
@@ -564,7 +554,6 @@ bool BaseInFileStream::SendCodecs() {
 		FATAL("Unable to build the frame");
 		return false;
 	}
-	//FINEST("frame1 buffer:\n%s", STR(buffer));
 
 	//6. Do the feedeng with the first frame
 	if (!_pOutStreams->info->FeedData(
@@ -578,11 +567,9 @@ bool BaseInFileStream::SendCodecs() {
 		FATAL("Unable to feed audio data");
 		return false;
 	}
-	//FINEST("frame1 was fed");
 
 	//7. Is the second frame a codec setup?
 	if (!frame2.isBinaryHeader) {
-		//FINEST("frame2 is not binary header");
 		_audioVideoCodecsSent = true;
 		return true;
 	}
@@ -593,7 +580,6 @@ bool BaseInFileStream::SendCodecs() {
 		FATAL("Unable to build the frame");
 		return false;
 	}
-	//FINEST("frame2 buffer:\n%s", STR(buffer));
 
 	//9. Do the feedeng with the second frame
 	if (!_pOutStreams->info->FeedData(
@@ -607,7 +593,6 @@ bool BaseInFileStream::SendCodecs() {
 		FATAL("Unable to feed audio data");
 		return false;
 	}
-	//FINEST("frame2 was fed");
 
 	//10. Done
 	_audioVideoCodecsSent = true;

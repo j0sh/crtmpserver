@@ -109,9 +109,6 @@ uint32_t BaseOutNetRTMPStream::GetRTMPStreamId() {
 }
 
 uint32_t BaseOutNetRTMPStream::GetCommandsChannelId() {
-	//	if (_pChannelAudio == NULL)
-	//		return 3;
-	//	return _pChannelAudio->id;
 	return 3;
 }
 
@@ -155,12 +152,6 @@ void BaseOutNetRTMPStream::GetStats(Variant &info) {
 bool BaseOutNetRTMPStream::FeedData(uint8_t *pData, uint32_t dataLength,
 		uint32_t processedLength, uint32_t totalLength,
 		double absoluteTimestamp, bool isAudio) {
-	//	FINEST("dataLength: % 5d; processedLength: % 5d; totalLength: % 5d; absoluteTimestamp: %.2f; isAudio: %d",
-	//			dataLength,
-	//			processedLength,
-	//			totalLength,
-	//			absoluteTimestamp,
-	//			isAudio);
 	if (_paused)
 		return true;
 	if (isAudio) {
@@ -193,8 +184,6 @@ bool BaseOutNetRTMPStream::FeedData(uint8_t *pData, uint32_t dataLength,
 			}
 		} else {
 			ALLOW_EXECUTION(processedLength, dataLength, isAudio);
-			//        H_IA(_audioHeader) = true;
-			//        H_TS(_audioHeader) = absoluteTime - _deltaTime;
 			H_IA(_audioHeader) = false;
 			if (processedLength == 0)
 				H_TS(_audioHeader) = (uint32_t) ((absoluteTimestamp - (*_pDeltaAudioTime) + _seekTime)
@@ -209,7 +198,6 @@ bool BaseOutNetRTMPStream::FeedData(uint8_t *pData, uint32_t dataLength,
 		if (processedLength == 0)
 			_videoPacketsCount++;
 		_videoBytesCount += dataLength;
-		//FINEST("absoluteTime: %f", absoluteTime);
 		if (_isFirstVideoFrame) {
 			if (dataLength == 0)
 				return true;
@@ -235,12 +223,6 @@ bool BaseOutNetRTMPStream::FeedData(uint8_t *pData, uint32_t dataLength,
 				(*_pDeltaVideoTime) = absoluteTimestamp;
 
 			H_IA(_videoHeader) = true;
-			//			FINEST("absoluteTimestamp: %.2f; _pDeltaVideoTime: %.2f (a: %p; v: %p; c: %p); _seekTime: %.2f; r: %.2f",
-			//					absoluteTimestamp, (*_pDeltaVideoTime),
-			//					&_deltaAudioTime, &_deltaVideoTime,
-			//					_pDeltaVideoTime, _seekTime,
-			//					absoluteTimestamp - (*_pDeltaVideoTime) + _seekTime
-			//					);
 			H_TS(_videoHeader) = (uint32_t) (absoluteTimestamp - (*_pDeltaVideoTime) + _seekTime);
 
 			if ((pData[0] == 0x17) //AVC keyframe
@@ -253,8 +235,6 @@ bool BaseOutNetRTMPStream::FeedData(uint8_t *pData, uint32_t dataLength,
 			}
 		} else {
 			ALLOW_EXECUTION(processedLength, dataLength, isAudio);
-			//        H_IA(_videoHeader) = true;
-			//        H_TS(_videoHeader) = absoluteTime - _deltaTime;
 			H_IA(_videoHeader) = false;
 			if (processedLength == 0)
 				H_TS(_videoHeader) = (uint32_t) ((absoluteTimestamp - (*_pDeltaVideoTime) + _seekTime)
@@ -263,7 +243,6 @@ bool BaseOutNetRTMPStream::FeedData(uint8_t *pData, uint32_t dataLength,
 
 		H_ML(_videoHeader) = totalLength;
 
-		//FINEST("Start chunk and send");
 		return ChunkAndSend(pData, dataLength, _videoBucket,
 				_videoHeader, *_pChannelVideo);
 	}
@@ -287,8 +266,6 @@ bool BaseOutNetRTMPStream::SendStreamMessage(Variant &message) {
 }
 
 void BaseOutNetRTMPStream::SignalAttachedToInStream() {
-	//    FINEST("outbound stream %u attached to inbound stream %u",
-	//            GetUniqueId(), _pInStream->GetUniqueId());
 	//1. Store the attached stream type to know how we should proceed on detach
 	_attachedStreamType = _pInStream->GetType();
 
@@ -519,7 +496,6 @@ bool BaseOutNetRTMPStream::SignalResume() {
 }
 
 bool BaseOutNetRTMPStream::SignalSeek(double &absoluteTimestamp) {
-	//FINEST("SignalSeek: %.02f", currentTimestamp);
 
 	//1. Stream eof
 	Variant message = StreamMessageFactory::GetUserControlStreamEof(_rtmpStreamId);
@@ -632,12 +608,10 @@ bool BaseOutNetRTMPStream::SignalSeek(double &absoluteTimestamp) {
 }
 
 bool BaseOutNetRTMPStream::SignalStop() {
-	//FINEST("SignalStop: %.02f", currentTimestamp);
 	return true;
 }
 
 void BaseOutNetRTMPStream::SignalStreamCompleted() {
-	//FINEST("SignalStreamCompleted");
 	//1. notify onPlayStatus code="NetStream.Play.Complete", bytes=xxx, duration=yyy, level status
 	Variant message = StreamMessageFactory::GetNotifyOnPlayStatusPlayComplete(
 			_pChannelAudio->id, _rtmpStreamId, 0, false,
@@ -675,13 +649,6 @@ void BaseOutNetRTMPStream::SignalStreamCompleted() {
 
 bool BaseOutNetRTMPStream::ChunkAndSend(uint8_t *pData, uint32_t length,
 		IOBuffer &bucket, Header &header, Channel &channel) {
-	//    if (H_ML(header) > _feederChunkSize) {
-	//        FATAL("_feederChunkSize: %d; totalLength: %d; _chunkSize: %d",
-	//                _feederChunkSize, H_ML(header), _chunkSize);
-	//    } else {
-	//        FINEST("_feederChunkSize: %d; totalLength: %d _chunkSize: %d",
-	//                _feederChunkSize, H_ML(header), _chunkSize);
-	//    }
 	if (H_ML(header) == 0) {
 		TRACK_HEADER(header, channel.lastOutProcBytes);
 		return _pRTMPProtocol->SendRawData(header, channel, NULL, 0);
@@ -792,12 +759,10 @@ bool BaseOutNetRTMPStream::AllowExecution(uint32_t totalProcessed, uint32_t data
 			//of it or this is a new one
 			if (totalProcessed != 0) {
 				//we are in the middle of it. Don't allow execution
-				//FINEST("In the middle of a dropped frame");
 				bytesCounter += dataLength;
 				return false;
 			} else {
 				//this is a new frame. We will detect later if it can be sent
-				//FINEST("Last dropped frame completed.");
 				_currentFrameDropped = false;
 			}
 		}
@@ -811,26 +776,20 @@ bool BaseOutNetRTMPStream::AllowExecution(uint32_t totalProcessed, uint32_t data
 
 				if (GETAVAILABLEBYTESCOUNT(*_pRTMPProtocol->GetOutputBuffer()) > _maxBufferSize) {
 					//we have too many data left unsent. Drop the frame
-					//FINEST("Too many data left unsent: %d; max: %d",
-					//        GETAVAILABLEBYTESCOUNT(*_pRTMPProtocol->GetOutputBuffer()),
-					//        _maxBufferSize);
 					packetsCounter++;
 					bytesCounter += dataLength;
 					_currentFrameDropped = true;
 					return false;
 				} else {
 					//we can still pump data
-
 					return true;
 				}
 			} else {
 				//no data in the output buffer. Allow to send it
-
 				return true;
 			}
 		} else {
 			//we are in the middle of a non-dropped frame. Send it anyway
-
 			return true;
 		}
 	} else {

@@ -66,7 +66,6 @@ StdioCarrier::~StdioCarrier() {
 }
 
 bool StdioCarrier::OnEvent(struct epoll_event &event) {
-	//FINEST("Event: %d", event.events);
 
 	//1. Read data
 	if ((event.events & EPOLLIN) != 0) {
@@ -77,7 +76,6 @@ bool StdioCarrier::OnEvent(struct epoll_event &event) {
 			FATAL("Unable to read data");
 			return false;
 		}
-		//FINEST("recvBytes: %d; _totalRecveivedBytes: %d", recvBytes, _totalRecveivedBytes);
 		if (recvBytes == 0) {
 			FATAL("Connection closed");
 			return false;

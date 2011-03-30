@@ -247,9 +247,6 @@ BaseAtom * MP4Document::ReadAtom(BaseAtom *pParentAtom) {
 			break;
 		default:
 		{
-			//            FATAL("Atom type %s(%u) not yet implemented. Position: 0x%x",
-			//                    STR(U32TOS(type)), type, (uint32_t) _mediaFile.Cursor());
-			//            return NULL;
 			pAtom = new IgnoredAtom(this, type, size, currentPos);
 			break;
 		}
@@ -261,9 +258,6 @@ BaseAtom * MP4Document::ReadAtom(BaseAtom *pParentAtom) {
 		FATAL("Unable to read atom type %s", STR(U32TOS(type)));
 		return NULL;
 	}
-
-	//    FINEST("END reading atom %s at 0x%x with size 0x%x",
-	//            STR(U32TOS(type)), currentPos, size);
 
 	if (currentPos + pAtom->GetSize() != _mediaFile.Cursor()) {
 		FATAL("atom start: %llu; Atom size: %llu; currentPos: %llu",
@@ -366,7 +360,6 @@ bool MP4Document::BuildFrames() {
 		FINEST("Start: %llu (%llx); Length: %llu (%llx);", audioHeader.start,
 				audioHeader.start, audioHeader.length, audioHeader.length);
 	}
-	//ADD_VECTOR_BEGIN(_frames, audioHeader);
 
 	//add binary video header
 	MediaFrame videoHeader = {0};
@@ -379,9 +372,6 @@ bool MP4Document::BuildFrames() {
 		videoHeader.start = pAVCC->GetExtraDataStart();
 		videoHeader.deltaTime = 0;
 		videoHeader.compositionOffset = 0;
-		//    FINEST("Start: %u (%x); Length: %u (%x);", videoHeader.start,
-		//            videoHeader.start, videoHeader.length,videoHeader.length);
-		//ADD_VECTOR_BEGIN(_frames, videoHeader);
 	}
 
 	if (pESDS != NULL) {
@@ -491,13 +481,7 @@ bool MP4Document::BuildFrames(bool audio) {
 	}
 	INFO("audio: %d; keyFrames: %u; frames: %u; compositionOffsets: %u",
 			audio, keyFrames.size(), sampleSize.size(), compositionOffsets.size());
-
-	//    FINEST("sampleSize count: %d", sampleSize.size());
-	//    FINEST("sampleDeltaTime count: %d", sampleDeltaTime.size());
-	//    FINEST("chunckOffsets count: %d", chunckOffsets.size());
-	//    FINEST("sample2Chunk count: %d", sample2Chunk.size());
-	//    FINEST("keyFrames count: %d", keyFrames.size());
-
+	
 	uint32_t timeScale = pMDHD->GetTimeScale();
 	uint32_t totalTime = 0;
 	uint32_t localOffset = 0;
@@ -509,7 +493,6 @@ bool MP4Document::BuildFrames(bool audio) {
 		if (pCTSS != NULL) {
 			double doubleVal = ((double) compositionOffsets[i] / (double) timeScale)*(double) 1000.00;
 			frame.compositionOffset = (int32_t) doubleVal;
-			//FINEST("frame.compositionOffset: %08x", frame.compositionOffset);
 		} else {
 			frame.compositionOffset = 0;
 		}
@@ -547,7 +530,6 @@ bool MP4Document::BuildFrames(bool audio) {
 		frame.isBinaryHeader = false;
 		totalTime += sampleDeltaTime[i];
 
-		//FINEST("Frame: %s", STR(frame));
 		ADD_VECTOR_END(_frames, frame);
 	}
 

@@ -92,7 +92,6 @@ bool StdioCarrier::OnEvent(struct kevent &event) {
 			IOBuffer *pOutputBuffer = NULL;
 
 			while ((pOutputBuffer = _pProtocol->GetOutputBuffer()) != NULL) {
-				//FINEST("Try to send buffer:\n%s", STR(*pOutputBuffer));
 				if (!pOutputBuffer->WriteToStdio(event.ident, event.data)) {
 					FATAL("Unable to send data");
 					IOHandlerManager::EnqueueForDelete(this);

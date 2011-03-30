@@ -93,7 +93,6 @@ bool ID3Parser::Parse(MediaFile &file) {
 	totalSize = (totalSize << 7) | (tempBuffer[1]&0x7f);
 	totalSize = (totalSize << 7) | (tempBuffer[2]&0x7f);
 	totalSize = (totalSize << 7) | (tempBuffer[3]&0x7f);
-	//FINEST("_totalSize: 0x%08x (%d)", _totalSize, _totalSize);
 
 	//3. See if we go to the end of the ID3 we have a valid media frame
 	//After that we go back to where we left (end of the header, offset 10)
@@ -179,17 +178,14 @@ bool ID3Parser::ParseTags(IOBuffer &buffer) {
 		} else {
 			size = ENTOHLP(GETIBPOINTER(buffer));
 		}
-		//FINEST("name: %s; size: %d", STR(name), size);
 		buffer.Ignore(4);
 
 		CHECK_BUFFER_SIZE(buffer, 2);
-		//uint16_t flags = ENTOHSP(GETIBPOINTER(buffer));
 		buffer.Ignore(2);
 		if (size == 0 || GETAVAILABLEBYTESCOUNT(buffer) < size) {
 			WARN("Invalid tagSize");
 			return false;
 		}
-		//FINEST("id: %08x; name: %s; size: %d; flags: %d", id, STR(name), size, flags);
 
 		//3. Get a copy of data
 		tagBuffer.IgnoreAll();

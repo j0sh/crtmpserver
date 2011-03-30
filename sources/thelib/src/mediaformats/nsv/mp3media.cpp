@@ -202,11 +202,8 @@ bool MP3Media::GetAudioFrames(uint8_t *pBuffer, uint32_t &audioSamplesCount, Med
 
 		audioSamplesCount += samplesCount;
 
-		//FINEST("samplesCount : %d", samplesCount);
-		//FINEST("sampleRate:%d", (_samplingRates[version][sampleRateIndex]));
 
 		//8. All good. Save the frame
-		//ADD_VECTOR_END(_frames, frame);
 	}
 	return true;
 }

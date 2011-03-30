@@ -92,7 +92,6 @@ bool StdioCarrier::OnEvent(select_event &event) {
 			IOBuffer *pOutputBuffer = NULL;
 
 			while ((pOutputBuffer = _pProtocol->GetOutputBuffer()) != NULL) {
-				//FINEST("Try to send buffer:\n%s", STR(*pOutputBuffer));
 				if (!pOutputBuffer->WriteToStdio(_outboundFd,
 						FD_WRITE_CHUNK)) {
 					FATAL("Unable to send data");

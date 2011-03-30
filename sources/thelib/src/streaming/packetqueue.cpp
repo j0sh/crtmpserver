@@ -90,11 +90,9 @@ Packet *PacketQueue::GetPacket(uint8_t *pData, uint32_t dataLength,
 		return NULL;
 	Packet *pPacket = NULL;
 	if (_free.size() != 0) {
-		//FINEST("cache");
 		pPacket = _free[0];
 		_free.erase(_free.begin());
 	} else {
-		//FINEST("new");
 		pPacket = new Packet;
 		pPacket->buffer.ReadFromRepeat(0, _initialBuffer);
 		pPacket->buffer.IgnoreAll();

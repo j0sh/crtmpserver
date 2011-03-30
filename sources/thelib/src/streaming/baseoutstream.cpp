@@ -57,8 +57,6 @@ bool BaseOutStream::Link(BaseInStream *pInStream, bool reverseLink) {
 				STR(tagToString(pInStream->GetType())));
 		return false;
 	}
-	//    FINEST("BaseOutStream::Link: this: %u; pInStream: %u; reverseLink: %d",
-	//            GetUniqueId(), pInStream->GetUniqueId(), reverseLink);
 	if (_pInStream != NULL) {
 		if (_pInStream->GetUniqueId() == pInStream->GetUniqueId()) {
 			WARN("BaseOutStream::Link: This stream is already linked");
@@ -68,50 +66,34 @@ bool BaseOutStream::Link(BaseInStream *pInStream, bool reverseLink) {
 				_pInStream->GetUniqueId());
 		return false;
 	}
-	//FINEST("BaseOutStream::Link: Linking...");
 	_pInStream = pInStream;
 	if (reverseLink) {
-		//FINEST("BaseOutStream::Link: Reverse linking...");
 		if (!_pInStream->Link(this, false)) {
 			FATAL("BaseOutStream::Link: Unable to reverse link");
 			_pInStream = NULL;
 			return false;
 		}
-		//FINEST("BaseOutStream::Link: Done reverse link");
 	}
-	//FINEST("BaseOutStream::Link: Signal AttachedToInStream");
 	SignalAttachedToInStream();
-	//FINEST("BaseOutStream::Link: Done");
 	return true;
 }
 
 bool BaseOutStream::UnLink(bool reverseUnLink) {
-	//    FINEST("BaseOutStream::UnLink: this: %u; _pInStream: %u; reverseUnLink: %d",
-	//            GetUniqueId(), _pInStream != NULL ? _pInStream->GetUniqueId() : 0,
-	//            reverseUnLink);
 	if (_pInStream == NULL) {
 		WARN("BaseOutStream::UnLink: This stream is not linked");
 		return true;
 	}
 	if (reverseUnLink) {
-		//FINEST("BaseOutStream::UnLink: Reverse unLinking...");
 		if (!_pInStream->UnLink(this, false)) {
 			FATAL("BaseOutStream::UnLink: Unable to reverse unLink");
 			//TODO: what are we going to do here???
 			NYIA;
 		}
-		//FINEST("BaseOutStream::UnLink: Done reverse unLink");
 	}
-	//FINEST("BaseOutStream::UnLink: unLinking...");
 	_pInStream = NULL;
-
-	//    FINEST("BaseOutStream::UnLink: _canCallDetachedFromInStream: %d",
-	//            _canCallDetachedFromInStream);
 	if (_canCallDetachedFromInStream) {
-		//FINEST("BaseOutStream::UnLink: Signal DetachedFromInStream");
 		SignalDetachedFromInStream();
 	}
-	//FINEST("BaseOutStream::UnLink: Done");
 	return true;
 }
 

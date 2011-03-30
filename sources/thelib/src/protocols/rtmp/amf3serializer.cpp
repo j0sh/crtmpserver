@@ -147,17 +147,9 @@ bool AMF3Serializer::Write(IOBuffer &buffer, Variant &variant) {
 		case V_INT8:
 		case V_INT16:
 		case V_INT32:
-			//        {
-			//            uint32_t temp = (uint32_t) variant;
-			//            temp &= 0x1FFFFFFF;
-			//            return WriteInteger(buffer, temp);
-			//        }
 		case V_UINT8:
 		case V_UINT16:
 		case V_UINT32:
-			//        {
-			//            return WriteInteger(buffer, variant);
-			//        }
 		case V_UINT64:
 		case V_INT64:
 		case V_DOUBLE:
@@ -265,7 +257,6 @@ bool AMF3Serializer::ReadDouble(IOBuffer &buffer, Variant &variant, bool readTyp
 bool AMF3Serializer::WriteDouble(IOBuffer &buffer, double value, bool writeType) {
 	WRITE_AMF3_TYPE(AMF3_DOUBLE);
 
-	//uint64_t u64Val = HTOND(*((uint64_t *) & value));
 	uint64_t u64Val = 0;
 	EHTOND(value, u64Val);
 
@@ -394,7 +385,6 @@ bool AMF3Serializer::ReadArray(IOBuffer &buffer, Variant &variant, bool readType
 			FATAL("Unable to read the key");
 			return false;
 		}
-		//FINEST("key: %s", STR(key));
 		if (key == "")
 			break;
 		if (!Read(buffer, variant[(string) key])) {
@@ -629,7 +619,6 @@ bool AMF3Serializer::ReadObject(IOBuffer &buffer, Variant &variant, bool readTyp
 
 bool AMF3Serializer::WriteObject(IOBuffer &buffer, Variant &variant, bool writeType) {
 	WRITE_AMF3_TYPE(AMF3_OBJECT);
-	//(variant.MapSize() << 4) |
 	if (!WriteU29(buffer, 0x0b)) {
 		FATAL("Unable to save the traits count");
 		return false;

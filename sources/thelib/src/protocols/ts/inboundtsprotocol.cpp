@@ -24,7 +24,6 @@
 #include "protocols/ts/inboundtsprotocol.h"
 #include "protocols/ts/tspacketpat.h"
 #include "protocols/ts/tspacketpmt.h"
-#include "protocols/ts/tsadaptationfield.h"
 #include "protocols/ts/basetsappprotocolhandler.h"
 #include "protocols/ts/innettsstream.h"
 #include "protocols/ts/tsboundscheck.h"
@@ -98,11 +97,6 @@ bool InboundTSProtocol::Initialize(Variant &parameters) {
 }
 
 bool InboundTSProtocol::AllowFarProtocol(uint64_t type) {
-	//    if (type == PT_TCP ||
-	//            type == PT_OUTBOUNDHTTP)
-	//        return true;
-	//    FATAL("Far protocol %d not accepted", type);
-	//    return false;
 	return true;
 }
 
@@ -246,7 +240,6 @@ bool InboundTSProtocol::ProcessPacket(uint32_t packetHeader,
 		cursor += pBuffer[cursor] + 1;
 	}
 	if (!TS_TRANSPORT_PACKET_HAS_PAYLOAD(packetHeader)) {
-		//WARN("No payload here!");
 		return true;
 	}
 
@@ -323,7 +316,6 @@ bool InboundTSProtocol::ProcessPidTypePAT(uint32_t packetHeader,
 		FATAL("Unable to read PAT");
 		return false;
 	}
-	//FINEST("packetPAT:\n%s", STR(packetPAT));
 
 	//3. Store the crc
 	pidDescriptor.payload.crc = packetPAT.GetCRC();
@@ -381,7 +373,6 @@ bool InboundTSProtocol::ProcessPidTypePMT(uint32_t packetHeader,
 		FATAL("Unable to read PAT");
 		return false;
 	}
-	//FINEST("packetPMT:\n%s", STR(packetPMT));
 
 	//3. Store the CRC
 	pidDescriptor.payload.crc = packetPMT.GetCRC();

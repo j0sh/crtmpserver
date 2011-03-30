@@ -46,7 +46,6 @@ bool AtomCTTS::ReadData() {
 		FATAL("Unable to read count");
 		return false;
 	}
-	//FINEST("count: %u", count);
 
 	for (uint32_t i = 0; i < count; i++) {
 		CTTSEntry entry;
@@ -59,10 +58,7 @@ bool AtomCTTS::ReadData() {
 			FATAL("Unable to read sample offset");
 			return false;
 		}
-
-		//        FINEST("sampleCount[%u]: %u; sampleOffset[%u]: %u", i,
-		//                entry.sampleCount, i, entry.sampleOffset);
-
+		
 		ADD_VECTOR_END(_entries, entry);
 	}
 	return true;

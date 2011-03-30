@@ -42,38 +42,31 @@ bool AtomHDLR::ReadData() {
 		FATAL("Unable to read component type");
 		return false;
 	}
-	//FINEST("_componentType: %u", _componentType);
 
 	if (!ReadUInt32(_componentSubType)) {
 		FATAL("Unable to read component sub type");
 		return false;
 	}
-	//    FINEST("_componentSubType: %s(%u)", STR(U32TOS(_componentSubType)),
-	//            _componentSubType);
 
 	if (!ReadUInt32(_componentManufacturer)) {
 		FATAL("Unable to read component manufacturer");
 		return false;
 	}
-	//FINEST("_componentManufacturer: %u", _componentManufacturer);
 
 	if (!ReadUInt32(_componentFlags)) {
 		FATAL("Unable to read component flags");
 		return false;
 	}
-	//FINEST("_componentFlags: %u", _componentFlags);
 
 	if (!ReadUInt32(_componentFlagsMask)) {
 		FATAL("Unable to read component flags mask");
 		return false;
 	}
-	//FINEST("_componentFlagsMask: %u", _componentFlagsMask);
 
 	if (!ReadString(_componentName, _size - 32)) {
 		FATAL("Unable to read component name");
 		return false;
 	}
-	//FINEST("_componentFlagsMask: %s", STR(_componentName));
 
 	return true;
 }

@@ -144,7 +144,6 @@ bool InNetTSStream::FeedData(uint8_t *pData, uint32_t length, bool packetStart,
 
 			absoluteTime = (ptsTime - deltaTime);
 			_feedTime = _feedTime < absoluteTime ? absoluteTime : _feedTime;
-			//FINEST("%c: absoluteTime: %.2f;", isAudio ? 'A' : 'V', absoluteTime);
 
 			pData += 9 + pesHeaderLength;
 			length -= (9 + pesHeaderLength);
@@ -224,10 +223,6 @@ bool InNetTSStream::HandleAudioData(uint8_t *pRawBuffer, uint32_t rawBufferLengt
 	//6.2  Audio Data Transport Stream, ADTS
 	//iso13818-7 page 26/206
 
-	//	FINEST("rawBufferLength: %d; GETAVAILABLEBYTESCOUNT(_audioBuffer): %d",
-	//			rawBufferLength, GETAVAILABLEBYTESCOUNT(_audioBuffer));
-
-
 	//1. Save the data
 	_audioBuffer.ReadFromBuffer(pRawBuffer, rawBufferLength);
 
@@ -249,11 +244,9 @@ bool InNetTSStream::HandleAudioData(uint8_t *pRawBuffer, uint32_t rawBufferLengt
 		}
 
 		if ((ENTOHSP(pBuffer)&0xfff0) != 0xfff0) {
-			//WARN("Bogus marker %02x %02x. Skip one byte", pBuffer[0], pBuffer[1]);
 			_audioBuffer.Ignore(1);
 			continue;
 		} else {
-			//FINEST("OK: %d", pBuffer[1]&0x01);
 		}
 
 		//4. Read the frame length and see if we have enough data.
@@ -267,9 +260,6 @@ bool InNetTSStream::HandleAudioData(uint8_t *pRawBuffer, uint32_t rawBufferLengt
 			continue;
 		}
 		if (bufferLength < frameLength) {
-			//			FINEST("Not enough data. Wanted: %d; Got: %d",
-			//					frameLength,
-			//					GETAVAILABLEBYTESCOUNT(_audioBuffer));
 			break;
 		}
 
@@ -279,7 +269,6 @@ bool InNetTSStream::HandleAudioData(uint8_t *pRawBuffer, uint32_t rawBufferLengt
 			ts = _lastSentAudioTimestamp;
 		}
 		_lastSentAudioTimestamp = ts;
-		//FINEST("timestamp: %.2f; _audioPacketsCount: %d", timestamp, _audioPacketsCount);
 
 		//5. Feed
 		if (!FeedData(pBuffer, frameLength, 0, frameLength, ts, true)) {
@@ -415,7 +404,6 @@ void InNetTSStream::InitializeVideoCapabilities(uint8_t *pData, uint32_t length)
 }
 
 void InNetTSStream::InitializeAudioCapabilities(uint8_t *pData, uint32_t length) {
-	//FINEST("_streamCapabilities.audioCodecId: %016llx", _streamCapabilities.audioCodecId);
 	if (_streamCapabilities.audioCodecId == CODEC_AUDIO_UNKNOWN) {
 		uint8_t mpegts2rtmpProfile[] = {
 			1, 2, 3

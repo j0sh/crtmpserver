@@ -145,7 +145,6 @@ bool OutboundDNSResolverProtocol::SignalInputData(int32_t recvAmount) {
 bool OutboundDNSResolverProtocol::SignalInputData(IOBuffer &buffer) {
 	while (true) {
 		if (GETAVAILABLEBYTESCOUNT(buffer) < 4) {
-			//FINEST("Not enough data");
 			return true;
 		}
 		uint32_t size = *((uint32_t *) GETIBPOINTER(buffer));

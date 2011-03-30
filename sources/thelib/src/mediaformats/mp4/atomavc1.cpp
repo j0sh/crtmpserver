@@ -50,79 +50,66 @@ bool AtomAVC1::ReadData() {
 		FATAL("Unable to read _reserved");
 		return false;
 	}
-	//FINEST("_reserved: %u", _reserved);
 
 	if (!ReadUInt16(_referenceIndex)) {
 		FATAL("Unable to read _referenceIndex");
 		return false;
 	}
-	//FINEST("_referenceIndex: %u", _referenceIndex);
 
 	if (!ReadUInt16(_qtVideoEncodingVersion)) {
 		FATAL("Unable to read _qtVideoEncodingVersion");
 		return false;
 	}
-	//FINEST("_qtVideoEncodingVersion: %u", _qtVideoEncodingVersion);
 
 	if (!ReadUInt16(_qtVideoEncodingRevisionLevel)) {
 		FATAL("Unable to read _qtVideoEncodingRevisionLevel");
 		return false;
 	}
-	//FINEST("_qtVideoEncodingRevisionLevel: %u", _qtVideoEncodingRevisionLevel);
 
 	if (!ReadUInt32(_qtVideoEncodingVendor)) {
 		FATAL("Unable to read _qtVideoEncodingVendor");
 		return false;
 	}
-	//FINEST("_qtVideoEncodingVendor: %u", _qtVideoEncodingVendor);
 
 	if (!ReadUInt32(_qtVideoTemporalQuality)) {
 		FATAL("Unable to read _qtVideoTemporalQuality");
 		return false;
 	}
-	//FINEST("_qtVideoTemporalQuality: %u", _qtVideoTemporalQuality);
 
 	if (!ReadUInt32(_qtVideoSpatialQuality)) {
 		FATAL("Unable to read _qtVideoSpatialQuality");
 		return false;
 	}
-	//FINEST("_qtVideoSpatialQuality: %u", _qtVideoSpatialQuality);
 
 	if (!ReadUInt32(_videoFramePixelSize)) {
 		FATAL("Unable to read _videoFramePixelSize");
 		return false;
 	}
-	//FINEST("_videoFramePixelSize: %u", _videoFramePixelSize);
 
 	if (!ReadUInt32(_horizontalDpi)) {
 		FATAL("Unable to read _horizontalDpi");
 		return false;
 	}
-	//FINEST("_horizontalDpi: %u", _horizontalDpi);
 
 	if (!ReadUInt32(_verticalDpi)) {
 		FATAL("Unable to read _verticalDpi");
 		return false;
 	}
-	//FINEST("_verticalDpi: %u", _verticalDpi);
 
 	if (!ReadUInt32(_qtVideoDataSize)) {
 		FATAL("Unable to read _qtVideoDataSize");
 		return false;
 	}
-	//FINEST("_qtVideoDataSize: %u", _qtVideoDataSize);
 
 	if (!ReadUInt16(_videoFrameCount)) {
 		FATAL("Unable to read _videoFrameCount");
 		return false;
 	}
-	//FINEST("_videoFrameCount: %u", _videoFrameCount);
 
 	if (!ReadUInt8(_videoEncoderNameLength)) {
 		FATAL("Unable to read _videoEncoderNameLength");
 		return false;
 	}
-	//FINEST("_videoEncoderNameLength: %u", _videoEncoderNameLength);
 
 	if (_videoEncoderNameLength < 31)
 		_videoEncoderNameLength = 31;
@@ -135,19 +122,16 @@ bool AtomAVC1::ReadData() {
 	}
 	_videoEncoderName = string((char *) pTemp, _videoEncoderNameLength);
 	delete[] pTemp;
-	//FINEST("_videoEncoderName: %s", STR(_videoEncoderName));
 
 	if (!ReadUInt16(_videoPixelDepth)) {
 		FATAL("Unable to read _videoPixelDepth");
 		return false;
 	}
-	//FINEST("_videoPixelDepth: %u", _videoPixelDepth);
 
 	if (!ReadUInt16(_qtVideoColorTableId)) {
 		FATAL("Unable to read _qtVideoColorTableId");
 		return false;
 	}
-	//FINEST("_qtVideoColorTableId: %u", _qtVideoColorTableId);
 	if (_qtVideoColorTableId != 0xffff) {
 		FATAL("_qtVideoColorTableId not supported yet");
 		return false;

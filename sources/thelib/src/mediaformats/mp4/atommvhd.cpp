@@ -47,46 +47,36 @@ bool AtomMVHD::ReadData() {
 		FATAL("Unable to read creation time");
 		return false;
 	}
-	//FINEST("_creationTime: %u", _creationTime);
 
 	if (!ReadUInt32(_modificationTime)) {
 		FATAL("Unable to read modification time");
 		return false;
 	}
-	//FINEST("_modificationTime: %u", _modificationTime);
 
 	if (!ReadUInt32(_timeScale)) {
 		FATAL("Unable to read time scale");
 		return false;
 	}
-	//FINEST("_timeScale: %u", _timeScale);
 
 	if (!ReadUInt32(_duration)) {
 		FATAL("Unable to read duration");
 		return false;
 	}
-	//FINEST("_duration: %u", _duration);
 
 	if (!ReadUInt32(_preferredRate)) {
 		FATAL("Unable to read preferred rate");
 		return false;
 	}
-	//FINEST("_preferredRate: %u", _preferredRate);
 
 	if (!ReadUInt16(_preferredVolume)) {
 		FATAL("Unable to read preferred volume");
 		return false;
 	}
-	//FINEST("_preferredVolume: %u", _preferredVolume);
 
 	if (!ReadArray(_reserved, 10)) {
 		FATAL("Unable to read reserved");
 		return false;
 	}
-	//    FINEST("_reserved: %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x",
-	//            _reserved[0], _reserved[1], _reserved[2], _reserved[3],
-	//    _reserved[4], _reserved[5], _reserved[6], _reserved[7],
-	//            _reserved[8], _reserved[9]);
 
 	if (!ReadArray((uint8_t *) _matrixStructure, 36)) {
 		FATAL("Unable to read matrix structure");
@@ -97,43 +87,36 @@ bool AtomMVHD::ReadData() {
 		FATAL("Unable to read preview time");
 		return false;
 	}
-	//FINEST("_previewTime: %u", _previewTime);
 
 	if (!ReadUInt32(_previewDuration)) {
 		FATAL("Unable to read preview duration");
 		return false;
 	}
-	//FINEST("_previewDuration: %u", _previewDuration);
 
 	if (!ReadUInt32(_posterTime)) {
 		FATAL("Unable to read poster time");
 		return false;
 	}
-	//FINEST("_posterTime: %u", _posterTime);
 
 	if (!ReadUInt32(_selectionTime)) {
 		FATAL("Unable to read selection time");
 		return false;
 	}
-	//FINEST("_selectionTime: %u", _selectionTime);
 
 	if (!ReadUInt32(_selectionDuration)) {
 		FATAL("Unable to read selection duration");
 		return false;
 	}
-	//FINEST("_selectionDuration: %u", _selectionDuration);
 
 	if (!ReadUInt32(_currentTime)) {
 		FATAL("Unable to read current time");
 		return false;
 	}
-	//FINEST("_currentTime: %u", _currentTime);
 
 	if (!ReadUInt32(_nextTrakId)) {
 		FATAL("Unable to read next track ID");
 		return false;
 	}
-	//FINEST("_nextTrakId: %u", _nextTrakId);
 
 	return true;
 }

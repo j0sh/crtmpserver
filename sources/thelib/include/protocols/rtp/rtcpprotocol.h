@@ -35,8 +35,6 @@ private:
 	bool _isAudio;
 	uint32_t _ssrc;
 	bool _validLastAddress;
-	//	uint64_t _lastNtpMicroseconds;
-	//	uint32_t _lastRtpTimestamp;
 public:
 	RTCPProtocol();
 	virtual ~RTCPProtocol();
@@ -48,7 +46,6 @@ public:
 	virtual bool SignalInputData(IOBuffer &buffer, sockaddr_in *pPeerAddress);
 	virtual bool SignalInputData(IOBuffer &buffer);
 
-	//bool SendRR(sockaddr_in &address);
 	uint32_t GetLastSenderReport();
 	sockaddr_in *GetLastAddress();
 	uint32_t GetSSRC();

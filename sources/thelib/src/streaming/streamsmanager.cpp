@@ -144,8 +144,6 @@ map<uint32_t, BaseStream *> StreamsManager::FindByName(string name, bool partial
 }
 
 map<uint32_t, BaseStream *> StreamsManager::FindByType(uint64_t type, bool partial) {
-	//    FINEST("FindByType: type: %s; partial: %d",
-	//            STR(tagToString(type)), partial);
 	map<uint32_t, BaseStream * > result;
 
 	if (!partial) {
@@ -158,10 +156,7 @@ map<uint32_t, BaseStream *> StreamsManager::FindByType(uint64_t type, bool parti
 
 	for (map<uint64_t, map<uint32_t, BaseStream * > >::iterator i = _streamsByType.begin();
 			i != _streamsByType.end(); i++) {
-		//        FINEST("FindByType: MAP_KEY(i): %016llx; mask: %016llx; type: %016llx; (MAP_KEY(i) & mask): %016llx",
-		//                MAP_KEY(i), mask, type, (MAP_KEY(i) & mask));
 		if ((MAP_KEY(i) & mask) == type) {
-			//FINEST("FindByType: matched");
 
 			FOR_MAP(MAP_VAL(i), uint32_t, BaseStream *, j) {
 				result[MAP_KEY(j)] = MAP_VAL(j);
@@ -174,16 +169,8 @@ map<uint32_t, BaseStream *> StreamsManager::FindByType(uint64_t type, bool parti
 
 map<uint32_t, BaseStream *> StreamsManager::FindByTypeByName(uint64_t type,
 		string name, bool partialType, bool partialName) {
-	//    FINEST("FindByTypeByName: type: %s; name: %s; partialType: %d; partialName: %d",
-	//            STR(tagToString(type)), STR(name), partialType, partialName);
 	//1. Filter on type
 	map<uint32_t, BaseStream * > possibleResults = FindByType(type, partialType);
-
-	//    FOR_MAP(possibleResults, uint32_t, BaseStream *, i) {
-	//        FINEST("FindByTypeByName: filer on type: UID: %u; type: %s",
-	//                MAP_VAL(i)->GetUniqueId(),
-	//                STR(tagToString(MAP_VAL(i)->GetType())));
-	//    }
 
 	//2. Filter on name
 	map<uint32_t, BaseStream * > result;

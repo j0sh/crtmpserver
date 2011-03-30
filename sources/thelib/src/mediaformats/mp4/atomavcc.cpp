@@ -58,39 +58,33 @@ bool AtomAVCC::Read() {
 		FATAL("Unable to read _configurationVersion");
 		return false;
 	}
-	//FINEST("_configurationVersion: %d", _configurationVersion);
 
 	if (!ReadUInt8(_profile)) {
 		FATAL("Unable to read _profile");
 		return false;
 	}
-	//FINEST("_profile: %d", _profile);
 
 	if (!ReadUInt8(_profileCompatibility)) {
 		FATAL("Unable to read _profileCompatibility");
 		return false;
 	}
-	//FINEST("_profileCompatibility: %d", _profileCompatibility);
 
 	if (!ReadUInt8(_level)) {
 		FATAL("Unable to read _level");
 		return false;
 	}
-	//FINEST("_level: %d", _level);
 
 	if (!ReadUInt8(_naluLengthSize)) {
 		FATAL("Unable to read _naluLengthSize");
 		return false;
 	}
 	_naluLengthSize = 1 + (_naluLengthSize & 0x03);
-	//FINEST("_naluLengthSize: %d", _naluLengthSize);
 
 	if (!ReadUInt8(_seqCount)) {
 		FATAL("Unable to read _seqCount");
 		return false;
 	}
 	_seqCount = _seqCount & 0x1f;
-	//FINEST("_seqCount: %d", _seqCount);
 
 	for (uint8_t i = 0; i < _seqCount; i++) {
 		AVCCParameter parameter = {0};
@@ -99,7 +93,6 @@ bool AtomAVCC::Read() {
 			FATAL("Unable to read parameter.size");
 			return false;
 		}
-		//FINEST("parameter.size: %d", parameter.size);
 
 		if (parameter.size > 0) {
 			parameter.pData = new uint8_t[parameter.size];
@@ -118,7 +111,6 @@ bool AtomAVCC::Read() {
 		FATAL("Unable to read _picCount");
 		return false;
 	}
-	//FINEST("_picCount: %d", _picCount);
 
 	for (uint8_t i = 0; i < _picCount; i++) {
 		AVCCParameter parameter = {0};
@@ -127,7 +119,6 @@ bool AtomAVCC::Read() {
 			FATAL("Unable to read parameter.size");
 			return false;
 		}
-		//FINEST("parameter.size: %d", parameter.size);
 
 		if (parameter.size > 0) {
 			parameter.pData = new uint8_t[parameter.size];

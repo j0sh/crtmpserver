@@ -124,7 +124,6 @@ bool RTSPProtocol::SignalInputData(IOBuffer &buffer) {
 					return false;
 				}
 				if (_state != RTSP_STATE_PAYLOAD) {
-					//FINEST("Not enough data to parse the headers");
 					return true;
 				}
 			}
@@ -353,10 +352,6 @@ bool RTSPProtocol::SendMessage(Variant &headers, string &content) {
 	//4. Write the content
 	_outputBuffer.ReadFromString(content);
 
-
-	//	string aaa = string((char *) GETIBPOINTER(_outputBuffer), GETAVAILABLEBYTESCOUNT(_outputBuffer));
-	//	FINEST("\n`%s`", STR(aaa));
-
 	//5. Enqueue for outbound
 	return EnqueueForOutbound();
 }
@@ -376,13 +371,11 @@ bool RTSPProtocol::ParseHeaders(IOBuffer& buffer) {
 
 bool RTSPProtocol::ParseInterleavedHeaders(IOBuffer &buffer) {
 	//1. Marl this as a interleaved content
-	//FINEST("buffer:\n%s", STR(buffer));
 	_rtpData = true;
 
 	//2. Do we have at least 4 bytes ($ sign, channel byte an 2-bytes length)?
 	uint32_t bufferLength = GETAVAILABLEBYTESCOUNT(buffer);
 	if (bufferLength < 4) {
-		//WARN("Not enough data");
 		return true;
 	}
 
@@ -401,7 +394,6 @@ bool RTSPProtocol::ParseInterleavedHeaders(IOBuffer &buffer) {
 
 	//6. Do we have enough data?
 	if (_rtpDataLength + 4 > bufferLength) {
-		//WARN("Not enough data. _rtpDataLength: %d; bufferLength: %d", _rtpDataLength, bufferLength);
 		return true;
 	}
 
@@ -417,7 +409,6 @@ bool RTSPProtocol::ParseInterleavedHeaders(IOBuffer &buffer) {
 bool RTSPProtocol::ParseNormalHeaders(IOBuffer &buffer) {
 	_inboundHeaders.Reset();
 	_inboundContent = "";
-	//FINEST("buffer:\n%s", STR(buffer));
 	//1. We have to have at least 4 bytes (double \r\n)
 	if (GETAVAILABLEBYTESCOUNT(buffer) < 4) {
 		return true;
@@ -469,9 +460,6 @@ bool RTSPProtocol::ParseNormalHeaders(IOBuffer &buffer) {
 
 	//5. Consider the rest of the lines as key: value pairs and store them
 	//0. Reset the headers
-	//	for (uint32_t i = 1; i < lines.size(); i++) {
-	//		FINEST("line %d: `%s`", i, STR(lines[i]));
-	//	}
 	_inboundHeaders[RTSP_HEADERS].IsArray(false);
 	for (uint32_t i = 1; i < lines.size(); i++) {
 		string line = lines[i];
@@ -536,7 +524,6 @@ bool RTSPProtocol::ParseFirstLine(string &line) {
 		_inboundHeaders[RTSP_FIRST_LINE][RTSP_STATUS_CODE_REASON] = reason;
 		_inboundHeaders["isRequest"] = false;
 
-		//FINEST("_inboundHeaders:\n%s", STR(_inboundHeaders.ToString()));
 
 		return true;
 

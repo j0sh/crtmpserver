@@ -208,7 +208,6 @@ bool BaseRTMPAppProtocolHandler::InboundMessageAvailable(BaseRTMPProtocol *pFrom
 
 bool BaseRTMPAppProtocolHandler::InboundMessageAvailable(BaseRTMPProtocol *pFrom,
 		Variant &request) {
-	//FINEST("request:\n%s", STR(request.ToString()));
 
 	//1. Perform authentication
 	Variant &parameters = pFrom->GetCustomParameters();
@@ -372,14 +371,12 @@ bool BaseRTMPAppProtocolHandler::ProcessWinAckSize(BaseRTMPProtocol *pFrom,
 
 bool BaseRTMPAppProtocolHandler::ProcessPeerBW(BaseRTMPProtocol *pFrom,
 		Variant &request) {
-	//WARN("ProcessPeerBW:\n%s", STR(request.ToString()));
 	WARN("ProcessPeerBW");
 	return true;
 }
 
 bool BaseRTMPAppProtocolHandler::ProcessAck(BaseRTMPProtocol *pFrom,
 		Variant &request) {
-	//WARN("ProcessAck:\n%s", STR(request.ToString()));
 	return true;
 }
 
@@ -407,9 +404,7 @@ bool BaseRTMPAppProtocolHandler::ProcessUsrCtrl(BaseRTMPProtocol *pFrom,
 	switch ((uint16_t) M_USRCTRL_TYPE(request)) {
 		case RM_USRCTRL_TYPE_PING_REQUEST:
 		{
-			//FINEST("request:\n%s", STR(request.ToString()));
 			Variant response = ConnectionMessageFactory::GetPong();
-			//ASSERT("response:\n%s", STR(response.ToString()));
 			return SendRTMPMessage(pFrom, response);
 		}
 		case RM_USRCTRL_TYPE_STREAM_BEGIN:
@@ -423,7 +418,6 @@ bool BaseRTMPAppProtocolHandler::ProcessUsrCtrl(BaseRTMPProtocol *pFrom,
 		case RM_USRCTRL_TYPE_UNKNOWN1:
 		case RM_USRCTRL_TYPE_UNKNOWN2:
 		{
-			//WARN("User control message type: %s", STR(M_USRCTRL_TYPE_STRING(request)));
 			return true;
 		}
 		default:
@@ -436,7 +430,6 @@ bool BaseRTMPAppProtocolHandler::ProcessUsrCtrl(BaseRTMPProtocol *pFrom,
 
 bool BaseRTMPAppProtocolHandler::ProcessNotify(BaseRTMPProtocol *pFrom,
 		Variant &request) {
-	//FINEST("request:\n%s", STR(request.ToString()));
 	//1. Find the corresponding inbound stream
 	InNetRTMPStream *pInNetRTMPStream = NULL;
 	map<uint32_t, BaseStream *> possibleStreams = GetApplication()->
@@ -477,7 +470,6 @@ bool BaseRTMPAppProtocolHandler::ProcessNotify(BaseRTMPProtocol *pFrom,
 
 bool BaseRTMPAppProtocolHandler::ProcessFlexStreamSend(BaseRTMPProtocol *pFrom,
 		Variant &request) {
-	//FINEST("request:\n%s", STR(request.ToString()));
 
 	//1. Find the corresponding inbound stream
 	InNetRTMPStream *pInNetRTMPStream = NULL;
@@ -524,7 +516,6 @@ bool BaseRTMPAppProtocolHandler::ProcessSharedObject(BaseRTMPProtocol *pFrom,
 
 bool BaseRTMPAppProtocolHandler::ProcessInvoke(BaseRTMPProtocol *pFrom,
 		Variant &request) {
-	//FINEST("Request:\n%s", STR(request.ToString()));
 
 	string functionName = request[RM_INVOKE][RM_INVOKE_FUNCTION];
 	if (functionName == RM_INVOKE_FUNCTION_CONNECT) {
@@ -566,7 +557,6 @@ bool BaseRTMPAppProtocolHandler::ProcessInvoke(BaseRTMPProtocol *pFrom,
 
 bool BaseRTMPAppProtocolHandler::ProcessInvokeConnect(BaseRTMPProtocol *pFrom,
 		Variant & request) {
-	//FINEST("\n%s", STR(request.ToString()));
 	//1. Send the channel specific messages
 	Variant response = GenericMessageFactory::GetWinAckSize(2500000);
 	if (!SendRTMPMessage(pFrom, response)) {
@@ -974,8 +964,6 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokeOnStatus(BaseRTMPProtocol *pFrom,
 		return false;
 	}
 
-	//pProtocol->
-
 	//6. Get our hands on streaming parameters
 	string path = "";
 	if (NeedsToPullExternalStream(pFrom))
@@ -1070,7 +1058,6 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokeFCPublish(BaseRTMPProtocol *pFrom,
 
 bool BaseRTMPAppProtocolHandler::ProcessInvokeGetStreamLength(BaseRTMPProtocol *pFrom,
 		Variant & request) {
-	//FINEST("Request:\n%s", STR(request.ToString()));
 	Variant metadata = GetMetaData(M_INVOKE_PARAM(request, 1), true);
 	Variant params;
 	params[(uint32_t) 0] = Variant();
@@ -1090,7 +1077,6 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokeGetStreamLength(BaseRTMPProtocol *
 
 bool BaseRTMPAppProtocolHandler::ProcessInvokeOnBWDone(BaseRTMPProtocol *pFrom,
 		Variant &request) {
-	//WARN("ProcessInvokeOnBWDone:\n%s", STR(request.ToString()));
 	WARN("ProcessInvokeOnBWDone");
 	return true;
 }
@@ -1320,13 +1306,8 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokeFCSubscribeResult(BaseRTMPProtocol
 
 bool BaseRTMPAppProtocolHandler::AuthenticateInboundAdobe(BaseRTMPProtocol *pFrom,
 		Variant & request, Variant &authState) {
-
-	//	FINEST("_configuration:\n%s", STR(_configuration.ToString()));
-	//	FINEST("request:\n%s", STR(request.ToString()));
-
 	if (!authState.HasKey("stage"))
 		authState["stage"] = "inProgress";
-	//FINEST("authState:\n%s", STR(authState.ToString()));
 
 	if (authState["stage"] == "authenticated") {
 		return true;
@@ -1389,7 +1370,6 @@ bool BaseRTMPAppProtocolHandler::AuthenticateInboundAdobe(BaseRTMPProtocol *pFro
 		return true;
 	}
 	string appUrl = (string) connectParams[RM_INVOKE_PARAMS_CONNECT_APP];
-	//FINEST("appUrl: %s", STR(appUrl));
 
 	//8. Split the URI into parts
 	vector<string> appUrlParts;
@@ -1406,14 +1386,12 @@ bool BaseRTMPAppProtocolHandler::AuthenticateInboundAdobe(BaseRTMPProtocol *pFro
 				FATAL("Unable to send message");
 				return false;
 			}
-			//FINEST("response:\n%s", STR(response.ToString()));
 
 			response = ConnectionMessageFactory::GetInvokeClose();
 			if (!pFrom->SendMessage(response)) {
 				FATAL("Unable to send message");
 				return false;
 			}
-			//FINEST("response:\n%s", STR(response.ToString()));
 
 			pFrom->GracefullyEnqueueForDelete();
 			return true;
@@ -1429,10 +1407,6 @@ bool BaseRTMPAppProtocolHandler::AuthenticateInboundAdobe(BaseRTMPProtocol *pFro
 				return true;
 			}
 
-			//            FOR_MAP(params, string, string, i) {
-			//                FINEST("%s: `%s`", STR(MAP_KEY(i)), STR(MAP_VAL(i)));
-			//            }
-
 			string user = params["user"];
 
 			if (MAP_HAS1(params, "challenge")
@@ -1445,20 +1419,17 @@ bool BaseRTMPAppProtocolHandler::AuthenticateInboundAdobe(BaseRTMPProtocol *pFro
 				if (password == "") {
 					WARN("No such user: `%s`", STR(user));
 					Variant response = ConnectionMessageFactory::GetInvokeConnectError(request,
-							//"[ AccessManager.Reject ] : [ authmod=adobe ] : ?reason=nosuchuser&opaque=nQoAAA==");
 							"[ AccessManager.Reject ] : [ authmod=adobe ] : ?reason=authfailed&opaque=vgoAAA==");
 					if (!pFrom->SendMessage(response)) {
 						FATAL("Unable to send message");
 						return false;
 					}
-					//FINEST("response:\n%s", STR(response.ToString()));
 
 					response = ConnectionMessageFactory::GetInvokeClose();
 					if (!pFrom->SendMessage(response)) {
 						FATAL("Unable to send message");
 						return false;
 					}
-					//FINEST("response:\n%s", STR(response.ToString()));
 
 					pFrom->GracefullyEnqueueForDelete();
 					return true;
@@ -1477,22 +1448,18 @@ bool BaseRTMPAppProtocolHandler::AuthenticateInboundAdobe(BaseRTMPProtocol *pFro
 					return true;
 				} else {
 					WARN("Invalid password for user `%s`", STR(user));
-					//					FATAL("Auth failed: s1: `%s`; h1: `%s`; s2: `%s`; h2: `%s`",
-					//							STR(str1), STR(hash1), STR(str2), STR(hash2));
 					Variant response = ConnectionMessageFactory::GetInvokeConnectError(request,
 							"[ AccessManager.Reject ] : [ authmod=adobe ] : ?reason=authfailed&opaque=vgoAAA==");
 					if (!pFrom->SendMessage(response)) {
 						FATAL("Unable to send message");
 						return false;
 					}
-					//FINEST("response:\n%s", STR(response.ToString()));
 
 					response = ConnectionMessageFactory::GetInvokeClose();
 					if (!pFrom->SendMessage(response)) {
 						FATAL("Unable to send message");
 						return false;
 					}
-					//FINEST("response:\n%s", STR(response.ToString()));
 
 					pFrom->GracefullyEnqueueForDelete();
 					return true;
@@ -1510,14 +1477,12 @@ bool BaseRTMPAppProtocolHandler::AuthenticateInboundAdobe(BaseRTMPProtocol *pFro
 					FATAL("Unable to send message");
 					return false;
 				}
-				//FINEST("response:\n%s", STR(response.ToString()));
 
 				response = ConnectionMessageFactory::GetInvokeClose();
 				if (!pFrom->SendMessage(response)) {
 					FATAL("Unable to send message");
 					return false;
 				}
-				//FINEST("response:\n%s", STR(response.ToString()));
 
 				pFrom->GracefullyEnqueueForDelete();
 				return true;
@@ -1617,12 +1582,7 @@ Variant BaseRTMPAppProtocolHandler::GetMetaData(string streamName,
 	result[META_SERVER_MEDIA_DIR] = _mediaFolder;
 
 	result[META_SERVER_FULL_PATH] = normalizePath(_mediaFolder, searchFor);
-	//ASSERT("result[META_SERVER_FULL_PATH]: %s\n_mediaFolder: %s\nsearchFor: %s",
-	//	STR(result[META_SERVER_FULL_PATH]),
-	//	STR(_mediaFolder),
-	//	STR(searchFor));
 
-	//FINEST("result[META_SERVER_FULL_PATH]: %s", STR(result[META_SERVER_FULL_PATH]));
 	if (!result.HasKey(META_SERVER_FULL_PATH))
 		result[META_SERVER_FULL_PATH] = "";
 
@@ -1680,7 +1640,6 @@ bool BaseRTMPAppProtocolHandler::SendRTMPMessage(BaseRTMPProtocol *pTo,
 					_nextInvokeId[pTo->GetId()] = invokeId + 1;
 				}
 				M_INVOKE_ID(message) = invokeId;
-				//  FINEST("PID: %d; IID: %d", pTo->GetId(), invokeId);
 				if (trackResponse)
 					_resultMessageTracking[pTo->GetId()][invokeId] = message;
 				return pTo->SendMessage(message);
@@ -1712,7 +1671,6 @@ bool BaseRTMPAppProtocolHandler::TryLinkToLiveStream(BaseRTMPProtocol *pFrom,
 	vector<string> parts;
 	split(streamName, "?", parts);
 	string shortName = parts[0];
-	//FINEST("short name: `%s`; long name: `%s`", STR(shortName), STR(streamName));
 
 	//2. Search for the long version first
 	map<uint32_t, BaseStream *> inboundStreams =
@@ -1850,7 +1808,6 @@ bool BaseRTMPAppProtocolHandler::PushLocalStream(BaseRTMPProtocol *pFrom) {
 
 bool BaseRTMPAppProtocolHandler::ConnectForPullPush(BaseRTMPProtocol *pFrom,
 		string uriPath, Variant &streamConfig) {
-	//FINEST("streamConfig:\n%s", STR(streamConfig.ToString()));
 	URI uri;
 	if (!URI::FromVariant(streamConfig[uriPath], uri)) {
 		FATAL("Unable to parse uri:\n%s", STR(streamConfig["targetUri"]));

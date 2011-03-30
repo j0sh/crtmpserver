@@ -83,7 +83,6 @@ bool ProtocolFactoryManager::UnRegisterProtocolFactory(uint32_t factoryId) {
 }
 
 bool ProtocolFactoryManager::UnRegisterProtocolFactory(BaseProtocolFactory *pFactory) {
-	//FINEST("BEFORE:\n%s", STR(Dump()));
 	if (pFactory == NULL) {
 		WARN("pFactory is NULL");
 		return true;
@@ -107,7 +106,6 @@ bool ProtocolFactoryManager::UnRegisterProtocolFactory(BaseProtocolFactory *pFac
 
 	_factoriesById.erase(pFactory->GetId());
 
-	//FINEST("AFTER:\n%s", STR(Dump()));
 	return true;
 }
 
@@ -164,7 +162,6 @@ BaseProtocol *ProtocolFactoryManager::CreateProtocolChain(vector<uint64_t> &chai
 		pResult = pProtocol;
 	}
 
-	//
 	if (failed) {
 		if (pResult != NULL)
 			delete pResult->GetFarEndpoint();

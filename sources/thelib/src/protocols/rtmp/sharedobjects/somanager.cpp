@@ -54,10 +54,6 @@ void SOManager::UnRegisterProtocol(BaseRTMPProtocol *pProtocol) {
 
 bool SOManager::Process(BaseRTMPProtocol *pFrom, Variant &request) {
 	//TODO: This is a hack. We process both kinds of messages with ProcessSharedObject
-	//    if ((uint8_t) VH_MT(request) == RM_HEADER_MESSAGETYPE_FLEXSHAREDOBJECT)
-	//        return ProcessFlexSharedObject(pFrom, request);
-	//    else
-	//        return ProcessSharedObject(pFrom, request);
 	return ProcessSharedObject(pFrom, request);
 }
 
@@ -148,41 +144,6 @@ bool SOManager::ProcessSharedObjectPrimitive(BaseRTMPProtocol *pFrom, SO *pSO,
 		}
 	}
 	return true;
-	//    Variant primitive = M_SO_PRIMITIVE(request, primitiveId);
-	//
-	//    switch ((uint8_t) primitive[RM_SHAREDOBJECTPRIMITIVE_TYPE]) {
-	//        case SOT_SERVER_CONNECT:
-	//        {
-	//            pSO->RegisterProtocol(pFrom->GetId());
-	//            ADD_VECTOR_END(_protocolSos[pFrom->GetId()], pSO);
-	//            return true;
-	//        }
-	//        case SOT_SERVER_SET_ATTRIBUTE:
-	//        {
-	//            if (pSO == NULL)
-	//                return false;
-	//
-	//            FOR_MAP(primitive[RM_SHAREDOBJECTPRIMITIVE_PAYLOAD], string, Variant, i) {
-	//                pSO->Set(MAP_KEY(i), MAP_VAL(i), pFrom->GetId());
-	//            }
-	//            return true;
-	//        }
-	//        case SOT_SERVER_DELETE_ATTRIBUTE:
-	//        {
-	//            if (pSO == NULL)
-	//                return false;
-	//            for (uint32_t i = 0; i < primitive[RM_SHAREDOBJECTPRIMITIVE_PAYLOAD].MapSize(); i++) {
-	//                pSO->UnSet(primitive[RM_SHAREDOBJECTPRIMITIVE_PAYLOAD][i]);
-	//            }
-	//            return true;
-	//        }
-	//        default:
-	//        {
-	//            FATAL("Sahred object primitive type not yet implemented: %d",
-	//                    (uint8_t) primitive[RM_SHAREDOBJECTPRIMITIVE_TYPE]);
-	//            return false;
-	//        }
-	//    }
 }
 
 #endif /* HAS_PROTOCOL_RTMP */

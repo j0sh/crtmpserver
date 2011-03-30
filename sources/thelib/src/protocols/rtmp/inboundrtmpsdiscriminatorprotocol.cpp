@@ -89,8 +89,6 @@ bool InboundRTMPSDiscriminatorProtocol::BindHTTP(IOBuffer &buffer) {
 		return false;
 	}
 
-	//**** ---> ****
-
 	//3. Destroy the link
 	BaseProtocol *pFar = _pFarProtocol;
 	pFar->ResetNearProtocol();

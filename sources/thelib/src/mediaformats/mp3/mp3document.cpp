@@ -164,7 +164,6 @@ bool MP3Document::BuildFrames() {
 			//4. Possible frame. Read the header
 			uint8_t version = (firstBytes[1] >> 3)&0x03;
 			uint8_t layer = (firstBytes[1] >> 1)&0x03;
-			//uint8_t protectBit = firstBytes[1]&0x01;
 			uint8_t bitRateIndex = firstBytes[2] >> 4;
 			uint8_t sampleRateIndex = (firstBytes[2] >> 2)&0x03;
 			uint8_t paddingBit = (firstBytes[2] >> 1)&0x01;
@@ -179,9 +178,6 @@ bool MP3Document::BuildFrames() {
 						paddingBit, _mediaFile.Cursor());
 				return false;
 			}
-			//            FINEST("Bytes: %02x %02x %02x %02x; frameStart: 0x%x; frameLength: 0x%x; Layer: %s",
-			//                    firstBytes[0], firstBytes[1], firstBytes[2], firstBytes[3],
-			//                    frame.start, frame.length, STR(_layerNames[layer]));
 
 			//6. Compute the frame duration and save the frame start
 			uint32_t samplesCount = 0;
@@ -202,13 +198,10 @@ bool MP3Document::BuildFrames() {
 			//8. All good. Save the frame
 			ADD_VECTOR_END(_frames, frame);
 		} else {
-			//            WARN("Invalid bytes: %02x %02x %02x %02x",
-			//                    firstBytes[0], firstBytes[1], firstBytes[2], firstBytes[3]);
 			break;
 		}
 	}
 
-	//FINEST("totalTime: %f", totalDuration);
 
 	return true;
 }
@@ -238,7 +231,6 @@ bool MP3Document::FindFrameData() {
 		//2. Split the flags
 		uint8_t version = (firstBytes[1] >> 3)&0x03;
 		uint8_t layer = (firstBytes[1] >> 1)&0x03;
-		//uint8_t protectBit = firstBytes[1]&0x01;
 		uint8_t bitRateIndex = firstBytes[2] >> 4;
 		uint8_t sampleRateIndex = (firstBytes[2] >> 2)&0x03;
 		uint8_t paddingBit = (firstBytes[2] >> 1)&0x01;
@@ -296,7 +288,6 @@ bool MP3Document::ParseMetadata() {
 		FATAL("Unable to read 1 byte");
 		return false;
 	}
-	//FINEST("We have an ID3v%d.%d", majorVersion, minorVersion);
 
 	//3. Instantiate the proper parser
 	ID3Parser *pParser = new ID3Parser(majorVersion, minorVersion);

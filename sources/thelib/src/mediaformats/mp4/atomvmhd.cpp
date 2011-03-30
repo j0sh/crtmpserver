@@ -34,7 +34,6 @@ bool AtomVMHD::ReadData() {
 		FATAL("Unable to read graphics mode");
 		return false;
 	}
-	//FINEST("_graphicsMode: %u", _graphicsMode);
 
 	if (!ReadArray(_opcolor, 6)) {
 		FATAL("Unable to read opcodes");

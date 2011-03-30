@@ -53,19 +53,16 @@ bool AtomTKHD::ReadData() {
 		FATAL("Unable to read creation time");
 		return false;
 	}
-	//FINEST("_creationTime: %u", _creationTime);
 
 	if (!ReadUInt32(_modificationTime)) {
 		FATAL("Unable to read modification time");
 		return false;
 	}
-	//FINEST("_modificationTime: %u", _modificationTime);
 
 	if (!ReadUInt32(_trackId)) {
 		FATAL("Unable to read track id");
 		return false;
 	}
-	//FINEST("_trackId: %u", _trackId);
 
 	if (!ReadArray(_reserved1, 4)) {
 		FATAL("Unable to read reserved 1");
@@ -76,7 +73,6 @@ bool AtomTKHD::ReadData() {
 		FATAL("Unable to read duration");
 		return false;
 	}
-	//FINEST("_duration: %u", _duration);
 
 	if (!ReadArray(_reserved2, 8)) {
 		FATAL("Unable to read reserved 2");
@@ -87,19 +83,16 @@ bool AtomTKHD::ReadData() {
 		FATAL("Unable to read layer");
 		return false;
 	}
-	//FINEST("_layer: %u", _layer);
 
 	if (!ReadUInt16(_alternateGroup)) {
 		FATAL("Unable to read alternate group");
 		return false;
 	}
-	//FINEST("_alternateGroup: %u", _alternateGroup);
 
 	if (!ReadUInt16(_volume)) {
 		FATAL("Unable to read volume");
 		return false;
 	}
-	//FINEST("_volume: %u", _volume);
 
 	if (!ReadArray(_reserved3, 2)) {
 		FATAL("Unable to read reserved 3");
@@ -115,13 +108,11 @@ bool AtomTKHD::ReadData() {
 		FATAL("Unable to read track width");
 		return false;
 	}
-	//FINEST("_trackWidth: %u", _trackWidth);
 
 	if (!ReadUInt32(_trackHeight)) {
 		FATAL("Unable to read track height");
 		return false;
 	}
-	//FINEST("_trackHeight: %u", _trackHeight);
 
 	return true;
 }

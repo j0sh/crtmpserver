@@ -39,7 +39,6 @@ bool AtomCO64::ReadData() {
 		FATAL("Unable to read count");
 		return false;
 	}
-	//FINEST("count: %u", count);
 
 	for (uint32_t i = 0; i < count; i++) {
 		uint64_t offset;
@@ -47,7 +46,6 @@ bool AtomCO64::ReadData() {
 			FATAL("Unable to read offset");
 			return false;
 		}
-		//FINEST("offset[%u]: %u", i, offset);
 		ADD_VECTOR_END(_entries, offset);
 	}
 	return true;

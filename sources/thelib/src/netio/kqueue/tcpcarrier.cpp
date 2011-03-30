@@ -56,16 +56,10 @@ TCPCarrier::TCPCarrier(int32_t fd)
 	GetEndpointsInfo();
 	_rx = 0;
 	_tx = 0;
-	//	uint32_t sendBufferSize = 1024 * 1024;
-	//	if (setsockopt(fd, SOL_SOCKET, SO_SNDBUF, &sendBufferSize, sizeof (uint32_t)) != 0) {
-	//		ASSERT("Unable to determine the send buffer size");
-	//	}
 }
 
 TCPCarrier::~TCPCarrier() {
-	//FINEST("Delete tcp carrier %p", this);
 	close(_inboundFd);
-	//FINEST("Done delete tcp carrier %p", this);
 }
 
 bool TCPCarrier::OnEvent(struct kevent &event) {
@@ -92,8 +86,6 @@ bool TCPCarrier::OnEvent(struct kevent &event) {
 			IOBuffer *pOutputBuffer = NULL;
 
 			if ((pOutputBuffer = _pProtocol->GetOutputBuffer()) != NULL) {
-				//uint32_t initial = GETAVAILABLEBYTESCOUNT(*pOutputBuffer);
-				//FINEST("Try to send buffer:\n%s", STR(*pOutputBuffer));
 				if (!pOutputBuffer->WriteToTCPFd(event.ident, event.data, writeAmount)) {
 					FATAL("Unable to send data. %s:%d -> %s:%d",
 							STR(_farIp), _farPort,
@@ -105,13 +97,6 @@ bool TCPCarrier::OnEvent(struct kevent &event) {
 				if (GETAVAILABLEBYTESCOUNT(*pOutputBuffer) == 0) {
 					DISABLE_WRITE_DATA;
 				}
-				//				else {
-				//					FINEST("Advertised: %d; sent: %d; initial :%d; leftovers: %d;",
-				//							event.data,
-				//							writeAmount,
-				//							initial,
-				//							GETAVAILABLEBYTESCOUNT(*pOutputBuffer));
-				//				}
 			} else {
 				DISABLE_WRITE_DATA;
 			}
@@ -207,7 +192,6 @@ bool TCPCarrier::GetEndpointsInfo() {
 	}
 	_nearIp = format("%s", inet_ntoa(((sockaddr_in *) & _nearAddress)->sin_addr));
 	_nearPort = ENTOHS(((sockaddr_in *) & _nearAddress)->sin_port); //----MARKED-SHORT----
-	//FINEST("_nearAddress: %s; _nearPort: %d", STR(_nearAddress), _nearPort);
 	return true;
 }
 

@@ -143,12 +143,10 @@ bool BaseRTMPProtocol::SignalInputData(IOBuffer &buffer) {
 	bool result = false;
 	if (_handshakeCompleted) {
 		result = ProcessBytes(buffer);
-		//FINEST("Bytes were processed in %d clocks", end - start);
 		uint32_t decodedBytes = GetDecodedBytesCount();
 		if (result && decodedBytes >= _nextReceivedBytesCountReport) {
 			Variant _bytesReadMessage = GenericMessageFactory::GetAck(decodedBytes);
 			_nextReceivedBytesCountReport += _winAckSize;
-			//FINEST("BR\n%s", STR(_bytesReadMessage.ToString()));
 			if (!SendMessage(_bytesReadMessage)) {
 				FATAL("Unable to send\n%s", STR(_bytesReadMessage.ToString()));
 				return false;
@@ -214,14 +212,6 @@ void BaseRTMPProtocol::GetStats(Variant &info) {
 }
 
 bool BaseRTMPProtocol::SendMessage(Variant & message) {
-	//    //1. Test the ability to further send data
-	//    if (GETAVAILABLEBYTESCOUNT(_outputBuffer) >= MAX_RTMP_OUTPUT_BUFFER) {
-	//        FATAL("Too many data left unsent [%d of maximum %d]. Abort!",
-	//                GETAVAILABLEBYTESCOUNT(_outputBuffer), MAX_RTMP_OUTPUT_BUFFER);
-	//        return false;
-	//    }
-	//    FINEST("message:\n%s", STR(message.ToString()));
-
 	//2. Send the message
 	if (!_rtmpProtocolSerializer.Serialize(_channels[(uint32_t) VH_CI(message)],
 			message, _outputBuffer, _outboundChunkSize)) {
@@ -276,10 +266,7 @@ bool BaseRTMPProtocol::SetInboundChunkSize(uint32_t chunkSize) {
 }
 
 void BaseRTMPProtocol::TrySetOutboundChunkSize(uint32_t chunkSize) {
-	//    WARN("Try to set outbound Chunk size for RTMP connection %p: %d->%d", this,
-	//            _outboundChunkSize, chunkSize);
 	if (_outboundChunkSize >= chunkSize) {
-		//        WARN("The chunk size will remain the same.");
 		return;
 	}
 	_outboundChunkSize = chunkSize;
@@ -302,7 +289,6 @@ BaseStream * BaseRTMPProtocol::GetRTMPStream(uint32_t rtmpStreamId) {
 }
 
 bool BaseRTMPProtocol::CloseStream(uint32_t streamId, bool createNeutralStream) {
-	//FINEST("-----bool BaseRTMPProtocol::CloseStream: %d", streamId);
 	//1. Validate request
 	if (streamId == 0 || streamId >= MAX_STREAMS_COUNT) {
 		FATAL("Invalid stream id: %d", streamId);
@@ -347,13 +333,11 @@ bool BaseRTMPProtocol::CloseStream(uint32_t streamId, bool createNeutralStream) 
 		_streams[streamId] = new RTMPStream(this,
 				GetApplication()->GetStreamsManager(), streamId);
 	}
-	//FINEST("Stream %d closed", streamId);
 
 	return true;
 }
 
 RTMPStream * BaseRTMPProtocol::CreateNeutralStream(uint32_t & streamId) {
-	//FINEST("-----bool BaseRTMPProtocol::CreateNeutralStream: %d", streamId);
 	if (streamId == 0) {
 		//Automatic allocation
 		for (uint32_t i = 1; i < MAX_STREAMS_COUNT; i++) {
@@ -386,7 +370,6 @@ RTMPStream * BaseRTMPProtocol::CreateNeutralStream(uint32_t & streamId) {
 
 InNetRTMPStream * BaseRTMPProtocol::CreateINS(uint32_t channelId,
 		uint32_t streamId, string streamName) {
-	//FINEST("-----bool BaseRTMPProtocol::CreateNIS: %d", streamId);
 	if (streamId == 0 || streamId >= MAX_STREAMS_COUNT) {
 		FATAL("Invalid stream id: %d", streamId);
 		return NULL;
@@ -416,7 +399,6 @@ InNetRTMPStream * BaseRTMPProtocol::CreateINS(uint32_t channelId,
 
 BaseOutNetRTMPStream * BaseRTMPProtocol::CreateONS(uint32_t streamId,
 		string streamName, uint64_t inStreamType) {
-	//FINEST("-----bool BaseRTMPProtocol::CreateNOS: %d", streamId);
 	if (streamId == 0 || streamId >= MAX_STREAMS_COUNT) {
 		FATAL("Invalid stream id: %d", streamId);
 		return NULL;
@@ -451,12 +433,9 @@ BaseOutNetRTMPStream * BaseRTMPProtocol::CreateONS(uint32_t streamId,
 }
 
 void BaseRTMPProtocol::SignalONS(BaseOutNetRTMPStream *pONS) {
-	//    FINEST("-----Stream %d from protocol %d was marked as signal-able",
-	//            GetId(), pNOS->GetId());
 	LinkedListNode<BaseOutNetRTMPStream *> *pTemp = _pSignaledRTMPOutNetStream;
 	while (pTemp != NULL) {
 		if (pTemp->info == pONS) {
-			//WARN("Already marked for signaling");
 			return;
 		}
 		pTemp = pTemp->pPrev;
@@ -466,7 +445,6 @@ void BaseRTMPProtocol::SignalONS(BaseOutNetRTMPStream *pONS) {
 }
 
 InFileRTMPStream * BaseRTMPProtocol::CreateIFS(Variant &metadata) {
-	//FINEST("-----bool BaseRTMPProtocol::CreateFIS:\n%s", STR(metadata.ToString()));
 	InFileRTMPStream *pRTMPInFileStream = InFileRTMPStream::GetInstance(
 			this, GetApplication()->GetStreamsManager(), metadata);
 	if (pRTMPInFileStream == NULL) {
@@ -484,7 +462,6 @@ InFileRTMPStream * BaseRTMPProtocol::CreateIFS(Variant &metadata) {
 }
 
 void BaseRTMPProtocol::RemoveIFS(InFileRTMPStream *pIFS) {
-	//FINEST("-----Remove FIS: %p", pIFS);
 	_inFileStreams.erase(pIFS);
 	delete pIFS;
 }
@@ -594,9 +571,7 @@ bool BaseRTMPProtocol::ProcessBytes(IOBuffer &buffer) {
 	while (true) {
 		uint32_t availableBytesCount = GETAVAILABLEBYTESCOUNT(buffer);
 		if (_selectedChannel < 0) {
-			//FINEST("availableBytesCount: %d",availableBytesCount);
 			if (availableBytesCount < 1) {
-				//FINEST("Not enough data");
 				return true;
 			} else {
 				switch (GETIBPOINTER(buffer)[0]&0x3f) {
@@ -646,7 +621,6 @@ bool BaseRTMPProtocol::ProcessBytes(IOBuffer &buffer) {
 				return false;
 			} else {
 				if (header.readCompleted) {
-					//FINEST("Header:%s", STR(header));
 					channel.state = CS_PAYLOAD;
 					switch (channel.lastInHeaderType) {
 						case HT_FULL:
@@ -658,13 +632,11 @@ bool BaseRTMPProtocol::ProcessBytes(IOBuffer &buffer) {
 							break;
 						case HT_CONTINUATION:
 							if (channel.lastInProcBytes == 0) {
-								//FINEST("Time adjusted on channel %d", channel.id);
 								channel.lastInAbsTs += H_TS(header);
 							}
 							break;
 					}
 				} else {
-					//FINEST("Not enough data");
 					return true;
 				}
 			}
@@ -672,17 +644,12 @@ bool BaseRTMPProtocol::ProcessBytes(IOBuffer &buffer) {
 
 		if (channel.state == CS_PAYLOAD) {
 			uint32_t tempSize = H_ML(header) - channel.lastInProcBytes;
-			//FINEST("Expected: %d", tempSize);
 			tempSize = (tempSize >= _inboundChunkSize) ? _inboundChunkSize : tempSize;
-			//FINEST("Chunked: %d", tempSize);
 			uint32_t availableBytes = GETAVAILABLEBYTESCOUNT(buffer);
 			switch (H_MT(header)) {
 				case RM_HEADER_MESSAGETYPE_VIDEODATA:
 				{
-					//FINEST("V: tempSize: %d; availableBytes: %d; totalRequired: %d",
-					//        tempSize, availableBytes, header.messageLength);
 					if (tempSize <= availableBytes) {
-						//FINEST("V: Enough data");
 						channel.state = CS_HEADER;
 						_selectedChannel = -1;
 
@@ -710,11 +677,7 @@ bool BaseRTMPProtocol::ProcessBytes(IOBuffer &buffer) {
 						}
 
 						channel.lastInProcBytes += tempSize;
-						//FINEST("V: processedBytes: %d", channel.processedBytes);
 						if (H_ML(header) == channel.lastInProcBytes) {
-							//FINEST("V: %d Message completed: %d",
-							//  GetId(),
-							//  header.messageLength);
 							channel.lastInProcBytes = 0;
 						}
 						if (!buffer.Ignore(tempSize)) {
@@ -723,17 +686,12 @@ bool BaseRTMPProtocol::ProcessBytes(IOBuffer &buffer) {
 						}
 						break;
 					} else {
-						//FINEST("V: Not enough data. Available: %d; Wanted: %d",
-						//  availableBytes, tempSize);
 						return true;
 					}
 				}
 				case RM_HEADER_MESSAGETYPE_AUDIODATA:
 				{
-					//FINEST("A: tempSize: %d; availableBytes: %d; totalRequired: %d",
-					//        tempSize, availableBytes, header.messageLength);
 					if (tempSize <= availableBytes) {
-						//FINEST("A: Enough data");
 						channel.state = CS_HEADER;
 						_selectedChannel = -1;
 
@@ -759,11 +717,7 @@ bool BaseRTMPProtocol::ProcessBytes(IOBuffer &buffer) {
 
 
 						channel.lastInProcBytes += tempSize;
-						//FINEST("A: processedBytes: %d", channel.processedBytes);
 						if (H_ML(header) == channel.lastInProcBytes) {
-							//FINEST("A: %d Message completed: %d",
-							//  GetId(),
-							//  header.messageLength);
 							channel.lastInProcBytes = 0;
 						}
 						if (!buffer.Ignore(tempSize)) {
@@ -772,8 +726,6 @@ bool BaseRTMPProtocol::ProcessBytes(IOBuffer &buffer) {
 						}
 						break;
 					} else {
-						//FINEST("A: Not enough data. Available: %d; Wanted: %d",
-						//  availableBytes, tempSize);
 						return true;
 					}
 				}
@@ -794,7 +746,6 @@ bool BaseRTMPProtocol::ProcessBytes(IOBuffer &buffer) {
 								FATAL("RTMP connection no longer associated with an application");
 								return false;
 							}
-							//FINEST("Buffer:\n%s", STR(channel.buffer));
 							if (!_pProtocolHandler->InboundMessageAvailable(this, header, channel.inputData)) {
 								FATAL("Unable to send rtmp message to application");
 								return false;
@@ -807,12 +758,9 @@ bool BaseRTMPProtocol::ProcessBytes(IOBuffer &buffer) {
 								return false;
 							}
 						} else {
-							//FINEST("Channel buffer length: %d", channel.buffer.GetAvailableBytesCount());
 						}
 						break;
 					} else {
-						//                        FINEST("I: Not enough data. Available: %d; Wanted: %d",
-						//                                availableBytes, tempSize);
 						return true;
 					}
 				}

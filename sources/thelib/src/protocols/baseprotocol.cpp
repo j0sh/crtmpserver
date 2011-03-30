@@ -174,12 +174,9 @@ void BaseProtocol::DeleteFarProtocol(bool deleteFar) {
 }
 
 BaseProtocol *BaseProtocol::GetFarEndpoint() {
-	//FINEST("GetFarEndpoint called from %s", STR(tagToString(_type)));
 	if (_pFarProtocol == NULL) {
-		//FINEST("Hey! we are the far most protocol");
 		return this;
 	} else {
-		//FINEST("We are not the far most protocol");
 		return _pFarProtocol->GetFarEndpoint();
 	}
 }
@@ -385,8 +382,6 @@ void BaseProtocol::SetApplication(BaseClientApplication *pApplication) {
 	}
 
 	//6. Trigger log to production
-	//	FINEST("********** %s -> %s ********** %s", STR(oldAppName), STR(newAppName),
-	//			STR(*this));
 }
 
 bool BaseProtocol::SignalInputData(IOBuffer &buffer, sockaddr_in *pPeerAddress) {

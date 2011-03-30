@@ -30,7 +30,6 @@ IOTimer::IOTimer()
 }
 
 IOTimer::~IOTimer() {
-	//FINEST("Disable timer");
 	IOHandlerManager::DisableTimer(this);
 }
 

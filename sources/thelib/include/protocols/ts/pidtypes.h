@@ -41,8 +41,6 @@ typedef enum _PIDType {
 	PID_TYPE_NULL
 } PIDType;
 
-//DLLEXP string GetPIDTypeString(PIDType pidType);
-
 #endif	/* _PIDTYPES_H */
 #endif	/* HAS_PROTOCOL_TS */
 

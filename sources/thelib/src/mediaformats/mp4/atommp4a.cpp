@@ -65,55 +65,46 @@ bool AtomMP4A::ReadData() {
 		FATAL("Unable to read count");
 		return false;
 	}
-	//FINEST("_dataReferenceIndex: %u", _dataReferenceIndex);
 
 	if (!ReadUInt16(_innerVersion)) {
 		FATAL("Unable to read count");
 		return false;
 	}
-	//FINEST("_innerVersion: %u", _innerVersion);
 
 	if (!ReadUInt16(_revisionLevel)) {
 		FATAL("Unable to read count");
 		return false;
 	}
-	//FINEST("_revisionLevel: %u", _revisionLevel);
 
 	if (!ReadUInt32(_vendor)) {
 		FATAL("Unable to read count");
 		return false;
 	}
-	//FINEST("_vendor: %u", _vendor);
 
 	if (!ReadUInt16(_numberOfChannels)) {
 		FATAL("Unable to read count");
 		return false;
 	}
-	//FINEST("_numberOfChannels: %u", _numberOfChannels);
 
 	if (!ReadUInt16(_sampleSizeInBits)) {
 		FATAL("Unable to read count");
 		return false;
 	}
-	//FINEST("_sampleSizeInBits: %u", _sampleSizeInBits);
 
 	if (!ReadInt16(_compressionId)) {
 		FATAL("Unable to read count");
 		return false;
 	}
-	//FINEST("_compressionId: %d", _compressionId);
 
 	if (!ReadUInt16(_packetSize)) {
 		FATAL("Unable to read count");
 		return false;
 	}
-	//FINEST("_packetSize: %u", _packetSize);
 
 	if (!ReadUInt32(_sampleRate)) {
 		FATAL("Unable to read count");
 		return false;
 	}
-	//FINEST("_sampleRate: 0x%08x", _sampleRate);
 
 	if (_innerVersion == 0) {
 		return true;
@@ -124,25 +115,21 @@ bool AtomMP4A::ReadData() {
 		FATAL("Unable to read count");
 		return false;
 	}
-	//FINEST("_samplesPerPacket: %u", _samplesPerPacket);
 
 	if (!ReadUInt32(_bytesPerPacket)) {
 		FATAL("Unable to read count");
 		return false;
 	}
-	//FINEST("_bytesPerPacket: %u", _bytesPerPacket);
 
 	if (!ReadUInt32(_bytesPerFrame)) {
 		FATAL("Unable to read count");
 		return false;
 	}
-	//FINEST("_bytesPerFrame: %u", _bytesPerFrame);
 
 	if (!ReadUInt32(_bytesPerSample)) {
 		FATAL("Unable to read count");
 		return false;
 	}
-	//FINEST("_bytesPerSample: %u", _bytesPerSample);
 
 	return true;
 }

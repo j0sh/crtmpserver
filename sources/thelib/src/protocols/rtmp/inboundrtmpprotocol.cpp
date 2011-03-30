@@ -53,7 +53,6 @@ bool InboundRTMPProtocol::PerformHandshake(IOBuffer &buffer) {
 		case RTMP_STATE_NOT_INITIALIZED:
 		{
 			if (GETAVAILABLEBYTESCOUNT(buffer) < 1537) {
-				//FINEST("Not enough data");
 				return true;
 			}
 			uint8_t handshakeType = GETIBPOINTER(buffer)[0];
@@ -63,7 +62,6 @@ bool InboundRTMPProtocol::PerformHandshake(IOBuffer &buffer) {
 			}
 
 			_currentFPVersion = ENTOHL(*((uint32_t *) (GETIBPOINTER(buffer) + 4))); //----MARKED-LONG---
-			//FINEST("Flash player: %s", STR(_currentFlashPlayerVersion));
 
 			switch (handshakeType) {
 				case 3: //plain
@@ -83,7 +81,6 @@ bool InboundRTMPProtocol::PerformHandshake(IOBuffer &buffer) {
 		}
 		case RTMP_STATE_SERVER_RESPONSE_SENT:
 		{
-			//FINEST("I: Player request 2:\n%s", STR(*pInputBuffer));
 			if (GETAVAILABLEBYTESCOUNT(buffer) < 1536) {
 				return true;
 			} else {
@@ -148,7 +145,6 @@ bool InboundRTMPProtocol::ValidateClientScheme(IOBuffer &inputBuffer, uint8_t sc
 	memcpy(pTempBuffer + clientDigestOffset, pBuffer + clientDigestOffset + 32,
 			1536 - clientDigestOffset - 32);
 
-	//uint8_t *pTempHash = new uint8_t[mhash_get_hash_pblock(MHASH_SHA256)];
 	uint8_t *pTempHash = new uint8_t[512];
 	HMACsha256(pTempBuffer, 1536 - 32, genuineFPKey, 30, pTempHash);
 
@@ -206,7 +202,6 @@ bool InboundRTMPProtocol::PerformHandshake(IOBuffer &buffer, bool encrypted) {
 	//compute DH key position
 	uint32_t serverDHOffset = GetDHOffset(_pOutputBuffer, _validationScheme);
 	uint32_t clientDHOffset = GetDHOffset(pInputBuffer, _validationScheme);
-	//FINEST("serverDHOffset: %u", serverDHOffset);
 
 	//generate DH key
 	DHWrapper dhWrapper(1024);
@@ -250,7 +245,6 @@ bool InboundRTMPProtocol::PerformHandshake(IOBuffer &buffer, bool encrypted) {
 
 	//generate the digest
 	uint32_t serverDigestOffset = GetDigestOffset(_pOutputBuffer, _validationScheme);
-	//FINEST("serverDigestOffset: %u", serverDigestOffset);
 
 	uint8_t *pTempBuffer = new uint8_t[1536 - 32];
 	memcpy(pTempBuffer, _pOutputBuffer, serverDigestOffset);
@@ -271,7 +265,6 @@ bool InboundRTMPProtocol::PerformHandshake(IOBuffer &buffer, bool encrypted) {
 	//**** SECOND 1536 bytes from server response ****//
 	//Compute the chalange index from the initial client request
 	uint32_t keyChallengeIndex = GetDigestOffset(pInputBuffer, _validationScheme);
-	//FINEST("keyChallengeIndex: %u", keyChallengeIndex);
 
 	//compute the key
 	pTempHash = new uint8_t[512];

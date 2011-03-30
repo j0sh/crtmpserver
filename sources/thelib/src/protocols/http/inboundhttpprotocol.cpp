@@ -127,7 +127,6 @@ string InboundHTTPProtocol::GetOutputFirstLine() {
 }
 
 bool InboundHTTPProtocol::ParseFirstLine(string &line, Variant &headers) {
-	//FINEST("first line: %s", STR(line));
 
 	vector<string> parts;
 	split(line, " ", parts);
@@ -168,7 +167,6 @@ bool InboundHTTPProtocol::Authenticate() {
 
 	//2. Is realm/uri combination into authentication mode?
 	if (!auth["uris"].HasKey(_headers[HTTP_FIRST_LINE][HTTP_URL])) {
-		//WARN("No auth required");
 		return true;
 	}
 

@@ -98,8 +98,6 @@ void InboundConnectivity::EnqueueForDelete() {
 bool InboundConnectivity::Initialize(Variant &videoTrack, Variant &audioTrack,
 		string streamName, bool forceTcp) {
 	_forceTcp = forceTcp;
-	//	FINEST("videoTrack:\n%s", STR(videoTrack.ToString()));
-	//	FINEST("audioTrack:\n%s", STR(audioTrack.ToString()));
 
 	//1. get the application
 	BaseClientApplication *pApplication = _pRTSP->GetApplication();
@@ -174,7 +172,6 @@ string InboundConnectivity::GetTransportHeaderLine(bool isAudio) {
 		for (uint32_t i = 0; i < 255; i++) {
 			if ((_pProtocols[i] != NULL) && (_pProtocols[i]->GetId() == pProtocol->GetId())) {
 				string result = format("RTP/AVP/TCP;unicast;interleaved=%d-%d", i, i + 1);
-				//FINEST("%s: %s", isAudio ? "audio" : "video", STR(result));
 				return result;
 			}
 		}
@@ -269,7 +266,6 @@ bool InboundConnectivity::SendRR(bool isAudio) {
 	EHTONLP(pBuffer + 20, pRTP->GetExtendedSeq()); //extended highest sequence number received
 	EHTONLP(pBuffer + 28, pRTCP->GetLastSenderReport()); //last SR (LSR)
 
-	//WARN("Send RR: %d", isAudio);
 	if (_forceTcp) {
 		return _pRTSP->SendRaw(pBuffer, 60);
 	} else {
@@ -328,21 +324,6 @@ bool InboundConnectivity::InitializeUDP(Variant &videoTrack, Variant & audioTrac
 		return false;
 	}
 
-	//	//4. get the ports if available
-	//	uint16_t videoRTPPort = 0;
-	//	uint16_t videoRTCPPort = 0;
-	//	if (videoTrack.HasKey("portsOrChannels")) {
-	//		videoRTPPort = (uint16_t) videoTrack["portsOrChannels"][(uint32_t) 0];
-	//		videoRTCPPort = (uint16_t) videoTrack["portsOrChannels"][(uint32_t) 1];
-	//	}
-	//
-	//	uint16_t audioRTPPort = 0;
-	//	uint16_t audioRTCPPort = 0;
-	//	if (audioTrack.HasKey("portsOrChannels")) {
-	//		audioRTPPort = (uint16_t) audioTrack["portsOrChannels"][(uint32_t) 0];
-	//		audioRTCPPort = (uint16_t) audioTrack["portsOrChannels"][(uint32_t) 1];
-	//	}
-
 	//4. Create the carriers
 	if (!CreateCarriers(_pRTPVideo, _pRTCPVideo)) {
 		FATAL("Unable to create video carriers");
@@ -373,7 +354,6 @@ bool InboundConnectivity::InitializeTCP(Variant &videoTrack, Variant & audioTrac
 		EHTONLP(_videoRR + 8, _pRTCPVideo->GetSSRC()); //SSRC of packet sender
 		EHTONLP(_videoRR + 40, _pRTCPVideo->GetSSRC()); //SSRC of packet sender
 		_videoRR[1] = idx + 1;
-		//FINEST("video: %d-%d; RTCP SSRC: %08x", idx, idx + 1, _pRTCPVideo->GetSSRC());
 	}
 
 	if (audioTrack != V_NULL) {
@@ -383,7 +363,6 @@ bool InboundConnectivity::InitializeTCP(Variant &videoTrack, Variant & audioTrac
 		EHTONLP(_audioRR + 8, _pRTCPAudio->GetSSRC()); //SSRC of packet sender
 		EHTONLP(_audioRR + 40, _pRTCPAudio->GetSSRC()); //SSRC of packet sender
 		_audioRR[1] = idx + 1;
-		//FINEST("audio: %d-%d; RTCP SSRC: %08x", idx, idx + 1, _pRTCPAudio->GetSSRC());
 	}
 
 	//3. Done
@@ -456,13 +435,10 @@ bool InboundConnectivity::CreateCarriers(InboundRTPProtocol *pRTP, RTCPProtocol 
 
 		pCarrier1->SetProtocol(pRTP->GetFarEndpoint());
 		pRTP->GetFarEndpoint()->SetIOHandler(pCarrier1);
-		//WARN("pRTP: %s", STR(*pRTP));
 
 		pCarrier2->SetProtocol(pRTCP->GetFarEndpoint());
 		pRTCP->GetFarEndpoint()->SetIOHandler(pCarrier2);
-		//WARN("pRTCP: %s", STR(*pRTCP));
 
-		//WARN("RTP/RTCP pair: %d-%d", pCarrier1->GetNearEndpointPort(), pCarrier2->GetNearEndpointPort());
 
 		return true;
 	}

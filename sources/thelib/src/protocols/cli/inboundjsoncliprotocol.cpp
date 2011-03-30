@@ -32,8 +32,6 @@ InboundJSONCLIProtocol::~InboundJSONCLIProtocol() {
 
 bool InboundJSONCLIProtocol::Initialize(Variant &parameters) {
 	InboundBaseCLIProtocol::Initialize(parameters);
-	//	_outputBuffer.ReadFromString("\r\nWelcome to "HTTP_HEADERS_X_POWERED_BY_US"\r\n\r\nType help for a list of commands\r\n\r\nrtmpd>");
-	//	return EnqueueForOutbound();
 	if (parameters["useLengthPadding"] == V_BOOL) {
 		_useLengthPadding = (bool)parameters["useLengthPadding"];
 	}
@@ -76,32 +74,6 @@ bool InboundJSONCLIProtocol::SignalInputData(IOBuffer &buffer) {
 }
 
 bool InboundJSONCLIProtocol::SendMessage(Variant &message) {
-	//	string output = "";
-	//	output = "\r\nSTATUS: " + (string) message["status"] + "\r\n\r\n";
-	//	output += (string) message["description"] + "\r\n";
-	//	if (message["data"] == V_MAP) {
-	//		output += "\r\n";
-	//
-	//		string item = "";
-	//		Variant count;
-	//		count["count"] = message["data"].MapSize();
-	//		if (!count.SerializeToJSON(item)) {
-	//			FATAL("Unable to serialize to JSON");
-	//			return false;
-	//		}
-	//		output += item + "\r\n\r\n";
-	//
-	//		FOR_MAP(message["data"], string, Variant, i) {
-	//			item = "";
-	//			if (!MAP_VAL(i).SerializeToJSON(item)) {
-	//				FATAL("Unable to serialize to JSON");
-	//				return false;
-	//			}
-	//			output += item + "\r\n";
-	//		}
-	//	}
-	//
-	//	output += "\r\nrtmpd>";
 	string json;
 	if (!message.SerializeToJSON(json)) {
 		FATAL("Unable to serialize to JSON");

@@ -44,10 +44,8 @@ void IOHandlerManager::SetupToken(IOHandler *pIOHandler) {
 	IOHandlerManagerToken *pResult = NULL;
 	if (_pAvailableTokens->size() == 0) {
 		pResult = new IOHandlerManagerToken();
-		//WARN("Token created: %p", pResult);
 	} else {
 		pResult = (*_pAvailableTokens)[0];
-		//WARN("Token %p served from %p", pResult, _pAvailableTokens);
 		_pAvailableTokens->erase(_pAvailableTokens->begin());
 	}
 	pResult->pPayload = pIOHandler;
@@ -57,7 +55,6 @@ void IOHandlerManager::SetupToken(IOHandler *pIOHandler) {
 
 void IOHandlerManager::FreeToken(IOHandler *pIOHandler) {
 	IOHandlerManagerToken *pToken = pIOHandler->GetIOHandlerManagerToken();
-	//FATAL("Token %p returned to %p", pToken, _pRecycledTokens);
 	pIOHandler->SetIOHandlerManagerToken(NULL);
 	pToken->pPayload = NULL;
 	pToken->validPayload = false;
@@ -186,7 +183,6 @@ bool IOHandlerManager::DisableWriteData(IOHandler *pIOHandler, bool ignoreError)
 }
 
 bool IOHandlerManager::EnableAcceptConnections(IOHandler *pIOHandler) {
-	//FINEST("EnableAcceptConnections");
 	return RegisterEvent(pIOHandler->GetInboundFd(), EVFILT_READ,
 			EV_ADD | EV_ENABLE, 0, 0,
 			pIOHandler->GetIOHandlerManagerToken());
@@ -200,7 +196,6 @@ bool IOHandlerManager::DisableAcceptConnections(IOHandler *pIOHandler, bool igno
 
 bool IOHandlerManager::EnableTimer(IOHandler *pIOHandler, uint32_t seconds) {
 #ifdef HAS_KQUEUE_TIMERS
-	//FINEST("Enable timer: %d", seconds);
 	return RegisterEvent(pIOHandler->GetId(), EVFILT_TIMER,
 			EV_ADD | EV_ENABLE, NOTE_USECONDS,
 			seconds*KQUEUE_TIMER_MULTIPLIER, pIOHandler->GetIOHandlerManagerToken());
@@ -238,11 +233,9 @@ uint32_t IOHandlerManager::DeleteDeadHandlers() {
 	uint32_t result = 0;
 	while (_deadIOHandlers.size() > 0) {
 		IOHandler *pIOHandler = MAP_VAL(_deadIOHandlers.begin());
-		//FINEST("Delete IOH %p", pIOHandler);
 		_deadIOHandlers.erase(pIOHandler->GetId());
 		delete pIOHandler;
 		result++;
-		//FINEST("Done delete IOH %p", pIOHandler);
 	}
 	return result;
 }

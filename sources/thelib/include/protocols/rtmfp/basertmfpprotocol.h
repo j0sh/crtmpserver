@@ -49,20 +49,11 @@ struct RTMFPPeer {
 	uint8_t publicKey[128];
 	uint8_t id[32];
 	sockaddr_in address;
-	//	EncDec enc;
-	//	EncDec dec;
 
 	RTMFPPeer() {
 		memset(tag, 0, sizeof (tag));
 		memset(cookie, 0, sizeof (cookie));
-		//		enc.Setup(true, (uint8_t *) "Adobe Systems 02", 128);
-		//		dec.Setup(false, (uint8_t *) "Adobe Systems 02", 128);
 	}
-
-	//	void SetEncDecKeys(uint8_t *pEnc, uint8_t * pDec) {
-	//		enc.Setup(true, (uint8_t *) pEnc, 128);
-	//		dec.Setup(false, (uint8_t *) pDec, 128);
-	//	}
 };
 
 struct RTMFPSession {
@@ -99,8 +90,6 @@ struct RTMFPSession {
 		HMAC(EVP_sha256(), ss, 0x80, md2, 0x20, sec2, NULL);
 		enc.Setup(true, (uint8_t *) sec2, 128);
 		dec.Setup(false, (uint8_t *) sec1, 128);
-		//		server.SetEncDecKeys(sec1, sec2);
-		//		client.SetEncDecKeys(sec2, sec1);
 	}
 };
 

@@ -69,7 +69,6 @@ if(ba.AvailableBits()<length) { \
 bool ReadSPSVUIHRD(BitArray &ba, Variant &v) {
 	//E.1.2 HRD parameters syntax
 	//14496-10.pdf 268/280
-	//FINEST("------BEGIN VUI HRD------");
 	READ_EG("cpb_cnt_minus1", uint64_t);
 	READ_INT("bit_rate_scale", uint8_t, 4);
 	READ_INT("cpb_size_scale", uint8_t, 4);
@@ -94,14 +93,12 @@ bool ReadSPSVUIHRD(BitArray &ba, Variant &v) {
 	READ_INT("cpb_removal_delay_length_minus1", uint8_t, 5);
 	READ_INT("dpb_output_delay_length_minus1", uint8_t, 5);
 	READ_INT("time_offset_length", uint8_t, 5);
-	//FINEST("------END VUI HRD------");
 	return true;
 }
 
 bool ReadSPSVUI(BitArray &ba, Variant &v) {
 	//E.1.1 VUI parameters syntax
 	//14496-10.pdf 267/280
-	//FINEST("------BEGIN VUI------");
 	READ_BOOL("aspect_ratio_info_present_flag");
 	if ((bool)v["aspect_ratio_info_present_flag"]) {
 		READ_INT("aspect_ratio_idc", uint8_t, 8);
@@ -163,15 +160,12 @@ bool ReadSPSVUI(BitArray &ba, Variant &v) {
 		READ_EG("num_reorder_frames", uint64_t);
 		READ_EG("max_dec_frame_buffering", uint64_t);
 	}
-	//FINEST("------END VUI------");
 	return true;
 }
 
 bool ReadSPS(BitArray &ba, Variant &v) {
 	//7.3.2.1 Sequence parameter set RBSP syntax
 	//14496-10.pdf 43/280
-	//FINEST("ba: %d", ba.AvailableBits());
-	//FINEST("------BEGIN SPS------");
 	READ_INT("profile_idc", uint8_t, 8);
 	READ_BOOL("constraint_set0_flag");
 	READ_BOOL("constraint_set1_flag");
@@ -219,14 +213,12 @@ bool ReadSPS(BitArray &ba, Variant &v) {
 			return false;
 		}
 	}
-	//FINEST("------END SPS------");
 	return true;
 }
 
 bool ReadPPS(BitArray &ba, Variant &v) {
 	//7.3.2.2 Picture parameter set RBSP syntax
 	//14496-10.pdf 44/280
-	//FINEST("ba: %d", ba.AvailableBits());
 	READ_EG("pic_parameter_set_id", uint64_t);
 	READ_EG("seq_parameter_set_id", uint64_t);
 	READ_BOOL("entropy_coding_mode_flag");
@@ -317,7 +309,6 @@ bool _VIDEO_AVC::Init(uint8_t *pSPS, uint32_t spsLength, uint8_t *pPPS,
 		_SPSInfo.Compact();
 		_width = ((uint32_t) _SPSInfo["pic_width_in_mbs_minus1"] + 1)*16;
 		_height = ((uint32_t) _SPSInfo["pic_height_in_map_units_minus1"] + 1)*16;
-		//FINEST("_SPSInfo:\n%s", STR(_SPSInfo.ToString()));
 	}
 
 	BitArray ppsBa;
@@ -325,11 +316,6 @@ bool _VIDEO_AVC::Init(uint8_t *pSPS, uint32_t spsLength, uint8_t *pPPS,
 	if (!ReadPPS(ppsBa, _PPSInfo)) {
 		WARN("Unable to read PPS info");
 	}
-	//	else {
-	//		FINEST("_PPSInfo:\n%s", STR(_PPSInfo.ToString()));
-	//	}
-
-	//FINEST("\n%s", STR(*this));
 
 	return true;
 }
@@ -380,9 +366,6 @@ bool _AUDIO_AAC::Init(uint8_t *pBuffer, uint32_t length) {
 	}
 
 	//1. Prepare the bit array
-	//	uint8_t temp[] = {0x13, 0x10, 0x56, 0xE5, 0x98};
-	//	length = sizeof (temp);
-	//	pBuffer = temp;
 	BitArray ba;
 	ba.ReadFromBuffer(pBuffer, length);
 
@@ -401,7 +384,6 @@ bool _AUDIO_AAC::Init(uint8_t *pBuffer, uint32_t length) {
 		FATAL("Invalid _audioObjectType: %d", _audioObjectType);
 		return false;
 	}
-	//FINEST("_audioObjectType: %d", _audioObjectType);
 
 	//3. Read the sample rate index
 	_sampleRateIndex = ba.ReadBits<uint8_t > (4);
@@ -410,7 +392,6 @@ bool _AUDIO_AAC::Init(uint8_t *pBuffer, uint32_t length) {
 		FATAL("Invalid sample rate: %d", _sampleRateIndex);
 		return false;
 	}
-	//FINEST("_sampleRateIndex: %d", _sampleRateIndex);
 	if (_sampleRateIndex == 15) {
 		if (length < 5) {
 			FATAL("Invalid length: %d", length);
@@ -424,7 +405,6 @@ bool _AUDIO_AAC::Init(uint8_t *pBuffer, uint32_t length) {
 		};
 		_sampleRate = rates[_sampleRateIndex];
 	}
-	//FINEST("_sampleRate: %d", _sampleRate);
 
 	//4. read the channel configuration index
 	_channelConfigurationIndex = ba.ReadBits<uint8_t > (4);
@@ -433,13 +413,11 @@ bool _AUDIO_AAC::Init(uint8_t *pBuffer, uint32_t length) {
 		FATAL("Invalid _channelConfigurationIndex: %d", _channelConfigurationIndex);
 		return false;
 	}
-	//FINEST("_channelConfigurationIndex: %d", _channelConfigurationIndex);
 
 	_pAAC = new uint8_t[length];
 	memcpy(_pAAC, pBuffer, length);
 	_aacLength = length;
 
-	//FINEST("AAC codec:\n%s", STR(*this));
 
 	return true;
 }

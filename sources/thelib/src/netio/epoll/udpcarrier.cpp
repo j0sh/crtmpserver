@@ -42,7 +42,6 @@ UDPCarrier::~UDPCarrier() {
 }
 
 bool UDPCarrier::OnEvent(struct epoll_event &event) {
-	//FINEST("Event: %d", event.events);
 
 	//1. Read data
 	if ((event.events & EPOLLIN) != 0) {
@@ -53,7 +52,6 @@ bool UDPCarrier::OnEvent(struct epoll_event &event) {
 			FATAL("Unable to read data");
 			return false;
 		}
-		//FINEST("recvBytes: %d;", recvBytes);
 		if (recvBytes == 0) {
 			FATAL("Connection closed");
 			return false;
@@ -193,7 +191,6 @@ bool UDPCarrier::GetEndpointsInfo() {
 	}
 	_nearIp = format("%s", inet_ntoa(((sockaddr_in *) & _nearAddress)->sin_addr));
 	_nearPort = ENTOHS(((sockaddr_in *) & _nearAddress)->sin_port); //----MARKED-SHORT----
-	//FINEST("_nearAddress: %s; _nearPort: %d", STR(_nearAddress), _nearPort);
 	return true;
 }
 

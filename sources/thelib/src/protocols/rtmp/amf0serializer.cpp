@@ -122,8 +122,6 @@ bool AMF0Serializer::ReadLongString(IOBuffer &buffer, Variant &variant, bool rea
 		}
 	}
 
-
-	//uint16_t length = (GETIBPOINTER(buffer)[0] << 8) | GETIBPOINTER(buffer)[1];
 	AMF_CHECK_BOUNDARIES(buffer, 4);
 	uint32_t length = ENTOHLP(GETIBPOINTER(buffer)); //----MARKED-LONG---
 	if (!buffer.Ignore(4)) {
@@ -184,7 +182,6 @@ bool AMF0Serializer::WriteDouble(IOBuffer &buffer, double value, bool writeType)
 	if (writeType)
 		buffer.ReadFromRepeat(AMF0_NUMBER, 1);
 
-	//uint64_t temp = HTOND(*(uint64_t *) & value);
 	uint64_t temp = 0;
 	EHTOND(value, temp);
 	buffer.ReadFromBuffer((uint8_t *) & temp, 8);
@@ -288,7 +285,6 @@ bool AMF0Serializer::WriteTypedObject(IOBuffer &buffer, Variant &variant, bool w
 
 bool AMF0Serializer::ReadMixedArray(IOBuffer &buffer, Variant &variant,
 		bool readType) {
-	//FINEST("Buffer:\n%s", STR(buffer));
 	if (readType) {
 		AMF_CHECK_BOUNDARIES(buffer, 1);
 		if (GETIBPOINTER(buffer)[0] != AMF0_MIXED_ARRAY) {
@@ -305,7 +301,6 @@ bool AMF0Serializer::ReadMixedArray(IOBuffer &buffer, Variant &variant,
 
 	AMF_CHECK_BOUNDARIES(buffer, 4);
 	uint32_t length = ENTOHLP(GETIBPOINTER(buffer)); //----MARKED-LONG---
-	//FINEST("Detected mixed array length: %d",length);
 	if (!buffer.Ignore(4)) {
 		FATAL("Unable to ignore 4 bytes");
 		return false;
@@ -352,7 +347,6 @@ bool AMF0Serializer::ReadMixedArray(IOBuffer &buffer, Variant &variant,
 
 	variant.IsArray(true);
 
-	//FINEST("Variant:\n%s", STR(variant.ToString()));
 
 	return true;
 }
@@ -404,7 +398,6 @@ bool AMF0Serializer::WriteMixedArray(IOBuffer &buffer, Variant &variant,
 }
 
 bool AMF0Serializer::ReadArray(IOBuffer &buffer, Variant &variant, bool readType) {
-	//FINEST("Buffer:\n%s", STR(buffer));
 
 	if (readType) {
 		AMF_CHECK_BOUNDARIES(buffer, 1);
@@ -422,7 +415,6 @@ bool AMF0Serializer::ReadArray(IOBuffer &buffer, Variant &variant, bool readType
 
 	AMF_CHECK_BOUNDARIES(buffer, 4);
 	uint32_t length = ENTOHLP(GETIBPOINTER(buffer)); //----MARKED-LONG---
-	//FINEST("Detected array length: %d", length);
 	if (!buffer.Ignore(4)) {
 		FATAL("Unable to ignore 4 bytes");
 		return false;
@@ -439,7 +431,6 @@ bool AMF0Serializer::ReadArray(IOBuffer &buffer, Variant &variant, bool readType
 
 	variant.IsArray(true);
 
-	//FINEST("Variant:\n%s", STR(variant.ToString()));
 
 	return true;
 }
@@ -815,15 +806,6 @@ bool AMF0Serializer::Write(IOBuffer &buffer, Variant &variant) {
 }
 
 bool AMF0Serializer::IsAMF3(Variant &variant) {
-	//    if (variant == V_BYTEARRAY)
-	//        return true;
-	//    if (variant != V_MAP && variant != V_TYPED_MAP)
-	//        return false;
-	//
-	//    FOR_MAP(variant, string, Variant, i) {
-	//        if (IsAMF3(MAP_VAL(i)))
-	//            return true;
-	//    }
 	return false;
 }
 #endif /* HAS_PROTOCOL_RTMP */

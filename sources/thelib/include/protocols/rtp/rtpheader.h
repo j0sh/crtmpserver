@@ -36,8 +36,6 @@ typedef struct DLLEXP _RTPHeader {
 	uint32_t _flags;
 	uint32_t _timestamp;
 	uint32_t _ssrc;
-	//we are not interested in this yet
-	//vector<uint32_t> _csrc;
 
 	operator string() {
 		return format("f: %08x; V: %u; P: %u; X: %u; CC: %u; M: %d; PT: %u; SEQ: %u; TS: %u; SSRC: %08x",

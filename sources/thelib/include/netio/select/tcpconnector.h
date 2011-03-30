@@ -50,10 +50,8 @@ public:
 	}
 
 	virtual ~TCPConnector() {
-		//FINEST("Close socket: %d", _closeSocket);
 		if (_closeSocket) {
 			CLOSE_SOCKET(_inboundFd);
-			//FINEST("Socket closed!");
 		}
 	}
 
@@ -65,12 +63,6 @@ public:
 	virtual bool OnEvent(select_event &event) {
 		IOHandlerManager::EnqueueForDelete(this);
 		WARN("THIS IS NOT COMPLETELY IMPLEMENTED");
-		//        if (((event.flags & EV_ERROR) != 0) ||
-		//                ((event.flags & EV_EOF) != 0)) {
-		//            DEBUG("***CONNECT ERROR***");
-		//            _closeSocket = true;
-		//            return false;
-		//        }
 
 		BaseProtocol *pProtocol = ProtocolFactoryManager::CreateProtocolChain(_protocolChain,
 				_customParameters);

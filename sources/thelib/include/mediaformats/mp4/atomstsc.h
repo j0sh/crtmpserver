@@ -33,8 +33,6 @@ class AtomSTSC
 : public VersionedAtom {
 private:
 	vector<STSCEntry> _stscEntries;
-
-	//map<sampleId, chunkId>
 	vector<uint32_t> _normalizedEntries;
 public:
 	AtomSTSC(MP4Document *pDocument, uint32_t type, uint64_t size, uint64_t start);

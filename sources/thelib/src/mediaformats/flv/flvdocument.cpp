@@ -155,48 +155,10 @@ bool FLVDocument::BuildFrames() {
 		if (frame.isBinaryHeader)
 			WARN("frame: %s", STR(frame));
 
-		//12. Read the metadata or ignore the data payload
-		//		if (frame.type == MEDIAFRAME_TYPE_DATA) {
-		//			IOBuffer tempBuffer;
-		//			tempBuffer.ReadFromFs(_mediaFile, (uint32_t) frame.length);
-		//			//tempBuffer.PutInputBuffer(&buffer, 0, length);
-		//#ifdef HAS_PROTOCOL_RTMP
-		//			AMF0Serializer amfSerializer;
-		//
-		//			string name = "";
-		//			Variant parameters;
-		//
-		//			Variant tempVariant;
-		//			if (!amfSerializer.Read(tempBuffer, tempVariant)) {
-		//				FATAL("Unable to read metadata");
-		//				return false;
-		//			}
-		//			if (tempVariant != V_STRING) {
-		//				FATAL("Unable to read metadata");
-		//				return false;
-		//			}
-		//			name = ((string) tempVariant);
-		//
-		//			while (GETAVAILABLEBYTESCOUNT(tempBuffer) > 0) {
-		//				tempVariant.Reset();
-		//				if (!amfSerializer.Read(tempBuffer, tempVariant)) {
-		//					FATAL("Unable to read metadata");
-		//					return false;
-		//				}
-		//				parameters.PushToArray(tempVariant);
-		//			}
-		//
-		//			FINEST("name:\n%s", STR(name));
-		//			FINEST("parameters:\n%s", STR(parameters.ToString()));
-		//			if (_metadata == V_NULL)
-		//				_metadata = parameters[(uint32_t) 0];
-		//#endif
-		//		} else {
 		if (!_mediaFile.SeekAhead(frame.length)) {
 			WARN("Unable to seek in file");
 			break;
 		}
-		//		}
 
 		//13. We are not interested in the previous tag size
 		if (!_mediaFile.SeekAhead(4)) {
@@ -213,14 +175,7 @@ bool FLVDocument::BuildFrames() {
 		}
 	}
 
-	//    for (uint32_t i = 0; i < 50; i++) {
-	//        FINEST("Before:%s", STR(_frames[i]));
-	//    }
 	sort(_frames.begin(), _frames.end(), CompareFrames);
-	//    for (uint32_t i = 0; i < _frames.size(); i++) {
-	//        FINEST("After:%s", STR(_frames[i]));
-	//    }
-	//    NYIR;
 
 	//15. Add the binary headers
 	for (uint32_t i = 0; i < binaryHeaders.size(); i++) {

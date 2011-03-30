@@ -39,7 +39,6 @@ bool AtomWAVE::AtomCreated(BaseAtom *pAtom) {
 			_pESDS = (AtomESDS *) pAtom;
 			return true;
 		case 0://NULL atom
-			//WARN("Ignoring NULL atom");
 			return true;
 		default:
 		{

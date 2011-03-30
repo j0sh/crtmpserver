@@ -38,7 +38,6 @@ SO::SO(string name, bool persistent) {
 	_payload["_dummy_"] = "";
 	_payload.RemoveKey("_dummy_");
 	_versionIncremented = false;
-	//FINEST("SO created. _name: %s; _persistent: %d", STR(_name), _persistent);
 }
 
 SO::~SO() {
@@ -135,7 +134,6 @@ string SO::DumpTrack() {
 }
 
 void SO::Track() {
-	//FINEST("Track:\n%s", STR(DumpTrack()));
 
 	FOR_MAP(_dirtyPropsByProtocol, uint32_t, Dirtyness, i) {
 		uint32_t protocolId = MAP_KEY(i);
@@ -174,7 +172,6 @@ void SO::Track() {
 		for (uint32_t i = 0; i < primitives.size(); i++)
 			M_SO_PRIMITIVE(message, i) = primitives[i];
 
-		//FINEST("Message:\n%s", STR(message.ToString()));
 
 		if (pTo != NULL) {
 			if (!pTo->SendMessage(message)) {
@@ -182,13 +179,6 @@ void SO::Track() {
 			}
 		}
 	}
-	//    if (_dirtyPropsByProtocol.size() > 0) {
-	//        FINEST("SO changed. Name: %s; Ver: %d; Persistent: %d, Payload:\n%s",
-	//                STR(_name),
-	//                _version,
-	//                _persistent,
-	//                STR(_payload.ToString()));
-	//    }
 	_dirtyPropsByProtocol.clear();
 	_versionIncremented = false;
 }
@@ -208,7 +198,6 @@ Variant & SO::Set(string key, Variant value, uint32_t protocolId) {
 		_version++;
 		_versionIncremented = true;
 	}
-	//FINEST("Set %s key", STR(key));
 	_payload[key] = value;
 
 	FOR_MAP(_registeredProtocols, uint32_t, uint32_t, i) {

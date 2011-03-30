@@ -238,7 +238,6 @@ bool AtomESDS::ReadData() {
 			}
 #endif /* DEBUG_ESDS_ATOM */
 
-			//NYIA;
 			return SkipRead(false);
 		}
 	}

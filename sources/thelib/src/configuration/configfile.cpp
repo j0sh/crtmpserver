@@ -871,7 +871,6 @@ void ConfigFile::FinishServiceInfo() {
 }
 
 void ConfigFile::Normalize(Variant &appConfigurationNode) {
-	//FINEST("Before:\n%s", STR(configuration.ToString()));
 
 	appConfigurationNode[CONF_APPLICATION_DIRECTORY] =
 			format("%s%s%c", STR(_rootApplicationsDirectory),
@@ -905,7 +904,6 @@ void ConfigFile::Normalize(Variant &appConfigurationNode) {
 
 	//3. Normalize the users db file
 	if (appConfigurationNode.HasKey(CONF_APPLICATION_AUTH)) {
-		//FINEST("Before:\n%s", STR(configuration.ToString()));
 		if (!appConfigurationNode[CONF_APPLICATION_AUTH].HasKey(
 				CONF_APPLICATION_AUTH_USERS_FILE)) {
 			appConfigurationNode[CONF_APPLICATION_AUTH][CONF_APPLICATION_AUTH_USERS_FILE] =
@@ -925,10 +923,8 @@ void ConfigFile::Normalize(Variant &appConfigurationNode) {
 			}
 			appConfigurationNode[CONF_APPLICATION_AUTH][CONF_APPLICATION_AUTH_ENCODER_AGENTS] = temp;
 
-			//FINEST("temp:\n%s", STR(temp.ToString()));
 		}
 
-		//FINEST("After:\n%s", STR(configuration.ToString()));
 	}
 
 	//4. Normalize the crt/key location inside acceptors

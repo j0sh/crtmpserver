@@ -192,14 +192,12 @@ bool OutboundRTMPProtocol::PerformHandshakeStage1(bool encrypted) {
 	DEBUG_HANDSHAKE("PHS1:  3. Randomize the buffer");
 	for (uint32_t i = 0; i < 1536; i++) {
 		_pOutputBuffer[i] = rand() % 256;
-		//_pOutputBuffer[i] = 0;
 	}
 
 	DEBUG_HANDSHAKE("PHS1:  4. Put the uptime. In our case, 0.");
 	EHTONLP(_pOutputBuffer, 0);
 
 	DEBUG_HANDSHAKE("PHS1:  5. Put the flash version. We impersonate with 9.0.124.2");
-	//EHTONLP(_pOutputBuffer + 4, 0);
 	_pOutputBuffer[4] = 9;
 	_pOutputBuffer[5] = 0;
 	_pOutputBuffer[6] = 124;
@@ -250,7 +248,6 @@ bool OutboundRTMPProtocol::PerformHandshakeStage1(bool encrypted) {
 	DEBUG_HANDSHAKE("PHS1: 14. Put the buffer on the outputBuffer");
 	_outputBuffer.ReadFromBuffer(_pOutputBuffer, 1536);
 	_outputBuffer222.ReadFromBuffer(_pOutputBuffer, 1536);
-	//FINEST("InputBuffer:\n%s", STR(_outputBuffer));
 
 	DEBUG_HANDSHAKE("PHS1: 15. delete the buffer");
 	delete[] _pOutputBuffer;

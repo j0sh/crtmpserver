@@ -137,7 +137,6 @@ bool BaseRTSPAppProtocolHandler::SignalProtocolCreated(BaseProtocol *pProtocol,
 
 bool BaseRTSPAppProtocolHandler::HandleRTSPRequest(RTSPProtocol *pFrom,
 		Variant &requestHeaders, string &requestContent) {
-	//FINEST("RTSP Request:\n%s", STR(requestHeaders.ToString()));
 	string method = requestHeaders[RTSP_FIRST_LINE][RTSP_METHOD];
 	string requestSessionId = "";
 	string connectionSessionId = "";
@@ -426,11 +425,6 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPRequestSetupOutbound(RTSPProtocol *pF
 
 bool BaseRTSPAppProtocolHandler::HandleRTSPRequestSetupInbound(RTSPProtocol *pFrom,
 		Variant &requestHeaders, string &requestContent) {
-	//	FINEST("--------------------------------------");
-	//	FINEST("requestHeaders:\n%s", STR(requestHeaders.ToString()));
-	//	FINEST("pendingTracks:\n%s", STR(pFrom->GetCustomParameters().ToString()));
-	//	FINEST("requestContent:\n%s", STR(requestContent));
-
 	//1. get the transport line and split it into parts
 	if (!requestHeaders[RTSP_HEADERS].HasKey(RTSP_HEADERS_TRANSPORT, false)) {
 		FATAL("No transport line");
@@ -438,10 +432,6 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPRequestSetupInbound(RTSPProtocol *pFr
 	}
 	string transportLine = lowercase(requestHeaders[RTSP_HEADERS].GetValue(RTSP_HEADERS_TRANSPORT, false));
 	map<string, string> parameters = mapping(transportLine, ";", "=", true);
-
-	//	FOR_MAP(parameters, string, string, i) {
-	//		FINEST("%s: %s", STR(MAP_KEY(i)), STR(MAP_VAL(i)));
-	//	}
 
 	//2. Check and see if it has RTP/AVP/TCP,RTP/AVP/UDP or RTP/AVP
 	if ((!MAP_HAS1(parameters, "rtp/avp/tcp"))
@@ -491,8 +481,6 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPRequestSetupInbound(RTSPProtocol *pFr
 		FATAL("Invalid transport line: %s", STR(transportLine));
 		return false;
 	}
-	//	FINEST("portsOrChannels: %d-%d; forceTcp: %d",
-	//			portsOrChannels[0], portsOrChannels[1], forceTcp);
 
 	//4. Find the track inside the pendingTracks ccollection and setup the ports or channels
 	if (pFrom->GetCustomParameters()["pendingTracks"] != V_MAP) {
@@ -500,7 +488,6 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPRequestSetupInbound(RTSPProtocol *pFr
 		return false;
 	}
 	string controlUri = requestHeaders[RTSP_FIRST_LINE][RTSP_URL];
-	//FINEST("controlUri: %s", STR(controlUri));
 
 	bool trackFound = false;
 
@@ -516,12 +503,10 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPRequestSetupInbound(RTSPProtocol *pFr
 		FATAL("track %s not found", STR(controlUri));
 		return false;
 	}
-	//FINEST("pendingTracks:\n%s", STR(pFrom->GetCustomParameters()["pendingTracks"].ToString()));
 
 	//5. Create a session
 	if (!pFrom->GetCustomParameters().HasKey(RTSP_HEADERS_SESSION)) {
 		pFrom->GetCustomParameters()[RTSP_HEADERS_SESSION] = generateRandomString(8);
-		//FINEST("Session: %s", STR(pFrom->GetCustomParameters()[RTSP_HEADERS_SESSION]));
 	}
 
 	//6. prepare the response
@@ -529,7 +514,6 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPRequestSetupInbound(RTSPProtocol *pFr
 	pFrom->PushResponseHeader(RTSP_HEADERS_SESSION, pFrom->GetCustomParameters()[RTSP_HEADERS_SESSION]);
 
 	//7. Send it
-	//FINEST("--------------------------------------");
 	return pFrom->SendResponseMessage();
 }
 
@@ -588,14 +572,12 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPRequestPlay(RTSPProtocol *pFrom,
 				STR(pFrom->GetCustomParameters()["videoTrackUri"]),
 				pOutboundConnectivity->GetLastVideoSequence(),
 				0);
-		//pOutboundConnectivity->GetLastVideoRTPTimestamp());
 	}
 	if (pFrom->GetCustomParameters().HasKey("audioTrackId")) {
 		rtpInfoAudio = format("url=%s;seq=%u;rtptime=%u",
 				STR(pFrom->GetCustomParameters()["audioTrackId"]),
 				pOutboundConnectivity->GetLastAudioSequence(),
 				0);
-		//pOutboundConnectivity->GetLastAudioRTPTimestamp());
 	}
 	string rtpInfo = rtpInfoVideo;
 	if (rtpInfo != "") {
@@ -605,7 +587,6 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPRequestPlay(RTSPProtocol *pFrom,
 	} else {
 		rtpInfo = rtpInfoAudio;
 	}
-	//pFrom->PushResponseHeader(RTSP_HEADERS_RTP_INFO, rtpInfo);
 
 	//7. Done
 	return pFrom->SendResponseMessage();
@@ -619,8 +600,6 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPRequestTearDown(RTSPProtocol *pFrom,
 
 bool BaseRTSPAppProtocolHandler::HandleRTSPRequestAnnounce(RTSPProtocol *pFrom,
 		Variant &requestHeaders, string &requestContent) {
-	//	FINEST("requestHeaders:\n%s", STR(requestHeaders.ToString()));
-	//	FINEST("requestContent:\n%s", STR(requestContent));
 	//1. Make sure we ONLY handle application/sdp
 	if (!requestHeaders[RTSP_HEADERS].HasKey(RTSP_HEADERS_CONTENT_TYPE, false)) {
 		FATAL("Invalid DESCRIBE response:\n%s", STR(requestHeaders.ToString()));
@@ -646,8 +625,6 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPRequestAnnounce(RTSPProtocol *pFrom,
 			requestHeaders[RTSP_FIRST_LINE][RTSP_URL]);
 	Variant audioTrack = sdp.GetAudioTrack(0,
 			requestHeaders[RTSP_FIRST_LINE][RTSP_URL]);
-	//	FINEST("videoTrack:\n%s", STR(videoTrack.ToString()));
-	//	FINEST("audioTrack:\n%s", STR(audioTrack.ToString()));
 
 	//5. Store the tracks inside the session for later use
 	if (audioTrack != V_NULL) {
@@ -720,7 +697,6 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPRequestRecord(RTSPProtocol *pFrom,
 bool BaseRTSPAppProtocolHandler::HandleRTSPResponse(RTSPProtocol *pFrom,
 		Variant &requestHeaders, string &requestContent, Variant &responseHeaders,
 		string &responseContent) {
-	//WARN("\n%s\n%s", STR(responseHeaders.ToString()), STR(responseContent));
 	switch ((uint32_t) responseHeaders[RTSP_FIRST_LINE][RTSP_STATUS_CODE]) {
 		case 200:
 		{
@@ -851,8 +827,6 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPResponse200Describe(
 			requestHeaders[RTSP_FIRST_LINE][RTSP_URL]);
 	Variant audioTrack = sdp.GetAudioTrack(0,
 			requestHeaders[RTSP_FIRST_LINE][RTSP_URL]);
-	//	FINEST("videoTrack:\n%s", STR(videoTrack.ToString()));
-	//	FINEST("audioTrack:\n%s", STR(audioTrack.ToString()));
 
 	//5. Store the tracks inside the session for later use
 	if (audioTrack != V_NULL) {

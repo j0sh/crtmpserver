@@ -34,11 +34,9 @@ BaseAtom::BaseAtom(MP4Document *pDocument, uint32_t type, uint64_t size, uint64_
 	_type = type;
 	_size = size;
 	_start = start;
-	//FINEST("Atom created: %p", this);
 }
 
 BaseAtom::~BaseAtom() {
-	//FINEST("Atom deleted: %p", this);
 }
 
 uint64_t BaseAtom::GetStart() {

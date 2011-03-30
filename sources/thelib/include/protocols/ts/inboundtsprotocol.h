@@ -25,7 +25,6 @@
 #include "protocols/baseprotocol.h"
 #include "protocols/ts/pidtypes.h"
 #include "protocols/ts/tspacketheader.h"
-#include "protocols/ts/tsadaptationfield.h"
 
 #define TS_CHUNK_188 188
 #define TS_CHUNK_204 204

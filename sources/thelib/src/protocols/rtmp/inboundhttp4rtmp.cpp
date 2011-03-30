@@ -96,7 +96,6 @@ bool InboundHTTP4RTMP::SignalInputData(IOBuffer &buffer) {
 
 	//7. Do the dammage
 	bool result;
-	//FINEST("Process %s", STR(parts[1]));
 	if (parts[1] == "fcs") {
 		result = ProcessFcs(parts);
 		buffer.Ignore(pHTTP->GetContentLength());
@@ -133,7 +132,6 @@ bool InboundHTTP4RTMP::EnqueueForOutbound() {
 
 void InboundHTTP4RTMP::ReadyForSend() {
 	if (_pNearProtocol != NULL) {
-		//FINEST("InboundHTTP4RTMP::ReadyForSend");
 		_pNearProtocol->ReadyForSend();
 	}
 }
@@ -198,7 +196,6 @@ bool InboundHTTP4RTMP::ProcessIdle(vector<string> &parts) {
 	_outputBuffer.ReadFromByte(1);
 	IOBuffer *pBuffer = pProtocol->GetOutputBuffer();
 	if (pBuffer != NULL) {
-		//FINEST("We have to send %d bytes", GETAVAILABLEBYTESCOUNT(*pBuffer));
 		_outputBuffer.ReadFromBuffer(GETIBPOINTER(*pBuffer), GETAVAILABLEBYTESCOUNT(*pBuffer));
 		pBuffer->IgnoreAll();
 	}
@@ -213,7 +210,6 @@ bool InboundHTTP4RTMP::ProcessSend(vector<string> &parts) {
 		return false;
 	}
 
-	//FINEST("_inputBuffer:\n%s", STR(_inputBuffer));
 	if (!pProtocol->SignalInputData(_inputBuffer)) {
 		FATAL("Unable to call upper protocol");
 		return false;
@@ -222,7 +218,6 @@ bool InboundHTTP4RTMP::ProcessSend(vector<string> &parts) {
 	_outputBuffer.ReadFromByte(1);
 	IOBuffer *pBuffer = pProtocol->GetOutputBuffer();
 	if (pBuffer != NULL) {
-		//FINEST("We have to send %d bytes", GETAVAILABLEBYTESCOUNT(*pBuffer));
 		_outputBuffer.ReadFromBuffer(GETIBPOINTER(*pBuffer), GETAVAILABLEBYTESCOUNT(*pBuffer));
 		pBuffer->IgnoreAll();
 	}

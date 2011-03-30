@@ -60,23 +60,6 @@ bool TCPProtocol::AllowFarProtocol(uint64_t type) {
 }
 
 bool TCPProtocol::AllowNearProtocol(uint64_t type) {
-	//    if (
-	//            type == PT_INBOUNDRTMP ||
-	//            type == PT_OUTBOUNDRTMP ||
-	//            type == PT_RTMPE ||
-	//            type == PT_SSL ||
-	//            type == PT_INBOUNDDNS ||
-	//            type == PT_OUTBOUNDDNS ||
-	//            type == PT_INBOUNDTS ||
-	//            type == PT_INBOUNDHTTP ||
-	//            type == PT_OUTBOUNDHTTP ||
-	//            false
-	//            )
-	//        return true;
-	//    WARN("Near protocol %s not accepted by %s",
-	//            STR(tagToString(type)),
-	//            STR(tagToString(_type)));
-	//    return false;
 	return true;
 }
 
@@ -86,7 +69,6 @@ IOBuffer * TCPProtocol::GetInputBuffer() {
 
 bool TCPProtocol::SignalInputData(int32_t recvAmount) {
 	_decodedBytesCount += recvAmount;
-	//FINEST("_decodedBytesCount: %d", _decodedBytesCount);
 	return _pNearProtocol->SignalInputData(_inputBuffer);
 }
 

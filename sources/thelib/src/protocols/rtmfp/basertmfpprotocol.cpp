@@ -189,12 +189,10 @@ void BaseRTMFPProtocol::SendToClient(RTMFPSession *pSession,
 	//4. Encrypt it
 	WARN("OUTPUT: \n%s", STR(IOBuffer::DumpBuffer(_outputBuffer.pCRC, chunkLength + 8 + padLen)));
 	Encrypt(pSession, _outputBuffer.pCRC, chunkLength + 8 + padLen);
-	//FINEST("AFTER: \n%s", STR(IOBuffer::DumpBuffer(_outputBuffer.pCRC, chunkLength + 8 + padLen)));
 
 	//5. Compute the xor
 	EHTONLP(_outputBuffer.pXor_1,
 			ENTOHLP(_outputBuffer.pXor_2)^ENTOHLP(_outputBuffer.pXor_3)^pSession->id);
-	//INFO("%08x; \n%s", pSession->client.crc, STR(IOBuffer::DumpBuffer(_outputBuffer.outputBuffer, chunkLength + 8 + padLen + 4)));
 
 	//8. Before actual we do the actual transfer, move the current session where it belongs (if necessary)
 	if (chunkType == 0x78) {
@@ -235,7 +233,6 @@ void BaseRTMFPProtocol::ProcessSession(RTMFPSession *pSession, IOBuffer &buffer)
 		FATAL("Invalid CRC");
 		return;
 	}
-	//FINEST("crc: %04x", crc);
 
 	//5. Read message type
 	uint8_t type = pBuffer[6];

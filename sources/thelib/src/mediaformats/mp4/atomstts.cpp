@@ -45,7 +45,6 @@ bool AtomSTTS::ReadData() {
 		FATAL("Unable to read entry count");
 		return false;
 	}
-	//FINEST("entryCount: %d", entryCount);
 
 	for (uint32_t i = 0; i < entryCount; i++) {
 		STTSEntry entry;
@@ -54,13 +53,11 @@ bool AtomSTTS::ReadData() {
 			FATAL("Unable to read count");
 			return false;
 		}
-		//FINEST("entry[%d].count: %d", i, entry.count);
 
 		if (!ReadUInt32(entry.delta)) {
 			FATAL("Unable to read delta");
 			return false;
 		}
-		//FINEST("entry[%d].delta: %d", i, entry.delta);
 
 		ADD_VECTOR_END(_sttsEntries, entry);
 	}

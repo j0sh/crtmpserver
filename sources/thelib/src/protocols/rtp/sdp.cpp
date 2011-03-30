@@ -29,7 +29,6 @@ SDP::~SDP() {
 }
 
 bool SDP::ParseSDP(SDP &sdp, string &raw) {
-	//FINEST("raw:\n%s\n", STR(raw));
 	//1. Reset
 	sdp.Reset();
 
@@ -42,10 +41,6 @@ bool SDP::ParseSDP(SDP &sdp, string &raw) {
 	vector<string> lines;
 	split(raw, "\n", lines);
 
-	//	FOR_VECTOR(lines, i) {
-	//		FINEST("lines[%02d]: %s", i, STR(lines[i]));
-	//	}
-
 	//4. Detect the media tracks indexes
 	vector<uint32_t> trackIndexes;
 	for (uint32_t i = 0; i < lines.size(); i++) {
@@ -53,9 +48,6 @@ bool SDP::ParseSDP(SDP &sdp, string &raw) {
 			ADD_VECTOR_END(trackIndexes, i);
 		}
 	}
-	//	for (uint32_t i = 0; i < trackIndexes.size(); i++) {
-	//		FINEST("trackIndexes[%02d]: %02d", i, trackIndexes[i]);
-	//	}
 	if (trackIndexes.size() == 0) {
 		FATAL("No tracks found");
 		return false;
@@ -90,7 +82,6 @@ bool SDP::ParseSDP(SDP &sdp, string &raw) {
 	}
 	sdp[SDP_MEDIATRACKS].PushToArray(media);
 
-	//FINEST("sdp:\n%s", STR(sdp.ToString()));
 
 	return true;
 }
@@ -102,7 +93,6 @@ Variant SDP::GetVideoTrack(uint32_t index, string uri) {
 		FATAL("Video track index %d not found", index);
 		return Variant();
 	}
-	//FINEST("track:\n%s", STR(track.ToString()));
 
 	//2. Prepare the info
 	Variant result;
@@ -137,7 +127,6 @@ Variant SDP::GetAudioTrack(uint32_t index, string uri) {
 		FATAL("Audio track index %d not found", index);
 		return Variant();
 	}
-	//FINEST("track:\n%s", STR(track.ToString()));
 
 	//2. Prepare the info
 	Variant result;
@@ -360,14 +349,11 @@ bool SDP::ParseSDPLineA(string &attributeName, Variant &value, string line) {
 			return false;
 		value["payloadType"] = (uint8_t) atoi(STR(parts[0]));
 		map<string, string> temp = mapping(parts[1], ";", "=", false);
-		//		FINEST("-----------");
-		//		FINEST("%s", STR(parts[1]));
 
 		FOR_MAP(temp, string, string, i) {
-			//FINEST("%s: %s", STR(MAP_KEY(i)), STR(MAP_VAL(i)));
 			value[MAP_KEY(i)] = MAP_VAL(i);
 		}
-		//		FINEST("-----------");
+
 		return true;
 	} else {
 		WARN("Attribute `%s` with value `%s` not parsed", STR(attributeName), STR(rawValue));
@@ -382,16 +368,12 @@ bool SDP::ParseSDPLineB(Variant &result, string line) {
 
 	vector<string> parts;
 	split(line, ":", parts);
-	//	for (uint32_t i = 0; i < parts.size(); i++) {
-	//		FINEST("parts[%d]: %s", i, STR(parts[i]));
-	//	}
 	if (parts.size() != 2)
 		return false;
 
 	result["modifier"] = parts[0];
 	result["value"] = parts[1];
 
-	//FINEST("result: %s", STR(result.ToString()));
 	return true;
 }
 
@@ -401,9 +383,6 @@ bool SDP::ParseSDPLineC(Variant &result, string line) {
 
 	vector<string> parts;
 	split(line, " ", parts);
-	//	for (uint32_t i = 0; i < parts.size(); i++) {
-	//		FINEST("parts[%d]: %s", i, STR(parts[i]));
-	//	}
 	if (parts.size() != 3)
 		return false;
 
@@ -411,7 +390,6 @@ bool SDP::ParseSDPLineC(Variant &result, string line) {
 	result["addressType"] = parts[1];
 	result["connectionAddress"] = parts[2];
 
-	//FINEST("result: %s", STR(result.ToString()));
 	return true;
 }
 
@@ -438,9 +416,6 @@ bool SDP::ParseSDPLineM(Variant &result, string line) {
 
 	vector<string> parts;
 	split(line, " ", parts);
-	//	for (uint32_t i = 0; i < parts.size(); i++) {
-	//		FINEST("parts[%d]: %s", i, STR(parts[i]));
-	//	}
 	if (parts.size() != 4)
 		return false;
 
@@ -448,8 +423,6 @@ bool SDP::ParseSDPLineM(Variant &result, string line) {
 	result["ports"] = parts[1];
 	result["transport"] = parts[2];
 	result["payloadType"] = parts[3];
-
-	//	FINEST("result: %s", STR(result.ToString()));
 	return true;
 }
 
@@ -459,9 +432,6 @@ bool SDP::ParseSDPLineO(Variant &result, string line) {
 
 	vector<string> parts;
 	split(line, " ", parts);
-	//	for (uint32_t i = 0; i < parts.size(); i++) {
-	//		FINEST("parts[%d]: %s", i, STR(parts[i]));
-	//	}
 	if (parts.size() != 6)
 		return false;
 
@@ -489,7 +459,6 @@ bool SDP::ParseSDPLineO(Variant &result, string line) {
 	}
 	result["ip_address"] = ip;
 
-	//FINEST("result: %s", STR(result.ToString()));
 	return true;
 }
 
@@ -516,16 +485,12 @@ bool SDP::ParseSDPLineT(Variant &result, string line) {
 
 	vector<string> parts;
 	split(line, " ", parts);
-	//	for (uint32_t i = 0; i < parts.size(); i++) {
-	//		FINEST("parts[%d]: %s", i, STR(parts[i]));
-	//	}
 	if (parts.size() != 2)
 		return false;
 
 	result["startTime"] = parts[0];
 	result["stopTime"] = parts[1];
 
-	//FINEST("result: %s", STR(result.ToString()));
 	return true;
 }
 

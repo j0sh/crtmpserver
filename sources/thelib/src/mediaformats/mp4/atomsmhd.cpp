@@ -34,13 +34,11 @@ bool AtomSMHD::ReadData() {
 		FATAL("Unable to read balance");
 		return false;
 	}
-	//FINEST("_balance: %u", _balance);
 
 	if (!ReadUInt16(_reserved)) {
 		FATAL("Unable to read reserved");
 		return false;
 	}
-	//FINEST("_reserved: %u", _reserved);
 
 	return true;
 }

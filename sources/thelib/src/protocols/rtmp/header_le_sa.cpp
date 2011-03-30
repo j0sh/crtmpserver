@@ -177,43 +177,31 @@ bool Header::GetFromVariant(Header &header, Variant &variant) {
 }
 
 bool Header::Write(Channel &channel, IOBuffer &buffer) {
-	//FINEST("this: %p", this);
 	//1. Compute the header size
 	if (channel.lastOutStreamId == H_SI(*this)) {
-		//FINEST("Same stream %d on channel %d", channel.lastOutStreamId, channel.id);
 		if (H_IA(*this)) {
-			//FINEST("This is absolute ts.");
 			if (channel.lastOutProcBytes == 0) {
-				//FINEST("This is the beginning of a packet");
 				H_HT(*this) = HT_FULL;
 				channel.lastOutAbsTs = H_TS(*this);
 			} else {
-				//FINEST("We are in the middle of the packet: %d", channel.lastOutProcBytes);
 				H_HT(*this) = HT_CONTINUATION;
 			}
 		} else {
-			//FINEST("This is relative ts.");
 			if (channel.lastOutProcBytes == 0) {
-				//FINEST("This is the beginning of a packet");
 				H_HT(*this) = HT_SAME_STREAM;
 				if ((H_MT(*this) == H_MT(channel.lastOutHeader)) &&
 						(H_ML(*this) == H_ML(channel.lastOutHeader))) {
-					//FINEST("Same stream and same length and type");
 					H_HT(*this) = HT_SAME_LENGTH_AND_STREAM;
 					if (H_TS(*this) == H_TS(channel.lastOutHeader)) {
-						//FINEST("Exactly the same header");
 						H_HT(*this) = HT_CONTINUATION;
 					}
 				}
 				channel.lastOutAbsTs += H_TS(*this);
 			} else {
-				//FINEST("We are in the middle of the packet: %d", channel.lastOutProcBytes);
 				H_HT(*this) = HT_CONTINUATION;
 			}
 		}
 	} else {
-		//        FINEST("Different stream on channel %d: channel: %d; header: %d",
-		//                channel.id, channel.lastOutStreamId, H_SI(*this));
 		H_HT(*this) = HT_FULL;
 		H_IA(*this) = true;
 		channel.lastOutAbsTs = H_TS(*this);
@@ -223,17 +211,11 @@ bool Header::Write(Channel &channel, IOBuffer &buffer) {
 	//2. Save the last sent header
 	channel.lastOutHeader = *this;
 
-	//    if (H_CI(*this) == 20)
-	//        DEBUG("header: %s", STR(*this));
-	//    else if (H_CI(*this) == 21)
-	//        FINEST("header: %s", STR(*this));
-
 	//3. do the write
 	return Write(buffer);
 }
 
 bool Header::Write(IOBuffer &buffer) {
-	//FINEST("header: %s", STR(*this));
 	if (ci < 64) {
 		buffer.ReadFromByte((ht << 6) | ci);
 	} else if (ci < 319) {
@@ -257,7 +239,6 @@ bool Header::Write(IOBuffer &buffer) {
 				buffer.ReadFromBuffer(&hf.datac[1], 11);
 				hf.s.ts = ENTOHL(hf.s.ts); //----MARKED-LONG---
 				hf.s.ml = ENTOHL(hf.s.ml) >> 8; //----MARKED-LONG---
-				//FINEST("Output buffer: %s", STR(buffer));
 				return true;
 			} else {
 				uint32_t temp = EHTONL(hf.s.ts); //----MARKED-LONG---
@@ -267,7 +248,6 @@ bool Header::Write(IOBuffer &buffer) {
 				hf.s.ts = ENTOHL(temp); //----MARKED-LONG---
 				hf.s.ml = ENTOHL(hf.s.ml) >> 8; //----MARKED-LONG---
 				buffer.ReadFromBuffer((uint8_t *) & temp, 4);
-				//FINEST("Output buffer: %s", STR(buffer));
 				return true;
 			}
 		}
@@ -279,7 +259,6 @@ bool Header::Write(IOBuffer &buffer) {
 				buffer.ReadFromBuffer(&hf.datac[1], 7);
 				hf.s.ts = ENTOHL(hf.s.ts); //----MARKED-LONG---
 				hf.s.ml = ENTOHL(hf.s.ml) >> 8; //----MARKED-LONG---
-				//FINEST("Output buffer: %s", STR(buffer));
 				return true;
 			} else {
 				uint32_t temp = EHTONL(hf.s.ts); //----MARKED-LONG---
@@ -289,7 +268,6 @@ bool Header::Write(IOBuffer &buffer) {
 				hf.s.ts = ENTOHL(temp); //----MARKED-LONG---
 				hf.s.ml = ENTOHL(hf.s.ml) >> 8; //----MARKED-LONG---
 				buffer.ReadFromBuffer((uint8_t *) & temp, 4);
-				//FINEST("Output buffer: %s", STR(buffer));
 				return true;
 			}
 		}
@@ -299,7 +277,6 @@ bool Header::Write(IOBuffer &buffer) {
 				hf.s.ts = EHTONL(hf.s.ts); //----MARKED-LONG---
 				buffer.ReadFromBuffer(&hf.datac[1], 3);
 				hf.s.ts = ENTOHL(hf.s.ts); //----MARKED-LONG---
-				//FINEST("Output buffer: %s", STR(buffer));
 				return true;
 			} else {
 				uint32_t temp = EHTONL(hf.s.ts); //----MARKED-LONG---
@@ -307,7 +284,6 @@ bool Header::Write(IOBuffer &buffer) {
 				buffer.ReadFromBuffer(&hf.datac[1], 3);
 				hf.s.ts = ENTOHL(temp); //----MARKED-LONG---
 				buffer.ReadFromBuffer((uint8_t *) & temp, 4);
-				//FINEST("Output buffer: %s", STR(buffer));
 				return true;
 			}
 		}

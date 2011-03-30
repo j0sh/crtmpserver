@@ -391,12 +391,6 @@ bool BaseHTTPProtocol::HandleChunkedContent(IOBuffer &buffer) {
 					HTTP_MAX_CHUNK_SIZE, chunkSize);
 			return false;
 		}
-		//        FINEST("chunkSizeString: %s", STR(chunkSizeString));
-		//        FINEST("chunkSize: %d", chunkSize);
-		//        FINEST("Bytes count: Wanted: %d. Got: %d.",
-		//                chunkSize + chunkSizeString.size() + 2,
-		//                GETAVAILABLEBYTESCOUNT(buffer));
-		//        FINEST("buffer:\n%s", STR(buffer));
 
 		//9. Now, we know the chunk size... do we have enough data?
 		if (GETAVAILABLEBYTESCOUNT(buffer) <
@@ -406,13 +400,6 @@ bool BaseHTTPProtocol::HandleChunkedContent(IOBuffer &buffer) {
 				+ chunkSize //chunk size itself
 				+ 2 //the \r\n that follows the data chunk
 				) {
-			//            FINEST("Not enough data. Wanted: %d. Got: %d. Wait for more...",
-			//                    chunkSizeString.size() //length of the chunk size string
-			//                    - 2 //substract the 0x particle
-			//                    + 2 //the \r\n that follows the chunk size string
-			//                    + chunkSize //chunk size itself
-			//                    + 2, //the \r\n that follows the data chunk
-			//                    GETAVAILABLEBYTESCOUNT(buffer));
 			return true;
 		}
 
@@ -437,7 +424,6 @@ bool BaseHTTPProtocol::HandleChunkedContent(IOBuffer &buffer) {
 
 		//13. Ignore the bytes from the input buffer
 		buffer.Ignore(chunkSizeString.size() - 2 + 2 + chunkSize + 2);
-		//FINEST("AFTER buffer:\n%s", STR(buffer));
 
 		//14. reset the state if necessary
 		if (TransferCompleted()) {

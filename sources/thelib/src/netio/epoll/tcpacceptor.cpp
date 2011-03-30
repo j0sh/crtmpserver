@@ -33,7 +33,6 @@ TCPAcceptor::TCPAcceptor(string ipAddress, uint16_t port, Variant parameters,
 		vector<uint64_t>/*&*/ protocolChain)
 : IOHandler(0, 0, IOHT_ACCEPTOR) {
 	_pApplication = NULL;
-	//assert((port > 1024 && port < 65535) || (port == 80));
 	memset(&_address, 0, sizeof (sockaddr_in));
 
 	_address.sin_family = PF_INET;

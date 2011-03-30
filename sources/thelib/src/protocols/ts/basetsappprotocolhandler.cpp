@@ -32,7 +32,6 @@ BaseTSAppProtocolHandler::~BaseTSAppProtocolHandler() {
 }
 
 void BaseTSAppProtocolHandler::RegisterProtocol(BaseProtocol *pProtocol) {
-	//FINEST("Register TS protocol %p to handler %p", pProtocol, this);
 	if (MAP_HAS1(_connections, pProtocol->GetId())) {
 		ASSERT("Protocol already registered");
 	}
@@ -40,7 +39,6 @@ void BaseTSAppProtocolHandler::RegisterProtocol(BaseProtocol *pProtocol) {
 }
 
 void BaseTSAppProtocolHandler::UnRegisterProtocol(BaseProtocol *pProtocol) {
-	//FINEST("Unregister TS protocol %p from handler %p", pProtocol, this);
 	_connections.erase(pProtocol->GetId());
 }
 

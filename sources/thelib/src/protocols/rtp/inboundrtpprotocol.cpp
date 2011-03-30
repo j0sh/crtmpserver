@@ -88,8 +88,6 @@ bool InboundRTPProtocol::SignalInputData(IOBuffer &buffer,
 			_seqRollOver++;
 			_lastSeq = GET_RTP_SEQ(_rtpHeader);
 		} else {
-			//			WARN("Bogus seq. current seq: %04x; last seq: %04x",
-			//					GET_RTP_SEQ(_rtpHeader), _lastSeq);
 			buffer.IgnoreAll();
 			return true;
 		}
@@ -110,38 +108,21 @@ bool InboundRTPProtocol::SignalInputData(IOBuffer &buffer,
 	//7. Detect rollover and adjust the timestamp
 #ifdef RTP_DETECT_ROLLOVER
 	if (_rtpHeader._timestamp < _lastTimestamp) {
-		//		FINEST("Possible roll over: _rtpHeader._timestamp: %016llx; _lastTimestamp: %016llx",
-		//				_rtpHeader._timestamp, _lastTimestamp);
 		if ((((_rtpHeader._timestamp & 0x80000000) >> 31) == 0)
 				&& (((_lastTimestamp & 0x80000000) >> 31) == 1)) {
 			_timestampRollover++;
 			_lastTimestamp = _rtpHeader._timestamp;
 			WARN("Roll over on %d; _timestampRollover: %d", GetId(), _timestampRollover);
 		}
-		//		else {
-		//			WARN("Bogus timestamp. current ts: %016llx; last ts: %016llx",
-		//					_rtpHeader._timestamp, _lastTimestamp);
-		//			buffer.IgnoreAll();
-		//			return true;
-		//		}
 	} else {
 		_lastTimestamp = _rtpHeader._timestamp;
 	}
-	//	string msg = "";
-	//	if ((_lastSeq % 1000) == 0) {
-	//		msg = format("%d: %016llx", GetId(), _rtpHeader._timestamp);
-	//	}
 	_rtpHeader._timestamp = (_timestampRollover << 32) | _rtpHeader._timestamp;
-	//	if ((_lastSeq % 1000) == 0) {
-	//		msg += format("(%016llx)", _rtpHeader._timestamp);
-	//		FINEST(STR(msg));
-	//	}
 #endif
 
 	//5. Feed the data to the stream
 	if (_pInStream != NULL) {
 		if (_isAudio) {
-			//FINEST("AUDIO: %08x", _rtpHeader._ssrc);
 			if (!_pInStream->FeedAudioData(pBuffer, length, _rtpHeader)) {
 				FATAL("Unable to stream data");
 				if (_pConnectivity != NULL) {
@@ -151,7 +132,6 @@ bool InboundRTPProtocol::SignalInputData(IOBuffer &buffer,
 				return false;
 			}
 		} else {
-			//FINEST("VIDEO: %08x", _rtpHeader._ssrc);
 			if (!_pInStream->FeedVideoData(pBuffer, length, _rtpHeader)) {
 				FATAL("Unable to stream data");
 				if (_pConnectivity != NULL) {
@@ -187,13 +167,10 @@ bool InboundRTPProtocol::SignalInputData(IOBuffer &buffer,
 }
 
 uint32_t InboundRTPProtocol::GetSSRC() {
-	//FINEST("_rtpHeader._ssrc: %08x", _rtpHeader._ssrc);
 	return _rtpHeader._ssrc;
 }
 
 uint32_t InboundRTPProtocol::GetExtendedSeq() {
-	//	FINEST("_seqRollOver: %04x", _seqRollOver);
-	//	FINEST("_lastSeq: %04x", _lastSeq);
 	return (((uint32_t) _seqRollOver) << 16) | _lastSeq;
 }
 

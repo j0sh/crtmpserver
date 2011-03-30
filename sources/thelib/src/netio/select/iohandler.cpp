@@ -34,7 +34,6 @@ IOHandler::IOHandler(int32_t inboundFd, int32_t outboundFd, IOHandlerType type) 
 }
 
 IOHandler::~IOHandler() {
-	//FINEST("IOHandler %p is in destructor", this);
 	if (_pProtocol != NULL) {
 		_pProtocol->SetIOHandler(NULL);
 		_pProtocol->EnqueueForDelete();

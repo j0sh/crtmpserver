@@ -53,15 +53,8 @@ TCPCarrier::TCPCarrier(int32_t fd)
 	memset(&_nearAddress, 0, sizeof (sockaddr_in));
 	_nearIp = "";
 	_nearPort = 0;
-	//socklen_t sz = sizeof (int);
 	_sendBufferSize = 1024;
-	//	if (getsockopt(fd, SOL_SOCKET, SO_SNDBUF, &_sendBufferSize, &sz) != 0) {
-	//		ASSERT("Unable to determine the send buffer size");
-	//	}
 	_recvBufferSize = 1024 * 256;
-	//	if (getsockopt(fd, SOL_SOCKET, SO_RCVBUF, &_recvBufferSize, &sz) != 0) {
-	//		ASSERT("Unable to determine the recv buffer size");
-	//	}
 	GetEndpointsInfo();
 	_rx = 0;
 	_tx = 0;
@@ -72,7 +65,6 @@ TCPCarrier::~TCPCarrier() {
 }
 
 bool TCPCarrier::OnEvent(struct epoll_event &event) {
-	//FINEST("Event: %d", event.events);
 	int32_t readAmount = 0;
 	int32_t writeAmount = 0;
 
@@ -87,7 +79,6 @@ bool TCPCarrier::OnEvent(struct epoll_event &event) {
 			return false;
 		}
 		_rx += readAmount;
-		//FINEST("recvBytes: %d; _totalRecveivedBytes: %d", recvBytes, _totalRecveivedBytes);
 		if (readAmount == 0) {
 			FATAL("Connection closed");
 			return false;
@@ -204,7 +195,6 @@ bool TCPCarrier::GetEndpointsInfo() {
 	}
 	_nearIp = format("%s", inet_ntoa(((sockaddr_in *) & _nearAddress)->sin_addr));
 	_nearPort = ENTOHS(((sockaddr_in *) & _nearAddress)->sin_port); //----MARKED-SHORT----
-	//FINEST("_nearAddress: %s; _nearPort: %d", STR(_nearAddress), _nearPort);
 	return true;
 }
 

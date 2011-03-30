@@ -38,7 +38,6 @@ bool AtomSTSS::ReadData() {
 		FATAL("Unable to read count");
 		return false;
 	}
-	//FINEST("count: %u", count);
 
 	for (uint32_t i = 0; i < count; i++) {
 		uint32_t sampleNumber;
@@ -46,7 +45,6 @@ bool AtomSTSS::ReadData() {
 			FATAL("Unable to read sample number");
 			return false;
 		}
-		//FINEST("sampleNumber[%u]: %u", i, sampleNumber);
 
 		ADD_VECTOR_END(_entries, sampleNumber);
 	}

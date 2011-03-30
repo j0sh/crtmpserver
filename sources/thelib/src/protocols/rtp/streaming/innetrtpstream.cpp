@@ -109,7 +109,6 @@ void InNetRTPStream::SignalOutStreamAttached(BaseOutStream *pOutStream) {
 }
 
 void InNetRTPStream::SignalOutStreamDetached(BaseOutStream *pOutStream) {
-	//NYIA;
 }
 
 bool InNetRTPStream::SignalPlay(double &absoluteTimestamp, double &length) {
@@ -146,7 +145,6 @@ bool InNetRTPStream::FeedData(uint8_t *pData, uint32_t dataLength,
 		double &ntp = isAudio ? _audioNTP : _videoNTP;
 		double &rtp = isAudio ? _audioRTP : _videoRTP;
 		absoluteTimestamp = ntp + absoluteTimestamp - rtp;
-		//FINEST("%c %.2f", isAudio ? 'A' : 'V', absoluteTimestamp);
 	}
 
 	double &lastTs = isAudio ? _lastAudioTs : _lastVideoTs;
@@ -228,12 +226,9 @@ bool InNetRTPStream::FeedVideoData(uint8_t *pData, uint32_t dataLength,
 	uint8_t naluType = NALU_TYPE(pData[0]);
 	if (naluType <= 23) {
 		//3. Standard NALU
-		//FINEST("Standard NALU");
 		return FeedData(pData, dataLength, 0, dataLength, ts, false);
 	} else if (naluType == NALU_TYPE_FUA) {
 		if (GETAVAILABLEBYTESCOUNT(_currentNalu) == 0) {
-			//			FINEST("--------------");
-			//			FINEST("First NALU_TYPE_FUA");
 			_currentNalu.IgnoreAll();
 			//start NAL
 			if ((pData[1] >> 7) == 0) {
@@ -244,20 +239,11 @@ bool InNetRTPStream::FeedVideoData(uint8_t *pData, uint32_t dataLength,
 			}
 			pData[1] = (pData[0]&0xe0) | (pData[1]&0x1f);
 			_currentNalu.ReadFromBuffer(pData + 1, dataLength - 1);
-			//			FINEST("NALU_TYPE_FUA: %s; s: %d",
-			//					STR(NALUToString(pData[1])),
-			//					GETAVAILABLEBYTESCOUNT(_currentNalu));
 			return true;
 		} else {
 			//middle NAL
 			_currentNalu.ReadFromBuffer(pData + 2, dataLength - 2);
-			//			FINEST("MIDDLE NALU_TYPE_FUA: end: %d; s: %d",
-			//					((pData[1] >> 6)&0x01),
-			//					GETAVAILABLEBYTESCOUNT(_currentNalu));
 			if (((pData[1] >> 6)&0x01) == 1) {
-				//				FINEST("NALU_TYPE_FUA feed; s: %d",
-				//						GETAVAILABLEBYTESCOUNT(_currentNalu));
-				//				FINEST("--------------");
 				_videoPacketsCount++;
 				_videoBytesCount += GETAVAILABLEBYTESCOUNT(_currentNalu);
 				if (!FeedData(GETIBPOINTER(_currentNalu),
@@ -274,7 +260,6 @@ bool InNetRTPStream::FeedVideoData(uint8_t *pData, uint32_t dataLength,
 		}
 	} else if (naluType == NALU_TYPE_STAPA) {
 		uint32_t index = 1;
-		//FINEST("ts: %.2f; delta: %.2f", ts, ts - _lastTs);
 		while (index + 3 < dataLength) {
 			uint16_t length = ENTOHSP(pData + index);
 			index += 2;
@@ -337,11 +322,6 @@ bool InNetRTPStream::FeedAudioData(uint8_t *pData, uint32_t dataLength,
 
 	//3. Feed the buffer chunk by chunk
 	uint32_t cursor = 2 + 2 * chunksCount;
-	//	string msg = "";
-	//	for (uint32_t i = 0; i < cursor; i++) {
-	//		msg += format("%02x ", pData[i]);
-	//	}
-	//	FINEST("%s", STR(msg));
 	uint16_t chunkSize = 0;
 	double ts = 0;
 	for (uint32_t i = 0; i < chunksCount; i++) {
@@ -350,9 +330,6 @@ bool InNetRTPStream::FeedAudioData(uint8_t *pData, uint32_t dataLength,
 		} else {
 			chunkSize = (uint16_t) (dataLength - cursor);
 		}
-		//		FINEST("chunkSize: %d; dataLength: %d; diff: %d", chunkSize, dataLength,
-		//				dataLength - chunkSize);
-		//FINEST("rtpHeader._timestamp: %llu", rtpHeader._timestamp);
 		ts = (double) (rtpHeader._timestamp + i * 1024) / (double) _capabilities.aac._sampleRate * 1000.00;
 		if ((cursor + chunkSize) > dataLength) {
 			FATAL("Unable to feed data: cursor: %d; chunkSize: %d; dataLength: %d; chunksCount: %d",
@@ -391,11 +368,9 @@ void InNetRTPStream::ReportSR(uint64_t ntpMicroseconds, uint32_t rtpTimestamp,
 	if (isAudio) {
 		_audioNTP = (double) ntpMicroseconds / 1000.0;
 		_audioRTP = (double) rtpTimestamp / (double) _capabilities.aac._sampleRate * 1000.0;
-		//WARN("Audio resync");
 	} else {
 		_videoNTP = (double) ntpMicroseconds / 1000.0;
 		_videoRTP = (double) rtpTimestamp / (double) _capabilities.avc._rate * 1000.0;
-		//WARN("Video resync");
 	}
 }
 

@@ -220,11 +220,9 @@ uint32_t IOHandlerManager::DeleteDeadHandlers() {
 	uint32_t result = 0;
 	while (_deadIOHandlers.size() > 0) {
 		IOHandler *pIOHandler = MAP_VAL(_deadIOHandlers.begin());
-		//FINEST("Delete IOH %p", pIOHandler);
 		_deadIOHandlers.erase(pIOHandler->GetId());
 		delete pIOHandler;
 		result++;
-		//FINEST("Done delete IOH %p", pIOHandler);
 	}
 	return result;
 }
@@ -283,10 +281,8 @@ void IOHandlerManager::SetupToken(IOHandler *pIOHandler) {
 	IOHandlerManagerToken *pResult = NULL;
 	if (_pAvailableTokens->size() == 0) {
 		pResult = new IOHandlerManagerToken();
-		//WARN("Token created: %p", pResult);
 	} else {
 		pResult = (*_pAvailableTokens)[0];
-		//WARN("Token %p served from %p", pResult, _pAvailableTokens);
 		_pAvailableTokens->erase(_pAvailableTokens->begin());
 	}
 	pResult->pPayload = pIOHandler;
@@ -296,7 +292,6 @@ void IOHandlerManager::SetupToken(IOHandler *pIOHandler) {
 
 void IOHandlerManager::FreeToken(IOHandler *pIOHandler) {
 	IOHandlerManagerToken *pToken = pIOHandler->GetIOHandlerManagerToken();
-	//FATAL("Token %p returned to %p", pToken, _pRecycledTokens);
 	pIOHandler->SetIOHandlerManagerToken(NULL);
 	pToken->pPayload = NULL;
 	pToken->validPayload = false;

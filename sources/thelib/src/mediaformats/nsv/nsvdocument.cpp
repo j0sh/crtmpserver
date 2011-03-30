@@ -73,7 +73,6 @@ bool NSVDocument::BuildFrames() {
 		}
 
 		if (marker_frame == 0x4e53) {
-			//FINEST("we got NS");
 			if (!_mediaFile.PeekUI16(&marker_frame)) {
 				FATAL("Unable to peek byte");
 				return false;
@@ -86,7 +85,6 @@ bool NSVDocument::BuildFrames() {
 				}
 				continue;
 			}
-			//FINEST("we got Vs");
 			if (!_mediaFile.SeekAhead(2)) {
 				FATAL("Unable to seek ahead ");
 				return false;
@@ -99,17 +97,9 @@ bool NSVDocument::BuildFrames() {
 		ReadPayLoadData();
 	}
 
-	//    for (uint32_t i = 0; i < 50; i++) {
-	//        FINEST("Before:%s", STR(_frames[i]));
-	//    }
 	sort(_frames.begin(), _frames.end(), CompareFrames);
-	//    for (uint32_t i = 0; i < _frames.size(); i++) {
-	//        FINEST("After:%s", STR(_frames[i]));
-	//    }
-	//    NYIR;
 
 	//15. Add the binary headers
-	//FINEST("binary headers size : %d", binaryHeaders.size());
 	for (uint32_t i = 0; i < binaryHeaders.size(); i++) {
 		assert(binaryHeaders[i].absoluteTime == 0);
 		ADD_VECTOR_BEGIN(_frames, binaryHeaders[i]);
@@ -121,10 +111,8 @@ bool NSVDocument::BuildFrames() {
 }
 
 bool NSVDocument::ParseNSVs() {
-	//FINEST("we got Vs reading header...");
 	//6. get video format
 	uint32_t vidfmt = 0;
-	//FINEST(" reading video format");
 	if (!_mediaFile.ReadUI32(&vidfmt)) {
 		FATAL("Unable to read video format ");
 		return false;
@@ -137,7 +125,6 @@ bool NSVDocument::ParseNSVs() {
 
 	//7. get audio format
 	uint32_t audfmt = 0;
-	//FINEST(" reading audio format");
 	if (!_mediaFile.ReadUI32(&audfmt)) {
 		FATAL("Unable to read audio format ");
 		return false;
@@ -150,42 +137,33 @@ bool NSVDocument::ParseNSVs() {
 
 	//8. get video width
 	uint16_t vid_width = 0;
-	//FINEST(" reading video width ");
 	if (!_mediaFile.ReadUI16(&vid_width, false)) {
 		FATAL("Unable to read video width ");
 		return false;
 	}
-	// FINEST("vid width : %d ", vid_width);
 
 	//9  get video height
 	uint16_t vid_height = 0;
-	//FINEST(" reading video height ");
 	if (!_mediaFile.ReadUI16(&vid_height, false)) {
 		FATAL("Unable to read video height ");
 		return false;
 	}
-	// FINEST("vid height : %d ", vid_height);
 
 	// get framerate_idx and check from
 	// frame rate table
 	uint8_t framerate_idx = 0;
-	//FINEST(" reading frame rate index ");
 	if (!_mediaFile.ReadUI8(&framerate_idx)) {
 		FATAL("Unable to read framerate idx ");
 		return false;
 	}
-	//FINEST(" video framerate idx : %d ", framerate_idx);
 	_framerate = GetFrameRate(framerate_idx);
-	//FINEST("framerate: %d", _framerate);
 
 	//10 get syncoffs
 	uint16_t syncoffs = 0;
-	//FINEST(" reading frame syncoffs ");
 	if (!_mediaFile.ReadUI16(&syncoffs, false)) {
 		FATAL("Unable to read syncoffs ");
 		return false;
 	}
-	// FINEST(" syncoffs : %d ", syncoffs);
 
 	return true;
 }
@@ -197,7 +175,6 @@ Variant NSVDocument::GetRTMPMeta() {
 bool NSVDocument::ReadPayLoadData() {
 
 	//13. get the aux plus video len
-	//FINEST("reading payload data at offset %llx", _mediaFile.Cursor());
 	if (!_mediaFile.ReadUI24(&aux_plus_vidlen, false)) {
 		FATAL("Unable to read aux_plus vid len data chuncks ");
 		return false;
@@ -205,7 +182,6 @@ bool NSVDocument::ReadPayLoadData() {
 
 	num_aux = aux_plus_vidlen & 0x0f;
 	aux_plus_vidlen = aux_plus_vidlen >> 4;
-	//FINEST("num_aux: %d; aux_plus_vidlen: %d ", num_aux, aux_plus_vidlen);
 
 	//14. audio len
 	if (!_mediaFile.ReadUI16(&audio_len, false)) {
@@ -215,14 +191,10 @@ bool NSVDocument::ReadPayLoadData() {
 
 	uint32_t auxLength = 0;
 	if (num_aux > 0) {
-		//        Variant Aux;
-		//        uint16_t aux_chunk_len;
-		//        if (!_mediaFile.)
 		NYIA;
 	}
 
 	if (aux_plus_vidlen > 0) {
-		// FINEST("video data offset %llx", _mediaFile.Cursor());
 		MediaFrame video_frame = {0};
 		video_frame.type = MEDIAFRAME_TYPE_VIDEO;
 		if (aux_plus_vidlen > 5) {
@@ -316,7 +288,6 @@ bool NSVDocument::IsValidAudioType(uint32_t audfmt) {
 }
 
 void NSVDocument::GetAudioFrame() {
-	//FINEST("====================");
 
 	uint8_t firstBytes[4];
 	//1. Read the first 4 bytes
@@ -346,9 +317,6 @@ void NSVDocument::GetAudioFrame() {
 	_buffer.ReadFromFs(_mediaFile, audio_len);
 	uint8_t *pBuffer = GETIBPOINTER(_buffer);
 	uint32_t length = GETAVAILABLEBYTESCOUNT(_buffer);
-	//    FINEST("audio data offset %x", audio_frame.start);
-	//    FINEST("Audio len:%d ", audio_len);
-	//    FINEST("Audio len:%d ", length);
 	while (length != 0) {
 		MP3Media mp3;
 		mp3.GetAudioFrames(pBuffer, _audioSamplesCount, audio_frame);
@@ -383,19 +351,16 @@ void NSVDocument::ComputeMediaFrames(uint64_t currentCursor) {
 				case NALU_TYPE_SPS:
 					video_frame.isBinaryHeader = true;
 					video_frame.isKeyFrame = false;
-					//FINEST("GOT SPS video data offset %x, len:%d", video_frame.start, video_frame.length);
 					break;
 
 				case NALU_TYPE_PPS:
 					video_frame.isBinaryHeader = true;
 					video_frame.isKeyFrame = false;
-					//FINEST("GOT PPS video data offset %x, len:%d", video_frame.start, video_frame.length);
 					break;
 
 				case NALU_TYPE_IDR:
 					video_frame.isBinaryHeader = false;
 					video_frame.isKeyFrame = true;
-					//FINEST("GOT IDR video data offset %x, len: %d", video_frame.start, video_frame.length);
 					break;
 			}
 			if (video_frame.isBinaryHeader) {
@@ -417,7 +382,6 @@ int NSVDocument::find_nal_unit(uint8_t* buf, uint32_t size, int* nal_start, int*
 	*nal_start = 0;
 	*nal_end = 0;
 
-	//i = 0;
 	while (//( next_bits( 24 ) != 0x000001 && next_bits( 32 ) != 0x00000001 )
 			(buf[i] != 0 || buf[i + 1] != 0 || buf[i + 2] != 0x01) &&
 			(buf[i] != 0 || buf[i + 1] != 0 || buf[i + 2] != 0 || buf[i + 3] != 0x01)

@@ -57,15 +57,12 @@ bool RTMPEProtocol::SignalInputData(int32_t recvAmount) {
 }
 
 bool RTMPEProtocol::SignalInputData(IOBuffer &buffer) {
-	//FINEST("Encoded:\n%s", STR(*pInputBuffer));
 	RC4(_pKeyIn, GETAVAILABLEBYTESCOUNT(buffer),
 			GETIBPOINTER(buffer),
 			GETIBPOINTER(buffer));
-	//FINEST("pInputBuffer:\n%s", STR(*pInputBuffer));
 
 	_inputBuffer.ReadFromBuffer(GETIBPOINTER(buffer),
 			GETAVAILABLEBYTESCOUNT(buffer));
-	//FINEST("Decoded:\n%s", STR(_inputBuffer));
 	buffer.IgnoreAll();
 
 	if (_pNearProtocol != NULL)
@@ -80,24 +77,10 @@ bool RTMPEProtocol::EnqueueForOutbound() {
 	if (pOutputBuffer == NULL)
 		return true;
 
-	//    FINEST("Before encrypt data:\n%s", STR(*pOutputBuffer));
-	//    InputBuffer tempBuffer;
-	//    tempBuffer.Put(_pKeyOut->data, 16);
-	//    FINEST("Before encrypt key: x: %d; y: %d\n%s",
-	//            _pKeyOut->x,
-	//            _pKeyOut->y,
-	//            STR(tempBuffer));
 	RC4(_pKeyOut, GETAVAILABLEBYTESCOUNT(*pOutputBuffer) - _skipBytes,
 			GETIBPOINTER(*pOutputBuffer) + _skipBytes,
 			GETIBPOINTER(*pOutputBuffer) + _skipBytes);
 	_skipBytes = 0;
-	//    FINEST("After encrypt data:\n%s", STR(*pOutputBuffer));
-	//    tempBuffer.Ignore(16);
-	//    tempBuffer.Put(_pKeyOut->data, 16);
-	//    FINEST("After encrypt key: x: %d; y: %d\n%s",
-	//            _pKeyOut->x,
-	//            _pKeyOut->y,
-	//            STR(tempBuffer));
 
 	_outputBuffer.ReadFromInputBuffer(pOutputBuffer, 0, GETAVAILABLEBYTESCOUNT(*pOutputBuffer));
 	pOutputBuffer->Ignore(GETAVAILABLEBYTESCOUNT(*pOutputBuffer));

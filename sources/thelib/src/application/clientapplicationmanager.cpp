@@ -65,8 +65,6 @@ bool ClientApplicationManager::RegisterApplication(BaseClientApplication* pClien
 
 	if (pClientApplication->IsDefault())
 		_pDefaultApplication = pClientApplication;
-	//    FINEST("Application `%s` (%d) registered", STR(pClientApplication->GetName()),
-	//            pClientApplication->GetId());
 	return true;
 }
 

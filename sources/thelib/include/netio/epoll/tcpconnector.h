@@ -49,10 +49,8 @@ public:
 	}
 
 	virtual ~TCPConnector() {
-		//FINEST("Close socket: %d", _closeSocket);
 		if (_closeSocket) {
 			close(_inboundFd);
-			//FINEST("Socket closed!");
 		}
 	}
 

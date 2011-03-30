@@ -62,7 +62,6 @@ bool AtomSTSC::ReadData() {
 		FATAL("Unable to read count");
 		return false;
 	}
-	//FINEST("count: %u", count);
 
 	if (count == 0)
 		return true;
@@ -74,19 +73,16 @@ bool AtomSTSC::ReadData() {
 			FATAL("Unable to read first chunk");
 			return false;
 		}
-		//FINEST("entry.firstChunk: %u", entry.firstChunk);
 
 		if (!ReadUInt32(entry.samplesPerChunk)) {
 			FATAL("Unable to read first samples per chunk");
 			return false;
 		}
-		//FINEST("entry.samplesPerChunk: %u", entry.samplesPerChunk);
 
 		if (!ReadUInt32(entry.sampleDescriptionIndex)) {
 			FATAL("Unable to read first sample description index");
 			return false;
 		}
-		//FINEST("entry.sampleDescriptionIndex: %u", entry.sampleDescriptionIndex);
 
 		ADD_VECTOR_END(_stscEntries, entry);
 	}

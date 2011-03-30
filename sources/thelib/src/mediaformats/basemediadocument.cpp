@@ -169,15 +169,12 @@ bool BaseMediaDocument::SaveSeekFile() {
 
 	if (framesCount >= 1) {
 		totalTime = _frames[framesCount - 1].absoluteTime;
-		//FINEST("totalTime: %f", totalTime);
 
 		//5. build the table
 		uint32_t frameIndex = 0;
 		uint32_t seekPoint = 0;
 		for (double i = 0; i <= totalTime; i += _seekGranularity) {
-			//FINEST("i: %.2f; frameIndex: %d", i, frameIndex);
 			while (_frames[frameIndex].absoluteTime < i) {
-				//FINEST("frame: %.2f", _frames[frameIndex].absoluteTime);
 				frameIndex++;
 				if (frameIndex >= framesCount)
 					break;
@@ -185,7 +182,6 @@ bool BaseMediaDocument::SaveSeekFile() {
 				if (_keyframeSeek) {
 					if ((_frames[frameIndex].type == MEDIAFRAME_TYPE_VIDEO)
 							&& (_frames[frameIndex].isKeyFrame)) {
-						//WARN("Seek point");
 						seekPoint = frameIndex;
 					}
 				} else {
@@ -194,7 +190,6 @@ bool BaseMediaDocument::SaveSeekFile() {
 			}
 			if (frameIndex >= framesCount)
 				break;
-			//FINEST("%.2f -> %.2f", i, _frames[frameIndex].absoluteTime);
 			if (!seekFile.WriteUI32(seekPoint, false)) {
 				FATAL("Unable to write frame index");
 				return false;
@@ -227,6 +222,5 @@ bool BaseMediaDocument::SaveMetaFile() {
 	_metadata[META_RTMP_META] = GetRTMPMeta();
 	_metadata[META_RTMP_META]["duration"] = (double) _metadata[META_FILE_DURATION] / 1000.00;
 
-	//FINEST("metadata:\n%s", STR(metadata.ToString()));
 	return _metadata.SerializeToBinFile(_metaFilePath + ".tmp");
 }

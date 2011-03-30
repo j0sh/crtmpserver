@@ -81,7 +81,6 @@ bool InboundLiveFLVProtocol::SignalInputData(IOBuffer &buffer) {
 		//2. ignore the first 13 bytes of header
 		if (!_headerParsed) {
 			if (GETAVAILABLEBYTESCOUNT(buffer) < 13) {
-				//FINEST("Not enough data");
 				break;
 			}
 			buffer.Ignore(13);
@@ -90,7 +89,6 @@ bool InboundLiveFLVProtocol::SignalInputData(IOBuffer &buffer) {
 
 		//3. Read the frame header
 		if (GETAVAILABLEBYTESCOUNT(buffer) < 11) {
-			//FINEST("Not enough data");
 			break;
 		}
 
@@ -105,12 +103,9 @@ bool InboundLiveFLVProtocol::SignalInputData(IOBuffer &buffer) {
 			return false;
 		}
 		timestamp = ENTOHAP((GETIBPOINTER(buffer) + 4)); //----MARKED-LONG---
-		//        FINEST("type: %d; length: %d(0x%x); timestamp: %d(0x%x)", type, length,
-		//                length, timestamp, timestamp);
 
 		//5. Do we have enough data? 15 bytes are the lead header and the trail length (11+4)
 		if (GETAVAILABLEBYTESCOUNT(buffer) < length + 15) {
-			//FINEST("Not enough data");
 			return true;
 		}
 

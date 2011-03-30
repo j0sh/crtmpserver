@@ -53,11 +53,9 @@ BaseVariantAppProtocolHandler::~BaseVariantAppProtocolHandler() {
 }
 
 void BaseVariantAppProtocolHandler::RegisterProtocol(BaseProtocol *pProtocol) {
-	//FINEST("BaseVariantAppProtocolHandler::RegisterProtocol");
 }
 
 void BaseVariantAppProtocolHandler::UnRegisterProtocol(BaseProtocol *pProtocol) {
-	//FINEST("BaseVariantAppProtocolHandler::UnRegisterProtocol");
 }
 
 bool BaseVariantAppProtocolHandler::Send(string ip, uint16_t port, Variant &variant, bool xml) {
@@ -72,7 +70,6 @@ bool BaseVariantAppProtocolHandler::Send(string url, Variant &variant, bool xml)
 		return false;
 	}
 	parameters["payload"] = variant;
-	//FINEST("parameters:\n%s", STR(parameters.ToString()));
 
 	//2. Start the HTTP request
 	if (!TCPConnector<BaseVariantAppProtocolHandler>::Connect(parameters["ip"],

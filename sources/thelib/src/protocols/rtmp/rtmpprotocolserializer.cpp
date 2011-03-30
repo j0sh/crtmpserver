@@ -149,7 +149,6 @@ bool RTMPProtocolSerializer::Deserialize(Header &header, IOBuffer &buffer,
 
 bool RTMPProtocolSerializer::Serialize(Channel &channel,
 		Variant &message, IOBuffer &buffer, uint32_t chunkSize) {
-	//FINEST("message:\n%s", STR(message.ToString()));
 	bool result = false;
 	_internalBuffer.Ignore(GETAVAILABLEBYTESCOUNT(_internalBuffer));
 
@@ -251,7 +250,6 @@ bool RTMPProtocolSerializer::Serialize(Channel &channel,
 
 bool RTMPProtocolSerializer::SerializeInvoke(IOBuffer &buffer,
 		Variant &message) {
-	//FINEST("About to serialize invoke: %s", STR(message.ToString()));
 
 	string functionName = message[RM_INVOKE_FUNCTION];
 	if (!_amf0.WriteShortString(buffer, functionName)) {
@@ -309,8 +307,6 @@ bool RTMPProtocolSerializer::SerializeAck(IOBuffer &buffer, uint32_t value) {
 }
 
 bool RTMPProtocolSerializer::SerializeUsrCtrl(IOBuffer &buffer, Variant message) {
-	//    FINEST("message:\n%s", STR(message.ToString()));
-
 	if (!_amf0.WriteInt16(buffer, message[RM_USRCTRL_TYPE], false)) {
 		FATAL("Unable to write user control message type value");
 		return false;
@@ -357,7 +353,6 @@ bool RTMPProtocolSerializer::SerializeWinAckSize(IOBuffer &buffer, uint32_t valu
 		FATAL("Unable to write int32_t value: %d", value);
 		return false;
 	}
-	//FINEST("SerializeServerBW Buffer:\n%s", STR(buffer));
 	return true;
 }
 
@@ -366,7 +361,6 @@ bool RTMPProtocolSerializer::SerializeAbortMessage(IOBuffer &buffer, uint32_t va
 		FATAL("Unable to write int32_t value: %d", value);
 		return false;
 	}
-	//FINEST("SerializeAbortMessage Buffer:\n%s", STR(buffer));
 	return true;
 }
 
@@ -381,7 +375,6 @@ bool RTMPProtocolSerializer::SerializeClientBW(IOBuffer &buffer, Variant value) 
 				(uint8_t) value[RM_PEERBW_TYPE]);
 		return false;
 	}
-	//FINEST("SerializeClientBW Buffer:\n%s", STR(buffer));
 	return true;
 }
 
@@ -418,7 +411,6 @@ bool RTMPProtocolSerializer::SerializeSharedObject(IOBuffer &buffer,
 	for (uint32_t i = 0; i < message[RM_SHAREDOBJECT_PRIMITIVES].MapSize(); i++) {
 
 		Variant primitive = message[RM_SHAREDOBJECT_PRIMITIVES][i];
-		//FINEST("Primitive:\n%s", STR(primitive.ToString()));
 
 		//type
 		if (!_amf0.WriteUInt8(buffer, primitive[RM_SHAREDOBJECTPRIMITIVE_TYPE],
@@ -501,7 +493,6 @@ bool RTMPProtocolSerializer::SerializeSharedObject(IOBuffer &buffer,
 		}
 	}
 
-	//FINEST("Buffer:\n%s", STR(buffer));
 	return true;
 }
 
@@ -539,7 +530,6 @@ bool RTMPProtocolSerializer::DeserializeFlexStreamSend(IOBuffer &buffer, Variant
 }
 
 bool RTMPProtocolSerializer::DeserializeInvoke(IOBuffer &buffer, Variant &message) {
-	//FINEST("input:\n%s", STR(message.ToString()));
 	if (message[RM_INVOKE_IS_FLEX]) {
 		if (!buffer.Ignore(1)) {
 			FATAL("Unable to ignore 1 byte");
@@ -570,7 +560,6 @@ bool RTMPProtocolSerializer::DeserializeInvoke(IOBuffer &buffer, Variant &messag
 bool RTMPProtocolSerializer::DeserializeAck(IOBuffer &buffer,
 		Variant &message) {
 	message = (uint32_t) ENTOHLP(GETIBPOINTER(buffer)); //----MARKED-LONG---
-	//FINEST("BR:\n%s", STR(message.ToString()));
 	return buffer.Ignore(4);
 }
 
@@ -607,7 +596,6 @@ bool RTMPProtocolSerializer::DeserializeUsrCtrl(IOBuffer &buffer, Variant &messa
 				FATAL("Unable to ignore 4 bytes");
 				return false;
 			}
-			//FINEST("message:\n%s", STR(message.ToString()));
 			return true;
 		}
 		case RM_USRCTRL_TYPE_PING_REQUEST:
@@ -617,7 +605,6 @@ bool RTMPProtocolSerializer::DeserializeUsrCtrl(IOBuffer &buffer, Variant &messa
 				FATAL("Unable to ignore 4 bytes");
 				return false;
 			}
-			//FINEST("message:\n%s", STR(message.ToString()));
 			return true;
 		}
 		case RM_USRCTRL_TYPE_PING_RESPONSE:
@@ -651,7 +638,6 @@ bool RTMPProtocolSerializer::DeserializeUsrCtrl(IOBuffer &buffer, Variant &messa
 bool RTMPProtocolSerializer::DeserializeChunkSize(IOBuffer &buffer,
 		Variant &message) {
 	message = (uint32_t) ENTOHLP(GETIBPOINTER(buffer)); //----MARKED-LONG---
-	//FINEST("CS:\n%s", STR(message.ToString()));
 	return buffer.Ignore(4);
 }
 
@@ -750,7 +736,6 @@ bool RTMPProtocolSerializer::DeserializeSharedObject(IOBuffer &buffer, Variant &
 		switch ((uint8_t) primitive[RM_SHAREDOBJECTPRIMITIVE_TYPE]) {
 			case SOT_CS_CONNECT:
 			{
-				//FINEST("rawLength: %d", rawLength);
 				break;
 			}
 			case SOT_CS_DISCONNECT:
@@ -772,8 +757,6 @@ bool RTMPProtocolSerializer::DeserializeSharedObject(IOBuffer &buffer, Variant &
 					}
 					afterRead = GETAVAILABLEBYTESCOUNT(buffer);
 					read += beforeRead - afterRead;
-					//                    FINEST("beforeRead: %d; afterRead: %d; read: %d; rawLength: %d",
-					//                            beforeRead, afterRead, read, rawLength);
 
 					beforeRead = GETAVAILABLEBYTESCOUNT(buffer);
 					if (!_amf0.Read(buffer, value)) {
@@ -782,8 +765,6 @@ bool RTMPProtocolSerializer::DeserializeSharedObject(IOBuffer &buffer, Variant &
 					}
 					afterRead = GETAVAILABLEBYTESCOUNT(buffer);
 					read += beforeRead - afterRead;
-					//                    FINEST("beforeRead: %d; afterRead: %d; read: %d; rawLength: %d",
-					//                            beforeRead, afterRead, read, rawLength);
 					primitive[RM_SHAREDOBJECTPRIMITIVE_PAYLOAD][STR(key)] = value;
 				}
 				if (read != rawLength) {
@@ -844,107 +825,7 @@ bool RTMPProtocolSerializer::DeserializeSharedObject(IOBuffer &buffer, Variant &
 		primitiveIndex++;
 	}
 
-	//FINEST("messaage:\n%s", STR(message.ToString()));
 	return true;
-	//
-	//    //name
-	//    if (!_amf0.ReadShortString(buffer, message[RM_SHAREDOBJECT_NAME], false)) {
-	//        FATAL("Unable to read %s", STR(RM_SHAREDOBJECT_NAME));
-	//        return false;
-	//    }
-	//
-	//    //version
-	//    if (!_amf0.ReadUInt32(buffer, message[RM_SHAREDOBJECT_VERSION], false)) {
-	//        FATAL("Unable to read %s", STR(RM_SHAREDOBJECT_VERSION));
-	//        return false;
-	//    }
-	//
-	//    //persistance
-	//    Variant persistence;
-	//    if (!_amf0.ReadUInt32(buffer, persistence, false)) {
-	//        FATAL("Unable to read %s", STR(RM_SHAREDOBJECT_PERSISTENCE));
-	//        return false;
-	//    }
-	//    message[RM_SHAREDOBJECT_PERSISTENCE] = (uint32_t) persistence == 2;
-	//
-	//    //unknown bytes
-	//    if (!buffer.Ignore(4)) {
-	//        FATAL("Unable to ignore 4 bytes");
-	//        return false;
-	//    }
-	//
-	//
-	//    //read primitives
-	//    uint32_t primitiveIndex = 0;
-	//
-	//    while (GETAVAILABLEBYTESCOUNT(buffer) > 0) {
-	//        Variant primitive;
-	//
-	//        //type
-	//        if (!_amf0.ReadUInt8(buffer, primitive[RM_SHAREDOBJECTPRIMITIVE_TYPE], false)) {
-	//            FATAL("Unable to read %s", STR(RM_SHAREDOBJECTPRIMITIVE_TYPE));
-	//            return false;
-	//        }
-	//
-	//        //raw length
-	//        if (!_amf0.ReadUInt32(buffer, primitive[RM_SHAREDOBJECTPRIMITIVE_RAWLENGTH], false)) {
-	//            FATAL("Unable to read %s", STR(RM_SHAREDOBJECTPRIMITIVE_RAWLENGTH));
-	//            return false;
-	//        }
-	//        uint32_t rawLength = primitive[RM_SHAREDOBJECTPRIMITIVE_RAWLENGTH];
-	//
-	//        uint8_t primitiveType = primitive[RM_SHAREDOBJECTPRIMITIVE_TYPE];
-	//        switch (primitiveType) {
-	//            case SOT_SERVER_CONNECT:
-	//            {
-	//                break;
-	//            }
-	//            case SOT_SERVER_SET_ATTRIBUTE:
-	//            {
-	//                uint32_t limit = GETAVAILABLEBYTESCOUNT(buffer) - rawLength;
-	//                while (limit < GETAVAILABLEBYTESCOUNT(buffer)) {
-	//                    Variant key;
-	//                    Variant value;
-	//                    if (!_amf0.ReadShortString(buffer, key, false)) {
-	//                        FATAL("Unable to read key");
-	//                        return false;
-	//                    }
-	//                    if (!_amf0.Read(buffer, value)) {
-	//                        FATAL("Unable to read value");
-	//                        return false;
-	//                    }
-	//                    primitive[RM_SHAREDOBJECTPRIMITIVE_PAYLOAD][STR(key)] = value;
-	//                }
-	//                break;
-	//            }
-	//            case SOT_SERVER_DELETE_ATTRIBUTE:
-	//            {
-	//                uint32_t limit = GETAVAILABLEBYTESCOUNT(buffer) - rawLength;
-	//                while (limit < GETAVAILABLEBYTESCOUNT(buffer)) {
-	//                    Variant key;
-	//                    if (!_amf0.ReadShortString(buffer, key, false)) {
-	//                        FATAL("Unable to read key");
-	//                        return false;
-	//                    }
-	//                    primitive[RM_SHAREDOBJECTPRIMITIVE_PAYLOAD].PushToArray(key);
-	//                }
-	//                break;
-	//            }
-	//            default:
-	//            {
-	//                FATAL("Unknown SO primitive type: %d. Buffer:\n%s",
-	//                        primitiveType, STR(buffer));
-	//                return false;
-	//            }
-	//        }
-	//
-	//        message[RM_SHAREDOBJECT_PRIMITIVES][(uint32_t) primitiveIndex] = primitive;
-	//        primitiveIndex++;
-	//    }
-	//
-	//    //FINEST("Message:\n%s",STR(message.ToString()));
-	//
-	//    return true;
 }
 
 void RTMPProtocolSerializer::ChunkBuffer(IOBuffer &destination,
@@ -953,9 +834,6 @@ void RTMPProtocolSerializer::ChunkBuffer(IOBuffer &destination,
 	uint32_t chunksCount = length / chunkSize;
 	chunksCount += (length % chunkSize) == 0 ? 0 : 1;
 	uint32_t copySizeChunk = 0;
-
-	//DEBUG("length: %d, chunkSize: %d, chunksCount: %d, miniHeader: %02x",
-	//      length, chunkSize, chunksCount, miniHeader);
 
 	for (uint32_t i = 0; i < chunksCount - 1; i++) {
 		copySizeChunk = length > chunkSize ? chunkSize : length;

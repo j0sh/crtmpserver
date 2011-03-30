@@ -37,13 +37,11 @@ bool AtomSTSZ::ReadData() {
 		FATAL("Unable to read sample size");
 		return false;
 	}
-	//FINEST("_sampleSize: %u", _sampleSize);
 
 	if (!ReadUInt32(_sampleCount)) {
 		FATAL("Unable to read sample count");
 		return false;
 	}
-	//FINEST("_sampleCount: %u", _sampleCount);
 
 	if (_sampleSize != 0) {
 		for (uint32_t i = 0; i < _sampleCount; i++) {
@@ -57,7 +55,6 @@ bool AtomSTSZ::ReadData() {
 				FATAL("Unable to read size");
 				return false;
 			}
-			//FINEST("size[%u]: %u", i, size);
 			ADD_VECTOR_END(_entries, size);
 		}
 		return true;

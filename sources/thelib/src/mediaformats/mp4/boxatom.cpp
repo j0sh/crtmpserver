@@ -39,7 +39,6 @@ bool BoxAtom::Read() {
 			return false;
 		}
 		if (!pAtom->IsIgnored()) {
-			//FINEST("pAtom: %p (%s)", pAtom, STR(pAtom->GetTypeString()));
 			if (!AtomCreated(pAtom)) {
 				FATAL("Unable to signal AtomCreated for atom %s (%x)",
 						STR(GetTypeString()), _start);
@@ -48,14 +47,11 @@ bool BoxAtom::Read() {
 		}
 		ADD_VECTOR_END(_subAtoms, pAtom);
 	}
-	//    FINEST("Atom %s has %d subatoms", STR(GetTypeString())  ,
-	//            (uint32_t) _subAtoms.size());
 	return true;
 }
 
 string BoxAtom::Hierarchy(uint32_t indent) {
 	string result = string(indent * 4, ' ') + GetTypeString() + "\n";
-	//FINEST("%d %s", indent, STR(result));
 	if (_subAtoms.size() == 0) {
 		result += string((indent + 1) * 4, ' ') + "[empty]";
 		return result;
@@ -72,14 +68,11 @@ BaseAtom * BoxAtom::GetPath(uint8_t depth, ...) {
 	vector<uint32_t> path;
 	va_list arguments;
 	va_start(arguments, depth);
-	//string strPath = "";
 	for (uint8_t i = 0; i < depth; i++) {
 		uint32_t pathElement = va_arg(arguments, uint32_t);
-		//strPath += format("%s->", STR(U32TOS(pathElement)));
 		ADD_VECTOR_END(path, pathElement);
 	}
 	va_end(arguments);
-	//FINEST("Path: %s", STR(strPath));
 	if (path.size() == 0)
 		return NULL;
 	return GetPath(path);
@@ -92,11 +85,6 @@ BaseAtom * BoxAtom::GetPath(vector<uint32_t> path) {
 	uint32_t search = path[0];
 	path.erase(path.begin());
 	for (uint32_t i = 0; i < _subAtoms.size(); i++) {
-		//        FINEST("Wanted s: %s; Got s: %s; Wanted: %08x; Got: %08x",
-		//                STR(U32TOS(search)),
-		//                STR(_subAtoms[i]->GetTypeString()),
-		//                search,
-		//                _subAtoms[i]->GetTypeNumeric());
 		if (_subAtoms[i]->GetTypeNumeric() == search) {
 			if (path.size() == 0)
 				return _subAtoms[i];

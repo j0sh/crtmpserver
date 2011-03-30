@@ -65,7 +65,6 @@ Variant AtomDATA::GetVariant() {
 			result.IsByteArray(true);
 			return result;
 			//TODO: for now, return null
-			//return Variant();
 		}
 		default:
 		{
@@ -81,14 +80,12 @@ bool AtomDATA::Read() {
 		FATAL("Unable to read type");
 		return false;
 	}
-	//FINEST("_type: %d", _type);
 
 	//2. Read unknown 4 bytes
 	if (!ReadUInt32(_unknown)) {
 		FATAL("Unable to read type");
 		return false;
 	}
-	//FINEST("_unknown: %d", _unknown);
 
 	switch (_type) {
 		case 1:
@@ -98,7 +95,6 @@ bool AtomDATA::Read() {
 				FATAL("Unable to read string");
 				return false;
 			}
-			//FINEST("String: %s", STR(_dataString));
 			return true;
 		}
 		case 0:

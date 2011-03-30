@@ -52,11 +52,9 @@ bool InFileRTMPMP4Stream::BuildFrame(FileClass *pFile, MediaFrame &mediaFrame,
 	if (mediaFrame.isBinaryHeader) {
 		if (mediaFrame.type == MEDIAFRAME_TYPE_AUDIO) {
 			// audio extra data
-			//FINEST("--- AUDIO EXTRA DATA");
 			buffer.ReadFromBuffer(_audioCodecHeaderInit, sizeof (_audioCodecHeaderInit));
 		} else {
 			// video extra data
-			//FINEST("--- VIDEO EXTRA DATA");
 			buffer.ReadFromBuffer(_videoCodecHeaderInit, sizeof (_videoCodecHeaderInit));
 		}
 	} else {
@@ -65,28 +63,15 @@ bool InFileRTMPMP4Stream::BuildFrame(FileClass *pFile, MediaFrame &mediaFrame,
 		} else {
 			if (mediaFrame.isKeyFrame) {
 				// video key frame
-				//FINEST("--- VIDEO KEY FRAME");
 				buffer.ReadFromBuffer(_videoCodecHeaderKeyFrame, sizeof (_videoCodecHeaderKeyFrame));
 			} else {
 				//video normal frame
-				//FINEST("--- VIDEO NORMAL FRAME");
 				buffer.ReadFromBuffer(_videoCodecHeader, sizeof (_videoCodecHeader));
 			}
 
 			mediaFrame.compositionOffset = (EHTONL(mediaFrame.compositionOffset & 0x00ffffff)) >> 8;
 
 			buffer.ReadFromBuffer((uint8_t *) & mediaFrame.compositionOffset, 3);
-
-			//            string str = format("%02x %02x %02x %02x %02x",
-			//                    GETIBPOINTER(buffer)[0],
-			//                    GETIBPOINTER(buffer)[1],
-			//                    GETIBPOINTER(buffer)[2],
-			//                    GETIBPOINTER(buffer)[3],
-			//                    GETIBPOINTER(buffer)[4]);
-			//            if (_currentFrame.isKeyFrame)
-			//                WARN("%s", STR(str));
-			//            else
-			//                FINEST("%s", STR(str));
 		}
 	}
 

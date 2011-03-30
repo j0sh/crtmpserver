@@ -346,8 +346,6 @@ bool OutboundConnectivity::FeedVideoDataUDP(msghdr &message) {
 	RTP_SEND_MESSAGE(_videoDataFd, _udpVideoDataClients, message);
 	_videoPacketsCount++;
 	COMPUTE_BYTES_COUNT(message, _videoBytesCount);
-	//uint16_t seq = ENTOHSP(((uint8_t *) message.msg_iov[0].iov_base) + 2);
-	//FINEST("seq: %d", seq);
 	if (((_videoPacketsCount % 300) == 0) || _videoPacketsCount <= 2) {
 		uint8_t buff[28];
 		if (CreateRTCPPacket(buff,
@@ -367,7 +365,6 @@ bool OutboundConnectivity::FeedVideoDataUDP(msghdr &message) {
 }
 
 bool OutboundConnectivity::FeedVideoDataTCP(msghdr &message) {
-	//NYIR;
 	return true;
 }
 
@@ -375,8 +372,6 @@ bool OutboundConnectivity::FeedAudioDataUDP(msghdr &message) {
 	RTP_SEND_MESSAGE(_audioDataFd, _udpAudioDataClients, message);
 	_audioPacketsCount++;
 	COMPUTE_BYTES_COUNT(message, _audioBytesCount);
-	//uint16_t seq = ENTOHSP(((uint8_t *) message.msg_iov[0].iov_base) + 2);
-	//FINEST("seq: %d", seq);
 	if (((_audioPacketsCount % 300) == 0) || (_audioPacketsCount <= 2)) {
 		uint8_t buff[28];
 		if (CreateRTCPPacket(buff,
@@ -396,7 +391,6 @@ bool OutboundConnectivity::FeedAudioDataUDP(msghdr &message) {
 }
 
 bool OutboundConnectivity::FeedAudioDataTCP(msghdr &message) {
-	//NYIR;
 	return true;
 }
 

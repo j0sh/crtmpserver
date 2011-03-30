@@ -51,10 +51,8 @@ bool OutboundSSLProtocol::DoHandshake() {
 		return true;
 	int32_t errorCode = SSL_ERROR_NONE;
 	errorCode = SSL_connect(_pSSL);
-	//FINEST("errorCode: %d", errorCode);
 	if (errorCode < 0) {
 		int32_t error = SSL_get_error(_pSSL, errorCode);
-		//FINEST("error: %d", error);
 		if (error != SSL_ERROR_WANT_READ &&
 				error != SSL_ERROR_WANT_WRITE) {
 			FATAL("Unable to connect SSL: %d; %s", error, STR(GetSSLErrors()));
@@ -63,7 +61,6 @@ bool OutboundSSLProtocol::DoHandshake() {
 	}
 
 	_sslHandshakeCompleted = SSL_is_init_finished(_pSSL);
-	//FINEST("_sslHandshakeCompleted: %d", _sslHandshakeCompleted);
 
 	if (!PerformIO()) {
 		FATAL("Unable to perform I/O");

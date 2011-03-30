@@ -45,7 +45,6 @@ Variant ConnectionMessageFactory::GetInvokeConnect(string appName, string tcUrl,
 
     connectRequest[(uint32_t) 0][RM_INVOKE_PARAMS_CONNECT_APP] = appName;
     connectRequest[(uint32_t) 0][RM_INVOKE_PARAMS_CONNECT_AUDIOCODECS] = audioCodecs;
-    //connectRequest[(uint32_t) 0][RM_INVOKE_PARAMS_CONNECT_CAPABILITIES] = capabilities;
     connectRequest[(uint32_t) 0][RM_INVOKE_PARAMS_CONNECT_FLASHVER] = flashVer;
     connectRequest[(uint32_t) 0][RM_INVOKE_PARAMS_CONNECT_FPAD] = (bool)fPad;
 

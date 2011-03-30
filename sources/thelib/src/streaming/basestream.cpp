@@ -33,12 +33,10 @@ BaseStream::BaseStream(BaseProtocol *pProtocol, StreamsManager *pStreamsManager,
 	GETCLOCKS(_creationTimestamp);
 	_creationTimestamp /= (double) CLOCKS_PER_SECOND;
 	_creationTimestamp *= 1000.00;
-	//FINEST("Stream %u created: %s", _uniqueId, STR(tagToString(_type)));
 }
 
 BaseStream::~BaseStream() {
 	_pStreamsManager->UnRegisterStream(this);
-	//FINEST("Stream %u deleted: %s", _uniqueId, STR(tagToString(_type)));
 }
 
 StreamsManager *BaseStream::GetStreamsManager() {
