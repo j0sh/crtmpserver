@@ -91,7 +91,6 @@ string changecase(string &value, bool lowerCase) {
 		else
 			result += toupper(value[i]);
 	}
-	//FINEST("Value: %s; Result: %s", STR(value), STR(result));
 	return result;
 }
 
@@ -209,7 +208,6 @@ string GetHostByName(string name) {
 }
 
 bool isNumeric(string value) {
-	//FINEST("value: `%s`", STR(value));
 	return value == format("%d", atoi(STR(value)));
 }
 

@@ -40,36 +40,24 @@ public:
 
 	template<typename T>
 	bool PutBits(T data, uint8_t count) {
-		//WARN("data: %x; count: %d", data, count);
 		if (!EnsureSize(sizeof (T)))
 			return false;
 
 		uint8_t *pBuffer = GETIBPOINTER(*this);
 
 		for (uint8_t i = 0; i < count; i++) {
-			//FINEST("sizeof (T): %d; count: %d; i: %d", sizeof (T)*8, count, i);
 			uint8_t srcBitIndex = sizeof (T)*8 - count + i;
 			uint8_t dstByteIndex = (uint8_t) ((_cursor + i) / 8);
 			uint8_t dstBitIndex = (_cursor + i) % 8;
-			//FINEST("srcBitIndex: %d; dstByteIndex: %d; dstBitIndex: %d",srcBitIndex,dstByteIndex,dstBitIndex);
 			if (dstBitIndex == 0) {
-				//INFO("New byte. reset it");
 				pBuffer[dstByteIndex] = 0;
 			}
 			T flag = (data << srcBitIndex);
 			flag = (flag >> (sizeof (T)*8 - 1));
-			//FINEST("flag: %d", flag);
-
-			//            FINEST("(data << srcBitIndex): %x", ((T)data << srcBitIndex));
-			//            FINEST("(sizeof (T)*8 - 1): %d",(sizeof (T)*8 - 1));
-			//            FINEST("All: %d", ((data << srcBitIndex) >> (sizeof (T)*8 - 1)));
 			pBuffer[dstByteIndex] |= (flag << (7 - dstBitIndex));
-			//            FINEST("srcBitIndex: %d; dstByteIndex: %d; dstBitIndex: %d; pBuffer[dstByteIndex]: %02x",
-			//                    srcBitIndex, dstByteIndex, dstBitIndex, pBuffer[dstByteIndex]);
 		}
 		_cursor += count;
 		_published = (_cursor / 8)+(((_cursor % 8) == 0) ? 0 : 1);
-		//WARN("data: %x; count: %d; Res: %s", data, count, STR(*this));
 		return true;
 	}
 
@@ -101,10 +89,7 @@ public:
 			uint8_t currentByteIndex = (uint8_t) (currentCursor / 8);
 			uint8_t currentBitIndex = currentCursor % 8;
 			uint8_t currentByte = GETIBPOINTER(*this)[currentByteIndex];
-			//            FINEST("_cursor: %d; currentCursor: %d; currentByteIndex: %d; currentBitIndex: %d; currentByte: %02x",
-			//                    _cursor, currentCursor, currentByteIndex, currentBitIndex, currentByte);
-
-
+			
 			result = (result << 1) | ((currentByte >> (7 - currentBitIndex))&0x01);
 		}
 
@@ -122,7 +107,6 @@ public:
 		}
 
 		_cursor += count;
-		//        FINEST("_cursor: %d", _cursor);
 	}
 
 	uint32_t AvailableBits() {

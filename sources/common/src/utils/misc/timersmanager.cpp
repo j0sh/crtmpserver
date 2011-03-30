@@ -56,18 +56,6 @@ void TimersManager::AddTimer(TimerEvent& timerEvent) {
 		_pSlots[startIndex % _slotsCount].timers[timerEvent.id] = timerEvent;
 		startIndex += timerEvent.period;
 	}
-
-	//    string result = "-----\n";
-	//    for (uint32_t i = 0; i < _slotsCount; i++) {
-	//        result += format("%d: ", i);
-	//
-	//        FOR_MAP(_pSlots[i].timers, uint32_t, TimerEvent, j) {
-	//            result += format("%d,", MAP_VAL(j).id);
-	//        }
-	//        result += "\n";
-	//    }
-	//    result += "-----";
-	//    FINEST("\n%s", STR(result));
 }
 
 void TimersManager::TimeElapsed(uint64_t currentTime) {
@@ -77,21 +65,13 @@ void TimersManager::TimeElapsed(uint64_t currentTime) {
 	if (delta <= 0 || _slotsCount == 0)
 		return;
 
-	//    uint32_t callCount = 0;
-	//    double start, end;
-	//    GETCLOCKS(start);
-
-	//FINEST("delta: %d", delta);
 	for (int32_t i = 0; i < delta; i++) {
 
 		FOR_MAP(_pSlots[_currentSlotIndex % _slotsCount].timers, uint32_t, TimerEvent, j) {
-			//callCount++;
 			_processTimerEvent(MAP_VAL(j));
 		}
 		_currentSlotIndex++;
 	}
-	//GETCLOCKS(end);
-	//FINEST("callCount: %d; %.2f sec", callCount, (end - start) / CLOCKS_PER_SECOND);
 }
 
 void TimersManager::UpdatePeriods(uint32_t period) {
@@ -145,7 +125,6 @@ uint32_t TimersManager::GCD(vector<uint32_t> numbers, uint32_t startIndex) {
 }
 
 uint32_t TimersManager::LCM(vector<uint32_t> numbers, uint32_t startIndex) {
-	//FINEST("size: %d; index: %d", numbers.size(), startIndex);
 	if (numbers.size() <= 1)
 		return 0;
 	if (numbers.size() <= startIndex)

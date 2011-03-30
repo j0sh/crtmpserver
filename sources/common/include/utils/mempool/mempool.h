@@ -31,9 +31,6 @@
 using namespace std;
 #include <stdio.h>
 
-
-//"T: %d; CS: % 4lu; C: % 4lu; U: % 4lu;\n",x,size,_created, _used)
-
 #ifdef DEBUG_MEM_POOL
 #define LOG_STATS(x) printf("T: %c; S: %lu; C: %lu; U: %lu\n",x,_size,_created, _used)
 #else
@@ -116,9 +113,6 @@ public:
 };
 
 template<size_t size> StaticMemoryPool<size> * StaticMemoryPool<size>::_pInstance = NULL;
-//template<size_t size> MemPoolEntry * StaticMemoryPool<size>::_pEntries = NULL;
-//template<size_t size> size_t StaticMemoryPool<size>::_created = 0;
-//template<size_t size> size_t StaticMemoryPool<size>::_used = 0;
 
 #else
 #define DECLARE_MEMORY_POOL_STRUCT(Cls)

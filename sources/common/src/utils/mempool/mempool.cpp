@@ -87,10 +87,8 @@ void * MemoryPool::Allocate() {
     void* pResult = _pEntries;
     if (pResult == NULL) {
         _created++;
-        //LOG_STATS('A');
         return ::operator new(_size, std::nothrow);
     } else {
-        //LOG_STATS('a');
         _pEntries = _pEntries->pNext;
         return pResult;
     }
@@ -102,7 +100,6 @@ void MemoryPool::Deallocate(void *p) {
     MemPoolEntry* pEntry = (MemPoolEntry *) (p);
     pEntry->pNext = _pEntries;
     _pEntries = pEntry;
-    //LOG_STATS('D');
 }
 
 void MemoryPool::Cleanup() {

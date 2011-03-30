@@ -22,7 +22,6 @@
 
 #include "utils/buffering/iobuffer.h"
 #include "utils/buffering/bitarray.h"
-#include "utils/buffering/multiconsumerbuffer.h"
 
 #endif	/* _BUFFERING_H */
 

@@ -30,8 +30,6 @@
 
 #define LOG(level,...) Logger::Log(level, __FILE__, __LINE__, __func__, __VA_ARGS__)
 #define FATAL(...) Logger::Log(_FATAL_, __FILE__, __LINE__, __func__, __VA_ARGS__)
-//TODO: Find a better way for naming this ERR thing.
-//#define ERR(...) Logger::Log(_ERROR_, __FILE__, __LINE__, __func__, __VA_ARGS__)
 #define WARN(...) Logger::Log(_WARNING_, __FILE__, __LINE__, __func__, __VA_ARGS__)
 #define INFO(...) Logger::Log(_INFO_, __FILE__, __LINE__, __func__, __VA_ARGS__)
 #define DEBUG(...) Logger::Log(_DEBUG_, __FILE__, __LINE__, __func__, __VA_ARGS__)

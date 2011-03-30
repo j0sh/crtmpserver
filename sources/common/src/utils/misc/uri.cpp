@@ -254,26 +254,4 @@ bool URI::FromString(string stringUri, bool resolveHost, URI &uri) {
 	}
 
 	return true;
-
-	//	if (uri) {
-	//		uri.host = pUri->host;
-	//		if ((uri.scheme == "http") || (uri.scheme == "rtmpt") || (uri.scheme == "rtmpte"))
-	//			uri.port = (pUri->port == 0) ? (uint16_t) 80 : (uint16_t) pUri->port;
-	//		else if ((uri.scheme == "https") || (uri.scheme == "rtmps"))
-	//			uri.port = (pUri->port == 0) ? (uint16_t) 443 : (uint16_t) pUri->port;
-	//		else if (uri.scheme == "rtsp")
-	//			uri.port = (pUri->port == 0) ? (uint16_t) 554 : (uint16_t) pUri->port;
-	//		else if ((uri.scheme == "rtmp") || (uri.scheme == "rtmpe"))
-	//			uri.port = (pUri->port == 0) ? (uint16_t) 1935 : (uint16_t) pUri->port;
-	//		uri.userName = pUri->user;
-	//		uri.password = pUri->pwd;
-	//		uri.document = pUri->doc;
-	//
-	//
-	//	}
-	//	fetchFreeURL(pUri);
-	//
-	//
-	//
-	//	return result;
 }

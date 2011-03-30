@@ -89,7 +89,6 @@ uint64_t getTagMask(uint64_t tag) {
 }
 
 bool isNumeric(string value) {
-	//FINEST("value: `%s`", STR(value));
 	return value == format("%d", atoi(STR(value)));
 }
 
@@ -263,7 +262,6 @@ int inet_aton(const char *pStr, struct in_addr *pRes) {
 }
 
 bool SetFdNonBlock(int32_t fd) {
-	// int32_t arg;
 	u_long iMode = 1; // 0 for blocking, anything else for nonblocking
 
 	if (ioctlsocket(fd, FIONBIO, &iMode) < 0) {
@@ -275,7 +273,6 @@ bool SetFdNonBlock(int32_t fd) {
 }
 
 bool SetFdNoSIGPIPE(int32_t fd) {
-	//NYIR;
 	return true;
 }
 
@@ -397,7 +394,6 @@ string normalizePath(string base, string file) {
 
 bool ListFolder(string root, string path, vector<string> &result) {
 	WIN32_FIND_DATA ffd;
-	//LARGE_INTEGER filesize;
 	TCHAR szDir[MAX_PATH];
 	size_t length_of_arg;
 	HANDLE hFind = INVALID_HANDLE_VALUE;
@@ -437,8 +433,6 @@ bool ListFolder(string root, string path, vector<string> &result) {
 		if (ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
 			WARN("Subdirectory listing not implemented");
 		} else {
-			//filesize.LowPart = ffd.nFileSizeLow;
-			//filesize.HighPart = ffd.nFileSizeHigh;
 			result.push_back(ffd.cFileName);
 		}
 	} while (FindNextFile(hFind, &ffd) != 0);

@@ -284,7 +284,6 @@ string unb64(string source) {
 
 string unb64(uint8_t *pBuffer, uint32_t length) {
 	// create a memory buffer containing base64 encoded data
-	//BIO* bmem = BIO_new_mem_buf((void*) STR(source), source.length());
 	BIO* bmem = BIO_new_mem_buf((void *) pBuffer, length);
 
 	// push a Base64 filter so that reading from buffer decodes it

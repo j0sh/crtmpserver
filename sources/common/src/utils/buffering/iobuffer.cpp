@@ -256,7 +256,6 @@ void IOBuffer::ReadFromByte(uint8_t byte) {
 	EnsureSize(1);
 	_pBuffer[_published] = byte;
 	_published++;
-	//PutRepeat(byte, 1);
 	SANITY_INPUT_BUFFER;
 }
 
@@ -294,7 +293,6 @@ void IOBuffer::ReadFromRepeat(uint8_t byte, uint32_t size) {
 bool IOBuffer::WriteToTCPFd(int32_t fd, uint32_t size, int32_t &sentAmount) {
 	SANITY_INPUT_BUFFER;
 	bool result = true;
-	//FINEST("BEFORE: _published: %d; _consumed: %d; amount: %d", _published, _consumed, _published - _consumed);
 	sentAmount = send(fd, (char *) (_pBuffer + _consumed),
 			//_published - _consumed,
 			size > _published - _consumed ? _published - _consumed : size,
@@ -309,14 +307,11 @@ bool IOBuffer::WriteToTCPFd(int32_t fd, uint32_t size, int32_t &sentAmount) {
 			result = false;
 		}
 	} else {
-		//FINEST("Sent: %d", sent);
 		_consumed += sentAmount;
 	}
 	if (result)
 		Recycle();
 	SANITY_INPUT_BUFFER;
-
-	//FINEST("AFTER: _published: %d; _consumed: %d; amount: %d", _published, _consumed, _published - _consumed);
 
 	return result;
 }
@@ -335,7 +330,6 @@ bool IOBuffer::WriteToStdio(int32_t fd, uint32_t size) {
 		FATAL("Permanent error!");
 		result = false;
 	} else {
-		//FINEST("Sent: %d", sent);
 		_consumed += sent;
 	}
 	if (result)
@@ -425,12 +419,6 @@ bool IOBuffer::EnsureSize(uint32_t expected) {
 
 	//5. Allocate
 	uint8_t *pTempBuffer = new uint8_t[_published + expected];
-	//	WARN("this: %p; %p->%p; %d -> %d",
-	//			this,
-	//			_pBuffer,
-	//			pTempBuffer,
-	//			_size,
-	//			_published + expected);
 
 	//6. Copy existing data if necessary and switch buffers
 	if (_pBuffer != NULL) {

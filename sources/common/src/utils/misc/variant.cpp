@@ -2195,28 +2195,6 @@ void Variant::NormalizeTs() {
 		val = 0;
 	}
 	gmtime_r(&val, _value.t);
-	//    FINEST("tm_sec: %d;\n"
-	//            "tm_min:%d;\n"
-	//            "tm_hour:%d;\n"
-	//            "tm_mday:%d;\n"
-	//            "tm_mon:%d;\n"
-	//            "tm_year:%d;\n"
-	//            "tm_wday:%d;\n"
-	//            "tm_yday:%d;\n"
-	//            "tm_isdst:%d;\n"
-	//            "tm_gmtoff:%d;\n"
-	//            "*tm_zone:%s;\n",
-	//            _value.t->tm_sec,
-	//            _value.t->tm_min,
-	//            _value.t->tm_hour,
-	//            _value.t->tm_mday,
-	//            _value.t->tm_mon,
-	//            _value.t->tm_year,
-	//            _value.t->tm_wday,
-	//            _value.t->tm_yday,
-	//            _value.t->tm_isdst,
-	//            _value.t->tm_gmtoff,
-	//            _value.t->tm_zone);
 }
 
 void Variant::EscapeJSON(string &value) {

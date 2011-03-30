@@ -110,8 +110,6 @@ bool MmapPointer::Free() {
 		FATAL("Unable to munmap: %d %s", errno, strerror(errno));
 		return false;
 	}
-	//    FINEST("Total bytes read from this buffer: %u; Size: %llu; Fill factor: %.2f",
-	//            _bytesRead, _size, (double) _bytesRead / (double) _size * 100.00);
 	_pData = NULL;
 	_size = 0;
 	_cursor = 0;
@@ -153,14 +151,7 @@ MmapPointer::operator string() {
 	return format("[%llu - %llu](%u)", _cursor, _cursor + _size - 1, _size);
 }
 
-//#define MIN_MMAP_WINDOW_SIZE 1024*512
-
 bool MmapFile::Initialize(string path, uint32_t windowSize, bool exclusive) {
-	//    if (windowSize < MIN_MMAP_WINDOW_SIZE) {
-	//        FATAL("window size must be at least %u bytes", MIN_MMAP_WINDOW_SIZE);
-	//        _failed = true;
-	//        return false;
-	//    }
 	//1. Do we have this file open?
 	LOG_MMAP("Initial window size: %d", windowSize);
 	uint32_t pagesCount = windowSize / _pageSize;
@@ -461,199 +452,7 @@ bool MmapFile::PeekBuffer(uint8_t *pDestBuffer, uint64_t count) {
 		return false;
 	}
 
-
-
-	//    //2. reposition the pointer if necessary
-	//    if (!((_cursor >= _headPointer._cursor)
-	//            && ((_cursor + count) <= (_headPointer._cursor + _headPointer._size)))) {
-	//        LOG_MMAP("_cursor: %llu; count: %u; %s", _cursor, count, STR(_path));
-	//        LOG_MMAP("BEFORE: %s", STR(_headPointer));
-	//        if (!_headPointer.Allocate(_fd, _cursor, _windowSize, count)) {
-	//            FATAL("Unable to allocate mmap pointer");
-	//            _failed = true;
-	//            return false;
-	//        }
-	//        LOG_MMAP(" AFTER: %s", STR(_headPointer));
-	//        if (!((_cursor >= _headPointer._cursor)
-	//                && ((_cursor + count) <= (_headPointer._cursor + _headPointer._size)))) {
-	//            FATAL("Unable to position mmap pointer correctly");
-	//            _failed = true;
-	//            return false;
-	//        }
-	//    }
-	//
-	//    //3. Do the read
-	//    if (_headPointer.Copy(pDestBuffer, _cursor, 0, count) != count) {
-	//        FATAL("Unable to copy %llu bytes", count);
-	//        _failed = true;
-	//        return false;
-	//    }
-
-	//4. Done
 	return true;
-
-	//    LOG_BUFF_MOV("-------------------------------");
-	//    LOG_BUFF_MOV("_cursor: %llu; count: %u; %s", _cursor, count, STR(_path));
-	//    //1. Sanity checks
-	//    if (_failed) {
-	//        FATAL("This mmap file is in inconsistent state");
-	//        return false;
-	//    }
-	//
-	//    if (_windowSize < count) {
-	//        FATAL("Invalid window size");
-	//        _failed = true;
-	//        return false;
-	//    }
-	//
-	//    if (_cursor + count > _size) {
-	//        FATAL("EOF will be reached: cursor: %d; count: %d; size: %d",
-	//                _cursor, count, _size);
-	//        _failed = true;
-	//        return false;
-	//    }
-	//
-	//    if (_cursor < _frontPointer._cursor && _cursor < _backPointer._cursor) {
-	//        _frontPointer.Free();
-	//        _backPointer.Free();
-	//    }
-	//
-	//
-	//    switch (_frontPointer.GetState(_backPointer)) {
-	//        case BS_NONE:
-	//        {
-	//            LOG_BUFF_MOV("  BS_NONE: %s; %s", STR(_backPointer), STR(_frontPointer));
-	//            if (!_frontPointer.Allocate(_fd, _cursor, _windowSize)) {
-	//                FATAL("Unable to move front pointer");
-	//                _failed = true;
-	//                return false;
-	//            }
-	//            LOG_BUFF_MOV("  BS_NONE: %s; %s AFTER", STR(_backPointer), STR(_frontPointer));
-	//            if (_frontPointer.Copy(pDestBuffer, _cursor, 0, count) != count) {
-	//                FATAL("Unable to copy data");
-	//                _failed = true;
-	//                return false;
-	//            }
-	//            return true;
-	//        }
-	//        case BS_FRONT:
-	//        {
-	//            LOG_BUFF_MOV("  BS_FRONT: %s; %s", STR(_backPointer), STR(_frontPointer));
-	//            if (_cursor >= _frontPointer._cursor) {
-	//                if (_frontPointer._cursor + _frontPointer._size < _cursor + count) {
-	//                    LOG_BUFF_MOV("We need to move");
-	//                    if (!_frontPointer.Allocate(_fd, _cursor, _windowSize)) {
-	//                        FATAL("Unable to move front pointer");
-	//                        _failed = true;
-	//                        return false;
-	//                    }
-	//                }
-	//                LOG_BUFF_MOV("  BS_FRONT: %s; %s AFTER", STR(_backPointer), STR(_frontPointer));
-	//                if (_frontPointer.Copy(pDestBuffer, _cursor, 0, count) != count) {
-	//                    FATAL("Unable to copy data: %llu", count);
-	//                    _failed = true;
-	//                    return false;
-	//                }
-	//                return true;
-	//            }
-	//            LOG_BUFF_MOV("We need to create back pointer");
-	//            uint32_t size = _frontPointer._cursor - _cursor;
-	//            size = size >= _windowSize ? _windowSize : size;
-	//            if (!_backPointer.Allocate(_fd, _cursor, size)) {
-	//                FATAL("Unable to allocate back pointer");
-	//                _failed = true;
-	//                return false;
-	//            }
-	//            LOG_BUFF_MOV("  BS_FRONT: %s; %s AFTER", STR(_backPointer), STR(_frontPointer));
-	//            uint64_t read = _backPointer.Copy(pDestBuffer, _cursor, 0, count);
-	//            if (read != count) {
-	//                WARN("We need to read another %u bytes", count - read);
-	//                _frontPointer.Copy(pDestBuffer + read, _cursor, read, count - read);
-	//            }
-	//            return true;
-	//        }
-	//        case BS_OVERLAP:
-	//        {
-	//            LOG_BUFF_MOV("BS_OVERLAP: %s; %s", STR(_backPointer), STR(_frontPointer));
-	//            if (_frontPointer._cursor + _frontPointer._size < _cursor + count) {
-	//                LOG_BUFF_MOV("We need to move front pointer");
-	//                if (!_frontPointer.Allocate(_fd, _cursor, _windowSize)) {
-	//                    FATAL("Unable to move front pointer");
-	//                    _failed = true;
-	//                    return false;
-	//                }
-	//                LOG_BUFF_MOV("  BS_OVERLAP: %s; %s AFTER", STR(_backPointer), STR(_frontPointer));
-	//                if (_frontPointer.Copy(pDestBuffer, _cursor, 0, count) != count) {
-	//                    FATAL("Unable to copy data");
-	//                    _failed = true;
-	//                    return false;
-	//                }
-	//                return true;
-	//            }
-	//
-	//            if (_cursor >= _frontPointer._cursor) {
-	//                if (_frontPointer.Copy(pDestBuffer, _cursor, 0, count) != count) {
-	//                    FATAL("Unable to copy data");
-	//                    _failed = true;
-	//                    return false;
-	//                }
-	//                return true;
-	//            }
-	//
-	//            uint64_t read = _backPointer.Copy(pDestBuffer, _cursor, 0, count);
-	//            if (read != count) {
-	//                WARN("We need to read another %u bytes", count - read);
-	//                _frontPointer.Copy(pDestBuffer + read, _cursor, read, count - read);
-	//            }
-	//
-	//            return true;
-	//        }
-	//        case BS_SPARSE:
-	//        {
-	//            LOG_BUFF_MOV(" BS_SPARSE: %s; %s", STR(_backPointer), STR(_frontPointer));
-	//            if (_cursor >= _frontPointer._cursor) {
-	//                if (_frontPointer._cursor + _frontPointer._size < _cursor + count) {
-	//                    LOG_BUFF_MOV("We need to move front pointer");
-	//                    if (!_frontPointer.Allocate(_fd, _cursor, _windowSize)) {
-	//                        FATAL("Unable to move front pointer");
-	//                        _failed = true;
-	//                        return false;
-	//                    }
-	//                }
-	//                LOG_BUFF_MOV("  BS_SPARSE: %s; %s AFTER", STR(_backPointer), STR(_frontPointer));
-	//                if (_frontPointer.Copy(pDestBuffer, _cursor, 0, count) != count) {
-	//                    FATAL("Unable to copy data");
-	//                    _failed = true;
-	//                    return false;
-	//                }
-	//                return true;
-	//            }
-	//
-	//            if (_backPointer._cursor + _backPointer._size < _cursor + count) {
-	//                LOG_BUFF_MOV("We need to create back pointer");
-	//                uint32_t size = _frontPointer._cursor - _cursor;
-	//                size = size >= _windowSize ? _windowSize : size;
-	//                if (!_backPointer.Allocate(_fd, _cursor, size)) {
-	//                    FATAL("Unable to allocate back pointer");
-	//                    _failed = true;
-	//                    return false;
-	//                }
-	//            }
-	//            LOG_BUFF_MOV("  BS_SPARSE: %s; %s AFTER", STR(_backPointer), STR(_frontPointer));
-	//            uint64_t read = _backPointer.Copy(pDestBuffer, _cursor, 0, count);
-	//            if (read != count) {
-	//                WARN("We need to read another %u bytes", count - read);
-	//                _frontPointer.Copy(pDestBuffer + read, _cursor, read, count - read);
-	//            }
-	//            return true;
-	//        }
-	//        default:
-	//        {
-	//            ASSERT("This should not be possible: %d", _frontPointer.GetState(_backPointer));
-	//            _failed = true;
-	//            return false;
-	//        }
-	//    }
 }
 #endif /* HAS_MMAP */
 

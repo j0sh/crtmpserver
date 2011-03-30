@@ -214,7 +214,6 @@ string GetHostByName(string name) {
 }
 
 bool isNumeric(string value) {
-	//FINEST("value: `%s`", STR(value));
 	return value == format("%d", atoi(STR(value)));
 }
 
