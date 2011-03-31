@@ -2024,56 +2024,56 @@ bool Variant::DeserializeFromXml(TiXmlElement *pNode, Variant &variant) {
 		variant.Reset(true);
 		return true;
 	} else if (nodeName == "int8") {
-		if (sscanf(STR(text), "%"PRId64, (long long int *) & val.i64) != 1) {
+		if (sscanf(STR(text), "%"PRId64, &val.i64) != 1) {
 			FATAL("Invalid number");
 			return false;
 		}
 		variant = (int8_t) val.i64;
 		return true;
 	} else if (nodeName == "int16") {
-		if (sscanf(STR(text), "%"PRId64, (long long int *) & val.i64) != 1) {
+		if (sscanf(STR(text), "%"PRId64, &val.i64) != 1) {
 			FATAL("Invalid number");
 			return false;
 		}
 		variant = (int16_t) val.i64;
 		return true;
 	} else if (nodeName == "int32") {
-		if (sscanf(STR(text), "%"PRId64, (long long int *) & val.i64) != 1) {
+		if (sscanf(STR(text), "%"PRId64, &val.i64) != 1) {
 			FATAL("Invalid number");
 			return false;
 		}
 		variant = (int32_t) val.i64;
 		return true;
 	} else if (nodeName == "int64") {
-		if (sscanf(STR(text), "%"PRId64, (long long int *) & val.i64) != 1) {
+		if (sscanf(STR(text), "%"PRId64, &val.i64) != 1) {
 			FATAL("Invalid number");
 			return false;
 		}
 		variant = (int64_t) val.i64;
 		return true;
 	} else if (nodeName == "uint8") {
-		if (sscanf(STR(text), "%"PRIu64, (long long unsigned int *) & val.ui64) != 1) {
+		if (sscanf(STR(text), "%"PRIu64, &val.ui64) != 1) {
 			FATAL("Invalid number");
 			return false;
 		}
 		variant = (uint8_t) val.ui64;
 		return true;
 	} else if (nodeName == "uint16") {
-		if (sscanf(STR(text), "%"PRIu64, (long long unsigned int *) & val.ui64) != 1) {
+		if (sscanf(STR(text), "%"PRIu64, &val.ui64) != 1) {
 			FATAL("Invalid number");
 			return false;
 		}
 		variant = (uint16_t) val.ui64;
 		return true;
 	} else if (nodeName == "uint32") {
-		if (sscanf(STR(text), "%"PRIu64, (long long unsigned int *) & val.ui64) != 1) {
+		if (sscanf(STR(text), "%"PRIu64, &val.ui64) != 1) {
 			FATAL("Invalid number");
 			return false;
 		}
 		variant = (uint32_t) val.ui64;
 		return true;
 	} else if (nodeName == "uint64") {
-		if (sscanf(STR(text), "%"PRIu64, (long long unsigned int *) & val.ui64) != 1) {
+		if (sscanf(STR(text), "%"PRIu64, &val.ui64) != 1) {
 			FATAL("Invalid number");
 			return false;
 		}
