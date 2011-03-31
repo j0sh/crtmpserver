@@ -913,6 +913,7 @@ void CommonTestsSuite::test_ParseURL() {
 }
 
 void CommonTestsSuite::test_SetFdOptions() {
+	InitNetworking();
 	int32_t fd = socket(AF_INET, SOCK_STREAM, 0);
 	TS_ASSERT(fd > 0);
 	TS_ASSERT(SetFdNoSIGPIPE(fd));

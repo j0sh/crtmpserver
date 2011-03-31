@@ -64,8 +64,6 @@ typedef enum _VariantType {
 struct VariantMap;
 class TiXmlElement;
 
-#define Timestamp struct tm
-
 class DLLEXP Variant {
 private:
 	VariantType _type;

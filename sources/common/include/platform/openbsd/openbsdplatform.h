@@ -100,6 +100,8 @@ using namespace std;
 #define NOTE_USECONDS 0
 #define MSG_NOSIGNAL 0
 #define SRAND() sranddev();
+#define Timestamp struct tm
+#define Timestamp_init {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 
 #define CLOCKS_PER_SECOND 1000000L
 #define GETCLOCKS(result) \

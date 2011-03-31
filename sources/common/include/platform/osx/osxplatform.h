@@ -97,6 +97,8 @@ using namespace std;
 #define FD_WRITE_CHUNK FD_READ_CHUNK
 #define RESET_TIMER(timer,sec,usec) timer.tv_sec=sec;timer.tv_usec=usec;
 #define SRAND() sranddev();
+#define Timestamp struct tm
+#define Timestamp_init {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 
 #define CLOCKS_PER_SECOND 1000000L
 #define GETCLOCKS(result) \

@@ -21,10 +21,24 @@
 #ifndef _WIN32PLATFORM_H
 #define _WIN32PLATFORM_H
 
-#include "platform/baseplatform.h"
+//define missing PRI_64 specifiers
+#ifndef PRId64
+#define PRId64 "lld"
+#endif /* PRId64 */
 
-#define __STDC_FORMAT_MACROS
-#include <inttypes.h>
+#ifndef PRIu64
+#define PRIu64 "llu"
+#endif /* PRIu64 */
+
+#ifndef PRIx64
+#define PRIx64 "llx"
+#endif /* PRIx64 */
+
+#ifndef PRIX64
+#define PRIX64 "llX"
+#endif /* PRIX64 */
+
+#include "platform/baseplatform.h"
 #include <assert.h>
 #include <time.h>
 #include <io.h>
@@ -52,7 +66,6 @@ typedef char int8_t;
 typedef short int int16_t;
 typedef long int int32_t;
 typedef long long int int64_t;
-
 #define atoll atol
 
 #define DLLEXP __declspec(dllexport)
@@ -94,6 +107,9 @@ typedef long long int int64_t;
 #define S_IWUSR S_IWRITE
 #define S_IRGRP 0000
 #define S_IWGRP 0000
+#define Timestamp struct tm
+#define Timestamp_init {0, 0, 0, 0, 0, 0, 0, 0, 0}
+#define snprintf sprintf_s
 
 
 #define gmtime_r(_p_time_t, _p_struct_tm) *(_p_struct_tm) = *gmtime(_p_time_t);

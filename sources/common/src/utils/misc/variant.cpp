@@ -618,7 +618,7 @@ Variant::operator Timestamp() {
 		return *_value.t;
 	} else {
 		ASSERT("Cast to struct tm failed: %s", STR(ToString()));
-		Timestamp temp = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+		Timestamp temp = Timestamp_init;
 		return temp;
 	}
 }
@@ -1039,7 +1039,7 @@ bool Variant::ConvertToTimestamp() {
 	if (!IsTimestamp(detectedType))
 		return false;
 
-	Timestamp temp = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+	Timestamp temp = Timestamp_init;
 
 	if (detectedType == V_DATE || detectedType == V_TIMESTAMP) {
 		temp.tm_year = (int) ((int32_t) (*this)["year"] - 1900);
