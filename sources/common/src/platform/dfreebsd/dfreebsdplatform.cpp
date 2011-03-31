@@ -30,18 +30,18 @@ DFreeBSDPlatform::DFreeBSDPlatform() {
 DFreeBSDPlatform::~DFreeBSDPlatform() {
 }
 
-string format(string format, ...) {
+string format(string fmt, ...) {
 	string result = "";
 	va_list arguments;
-	va_start(arguments, format);
-	result = vformat(format, arguments);
+	va_start(arguments, fmt);
+	result = vformat(fmt, arguments);
 	va_end(arguments);
 	return result;
 }
 
-string vformat(string format, va_list args) {
+string vformat(string fmt, va_list args) {
 	char *pBuffer = NULL;
-	if (vasprintf(&pBuffer, STR(format), args) == -1) {
+	if (vasprintf(&pBuffer, STR(fmt), args) == -1) {
 		assert(false);
 		return "";
 	}
@@ -200,7 +200,7 @@ string GetHostByName(string name) {
 		return "";
 	if (pHostEnt->h_length <= 0)
 		return "";
-	string result = format("%u.%u.%u.%u",
+	string result = format("%hhu.%hhu.%hhu.%hhu",
 			(uint8_t) pHostEnt->h_addr_list[0][0],
 			(uint8_t) pHostEnt->h_addr_list[0][1],
 			(uint8_t) pHostEnt->h_addr_list[0][2],
@@ -367,7 +367,8 @@ bool ListFolder(string root, string path, vector<string> &result) {
 	}
 
 	struct dirent *pDirent;
-	struct stat entryStat = {0};
+	struct stat entryStat;
+	memset(&entryStat, 0, sizeof (entryStat));
 	while ((pDirent = readdir(pDir)) != NULL) {
 		string entry = pDirent->d_name;
 		if (entry == "." || entry == "..") {

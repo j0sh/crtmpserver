@@ -24,6 +24,8 @@
 #include "platform/baseplatform.h"
 
 //platform includes
+#define __STDC_FORMAT_MACROS
+#include <inttypes.h>
 #include <algorithm>
 #include <arpa/inet.h>
 #include <assert.h>
@@ -135,8 +137,8 @@ typedef struct _select_event {
 } select_event;
 
 
-string format(string format, ...);
-string vformat(string format, va_list args);
+string format(string fmt, ...);
+string vformat(string fmt, va_list args);
 void replace(string &target, string search, string replacement);
 bool fileExists(string path);
 string lowercase(string value);
