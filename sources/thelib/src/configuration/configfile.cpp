@@ -189,7 +189,7 @@ bool ConfigFile::ValidateString(Variant &node, string name, bool notNull,
 	string temp = node[name];
 
 	if (temp.length() < minLength || temp.length() > maxLength) {
-		FATAL("Invalid %s. It must be present, must be string and have length between %d and %d",
+		FATAL("Invalid %s. It must be present, must be string and have length between %u and %u",
 				STR(name), minLength, maxLength);
 		return false;
 	}
@@ -240,7 +240,7 @@ bool ConfigFile::ValidateString(Variant &node, string name, bool notNull,
 bool ConfigFile::ValidateMap(Variant &node, string name, bool notNull,
 		uint32_t minLength, uint32_t maxLength) {
 	if (!ValidateMap(node[name], notNull, minLength, maxLength)) {
-		FATAL("Invalid %s. Rules: NotNull: %d; MinSize: %d; MaxSize: %d",
+		FATAL("Invalid %s. Rules: NotNull: %hhu; MinSize: %u; MaxSize: %u",
 				STR(name),
 				notNull, minLength, maxLength);
 		return false;
@@ -264,7 +264,7 @@ bool ConfigFile::ValidateMap(Variant &node, bool notNull,
 	}
 
 	if (node.MapSize() < minLength || node.MapSize() > maxLength) {
-		FATAL("Invalid array size: %d. Must be between %d and %d",
+		FATAL("Invalid array size: %u. Must be between %u and %u",
 				node.MapSize(), minLength, maxLength);
 		return false;
 	}
@@ -657,7 +657,7 @@ bool ConfigFile::ConfigureAcceptor(Variant &node, BaseClientApplication *pApplic
 
 		//5. Create the carrier and bind it
 		if (UDPCarrier::Create(node[CONF_IP], node[CONF_PORT], pProtocol) == NULL) {
-			FATAL("Unable to instantiate UDP carrier on %s:%d",
+			FATAL("Unable to instantiate UDP carrier on %s:%hu",
 					STR(node[CONF_IP]), (uint16_t) node[CONF_PORT]);
 			pProtocol->EnqueueForDelete();
 			return false;

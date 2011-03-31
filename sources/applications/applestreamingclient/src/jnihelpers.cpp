@@ -122,7 +122,7 @@ jobject VariantToJObject(Variant &value, JNIEnv* pEnv) {
 		}
 		default:
 		{
-			FATAL("Invalid variant type: %d", (VariantType) value);
+			FATAL("Invalid variant type: %hhu", (VariantType) value);
 			pEnv->PopLocalFrame(NULL);
 			return NULL;
 		}

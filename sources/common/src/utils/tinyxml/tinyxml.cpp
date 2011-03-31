@@ -526,7 +526,7 @@ int TiXmlElement::QueryDoubleAttribute(const std::string& name, double* dval) co
 
 void TiXmlElement::SetAttribute(const char * name, int val) {
 	char buf[64];
-	sprintf(buf, "%d", val);
+	sprintf(buf, "%u", val);
 	SetAttribute(name, buf);
 }
 
@@ -985,7 +985,7 @@ void TiXmlAttribute::Print(FILE* cfile, int /*depth*/, TIXML_STRING* str) const 
 }
 
 int TiXmlAttribute::QueryIntValue(int* ival) const {
-	if (sscanf(value.c_str(), "%d", ival) == 1)
+	if (sscanf(value.c_str(), "%u", ival) == 1)
 		return TIXML_SUCCESS;
 	return TIXML_WRONG_TYPE;
 }
@@ -998,7 +998,7 @@ int TiXmlAttribute::QueryDoubleValue(double* dval) const {
 
 void TiXmlAttribute::SetIntValue(int _value) {
 	char buf [64];
-	sprintf(buf, "%d", _value);
+	sprintf(buf, "%u", _value);
 	SetValue(buf);
 }
 

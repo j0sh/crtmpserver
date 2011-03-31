@@ -272,13 +272,13 @@ string Variant::ToString(string name, uint32_t indent) {
 		}
 		case V_INT8:
 		{
-			result += format("%s<INT8 name=\"%s\">%d</INT8>",
+			result += format("%s<INT8 name=\"%s\">%hhd</INT8>",
 					STR(strIndent), STR(name), _value.i8);
 			break;
 		}
 		case V_INT16:
 		{
-			result += format("%s<INT16 name=\"%s\">%d</INT16>",
+			result += format("%s<INT16 name=\"%s\">%hd</INT16>",
 					STR(strIndent), STR(name), _value.i16);
 			break;
 		}
@@ -290,19 +290,19 @@ string Variant::ToString(string name, uint32_t indent) {
 		}
 		case V_INT64:
 		{
-			result += format("%s<INT64 name=\"%s\">%lld</INT64>",
+			result += format("%s<INT64 name=\"%s\">%"PRId64"</INT64>",
 					STR(strIndent), STR(name), _value.i64);
 			break;
 		}
 		case V_UINT8:
 		{
-			result += format("%s<UINT8 name=\"%s\">%u</UINT8>",
+			result += format("%s<UINT8 name=\"%s\">%hhu</UINT8>",
 					STR(strIndent), STR(name), _value.ui8);
 			break;
 		}
 		case V_UINT16:
 		{
-			result += format("%s<UINT16 name=\"%s\">%u</UINT16>",
+			result += format("%s<UINT16 name=\"%s\">%hu</UINT16>",
 					STR(strIndent), STR(name), _value.ui16);
 			break;
 		}
@@ -314,7 +314,7 @@ string Variant::ToString(string name, uint32_t indent) {
 		}
 		case V_UINT64:
 		{
-			result += format("%s<UINT64 name=\"%s\">%llu</UINT64>",
+			result += format("%s<UINT64 name=\"%s\">%"PRIu64"</UINT64>",
 					STR(strIndent), STR(name), _value.ui64);
 			break;
 		}
@@ -350,7 +350,7 @@ string Variant::ToString(string name, uint32_t indent) {
 		}
 		case V_BYTEARRAY:
 		{
-			result += format("%s<BYTEARRAY name=\"%s\">%llu bytes</BYTEARRAY>",
+			result += format("%s<BYTEARRAY name=\"%s\">%zu bytes</BYTEARRAY>",
 					STR(strIndent), STR(name), _value.s->length());
 			break;
 		}
@@ -380,7 +380,7 @@ string Variant::ToString(string name, uint32_t indent) {
 		}
 		default:
 		{
-			FATAL("Invalid type: %d", _type);
+			FATAL("Invalid type: %hhu", _type);
 			assert(false);
 		}
 	}
@@ -618,7 +618,7 @@ Variant::operator Timestamp() {
 		return *_value.t;
 	} else {
 		ASSERT("Cast to struct tm failed: %s", STR(ToString()));
-		Timestamp temp = {0};
+		Timestamp temp = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 		return temp;
 	}
 }
@@ -637,7 +637,7 @@ Variant::operator string() {
 		}
 		case V_INT64:
 		{
-			return format("%lld", this->operator int64_t());
+			return format("%"PRId64, this->operator int64_t());
 		}
 		case V_UINT8:
 		case V_UINT16:
@@ -647,7 +647,7 @@ Variant::operator string() {
 		}
 		case V_UINT64:
 		{
-			return format("%llu", this->operator uint64_t());
+			return format("%"PRIu64, this->operator uint64_t());
 		}
 		case V_DOUBLE:
 		{
@@ -1039,7 +1039,7 @@ bool Variant::ConvertToTimestamp() {
 	if (!IsTimestamp(detectedType))
 		return false;
 
-	Timestamp temp = {0};
+	Timestamp temp = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 	if (detectedType == V_DATE || detectedType == V_TIMESTAMP) {
 		temp.tm_year = (int) ((int32_t) (*this)["year"] - 1900);
@@ -1306,7 +1306,7 @@ bool Variant::SerializeToBin(string &result) {
 		default:
 		{
 			result = "";
-			FATAL("Invalid variant type: %d", _type);
+			FATAL("Invalid variant type: %hhu", _type);
 			return false;
 		}
 	}
@@ -1580,7 +1580,7 @@ bool Variant::SerializeToJSON(string &result) {
 		case V_INT64:
 		{
 			int64_t value = (int64_t) (*this);
-			result += format("%lld", value);
+			result += format("%"PRId64, value);
 			break;
 		}
 		case V_UINT8:
@@ -1589,7 +1589,7 @@ bool Variant::SerializeToJSON(string &result) {
 		case V_UINT64:
 		{
 			uint64_t value = (uint64_t) (*this);
-			result += format("%llu", value);
+			result += format("%"PRIu64, value);
 			break;
 		}
 		case V_DOUBLE:
@@ -1638,7 +1638,7 @@ bool Variant::SerializeToJSON(string &result) {
 		}
 		default:
 		{
-			ASSERT("Invalid type %d", _type);
+			ASSERT("Invalid type %hhu", _type);
 			break;
 		}
 	}
@@ -1691,13 +1691,13 @@ TiXmlElement *Variant::SerializeToXmlElement(string &name) {
 		case V_INT8:
 		{
 			pResult = new TiXmlElement("INT8");
-			pResult->LinkEndChild(new TiXmlText(format("%d", _value.i8)));
+			pResult->LinkEndChild(new TiXmlText(format("%hhd", _value.i8)));
 			break;
 		}
 		case V_INT16:
 		{
 			pResult = new TiXmlElement("INT16");
-			pResult->LinkEndChild(new TiXmlText(format("%d", _value.i16)));
+			pResult->LinkEndChild(new TiXmlText(format("%hd", _value.i16)));
 			break;
 		}
 		case V_INT32:
@@ -1709,19 +1709,19 @@ TiXmlElement *Variant::SerializeToXmlElement(string &name) {
 		case V_INT64:
 		{
 			pResult = new TiXmlElement("INT64");
-			pResult->LinkEndChild(new TiXmlText(format("%lld", _value.i64)));
+			pResult->LinkEndChild(new TiXmlText(format("%"PRId64, _value.i64)));
 			break;
 		}
 		case V_UINT8:
 		{
 			pResult = new TiXmlElement("UINT8");
-			pResult->LinkEndChild(new TiXmlText(format("%u", _value.ui8)));
+			pResult->LinkEndChild(new TiXmlText(format("%hhu", _value.ui8)));
 			break;
 		}
 		case V_UINT16:
 		{
 			pResult = new TiXmlElement("UINT16");
-			pResult->LinkEndChild(new TiXmlText(format("%u", _value.ui16)));
+			pResult->LinkEndChild(new TiXmlText(format("%hu", _value.ui16)));
 			break;
 		}
 		case V_UINT32:
@@ -1733,7 +1733,7 @@ TiXmlElement *Variant::SerializeToXmlElement(string &name) {
 		case V_UINT64:
 		{
 			pResult = new TiXmlElement("UINT64");
-			pResult->LinkEndChild(new TiXmlText(format("%llu", _value.ui64)));
+			pResult->LinkEndChild(new TiXmlText(format("%"PRIu64, _value.ui64)));
 			break;
 		}
 		case V_DOUBLE:
@@ -1798,7 +1798,7 @@ TiXmlElement *Variant::SerializeToXmlElement(string &name) {
 		}
 		default:
 		{
-			ASSERT("Invalid type: %d", _type);
+			ASSERT("Invalid type: %hhu", _type);
 			return NULL;
 		}
 	}
@@ -1812,7 +1812,7 @@ TiXmlElement *Variant::SerializeToXmlElement(string &name) {
 do {\
 	if(s>bufferSize-cursor) \
 	{ \
-		FATAL("Not enough data. Wanted: %u; Got: %u",s,bufferSize-cursor);\
+		FATAL("Not enough data. Wanted: %u; Got: %u",(uint32_t)s,bufferSize-cursor);\
 		return false; \
 	} \
 }\
@@ -1995,7 +1995,7 @@ bool Variant::DeserializeFromBin(uint8_t *pBuffer, uint32_t bufferSize,
 		}
 		default:
 		{
-			FATAL("Invalid variant type: %d", type);
+			FATAL("Invalid variant type: %hhu", type);
 			return false;
 		}
 	}
@@ -2024,56 +2024,56 @@ bool Variant::DeserializeFromXml(TiXmlElement *pNode, Variant &variant) {
 		variant.Reset(true);
 		return true;
 	} else if (nodeName == "int8") {
-		if (sscanf(STR(text), "%lld", (long long int *) & val.i64) != 1) {
+		if (sscanf(STR(text), "%"PRId64, (long long int *) & val.i64) != 1) {
 			FATAL("Invalid number");
 			return false;
 		}
 		variant = (int8_t) val.i64;
 		return true;
 	} else if (nodeName == "int16") {
-		if (sscanf(STR(text), "%lld", (long long int *) & val.i64) != 1) {
+		if (sscanf(STR(text), "%"PRId64, (long long int *) & val.i64) != 1) {
 			FATAL("Invalid number");
 			return false;
 		}
 		variant = (int16_t) val.i64;
 		return true;
 	} else if (nodeName == "int32") {
-		if (sscanf(STR(text), "%lld", (long long int *) & val.i64) != 1) {
+		if (sscanf(STR(text), "%"PRId64, (long long int *) & val.i64) != 1) {
 			FATAL("Invalid number");
 			return false;
 		}
 		variant = (int32_t) val.i64;
 		return true;
 	} else if (nodeName == "int64") {
-		if (sscanf(STR(text), "%lld", (long long int *) & val.i64) != 1) {
+		if (sscanf(STR(text), "%"PRId64, (long long int *) & val.i64) != 1) {
 			FATAL("Invalid number");
 			return false;
 		}
 		variant = (int64_t) val.i64;
 		return true;
 	} else if (nodeName == "uint8") {
-		if (sscanf(STR(text), "%llu", (long long unsigned int *) & val.ui64) != 1) {
+		if (sscanf(STR(text), "%"PRIu64, (long long unsigned int *) & val.ui64) != 1) {
 			FATAL("Invalid number");
 			return false;
 		}
 		variant = (uint8_t) val.ui64;
 		return true;
 	} else if (nodeName == "uint16") {
-		if (sscanf(STR(text), "%llu", (long long unsigned int *) & val.ui64) != 1) {
+		if (sscanf(STR(text), "%"PRIu64, (long long unsigned int *) & val.ui64) != 1) {
 			FATAL("Invalid number");
 			return false;
 		}
 		variant = (uint16_t) val.ui64;
 		return true;
 	} else if (nodeName == "uint32") {
-		if (sscanf(STR(text), "%llu", (long long unsigned int *) & val.ui64) != 1) {
+		if (sscanf(STR(text), "%"PRIu64, (long long unsigned int *) & val.ui64) != 1) {
 			FATAL("Invalid number");
 			return false;
 		}
 		variant = (uint32_t) val.ui64;
 		return true;
 	} else if (nodeName == "uint64") {
-		if (sscanf(STR(text), "%llu", (long long unsigned int *) & val.ui64) != 1) {
+		if (sscanf(STR(text), "%"PRIu64, (long long unsigned int *) & val.ui64) != 1) {
 			FATAL("Invalid number");
 			return false;
 		}
@@ -2095,7 +2095,7 @@ bool Variant::DeserializeFromXml(TiXmlElement *pNode, Variant &variant) {
 		variant._type = V_TIMESTAMP;
 		return true;
 	} else if (nodeName == "date") {
-		if (strptime(STR(text), "%Y-%m-%d", &val.t) == NULL) {
+		if (strptime(STR(text), "%Y-%m-%u", &val.t) == NULL) {
 			FATAL("Invalid timestamp (date, time or timestamp)");
 			return false;
 		}
@@ -2251,7 +2251,7 @@ bool Variant::ReadJSONString(string &raw, Variant &result, uint32_t &start) {
 		return false;
 	}
 	if (raw[start] != '\"') {
-		FATAL("Invalid JSON string: %d", start);
+		FATAL("Invalid JSON string: %u", start);
 		return false;
 	}
 	start++;

@@ -39,7 +39,7 @@ BaseProtocol::BaseProtocol(uint64_t type) {
 	_gracefullyEnqueueForDelete = false;
 	_pApplication = NULL;
 #ifdef LOG_CONSTRUCTOR_DESTRUCTOR
-	FINEST("Protocol with id %d of type %s created; F: %p,N: %p, DF: %d, DN: %d",
+	FINEST("Protocol with id %u of type %s created; F: %p,N: %p, DF: %hhu, DN: %hhu",
 			_id, STR(tagToString(_type)),
 			_pFarProtocol, _pNearProtocol, _deleteFar, _deleteNear);
 #endif
@@ -51,7 +51,7 @@ BaseProtocol::BaseProtocol(uint64_t type) {
 
 BaseProtocol::~BaseProtocol() {
 #ifdef LOG_CONSTRUCTOR_DESTRUCTOR
-	FINEST("Protocol with id %d of type %s going to be deleted; F: %p,N: %p, DF: %d, DN: %d",
+	FINEST("Protocol with id %u of type %s going to be deleted; F: %p,N: %p, DF: %hhu, DN: %hhu",
 			_id, STR(tagToString(_type)),
 			_pFarProtocol, _pNearProtocol, _deleteFar, _deleteNear);
 #endif
@@ -73,7 +73,7 @@ BaseProtocol::~BaseProtocol() {
 		}
 	}
 #ifdef LOG_CONSTRUCTOR_DESTRUCTOR
-	FINEST("Protocol with id %d of type %s deleted; F: %p,N: %p, DF: %d, DN: %d",
+	FINEST("Protocol with id %u of type %s deleted; F: %p,N: %p, DF: %hhu, DN: %hhu",
 			_id, STR(tagToString(_type)),
 			_pFarProtocol, _pNearProtocol, _deleteFar, _deleteNear);
 #endif
@@ -111,7 +111,7 @@ void BaseProtocol::SetFarProtocol(BaseProtocol *pProtocol) {
 		_pFarProtocol = pProtocol;
 		pProtocol->SetNearProtocol(this);
 #ifdef LOG_CONSTRUCTOR_DESTRUCTOR
-		FINEST("Protocol with id %d of type %s setted up; F: %p,N: %p, DF: %d, DN: %d",
+		FINEST("Protocol with id %u of type %s setted up; F: %p,N: %p, DF: %hhu, DN: %hhu",
 				_id, STR(tagToString(_type)),
 				_pFarProtocol, _pNearProtocol, _deleteFar, _deleteNear);
 #endif
@@ -148,7 +148,7 @@ void BaseProtocol::SetNearProtocol(BaseProtocol *pProtocol) {
 		_pNearProtocol = pProtocol;
 		pProtocol->SetFarProtocol(this);
 #ifdef LOG_CONSTRUCTOR_DESTRUCTOR
-		FINEST("Protocol with id %d of type %s setted up; F: %p,N: %p, DF: %d, DN: %d",
+		FINEST("Protocol with id %u of type %s setted up; F: %p,N: %p, DF: %hhu, DN: %hhu",
 				_id, STR(tagToString(_type)),
 				_pFarProtocol, _pNearProtocol, _deleteFar, _deleteNear);
 #endif
@@ -262,7 +262,7 @@ BaseProtocol::operator string() {
 				result = format("T(%d) <-> ", GetIOHandler()->GetInboundFd());
 				break;
 			default:
-				result = format("#unknown %d#(%d,%d) <-> ",
+				result = format("#unknown %hhu#(%d,%d) <-> ",
 						GetIOHandler()->GetType(),
 						GetIOHandler()->GetInboundFd(),
 						GetIOHandler()->GetOutboundFd());
@@ -408,9 +408,9 @@ void BaseProtocol::GetStats(Variant &info) {
 string BaseProtocol::ToString(uint32_t currentId) {
 	string result = "";
 	if (_id == currentId)
-		result = format("[%s(%d)]", STR(tagToString(_type)), _id);
+		result = format("[%s(%u)]", STR(tagToString(_type)), _id);
 	else
-		result = format("%s(%d)", STR(tagToString(_type)), _id);
+		result = format("%s(%u)", STR(tagToString(_type)), _id);
 	return result;
 }
 

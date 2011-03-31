@@ -61,7 +61,7 @@ bool UDPCarrier::OnEvent(select_event &event) {
 		}
 		default:
 		{
-			ASSERT("Invalid state: %d", event.type);
+			ASSERT("Invalid state: %hhu", event.type);
 			return false;
 		}
 	}
@@ -131,19 +131,20 @@ UDPCarrier* UDPCarrier::Create(string bindIp, uint16_t bindPort) {
 	}
 
 	//3. bind if necessary
-	sockaddr_in bindAddress = {0};
+	sockaddr_in bindAddress;
+	memset(&bindAddress, 0, sizeof (bindAddress));
 	if (bindIp != "") {
 		bindAddress.sin_family = PF_INET;
 		bindAddress.sin_addr.s_addr = inet_addr(bindIp.c_str());
 		bindAddress.sin_port = EHTONS(bindPort); //----MARKED-SHORT----
 		if (bindAddress.sin_addr.s_addr == INADDR_NONE) {
-			FATAL("Unable to bind on address %s:%d", STR(bindIp), bindPort);
+			FATAL("Unable to bind on address %s:%hu", STR(bindIp), bindPort);
 			CLOSE_SOCKET(sock);
 			return NULL;
 		}
 		if (bind(sock, (sockaddr *) & bindAddress, sizeof (sockaddr)) != 0) {
 			int error = LASTSOCKETERROR;
-			FATAL("Unable to bind on address: udp://%s:%d; Error was: %s (%d)",
+			FATAL("Unable to bind on address: udp://%s:%hu; Error was: %s (%d)",
 					STR(bindIp), bindPort, strerror(error), error);
 			CLOSE_SOCKET(sock);
 			return NULL;

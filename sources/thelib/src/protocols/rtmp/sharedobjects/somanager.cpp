@@ -84,7 +84,7 @@ bool SOManager::ProcessSharedObject(BaseRTMPProtocol *pFrom, Variant &request) {
 	//3. Hit the SO with the operations requested
 	for (uint32_t i = 0; i < M_SO_PRIMITIVES(request).MapSize(); i++) {
 		if (!ProcessSharedObjectPrimitive(pFrom, pSO, name, request, i)) {
-			FATAL("Unable to process primitive %d from\n%s", i,
+			FATAL("Unable to process primitive %u from\n%s", i,
 					STR(request.ToString()));
 			return false;
 		}

@@ -34,7 +34,7 @@ bool InFileRTMPMP3Stream::BuildFrame(FileClass *pFile, MediaFrame &mediaFrame,
 		IOBuffer &buffer) {
 	//1. Seek into the data file at the correct position
 	if (!pFile->SeekTo(mediaFrame.start)) {
-		FATAL("Unable to seek to position %llu", mediaFrame.start);
+		FATAL("Unable to seek to position %"PRIu64, mediaFrame.start);
 		return false;
 	}
 
@@ -43,7 +43,7 @@ bool InFileRTMPMP3Stream::BuildFrame(FileClass *pFile, MediaFrame &mediaFrame,
 
 	//3. Read the data
 	if (!buffer.ReadFromFs(*pFile, (uint32_t) mediaFrame.length)) {
-		FATAL("Unable to read %llu bytes from offset %llu", mediaFrame.length, mediaFrame.start);
+		FATAL("Unable to read %"PRIu64" bytes from offset %"PRIu64, mediaFrame.length, mediaFrame.start);
 		return false;
 	}
 

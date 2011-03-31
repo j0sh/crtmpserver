@@ -35,13 +35,6 @@ InboundNamedPipeCarrier::~InboundNamedPipeCarrier() {
 
 InboundNamedPipeCarrier *InboundNamedPipeCarrier::Create(string path,
 		uint16_t mode) {
-	/*if (mkfifo(STR(path), mode) != 0) {
-		int err = errno;
-		FATAL("Unable to create named pipe %s with mode %d: %s (%d)",
-				STR(path), mode, strerror(err), err);
-		return NULL;
-	}*/
-
 	int32_t fd = open(STR(path), O_RDONLY/* | O_NONBLOCK*/);
 	if (fd < 0) {
 		int err = errno;
@@ -89,7 +82,7 @@ bool InboundNamedPipeCarrier::OnEvent(select_event &event) {
 		}
 		default:
 		{
-			ASSERT("Invalid state: %d", event.type);
+			ASSERT("Invalid state: %hhu", event.type);
 			return false;
 		}
 	}

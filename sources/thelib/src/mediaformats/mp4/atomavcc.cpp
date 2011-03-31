@@ -113,7 +113,7 @@ bool AtomAVCC::Read() {
 	}
 
 	for (uint8_t i = 0; i < _picCount; i++) {
-		AVCCParameter parameter = {0};
+		AVCCParameter parameter = {0, 0};
 
 		if (!ReadUInt16(parameter.size)) {
 			FATAL("Unable to read parameter.size");

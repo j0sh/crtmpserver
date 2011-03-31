@@ -101,7 +101,7 @@ bool BaseRTSPAppProtocolHandler::PullExternalStream(URI uri, Variant streamConfi
 			uri.ip,
 			uri.port,
 			chain, customParameters)) {
-		FATAL("Unable to connect to %s:%d",
+		FATAL("Unable to connect to %s:%hu",
 				STR(customParameters["uri"]["ip"]),
 				(uint16_t) customParameters["uri"]["port"]);
 		return false;
@@ -347,12 +347,12 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPRequestSetupOutbound(RTSPProtocol *pF
 			}
 
 			dataPortNumber = atoi(STR(ports[0]));
-			if (format("%u", dataPortNumber) != ports[0]) {
+			if (format("%hu", dataPortNumber) != ports[0]) {
 				WARN("Invalid client_port transport part: %s", STR(parts[i]));
 				continue;
 			}
 			rtcpPortNumber = atoi(STR(ports[1]));
-			if (format("%u", rtcpPortNumber) != ports[1]) {
+			if (format("%hu", rtcpPortNumber) != ports[1]) {
 				WARN("Invalid client_port transport part: %s", STR(parts[i]));
 				continue;
 			}
@@ -679,7 +679,7 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPRequestRecord(RTSPProtocol *pFrom,
 	//2. Get the stream name
 	string streamName = pFrom->GetCustomParameters()["sdpStreamName"];
 	if (streamName == "") {
-		streamName = format("rtsp_stream_%d", pFrom->GetId());
+		streamName = format("rtsp_stream_%u", pFrom->GetId());
 	}
 
 	//3. Create the inbound connectivity
@@ -739,8 +739,7 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPResponse200(RTSPProtocol *pFrom,
 		return HandleRTSPResponse200Play(pFrom, requestHeaders, requestContent,
 				responseHeaders, responseContent);
 	} else {
-		FATAL("Response for method not implemented yet", STR(method));
-
+		FATAL("Response for method %s not implemented yet", STR(method));
 		return false;
 	}
 }
@@ -756,8 +755,7 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPResponse404(RTSPProtocol *pFrom, Vari
 		return HandleRTSPResponse404Play(pFrom, requestHeaders, requestContent,
 				responseHeaders, responseContent);
 	} else {
-		FATAL("Response for method not implemented yet", STR(method));
-
+		FATAL("Response for method %s not implemented yet", STR(method));
 		return false;
 	}
 }
@@ -926,7 +924,7 @@ OutboundConnectivity *BaseRTSPAppProtocolHandler::GetOutboundConnectivity(
 			(BaseInNetStream *) GetApplication()->GetStreamsManager()->FindByUniqueId(
 			pFrom->GetCustomParameters()["streamId"]);
 	if (pInNetStream == NULL) {
-		FATAL("Inbound stream %d not found",
+		FATAL("Inbound stream %u not found",
 				(uint32_t) pFrom->GetCustomParameters()["streamId"]);
 		return NULL;
 	}
@@ -977,13 +975,13 @@ StreamCapabilities *BaseRTSPAppProtocolHandler::GetInboundStreamCapabilities(
 
 string BaseRTSPAppProtocolHandler::GetAudioTrack(RTSPProtocol *pFrom,
 		StreamCapabilities *pCapabilities) {
-	pFrom->GetCustomParameters()["audioTrackId"] = md5(format("A%d%s",
+	pFrom->GetCustomParameters()["audioTrackId"] = md5(format("A%u%s",
 			pFrom->GetId(), STR(generateRandomString(4))), true);
 	string result = "";
 	if (pCapabilities->audioCodecId == CODEC_AUDIO_AAC) {
 		result += "m=audio 0 RTP/AVP 96\r\n";
 		result += "a=recvonly\r\n";
-		result += format("a=rtpmap:96 mpeg4-generic/%d/2\r\n",
+		result += format("a=rtpmap:96 mpeg4-generic/%u/2\r\n",
 				pCapabilities->aac._sampleRate);
 		FINEST("result: %s", STR(result));
 		result += "a=control:trackID="
@@ -999,7 +997,7 @@ string BaseRTSPAppProtocolHandler::GetAudioTrack(RTSPProtocol *pFrom,
 
 string BaseRTSPAppProtocolHandler::GetVideoTrack(RTSPProtocol *pFrom,
 		StreamCapabilities *pCapabilities) {
-	pFrom->GetCustomParameters()["videoTrackId"] = md5(format("V%d%s",
+	pFrom->GetCustomParameters()["videoTrackId"] = md5(format("V%u%s",
 			pFrom->GetId(), STR(generateRandomString(4))), true);
 	string result = "";
 	if (pCapabilities->videoCodecId == CODEC_VIDEO_AVC) {
@@ -1009,7 +1007,7 @@ string BaseRTSPAppProtocolHandler::GetVideoTrack(RTSPProtocol *pFrom,
 				+ (string) pFrom->GetCustomParameters()["videoTrackId"] + "\r\n";
 		result += "a=rtpmap:97 H264/90000\r\n";
 		result += "a=fmtp:97 profile-level-id=";
-		result += format("%02X%02X%02X",
+		result += format("%02hhX%02hhX%02hhX",
 				pCapabilities->avc._pSPS[1],
 				pCapabilities->avc._pSPS[2],
 				pCapabilities->avc._pSPS[3]);

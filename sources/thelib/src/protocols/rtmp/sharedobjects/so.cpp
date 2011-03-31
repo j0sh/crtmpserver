@@ -65,13 +65,13 @@ void SO::RegisterProtocol(uint32_t protocolId) {
 	DirtyInfo di;
 
 	//1. Clear
-	di.propertyName = format("SOT_SC_CLEAR_DATA_%d", protocolId);
+	di.propertyName = format("SOT_SC_CLEAR_DATA_%u", protocolId);
 	di.type = SOT_SC_CLEAR_DATA;
 	ADD_VECTOR_END(_dirtyPropsByProtocol[protocolId], di);
 
 
 	//2. Initial
-	di.propertyName = format("SOT_SC_INITIAL_DATA_%d", protocolId);
+	di.propertyName = format("SOT_SC_INITIAL_DATA_%u", protocolId);
 	di.type = SOT_SC_INITIAL_DATA;
 	ADD_VECTOR_END(_dirtyPropsByProtocol[protocolId], di);
 
@@ -117,16 +117,16 @@ bool SO::HasProperty(string propertyName) {
 }
 
 string SO::DumpTrack() {
-	string result = format("SO: %s; Ver: %d\n", STR(_name), _version);
+	string result = format("SO: %s; Ver: %u\n", STR(_name), _version);
 
 	FOR_MAP(_dirtyPropsByProtocol, uint32_t, Dirtyness, i) {
 		uint32_t protocolId = MAP_KEY(i);
 		Dirtyness dirtyness = MAP_VAL(i);
-		result += format("Protocol: %d\n", protocolId);
+		result += format("Protocol: %u\n", protocolId);
 
 		FOR_VECTOR_ITERATOR(DirtyInfo, dirtyness, j) {
 			DirtyInfo di = VECTOR_VAL(j);
-			result += format("\tKey: %s; Type: %d\n", STR(di.propertyName),
+			result += format("\tKey: %s; Type: %hhu\n", STR(di.propertyName),
 					di.type);
 		}
 	}
@@ -161,7 +161,7 @@ void SO::Track() {
 				case SOT_SC_CLEAR_DATA:
 					break;
 				default:
-					ASSERT("Unable to handle primitive type: %d", type);
+					ASSERT("Unable to handle primitive type: %hhu", type);
 			}
 			ADD_VECTOR_END(primitives, primitive);
 		}

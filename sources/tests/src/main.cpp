@@ -27,7 +27,7 @@ int main(int argc, char **argv) {
 	EXECUTE_SUITE(CommonTestsSuite);
 	EXECUTE_SUITE(VariantTestsSuite);
 	EXECUTE_SUITE(TheLibTestsSuite);
-	TS_PRINT("A total of %d tests completed successfuly\n", BaseTestsSuite::_testsCount);
+	TS_PRINT("A total of %u tests completed successfuly\n", BaseTestsSuite::_testsCount);
 	return 0;
 }
 

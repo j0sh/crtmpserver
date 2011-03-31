@@ -65,7 +65,7 @@ public:
 
 		if (((event.flags & EV_ERROR) != 0) ||
 				((event.flags & EV_EOF) != 0)) {
-			DEBUG("***CONNECT ERROR: Unable to connect to: %s:%d",
+			DEBUG("***CONNECT ERROR: Unable to connect to: %s:%hu",
 					STR(_ip),
 					_port);
 			T::SignalProtocolCreated(NULL, _customParameters);
@@ -144,7 +144,7 @@ public:
 		if (connect(_inboundFd, (sockaddr *) & address, sizeof (address)) != 0) {
 			int err = errno;
 			if (err != EINPROGRESS) {
-				FATAL("Unable to connect to %s:%d (%d) (%s)", STR(_ip), _port, err,
+				FATAL("Unable to connect to %s:%hu (%d) (%s)", STR(_ip), _port, err,
 						strerror(err));
 				T::SignalProtocolCreated(NULL, _customParameters);
 				_closeSocket = true;

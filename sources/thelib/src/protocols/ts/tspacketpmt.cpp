@@ -32,32 +32,32 @@ TSPacketPMT::~TSPacketPMT() {
 
 TSPacketPMT::operator string() {
 	string result = "";
-	result += format("tableId:                %d\n", _tableId);
-	result += format("sectionSyntaxIndicator: %d\n", _sectionSyntaxIndicator);
-	result += format("reserved1:              %d\n", _reserved1);
-	result += format("reserved2:              %d\n", _reserved2);
-	result += format("sectionLength:          %d\n", _sectionLength);
-	result += format("programNumber:          %d\n", _programNumber);
-	result += format("reserved3:              %d\n", _reserved3);
-	result += format("versionNumber:          %d\n", _versionNumber);
-	result += format("currentNextIndicator:   %d\n", _currentNextIndicator);
-	result += format("sectionNumber:          %d\n", _sectionNumber);
-	result += format("lastSectionNumber:      %d\n", _lastSectionNumber);
-	result += format("reserved4:              %d\n", _reserved4);
-	result += format("pcrPid:                 %d\n", _pcrPid);
-	result += format("reserved5:              %d\n", _reserved5);
-	result += format("programInfoLength:      %d\n", _programInfoLength);
-	result += format("crc:                    %08x\n", _crc);
-	result += format("descriptors count:      %d\n", _programInfoDescriptors.size());
+	result += format("tableId:                %hhu\n", _tableId);
+	result += format("sectionSyntaxIndicator: %hhu\n", _sectionSyntaxIndicator);
+	result += format("reserved1:              %hhu\n", _reserved1);
+	result += format("reserved2:              %hhu\n", _reserved2);
+	result += format("sectionLength:          %hu\n", _sectionLength);
+	result += format("programNumber:          %hu\n", _programNumber);
+	result += format("reserved3:              %hhu\n", _reserved3);
+	result += format("versionNumber:          %hhu\n", _versionNumber);
+	result += format("currentNextIndicator:   %hhu\n", _currentNextIndicator);
+	result += format("sectionNumber:          %hhu\n", _sectionNumber);
+	result += format("lastSectionNumber:      %hhu\n", _lastSectionNumber);
+	result += format("reserved4:              %hhu\n", _reserved4);
+	result += format("pcrPid:                 %hu\n", _pcrPid);
+	result += format("reserved5:              %hhu\n", _reserved5);
+	result += format("programInfoLength:      %hu\n", _programInfoLength);
+	result += format("crc:                    %x\n", _crc);
+	result += format("descriptors count:      %zu\n", _programInfoDescriptors.size());
 	for (uint32_t i = 0; i < _programInfoDescriptors.size(); i++) {
 		result += format("\t%s", STR(_programInfoDescriptors[i]));
 		if (i != _programInfoDescriptors.size() - 1)
 			result += "\n";
 	}
-	result += format("streams count:          %d\n", _streams.size());
+	result += format("streams count:          %zu\n", _streams.size());
 
 	FOR_MAP(_streams, uint16_t, TSStreamInfo, i) {
-		result += format("\t%d: %s\n", MAP_KEY(i), STR(MAP_VAL(i).toString(1)));
+		result += format("\t%hu: %s\n", MAP_KEY(i), STR(MAP_VAL(i).toString(1)));
 	}
 	return result;
 }
@@ -141,7 +141,7 @@ bool TSPacketPMT::Read(uint8_t *pBuffer, uint32_t &cursor, uint32_t maxCursor) {
 
 	//14. Read the streams info
 	while (streamsInfoCursor < streamsInfoLength) {
-		TSStreamInfo streamInfo = {0};
+		TSStreamInfo streamInfo;
 
 		//14.1. read the stream type
 		CHECK_BOUNDS(1);

@@ -30,7 +30,8 @@ vector<IOHandlerManagerToken *> IOHandlerManager::_tokensVector2;
 vector<IOHandlerManagerToken *> *IOHandlerManager::_pAvailableTokens;
 vector<IOHandlerManagerToken *> *IOHandlerManager::_pRecycledTokens;
 TimersManager *IOHandlerManager::_pTimersManager = NULL;
-struct epoll_event IOHandlerManager::_dummy = {0};
+struct epoll_event IOHandlerManager::_dummy = {0,
+	{0}};
 
 map<uint32_t, IOHandler *> & IOHandlerManager::GetActiveHandlers() {
 	return _activeIOHandlers;
@@ -48,6 +49,7 @@ void IOHandlerManager::Initialize() {
 	_pAvailableTokens = &_tokensVector1;
 	_pRecycledTokens = &_tokensVector2;
 	_pTimersManager = new TimersManager(ProcessTimer);
+	memset(&_dummy, 0, sizeof (_dummy));
 }
 
 void IOHandlerManager::SignalShutdown() {
@@ -90,24 +92,25 @@ void IOHandlerManager::RegisterIOHandler(IOHandler* pIOHandler) {
 		ASSERT("IOHandler already registered");
 	}
 	SetupToken(pIOHandler);
-	uint32_t before = (uint32_t) _activeIOHandlers.size();
+	size_t before = _activeIOHandlers.size();
 	_activeIOHandlers[pIOHandler->GetId()] = pIOHandler;
-	DEBUG("Handlers count changed: %d->%d %s", before, before + 1,
+	DEBUG("Handlers count changed: %zu->%zu %s", before, before + 1,
 			STR(IOHandler::IOHTToString(pIOHandler->GetType())));
 }
 
 void IOHandlerManager::UnRegisterIOHandler(IOHandler *pIOHandler) {
 	if (MAP_HAS1(_activeIOHandlers, pIOHandler->GetId())) {
 		FreeToken(pIOHandler);
-		uint32_t before = (uint32_t) _activeIOHandlers.size();
+		size_t before = _activeIOHandlers.size();
 		_activeIOHandlers.erase(pIOHandler->GetId());
-		DEBUG("Handlers count changed: %d->%d %s", before, before - 1,
+		DEBUG("Handlers count changed: %zu->%zu %s", before, before - 1,
 				STR(IOHandler::IOHTToString(pIOHandler->GetType())));
 	}
 }
 
 bool IOHandlerManager::EnableReadData(IOHandler *pIOHandler) {
-	struct epoll_event evt = {0};
+	struct epoll_event evt = {0,
+		{0}};
 	evt.events = EPOLLIN;
 	evt.data.ptr = pIOHandler->GetIOHandlerManagerToken();
 	if (epoll_ctl(_eq, EPOLL_CTL_ADD, pIOHandler->GetInboundFd(), &evt) != 0) {
@@ -119,7 +122,8 @@ bool IOHandlerManager::EnableReadData(IOHandler *pIOHandler) {
 }
 
 bool IOHandlerManager::DisableReadData(IOHandler *pIOHandler, bool ignoreError) {
-	struct epoll_event evt = {0};
+	struct epoll_event evt = {0,
+		{0}};
 	evt.events = EPOLLIN;
 	evt.data.ptr = pIOHandler->GetIOHandlerManagerToken();
 	if (epoll_ctl(_eq, EPOLL_CTL_DEL, pIOHandler->GetInboundFd(), &evt) != 0) {
@@ -133,7 +137,8 @@ bool IOHandlerManager::DisableReadData(IOHandler *pIOHandler, bool ignoreError) 
 }
 
 bool IOHandlerManager::EnableWriteData(IOHandler *pIOHandler) {
-	struct epoll_event evt = {0};
+	struct epoll_event evt = {0,
+		{0}};
 	evt.events = EPOLLIN | EPOLLOUT;
 	evt.data.ptr = pIOHandler->GetIOHandlerManagerToken();
 
@@ -154,7 +159,8 @@ bool IOHandlerManager::EnableWriteData(IOHandler *pIOHandler) {
 }
 
 bool IOHandlerManager::DisableWriteData(IOHandler *pIOHandler, bool ignoreError) {
-	struct epoll_event evt = {0};
+	struct epoll_event evt = {0,
+		{0}};
 	evt.events = EPOLLIN;
 	evt.data.ptr = pIOHandler->GetIOHandlerManagerToken();
 	if (epoll_ctl(_eq, EPOLL_CTL_MOD, pIOHandler->GetOutboundFd(), &evt) != 0) {
@@ -168,7 +174,8 @@ bool IOHandlerManager::DisableWriteData(IOHandler *pIOHandler, bool ignoreError)
 }
 
 bool IOHandlerManager::EnableAcceptConnections(IOHandler *pIOHandler) {
-	struct epoll_event evt = {0};
+	struct epoll_event evt = {0,
+		{0}};
 	evt.events = EPOLLIN;
 	evt.data.ptr = pIOHandler->GetIOHandlerManagerToken();
 	if (epoll_ctl(_eq, EPOLL_CTL_ADD, pIOHandler->GetInboundFd(), &evt) != 0) {
@@ -180,7 +187,8 @@ bool IOHandlerManager::EnableAcceptConnections(IOHandler *pIOHandler) {
 }
 
 bool IOHandlerManager::DisableAcceptConnections(IOHandler *pIOHandler, bool ignoreError) {
-	struct epoll_event evt = {0};
+	struct epoll_event evt = {0,
+		{0}};
 	evt.events = EPOLLIN;
 	evt.data.ptr = pIOHandler->GetIOHandlerManagerToken();
 	if (epoll_ctl(_eq, EPOLL_CTL_DEL, pIOHandler->GetInboundFd(), &evt) != 0) {
@@ -194,7 +202,7 @@ bool IOHandlerManager::DisableAcceptConnections(IOHandler *pIOHandler, bool igno
 }
 
 bool IOHandlerManager::EnableTimer(IOHandler *pIOHandler, uint32_t seconds) {
-	TimerEvent event = {0};
+	TimerEvent event = {0, 0, 0};
 	event.id = pIOHandler->GetId();
 	event.period = seconds;
 	event.pUserData = pIOHandler->GetIOHandlerManagerToken();

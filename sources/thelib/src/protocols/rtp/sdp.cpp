@@ -90,7 +90,7 @@ Variant SDP::GetVideoTrack(uint32_t index, string uri) {
 	//1. Find the track
 	Variant track = GetTrack(index, "video");
 	if (track == V_NULL) {
-		FATAL("Video track index %d not found", index);
+		FATAL("Video track index %u not found", index);
 		return Variant();
 	}
 
@@ -124,7 +124,7 @@ Variant SDP::GetAudioTrack(uint32_t index, string uri) {
 	//1. Find the track
 	Variant track = GetTrack(index, "audio");
 	if (track == V_NULL) {
-		FATAL("Audio track index %d not found", index);
+		FATAL("Audio track index %u not found", index);
 		return Variant();
 	}
 
@@ -464,8 +464,8 @@ bool SDP::ParseSDPLineO(Variant &result, string line) {
 
 bool SDP::ParseSDPLineP(Variant &result, string line) {
 	result.Reset();
-    result = line;
-    return true;
+	result = line;
+	return true;
 }
 
 bool SDP::ParseSDPLineR(Variant &result, string line) {

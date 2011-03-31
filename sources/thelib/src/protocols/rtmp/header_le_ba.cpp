@@ -123,7 +123,7 @@ bool Header::Read(uint32_t channelId, uint8_t type, IOBuffer &buffer,
 		}
 		default:
 		{
-			FATAL("Invalid header type: %d", ht);
+			FATAL("Invalid header type: %hhu", ht);
 			return false;
 		}
 	}
@@ -298,15 +298,16 @@ bool Header::Write(IOBuffer &buffer) {
 		}
 		default:
 		{
-			FATAL("Invalid header size: %d", ht);
+			FATAL("Invalid header size: %hhu", ht);
 			return false;
 		}
 	}
 }
 
 Header::operator string() {
-	return format("(RC: %d; HT: %d; CI: %02u; T: % 9u; L: % 6u; MT: % 2u; SI: % 2u; IA: %d)",
-			readCompleted, ht, ci, hf.s.ts, hf.s.ml, hf.s.mt, hf.s.si, isAbsolute);
+	//	return format("(RC: %u; HT: %u; CI: %02u; T: % 9u; L: % 6u; MT: % 2u; SI: % 2u; IA: %u)",
+	//			readCompleted, ht, ci, hf.s.ts, hf.s.ml, hf.s.mt, hf.s.si, isAbsolute);
+	return "not yet implemented";
 }
 
 #endif /* LITTLE_ENDIAN_BYTE_ALIGNED */

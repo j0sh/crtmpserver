@@ -66,7 +66,7 @@ bool TCPAcceptor::StartAccept(BaseClientApplication *pApplication) {
 
 	if (bind(_inboundFd, (sockaddr *) & _address, sizeof (sockaddr)) != 0) {
 		int error = errno;
-		FATAL("Unable to bind on address: tcp://%s:%d; Error was: %s (%d)",
+		FATAL("Unable to bind on address: tcp://%s:%hu; Error was: %s (%d)",
 				inet_ntoa(((sockaddr_in *) & _address)->sin_addr),
 				ENTOHS(((sockaddr_in *) & _address)->sin_port),
 				strerror(error),
@@ -113,14 +113,14 @@ bool TCPAcceptor::OnConnectionAvailable(struct kevent &event) {
 	if (!_enabled) {
 		CLOSE_SOCKET(fd);
 		_droppedCount++;
-		WARN("Acceptor is not enabled. Client dropped: %s:%d -> %s:%d",
+		WARN("Acceptor is not enabled. Client dropped: %s:%hu -> %s:%hu",
 				inet_ntoa(((sockaddr_in *) & address)->sin_addr),
 				ENTOHS(((sockaddr_in *) & address)->sin_port),
 				STR(_ipAddress),
 				_port);
 		return true;
 	}
-	INFO("Client connected: %s:%d -> %s:%d",
+	INFO("Client connected: %s:%hu -> %s:%hu",
 			inet_ntoa(((sockaddr_in *) & address)->sin_addr),
 			ENTOHS(((sockaddr_in *) & address)->sin_port),
 			STR(_ipAddress),

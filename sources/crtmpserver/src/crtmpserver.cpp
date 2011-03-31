@@ -228,7 +228,7 @@ void Run() {
 		exit(-1);
 	}
 	INFO("\n%s", STR(gRs.pConfigFile->GetServicesInfo()));
-	INFO("GO! GO! GO! (%d)", getpid());
+	INFO("GO! GO! GO! (%u)", (uint32_t) getpid());
 	while (IOHandlerManager::Pulse()) {
 		IOHandlerManager::DeleteDeadHandlers();
 		ProtocolManager::CleanupDeadProtocols();

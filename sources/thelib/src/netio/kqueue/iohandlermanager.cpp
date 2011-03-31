@@ -141,19 +141,19 @@ void IOHandlerManager::RegisterIOHandler(IOHandler* pIOHandler) {
 	if (MAP_HAS1(_activeIOHandlers, pIOHandler->GetId())) {
 		ASSERT("IOHandler already registered");
 	}
-	uint32_t before = (uint32_t) _activeIOHandlers.size();
+	size_t before = _activeIOHandlers.size();
 	_activeIOHandlers[pIOHandler->GetId()] = pIOHandler;
 	SetupToken(pIOHandler);
-	DEBUG("Handlers count changed: %d->%d %s", before, before + 1,
+	DEBUG("Handlers count changed: %zu->%zu %s", before, before + 1,
 			STR(IOHandler::IOHTToString(pIOHandler->GetType())));
 }
 
 void IOHandlerManager::UnRegisterIOHandler(IOHandler *pIOHandler) {
 	if (MAP_HAS1(_activeIOHandlers, pIOHandler->GetId())) {
 		FreeToken(pIOHandler);
-		uint32_t before = (uint32_t) _activeIOHandlers.size();
+		size_t before = _activeIOHandlers.size();
 		_activeIOHandlers.erase(pIOHandler->GetId());
-		DEBUG("Handlers count changed: %d->%d %s", before, before - 1,
+		DEBUG("Handlers count changed: %zu->%zu %s", before, before - 1,
 				STR(IOHandler::IOHTToString(pIOHandler->GetType())));
 	}
 }
@@ -200,7 +200,7 @@ bool IOHandlerManager::EnableTimer(IOHandler *pIOHandler, uint32_t seconds) {
 			EV_ADD | EV_ENABLE, NOTE_USECONDS,
 			seconds*KQUEUE_TIMER_MULTIPLIER, pIOHandler->GetIOHandlerManagerToken());
 #else
-	TimerEvent event = {0};
+	TimerEvent event = {0, 0, 0};
 	event.id = pIOHandler->GetId();
 	event.period = seconds;
 	event.pUserData = pIOHandler->GetIOHandlerManagerToken();

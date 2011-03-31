@@ -234,7 +234,7 @@ void RTSPProtocol::PushResponseContent(string outboundContent, bool append) {
 
 bool RTSPProtocol::SendResponseMessage() {
 	//1. Put the first line
-	_outputBuffer.ReadFromString(format("%s %d %s\r\n",
+	_outputBuffer.ReadFromString(format("%s %u %s\r\n",
 			STR(_responseHeaders[RTSP_FIRST_LINE][RTSP_VERSION]),
 			(uint32_t) _responseHeaders[RTSP_FIRST_LINE][RTSP_STATUS_CODE],
 			STR(_responseHeaders[RTSP_FIRST_LINE][RTSP_STATUS_CODE_REASON])));
@@ -339,7 +339,7 @@ bool RTSPProtocol::SendMessage(Variant &headers, string &content) {
 
 	//2. Add the content length if required
 	if (content.size() > 0) {
-		headers[RTSP_HEADERS][RTSP_HEADERS_CONTENT_LENGTH] = format("%d", content.size());
+		headers[RTSP_HEADERS][RTSP_HEADERS_CONTENT_LENGTH] = format("%zu", content.size());
 	}
 
 	//3. Write the headers
@@ -566,7 +566,7 @@ bool RTSPProtocol::HandleRTSPMessage(IOBuffer &buffer) {
 		_inboundContent += string((char *) GETIBPOINTER(buffer), chunkLength);
 		buffer.Ignore(chunkLength);
 		if (_inboundContent.size() < _contentLength) {
-			FINEST("Not enough data. Wanted: %u; got: %u", _contentLength, _inboundContent.size());
+			FINEST("Not enough data. Wanted: %u; got: %zu", _contentLength, _inboundContent.size());
 			return true;
 		}
 	}

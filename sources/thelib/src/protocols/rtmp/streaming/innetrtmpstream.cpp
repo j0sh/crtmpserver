@@ -33,7 +33,7 @@ InNetRTMPStream::InNetRTMPStream(BaseProtocol *pProtocol,
 	_rtmpStreamId = rtmpStreamId;
 	_chunkSize = chunkSize;
 	_channelId = channelId;
-	_clientId = format("%d_%d_%d", _pProtocol->GetId(), _rtmpStreamId, this);
+	_clientId = format("%d_%d_%z", _pProtocol->GetId(), _rtmpStreamId, (size_t)this);
 	_lastVideoTime = 0;
 	_lastAudioTime = 0;
 	_pOutFileRTMPFLVStream = NULL;
@@ -191,7 +191,7 @@ void InNetRTMPStream::SignalOutStreamAttached(BaseOutStream *pOutStream) {
 				GETAVAILABLEBYTESCOUNT(_videoCodecInit), 0,
 				GETAVAILABLEBYTESCOUNT(_videoCodecInit),
 				_lastAudioTime, false)) {
-			FINEST("Unable to feed OS: %d", pOutStream->GetUniqueId());
+			FINEST("Unable to feed OS: %u", pOutStream->GetUniqueId());
 			pOutStream->EnqueueForDelete();
 		}
 	}
@@ -201,7 +201,7 @@ void InNetRTMPStream::SignalOutStreamAttached(BaseOutStream *pOutStream) {
 				GETAVAILABLEBYTESCOUNT(_audioCodecInit), 0,
 				GETAVAILABLEBYTESCOUNT(_audioCodecInit),
 				_lastAudioTime, true)) {
-			FINEST("Unable to feed OS: %d", pOutStream->GetUniqueId());
+			FINEST("Unable to feed OS: %u", pOutStream->GetUniqueId());
 			pOutStream->EnqueueForDelete();
 		}
 	}
@@ -305,7 +305,7 @@ bool InNetRTMPStream::InitializeAudioCapabilities(uint8_t *pData, uint32_t lengt
 		FATAL("InitAudioAAC failed");
 		return false;
 	}
-	FINEST("Cached the AAC audio codec initialization: %d",
+	FINEST("Cached the AAC audio codec initialization: %u",
 			GETAVAILABLEBYTESCOUNT(_audioCodecInit));
 	return true;
 }
@@ -326,7 +326,7 @@ bool InNetRTMPStream::InitializeVideoCapabilities(uint8_t *pData, uint32_t lengt
 		return false;
 	}
 
-	FINEST("Cached the h264 video codec initialization: %d",
+	FINEST("Cached the h264 video codec initialization: %u",
 			GETAVAILABLEBYTESCOUNT(_videoCodecInit));
 
 	return true;

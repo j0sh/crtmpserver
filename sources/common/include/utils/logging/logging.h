@@ -28,16 +28,29 @@
 #include "utils/logging/logcatloglocation.h"
 #include "utils/logging/logger.h"
 
-#define LOG(level,...) Logger::Log(level, __FILE__, __LINE__, __func__, __VA_ARGS__)
-#define FATAL(...) Logger::Log(_FATAL_, __FILE__, __LINE__, __func__, __VA_ARGS__)
-#define WARN(...) Logger::Log(_WARNING_, __FILE__, __LINE__, __func__, __VA_ARGS__)
-#define INFO(...) Logger::Log(_INFO_, __FILE__, __LINE__, __func__, __VA_ARGS__)
-#define DEBUG(...) Logger::Log(_DEBUG_, __FILE__, __LINE__, __func__, __VA_ARGS__)
-#define FINE(...) Logger::Log(_FINE_, __FILE__, __LINE__, __func__, __VA_ARGS__)
-#define FINEST(...) Logger::Log(_FINEST_, __FILE__, __LINE__, __func__, __VA_ARGS__)
-#define ASSERT(...) {Logger::Log(_FATAL_, __FILE__, __LINE__, __func__, __VA_ARGS__);assert(false);abort();}
+
+
+#ifdef VALIDATE_FROMAT_SPECIFIERS
+#define __VALIDATE_FROMAT_SPECIFIERS(...) \
+do { \
+   char ___tempLocation[1024]; \
+   snprintf(___tempLocation,1023,__VA_ARGS__); \
+}while (0)
+#else
+#define __VALIDATE_FROMAT_SPECIFIERS(...)
+#endif /* VALIDATE_FROMAT_SPECIFIERS */
+
+#define LOG(level,...) do{__VALIDATE_FROMAT_SPECIFIERS(__VA_ARGS__);Logger::Log(level, __FILE__, __LINE__, __func__, __VA_ARGS__);}while(0)
+#define FATAL(...) do{__VALIDATE_FROMAT_SPECIFIERS(__VA_ARGS__);Logger::Log(_FATAL_, __FILE__, __LINE__, __func__, __VA_ARGS__);}while(0)
+
+#define WARN(...) do{__VALIDATE_FROMAT_SPECIFIERS(__VA_ARGS__);Logger::Log(_WARNING_, __FILE__, __LINE__, __func__, __VA_ARGS__);}while(0)
+#define INFO(...) do{__VALIDATE_FROMAT_SPECIFIERS(__VA_ARGS__);Logger::Log(_INFO_, __FILE__, __LINE__, __func__, __VA_ARGS__);}while(0)
+#define DEBUG(...) do{__VALIDATE_FROMAT_SPECIFIERS(__VA_ARGS__);Logger::Log(_DEBUG_, __FILE__, __LINE__, __func__, __VA_ARGS__);}while(0)
+#define FINE(...) do{__VALIDATE_FROMAT_SPECIFIERS(__VA_ARGS__);Logger::Log(_FINE_, __FILE__, __LINE__, __func__, __VA_ARGS__);}while(0)
+#define FINEST(...) do{__VALIDATE_FROMAT_SPECIFIERS(__VA_ARGS__);Logger::Log(_FINEST_, __FILE__, __LINE__, __func__, __VA_ARGS__);}while(0)
+#define ASSERT(...) do{__VALIDATE_FROMAT_SPECIFIERS(__VA_ARGS__);Logger::Log(_FATAL_, __FILE__, __LINE__, __func__, __VA_ARGS__);assert(false);abort();}while(0)
 #define NYI WARN("%s not yet implemented",__func__);
-#define NYIR {NYI;return false;}
-#define NYIA {NYI;assert(false);abort();}
+#define NYIR do{NYI;return false;}while(0)
+#define NYIA do{NYI;assert(false);abort();}while(0)
 
 #endif /* _LOGGING_H */

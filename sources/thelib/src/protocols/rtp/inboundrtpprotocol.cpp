@@ -112,7 +112,6 @@ bool InboundRTPProtocol::SignalInputData(IOBuffer &buffer,
 				&& (((_lastTimestamp & 0x80000000) >> 31) == 1)) {
 			_timestampRollover++;
 			_lastTimestamp = _rtpHeader._timestamp;
-			WARN("Roll over on %d; _timestampRollover: %d", GetId(), _timestampRollover);
 		}
 	} else {
 		_lastTimestamp = _rtpHeader._timestamp;

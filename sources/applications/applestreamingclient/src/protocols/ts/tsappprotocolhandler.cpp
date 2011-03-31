@@ -41,7 +41,7 @@ void TSAppProtocolHandler::RegisterProtocol(BaseProtocol *pProtocol) {
 	uint32_t contextId = pProtocol->GetCustomParameters()["payload"]["contextId"];
 	ClientContext *pContext = ClientContext::GetContext(contextId, 0, 0);
 	if (pContext == NULL) {
-		FATAL("Unable to get the context with id: %d", contextId);
+		FATAL("Unable to get the context with id: %u", contextId);
 		pProtocol->EnqueueForDelete();
 		return;
 	}

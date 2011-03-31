@@ -23,6 +23,8 @@
 
 #include "platform/baseplatform.h"
 
+#define __STDC_FORMAT_MACROS
+#include <inttypes.h>
 #include <assert.h>
 #include <time.h>
 #include <io.h>
@@ -142,8 +144,8 @@ struct msghdr {
 
 #define FD_COPY(f, t)   (void)(*(t) = *(f))
 
-DLLEXP string format(string format, ...);
-DLLEXP string vformat(string format, va_list args);
+DLLEXP string format(string fmt, ...);
+DLLEXP string vformat(string fmt, va_list args);
 DLLEXP void replace(string &target, string search, string replacement);
 DLLEXP bool fileExists(string path);
 DLLEXP string lowercase(string value);
@@ -174,7 +176,7 @@ DLLEXP bool MoveFile(string src, string dst);
 DLLEXP void InstallQuitSignal(SignalFnc pQuitSignalFnc);
 DLLEXP void InstallConfRereadSignal(SignalFnc pConfRereadSignalFnc);
 DLLEXP time_t timegm(struct tm *tm);
-DLLEXP char *strptime(const char *buf, const char *format, struct tm *timeptr);
+DLLEXP char *strptime(const char *buf, const char *fmt, struct tm *timeptr);
 DLLEXP int strcasecmp(const char *s1, const char *s2);
 DLLEXP int strncasecmp(const char *s1, const char *s2, size_t n);
 DLLEXP int vasprintf(char **strp, const char *fmt, va_list ap, int size = 256);

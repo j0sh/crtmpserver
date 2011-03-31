@@ -178,7 +178,7 @@ bool ProxyPublishApplication::InitiateForwardingStream(BaseInStream *pStream) {
 	FOR_MAP(_targetServers, string, Variant, i) {
 		Variant &target = MAP_VAL(i);
 		if (!InitiateForwardingStream(pStream, target)) {
-			WARN("Unable to forward stream %d of type %s with name `%s` owned by application `%s` to server %s",
+			WARN("Unable to forward stream %u of type %s with name `%s` owned by application `%s` to server %s",
 					pStream->GetUniqueId(),
 					STR(tagToString(pStream->GetType())),
 					STR(pStream->GetName()),
@@ -216,7 +216,7 @@ bool ProxyPublishApplication::InitiateForwardingStream(BaseInStream *pStream, Va
 		parameters["targetStreamName"] = pStream->GetName();
 
 	//3. Some nice info
-	INFO("Initiate forward stream %d of type %s with name `%s` owned by application `%s` to server %s with name `%s`",
+	INFO("Initiate forward stream %u of type %s with name `%s` owned by application `%s` to server %s with name `%s`",
 			pStream->GetUniqueId(),
 			STR(tagToString(pStream->GetType())),
 			STR(pStream->GetName()),

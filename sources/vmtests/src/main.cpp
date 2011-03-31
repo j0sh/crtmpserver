@@ -184,7 +184,7 @@ bool RunTestEchoFunctionCall(BaseVM *pVM, Variant &test) {
 		gotBuffer.ReadFromString(got);
 		for (uint32_t i = 0; i < GETAVAILABLEBYTESCOUNT(wantedBuffer) && i < GETAVAILABLEBYTESCOUNT(gotBuffer); i++) {
 			if (GETIBPOINTER(wantedBuffer)[i] != GETIBPOINTER(gotBuffer)[i]) {
-				FATAL("w: %02x; g: %02x; i: %d",
+				FATAL("w: %hhx; g: %hhx; i: %u",
 						GETIBPOINTER(wantedBuffer)[i],
 						GETIBPOINTER(gotBuffer)[i],
 						i);

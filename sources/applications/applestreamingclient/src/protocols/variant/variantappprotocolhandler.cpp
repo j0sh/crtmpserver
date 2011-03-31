@@ -129,7 +129,7 @@ void VariantAppProtocolHandler::ProcessCommandSetBitrates(
 	map<uint32_t, uint32_t> bws;
 
 	FOR_MAP(ASC_REQ_COMMAND_SET_BITRATES_BWS(request), string, Variant, i) {
-		FINEST("(uint32_t)MAP_VAL(i): %d", (uint32_t) MAP_VAL(i));
+		FINEST("(uint32_t)MAP_VAL(i): %u", (uint32_t) MAP_VAL(i));
 		bws[(uint32_t) MAP_VAL(i)] = (uint32_t) MAP_VAL(i);
 	}
 	pContext->SetAllowedBitrates(bws);
@@ -183,15 +183,15 @@ void VariantAppProtocolHandler::ProcessInfoListAllStreams(
 	vector<uint32_t> contextIds = ClientContext::GetContextIds();
 	vector<string> allStreams;
 	for (uint32_t i = 0; i < contextIds.size(); i++) {
-		FINEST("Inspecting context id: %d", contextIds[i]);
+		FINEST("Inspecting context id: %u", contextIds[i]);
 		ClientContext *pContext = GetContext(contextIds[i],
 				pProtocol->GetType());
 		if (pContext == NULL) {
-			WARN("Context id %d is NULL", contextIds[i]);
+			WARN("Context id %u is NULL", contextIds[i]);
 			continue;
 		}
 		if (pContext->EventSink()->GetType() != EVENT_SYNC_VARIANT) {
-			WARN("Context id %d is not Variant friendly", contextIds[i]);
+			WARN("Context id %u is not Variant friendly", contextIds[i]);
 			continue;
 		}
 		VariantEventSink *pSink = (VariantEventSink *) pContext->EventSink();

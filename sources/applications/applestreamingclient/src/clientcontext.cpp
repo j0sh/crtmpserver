@@ -57,11 +57,9 @@ ClientContext::ClientContext() {
 	_lastWallClock = 0;
 	_avData.EnsureSize(_maxAVBufferSize * 3);
 	_firstFeedTime = 0;
-	INFO("Context created: %d (%p)", _id, this);
 }
 
 ClientContext::~ClientContext() {
-	INFO("Context destroyed: %d (%p)", _id, this);
 	if (_pMasterPlaylist != NULL) {
 		delete _pMasterPlaylist;
 		_pMasterPlaylist = NULL;
@@ -159,7 +157,7 @@ Playlist *ClientContext::MasterPlaylist() {
 
 Playlist *ClientContext::ChildPlaylist(uint32_t bw) {
 	if (!MAP_HAS1(_childPlaylists, bw)) {
-		FATAL("Playlist for bandwidth %d not found", bw);
+		FATAL("Playlist for bandwidth %u not found", bw);
 		return NULL;
 	}
 	return _childPlaylists[bw];
@@ -464,7 +462,7 @@ bool ClientContext::SignalProtocolCreated(BaseProtocol *pProtocol, Variant &para
 	BaseClientApplication *pApp = ClientApplicationManager::FindAppById(
 			parameters["applicationId"]);
 	if (pApp == NULL) {
-		FATAL("Application id %d not found", (uint32_t) parameters["applicationId"]);
+		FATAL("Application id %u not found", (uint32_t) parameters["applicationId"]);
 		return false;
 	}
 
@@ -484,14 +482,14 @@ bool ClientContext::SignalMasterPlaylistAvailable() {
 			bw *= 1024;
 		if (_allowedBitrates.size() > 0) {
 			if (!MAP_HAS1(_allowedBitrates, bw)) {
-				WARN("Skipping bitrate %d", bw);
+				WARN("Skipping bitrate %u", bw);
 				continue;
 			}
 		}
 		string uri = _pMasterPlaylist->GetItemUri(i);
 
 		if (MAP_HAS1(_childPlaylists, bw)) {
-			FATAL("Duplicate bandwidth detected: %d", bw);
+			FATAL("Duplicate bandwidth detected: %u", bw);
 			return false;
 		}
 
@@ -521,7 +519,7 @@ bool ClientContext::SignalChildPlaylistNotAvailable(uint32_t bw) {
 	Playlist *pPl = _childPlaylists[bw];
 	delete pPl;
 	_childPlaylists.erase(bw);
-	WARN("bw %d removed", bw);
+	WARN("bw %u removed", bw);
 	return StartFeeding();
 }
 

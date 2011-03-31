@@ -73,7 +73,7 @@ bool TCPCarrier::OnEvent(struct epoll_event &event) {
 		IOBuffer *pInputBuffer = _pProtocol->GetInputBuffer();
 		assert(pInputBuffer != NULL);
 		if (!pInputBuffer->ReadFromTCPFd(_inboundFd, _recvBufferSize, readAmount)) {
-			FATAL("Unable to read data. %s:%d -> %s:%d",
+			FATAL("Unable to read data. %s:%hu -> %s:%hu",
 					STR(_farIp), _farPort,
 					STR(_nearIp), _nearPort);
 			return false;
@@ -96,7 +96,7 @@ bool TCPCarrier::OnEvent(struct epoll_event &event) {
 
 		if ((pOutputBuffer = _pProtocol->GetOutputBuffer()) != NULL) {
 			if (!pOutputBuffer->WriteToTCPFd(_inboundFd, _sendBufferSize, writeAmount)) {
-				FATAL("Unable to send data. %s:%d -> %s:%d",
+				FATAL("Unable to send data. %s:%hu -> %s:%hu",
 						STR(_farIp), _farPort,
 						STR(_nearIp), _nearPort);
 				IOHandlerManager::EnqueueForDelete(this);

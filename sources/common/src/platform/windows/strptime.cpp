@@ -202,21 +202,21 @@ set_week_number_mon4 (struct tm *timeptr, int wnum)
  */
 
 char *
-strptime (const char *buf, const char *format, struct tm *timeptr)
+strptime (const char *buf, const char *fmt, struct tm *timeptr)
 {
     char c;
 
-    for (; (c = *format) != '\0'; ++format) {
+    for (; (c = *fmt) != '\0'; ++fmt) {
 	char *s;
 	int ret;
 
 	if (isspace (c)) {
 	    while (isspace (*buf))
 		++buf;
-	} else if (c == '%' && format[1] != '\0') {
-	    c = *++format;
+	} else if (c == '%' && fmt[1] != '\0') {
+	    c = *++fmt;
 	    if (c == 'E' || c == 'O')
-		c = *++format;
+		c = *++fmt;
 	    switch (c) {
 	    case 'A' :
 		ret = match_string (&buf, full_weekdays);
@@ -415,7 +415,7 @@ strptime (const char *buf, const char *format, struct tm *timeptr)
 	    case 'Z' :
 		abort ();
 	    case '\0' :
-		--format;
+		--fmt;
 		/* FALLTHROUGH */
 	    case '%' :
 		if (*buf == '%')

@@ -68,7 +68,7 @@ Variant AtomDATA::GetVariant() {
 		}
 		default:
 		{
-			FATAL("Type %d not yet implemented", _type);
+			FATAL("Type %u not yet implemented", _type);
 			return false;
 		}
 	}
@@ -136,7 +136,7 @@ bool AtomDATA::Read() {
 		}
 		default:
 		{
-			FATAL("Type %d not yet implemented", _type);
+			FATAL("Type %u not yet implemented", _type);
 			return false;
 		}
 	}

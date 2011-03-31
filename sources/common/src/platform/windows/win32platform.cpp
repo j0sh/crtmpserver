@@ -26,18 +26,18 @@
 
 static map<uint32_t, SignalFnc> _signalHandlers;
 
-string format(string format, ...) {
+string format(string fmt, ...) {
 	string result = "";
 	va_list arguments;
-	va_start(arguments, format);
-	result = vformat(format, arguments);
+	va_start(arguments, fmt);
+	result = vformat(fmt, arguments);
 	va_end(arguments);
 	return result;
 }
 
-string vformat(string format, va_list args) {
+string vformat(string fmt, va_list args) {
 	char *pBuffer = NULL;
-	if (vasprintf(&pBuffer, STR(format), args) == -1) {
+	if (vasprintf(&pBuffer, STR(fmt), args) == -1) {
 		ASSERT("vasprintf failed");
 		return "";
 	}
@@ -228,7 +228,8 @@ double GetFileModificationDate(string path) {
 }
 
 void InitNetworking() {
-	WSADATA wsa = {0};
+	WSADATA wsa;
+	memset(&wsa,0,sizeof(wsa));
 	WSAStartup(0, &wsa);
 	WSAStartup(wsa.wHighVersion, &wsa);
 }
@@ -279,7 +280,7 @@ bool SetFdNoSIGPIPE(int32_t fd) {
 bool SetFdKeepAlive(int32_t fd) {
 	BOOL value = TRUE;
 	if (setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, (char *)&value, sizeof(BOOL)) == SOCKET_ERROR) {
-		FATAL("Error #%d", WSAGetLastError());
+		FATAL("Error #%u", WSAGetLastError());
 		return false;
 	}
 	return true;
@@ -288,7 +289,7 @@ bool SetFdKeepAlive(int32_t fd) {
 bool SetFdNoNagle(int32_t fd) {
 	BOOL value = TRUE;
 	if (setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, (char *)&value, sizeof(BOOL)) == SOCKET_ERROR) {
-		FATAL("Error #%d", WSAGetLastError());
+		FATAL("Error #%u", WSAGetLastError());
 		return false;
 	}
 	return true;
@@ -297,7 +298,7 @@ bool SetFdNoNagle(int32_t fd) {
 bool SetFdReuseAddress(int32_t fd) {
 	BOOL value = TRUE;
 	if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (char *)&value, sizeof(BOOL)) == SOCKET_ERROR) {
-		FATAL("Error #%d", WSAGetLastError());
+		FATAL("Error #%u", WSAGetLastError());
 		return false;
 	}
 	return true;
@@ -347,7 +348,7 @@ string GetHostByName(string name) {
 		return "";
 	if (pHostEnt->h_length <= 0)
 		return "";
-	string result = format("%u.%u.%u.%u",
+	string result = format("%hhu.%hhu.%hhu.%hhu",
 			(uint8_t) pHostEnt->h_addr_list[0][0],
 			(uint8_t) pHostEnt->h_addr_list[0][1],
 			(uint8_t) pHostEnt->h_addr_list[0][2],

@@ -155,7 +155,7 @@ bool InNetRTPStream::FeedData(uint8_t *pData, uint32_t dataLength,
 	}
 
 	if (lastTs * 100.00 > absoluteTimestamp * 100.00) {
-		WARN("Back time on %s. ATS: %.08f LTS: %.08f; D: %.8f; isAudio: %d",
+		WARN("Back time on %s. ATS: %.08f LTS: %.08f; D: %.8f; isAudio: %hhu",
 				STR(GetName()),
 				absoluteTimestamp,
 				lastTs,
@@ -208,7 +208,7 @@ bool InNetRTPStream::FeedVideoData(uint8_t *pData, uint32_t dataLength,
 		return true;
 	} else {
 		if ((uint16_t) (_videoSequence + 1) != (uint16_t) GET_RTP_SEQ(rtpHeader)) {
-			WARN("Missing video packet. Wanted: %d; got: %d on stream: %s",
+			WARN("Missing video packet. Wanted: %hu; got: %hu on stream: %s",
 					(uint16_t) (_videoSequence + 1),
 					(uint16_t) GET_RTP_SEQ(rtpHeader),
 					STR(GetName()));
@@ -300,7 +300,7 @@ bool InNetRTPStream::FeedAudioData(uint8_t *pData, uint32_t dataLength,
 		return true;
 	} else {
 		if ((uint16_t) (_audioSequence + 1) != (uint16_t) GET_RTP_SEQ(rtpHeader)) {
-			WARN("Missing audio packet. Wanted: %d; got: %d on stream: %s",
+			WARN("Missing audio packet. Wanted: %hu; got: %hu on stream: %s",
 					(uint16_t) (_audioSequence + 1),
 					(uint16_t) GET_RTP_SEQ(rtpHeader),
 					STR(GetName()));
@@ -315,7 +315,7 @@ bool InNetRTPStream::FeedAudioData(uint8_t *pData, uint32_t dataLength,
 	//1. Compute chunks count
 	uint16_t chunksCount = ENTOHSP(pData);
 	if ((chunksCount % 16) != 0) {
-		FATAL("Invalid AU headers length: %04x", chunksCount);
+		FATAL("Invalid AU headers length: %hx", chunksCount);
 		return false;
 	}
 	chunksCount = chunksCount / 16;
@@ -332,7 +332,7 @@ bool InNetRTPStream::FeedAudioData(uint8_t *pData, uint32_t dataLength,
 		}
 		ts = (double) (rtpHeader._timestamp + i * 1024) / (double) _capabilities.aac._sampleRate * 1000.00;
 		if ((cursor + chunkSize) > dataLength) {
-			FATAL("Unable to feed data: cursor: %d; chunkSize: %d; dataLength: %d; chunksCount: %d",
+			FATAL("Unable to feed data: cursor: %u; chunkSize: %hu; dataLength: %u; chunksCount: %hu",
 					cursor, chunkSize, dataLength, chunksCount);
 			return false;
 		}

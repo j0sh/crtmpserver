@@ -73,7 +73,7 @@ bool TCPCarrier::OnEvent(struct kevent &event) {
 			IOBuffer *pInputBuffer = _pProtocol->GetInputBuffer();
 			assert(pInputBuffer != NULL);
 			if (!pInputBuffer->ReadFromTCPFd(event.ident, event.data, readAmount)) {
-				FATAL("Unable to read data. %s:%d -> %s:%d",
+				FATAL("Unable to read data. %s:%hu -> %s:%hu",
 						STR(_farIp), _farPort,
 						STR(_nearIp), _nearPort);
 				return false;
@@ -87,7 +87,7 @@ bool TCPCarrier::OnEvent(struct kevent &event) {
 
 			if ((pOutputBuffer = _pProtocol->GetOutputBuffer()) != NULL) {
 				if (!pOutputBuffer->WriteToTCPFd(event.ident, event.data, writeAmount)) {
-					FATAL("Unable to send data. %s:%d -> %s:%d",
+					FATAL("Unable to send data. %s:%hu -> %s:%hu",
 							STR(_farIp), _farPort,
 							STR(_nearIp), _nearPort);
 					IOHandlerManager::EnqueueForDelete(this);
@@ -104,8 +104,7 @@ bool TCPCarrier::OnEvent(struct kevent &event) {
 		}
 		default:
 		{
-			ASSERT("Invalid state: %d", event.filter);
-
+			ASSERT("Invalid state: %hd", event.filter);
 			return false;
 		}
 	}

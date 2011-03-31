@@ -45,7 +45,7 @@ bool parseURI(string stringUri, URI &uri) {
 	vector<string> components;
 	split(stringUri, "/", components);
 	for (uint32_t i = 0; i < components.size(); i++) {
-		LOG_URI_SPLIT("%d: %s", i, STR(components[i]));
+		LOG_URI_SPLIT("%u: %s", i, STR(components[i]));
 	}
 
 	//0 - scheme:
@@ -124,7 +124,7 @@ bool parseURI(string stringUri, URI &uri) {
 		else
 			return false;
 	}
-	LOG_URI_SPLIT("uri.port: %d", uri.port);
+	LOG_URI_SPLIT("uri.port: %u", uri.port);
 
 	for (uint32_t i = 3; i < components.size(); i++) {
 		uri.fullDocumentPath += "/" + components[i];

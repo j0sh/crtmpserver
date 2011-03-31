@@ -40,7 +40,7 @@ bool BoxAtom::Read() {
 		}
 		if (!pAtom->IsIgnored()) {
 			if (!AtomCreated(pAtom)) {
-				FATAL("Unable to signal AtomCreated for atom %s (%x)",
+				FATAL("Unable to signal AtomCreated for atom %s (%"PRIx64")",
 						STR(GetTypeString()), _start);
 				return false;
 			}

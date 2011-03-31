@@ -38,7 +38,7 @@ MmapFile::MmapFile() {
 	_failed = false;
 	if (_pageSize == 0) {
 		_pageSize = getpagesize();
-		LOG_MMAP("_pageSize: %d", _pageSize);
+		LOG_MMAP("_pageSize: %u", _pageSize);
 	}
 	_windowSize = 0;
 	memset(&_pointer1, 0, sizeof (MmapPointer));
@@ -71,7 +71,7 @@ bool MmapPointer::Allocate(int fd, uint64_t cursor,
 	Free();
 
 	if (size > windowSize) {
-		FATAL("size is greater than window size: %llu > %llu", size, windowSize);
+		FATAL("size is greater than window size: %"PRIu64" > %u", size, windowSize);
 		return false;
 	}
 
@@ -82,12 +82,12 @@ bool MmapPointer::Allocate(int fd, uint64_t cursor,
 	//2. Compute the new size
 	_size = windowSize;
 	while (_cursor + _size < cursor + size) {
-		LOG_MMAP("We need to go a little bit further; Wanted: %llu; got: %llu",
+		LOG_MMAP("We need to go a little bit further; Wanted: %"PRIu64"; got: %"PRIu64,
 				cursor + size, _cursor + _size);
 		_size += MmapFile::_pageSize;
 	}
 
-	LOG_MMAP("Reading %llu bytes from disk", _size);
+	LOG_MMAP("Reading %"PRIu64" bytes from disk", _size);
 	_pData = (uint8_t *) mmap(NULL,
 			_size,
 			PROT_READ,
@@ -148,20 +148,20 @@ bool MmapPointer::HasRange(uint64_t cursor, uint64_t count) {
 MmapPointer::operator string() {
 	if (_size == 0)
 		return "[N - N](0)";
-	return format("[%llu - %llu](%u)", _cursor, _cursor + _size - 1, _size);
+	return format("[%"PRIu64" - %"PRIu64"](%u)", _cursor, _cursor + _size - 1, _size);
 }
 
 bool MmapFile::Initialize(string path, uint32_t windowSize, bool exclusive) {
 	//1. Do we have this file open?
-	LOG_MMAP("Initial window size: %d", windowSize);
+	LOG_MMAP("Initial window size: %u", windowSize);
 	uint32_t pagesCount = windowSize / _pageSize;
-	LOG_MMAP("pagesCount: %d", pagesCount);
+	LOG_MMAP("pagesCount: %u", pagesCount);
 	_windowSize = (pagesCount * _pageSize) +
 			(((windowSize % _pageSize) != 0) ? _pageSize : 0);
 	_path = path;
-	LOG_MMAP("_windowSize: %d; file: `%s`", _windowSize, STR(_path));
+	LOG_MMAP("_windowSize: %u; file: `%s`", _windowSize, STR(_path));
 	if (!MAP_HAS1(_fds, _path)) {
-		__FileInfo__ fi = {0};
+		__FileInfo__ fi = {0, 0, 0};
 
 		//2. Open the file
 		if (exclusive) {
@@ -256,7 +256,7 @@ bool MmapFile::SeekTo(uint64_t position) {
 		return false;
 	}
 	if (position > _size) {
-		FATAL("Invalid position: %llu. Must be at most: %llu", position, _size - 1);
+		FATAL("Invalid position: %"PRIu64". Must be at most: %"PRIu64, position, _size - 1);
 		_failed = true;
 		return false;
 	}
@@ -403,22 +403,22 @@ bool MmapFile::PeekUI64(uint64_t *pValue, bool networkOrder) {
 bool MmapFile::PeekBuffer(uint8_t *pDestBuffer, uint64_t count) {
 	//1. Sanity checks
 	if (_failed) {
-		DEBUG("_cursor: %llu; count: %u; %s", _cursor, count, STR(_path));
+		DEBUG("_cursor: %"PRIu64"; count: %"PRIu64"; %s", _cursor, count, STR(_path));
 		FATAL("This mmap file is in inconsistent state");
 		return false;
 	}
 
 	if (_windowSize < count) {
-		DEBUG("_cursor: %llu; count: %u; %s", _cursor, count, STR(_path));
-		FATAL("Invalid window size: _windowSize < count %llu < %llu",
+		DEBUG("_cursor: %"PRIu64"; count: %"PRIu64"; %s", _cursor, count, STR(_path));
+		FATAL("Invalid window size: _windowSize < count %u < %"PRIu64,
 				_windowSize, count);
 		_failed = true;
 		return false;
 	}
 
 	if (_cursor + count > _size) {
-		DEBUG("_cursor: %llu; count: %u; %s", _cursor, count, STR(_path));
-		FATAL("EOF will be reached: cursor: %d; count: %d; size: %d",
+		DEBUG("_cursor: %"PRIu64"; count: %"PRIu64"; %s", _cursor, count, STR(_path));
+		FATAL("EOF will be reached: cursor: %"PRIu64"; count: %"PRIu64"; size: %"PRIu64,
 				_cursor, count, _size);
 		_failed = true;
 		return false;
@@ -447,7 +447,7 @@ bool MmapFile::PeekBuffer(uint8_t *pDestBuffer, uint64_t count) {
 
 	//3. Do the read
 	if (pPointer->Copy(pDestBuffer, _cursor, 0, count) != count) {
-		FATAL("Unable to copy %llu bytes", count);
+		FATAL("Unable to copy %"PRIu64" bytes", count);
 		_failed = true;
 		return false;
 	}

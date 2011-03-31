@@ -105,8 +105,6 @@ bool NSVDocument::BuildFrames() {
 		ADD_VECTOR_BEGIN(_frames, binaryHeaders[i]);
 	}
 
-	FINEST("audcount: %d vidcount: %d ", _audioSamplesCount, _videoSamplesCount);
-
 	return true;
 }
 
@@ -195,7 +193,7 @@ bool NSVDocument::ReadPayLoadData() {
 	}
 
 	if (aux_plus_vidlen > 0) {
-		MediaFrame video_frame = {0};
+		MediaFrame video_frame = {0, 0, 0, 0, 0, 0, 0, 0};
 		video_frame.type = MEDIAFRAME_TYPE_VIDEO;
 		if (aux_plus_vidlen > 5) {
 			uint64_t nt;
@@ -208,7 +206,7 @@ bool NSVDocument::ReadPayLoadData() {
 			//             06 - SEI NAL unit
 			if (NALU_TYPE_SEI == NALU_TYPE(nt)) {
 				// get binary header from payload data
-				FINEST("video data offset %llx", _mediaFile.Cursor());
+				FINEST("video data offset %"PRIx64, _mediaFile.Cursor());
 				uint64_t currentCursor = _mediaFile.Cursor();
 				_buffer.IgnoreAll();
 				_buffer.ReadFromFs(_mediaFile, aux_plus_vidlen);
@@ -305,13 +303,7 @@ void NSVDocument::GetAudioFrame() {
 		return;
 	}
 
-	/*
-		// audio frame
-		FINEST("audio data offset %x", _mediaFile.Cursor());
-		_audioSamplesCount+=samplesCount; //382 or 1152
-		audio_frame.absoluteTime = 0; //(double)_audioSamplesCount / (double)_framerate*1000.0;
-	 */
-	MediaFrame audio_frame = {0};
+	MediaFrame audio_frame = {0, 0, 0, 0, 0, 0, 0, 0};
 	audio_frame.start = _mediaFile.Cursor();
 	_buffer.IgnoreAll();
 	_buffer.ReadFromFs(_mediaFile, audio_len);
@@ -335,7 +327,7 @@ void NSVDocument::ComputeMediaFrames(uint64_t currentCursor) {
 	int nal_start = 0;
 	int nal_end = 0;
 	uint8_t nal_type = 0;
-	MediaFrame video_frame = {0};
+	MediaFrame video_frame = {0, 0, 0, 0, 0, 0, 0, 0};
 	while (length != 0) {
 		find_nal_unit(pBuffer, length, &nal_start, &nal_end);
 		nal_type = pBuffer[nal_start];

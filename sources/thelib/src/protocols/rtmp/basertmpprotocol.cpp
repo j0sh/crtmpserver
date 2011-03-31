@@ -116,7 +116,6 @@ bool BaseRTMPProtocol::AllowFarProtocol(uint64_t type) {
 			|| type == PT_INBOUND_SSL
 			|| type == PT_INBOUND_HTTP_FOR_RTMP)
 		return true;
-	FATAL("Far protocol %d not accepted", type);
 	return false;
 }
 
@@ -253,7 +252,7 @@ uint32_t BaseRTMPProtocol::GetOutboundChunkSize() {
 }
 
 bool BaseRTMPProtocol::SetInboundChunkSize(uint32_t chunkSize) {
-	WARN("Chunk size changed for RTMP connection %p: %d->%d", this,
+	WARN("Chunk size changed for RTMP connection %p: %u->%u", this,
 			_inboundChunkSize, chunkSize);
 	_inboundChunkSize = chunkSize;
 	for (uint32_t i = 0; i < MAX_STREAMS_COUNT; i++) {
@@ -282,7 +281,7 @@ void BaseRTMPProtocol::TrySetOutboundChunkSize(uint32_t chunkSize) {
 
 BaseStream * BaseRTMPProtocol::GetRTMPStream(uint32_t rtmpStreamId) {
 	if (rtmpStreamId == 0 || rtmpStreamId >= MAX_STREAMS_COUNT) {
-		FATAL("Invalid stream id: %d", rtmpStreamId);
+		FATAL("Invalid stream id: %u", rtmpStreamId);
 		return false;
 	}
 	return _streams[rtmpStreamId];
@@ -291,7 +290,7 @@ BaseStream * BaseRTMPProtocol::GetRTMPStream(uint32_t rtmpStreamId) {
 bool BaseRTMPProtocol::CloseStream(uint32_t streamId, bool createNeutralStream) {
 	//1. Validate request
 	if (streamId == 0 || streamId >= MAX_STREAMS_COUNT) {
-		FATAL("Invalid stream id: %d", streamId);
+		FATAL("Invalid stream id: %u", streamId);
 		return false;
 	}
 
@@ -352,7 +351,7 @@ RTMPStream * BaseRTMPProtocol::CreateNeutralStream(uint32_t & streamId) {
 		}
 	} else {
 		if (streamId == 0 || streamId >= MAX_STREAMS_COUNT) {
-			FATAL("Invalid stream id: %d", streamId);
+			FATAL("Invalid stream id: %u", streamId);
 			return NULL;
 		}
 		if (_streams[streamId] != NULL) {
@@ -371,7 +370,7 @@ RTMPStream * BaseRTMPProtocol::CreateNeutralStream(uint32_t & streamId) {
 InNetRTMPStream * BaseRTMPProtocol::CreateINS(uint32_t channelId,
 		uint32_t streamId, string streamName) {
 	if (streamId == 0 || streamId >= MAX_STREAMS_COUNT) {
-		FATAL("Invalid stream id: %d", streamId);
+		FATAL("Invalid stream id: %u", streamId);
 		return NULL;
 	}
 
@@ -400,7 +399,7 @@ InNetRTMPStream * BaseRTMPProtocol::CreateINS(uint32_t channelId,
 BaseOutNetRTMPStream * BaseRTMPProtocol::CreateONS(uint32_t streamId,
 		string streamName, uint64_t inStreamType) {
 	if (streamId == 0 || streamId >= MAX_STREAMS_COUNT) {
-		FATAL("Invalid stream id: %d", streamId);
+		FATAL("Invalid stream id: %u", streamId);
 		return NULL;
 	}
 
@@ -410,7 +409,7 @@ BaseOutNetRTMPStream * BaseRTMPProtocol::CreateONS(uint32_t streamId,
 	}
 
 	if (_streams[streamId]->GetType() != ST_NEUTRAL_RTMP) {
-		FATAL("Try to play a stream over a non neutral stream: id: %d; type: %d",
+		FATAL("Try to play a stream over a non neutral stream: id: %u; type: %"PRIu64,
 				streamId, _streams[streamId]->GetType());
 		return NULL;
 	}
@@ -503,7 +502,7 @@ uint32_t BaseRTMPProtocol::GetDHOffset(uint8_t *pBuffer, uint8_t schemeNumber) {
 		}
 		default:
 		{
-			WARN("Invalid scheme number: %d. Defaulting to 0", schemeNumber);
+			WARN("Invalid scheme number: %hhu. Defaulting to 0", schemeNumber);
 			return GetDHOffset0(pBuffer);
 		}
 	}
@@ -521,7 +520,7 @@ uint32_t BaseRTMPProtocol::GetDigestOffset(uint8_t *pBuffer, uint8_t schemeNumbe
 		}
 		default:
 		{
-			WARN("Invalid scheme number: %d. Defaulting to 0", schemeNumber);
+			WARN("Invalid scheme number: %hhu. Defaulting to 0", schemeNumber);
 			return GetDigestOffset0(pBuffer);
 		}
 	}
@@ -681,7 +680,7 @@ bool BaseRTMPProtocol::ProcessBytes(IOBuffer &buffer) {
 							channel.lastInProcBytes = 0;
 						}
 						if (!buffer.Ignore(tempSize)) {
-							FATAL("V: Unable to ignore %d bytes", tempSize);
+							FATAL("V: Unable to ignore %u bytes", tempSize);
 							return false;
 						}
 						break;
@@ -721,7 +720,7 @@ bool BaseRTMPProtocol::ProcessBytes(IOBuffer &buffer) {
 							channel.lastInProcBytes = 0;
 						}
 						if (!buffer.Ignore(tempSize)) {
-							FATAL("A: Unable to ignore %d bytes", tempSize);
+							FATAL("A: Unable to ignore %u bytes", tempSize);
 							return false;
 						}
 						break;
@@ -737,7 +736,7 @@ bool BaseRTMPProtocol::ProcessBytes(IOBuffer &buffer) {
 						channel.inputData.ReadFromInputBuffer(buffer, tempSize);
 						channel.lastInProcBytes += tempSize;
 						if (!buffer.Ignore(tempSize)) {
-							FATAL("Unable to ignore %d bytes", tempSize);
+							FATAL("Unable to ignore %u bytes", tempSize);
 							return false;
 						}
 						if (H_ML(header) == channel.lastInProcBytes) {
@@ -753,7 +752,7 @@ bool BaseRTMPProtocol::ProcessBytes(IOBuffer &buffer) {
 							_rxInvokes++;
 
 							if (GETAVAILABLEBYTESCOUNT(channel.inputData) != 0) {
-								FATAL("Invalid message!!! We have leftovers: %d bytes",
+								FATAL("Invalid message!!! We have leftovers: %u bytes",
 										GETAVAILABLEBYTESCOUNT(channel.inputData));
 								return false;
 							}

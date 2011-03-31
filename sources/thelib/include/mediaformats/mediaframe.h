@@ -37,7 +37,7 @@ typedef struct _MediaFrame {
 	int32_t compositionOffset;
 
 	operator string() {
-		return format("s: %llx; l: %llx; t: %d; dt: %.2f; kf: %d; at: %.2f; bh: %d",
+		return format("s: %"PRIx64"; l: %"PRIx64"; t: %hhu; dt: %.2f; kf: %hhu; at: %.2f; bh: %hhu",
 				start, length, type, deltaTime, isKeyFrame, absoluteTime, isBinaryHeader);
 	};
 } MediaFrame;

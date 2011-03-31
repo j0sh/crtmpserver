@@ -75,7 +75,7 @@
 do { \
     if(GETAVAILABLEBYTESCOUNT(x)<(y)) { \
         FATAL("Not enough data. Wanted: %u; Got: %u", \
-            (y),GETAVAILABLEBYTESCOUNT(x)); \
+            (uint32_t)(y),GETAVAILABLEBYTESCOUNT(x)); \
         return false; \
     } \
 }while(0)

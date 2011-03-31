@@ -46,6 +46,6 @@ void LogCatLogLocation::Log(int32_t level, string fileName, uint32_t lineNumber,
 	}
 
 	__android_log_write(_levelsMap[level], "rtmpd",
-			STR(format("%s:%d %s", STR(fileName), lineNumber, STR(message))));
+			STR(format("%s:%u %s", STR(fileName), lineNumber, STR(message))));
 }
 #endif /* ANDROID */

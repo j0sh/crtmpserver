@@ -32,7 +32,7 @@ bool ProtocolFactoryManager::RegisterProtocolFactory(BaseProtocolFactory *pFacto
 
 	//1. Test to see if this factory is already registered
 	if (MAP_HAS1(_factoriesById, pFactory->GetId())) {
-		FATAL("Factory id %d already registered", pFactory->GetId());
+		FATAL("Factory id %u already registered", pFactory->GetId());
 		return false;
 	}
 
@@ -41,7 +41,7 @@ bool ProtocolFactoryManager::RegisterProtocolFactory(BaseProtocolFactory *pFacto
 
 	FOR_VECTOR(protocolChains, i) {
 		if (MAP_HAS1(_factoriesByChainName, protocolChains[i])) {
-			FATAL("protocol chain %s already handled by factory %d",
+			FATAL("protocol chain %s already handled by factory %u",
 					STR(protocolChains[i]),
 					_factoriesByChainName[protocolChains[i]]->GetId());
 			return false;
@@ -53,7 +53,7 @@ bool ProtocolFactoryManager::RegisterProtocolFactory(BaseProtocolFactory *pFacto
 
 	FOR_VECTOR(protocols, i) {
 		if (MAP_HAS1(_factoriesByProtocolId, protocols[i])) {
-			FATAL("protocol %08x already handled by factory %d", protocols[i],
+			FATAL("protocol %"PRIx64" already handled by factory %u", protocols[i],
 					_factoriesByProtocolId[protocols[i]]->GetId());
 			return false;
 		}
@@ -76,7 +76,7 @@ bool ProtocolFactoryManager::RegisterProtocolFactory(BaseProtocolFactory *pFacto
 
 bool ProtocolFactoryManager::UnRegisterProtocolFactory(uint32_t factoryId) {
 	if (!MAP_HAS1(_factoriesById, factoryId)) {
-		WARN("Factory id not found: %d", factoryId);
+		WARN("Factory id not found: %u", factoryId);
 		return true;
 	}
 	return UnRegisterProtocolFactory(_factoriesById[factoryId]);
@@ -89,7 +89,7 @@ bool ProtocolFactoryManager::UnRegisterProtocolFactory(BaseProtocolFactory *pFac
 	}
 
 	if (!MAP_HAS1(_factoriesById, pFactory->GetId())) {
-		WARN("Factory id not found: %d", pFactory->GetId());
+		WARN("Factory id not found: %u", pFactory->GetId());
 		return true;
 	}
 
@@ -137,7 +137,7 @@ BaseProtocol *ProtocolFactoryManager::CreateProtocolChain(vector<uint64_t> &chai
 
 	FOR_VECTOR(chain, i) {
 		if (!MAP_HAS1(_factoriesByProtocolId, chain[i])) {
-			FATAL("protocol %08x not handled by anyone", chain[i]);
+			FATAL("protocol %"PRIx64" not handled by anyone", chain[i]);
 			return NULL;
 		}
 	}
@@ -150,7 +150,7 @@ BaseProtocol *ProtocolFactoryManager::CreateProtocolChain(vector<uint64_t> &chai
 		BaseProtocol *pProtocol = _factoriesByProtocolId[chain[i]]->SpawnProtocol(
 				chain[i], parameters);
 		if (pProtocol == NULL) {
-			FATAL("Unable to spawn protocol %s handled by factory %d",
+			FATAL("Unable to spawn protocol %s handled by factory %u",
 					STR(tagToString(chain[i])),
 					_factoriesByProtocolId[chain[i]]->GetId());
 			failed = true;

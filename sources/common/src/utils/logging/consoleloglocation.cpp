@@ -49,14 +49,14 @@ void ConsoleLogLocation::Log(int32_t level, string fileName,
 	}
 #ifdef ANDROID
 	if (_allowColors) {
-		printf("%s%s:%d %s%s\n",
+		printf("%s%s:%u %s%s\n",
 				STR(_colors[level]),
 				STR(fileName),
 				lineNumber,
 				STR(message),
 				STR(_colors[6]));
 	} else {
-		printf("%s:%d %s\n",
+		printf("%s:%u %s\n",
 				STR(fileName),
 				lineNumber,
 				STR(message));

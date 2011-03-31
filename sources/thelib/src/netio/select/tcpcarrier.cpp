@@ -83,7 +83,7 @@ bool TCPCarrier::OnEvent(select_event &event) {
 			assert(pInputBuffer != NULL);
 			if (!pInputBuffer->ReadFromTCPFd(_inboundFd,
 					_recvBufferSize, readAmount)) {
-				FATAL("Unable to read data. %s:%d -> %s:%d",
+				FATAL("Unable to read data. %s:%hu -> %s:%hu",
 						STR(_farIp), _farPort,
 						STR(_nearIp), _nearPort);
 				return false;
@@ -98,7 +98,7 @@ bool TCPCarrier::OnEvent(select_event &event) {
 			while ((pOutputBuffer = _pProtocol->GetOutputBuffer()) != NULL) {
 				if (!pOutputBuffer->WriteToTCPFd(_outboundFd,
 						_sendBufferSize, writeAmount)) {
-					FATAL("Unable to send data. %s:%d -> %s:%d",
+					FATAL("Unable to send data. %s:%hu -> %s:%hu",
 							STR(_farIp), _farPort,
 							STR(_nearIp), _nearPort);
 					IOHandlerManager::EnqueueForDelete(this);
@@ -117,7 +117,7 @@ bool TCPCarrier::OnEvent(select_event &event) {
 		}
 		default:
 		{
-			ASSERT("Invalid state: %d", event.type);
+			ASSERT("Invalid state: %hhu", event.type);
 			return false;
 		}
 	}

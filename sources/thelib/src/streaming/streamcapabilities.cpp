@@ -38,7 +38,8 @@ _VIDEO_AVC::~_VIDEO_AVC() {
 
 #define CHECK_BA_LIMITS(name,length) \
 if(ba.AvailableBits()<length) { \
-	FATAL("Unable to read `"name"` value. Not enough bits. Wanted: %d; Have: %d", length,ba.AvailableBits()); \
+	FATAL("Unable to read `"name"` value. Not enough bits. Wanted: %u; Have: %u", \
+		(uint32_t)length, ba.AvailableBits()); \
 	return false; \
 }
 
@@ -336,9 +337,9 @@ void _VIDEO_AVC::Clear() {
 
 _VIDEO_AVC::operator string() {
 	string result;
-	result += format("_spsLength: %d\n", _spsLength);
-	result += format("_ppsLength: %d\n", _ppsLength);
-	result += format("_rate: %d\n", _rate);
+	result += format("_spsLength: %hu\n", _spsLength);
+	result += format("_ppsLength: %hu\n", _ppsLength);
+	result += format("_rate: %u\n", _rate);
 	result += format("WxH: %ux%u", _width, _height);
 	return result;
 }
@@ -361,7 +362,7 @@ bool _AUDIO_AAC::Init(uint8_t *pBuffer, uint32_t length) {
 	//http://wiki.multimedia.cx/index.php?title=MP4A#Audio_Specific_Config
 
 	if (length < 2) {
-		FATAL("Invalid length: %d", length);
+		FATAL("Invalid length: %u", length);
 		return false;
 	}
 
@@ -381,7 +382,7 @@ bool _AUDIO_AAC::Init(uint8_t *pBuffer, uint32_t length) {
 			&& (_audioObjectType != 20)
 			&& (_audioObjectType != 23)
 			&& (_audioObjectType != 39)) {
-		FATAL("Invalid _audioObjectType: %d", _audioObjectType);
+		FATAL("Invalid _audioObjectType: %hhu", _audioObjectType);
 		return false;
 	}
 
@@ -389,12 +390,12 @@ bool _AUDIO_AAC::Init(uint8_t *pBuffer, uint32_t length) {
 	_sampleRateIndex = ba.ReadBits<uint8_t > (4);
 	if ((_sampleRateIndex == 13)
 			|| (_sampleRateIndex == 14)) {
-		FATAL("Invalid sample rate: %d", _sampleRateIndex);
+		FATAL("Invalid sample rate: %hhu", _sampleRateIndex);
 		return false;
 	}
 	if (_sampleRateIndex == 15) {
 		if (length < 5) {
-			FATAL("Invalid length: %d", length);
+			FATAL("Invalid length: %u", length);
 			return false;
 		}
 		_sampleRate = ba.ReadBits<uint32_t > (24);
@@ -410,7 +411,7 @@ bool _AUDIO_AAC::Init(uint8_t *pBuffer, uint32_t length) {
 	_channelConfigurationIndex = ba.ReadBits<uint8_t > (4);
 	if ((_channelConfigurationIndex == 0)
 			|| (_channelConfigurationIndex >= 8)) {
-		FATAL("Invalid _channelConfigurationIndex: %d", _channelConfigurationIndex);
+		FATAL("Invalid _channelConfigurationIndex: %hhu", _channelConfigurationIndex);
 		return false;
 	}
 
@@ -437,18 +438,18 @@ void _AUDIO_AAC::Clear() {
 string _AUDIO_AAC::GetRTSPFmtpConfig() {
 	string result;
 	for (uint32_t i = 0; i < _aacLength; i++) {
-		result += format("%02x", _pAAC[i]);
+		result += format("%02hhx", _pAAC[i]);
 	}
 	return "config=" + result;
 }
 
 _AUDIO_AAC::operator string() {
 	string result;
-	result += format("_aacLength: %d\n", _aacLength);
-	result += format("_audioObjectType: %d\n", _audioObjectType);
-	result += format("_sampleRateIndex: %d\n", _sampleRateIndex);
-	result += format("_sampleRate: %d\n", _sampleRate);
-	result += format("_channelConfigurationIndex: %d", _channelConfigurationIndex);
+	result += format("_aacLength: %u\n", _aacLength);
+	result += format("_audioObjectType: %hhu\n", _audioObjectType);
+	result += format("_sampleRateIndex: %hhu\n", _sampleRateIndex);
+	result += format("_sampleRate: %u\n", _sampleRate);
+	result += format("_channelConfigurationIndex: %hhu", _channelConfigurationIndex);
 	return result;
 }
 

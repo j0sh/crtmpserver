@@ -29,7 +29,7 @@ int main(int argc, char **ppArgv) {
 	ConsoleLogLocation *pLogLocation = new ConsoleLogLocation();
 	pLogLocation->SetLevel(_FINEST_);
 	Logger::AddLogLocation(pLogLocation);
-	INFO("Traffic dissector started (%d)", getpid());
+	INFO("Traffic dissector started (%u)", (uint32_t)getpid());
 
 	//2. Parse the parameters
 	if (argc != 2) {

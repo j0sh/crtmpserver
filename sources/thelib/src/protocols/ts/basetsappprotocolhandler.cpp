@@ -43,7 +43,7 @@ void BaseTSAppProtocolHandler::UnRegisterProtocol(BaseProtocol *pProtocol) {
 }
 
 void BaseTSAppProtocolHandler::ProgramSetupCompleted(InNetTSStream *pInNetTSStream) {
-	INFO("Stream available (%d): %s", pInNetTSStream->GetUniqueId(),
+	INFO("Stream available (%u): %s", pInNetTSStream->GetUniqueId(),
 			STR(pInNetTSStream->GetName()));
 }
 #endif	/* HAS_PROTOCOL_TS */

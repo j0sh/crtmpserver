@@ -48,7 +48,7 @@ bool OutboundDNSResolverProtocol::Connect(string ip, uint16_t port,
 	}
 	if (!TCPConnector<OutboundDNSResolverProtocol>::Connect(ip, port, chain,
 			customParameters)) {
-		FATAL("Unable to connect to %s:%d", STR(ip), port);
+		FATAL("Unable to connect to %s:%hu", STR(ip), port);
 		return false;
 	}
 	return true;
@@ -122,7 +122,6 @@ bool OutboundDNSResolverProtocol::Initialize(Variant &parameters) {
 bool OutboundDNSResolverProtocol::AllowFarProtocol(uint64_t type) {
 	if (type == PT_TCP)
 		return true;
-	FATAL("Far protocol %d not accepted", type);
 	return false;
 }
 
@@ -160,7 +159,7 @@ bool OutboundDNSResolverProtocol::SignalInputData(IOBuffer &buffer) {
 			return false;
 		}
 		if (!buffer.Ignore(4 + size)) {
-			FATAL("Unable to ignore %d bytes", 4 + size);
+			FATAL("Unable to ignore %u bytes", 4 + size);
 			return false;
 		}
 		if (!HandleResponse(response)) {

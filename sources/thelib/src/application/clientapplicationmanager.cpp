@@ -37,7 +37,7 @@ void ClientApplicationManager::Shutdown() {
 
 bool ClientApplicationManager::RegisterApplication(BaseClientApplication* pClientApplication) {
 	if (MAP_HAS1(_applicationsById, pClientApplication->GetId())) {
-		FATAL("Client application with id %d already registered",
+		FATAL("Client application with id %u already registered",
 				pClientApplication->GetId());
 		return false;
 	}
@@ -87,7 +87,7 @@ void ClientApplicationManager::UnRegisterApplication(BaseClientApplication* pCli
 		}
 	}
 
-	FINEST("Application `%s` (%d) unregistered", STR(pClientApplication->GetName()),
+	FINEST("Application `%s` (%u) unregistered", STR(pClientApplication->GetName()),
 			pClientApplication->GetId());
 }
 

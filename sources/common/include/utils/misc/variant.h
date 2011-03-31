@@ -27,10 +27,10 @@
 //#define LOG_VARIANT_MEMORY_MANAGEMENT
 
 #ifdef LOG_VARIANT_MEMORY_MANAGEMENT
-#define CONSTRUCTOR		printf(" +  %d->%d\n",_constructorCount,_constructorCount+1); _constructorCount++;
-#define DESTRUCTOR		printf(" -  %d->%d\n",_constructorCount,_constructorCount-1); _constructorCount--;
-#define DYNAMIC_ALLOC(type)	printf("(+) %d->%d (%s)\n",_dynamicAllocationCount,_dynamicAllocationCount+1,type); _dynamicAllocationCount++;
-#define DYNAMIC_FREE(type)	printf("(-) %d->%d (%s)\n",_dynamicAllocationCount,_dynamicAllocationCount-1,type); _dynamicAllocationCount--;
+#define CONSTRUCTOR		printf(" +  %u->%u\n",_constructorCount,_constructorCount+1); _constructorCount++;
+#define DESTRUCTOR		printf(" -  %u->%u\n",_constructorCount,_constructorCount-1); _constructorCount--;
+#define DYNAMIC_ALLOC(type)	printf("(+) %u->%u (%s)\n",_dynamicAllocationCount,_dynamicAllocationCount+1,type); _dynamicAllocationCount++;
+#define DYNAMIC_FREE(type)	printf("(-) %u->%u (%s)\n",_dynamicAllocationCount,_dynamicAllocationCount-1,type); _dynamicAllocationCount--;
 #else
 #define CONSTRUCTOR
 #define DESTRUCTOR

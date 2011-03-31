@@ -260,7 +260,7 @@ BaseAtom * MP4Document::ReadAtom(BaseAtom *pParentAtom) {
 	}
 
 	if (currentPos + pAtom->GetSize() != _mediaFile.Cursor()) {
-		FATAL("atom start: %llu; Atom size: %llu; currentPos: %llu",
+		FATAL("atom start: %"PRIu64"; Atom size: %"PRIu64"; currentPos: %"PRIu64,
 				currentPos, pAtom->GetSize(), _mediaFile.Cursor());
 		return NULL;
 	}
@@ -347,7 +347,7 @@ bool MP4Document::BuildFrames() {
 	sort(_frames.begin(), _frames.end(), CompareFrames);
 
 	//add binary audio header
-	MediaFrame audioHeader = {0};
+	MediaFrame audioHeader = {0, 0, 0, 0, 0, 0, 0, 0};
 	if (pESDS != NULL) {
 		audioHeader.type = MEDIAFRAME_TYPE_AUDIO;
 		audioHeader.isBinaryHeader = true;
@@ -357,12 +357,13 @@ bool MP4Document::BuildFrames() {
 		audioHeader.start = pESDS->GetExtraDataStart();
 		audioHeader.deltaTime = 0;
 		audioHeader.compositionOffset = 0;
-		FINEST("Start: %llu (%llx); Length: %llu (%llx);", audioHeader.start,
-				audioHeader.start, audioHeader.length, audioHeader.length);
+		FINEST("Start: %"PRIu64" (%"PRIx64"); Length: %"PRIu64" (%"PRIx64");",
+				audioHeader.start, audioHeader.start, audioHeader.length,
+				audioHeader.length);
 	}
 
 	//add binary video header
-	MediaFrame videoHeader = {0};
+	MediaFrame videoHeader = {0, 0, 0, 0, 0, 0, 0, 0};
 	if (pAVCC != NULL) {
 		videoHeader.type = MEDIAFRAME_TYPE_VIDEO;
 		videoHeader.isBinaryHeader = true;
@@ -470,25 +471,25 @@ bool MP4Document::BuildFrames(bool audio) {
 	if (pCTSS != NULL) {
 		compositionOffsets = pCTSS->GetEntries();
 		if (sampleSize.size() != compositionOffsets.size()) {
-			WARN("composition offsets count != samples count; compositionOffsets: %d; sampleSize.size: %d",
+			WARN("composition offsets count != samples count; compositionOffsets: %zu; sampleSize.size: %zu",
 					compositionOffsets.size(),
 					sampleSize.size());
 			for (uint32_t i = compositionOffsets.size(); i < sampleSize.size(); i++)
 				ADD_VECTOR_END(compositionOffsets, 0);
-			WARN("composition offsets padded with 0. Now size is %d",
+			WARN("composition offsets padded with 0. Now size is %zu",
 					compositionOffsets.size());
 		}
 	}
-	INFO("audio: %d; keyFrames: %u; frames: %u; compositionOffsets: %u",
+	INFO("audio: %hhu; keyFrames: %zu; frames: %zu; compositionOffsets: %zu",
 			audio, keyFrames.size(), sampleSize.size(), compositionOffsets.size());
-	
+
 	uint32_t timeScale = pMDHD->GetTimeScale();
 	uint32_t totalTime = 0;
 	uint32_t localOffset = 0;
 	uint32_t startIndex = _frames.size();
 
 	for (uint32_t i = 0; i < sampleSize.size(); i++) {
-		MediaFrame frame = {0};
+		MediaFrame frame = {0, 0, 0, 0, 0, 0, 0, 0};
 		frame.start = chunckOffsets[sample2Chunk[i]] + localOffset;
 		if (pCTSS != NULL) {
 			double doubleVal = ((double) compositionOffsets[i] / (double) timeScale)*(double) 1000.00;

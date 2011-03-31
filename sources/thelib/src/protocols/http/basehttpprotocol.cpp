@@ -100,7 +100,7 @@ bool BaseHTTPProtocol::EnqueueForOutbound() {
 	//5. Get rid of the Content-Length attribute and add it only if necessary
 	_outboundHeaders.RemoveKey(HTTP_HEADERS_CONTENT_LENGTH);
 	if (bufferLength > 0) {
-		_outboundHeaders[HTTP_HEADERS_CONTENT_LENGTH] = format("%d", bufferLength);
+		_outboundHeaders[HTTP_HEADERS_CONTENT_LENGTH] = format("%u", bufferLength);
 	}
 
 	//6. Get rid of Transfer-Encoding attribute
@@ -229,13 +229,13 @@ string BaseHTTPProtocol::DumpState() {
 	string result = "";
 
 	result += _state == HTTP_STATE_HEADERS ? "HTTP_STATE_HEADERS\n" : "HTTP_STATE_PAYLOAD\n";
-	result += format("_chunkedContent: %d\n", _chunkedContent);
-	result += format("_lastChunk: %d\n", _lastChunk);
-	result += format("_contentLength: %d\n", _contentLength);
-	result += format("_sessionDecodedBytesCount: %d\n", _sessionDecodedBytesCount);
-	result += format("_decodedBytesCount: %d\n", _decodedBytesCount);
-	result += format("_disconnectAfterTransfer: %d\n", _disconnectAfterTransfer);
-	result += format("TransferCompleted(): %d\n", TransferCompleted());
+	result += format("_chunkedContent: %hhu\n", _chunkedContent);
+	result += format("_lastChunk: %hhu\n", _lastChunk);
+	result += format("_contentLength: %u\n", _contentLength);
+	result += format("_sessionDecodedBytesCount: %u\n", _sessionDecodedBytesCount);
+	result += format("_decodedBytesCount: %u\n", _decodedBytesCount);
+	result += format("_disconnectAfterTransfer: %hhu\n", _disconnectAfterTransfer);
+	result += format("TransferCompleted(): %hhu\n", TransferCompleted());
 	result += format("_headers:\n%s\n", STR(_headers.ToString()));
 	result += format("_outputBuffer:\n%s\n", STR(_outputBuffer));
 	result += format("_inputBuffer:\n%s", STR(_inputBuffer));
@@ -330,7 +330,8 @@ bool BaseHTTPProtocol::ParseHeaders(IOBuffer& buffer) {
 	} else if (_headers[HTTP_HEADERS].HasKey(HTTP_HEADERS_TRANSFER_ENCODING, false)) {
 		if (lowercase(_headers[HTTP_HEADERS].GetValue(HTTP_HEADERS_TRANSFER_ENCODING, false)) !=
 				lowercase(HTTP_HEADERS_TRANSFER_ENCODING_CHUNKED)) {
-			FATAL("The only supported %s is %s", HTTP_HEADERS_TRANSFER_ENCODING,
+			FATAL("The only supported %s is %s",
+					HTTP_HEADERS_TRANSFER_ENCODING,
 					HTTP_HEADERS_TRANSFER_ENCODING_CHUNKED);
 			return false;
 		}
@@ -387,8 +388,8 @@ bool BaseHTTPProtocol::HandleChunkedContent(IOBuffer &buffer) {
 		//8. Get its actual value and test it as well
 		chunkSize = strtol(STR(chunkSizeString), NULL, 16);
 		if (chunkSize > HTTP_MAX_CHUNK_SIZE) {
-			FATAL("Chunk size too large. Maximum allowed is %d and we got %d",
-					HTTP_MAX_CHUNK_SIZE, chunkSize);
+			FATAL("Chunk size too large. Maximum allowed is %u and we got %u",
+					(uint32_t) HTTP_MAX_CHUNK_SIZE, chunkSize);
 			return false;
 		}
 

@@ -26,7 +26,7 @@
 //#define RTP_DEBUG
 #ifdef RTP_DEBUG
 #define RTP_DEBUG_MESSAGE(sent) \
-string message = format("%d %02x-%02x-%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x", \
+string message = format("%zu %02hhx-%02hhx-%02hhx%02hhx-%02hhx%02hhx%02hhx%02hhx-%02hhx%02hhx%02hhx%02hhx", \
     _videoData.msg_iov[0].iov_len, \
     ((uint8_t *) _videoData.msg_iov[0].iov_base)[0], \
     ((uint8_t *) _videoData.msg_iov[0].iov_base)[1], \
@@ -41,18 +41,18 @@ string message = format("%d %02x-%02x-%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x
     ((uint8_t *) _videoData.msg_iov[0].iov_base)[10], \
     ((uint8_t *) _videoData.msg_iov[0].iov_base)[11]); \
 if (_videoData.msg_iov[0].iov_len == 12) { \
-    message += format(" %02x%02x %s", \
+    message += format(" %02hhx%02hhx %s", \
         ((uint8_t *) _videoData.msg_iov[1].iov_base)[0], \
         ((uint8_t *) _videoData.msg_iov[1].iov_base)[1], \
         STR(NALUToString(((uint8_t *) _videoData.msg_iov[1].iov_base)[0]))); \
 } else { \
-    message += format(" %02x%02x %s %s", \
+    message += format(" %02hhx%02hhx %s %s", \
         ((uint8_t *) _videoData.msg_iov[0].iov_base)[12], \
         ((uint8_t *) _videoData.msg_iov[0].iov_base)[13], \
         STR(NALUToString(((uint8_t *) _videoData.msg_iov[0].iov_base)[13])), \
         STR(NALUToString(((uint8_t *) _videoData.msg_iov[0].iov_base)[12]))); \
 } \
-message += format(" s: %d; dl: %d; pl: %d; tl: %d;", sent, dataLength, processedLength, totalLength); \
+message += format(" s: %u; dl: %u; pl: %u; tl: %u;", (uint32_t)sent, (uint32_t)dataLength, (uint32_t)processedLength, (uint32_t)totalLength); \
 if(processedLength+sentAmount+chunkSize==totalLength) \
     WARN("%s", STR(message)); \
 else \
@@ -68,11 +68,6 @@ do { \
         vd.msg_name = &MAP_VAL(i); \
         sent = sendmsg(fd, &vd, 0); \
     } \
-	/*FATAL("TS: %02x%02x%02x%02x", \
-		((uint8_t *)vd.msg_iov[0].iov_base)[4], \
-		((uint8_t *)vd.msg_iov[0].iov_base)[5], \
-		((uint8_t *)vd.msg_iov[0].iov_base)[6], \
-		((uint8_t *)vd.msg_iov[0].iov_base)[7]); */\
 	RTP_DEBUG_MESSAGE(sent); \
 } \
 while (0)
@@ -118,7 +113,6 @@ OutboundConnectivity::~OutboundConnectivity() {
 	}
 	CLOSE_SOCKET(_videoDataFd);
 	CLOSE_SOCKET(_audioDataFd);
-	WARN("OC deleted: %p", this);
 }
 
 bool OutboundConnectivity::Initialize() {
@@ -142,11 +136,11 @@ void OutboundConnectivity::SetOutStream(BaseOutNetRTPUDPStream *pOutStream) {
 }
 
 string OutboundConnectivity::GetVideoServerPorts() {
-	return format("%d-%d", _videoDataPort, _videoRTCPPort);
+	return format("%hu-%hu", _videoDataPort, _videoRTCPPort);
 }
 
 string OutboundConnectivity::GetAudioServerPorts() {
-	return format("%d-%d", _audioDataPort, _audioRTCPPort);
+	return format("%hu-%hu", _audioDataPort, _audioRTCPPort);
 }
 
 uint32_t OutboundConnectivity::GetSSRC() {
@@ -295,7 +289,8 @@ bool OutboundConnectivity::InitializePorts(int32_t &dataFd, uint16_t &dataPort,
 		dataFd = socket(AF_INET, SOCK_DGRAM, 0);
 		RTCPFd = socket(AF_INET, SOCK_DGRAM, 0);
 
-		sockaddr_in address = {0};
+		sockaddr_in address;
+		memset(&address, 0, sizeof (address));
 		address.sin_family = AF_INET;
 		address.sin_port = 0;
 		address.sin_addr.s_addr = INADDR_ANY;

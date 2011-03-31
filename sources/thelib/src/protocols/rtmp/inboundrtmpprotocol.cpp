@@ -74,7 +74,7 @@ bool InboundRTMPProtocol::PerformHandshake(IOBuffer &buffer) {
 				}
 				default:
 				{
-					FATAL("Handshake type not implemented: %d", handshakeType);
+					FATAL("Handshake type not implemented: %hhu", handshakeType);
 					return false;
 				}
 			}
@@ -112,7 +112,7 @@ bool InboundRTMPProtocol::PerformHandshake(IOBuffer &buffer) {
 		}
 		default:
 		{
-			FATAL("Invalid RTMP state: %d", _rtmpState);
+			FATAL("Invalid RTMP state: %hhu", _rtmpState);
 			return false;
 		}
 	}

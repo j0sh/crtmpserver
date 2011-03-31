@@ -225,7 +225,7 @@ do {\
 		} \
 		default: \
 		{ \
-			ASSERT("Unknown status code: %d",(status)); \
+			ASSERT("Unknown status code: %u",(uint32_t)(status)); \
 			ASC_RES_STATUS_DESC(r)=ASC_RES_STATUS_UNKNOWN; \
 			break;\
 		} \

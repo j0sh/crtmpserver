@@ -63,84 +63,54 @@ bool InFileRTMPNSVStream::BuildFrame(FileClass *pFile, MediaFrame &mediaFrame,
 
 
 	if (mediaFrame.type == MEDIAFRAME_TYPE_AUDIO) {
-		//FINEST("--- AUDIO DATA");
-
 		// MP3 Audio
 		buffer.ReadFromRepeat(0x2f, 1);
 
 		//1. Seek into the data file at the correct position
 		if (!pFile->SeekTo(mediaFrame.start)) {
-			FATAL("Unable to seek to position %llu", mediaFrame.start);
+			FATAL("Unable to seek to position %"PRIu64, mediaFrame.start);
 			return false;
 		}
 
 		//3. Read the data
 		if (!buffer.ReadFromFs(*pFile, (uint32_t) mediaFrame.length)) {
-			FATAL("Unable to read %llu bytes from offset %llu", mediaFrame.length, mediaFrame.start);
+			FATAL("Unable to read %"PRIu64" bytes from offset %"PRIu64, mediaFrame.length, mediaFrame.start);
 			return false;
 		}
 
 	} else {
 		if (mediaFrame.isBinaryHeader) {
-			//FINEST("--- VIDEO EXTRA DATA");
-
 			if (!BuildFrameHeaders(pFile, mediaFrame, buffer)) {
 				FATAL("Unable to build frame header...");
 				return false;
 			}
-			//FINEST("sizeof spspps:%d", sizeof (_pSPSPPS));
-			//FINEST("frame Headers:\n%s", STR(buffer));
 		} else {
 			if (mediaFrame.isKeyFrame) {
 				// video key frame
-				//FINEST("--- VIDEO KEY FRAME");
 				buffer.ReadFromBuffer(_videoCodecHeaderKeyFrame, sizeof (_videoCodecHeaderKeyFrame));
 			} else {
 				//video normal frame
-				//            string str = format("%02x %02x %02x %02x %02x",
-				//                    GETIBPOINTER(buffer)[0],
-				//
-				//FINEST("--- VIDEO NORMAL FRAME");
 				buffer.ReadFromBuffer(_videoCodecHeader, sizeof (_videoCodecHeader));
 			}
 
 
 			//composition timestamp is always 0 for NSV
 			buffer.ReadFromRepeat(0, 3);
-			//FINEST("length : %08x", mediaFrame.length);
 			// need help here...
 			buffer.ReadFromRepeat(0, 4);
 			uint32_t frameLength=0;
 			EHTONLP((GETIBPOINTER(buffer) + 5), frameLength);
 			mediaFrame.length=frameLength;
 
-			//buffer.ReadFromBuffer((uint8_t *) &mediaFrame.length, 4);
-			//            string str = format("%02x %02x %02x %02x %02x",
-			//                    GETIBPOINTER(buffer)[0],
-			//                    GETIBPOINTER(buffer)[1],
-			//                    GETIBPOINTER(buffer)[2],
-			//                    GETIBPOINTER(buffer)[3],
-			//                    GETIBPOINTER(buffer)[4]);
-			//            if (_currentFrame.isKeyFrame)
-			//                WARN("%s", STR(str));
-			//            else
-			//                FINEST("%s", STR(str));
-
-			/*if (mediaFrame.type == MEDIAFRAME_TYPE_VIDEO) {
-				FINEST("Media frame:\n%s", STR(mediaFrame));
-				FINEST("Headers:\n%s", STR(buffer));
-			}
-			 */
-
 			//1. Seek into the data file at the correct position
 			if (!pFile->SeekTo(mediaFrame.start)) {
-				FATAL("Unable to seek to position %llu", mediaFrame.start);
+				FATAL("Unable to seek to position %"PRIu64, mediaFrame.start);
 				return false;
 			}
 
 			//3. Read the data
 			if (!buffer.ReadFromFs(*pFile, (uint32_t) mediaFrame.length)) {
-				FATAL("Unable to read %llu bytes from offset %llu", mediaFrame.length, mediaFrame.start);
+				FATAL("Unable to read %"PRIu64" bytes from offset %"PRIu64, mediaFrame.length, mediaFrame.start);
 				return false;
 			}
 
@@ -163,18 +133,15 @@ bool InFileRTMPNSVStream::BuildFrameHeaders(FileClass *pFile, MediaFrame &mediaF
 
 	//1. Seek into the data file at the correct position
 	if (!pFile->SeekTo(mediaFrame.start)) {
-		FATAL("Unable to seek to position %llu", mediaFrame.start);
+		FATAL("Unable to seek to position %"PRIu64, mediaFrame.start);
 		return false;
 	}
 
 	IOBuffer pbuf;
 	if (!pbuf.ReadFromFs(*pFile, (uint32_t) mediaFrame.length)) {
-		FATAL("Unable to read %llu bytes from offset %llu", mediaFrame.length, mediaFrame.start);
+		FATAL("Unable to read %"PRIu64" bytes from offset %"PRIu64, mediaFrame.length, mediaFrame.start);
 		return false;
 	}
-	//FINEST("video data offset %x", mediaFrame.start);
-	//FINEST("data len %d", mediaFrame.length);
-	//FINEST(" buffer: \n%s", STR(pbuf));
 
 	uint8_t *pData = GETIBPOINTER(pbuf);
 	if(mediaFrame.length>=0x100000000LL){
@@ -182,14 +149,11 @@ bool InFileRTMPNSVStream::BuildFrameHeaders(FileClass *pFile, MediaFrame &mediaF
 		return false;
 	}
 	uint32_t dataLength = (uint32_t)mediaFrame.length;
-	//FINEST("%02x - %s", (uint8_t) NALU_TYPE(pData[0]), STR(NALUToString((uint8_t) pData[0])));
 
 	switch (NALU_TYPE(pData[0])) {
 		case NALU_TYPE_SPS:
 		{
-			//FINEST("WE GOT SPS");
 			//1. Prepare the SPS part from video codec
-			//FINEST("spspps length: %d ppsstrt:%d", _SPSPPSLength, _PPSStart);
 			if (dataLength > 128) {
 				FATAL("SPS too big");
 				return false;
@@ -200,14 +164,12 @@ bool InFileRTMPNSVStream::BuildFrameHeaders(FileClass *pFile, MediaFrame &mediaF
 			_PPSStart = 13 + dataLength;
 			_spsAvailable = true;
 			_SPSPPSLength = _PPSStart;
-			//FINEST("spspps length: %d ppsstrt:%d", _SPSPPSLength, _PPSStart);
 
 			return true;
 		}
 
 		case NALU_TYPE_PPS:
 		{
-			//FINEST("WE GOT PPS");
 			//2. Prepare the PPS part from video codec
 			if (dataLength > 128) {
 				FATAL("PPS too big");
@@ -217,14 +179,12 @@ bool InFileRTMPNSVStream::BuildFrameHeaders(FileClass *pFile, MediaFrame &mediaF
 				WARN("No SPS available yet");
 				return true;
 			}
-			//FINEST("spspps length: %d ppsstrt:%d", _SPSPPSLength, _PPSStart);
 			_pSPSPPS[_PPSStart] = 1;
 			EHTONSP(_pSPSPPS + _PPSStart + 1, (uint16_t) dataLength);
 			memcpy(_pSPSPPS + _PPSStart + 1 + 2, pData, dataLength);
 			_SPSPPSLength = _PPSStart + 1 + 2 + dataLength;
 			_spsAvailable = false;
 
-			//FINEST("spspps length: %d", _SPSPPSLength);
 			buffer.ReadFromBuffer(_pSPSPPS, _SPSPPSLength); //sizeof (_pSPSPPS));
 
 			return true;

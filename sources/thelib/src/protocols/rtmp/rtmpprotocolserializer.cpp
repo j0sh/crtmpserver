@@ -51,7 +51,7 @@ string RTMPProtocolSerializer::GetUserCtrlTypeString(uint16_t type) {
 		case RM_USRCTRL_TYPE_UNKNOWN2:
 			return "RM_USRCTRL_TYPE_UNKNOWN2";
 		default:
-			return format("#unknownUCT(%d)", type);
+			return format("#unknownUCT(%hu)", type);
 	}
 }
 
@@ -80,7 +80,7 @@ string RTMPProtocolSerializer::GetSOPrimitiveString(uint8_t type) {
 		case SOT_SC_INITIAL_DATA:
 			return "SOT_SC_INITIAL_DATA";
 		default:
-			return format("#unknownSOP(%d)", type);
+			return format("#unknownSOP(%hhu)", type);
 	}
 }
 
@@ -141,7 +141,7 @@ bool RTMPProtocolSerializer::Deserialize(Header &header, IOBuffer &buffer,
 		}
 		default:
 		{
-			FATAL("Invalid message type: %d %s", H_MT(header), STR(buffer));
+			FATAL("Invalid message type: %u %s", H_MT(header), STR(buffer));
 			return false;
 		}
 	}
@@ -264,7 +264,8 @@ bool RTMPProtocolSerializer::SerializeInvoke(IOBuffer &buffer,
 
 	FOR_MAP(message[RM_INVOKE_PARAMS], string, Variant, i) {
 		if (!_amf0.Write(buffer, MAP_VAL(i))) {
-			FATAL("Unable to serialize invoke parameter %s: %s", STR(MAP_KEY(i)),
+			FATAL("Unable to serialize invoke parameter %s: %s",
+					STR(MAP_KEY(i)),
 					STR(message.ToString()));
 			return false;
 		}
@@ -277,7 +278,8 @@ bool RTMPProtocolSerializer::SerializeNotify(IOBuffer &buffer, Variant &message)
 
 	FOR_MAP(message[RM_NOTIFY_PARAMS], string, Variant, i) {
 		if (!_amf0.Write(buffer, MAP_VAL(i))) {
-			FATAL("Unable to serialize invoke parameter %s: %s", STR(MAP_KEY(i)),
+			FATAL("Unable to serialize invoke parameter %s: %s",
+					STR(MAP_KEY(i)),
 					STR(message.ToString()));
 			return false;
 		}
@@ -290,7 +292,8 @@ bool RTMPProtocolSerializer::SerializeFlexStreamSend(IOBuffer &buffer, Variant &
 
 	FOR_MAP(message[RM_FLEXSTREAMSEND_PARAMS], string, Variant, i) {
 		if (!_amf0.Write(buffer, MAP_VAL(i))) {
-			FATAL("Unable to serialize invoke parameter %s: %s", STR(MAP_KEY(i)),
+			FATAL("Unable to serialize invoke parameter %s: %s",
+					STR(MAP_KEY(i)),
 					STR(message.ToString()));
 			return false;
 		}
@@ -300,7 +303,7 @@ bool RTMPProtocolSerializer::SerializeFlexStreamSend(IOBuffer &buffer, Variant &
 
 bool RTMPProtocolSerializer::SerializeAck(IOBuffer &buffer, uint32_t value) {
 	if (!_amf0.WriteUInt32(buffer, value, false)) {
-		FATAL("Unable to write int32_t value: %d", value);
+		FATAL("Unable to write uint32_t value: %u", value);
 		return false;
 	}
 	return true;
@@ -342,7 +345,7 @@ bool RTMPProtocolSerializer::SerializeUsrCtrl(IOBuffer &buffer, Variant message)
 
 bool RTMPProtocolSerializer::SerializeChunkSize(IOBuffer &buffer, uint32_t value) {
 	if (!_amf0.WriteUInt32(buffer, value, false)) {
-		FATAL("Unable to write int32_t value: %d", value);
+		FATAL("Unable to write uint32_t value: %u", value);
 		return false;
 	}
 	return true;
@@ -350,7 +353,7 @@ bool RTMPProtocolSerializer::SerializeChunkSize(IOBuffer &buffer, uint32_t value
 
 bool RTMPProtocolSerializer::SerializeWinAckSize(IOBuffer &buffer, uint32_t value) {
 	if (!_amf0.WriteUInt32(buffer, value, false)) {
-		FATAL("Unable to write int32_t value: %d", value);
+		FATAL("Unable to write uint32_t value: %u", value);
 		return false;
 	}
 	return true;
@@ -358,7 +361,7 @@ bool RTMPProtocolSerializer::SerializeWinAckSize(IOBuffer &buffer, uint32_t valu
 
 bool RTMPProtocolSerializer::SerializeAbortMessage(IOBuffer &buffer, uint32_t value) {
 	if (!_amf0.WriteUInt32(buffer, value, false)) {
-		FATAL("Unable to write int32_t value: %d", value);
+		FATAL("Unable to write uint32_t value: %u", value);
 		return false;
 	}
 	return true;
@@ -366,12 +369,12 @@ bool RTMPProtocolSerializer::SerializeAbortMessage(IOBuffer &buffer, uint32_t va
 
 bool RTMPProtocolSerializer::SerializeClientBW(IOBuffer &buffer, Variant value) {
 	if (!_amf0.WriteUInt32(buffer, value[RM_PEERBW_VALUE], false)) {
-		FATAL("Unable to write int32_t value: %d",
+		FATAL("Unable to write uint32_t value: %u",
 				(uint32_t) value[RM_PEERBW_VALUE]);
 		return false;
 	}
 	if (!_amf0.WriteUInt8(buffer, value[RM_PEERBW_TYPE], false)) {
-		FATAL("Unable to write int32_t value: %d",
+		FATAL("Unable to write uint8_t value: %hhu",
 				(uint8_t) value[RM_PEERBW_TYPE]);
 		return false;
 	}
@@ -499,7 +502,7 @@ bool RTMPProtocolSerializer::SerializeSharedObject(IOBuffer &buffer,
 bool RTMPProtocolSerializer::DeserializeNotify(IOBuffer &buffer, Variant &message) {
 	for (uint32_t i = 0; GETAVAILABLEBYTESCOUNT(buffer) > 0; i++) {
 		if (!_amf0.Read(buffer, message[RM_NOTIFY_PARAMS][i])) {
-			FATAL("Unable to deserialize invoke parameter %d", i);
+			FATAL("Unable to de-serialize invoke parameter %u", i);
 			return false;
 		}
 	}
@@ -521,7 +524,7 @@ bool RTMPProtocolSerializer::DeserializeFlexStreamSend(IOBuffer &buffer, Variant
 
 	for (uint32_t i = 0; GETAVAILABLEBYTESCOUNT(buffer) > 0; i++) {
 		if (!_amf0.Read(buffer, message[RM_FLEXSTREAMSEND_PARAMS][i])) {
-			FATAL("Unable to deserialize invoke parameter %d", i);
+			FATAL("Unable to de-serialize invoke parameter %u", i);
 			return false;
 		}
 	}
@@ -549,7 +552,7 @@ bool RTMPProtocolSerializer::DeserializeInvoke(IOBuffer &buffer, Variant &messag
 
 	for (uint32_t i = 0; GETAVAILABLEBYTESCOUNT(buffer) > 0; i++) {
 		if (!_amf0.Read(buffer, message[RM_INVOKE_PARAMS][i])) {
-			FATAL("Unable to deserialize invoke parameter %d", i);
+			FATAL("Unable to de-serialize invoke parameter %u", i);
 			return false;
 		}
 	}
@@ -668,7 +671,7 @@ bool RTMPProtocolSerializer::DeserializeAbortMessage(IOBuffer &buffer, Variant &
 bool RTMPProtocolSerializer::DeserializeFlexSharedObject(IOBuffer &buffer,
 		Variant &message) {
 	if (GETIBPOINTER(buffer)[0] != 0) {
-		FATAL("Encoding %d not supported yet", GETIBPOINTER(buffer)[0]);
+		FATAL("Encoding %hhu not supported yet", GETIBPOINTER(buffer)[0]);
 		return false;
 	}
 

@@ -34,7 +34,7 @@ BaseLiveFLVAppProtocolHandler::~BaseLiveFLVAppProtocolHandler() {
 
 void BaseLiveFLVAppProtocolHandler::RegisterProtocol(BaseProtocol *pProtocol) {
 	if (MAP_HAS1(_protocols, pProtocol->GetId())) {
-		ASSERT("Protocol ID %d already registered", pProtocol->GetId());
+		ASSERT("Protocol ID %u already registered", pProtocol->GetId());
 		return;
 	}
 	if (pProtocol->GetType() != PT_INBOUND_LIVE_FLV) {
@@ -47,7 +47,7 @@ void BaseLiveFLVAppProtocolHandler::RegisterProtocol(BaseProtocol *pProtocol) {
 
 void BaseLiveFLVAppProtocolHandler::UnRegisterProtocol(BaseProtocol *pProtocol) {
 	if (!MAP_HAS1(_protocols, pProtocol->GetId())) {
-		ASSERT("Protocol ID %d not registered", pProtocol->GetId());
+		ASSERT("Protocol ID %u not registered", pProtocol->GetId());
 		return;
 	}
 	if (pProtocol->GetType() != PT_INBOUND_LIVE_FLV) {

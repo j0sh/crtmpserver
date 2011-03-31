@@ -55,7 +55,7 @@ bool FLVDocument::BuildFrames() {
 	}
 
 	//4. Build the frames
-	MediaFrame frame = {0};
+	MediaFrame frame = {0, 0, 0, 0, 0, 0, 0, 0};
 	uint8_t tagType = 0;
 	uint32_t timestamp;
 	while (_mediaFile.Cursor() != _mediaFile.Size()) {
@@ -81,7 +81,7 @@ bool FLVDocument::BuildFrames() {
 				frame.type = MEDIAFRAME_TYPE_DATA;
 				break;
 			default:
-				WARN("Invalid tag type: %d at cursor %llu", tagType, _mediaFile.Cursor());
+				WARN("Invalid tag type: %hhu at cursor %"PRIu64, tagType, _mediaFile.Cursor());
 				mustBreak = true;
 				break;
 		}

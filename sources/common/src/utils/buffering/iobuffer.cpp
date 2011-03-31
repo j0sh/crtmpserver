@@ -301,7 +301,7 @@ bool IOBuffer::WriteToTCPFd(int32_t fd, uint32_t size, int32_t &sentAmount) {
 
 	if (sentAmount < 0) {
 		if (err != SOCKERROR_SEND_IN_PROGRESS) {
-			FATAL("Unable to send %d bytes of data data. Size advertised by network layer was %d [%d: %s]",
+			FATAL("Unable to send %u bytes of data data. Size advertised by network layer was %u [%d: %s]",
 					_published - _consumed, size, err, strerror(err));
 			FATAL("Permanent error!");
 			result = false;
@@ -325,7 +325,7 @@ bool IOBuffer::WriteToStdio(int32_t fd, uint32_t size) {
 	int err = LASTSOCKETERROR;
 
 	if (sent < 0) {
-		FATAL("Unable to send %d bytes of data data. Size advertised by network layer was %d [%d: %s]",
+		FATAL("Unable to send %u bytes of data data. Size advertised by network layer was %u [%d: %s]",
 				_published - _consumed, size, err, strerror(err));
 		FATAL("Permanent error!");
 		result = false;
@@ -450,7 +450,7 @@ string IOBuffer::ToString(uint32_t startIndex, uint32_t limit) {
 	ss << "Consumed: " << _consumed << endl;
 	ss << format("Address: %p", _pBuffer) << endl;
 	if (limit != 0) {
-		ss << format("Limited to %d bytes", limit) << endl;
+		ss << format("Limited to %u bytes", limit) << endl;
 	}
 	string address = "";
 	string part1 = "";
@@ -464,13 +464,13 @@ string IOBuffer::ToString(uint32_t startIndex, uint32_t limit) {
 			part2 = "";
 			hr = "";
 		}
-		address = format("%08d", i - (i % 16));
+		address = format("%08u", i - (i % 16));
 
 		if ((i % 16) < 8) {
-			part1 += format("%02x", _pBuffer[i]);
+			part1 += format("%02hhx", _pBuffer[i]);
 			part1 += " ";
 		} else {
-			part2 += format("%02x", _pBuffer[i]);
+			part2 += format("%02hhx", _pBuffer[i]);
 			part2 += " ";
 		}
 

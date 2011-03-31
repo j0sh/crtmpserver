@@ -108,7 +108,7 @@ uint32_t TimersManager::LCM(uint32_t a, uint32_t b) {
 	if (a == 0 || b == 0)
 		return 0;
 	uint32_t result = a * b / GCD(a, b);
-	FINEST("a: %d; b: %d; r: %d", a, b, result);
+	FINEST("a: %u; b: %u; r: %u", a, b, result);
 	return result;
 }
 

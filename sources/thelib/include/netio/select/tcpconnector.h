@@ -135,7 +135,7 @@ public:
 		if (connect(_inboundFd, (sockaddr *) & address, sizeof (address)) != 0) {
 			int err = LASTSOCKETERROR;
 			if (err != SOCKERROR_CONNECT_IN_PROGRESS) {
-				FATAL("Unable to connect to %s:%d (%d) (%s)", STR(_ip), _port, err,
+				FATAL("Unable to connect to %s:%hu (%d) (%s)", STR(_ip), _port, err,
 						strerror(err));
 				T::SignalProtocolCreated(NULL, _customParameters);
 				_closeSocket = true;

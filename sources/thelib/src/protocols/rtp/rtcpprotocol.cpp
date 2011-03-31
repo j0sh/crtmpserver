@@ -77,7 +77,7 @@ bool RTCPProtocol::SignalInputData(IOBuffer &buffer, sockaddr_in *pPeerAddress) 
 	uint16_t len = ENTOHSP(pBuffer + 2);
 	len = (len + 1)*4;
 	if (len > bufferLength) {
-		WARN("Invalid RTCP packet length: len %d; bufferLength: %d", len, bufferLength);
+		WARN("Invalid RTCP packet length: len %hu; bufferLength: %u", len, bufferLength);
 		buffer.IgnoreAll();
 		return true;
 	}
@@ -86,7 +86,7 @@ bool RTCPProtocol::SignalInputData(IOBuffer &buffer, sockaddr_in *pPeerAddress) 
 		case 200: //SR
 		{
 			if (len < 28) {
-				WARN("Invalid RTCP packet length: %d", len);
+				WARN("Invalid RTCP packet length: %hu", len);
 				buffer.IgnoreAll();
 				return true;
 			}
@@ -100,7 +100,7 @@ bool RTCPProtocol::SignalInputData(IOBuffer &buffer, sockaddr_in *pPeerAddress) 
 		}
 		default:
 		{
-			WARN("Unknown packet type: %d", PT);
+			WARN("Unknown packet type: %hhu", PT);
 			buffer.IgnoreAll();
 			return true;
 		}

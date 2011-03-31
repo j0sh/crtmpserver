@@ -66,7 +66,7 @@ bool BaseFeeder::Feed(const uint8_t *pBuffer, uint32_t length, uint8_t type) {
 		case DATA_TYPE_CLIENT2SERVER:
 		{
 			if (!_client2ServerBuffer.ReadFromBuffer(pBuffer, length)) {
-				FATAL("Unable to put %d bytes to _client2ServerBuffer buffer");
+				FATAL("Unable to put %u bytes to _client2ServerBuffer buffer", length);
 				return false;
 			}
 
@@ -75,7 +75,7 @@ bool BaseFeeder::Feed(const uint8_t *pBuffer, uint32_t length, uint8_t type) {
 		case DATA_TYPE_SERVER2CLIENT:
 		{
 			if (!_server2ClientBuffer.ReadFromBuffer(pBuffer, length)) {
-				FATAL("Unable to put %d bytes to _server2ClientBuffer buffer");
+				FATAL("Unable to put %u bytes to _server2ClientBuffer buffer", length);
 				return false;
 			}
 
@@ -83,7 +83,7 @@ bool BaseFeeder::Feed(const uint8_t *pBuffer, uint32_t length, uint8_t type) {
 		}
 		default:
 		{
-			FATAL("Invalid data type: %d", type);
+			FATAL("Invalid data type: %hhu", type);
 			return false;
 		}
 	}

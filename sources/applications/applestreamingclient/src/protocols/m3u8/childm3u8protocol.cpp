@@ -36,7 +36,7 @@ bool ChildM3U8Protocol::Initialize(Variant &parameters) {
 	}
 	_bw = parameters["payload"]["bw"];
 	if (_bw == 0) {
-		FATAL("Invalid bandwidth: %d", _bw);
+		FATAL("Invalid bandwidth: %u", _bw);
 		return false;
 	}
 	return true;

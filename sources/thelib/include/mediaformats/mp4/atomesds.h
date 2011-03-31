@@ -23,14 +23,6 @@
 
 #include "mediaformats/mp4/versionedatom.h"
 
-//#define DEBUG_ESDS_ATOM
-
-#ifdef DEBUG_ESDS_ATOM
-#define FINEST_ESDS_ATOM(...) FINEST(__VA_ARGS__)
-#else
-#define FINEST_ESDS_ATOM(...)
-#endif
-
 class AtomESDS
 : public VersionedAtom {
 private:

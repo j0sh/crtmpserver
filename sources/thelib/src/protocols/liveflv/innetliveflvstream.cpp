@@ -99,7 +99,7 @@ void InNetLiveFLVStream::SignalOutStreamAttached(BaseOutStream *pOutStream) {
 				GETAVAILABLEBYTESCOUNT(_videoCodecInit), 0,
 				GETAVAILABLEBYTESCOUNT(_videoCodecInit),
 				_lastVideoTime, false)) {
-			FINEST("Unable to feed OS: %d", pOutStream->GetUniqueId());
+			FINEST("Unable to feed OS: %u", pOutStream->GetUniqueId());
 			pOutStream->EnqueueForDelete();
 		}
 	}
@@ -109,7 +109,7 @@ void InNetLiveFLVStream::SignalOutStreamAttached(BaseOutStream *pOutStream) {
 				GETAVAILABLEBYTESCOUNT(_audioCodecInit), 0,
 				GETAVAILABLEBYTESCOUNT(_audioCodecInit),
 				_lastAudioTime, true)) {
-			FINEST("Unable to feed OS: %d", pOutStream->GetUniqueId());
+			FINEST("Unable to feed OS: %u", pOutStream->GetUniqueId());
 			pOutStream->EnqueueForDelete();
 		}
 	}
@@ -200,7 +200,7 @@ bool InNetLiveFLVStream::InitializeAudioCapabilities(uint8_t *pData, uint32_t le
 		FATAL("InitAudioAAC failed");
 		return false;
 	}
-	FINEST("Cached the AAC audio codec initialization: %d",
+	FINEST("Cached the AAC audio codec initialization: %u",
 			GETAVAILABLEBYTESCOUNT(_audioCodecInit));
 	return true;
 }
@@ -221,7 +221,7 @@ bool InNetLiveFLVStream::InitializeVideoCapabilities(uint8_t *pData, uint32_t le
 		return false;
 	}
 
-	FINEST("Cached the h264 video codec initialization: %d",
+	FINEST("Cached the h264 video codec initialization: %u",
 			GETAVAILABLEBYTESCOUNT(_videoCodecInit));
 
 	return true;

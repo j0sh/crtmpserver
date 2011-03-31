@@ -130,7 +130,7 @@ bool InboundConnectivity::Initialize(Variant &videoTrack, Variant &audioTrack,
 
 	//5. Create the in stream
 	if (streamName == "")
-		streamName = format("rtsp_%d", _pRTSP->GetId());
+		streamName = format("rtsp_%u", _pRTSP->GetId());
 	_pInStream = new InNetRTPStream(_pRTSP, pApplication->GetStreamsManager(),
 			streamName,
 			videoTrack != V_NULL ? unb64((string) SDP_VIDEO_CODEC_H264_SPS(videoTrack)) : "",
@@ -152,7 +152,7 @@ bool InboundConnectivity::Initialize(Variant &videoTrack, Variant &audioTrack,
 	map<uint32_t, BaseOutStream *> subscribedOutStreams =
 			pApplication->GetStreamsManager()->GetWaitingSubscribers(
 			streamName, _pInStream->GetType());
-	FINEST("subscribedOutStreams count: %d", subscribedOutStreams.size());
+	FINEST("subscribedOutStreams count: %zu", subscribedOutStreams.size());
 
 
 	//9. Bind the waiting subscribers
@@ -171,7 +171,7 @@ string InboundConnectivity::GetTransportHeaderLine(bool isAudio) {
 		BaseProtocol *pProtocol = isAudio ? _pRTPAudio : _pRTPVideo;
 		for (uint32_t i = 0; i < 255; i++) {
 			if ((_pProtocols[i] != NULL) && (_pProtocols[i]->GetId() == pProtocol->GetId())) {
-				string result = format("RTP/AVP/TCP;unicast;interleaved=%d-%d", i, i + 1);
+				string result = format("RTP/AVP/TCP;unicast;interleaved=%u-%u", i, i + 1);
 				return result;
 			}
 		}
@@ -188,14 +188,14 @@ bool InboundConnectivity::FeedData(uint32_t channelId, uint8_t *pBuffer,
 		uint32_t bufferLength) {
 	//1. Is the chanel number a valid chanel?
 	if (channelId >= 4) {
-		FATAL("Invalid chanel number: %d", channelId);
+		FATAL("Invalid chanel number: %u", channelId);
 		return false;
 	}
 
 	//2. Get the protocol
 	BaseProtocol *pProtocol = _pProtocols[channelId];
 	if (pProtocol == NULL) {
-		FATAL("Invalid chanel number: %d", channelId);
+		FATAL("Invalid chanel number: %u", channelId);
 		return false;
 	}
 
@@ -208,13 +208,13 @@ bool InboundConnectivity::FeedData(uint32_t channelId, uint8_t *pBuffer,
 }
 
 string InboundConnectivity::GetAudioClientPorts() {
-	return format("%d-%d",
+	return format("%hu-%hu",
 			((UDPCarrier *) _pRTPAudio->GetIOHandler())->GetNearEndpointPort(),
 			((UDPCarrier *) _pRTCPAudio->GetIOHandler())->GetNearEndpointPort());
 }
 
 string InboundConnectivity::GetVideoClientPorts() {
-	return format("%d-%d",
+	return format("%hu-%hu",
 			((UDPCarrier *) _pRTPVideo->GetIOHandler())->GetNearEndpointPort(),
 			((UDPCarrier *) _pRTCPVideo->GetIOHandler())->GetNearEndpointPort());
 }

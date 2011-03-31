@@ -154,7 +154,7 @@ bool Playlist::ParseBandwidthInfo() {
 			break;
 		}
 		if (!bandwidthFound) {
-			FATAL("Item number %u dowsn't have bandwidth info", MAP_KEY(i));
+			FATAL("Item number %u doesn't have bandwidth info", MAP_KEY(i));
 			return false;
 		}
 	}
@@ -212,7 +212,7 @@ Variant Playlist::GetItemVariant(uint32_t &sequence) {
 
 uint32_t Playlist::GetIndex(uint32_t &sequence) {
 	FINEST("---------------------");
-	FINEST("sequence requested: %d", sequence);
+	FINEST("sequence requested: %u", sequence);
 	//1. We have it, we return it
 	if (MAP_HAS1(_itemMediaSequences, sequence)) {
 		FINEST("WE have it");
@@ -223,7 +223,7 @@ uint32_t Playlist::GetIndex(uint32_t &sequence) {
 	//2. We don't have it, and is a 0 value, that means it was never initialized
 	if (sequence == 0) {
 		FINEST("sequence is 0");
-		FINEST("_itemMediaSequences.size(): %d", _itemMediaSequences.size());
+		FINEST("_itemMediaSequences.size(): %zu", _itemMediaSequences.size());
 		if (_itemMediaSequences.size() != 0) {
 			//3. We have stuff. Init and return
 			FINEST("Return the first entry");
@@ -247,7 +247,7 @@ uint32_t Playlist::GetIndex(uint32_t &sequence) {
 			FINEST("Our sequence is somewhere there...");
 
 			FOR_MAP(_itemMediaSequences, uint32_t, uint32_t, i) {
-				FINEST("sequence: %d; MAP_KEY(i): %d", sequence, MAP_KEY(i));
+				FINEST("sequence: %u; MAP_KEY(i): %u", sequence, MAP_KEY(i));
 				if (MAP_KEY(i) >= sequence) {
 					sequence = MAP_KEY(i);
 					FINEST("JACKPOT");

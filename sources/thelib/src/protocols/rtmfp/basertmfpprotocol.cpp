@@ -82,12 +82,12 @@ bool BaseRTMFPProtocol::SignalInputData(IOBuffer &buffer, sockaddr_in *pPeerAddr
 
 	if (sessionId == 0) {
 		if (MAP_HAS2(_initSessions, pPeerAddress->sin_addr.s_addr, pPeerAddress->sin_port)) {
-			WARN("Session in hndshake mode: %s:%d",
+			WARN("Session in hndshake mode: %s:%hu",
 					inet_ntoa(pPeerAddress->sin_addr),
 					ENTOHS(pPeerAddress->sin_port));
 			pSession = _initSessions[pPeerAddress->sin_addr.s_addr][pPeerAddress->sin_port];
 		} else {
-			WARN("Brand new session: %s:%d",
+			WARN("Brand new session: %s:%hu",
 					inet_ntoa(pPeerAddress->sin_addr),
 					ENTOHS(pPeerAddress->sin_port));
 			pSession = new RTMFPSession;
@@ -95,13 +95,13 @@ bool BaseRTMFPProtocol::SignalInputData(IOBuffer &buffer, sockaddr_in *pPeerAddr
 		}
 	} else {
 		if (MAP_HAS1(_sessions, sessionId)) {
-			WARN("Active session: %08x - %s:%d",
+			WARN("Active session: %08x - %s:%hu",
 					sessionId,
 					inet_ntoa(pPeerAddress->sin_addr),
 					ENTOHS(pPeerAddress->sin_port));
 			pSession = _sessions[sessionId];
 		} else {
-			WARN("Bogus session: %08x - %s:%d",
+			WARN("Bogus session: %08x - %s:%hu",
 					sessionId,
 					inet_ntoa(pPeerAddress->sin_addr),
 					ENTOHS(pPeerAddress->sin_port));
@@ -244,17 +244,17 @@ void BaseRTMFPProtocol::ProcessSession(RTMFPSession *pSession, IOBuffer &buffer)
 	bool R = (type & 0x04) != 0;
 	bool t = (type & 0x02) != 0;
 	bool T = (type & 0x01) != 0;
-	FINEST("BITS: %d %d %d %d %d %d %d %d",
+	FINEST("BITS: %hhu %hhu %hhu %hhu %hhu %hhu %hhu %hhu",
 			E, S, r1, r2, I, R, t, T);
-	FINEST("E Timestamp Echo Valid: %d", E);
-	FINEST("S Startup: %d", S);
-	FINEST("R1 Reserved1: %d", r1);
-	FINEST("R2 Reserved2: %d", r2);
-	FINEST("I Initiator Mark: %d", I);
-	FINEST("R Responder Mark: %d", R);
-	FINEST("t Time Critical Reverse Notification: %d", t);
-	FINEST("T Time Critical Forward Notification: %d", T);
-	FINEST("type: %02x E: %d; S: %d; b1: %d; b2: %d; I: %d; R: %d; t: %d; T: %d",
+	FINEST("E Timestamp Echo Valid: %hhu", E);
+	FINEST("S Startup: %hhu", S);
+	FINEST("R1 Reserved1: %hhu", r1);
+	FINEST("R2 Reserved2: %hhu", r2);
+	FINEST("I Initiator Mark: %hhu", I);
+	FINEST("R Responder Mark: %hhu", R);
+	FINEST("t Time Critical Reverse Notification: %hhu", t);
+	FINEST("T Time Critical Forward Notification: %hhu", T);
+	FINEST("type: %hhx E: %hhu; S: %hhu; b1: %hhu; b2: %hhu; I: %hhu; R: %hhu; t: %hhu; T: %hhu",
 			type, E, S, r1, r2, I, R, t, T);
 
 	//6. Read the timestamp
@@ -284,14 +284,14 @@ void BaseRTMFPProtocol::ProcessSessionMessage(
 		uint16_t timestamp,
 		uint8_t chunkType,
 		uint16_t chunkLength) {
-	FINEST("type: %02x; timestamp: %04x; chunkType: %02x; chunkLength: %04x",
+	FINEST("type: %hhx; timestamp: %hx; chunkType: %hhx; chunkLength: %hx",
 			type, timestamp, chunkType, chunkLength);
 	switch (type) {
 		case 0x0B:
 			ProcessSessionMessage_0b(pSession, buffer, timestamp, chunkType, chunkLength);
 			break;
 		default:
-			FATAL("Invalid message type: %02x", type);
+			FATAL("Invalid message type: %hhx", type);
 			break;
 	}
 }
@@ -310,7 +310,7 @@ void BaseRTMFPProtocol::ProcessSessionMessage_0b(
 			ProcessSessionMessage_0b_38(pSession, buffer, timestamp, chunkLength);
 			break;
 		default:
-			FATAL("Invalid chunk type: %02x", chunkType);
+			FATAL("Invalid chunk type: %hhx", chunkType);
 			break;
 	}
 }
@@ -324,7 +324,7 @@ FINEST(#value": %u (0x%x)", value, value);
 
 #define __CHECK_SIZE(size) \
 if(GETAVAILABLEBYTESCOUNT(buffer)<(size)) {\
-	FATAL("Invalid buffer size. Wanted: %u; got: %u",(size),GETAVAILABLEBYTESCOUNT(buffer)); \
+	FATAL("Invalid buffer size. Wanted: %u; got: %u",(uint32_t)(size),GETAVAILABLEBYTESCOUNT(buffer)); \
 	return; \
 } \
 
@@ -335,16 +335,16 @@ buffer.Ignore((size)); \
 { \
 	string __tempString__; \
 	for(uint32_t i=0;i<(size);i++) { \
-		__tempString__+=format("%02x",(value)[i]); \
+		__tempString__+=format("%02hhx",(value)[i]); \
 	} \
-	FINEST(#value"[%d]: %s",(size), STR(__tempString__)); \
+	FINEST(#value"[%u]: %s",(uint32_t)(size), STR(__tempString__)); \
 }
 
 #define __READ_STRING(value,size) \
 __CHECK_SIZE(size); \
 value=string((char *)GETIBPOINTER(buffer),(size)); \
 buffer.Ignore((size)); \
-FINEST(#value"[%d]: `%s`",(size),STR(value));
+FINEST(#value"[%u]: `%s`",(uint32_t)(size),STR(value));
 
 void BaseRTMFPProtocol::ProcessSessionMessage_0b_30(
 		RTMFPSession *pSession,
@@ -496,7 +496,7 @@ void BaseRTMFPProtocol::ProcessSessionMessage_0b_38(
 	EVP_Digest(pSession->client.publicKey, 128, pSession->client.id, NULL, EVP_sha256(), NULL);
 	string temp = "";
 	for (uint32_t i = 0; i < 32; i++) {
-		temp += format("%02x", pSession->client.id[i]);
+		temp += format("%02hhx", pSession->client.id[i]);
 	}
 	FINEST("farId: %s", STR(temp));
 
@@ -504,7 +504,7 @@ void BaseRTMFPProtocol::ProcessSessionMessage_0b_38(
 	EVP_Digest(pSession->server.publicKey, 128, pSession->server.id, NULL, EVP_sha256(), NULL);
 	temp = "";
 	for (uint32_t i = 0; i < 32; i++) {
-		temp += format("%02x", pSession->server.id[i]);
+		temp += format("%02hhx", pSession->server.id[i]);
 	}
 	FINEST("nearId: %s", STR(temp));
 

@@ -442,7 +442,8 @@ bool BaseRTMPAppProtocolHandler::ProcessNotify(BaseRTMPProtocol *pFrom,
 		}
 	}
 	if (pInNetRTMPStream == NULL) {
-		WARN("No stream found. Searched for %d:%d. Message was:\n%s", pFrom->GetId(),
+		WARN("No stream found. Searched for %u:%u. Message was:\n%s",
+				pFrom->GetId(),
 				(uint32_t) VH_SI(request),
 				STR(request.ToString()));
 		return true;
@@ -483,7 +484,8 @@ bool BaseRTMPAppProtocolHandler::ProcessFlexStreamSend(BaseRTMPProtocol *pFrom,
 		}
 	}
 	if (pInNetRTMPStream == NULL) {
-		WARN("No stream found. Searched for %d:%d", pFrom->GetId(),
+		WARN("No stream found. Searched for %u:%u",
+				pFrom->GetId(),
 				(uint32_t) VH_SI(request));
 		return true;
 	}
@@ -643,7 +645,7 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokePublish(BaseRTMPProtocol *pFrom,
 			FOR_MAP(existingStreams, uint32_t, BaseStream *, i) {
 				InNetRTMPStream *pTempStream = (InNetRTMPStream *) MAP_VAL(i);
 				if (pTempStream->GetProtocol() != NULL) {
-					WARN("Overriding stream R%d:U%d with name %s from connection %d",
+					WARN("Overriding stream R%u:U%u with name %s from connection %u",
 							pTempStream->GetRTMPStreamId(),
 							pTempStream->GetUniqueId(),
 							STR(pTempStream->GetName()),
@@ -667,7 +669,7 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokePublish(BaseRTMPProtocol *pFrom,
 	map<uint32_t, BaseOutStream *> subscribedOutStreams =
 			GetApplication()->GetStreamsManager()->GetWaitingSubscribers(
 			streamName, pInNetRTMPStream->GetType());
-	FINEST("subscribedOutStreams count: %d", subscribedOutStreams.size());
+	FINEST("subscribedOutStreams count: %zu", subscribedOutStreams.size());
 
 
 	//7. Bind the waiting subscribers
@@ -742,7 +744,8 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokePlay(BaseRTMPProtocol *pFrom,
 
 	//2. Close any streams left open
 	if (!pFrom->CloseStream(VH_SI(request), true)) {
-		FATAL("Unable to close stream %d:%d", pFrom->GetId(),
+		FATAL("Unable to close stream %u:%u",
+				pFrom->GetId(),
 				(uint32_t) VH_SI(request));
 		return false;
 	}
@@ -1092,7 +1095,7 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokeGeneric(BaseRTMPProtocol *pFrom,
 bool BaseRTMPAppProtocolHandler::ProcessInvokeResult(BaseRTMPProtocol *pFrom,
 		Variant & result) {
 	if (!MAP_HAS2(_resultMessageTracking, pFrom->GetId(), M_INVOKE_ID(result))) {
-		WARN("Unable to track response from PID %d:\n%s",
+		WARN("Unable to track response from PID %u:\n%s",
 				pFrom->GetId(), STR(result.ToString()));
 
 		return true;
@@ -1536,7 +1539,8 @@ string BaseRTMPAppProtocolHandler::GetAuthPassword(string user) {
 			return "";
 		}
 	} else {
-		FATAL("User `%s` not present in users file: `%s`", STR(user),
+		FATAL("User `%s` not present in users file: `%s`",
+				STR(user),
 				STR(usersFile));
 		return "";
 	}
@@ -1851,7 +1855,7 @@ bool BaseRTMPAppProtocolHandler::ConnectForPullPush(BaseRTMPProtocol *pFrom,
 	string tcUrl = format("%s://%s%s/%s",
 			STR(uri.scheme),
 			STR(uri.host),
-			STR(uri.port == 1935 ? "" : format(":%d", uri.port)),
+			STR(uri.port == 1935 ? "" : format(":%hu", uri.port)),
 			STR(appName));
 
 	//4. Get the user agent

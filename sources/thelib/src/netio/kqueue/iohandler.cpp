@@ -92,7 +92,7 @@ string IOHandler::IOHTToString(IOHandlerType type) {
 		case IOHT_STDIO:
 			return "IOHT_STDIO";
 		default:
-			return format("#unknown: %d#", type);
+			return format("#unknown: %hhu#", type);
 	}
 }
 #endif /* NET_KQUEUE */

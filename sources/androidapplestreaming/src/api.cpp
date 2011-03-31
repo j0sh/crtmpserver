@@ -28,7 +28,7 @@
 #include "protocols/variant/messagestructure.h"
 using namespace app_applestreamingclient;
 
-static sockaddr_in gAddress = {0};
+static sockaddr_in gAddress;
 
 #define SEND_VARIANT_REQUEST(request,response) \
 do { \
@@ -91,7 +91,7 @@ void EnvRun(string ip, uint16_t port, int logLevel)
 	configuration[CONF_APPLICATION_SEEKGRANULARITY] = 1.00;
 	configuration[CONF_APPLICATION_MEDIAFOLDER] = "./";
 	configuration[CONF_APPLICATION_GENERATE_META_FILES] = (bool)false;
-	configuration["rtspHost"] = format("rtsp://127.0.0.1:%d/", port);
+	configuration["rtspHost"] = format("rtsp://127.0.0.1:%hu/", port);
 	AppleStreamingClientApplication *pApp = new AppleStreamingClientApplication(
 			configuration);
 #ifdef ANDROID
@@ -174,7 +174,7 @@ void EnvRun(string ip, uint16_t port, int logLevel)
 	}
 	UDPCarrier *pUDPCarrier = UDPCarrier::Create(acceptorConfig[CONF_IP], (uint16_t) acceptorConfig[CONF_PORT]);
 	if (pUDPCarrier == NULL) {
-		ASSERT("Unable to bind on udp://%s:%d", STR(acceptorConfig[CONF_IP]), (uint16_t) acceptorConfig[CONF_PORT]);
+		ASSERT("Unable to bind on udp://%s:%hu", STR(acceptorConfig[CONF_IP]), (uint16_t) acceptorConfig[CONF_PORT]);
 	}
 	BaseProtocol *pTimer = ProtocolFactoryManager::CreateProtocolChain(chain, acceptorConfig);
 	pTimer->GetFarEndpoint()->SetIOHandler(pUDPCarrier);
@@ -183,6 +183,7 @@ void EnvRun(string ip, uint16_t port, int logLevel)
 #endif /* HAS_MS_TIMER */
 
 	inet_aton("127.0.0.1", &gAddress.sin_addr);
+	memset(&gAddress, 0, sizeof (gAddress));
 	gAddress.sin_family = AF_INET;
 	gAddress.sin_port = EHTONS(port + 1);
 
@@ -310,7 +311,8 @@ Variant CommandPlay(uint32_t contextId, string connectingString) {
 		keyPassword = parts[1];
 		httpSessionId = parts[2];
 	}
-	FINEST("uri: `%s`\nkeyPassword: `%s`\nhttpSessionId: `%s`", STR(uri),
+	FINEST("uri: `%s`\nkeyPassword: `%s`\nhttpSessionId: `%s`",
+			STR(uri),
 			STR(keyPassword), STR(httpSessionId));
 	if (uri == "") {
 		ASSERT("Invalid connecting string: %s", STR(connectingString));

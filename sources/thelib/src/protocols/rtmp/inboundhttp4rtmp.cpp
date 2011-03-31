@@ -177,7 +177,7 @@ bool InboundHTTP4RTMP::ProcessOpen(vector<string> &parts) {
 	}
 
 	//2. create a SID, save it, and send it after that
-	string sid = md5(format("%d", GetId()), true).substr(0, 16);
+	string sid = md5(format("%u", GetId()), true).substr(0, 16);
 	_generatedSids[sid] = sid;
 	_outputBuffer.ReadFromString(sid + "\n");
 

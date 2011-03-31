@@ -38,7 +38,7 @@ typedef struct DLLEXP _RTPHeader {
 	uint32_t _ssrc;
 
 	operator string() {
-		return format("f: %08x; V: %u; P: %u; X: %u; CC: %u; M: %d; PT: %u; SEQ: %u; TS: %u; SSRC: %08x",
+		return format("f: %hhx; V: %hhu; P: %hhu; X: %hhu; CC: %hhu; M: %hhu; PT: %hhu; SEQ: %hu; TS: %u; SSRC: %x",
 				_flags,
 				GET_RTP_V(*this),
 				GET_RTP_P(*this),

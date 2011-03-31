@@ -45,8 +45,8 @@ void FileLogLocation::Log(int32_t level, string fileName, uint32_t lineNumber,
 	if (_level < 0 || level > _level) {
 		return;
 	}
-	string logEntry = format("%d:%d:%s:%d:%s:%s\n",
-			time(NULL), level, STR(fileName), lineNumber, STR(functionName),
+	string logEntry = format("%"PRIu64":%d:%s:%u:%s:%s\n",
+			(uint64_t)time(NULL), level, STR(fileName), lineNumber, STR(functionName),
 			STR(message));
 	_fileStream.write(STR(logEntry), logEntry.size());
 	_fileStream.flush();

@@ -39,7 +39,7 @@ uint32_t StreamsManager::GenerateUniqueId() {
 bool StreamsManager::RegisterStream(BaseStream *pStream) {
 	//1. Test to see if we had registered this stream before
 	if (MAP_HAS1(_streamsByUniqueId, pStream->GetUniqueId())) {
-		FATAL("Stream with unique ID %lu already registered", pStream->GetUniqueId());
+		FATAL("Stream with unique ID %u already registered", pStream->GetUniqueId());
 		return false;
 	}
 
@@ -96,7 +96,8 @@ map<uint32_t, BaseOutStream *> StreamsManager::GetWaitingSubscribers(string stre
 	shortSubscribers = FindByTypeByName(ST_OUT, shortName, true, false);
 	longSubscribers = FindByTypeByName(ST_OUT, streamName, true, false);
 
-	FINEST("short count: %d; long count: %d", shortSubscribers.size(), longSubscribers.size());
+	FINEST("short count: %zu; long count: %zu",
+			shortSubscribers.size(), longSubscribers.size());
 
 	//3. merge them
 	map<uint32_t, BaseOutStream *> result;

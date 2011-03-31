@@ -38,7 +38,7 @@ void AESAppProtocolHandler::RegisterProtocol(BaseProtocol *pProtocol) {
 	//2. Get the TS protocol
 	BaseProtocol *pTSProtocol = ProtocolManager::GetProtocol(tsId);
 	if (pTSProtocol == NULL) {
-		FATAL("Unable to get TS protocol by id: %d", tsId);
+		FATAL("Unable to get TS protocol by id: %u", tsId);
 		pProtocol->EnqueueForDelete();
 		return;
 	}

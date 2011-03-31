@@ -96,7 +96,7 @@ bool PopVariant(lua_State *pLuaState, Variant &variant) {
 
 			bool isArray = true;
 			for (uint32_t i = 0; i < variant.MapSize(); i++) {
-				if (!variant.HasKey(format(VAR_INDEX_VALUE"%d", i))) {
+				if (!variant.HasKey(format(VAR_INDEX_VALUE"%u", i))) {
 					isArray = false;
 					break;
 				}
@@ -114,7 +114,7 @@ bool PopVariant(lua_State *pLuaState, Variant &variant) {
 		}
 		default:
 		{
-			WARN("Element type not supported: %d (0x%08x)", type, type);
+			WARN("Element type not supported: %d (0x%x)", type, type);
 			return false;
 			break;
 		}
@@ -302,7 +302,7 @@ bool PushVariant(lua_State *pLuaState,
 		}
 		default:
 		{
-			FATAL("Unknown type %d", (VariantType) variant);
+			FATAL("Unknown type %hhu", (VariantType) variant);
 			return false;
 			break;
 		}
@@ -321,14 +321,16 @@ bool EvalLuaExpression(lua_State *pLuaState, string expression) {
 
 bool LoadLuaScriptFromFile(string file, lua_State *pLuaState, bool pCall) {
 	if (luaL_loadfile(pLuaState, STR(file)) != 0) {
-		FATAL("Error parsing file %s: %s", STR(file),
+		FATAL("Error parsing file %s: %s",
+				STR(file),
 				lua_tostring(pLuaState, -1));
 		return false;
 	}
 
 	if (pCall) {
 		if (lua_pcall(pLuaState, 0, 0, 0) != 0) {
-			FATAL("Error parsing file %s: %s", STR(file),
+			FATAL("Error parsing file %s: %s",
+					STR(file),
 					lua_tostring(pLuaState, -1));
 			return false;
 		}
@@ -339,14 +341,16 @@ bool LoadLuaScriptFromFile(string file, lua_State *pLuaState, bool pCall) {
 
 bool LoadLuaScriptFromString(string luaScript, lua_State *pLuaState, bool pCall) {
 	if (luaL_loadstring(pLuaState, STR(luaScript)) != 0) {
-		FATAL("Error parsing script %s: %s", STR(luaScript),
+		FATAL("Error parsing script %s: %s",
+				STR(luaScript),
 				lua_tostring(pLuaState, -1));
 		return false;
 	}
 
 	if (pCall) {
 		if (lua_pcall(pLuaState, 0, 0, 0) != 0) {
-			FATAL("Error parsing script %s: %s", STR(luaScript),
+			FATAL("Error parsing script %s: %s",
+					STR(luaScript),
 					lua_tostring(pLuaState, -1));
 			return false;
 		}

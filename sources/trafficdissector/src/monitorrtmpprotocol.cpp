@@ -42,7 +42,7 @@ uint8_t MonitorRTMPProtocol::GetLogLevel() {
 bool MonitorRTMPProtocol::Initialize(Variant &parameters) {
 	for (uint32_t i = 0; i < MAX_STREAMS_COUNT; i++) {
 		_streams[i] = new MonitorStream(this,
-				GetApplication()->GetStreamsManager(), format("stream_%d", i));
+				GetApplication()->GetStreamsManager(), format("stream_%u", i));
 	}
 	return true;
 }
@@ -94,7 +94,7 @@ bool MonitorRTMPProtocol::PerformHandshakeClient(IOBuffer &buffer) {
 		}
 		default:
 		{
-			LOG(GetLogLevel(), "Invalid handshake stage: %d", _handshakeStage);
+			LOG(GetLogLevel(), "Invalid handshake stage: %u", _handshakeStage);
 			return false;
 		}
 	}
@@ -117,7 +117,7 @@ bool MonitorRTMPProtocol::PerformHandshakeServer(IOBuffer &buffer) {
 		}
 		default:
 		{
-			LOG(GetLogLevel(), "Invalid handshake stage: %d", _handshakeStage);
+			LOG(GetLogLevel(), "Invalid handshake stage: %u", _handshakeStage);
 			return false;
 		}
 	}

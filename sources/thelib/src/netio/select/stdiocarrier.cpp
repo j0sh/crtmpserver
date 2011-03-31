@@ -110,7 +110,7 @@ bool StdioCarrier::OnEvent(select_event &event) {
 		}
 		default:
 		{
-			ASSERT("Invalid state: %d", event.type);
+			ASSERT("Invalid state: %hhu", event.type);
 			return false;
 		}
 	}

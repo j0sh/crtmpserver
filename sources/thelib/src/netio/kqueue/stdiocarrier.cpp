@@ -109,7 +109,7 @@ bool StdioCarrier::OnEvent(struct kevent &event) {
 		}
 		default:
 		{
-			ASSERT("Invalid state: %d", event.filter);
+			ASSERT("Invalid state: %hu", event.filter);
 
 			return false;
 		}

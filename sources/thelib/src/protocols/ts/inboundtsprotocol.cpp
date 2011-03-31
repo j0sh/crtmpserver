@@ -141,7 +141,7 @@ bool InboundTSProtocol::SignalInputData(IOBuffer &buffer) {
 		}
 
 		if (!buffer.Ignore(_chunkSize)) {
-			FATAL("Unable to ignore %d bytes", _chunkSize);
+			FATAL("Unable to ignore %u bytes", _chunkSize);
 		}
 
 		buffer.MoveData();
@@ -267,12 +267,12 @@ bool InboundTSProtocol::ProcessPacket(uint32_t packetHeader,
 		}
 		case PID_TYPE_RESERVED:
 		{
-			WARN("This PID should not be used because is reserved according to iso13818-1.pdf", pPIDDescriptor->pid);
+			WARN("This PID %hu should not be used because is reserved according to iso13818-1.pdf", pPIDDescriptor->pid);
 			return true;
 		}
 		case PID_TYPE_UNKNOWN:
 		{
-			WARN("PID %d not known yet", pPIDDescriptor->pid);
+			WARN("PID %hu not known yet", pPIDDescriptor->pid);
 			return true;
 		}
 		case PID_TYPE_NULL:
@@ -282,7 +282,7 @@ bool InboundTSProtocol::ProcessPacket(uint32_t packetHeader,
 		}
 		default:
 		{
-			WARN("PID type not implemented: %d. Pid number: %d",
+			WARN("PID type not implemented: %hhu. Pid number: %hu",
 					pPIDDescriptor->type, pPIDDescriptor->pid);
 			return false;
 		}
@@ -412,7 +412,7 @@ bool InboundTSProtocol::ProcessPidTypePMT(uint32_t packetHeader,
 			default:
 			{
 				unknownPids[MAP_KEY(i)] = MAP_KEY(i);
-				WARN("stream type %u not supported yet", MAP_VAL(i).streamType);
+				WARN("stream type %hhu not supported yet", MAP_VAL(i).streamType);
 				break;
 			}
 		}
@@ -422,7 +422,7 @@ bool InboundTSProtocol::ProcessPidTypePMT(uint32_t packetHeader,
 	InNetTSStream *pStream = NULL;
 	if ((videoPid != 0) || (audioPid != 0)) {
 		pStream = new InNetTSStream(this, GetApplication()->GetStreamsManager(),
-				format("ts_%d_%d_%d", GetId(), audioPid, videoPid));
+				format("ts_%u_%hu_%hu", GetId(), audioPid, videoPid));
 	}
 
 	//5. Create the pid descriptors for audioPid and videoPid and store them

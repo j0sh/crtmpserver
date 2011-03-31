@@ -60,7 +60,7 @@ MP4Document * BaseAtom::GetDoc() {
 }
 
 BaseAtom::operator string() {
-	return format("S: %llu(0x%llx); L: %llu(0x%llx); T: %d(%s)",
+	return format("S: %"PRIu64"(0x%"PRIx64"); L: %"PRIu64"(0x%"PRIx64"); T: %u(%s)",
 			_start, _start, _size, _size, GetTypeNumeric(), STR(GetTypeString()));
 }
 
@@ -83,7 +83,7 @@ void BaseAtom::SetParentAtom(BaseAtom *pParent) {
 
 bool BaseAtom::SkipRead(bool issueWarn) {
 	if (issueWarn)
-		WARN("Atom type %s skipped. Position 0x%llx(%llu); Size: 0x%llx(%llu)",
+		WARN("Atom type %s skipped. Position 0x%"PRIx64"(%"PRIu64"); Size: 0x%"PRIx64"(%"PRIu64")",
 			STR(GetTypeString()), _start, _start, _size, _size);
 	return _pDoc->GetMediaFile().SeekTo(_start + _size);
 }
@@ -94,7 +94,7 @@ uint64_t BaseAtom::CurrentPosition() {
 
 bool BaseAtom::CheckBounds(uint64_t size) {
 	if (CurrentPosition() + size > _start + _size) {
-		FATAL("Reached the end of the atom: Current pos: %llu; Wanted size: %d; atom start: %d; atom size: %d",
+		FATAL("Reached the end of the atom: Current pos: %"PRIu64"; Wanted size: %"PRIu64"; atom start: %"PRIu64"; atom size: %"PRIu64,
 				CurrentPosition(), size, _start, _size);
 		return false;
 	}

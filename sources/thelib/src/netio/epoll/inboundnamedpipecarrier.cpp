@@ -36,8 +36,8 @@ InboundNamedPipeCarrier *InboundNamedPipeCarrier::Create(string path,
 		uint16_t mode) {
 	if (mkfifo(STR(path), mode) != 0) {
 		int err = errno;
-		FATAL("Unable to create named pipe %s with mode %d: %s (%d)",
-				STR(path), mode, strerror(err), err);
+		FATAL("Unable to create named pipe %s with mode %u: %s (%d)",
+				STR(path), (uint32_t) mode, strerror(err), err);
 		return NULL;
 	}
 
@@ -89,7 +89,7 @@ bool InboundNamedPipeCarrier::OnEvent(struct epoll_event &event) {
 			_pProtocol->EnqueueForDelete();
 		return false;
 	} else {
-		ASSERT("Invalid state: %04x", event.events);
+		ASSERT("Invalid state: %x", event.events);
 
 		return false;
 	}

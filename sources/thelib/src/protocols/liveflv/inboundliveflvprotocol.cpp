@@ -48,7 +48,7 @@ bool InboundLiveFLVProtocol::Initialize(Variant &parameters) {
 		_waitForMetadata = (bool)parameters["waitForMetadata"];
 	else
 		_waitForMetadata = false;
-	FINEST("_waitForMetadata: %d", _waitForMetadata);
+	FINEST("_waitForMetadata: %hhu", _waitForMetadata);
 	return true;
 }
 
@@ -99,7 +99,7 @@ bool InboundLiveFLVProtocol::SignalInputData(IOBuffer &buffer) {
 		type = GETIBPOINTER(buffer)[0];
 		length = ENTOHLP((GETIBPOINTER(buffer) + 1)) >> 8; //----MARKED-LONG---
 		if (length >= 1024 * 1024) {
-			FATAL("Frame too large: %d", length);
+			FATAL("Frame too large: %u", length);
 			return false;
 		}
 		timestamp = ENTOHAP((GETIBPOINTER(buffer) + 4)); //----MARKED-LONG---
@@ -195,7 +195,7 @@ bool InboundLiveFLVProtocol::SignalInputData(IOBuffer &buffer) {
 			}
 			default:
 			{
-				FATAL("Invalid frame type: %d", type);
+				FATAL("Invalid frame type: %hhu", type);
 				return false;
 			}
 		}
@@ -215,16 +215,16 @@ bool InboundLiveFLVProtocol::InitializeStream(string streamName) {
 			//we have a carrier
 			if (GetIOHandler()->GetType() == IOHT_TCP_CARRIER) {
 				//this is a tcp carrier
-				streamName = format("%s_%d",
+				streamName = format("%s_%hu",
 						STR(((TCPCarrier *) GetIOHandler())->GetFarEndpointAddressIp()),
 						((TCPCarrier *) GetIOHandler())->GetFarEndpointPort());
 			} else {
 				//this is not a TCP carrier
-				streamName = format("flv_%d", GetId());
+				streamName = format("flv_%u", GetId());
 			}
 		} else {
 			//we don't have a carrier. This protocl might be artificially fed
-			streamName = format("flv_%d", GetId());
+			streamName = format("flv_%u", GetId());
 		}
 	}
 	FINEST("Stream name: %s", STR(streamName));
@@ -236,7 +236,7 @@ bool InboundLiveFLVProtocol::InitializeStream(string streamName) {
 	map<uint32_t, BaseOutStream *> subscribedOutStreams =
 			GetApplication()->GetStreamsManager()->GetWaitingSubscribers(
 			streamName, _pStream->GetType());
-	FINEST("subscribedOutStreams count: %d", subscribedOutStreams.size());
+	FINEST("subscribedOutStreams count: %zu", subscribedOutStreams.size());
 
 
 	//7. Bind the waiting subscribers

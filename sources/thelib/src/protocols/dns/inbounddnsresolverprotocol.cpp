@@ -36,7 +36,6 @@ bool InboundDNSResolverProtocol::Initialize(Variant &parameters) {
 bool InboundDNSResolverProtocol::AllowFarProtocol(uint64_t type) {
 	if (type == PT_TCP)
 		return true;
-	FATAL("Far protocol %d not accepted", type);
 	return false;
 }
 
@@ -74,7 +73,7 @@ bool InboundDNSResolverProtocol::SignalInputData(IOBuffer &buffer) {
 			return false;
 		}
 		if (!buffer.Ignore(4 + size)) {
-			FATAL("Unable to ignore %d bytes", 4 + size);
+			FATAL("Unable to ignore %u bytes", 4 + size);
 			return false;
 		}
 		if (!HandleRequest(request)) {

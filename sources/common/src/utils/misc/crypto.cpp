@@ -227,7 +227,7 @@ string md5(string source, bool textResult) {
 	if (textResult) {
 		string result = "";
 		for (uint32_t i = 0; i < md_len; i++) {
-			result += format("%02x", md_value[i]);
+			result += format("%02hhx", md_value[i]);
 		}
 		return result;
 	} else {

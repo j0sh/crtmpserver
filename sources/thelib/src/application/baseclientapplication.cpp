@@ -96,13 +96,8 @@ BaseAppProtocolHandler *BaseClientApplication::GetProtocolHandler(BaseProtocol *
 
 BaseAppProtocolHandler *BaseClientApplication::GetProtocolHandler(uint64_t protocolType) {
 	if (!MAP_HAS1(_protocolsHandlers, protocolType)) {
-		FINEST("protocolType: %llu", protocolType);
-
-		FOR_MAP(_protocolsHandlers, uint64_t, BaseAppProtocolHandler *, i) {
-			FINEST("%llu: %p", MAP_KEY(i), MAP_VAL(i));
-		}
-		ASSERT("Protocol handler not activated for protocol type %d in application %s",
-				protocolType, STR(_name));
+		ASSERT("Protocol handler not activated for protocol type %s in application %s",
+				STR(tagToString(protocolType)), STR(_name));
 	}
 	return _protocolsHandlers[protocolType];
 }
@@ -145,15 +140,15 @@ void BaseClientApplication::RegisterProtocol(BaseProtocol *pProtocol) {
 
 void BaseClientApplication::UnRegisterProtocol(BaseProtocol *pProtocol) {
 	if (!MAP_HAS1(_protocolsHandlers, pProtocol->GetType()))
-		ASSERT("Protocol handler not activated for protocol type %d in application %s",
-			pProtocol->GetType(), STR(_name));
+		ASSERT("Protocol handler not activated for protocol type %s in application %s",
+			STR(tagToString(pProtocol->GetType())), STR(_name));
 	_streamsManager.UnRegisterStreams(pProtocol->GetId());
 	_protocolsHandlers[pProtocol->GetType()]->UnRegisterProtocol(pProtocol);
 	FINEST("Protocol %s unregistered from application: %s", STR(*pProtocol), STR(_name));
 }
 
 void BaseClientApplication::SignalStreamRegistered(BaseStream *pStream) {
-	INFO("Stream %d of type %s with name `%s` registered to application `%s`",
+	INFO("Stream %u of type %s with name `%s` registered to application `%s`",
 			pStream->GetUniqueId(),
 			STR(tagToString(pStream->GetType())),
 			STR(pStream->GetName()),
@@ -161,7 +156,7 @@ void BaseClientApplication::SignalStreamRegistered(BaseStream *pStream) {
 }
 
 void BaseClientApplication::SignalStreamUnRegistered(BaseStream *pStream) {
-	INFO("Stream %d of type %s with name `%s` unregistered from application `%s`",
+	INFO("Stream %u of type %s with name `%s` unregistered from application `%s`",
 			pStream->GetUniqueId(),
 			STR(tagToString(pStream->GetType())),
 			STR(pStream->GetName()),

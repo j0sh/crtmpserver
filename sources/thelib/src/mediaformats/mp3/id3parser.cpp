@@ -77,7 +77,7 @@ bool ID3Parser::Parse(MediaFile &file) {
 		}
 		default:
 		{
-			WARN("Invalid version: ID3v%d.%d", _majorVersion, _minorVersion);
+			WARN("Invalid version: ID3v%u.%u", _majorVersion, _minorVersion);
 			return false;
 		}
 	}
@@ -97,7 +97,7 @@ bool ID3Parser::Parse(MediaFile &file) {
 	//3. See if we go to the end of the ID3 we have a valid media frame
 	//After that we go back to where we left (end of the header, offset 10)
 	if (!file.SeekTo(totalSize + 10)) {
-		WARN("Unable to seek to 0x%08x offset", totalSize);
+		WARN("Unable to seek to 0x%x offset", totalSize);
 		return false;
 	}
 
@@ -122,7 +122,7 @@ bool ID3Parser::Parse(MediaFile &file) {
 	//5. Store the tags inside a IOBuffer
 	IOBuffer buffer;
 	if (!buffer.ReadFromFs(file, totalSize)) {
-		WARN("Unable to read %d bytes", totalSize);
+		WARN("Unable to read %u bytes", totalSize);
 		return false;
 	}
 
@@ -135,8 +135,8 @@ bool ID3Parser::Parse(MediaFile &file) {
 
 #define CHECK_BUFFER_SIZE(x,y) \
 if (GETAVAILABLEBYTESCOUNT((x)) < (y)){ \
-    WARN("Not enough data (%d - %d)", \
-        GETAVAILABLEBYTESCOUNT((x)),(y)); \
+    WARN("Not enough data (%u - %u)", \
+        GETAVAILABLEBYTESCOUNT((x)),(uint32_t)(y)); \
     return false; \
 } 
 
@@ -157,7 +157,7 @@ bool ID3Parser::ParseTags(IOBuffer &buffer) {
 			if ((name[0] == 0) && (name[1] == 0) && (name[2] == 0) && (name[3] == 0)) {
 				return true;
 			} else {
-				WARN("Invalid tag name: %d %d %d %d",
+				WARN("Invalid tag name: %hhu %hhu %hhu %hhu",
 						name[0], name[1], name[2], name[3]);
 				return false;
 			}

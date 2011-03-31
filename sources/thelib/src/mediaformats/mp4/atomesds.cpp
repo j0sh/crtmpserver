@@ -77,8 +77,6 @@ bool AtomESDS::ReadTagAndLength(uint8_t &tagType, uint32_t &length) {
 		return false;
 	if (!ReadTagLength(length))
 		return false;
-	FINEST_ESDS_ATOM("tagType: %d; length: %x; currentPos: %llx",
-			tagType, length, CurrentPosition());
 	return true;
 }
 
@@ -86,7 +84,6 @@ bool AtomESDS::ReadData() {
 	uint8_t tagType = 0;
 	uint32_t length = 0;
 
-	FINEST_ESDS_ATOM("Position: %llx", CurrentPosition());
 	if (!ReadTagAndLength(tagType, length)) {
 		FATAL("Unable to read tag type and length");
 		return false;
@@ -97,22 +94,18 @@ bool AtomESDS::ReadData() {
 			FATAL("Unable to read _MP4ESDescrTag_ID");
 			return false;
 		}
-		FINEST_ESDS_ATOM("_MP4ESDescrTag_ID: %u", _MP4ESDescrTag_ID);
 
 		if (!ReadUInt8(_MP4ESDescrTag_Priority)) {
 			FATAL("Unable to read _MP4ESDescrTag_Priority");
 			return false;
 		}
-		FINEST_ESDS_ATOM("_MP4ESDescrTag_Priority: %u", _MP4ESDescrTag_Priority);
 	} else {
 		if (!ReadUInt16(_MP4ESDescrTag_ID)) {
 			FATAL("Unable to read _MP4ESDescrTag_ID");
 			return false;
 		}
-		FINEST_ESDS_ATOM("_MP4ESDescrTag_ID: %u", _MP4ESDescrTag_ID);
 	}
 
-	FINEST_ESDS_ATOM("Position: %llx", CurrentPosition());
 	if (!ReadTagAndLength(tagType, length)) {
 		FATAL("Unable to read tag type and length");
 		return false;
@@ -123,38 +116,27 @@ bool AtomESDS::ReadData() {
 			FATAL("Unable to read _MP4DecConfigDescrTag_ObjectTypeID");
 			return false;
 		}
-		FINEST_ESDS_ATOM("_MP4DecConfigDescrTag_ObjectTypeID: %u",
-				_MP4DecConfigDescrTag_ObjectTypeID);
 
 		if (!ReadUInt8(_MP4DecConfigDescrTag_StreamType)) {
 			FATAL("Unable to read _MP4DecConfigDescrTag_StreamType");
 			return false;
 		}
-		FINEST_ESDS_ATOM("_MP4DecConfigDescrTag_StreamType: %u",
-				_MP4DecConfigDescrTag_StreamType);
 
 		if (!ReadUInt24(_MP4DecConfigDescrTag_BufferSizeDB)) {
 			FATAL("Unable to read _MP4DecConfigDescrTag_BufferSizeDB");
 			return false;
 		}
-		FINEST_ESDS_ATOM("_MP4DecConfigDescrTag_BufferSizeDB: %u",
-				_MP4DecConfigDescrTag_BufferSizeDB);
 
 		if (!ReadUInt32(_MP4DecConfigDescrTag_MaxBitRate)) {
 			FATAL("Unable to read _MP4DecConfigDescrTag_MaxBitRate");
 			return false;
 		}
-		FINEST_ESDS_ATOM("_MP4DecConfigDescrTag_MaxBitRate: %u",
-				_MP4DecConfigDescrTag_MaxBitRate);
 
 		if (!ReadUInt32(_MP4DecConfigDescrTag_AvgBitRate)) {
 			FATAL("Unable to read _MP4DecConfigDescrTag_AvgBitRate");
 			return false;
 		}
-		FINEST_ESDS_ATOM("_MP4DecConfigDescrTag_AvgBitRate: %u",
-				_MP4DecConfigDescrTag_AvgBitRate);
 
-		FINEST_ESDS_ATOM("Position: %llx", CurrentPosition());
 		if (!ReadTagAndLength(tagType, length)) {
 			FATAL("Unable to read tag type and length");
 			return false;
@@ -166,9 +148,7 @@ bool AtomESDS::ReadData() {
 				FATAL("Unable to read unknownValue");
 				return false;
 			}
-			FINEST_ESDS_ATOM("unknownValue: %u", unknownValue);
-
-			FINEST_ESDS_ATOM("Position: %llx", CurrentPosition());
+			
 			if (!ReadTagAndLength(tagType, length)) {
 				FATAL("Unable to read tag type and length");
 				return false;
@@ -180,64 +160,6 @@ bool AtomESDS::ReadData() {
 			//http://wiki.multimedia.cx/index.php?title=MPEG-4_Audio
 			_extraDataStart = CurrentPosition();
 			_extraDataLength = length;
-#ifdef DEBUG_ESDS_ATOM
-			vector<string> sampleRates;
-			ADD_VECTOR_END(sampleRates, "96000");
-			ADD_VECTOR_END(sampleRates, "88200");
-			ADD_VECTOR_END(sampleRates, "64000");
-			ADD_VECTOR_END(sampleRates, "48000");
-			ADD_VECTOR_END(sampleRates, "44100");
-			ADD_VECTOR_END(sampleRates, "32000");
-			ADD_VECTOR_END(sampleRates, "24000");
-			ADD_VECTOR_END(sampleRates, "22050");
-			ADD_VECTOR_END(sampleRates, "16000");
-			ADD_VECTOR_END(sampleRates, "12000");
-			ADD_VECTOR_END(sampleRates, "11025");
-			ADD_VECTOR_END(sampleRates, "8000");
-			ADD_VECTOR_END(sampleRates, "7350");
-
-			uint8_t *pBuffer = new uint8_t[length];
-			if (!ReadArray(pBuffer, length)) {
-				FATAL("Unable to read the extra data buffer");
-				return false;
-			}
-
-			BitArray ba;
-			ba.Put(pBuffer, length);
-			FINEST_ESDS_ATOM("ba:\n%s", STR(ba));
-			delete [] pBuffer;
-
-			_objectType = ba.ReadBits<uint8_t > (5);
-			FINEST_ESDS_ATOM("_objectType: %d", _objectType);
-
-			_sampleRate = ba.ReadBits<uint8_t > (4);
-			FINEST_ESDS_ATOM("_sampleRate: %d; %s", _sampleRate, STR(sampleRates[_sampleRate]));
-
-			_channels = ba.ReadBits<uint8_t > (4);
-			FINEST_ESDS_ATOM("_channels: %d", _channels);
-
-			while (ba.AvailableBits() >= 11) {
-				if (ba.PeekBits<uint16_t > (11) == 0x2b7) {
-					ba.IgnoreBits(11);
-
-					_extObjectType = ba.ReadBits<uint8_t > (5);
-					FINEST_ESDS_ATOM("_extObjectType: %d", _extObjectType);
-
-					_sbr = ba.ReadBits<uint8_t > (1);
-					FINEST_ESDS_ATOM("_sbr: %d", _sbr);
-
-					_extSampleRate = ba.ReadBits<uint8_t > (4);
-					FINEST_ESDS_ATOM("_extSampleRate: %d; %s", _extSampleRate, STR(sampleRates[_extSampleRate]));
-
-					FINEST_ESDS_ATOM("leftovers bits count: %d", ba.AvailableBits());
-
-					break;
-				} else {
-					ba.IgnoreBits(1);
-				}
-			}
-#endif /* DEBUG_ESDS_ATOM */
-
 			return SkipRead(false);
 		}
 	}

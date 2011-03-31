@@ -74,7 +74,7 @@ bool InboundKeyProtocol::SignalInputData(IOBuffer &buffer) {
 	//6. Unbase64 the encrypted key
 	string encryptedKey = unb64(temp);
 	if (encryptedKey.size() != 16) {
-		FATAL("Invalid key length: %d", encryptedKey.size());
+		FATAL("Invalid key length: %zu", encryptedKey.size());
 		return false;
 	}
 

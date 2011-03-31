@@ -49,8 +49,14 @@ typedef struct _TSStreamInfo {
 	uint16_t esInfoLength;
 	vector<StreamDescriptor> esDescriptors;
 
+	_TSStreamInfo() {
+		streamType = 0;
+		elementaryPID = 0;
+		esInfoLength = 0;
+	}
+
 	string toString(int32_t indent) {
-		string result = format("%sstreamType: %02x; elementaryPID: %d; esInfoLength: %d; descriptors count: %d\n",
+		string result = format("%sstreamType: %hhx; elementaryPID: %hu; esInfoLength: %hu; descriptors count: %zu\n",
 				STR(string(indent, '\t')),
 				streamType, elementaryPID, esInfoLength, esDescriptors.size());
 		for (uint32_t i = 0; i < esDescriptors.size(); i++) {
@@ -63,7 +69,7 @@ typedef struct _TSStreamInfo {
 } TSStreamInfo;
 
 //iso13818-1.pdf page 64/174
-//Table 2-28 – Transport Stream program map section
+//Table 2-28 ‚Äö√Ñ√¨ Transport Stream program map section
 
 class TSPacketPMT {
 private:

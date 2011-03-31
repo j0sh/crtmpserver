@@ -69,7 +69,7 @@ typedef struct _StreamDescriptor {
 	uint8_t length;
 
 	operator string() {
-		return format("type: %d; length: %d", type, length);
+		return format("type: %hhu; length: %hhu", type, length);
 	};
 } StreamDescriptor;
 

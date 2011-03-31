@@ -42,7 +42,7 @@ bool ScheduleTimerProtocol::TimePeriodElapsed() {
 	//2. Get the context
 	ClientContext *pContext = ClientContext::GetContext(_contextId, 0, 0);
 	if (pContext == NULL) {
-		FATAL("Unable to get context with id %d", _contextId);
+		FATAL("Unable to get context with id %u", _contextId);
 		return false;
 	}
 

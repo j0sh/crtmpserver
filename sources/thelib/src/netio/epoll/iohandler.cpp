@@ -90,7 +90,7 @@ string IOHandler::IOHTToString(IOHandlerType type) {
 		case IOHT_INBOUNDNAMEDPIPE_CARRIER:
 			return "IOHT_INBOUNDNAMEDPIPE_CARRIER";
 		default:
-			return format("#unknown: %d#", type);
+			return format("#unknown: %hhu#", type);
 	}
 }
 

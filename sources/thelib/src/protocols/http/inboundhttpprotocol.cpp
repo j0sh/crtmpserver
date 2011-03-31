@@ -122,7 +122,7 @@ string InboundHTTPProtocol::GetOutputFirstLine() {
 		case 401:
 			return "HTTP/1.1 401 Unauthorized";
 		default:
-			return format("HTTP/1.1 %d Unknwon", _statusCode);
+			return format("HTTP/1.1 %hu Unknwon", _statusCode);
 	}
 }
 

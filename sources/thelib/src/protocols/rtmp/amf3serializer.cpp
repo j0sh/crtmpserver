@@ -26,8 +26,8 @@
 if (readType) { \
     AMF_CHECK_BOUNDARIES(buffer, 1); \
     if (GETIBPOINTER(buffer)[0] != wanted) { \
-        FATAL("AMF type not valid: want: %d; got: %d", \
-                wanted, GETIBPOINTER(buffer)[0]); \
+        FATAL("AMF type not valid: want: %hhu; got: %hhu", \
+                (uint8_t)wanted, GETIBPOINTER(buffer)[0]); \
         return false; \
     } \
     \
@@ -106,7 +106,7 @@ bool AMF3Serializer::Read(IOBuffer &buffer, Variant & variant) {
 		}
 		default:
 		{
-			FATAL("Unable to deserialize type %d; Buffer is:\n%s",
+			FATAL("Unable to deserialize type %hhu; Buffer is:\n%s",
 					GETIBPOINTER(buffer)[0], STR(buffer));
 			return false;
 		}
@@ -164,7 +164,7 @@ bool AMF3Serializer::Write(IOBuffer &buffer, Variant &variant) {
 		}
 		default:
 		{
-			FATAL("Unable to serialize type %d; variant is:\n%s",
+			FATAL("Unable to serialize type %hhu; variant is:\n%s",
 					(VariantType) variant, STR(variant.ToString()));
 			return false;
 		}
@@ -279,7 +279,7 @@ bool AMF3Serializer::ReadString(IOBuffer &buffer, Variant &variant, bool readTyp
 			AMF_CHECK_BOUNDARIES(buffer, length);
 			string result = string((char *) GETIBPOINTER(buffer), length);
 			if (!buffer.Ignore(length)) {
-				FATAL("Unable to ignore %d bytes", length);
+				FATAL("Unable to ignore %u bytes", length);
 				return false;
 			}
 			variant = result;
@@ -373,7 +373,7 @@ bool AMF3Serializer::ReadArray(IOBuffer &buffer, Variant &variant, bool readType
 	}
 
 	if ((temp & 0x01) == 0) {
-		WARN("Array reference: %d", temp >> 1);
+		WARN("Array reference: %u", temp >> 1);
 		variant = _objects[temp >> 1];
 		return true;
 	}
@@ -418,7 +418,6 @@ bool AMF3Serializer::WriteArray(IOBuffer &buffer, Variant &variant, bool writeTy
 	Variant v = variant;
 
 	uint32_t denseSize = v.MapDenseSize();
-	FINEST("denseSize: %d", denseSize);
 
 	for (uint32_t i = 0; i < denseSize; i++) {
 		v.RemoveAt(i);
@@ -462,7 +461,6 @@ bool AMF3Serializer::WriteArray(IOBuffer &buffer, Variant &variant, bool writeTy
 bool AMF3Serializer::ReadObject(IOBuffer &buffer, Variant &variant, bool readType) {
 	READ_AMF3_TYPE(AMF3_OBJECT);
 
-	uint32_t objectStart = buffer._consumed;
 	uint32_t temp;
 	if (!ReadU29(buffer, temp)) {
 		FATAL("Unable to read reference");
@@ -481,19 +479,7 @@ bool AMF3Serializer::ReadObject(IOBuffer &buffer, Variant &variant, bool readTyp
 	uint32_t traitsCount = temp >> 4;
 
 
-
-	string info = format("OS: %d; flags: %x; TE: %d; ", objectStart, temp, traitsExtended);
-	if (objectReference)
-		info += format("ORI: %d; ", objectReferenceIndex);
-
-	if (traitsReference)
-		info += format("TRI: %d; ", traitsReferenceIndex);
-	else
-		info += format("TC: %d; Dynamic: %d", traitsCount, isDynamic);
-	WARN("%s", STR(info));
-
 	if (objectReference) {
-		WARN("Object reference: %d", objectReferenceIndex);
 		variant = _objects[objectReferenceIndex];
 		return true;
 	}
@@ -520,19 +506,16 @@ bool AMF3Serializer::ReadObject(IOBuffer &buffer, Variant &variant, bool readTyp
 	}
 
 	uint32_t objectIndex = _objects.size();
-	WARN("Begin reading object %d", objectIndex);
 	Variant tempVariant = Variant();
 	ADD_VECTOR_END(_objects, tempVariant);
 
 	Variant traits;
 
 	if (traitsReference) {
-		FATAL("Traits reference: %d", traitsReferenceIndex);
 		traits = _traits[traitsReferenceIndex];
 		FINEST("Traits:\n%s", STR(traits.ToString()));
 	} else {
 		uint32_t traitsIndex = _traits.size();
-		INFO("Begin reading traits names %d", traitsIndex);
 
 		tempVariant = Variant();
 		ADD_VECTOR_END(_traits, tempVariant);
@@ -555,8 +538,6 @@ bool AMF3Serializer::ReadObject(IOBuffer &buffer, Variant &variant, bool readTyp
 		}
 
 		_traits[traitsIndex] = traits;
-
-		INFO("End reading traits names %d", traitsIndex);
 	}
 
 	if (traits[AMF3_TRAITS_CLASSNAME] != "") {
@@ -581,18 +562,6 @@ bool AMF3Serializer::ReadObject(IOBuffer &buffer, Variant &variant, bool readTyp
 		readDynamicPoperties = isDynamic;
 	}
 
-	/*if (isDynamic) {
-		readDynamicPoperties = true;
-	} else {
-		if (traitsReference) {
-			readDynamicPoperties = (bool)traits[AMF3_TRAITS_DYNAMIC];
-		} else {
-			readDynamicPoperties = false;
-		}
-	}*/
-
-	FINEST("readDynamicPoperties: %d", readDynamicPoperties);
-
 	if (readDynamicPoperties) {
 		while (true) {
 			Variant key;
@@ -612,8 +581,6 @@ bool AMF3Serializer::ReadObject(IOBuffer &buffer, Variant &variant, bool readTyp
 	}
 
 	_objects[objectIndex] = variant;
-	WARN("End reading object %d", objectIndex);
-
 	return true;
 }
 
@@ -680,7 +647,7 @@ bool AMF3Serializer::ReadByteArray(IOBuffer &buffer, Variant &variant, bool read
 			AMF_CHECK_BOUNDARIES(buffer, length);
 			string result = string((char *) GETIBPOINTER(buffer), length);
 			if (!buffer.Ignore(length)) {
-				FATAL("Unable to ignore %d bytes", length);
+				FATAL("Unable to ignore %u bytes", length);
 				return false;
 			}
 			variant = result;
@@ -757,7 +724,6 @@ bool AMF3Serializer::WriteU29(IOBuffer &buffer, uint32_t value) {
 		return true;
 	}
 
-	FATAL("Invalid range: %08x", value);
 	return false;
 }
 #endif /* HAS_PROTOCOL_RTMP */

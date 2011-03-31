@@ -68,7 +68,7 @@ bool FineTimer::SignalInputData(IOBuffer &buffer) {
 	FOR_MAP(_contextIds, uint32_t, uint32_t, i) {
 		ClientContext *pContext = ClientContext::GetContext(MAP_VAL(i), 0, 0);
 		if (pContext == NULL) {
-			WARN("Unable to get context with id %d", MAP_VAL(i));
+			WARN("Unable to get context with id %u", MAP_VAL(i));
 			continue;
 		}
 		pContext->ConsumeAVBuffer();

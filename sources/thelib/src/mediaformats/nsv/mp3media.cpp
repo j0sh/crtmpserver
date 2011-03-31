@@ -179,16 +179,11 @@ bool MP3Media::GetAudioFrames(uint8_t *pBuffer, uint32_t &audioSamplesCount, Med
 				[sampleRateIndex][paddingBit];
 
 		if (mediaFrame.length == 0) {
-			FATAL("Invalid frame length: %d:%d:%d:%d:%d;",
+			FATAL("Invalid frame length: %hhu:%hhu:%hhu:%hhu:%hhu;",
 					version, layer, bitRateIndex, sampleRateIndex,
 					paddingBit); //, _mediaFile.Cursor());
 			return false;
 		}
-		/*
-		FINEST("Bytes: %02x %02x %02x %02x; frameStart: 0x%x; frameLength: 0x%x; Layer: %s",
-				firstBytes[0], firstBytes[1], firstBytes[2], firstBytes[3],
-				mediaFrame.start, mediaFrame.length, STR(_layerNames[layer]));
-		 */
 
 		//6. Compute the frame duration and save the frame start
 		uint32_t samplesCount = 0;

@@ -182,7 +182,7 @@ bool BaseInFileStream::Initialize(int32_t clientSideBufferLength) {
 	//3. Compute the optimal window size by reading the biggest frame size
 	//from the seek file.
 	if (!_pSeekFile->SeekTo(_pSeekFile->Size() - 8)) {
-		FATAL("Unable to seek to %lld position", _pSeekFile->Cursor() - 8);
+		FATAL("Unable to seek to %"PRIu64" position", _pSeekFile->Cursor() - 8);
 		return false;
 	}
 	uint64_t maxFrameSize = 0;

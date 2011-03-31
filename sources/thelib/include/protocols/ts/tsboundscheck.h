@@ -22,7 +22,7 @@
 #ifndef _TSBOUNDSCHECK_H
 #define	_TSBOUNDSCHECK_H
 
-#define CHECK_BOUNDS(size) if((cursor+(size))>(maxCursor)){ FATAL("Bounds error: cursor: %d; size: %d; maxCursor: %d",cursor,(size),maxCursor);return false;}
+#define CHECK_BOUNDS(size) if((cursor+(size))>(maxCursor)){ FATAL("Bounds error: cursor: %u; size: %u; maxCursor: %u",(uint32_t)cursor,(uint32_t)(size),(uint32_t)maxCursor);return false;}
 
 #endif	/* _TSBOUNDSCHECK_H */
 #endif	/* HAS_PROTOCOL_TS */

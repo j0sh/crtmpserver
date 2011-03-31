@@ -122,7 +122,7 @@ bool OutboundRTMPProtocol::PerformHandshake(IOBuffer &buffer) {
 		}
 		default:
 		{
-			FATAL("Invalid RTMP state: %d", _rtmpState);
+			FATAL("Invalid RTMP state: %hhu", _rtmpState);
 			return false;
 		}
 	}
@@ -140,7 +140,7 @@ bool OutboundRTMPProtocol::Connect(string ip, uint16_t port,
 	}
 	if (!TCPConnector<OutboundRTMPProtocol>::Connect(ip, port, chain,
 			customParameters)) {
-		FATAL("Unable to connect to %s:%d", STR(ip), port);
+		FATAL("Unable to connect to %s:%hu", STR(ip), port);
 		return false;
 	}
 	return true;
@@ -204,7 +204,7 @@ bool OutboundRTMPProtocol::PerformHandshakeStage1(bool encrypted) {
 	_pOutputBuffer[7] = 2;
 
 	uint32_t clientDHOffset = GetDHOffset(_pOutputBuffer, _usedScheme);
-	DEBUG_HANDSHAKE("PHS1:  6. Get the DH public key position: %d", clientDHOffset);
+	DEBUG_HANDSHAKE("PHS1:  6. Get the DH public key position: %u", clientDHOffset);
 
 	DEBUG_HANDSHAKE("PHS1:  7. Generate the DH public/private key");
 	_pDHWrapper = new DHWrapper(1024);
@@ -213,7 +213,7 @@ bool OutboundRTMPProtocol::PerformHandshakeStage1(bool encrypted) {
 		return false;
 	}
 
-	DEBUG_HANDSHAKE("PHS1:  8. Get the public key and store it in the buffer at %d and _pClientPublicKey for later use", clientDHOffset);
+	DEBUG_HANDSHAKE("PHS1:  8. Get the public key and store it in the buffer at %u and _pClientPublicKey for later use", clientDHOffset);
 	if (!_pDHWrapper->CopyPublicKey(_pOutputBuffer + clientDHOffset, 128)) {
 		FATAL("Couldn't write public key!");
 		return false;
@@ -223,7 +223,7 @@ bool OutboundRTMPProtocol::PerformHandshakeStage1(bool encrypted) {
 
 
 	uint32_t clientDigestOffset = GetDigestOffset(_pOutputBuffer, _usedScheme);
-	DEBUG_HANDSHAKE("PHS1:  9. Compute the final digest offset: %d", clientDigestOffset);
+	DEBUG_HANDSHAKE("PHS1:  9. Compute the final digest offset: %u", clientDigestOffset);
 
 	DEBUG_HANDSHAKE("PHS1: 10. Generate the digest from pBuffer EXCLUDING the digest portion.");
 	uint8_t *pTempBuffer = new uint8_t[1536 - 32];
@@ -235,7 +235,7 @@ bool OutboundRTMPProtocol::PerformHandshakeStage1(bool encrypted) {
 	uint8_t *pTempHash = new uint8_t[512];
 	HMACsha256(pTempBuffer, 1536 - 32, genuineFPKey, 30, pTempHash);
 
-	DEBUG_HANDSHAKE("PHS1: 12. put the bytes at %d offset. Also save them for later use", clientDigestOffset);
+	DEBUG_HANDSHAKE("PHS1: 12. put the bytes at %u offset. Also save them for later use", clientDigestOffset);
 	memcpy(_pOutputBuffer + clientDigestOffset, pTempHash, 32);
 	_pClientDigest = new uint8_t[32];
 	memcpy(_pClientDigest, pTempHash, 32);
@@ -271,7 +271,7 @@ bool OutboundRTMPProtocol::VerifyServer(IOBuffer & inputBuffer) {
 	uint8_t *pBuffer = GETIBPOINTER(inputBuffer) + 1;
 
 	uint32_t serverDigestPos = GetDigestOffset(pBuffer, _usedScheme);
-	DEBUG_HANDSHAKE("VS:  1. Compute server digest offset: %d", serverDigestPos);
+	DEBUG_HANDSHAKE("VS:  1. Compute server digest offset: %u", serverDigestPos);
 
 	DEBUG_HANDSHAKE("VS:  2. Prepare the buffer");
 	uint8_t *pTempBuffer = new uint8_t[1536 - 32];
@@ -335,7 +335,7 @@ bool OutboundRTMPProtocol::PerformHandshakeStage2(IOBuffer &inputBuffer,
 	uint8_t *pBuffer = GETIBPOINTER(inputBuffer) + 1;
 
 	uint32_t serverDHOffset = GetDHOffset(pBuffer, _usedScheme);
-	DEBUG_HANDSHAKE("PHS2:  1. get the serverDHOffset: %d", serverDHOffset);
+	DEBUG_HANDSHAKE("PHS2:  1. get the serverDHOffset: %u", serverDHOffset);
 
 	DEBUG_HANDSHAKE("PHS2:  2. compute the secret key");
 	if (_pDHWrapper == NULL) {

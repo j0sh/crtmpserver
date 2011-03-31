@@ -83,7 +83,6 @@ bool BaseSSLProtocol::Initialize(Variant &parameters) {
 bool BaseSSLProtocol::AllowFarProtocol(uint64_t type) {
 	if (type == PT_TCP)
 		return true;
-	FATAL("Far protocol %d not accepted", type);
 	return false;
 }
 
@@ -105,7 +104,7 @@ bool BaseSSLProtocol::EnqueueForOutbound() {
 	//3. Encrypt the outstanding data
 	if (SSL_write(_pSSL, GETIBPOINTER(*pBuffer), GETAVAILABLEBYTESCOUNT(*pBuffer))
 			!= (int32_t) GETAVAILABLEBYTESCOUNT(*pBuffer)) {
-		FATAL("Unable to write %d bytes", GETAVAILABLEBYTESCOUNT(*pBuffer));
+		FATAL("Unable to write %u bytes", GETAVAILABLEBYTESCOUNT(*pBuffer));
 		return false;
 	}
 	pBuffer->IgnoreAll();
@@ -224,8 +223,8 @@ string BaseSSLProtocol::DumpBIO(BIO *pBIO) {
 	formatString += "next_bio: %p\n";
 	formatString += "prev_bio: %p\n";
 	formatString += "references: %d\n";
-	formatString += "num_read: %u\n";
-	formatString += "num_write: %u";
+	formatString += "num_read: %"PRId64"\n";
+	formatString += "num_write: %"PRId64;
 	return format(formatString,
 			pBIO->method,
 			pBIO->callback,
@@ -239,8 +238,8 @@ string BaseSSLProtocol::DumpBIO(BIO *pBIO) {
 			pBIO->next_bio,
 			pBIO->prev_bio,
 			pBIO->references,
-			pBIO->num_read,
-			pBIO->num_write);
+			(int64_t) pBIO->num_read,
+			(int64_t) pBIO->num_write);
 }
 
 void BaseSSLProtocol::InitRandGenerator() {

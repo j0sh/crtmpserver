@@ -254,7 +254,7 @@ bool InNetTSStream::HandleAudioData(uint8_t *pRawBuffer, uint32_t rawBufferLengt
 		//on bufferLength
 		uint32_t frameLength = ((((pBuffer[3]&0x03) << 8) | pBuffer[4]) << 3) | (pBuffer[5] >> 5);
 		if (frameLength < 8) {
-			WARN("Bogus framelength %d. Skip one byte", frameLength);
+			WARN("Bogus frameLength %u. Skip one byte", frameLength);
 			FINEST("_audioBuffer:\n%s", STR(_audioBuffer));
 			_audioBuffer.Ignore(1);
 			continue;
