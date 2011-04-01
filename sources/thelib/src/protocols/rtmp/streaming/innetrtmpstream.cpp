@@ -33,7 +33,7 @@ InNetRTMPStream::InNetRTMPStream(BaseProtocol *pProtocol,
 	_rtmpStreamId = rtmpStreamId;
 	_chunkSize = chunkSize;
 	_channelId = channelId;
-	_clientId = format("%d_%d_%z", _pProtocol->GetId(), _rtmpStreamId, (size_t)this);
+	_clientId = format("%d_%d_%zd", _pProtocol->GetId(), _rtmpStreamId, (size_t)this);
 	_lastVideoTime = 0;
 	_lastAudioTime = 0;
 	_pOutFileRTMPFLVStream = NULL;
