@@ -22,7 +22,7 @@ must not be misrepresented as being the original software.
 distribution.
  */
 
-#include "utils/tinyxml/tinyxml.h"
+#include "tinyxml.h"
 
 //#define DEBUG_PARSER
 #if defined( DEBUG_PARSER )
