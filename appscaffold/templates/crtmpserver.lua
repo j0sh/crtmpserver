@@ -11,4 +11,3 @@
 			--validateHandshake=true,
 			--default=true,
 		},
-		--#INSERTION_MARKER# DO NOT REMOVE THIS. USED BY appscaffold SCRIPT.

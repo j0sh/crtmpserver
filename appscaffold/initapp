@@ -84,18 +84,8 @@ updateServerConfig()
 {
 	doWildcardReplacements "templates" "crtmpserver.lua" "/tmp"
 
-	>/tmp/final
+	awk '/--#INSERTION_MARKER#/ {system("cat /tmp/crtmpserver.lua")}; {print $0}' ../builders/cmake/crtmpserver/crtmpserver.lua > /tmp/final
 	
-	while line=$(line);
-	do
-		if [ ! `expr "$line" : ".*--#INSERTION_MARKER#.*"` -eq 0 ]
-		then
-			cat /tmp/crtmpserver.lua >>/tmp/final
-		else
-			echo "$line">>/tmp/final;
-		fi
-	done < ../builders/cmake/crtmpserver/crtmpserver.lua
-
 	mv /tmp/final ../builders/cmake/crtmpserver/crtmpserver.lua
 	rm /tmp/crtmpserver.lua
 }
