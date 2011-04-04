@@ -22,9 +22,10 @@
 #include "utils/misc/variant.h"
 #include "utils/misc/variantmap.h"
 #include "utils/logging/logging.h"
-#include "utils/tinyxml/tinyxml.h"
 #include "utils/misc/file.h"
 #include "utils/misc/crypto.h"
+#define TIXML_USE_STL
+#include "tinyxml.h"
 
 #ifdef LOG_VARIANT_MEMORY_MANAGEMENT
 int Variant::_constructorCount = 0;
