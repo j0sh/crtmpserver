@@ -1,0 +1,110 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4E8000AA-2E66-4E13-9820-A473908C1D21}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{858E13D8-A461-4410-950C-DEB34D4A5B5D}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Header Files\vm">
+      <UniqueIdentifier>{65934736-7cf6-443f-ae37-4c47aa7ef987}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\vm\lua">
+      <UniqueIdentifier>{be4ff069-c2f0-4c5e-bd20-88b5f37bca19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\vm">
+      <UniqueIdentifier>{6627a4f8-544a-4be5-b69c-54ddad5e4251}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\vm\lua">
+      <UniqueIdentifier>{2d3863fe-59c6-4c21-b08d-a21839c5b3e2}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\sources\applications\vmapp\include\rtmpappprotocolhandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\applications\vmapp\include\rtpappprotocolhandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\applications\vmapp\include\rtspappprotocolhandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\applications\vmapp\include\tsappprotocolhandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\applications\vmapp\include\vmapp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\applications\vmapp\include\vmappapplication.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\applications\vmapp\include\vm\baseappvirtualmachine.h">
+      <Filter>Header Files\vm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\applications\vmapp\include\vm\lua\luaapi_application.h">
+      <Filter>Header Files\vm\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\applications\vmapp\include\vm\lua\luaapi_generics.h">
+      <Filter>Header Files\vm\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\applications\vmapp\include\vm\lua\luaapi_handler_mpegts.h">
+      <Filter>Header Files\vm\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\applications\vmapp\include\vm\lua\luaapi_handler_rtmp.h">
+      <Filter>Header Files\vm\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\applications\vmapp\include\vm\lua\luaapi_helpers.h">
+      <Filter>Header Files\vm\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\applications\vmapp\include\vm\lua\luaapi_protocols.h">
+      <Filter>Header Files\vm\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\applications\vmapp\include\vm\lua\luaappvirtualmachine.h">
+      <Filter>Header Files\vm\lua</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\sources\applications\vmapp\src\rtmpappprotocolhandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\applications\vmapp\src\rtpappprotocolhandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\applications\vmapp\src\rtspappprotocolhandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\applications\vmapp\src\tsappprotocolhandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\applications\vmapp\src\vmapp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\applications\vmapp\src\vmappapplication.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\applications\vmapp\src\vm\baseappvirtualmachine.cpp">
+      <Filter>Source Files\vm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\applications\vmapp\src\vm\lua\luaapi_application.cpp">
+      <Filter>Source Files\vm\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\applications\vmapp\src\vm\lua\luaapi_generics.cpp">
+      <Filter>Source Files\vm\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\applications\vmapp\src\vm\lua\luaapi_handler_mpegts.cpp">
+      <Filter>Source Files\vm\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\applications\vmapp\src\vm\lua\luaapi_handler_rtmp.cpp">
+      <Filter>Source Files\vm\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\applications\vmapp\src\vm\lua\luaappvirtualmachine.cpp">
+      <Filter>Source Files\vm\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dummy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
