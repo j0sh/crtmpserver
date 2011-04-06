@@ -188,6 +188,7 @@ bool LuaAppVirtualMachine::Call(APIFunctionID functionId, BaseInStream *pInStrea
 		ASSERT("Function id %d not found", functionId);
 	}
 	NYIA;
+	return false;
 }
 
 bool LuaAppVirtualMachine::BindAPI() {

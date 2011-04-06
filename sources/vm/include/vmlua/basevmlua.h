@@ -23,7 +23,7 @@
 
 #include "basevm.h"
 
-class BaseVMLua
+class DLLEXP BaseVMLua
 : public BaseVM {
 private:
 	lua_State *_pGlobalState;

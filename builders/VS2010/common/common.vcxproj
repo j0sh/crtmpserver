@@ -51,7 +51,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\..\sources\common\include;..\..\..\3rdparty\lua-dev;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\sources\common\include;..\..\..\3rdparty\lua-dev;..\..\..\3rdparty\tinyxml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>LITTLE_ENDIAN_BYTE_ALIGNED;NET_SELECT;HAS_LUA;HAS_PROTOCOL_HTTP;HAS_PROTOCOL_RTMP;HAS_PROTOCOL_RTP;HAS_PROTOCOL_LIVEFLV;HAS_PROTOCOL_TS;HAS_PROTOCOL_VAR;HAS_MEDIA_MP3;HAS_MEDIA_MP4;HAS_MEDIA_FLV;VM_LUA;WIN32;_DEBUG;_WINDOWS;_USRDLL;COMMON_EXPORTS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -79,7 +79,7 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>..\..\..\sources\common\include;..\..\..\3rdparty\lua-dev;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\sources\common\include;..\..\..\3rdparty\lua-dev;..\..\..\3rdparty\tinyxml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>LITTLE_ENDIAN_BYTE_ALIGNED;NET_SELECT;HAS_LUA;HAS_PROTOCOL_HTTP;HAS_PROTOCOL_RTMP;HAS_PROTOCOL_RTP;HAS_PROTOCOL_LIVEFLV;HAS_PROTOCOL_TS;HAS_PROTOCOL_VAR;HAS_MEDIA_MP3;HAS_MEDIA_MP4;HAS_MEDIA_FLV;VM_LUA;WIN32;NDEBUG;_WINDOWS;_USRDLL;COMMON_EXPORTS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -110,6 +110,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\3rdparty\tinyxml\tinyxml.h" />
     <ClInclude Include="..\..\..\sources\common\include\common.h" />
     <ClInclude Include="..\..\..\sources\common\include\defines.h" />
     <ClInclude Include="..\..\..\sources\common\include\platform\baseplatform.h" />
@@ -137,10 +138,12 @@
     <ClInclude Include="..\..\..\sources\common\include\utils\misc\uri.h" />
     <ClInclude Include="..\..\..\sources\common\include\utils\misc\variant.h" />
     <ClInclude Include="..\..\..\sources\common\include\utils\misc\variantmap.h" />
-    <ClInclude Include="..\..\..\sources\common\include\utils\tinyxml\tinyxml.h" />
     <ClInclude Include="..\..\..\sources\common\include\utils\utils.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\3rdparty\tinyxml\tinyxml.cpp" />
+    <ClCompile Include="..\..\..\3rdparty\tinyxml\tinyxmlerror.cpp" />
+    <ClCompile Include="..\..\..\3rdparty\tinyxml\tinyxmlparser.cpp" />
     <ClCompile Include="..\..\..\sources\common\src\platform\baseplatform.cpp" />
     <ClCompile Include="..\..\..\sources\common\src\platform\windows\strncasecmp.cpp" />
     <ClCompile Include="..\..\..\sources\common\src\platform\windows\strptime.cpp" />
@@ -160,9 +163,6 @@
     <ClCompile Include="..\..\..\sources\common\src\utils\misc\timersmanager.cpp" />
     <ClCompile Include="..\..\..\sources\common\src\utils\misc\uri.cpp" />
     <ClCompile Include="..\..\..\sources\common\src\utils\misc\variant.cpp" />
-    <ClCompile Include="..\..\..\sources\common\src\utils\tinyxml\tinyxml.cpp" />
-    <ClCompile Include="..\..\..\sources\common\src\utils\tinyxml\tinyxmlerror.cpp" />
-    <ClCompile Include="..\..\..\sources\common\src\utils\tinyxml\tinyxmlparser.cpp" />
     <ClCompile Include="..\dummy.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

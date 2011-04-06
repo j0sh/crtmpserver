@@ -23,7 +23,7 @@
 
 #include "common.h"
 
-class BaseVM {
+class DLLEXP BaseVM {
 private:
 	Variant _emptyParams;
 public:

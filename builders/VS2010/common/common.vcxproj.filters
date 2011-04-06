@@ -140,9 +140,6 @@
     <ClInclude Include="..\..\..\sources\common\include\utils\misc\variantmap.h">
       <Filter>Header Files\utils\misc</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\sources\common\include\utils\tinyxml\tinyxml.h">
-      <Filter>Header Files\utils\tinyxml</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\sources\common\include\common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -151,6 +148,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\sources\common\include\utils\misc\uri.h">
       <Filter>Header Files\utils\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\tinyxml\tinyxml.h">
+      <Filter>Header Files\utils\tinyxml</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -208,20 +208,20 @@
     <ClCompile Include="..\..\..\sources\common\src\utils\misc\variant.cpp">
       <Filter>Source Files\utils\misc</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\sources\common\src\utils\tinyxml\tinyxml.cpp">
-      <Filter>Source Files\utils\tinyxml</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\common\src\utils\tinyxml\tinyxmlerror.cpp">
-      <Filter>Source Files\utils\tinyxml</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\common\src\utils\tinyxml\tinyxmlparser.cpp">
-      <Filter>Source Files\utils\tinyxml</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\sources\common\src\utils\misc\uri.cpp">
       <Filter>Source Files\utils\misc</Filter>
     </ClCompile>
     <ClCompile Include="..\dummy.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\tinyxml\tinyxml.cpp">
+      <Filter>Source Files\utils\tinyxml</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\tinyxml\tinyxmlerror.cpp">
+      <Filter>Source Files\utils\tinyxml</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\tinyxml\tinyxmlparser.cpp">
+      <Filter>Source Files\utils\tinyxml</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -34,6 +34,7 @@ namespace app_vmapp {
 
 	int luaapi_application_outboundConnectionFailed(lua_State *L) {
 		NYIA;
+		return 0;
 	}
 
 	int luaapi_application_pullExternalStream(lua_State *L) {
