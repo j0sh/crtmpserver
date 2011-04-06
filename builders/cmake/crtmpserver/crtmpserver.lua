@@ -348,7 +348,7 @@ configuration=
 			--validateHandshake=true,
 			--default=true,
 		},
-		{
+		--[[{
 			name="vmapp",
 			description="An application demonstrating the use of virtual machines",
 			protocol="dynamiclinklibrary",
@@ -366,7 +366,7 @@ configuration=
 					protocol="inboundTcpTs"
 				}
 			}
-        },
+		},]]--
 		--#INSERTION_MARKER# DO NOT REMOVE THIS. USED BY appscaffold SCRIPT.
 	}
 }
