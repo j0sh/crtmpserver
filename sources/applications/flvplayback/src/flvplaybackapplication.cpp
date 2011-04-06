@@ -39,14 +39,14 @@ FLVPlaybackApplication::FLVPlaybackApplication(Variant &configuration)
 	_pRTMFPHandler = NULL;
 #endif /* HAS_PROTOCOL_RTMFP */
 #ifdef HAS_PROTOCOL_LIVEFLV
-	_pLiveFLV = NULL;
+	_pLiveFLVHandler = NULL;
 #endif /* HAS_PROTOCOL_LIVEFLV */
 #ifdef HAS_PROTOCOL_TS
-	_pTS = NULL;
+	_pTSHandler = NULL;
 #endif /* HAS_PROTOCOL_TS */
 #ifdef HAS_PROTOCOL_RTP
-	_pRTP = NULL;
-	_pRTSP = NULL;
+	_pRTPHandler = NULL;
+	_pRTSPHandler = NULL;
 #endif /* HAS_PROTOCOL_RTP */
 }
 
@@ -54,34 +54,46 @@ FLVPlaybackApplication::~FLVPlaybackApplication() {
 #ifdef HAS_PROTOCOL_RTMP
 	UnRegisterAppProtocolHandler(PT_INBOUND_RTMP);
 	UnRegisterAppProtocolHandler(PT_OUTBOUND_RTMP);
-	if (_pRTMPHandler != NULL)
+	if (_pRTMPHandler != NULL) {
 		delete _pRTMPHandler;
+		_pRTMPHandler = NULL;
+	}
 #endif /* HAS_PROTOCOL_RTMP */
 #ifdef HAS_PROTOCOL_RTMFP
 	UnRegisterAppProtocolHandler(PT_INBOUND_RTMFP);
-	if (_pRTMFPHandler != NULL)
+	if (_pRTMFPHandler != NULL) {
 		delete _pRTMFPHandler;
+		_pRTMFPHandler = NULL;
+	}
 #endif /* HAS_PROTOCOL_RTMFP */
 #ifdef HAS_PROTOCOL_LIVEFLV
 	UnRegisterAppProtocolHandler(PT_INBOUND_LIVE_FLV);
-	if (_pLiveFLV != NULL)
-		delete _pLiveFLV;
+	if (_pLiveFLVHandler != NULL) {
+		delete _pLiveFLVHandler;
+		_pLiveFLVHandler = NULL;
+	}
 #endif /* HAS_PROTOCOL_LIVEFLV */
 
 #ifdef HAS_PROTOCOL_TS
 	UnRegisterAppProtocolHandler(PT_INBOUND_TS);
-	if (_pTS != NULL)
-		delete _pTS;
+	if (_pTSHandler != NULL) {
+		delete _pTSHandler;
+		_pTSHandler = NULL;
+	}
 #endif /* HAS_PROTOCOL_TS */
 
 #ifdef HAS_PROTOCOL_RTP
 	UnRegisterAppProtocolHandler(PT_INBOUND_RTP);
-	if (_pRTP != NULL)
-		delete _pRTP;
+	if (_pRTPHandler != NULL) {
+		delete _pRTPHandler;
+		_pRTPHandler = NULL;
+	}
 
 	UnRegisterAppProtocolHandler(PT_RTSP);
-	if (_pRTSP != NULL)
-		delete _pRTSP;
+	if (_pRTSPHandler != NULL) {
+		delete _pRTSPHandler;
+		_pRTSPHandler = NULL;
+	}
 #endif /* HAS_PROTOCOL_RTP */
 }
 
@@ -97,22 +109,22 @@ bool FLVPlaybackApplication::Initialize() {
 	RegisterAppProtocolHandler(PT_INBOUND_RTMFP, _pRTMFPHandler);
 #endif /* HAS_PROTOCOL_RTMFP */
 #ifdef HAS_PROTOCOL_LIVEFLV
-	_pLiveFLV = new LiveFLVAppProtocolHandler(_configuration);
-	RegisterAppProtocolHandler(PT_INBOUND_LIVE_FLV, _pLiveFLV);
+	_pLiveFLVHandler = new LiveFLVAppProtocolHandler(_configuration);
+	RegisterAppProtocolHandler(PT_INBOUND_LIVE_FLV, _pLiveFLVHandler);
 #endif /* HAS_PROTOCOL_LIVEFLV */
 
 #ifdef HAS_PROTOCOL_TS
-	_pTS = new TSAppProtocolHandler(_configuration);
-	RegisterAppProtocolHandler(PT_INBOUND_TS, _pTS);
+	_pTSHandler = new TSAppProtocolHandler(_configuration);
+	RegisterAppProtocolHandler(PT_INBOUND_TS, _pTSHandler);
 #endif /* HAS_PROTOCOL_TS */
 
 #ifdef HAS_PROTOCOL_RTP
-	_pRTP = new RTPAppProtocolHandler(_configuration);
-	RegisterAppProtocolHandler(PT_INBOUND_RTP, _pRTP);
-	RegisterAppProtocolHandler(PT_RTCP, _pRTP);
+	_pRTPHandler = new RTPAppProtocolHandler(_configuration);
+	RegisterAppProtocolHandler(PT_INBOUND_RTP, _pRTPHandler);
+	RegisterAppProtocolHandler(PT_RTCP, _pRTPHandler);
 
-	_pRTSP = new RTSPAppProtocolHandler(_configuration);
-	RegisterAppProtocolHandler(PT_RTSP, _pRTSP);
+	_pRTSPHandler = new RTSPAppProtocolHandler(_configuration);
+	RegisterAppProtocolHandler(PT_RTSP, _pRTSPHandler);
 #endif /* HAS_PROTOCOL_RTP */
 
 	return PullExternalStreams();

@@ -141,7 +141,7 @@ bool BaseInFileStream::ResolveCompleteMetadata(Variant &metaData) {
 		FATAL("Unable to process document");
 		delete pDocument;
 		if ((bool)metaData[CONF_APPLICATION_RENAMEBADFILES]) {
-			MoveFile(metaData[META_SERVER_FULL_PATH],
+			moveFile(metaData[META_SERVER_FULL_PATH],
 					(string) metaData[META_SERVER_FULL_PATH] + ".bad");
 		} else {
 			WARN("File %s will not be renamed",
@@ -561,7 +561,7 @@ bool BaseInFileStream::SendCodecs() {
 			GETAVAILABLEBYTESCOUNT(buffer), //dataLength
 			0, //processedLength
 			GETAVAILABLEBYTESCOUNT(buffer), //totalLength
-			(uint32_t) currentFrame.absoluteTime, //absoluteTimestamp
+			currentFrame.absoluteTime, //absoluteTimestamp
 			frame1.type == MEDIAFRAME_TYPE_AUDIO //isAudio
 			)) {
 		FATAL("Unable to feed audio data");
@@ -587,7 +587,7 @@ bool BaseInFileStream::SendCodecs() {
 			GETAVAILABLEBYTESCOUNT(buffer), //dataLength
 			0, //processedLength
 			GETAVAILABLEBYTESCOUNT(buffer), //totalLength
-			(uint32_t) currentFrame.absoluteTime, //absoluteTimestamp
+			currentFrame.absoluteTime, //absoluteTimestamp
 			frame2.type == MEDIAFRAME_TYPE_AUDIO //isAudio
 			)) {
 		FATAL("Unable to feed audio data");

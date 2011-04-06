@@ -88,7 +88,7 @@ bool InboundDNSResolverProtocol::HandleRequest(Variant &request) {
 		FATAL("Invalid request:\n%s", STR(request.ToString()));
 		return false;
 	}
-	string ip = GetHostByName(request[DNS_RESOLVER_HOST]);
+	string ip = getHostByName(request[DNS_RESOLVER_HOST]);
 	Variant response;
 	response[DNS_RESOLVER_REQUEST] = request;
 	response[DNS_RESOLVER_IP] = ip;

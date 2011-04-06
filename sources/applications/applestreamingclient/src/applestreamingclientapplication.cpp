@@ -45,7 +45,7 @@ AppleStreamingClientApplication::AppleStreamingClientApplication(Variant &config
 	_pM3U8Handler = NULL;
 	_pKeyHandler = NULL;
 	_pTSHandler = NULL;
-	_pHTTPBuff = NULL;
+	_pHTTPBuffHandler = NULL;
 	_pAESHandler = NULL;
 	_pRTSPHandler = NULL;
 	_pVariantHandler = NULL;
@@ -83,9 +83,9 @@ AppleStreamingClientApplication::~AppleStreamingClientApplication() {
 	}
 
 	UnRegisterAppProtocolHandler(PT_HTTP_BUFF);
-	if (_pHTTPBuff != NULL) {
-		delete _pHTTPBuff;
-		_pHTTPBuff = NULL;
+	if (_pHTTPBuffHandler != NULL) {
+		delete _pHTTPBuffHandler;
+		_pHTTPBuffHandler = NULL;
 	}
 
 	UnRegisterAppProtocolHandler(PT_INBOUND_AES);
@@ -110,6 +110,7 @@ AppleStreamingClientApplication::~AppleStreamingClientApplication() {
 	if (_pFactory != NULL) {
 		ProtocolFactoryManager::UnRegisterProtocolFactory(_pFactory);
 		delete _pFactory;
+		_pFactory = NULL;
 	}
 }
 
@@ -142,8 +143,8 @@ bool AppleStreamingClientApplication::Initialize() {
 	_pTSHandler = new TSAppProtocolHandler(_configuration);
 	RegisterAppProtocolHandler(PT_INBOUND_TS, _pTSHandler);
 
-	_pHTTPBuff = new HTTPBuffAppProtocolHandler(_configuration);
-	RegisterAppProtocolHandler(PT_HTTP_BUFF, _pHTTPBuff);
+	_pHTTPBuffHandler = new HTTPBuffAppProtocolHandler(_configuration);
+	RegisterAppProtocolHandler(PT_HTTP_BUFF, _pHTTPBuffHandler);
 
 	_pAESHandler = new AESAppProtocolHandler(_configuration);
 	RegisterAppProtocolHandler(PT_INBOUND_AES, _pAESHandler);

@@ -25,4 +25,3 @@ BaseVM::BaseVM() {
 
 BaseVM::~BaseVM() {
 }
-

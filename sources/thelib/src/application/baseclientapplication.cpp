@@ -56,7 +56,7 @@ string BaseClientApplication::GetName() {
 	return _name;
 }
 
-Variant BaseClientApplication::GetConfiguration() {
+Variant &BaseClientApplication::GetConfiguration() {
 	return _configuration;
 }
 
@@ -96,8 +96,9 @@ BaseAppProtocolHandler *BaseClientApplication::GetProtocolHandler(BaseProtocol *
 
 BaseAppProtocolHandler *BaseClientApplication::GetProtocolHandler(uint64_t protocolType) {
 	if (!MAP_HAS1(_protocolsHandlers, protocolType)) {
-		ASSERT("Protocol handler not activated for protocol type %s in application %s",
+		WARN("Protocol handler not activated for protocol type %s in application %s",
 				STR(tagToString(protocolType)), STR(_name));
+		return NULL;
 	}
 	return _protocolsHandlers[protocolType];
 }

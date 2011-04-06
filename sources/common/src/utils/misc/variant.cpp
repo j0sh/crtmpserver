@@ -766,7 +766,7 @@ Variant &Variant::GetValue(string key, bool caseSensitive) {
 	} else {
 
 		FOR_MAP(*this, string, Variant, i) {
-			if (lowercase(MAP_KEY(i)) == lowercase(key))
+			if (lowerCase(MAP_KEY(i)) == lowerCase(key))
 				return MAP_VAL(i);
 		}
 
@@ -834,7 +834,7 @@ bool Variant::HasKey(const string &key, bool caseSensitive) {
 	} else {
 
 		FOR_MAP(*this, string, Variant, i) {
-			if (lowercase(MAP_KEY(i)) == lowercase(key))
+			if (lowerCase(MAP_KEY(i)) == lowerCase(key))
 				return true;
 		}
 		return false;
@@ -2003,7 +2003,7 @@ bool Variant::DeserializeFromBin(uint8_t *pBuffer, uint32_t bufferSize,
 }
 
 bool Variant::DeserializeFromXml(TiXmlElement *pNode, Variant &variant) {
-	string nodeName = lowercase(pNode->ValueStr());
+	string nodeName = lowerCase(pNode->ValueStr());
 
 	union {
 		int64_t i64;
@@ -2016,7 +2016,7 @@ bool Variant::DeserializeFromXml(TiXmlElement *pNode, Variant &variant) {
 	string text = pText == NULL ? "" : pText;
 
 	if (nodeName == "bool") {
-		variant = (bool)(lowercase(text) == "true");
+		variant = (bool)(lowerCase(text) == "true");
 		return true;
 	} else if (nodeName == "null") {
 		variant.Reset();
@@ -2124,9 +2124,9 @@ bool Variant::DeserializeFromXml(TiXmlElement *pNode, Variant &variant) {
 		//isArray and typename
 		variant.IsArray(false);
 		for (TiXmlAttribute *pI = pAttribute; pI != NULL; pI = pI->Next()) {
-			if (lowercase(pI->NameTStr()) == "isarray") {
-				variant.IsArray(lowercase(pI->ValueStr()) == "true");
-			} else if (lowercase(pI->NameTStr()) == "typename") {
+			if (lowerCase(pI->NameTStr()) == "isarray") {
+				variant.IsArray(lowerCase(pI->ValueStr()) == "true");
+			} else if (lowerCase(pI->NameTStr()) == "typename") {
 				variant.SetTypeName(pI->Value());
 			}
 		}
@@ -2136,7 +2136,7 @@ bool Variant::DeserializeFromXml(TiXmlElement *pNode, Variant &variant) {
 			//search for the name
 			string key = "";
 			for (TiXmlAttribute *pA = pE->FirstAttribute(); pA != NULL; pA = pA->Next()) {
-				if (lowercase(pA->NameTStr()) == "name") {
+				if (lowerCase(pA->NameTStr()) == "name") {
 					key = pA->ValueStr();
 					break;
 				}
@@ -2395,7 +2395,7 @@ bool Variant::ReadJSONBool(string &raw, Variant &result, uint32_t &start, string
 		FATAL("Invalid JSON bool");
 		return false;
 	}
-	string temp = lowercase(raw.substr(start, wanted.size()));
+	string temp = lowerCase(raw.substr(start, wanted.size()));
 	if (temp != wanted) {
 		FATAL("Invalid JSON bool");
 		return false;
@@ -2410,7 +2410,7 @@ bool Variant::ReadJSONNull(string &raw, Variant &result, uint32_t &start) {
 		FATAL("Invalid JSON null");
 		return false;
 	}
-	string temp = lowercase(raw.substr(start, 4));
+	string temp = lowerCase(raw.substr(start, 4));
 	if (temp != "null") {
 		FATAL("Invalid JSON null");
 		return false;

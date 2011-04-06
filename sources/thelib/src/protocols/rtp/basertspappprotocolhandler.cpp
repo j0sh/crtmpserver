@@ -430,7 +430,7 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPRequestSetupInbound(RTSPProtocol *pFr
 		FATAL("No transport line");
 		return false;
 	}
-	string transportLine = lowercase(requestHeaders[RTSP_HEADERS].GetValue(RTSP_HEADERS_TRANSPORT, false));
+	string transportLine = lowerCase(requestHeaders[RTSP_HEADERS].GetValue(RTSP_HEADERS_TRANSPORT, false));
 	map<string, string> parameters = mapping(transportLine, ";", "=", true);
 
 	//2. Check and see if it has RTP/AVP/TCP,RTP/AVP/UDP or RTP/AVP

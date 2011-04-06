@@ -20,17 +20,6 @@
         <logicalFolder name="flv" displayName="flv" projectFiles="true">
           <itemPath>../../../../sources/thelib/include/mediaformats/flv/flvdocument.h</itemPath>
         </logicalFolder>
-        <logicalFolder name="mkv" displayName="mkv" projectFiles="true">
-          <itemPath>../../../../sources/thelib/include/mediaformats/mkv/baseelement.h</itemPath>
-          <itemPath>../../../../sources/thelib/include/mediaformats/mkv/binaryelement.h</itemPath>
-          <itemPath>../../../../sources/thelib/include/mediaformats/mkv/boxelement.h</itemPath>
-          <itemPath>../../../../sources/thelib/include/mediaformats/mkv/elementdummy.h</itemPath>
-          <itemPath>../../../../sources/thelib/include/mediaformats/mkv/elementids.h</itemPath>
-          <itemPath>../../../../sources/thelib/include/mediaformats/mkv/floatelement.h</itemPath>
-          <itemPath>../../../../sources/thelib/include/mediaformats/mkv/intelement.h</itemPath>
-          <itemPath>../../../../sources/thelib/include/mediaformats/mkv/mkvdocument.h</itemPath>
-          <itemPath>../../../../sources/thelib/include/mediaformats/mkv/stringelement.h</itemPath>
-        </logicalFolder>
         <logicalFolder name="mp3" displayName="mp3" projectFiles="true">
           <itemPath>../../../../sources/thelib/include/mediaformats/mp3/id3parser.h</itemPath>
           <itemPath>../../../../sources/thelib/include/mediaformats/mp3/mp3document.h</itemPath>
@@ -72,6 +61,7 @@
           <itemPath>../../../../sources/thelib/include/mediaformats/mp4/atomwave.h</itemPath>
           <itemPath>../../../../sources/thelib/include/mediaformats/mp4/baseatom.h</itemPath>
           <itemPath>../../../../sources/thelib/include/mediaformats/mp4/boxatom.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/mediaformats/mp4/generateatom.sh</itemPath>
           <itemPath>../../../../sources/thelib/include/mediaformats/mp4/ignoredatom.h</itemPath>
           <itemPath>../../../../sources/thelib/include/mediaformats/mp4/mp4document.h</itemPath>
           <itemPath>../../../../sources/thelib/include/mediaformats/mp4/versionedatom.h</itemPath>
@@ -171,6 +161,7 @@
             <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/infilertmpflvstream.h</itemPath>
             <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/infilertmpmp3stream.h</itemPath>
             <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/infilertmpmp4stream.h</itemPath>
+            <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/infilertmpnsvstream.h</itemPath>
             <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/infilertmpstream.h</itemPath>
             <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/innetrtmpstream.h</itemPath>
             <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/outfilertmpflvstream.h</itemPath>
@@ -231,7 +222,6 @@
           <itemPath>../../../../sources/thelib/include/protocols/ts/innettsstream.h</itemPath>
           <itemPath>../../../../sources/thelib/include/protocols/ts/pidtypes.h</itemPath>
           <itemPath>../../../../sources/thelib/include/protocols/ts/streamdescriptors.h</itemPath>
-          <itemPath>../../../../sources/thelib/include/protocols/ts/tsadaptationfield.h</itemPath>
           <itemPath>../../../../sources/thelib/include/protocols/ts/tsboundscheck.h</itemPath>
           <itemPath>../../../../sources/thelib/include/protocols/ts/tspacketheader.h</itemPath>
           <itemPath>../../../../sources/thelib/include/protocols/ts/tspacketpat.h</itemPath>
@@ -248,7 +238,6 @@
         <itemPath>../../../../sources/thelib/include/protocols/defaultprotocolfactory.h</itemPath>
         <itemPath>../../../../sources/thelib/include/protocols/protocolfactorymanager.h</itemPath>
         <itemPath>../../../../sources/thelib/include/protocols/protocolmanager.h</itemPath>
-        <itemPath>../../../../sources/thelib/include/protocols/protocols.h</itemPath>
         <itemPath>../../../../sources/thelib/include/protocols/protocoltypes.h</itemPath>
         <itemPath>../../../../sources/thelib/include/protocols/tcpprotocol.h</itemPath>
         <itemPath>../../../../sources/thelib/include/protocols/udpprotocol.h</itemPath>
@@ -289,14 +278,6 @@
           <itemPath>../../../../sources/thelib/src/mediaformats/flv/flvdocument.cpp</itemPath>
         </logicalFolder>
         <logicalFolder name="mkv" displayName="mkv" projectFiles="true">
-          <itemPath>../../../../sources/thelib/src/mediaformats/mkv/baseelement.cpp</itemPath>
-          <itemPath>../../../../sources/thelib/src/mediaformats/mkv/binaryelement.cpp</itemPath>
-          <itemPath>../../../../sources/thelib/src/mediaformats/mkv/boxelement.cpp</itemPath>
-          <itemPath>../../../../sources/thelib/src/mediaformats/mkv/dummyelement.cpp</itemPath>
-          <itemPath>../../../../sources/thelib/src/mediaformats/mkv/floatelement.cpp</itemPath>
-          <itemPath>../../../../sources/thelib/src/mediaformats/mkv/intelement.cpp</itemPath>
-          <itemPath>../../../../sources/thelib/src/mediaformats/mkv/mkvdocument.cpp</itemPath>
-          <itemPath>../../../../sources/thelib/src/mediaformats/mkv/stringelement.cpp</itemPath>
         </logicalFolder>
         <logicalFolder name="mp3" displayName="mp3" projectFiles="true">
           <itemPath>../../../../sources/thelib/src/mediaformats/mp3/id3parser.cpp</itemPath>
@@ -339,6 +320,7 @@
           <itemPath>../../../../sources/thelib/src/mediaformats/mp4/atomwave.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/mediaformats/mp4/baseatom.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/mediaformats/mp4/boxatom.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/mediaformats/mp4/generateatom.sh</itemPath>
           <itemPath>../../../../sources/thelib/src/mediaformats/mp4/ignoredatom.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/mediaformats/mp4/mp4document.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/mediaformats/mp4/versionedatom.cpp</itemPath>
@@ -429,6 +411,7 @@
             <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/infilertmpflvstream.cpp</itemPath>
             <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/infilertmpmp3stream.cpp</itemPath>
             <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/infilertmpmp4stream.cpp</itemPath>
+            <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/infilertmpnsvstream.cpp</itemPath>
             <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/infilertmpstream.cpp</itemPath>
             <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/innetrtmpstream.cpp</itemPath>
             <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/outfilertmpflvstream.cpp</itemPath>
@@ -485,8 +468,6 @@
           <itemPath>../../../../sources/thelib/src/protocols/ts/innettsstream.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/protocols/ts/pidtypes.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/protocols/ts/streamdescriptors.cpp</itemPath>
-          <itemPath>../../../../sources/thelib/src/protocols/ts/tsadaptationfield.cpp</itemPath>
-          <itemPath>../../../../sources/thelib/src/protocols/ts/tspacketheader.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/protocols/ts/tspacketpat.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/protocols/ts/tspacketpmt.cpp</itemPath>
         </logicalFolder>

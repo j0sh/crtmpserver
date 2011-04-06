@@ -128,7 +128,7 @@ UDPCarrier* UDPCarrier::Create(string bindIp, uint16_t bindPort) {
 	}
 
 	//2. No SIGPIPE
-	if (!SetFdNoSIGPIPE(sock)) {
+	if (!setFdNoSIGPIPE(sock)) {
 		FATAL("Unable to set SO_NOSIGPIPE");
 		close(sock);
 		return NULL;

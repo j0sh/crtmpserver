@@ -30,12 +30,12 @@ string format(string fmt, ...) {
 	string result = "";
 	va_list arguments;
 	va_start(arguments, fmt);
-	result = vformat(fmt, arguments);
+	result = vFormat(fmt, arguments);
 	va_end(arguments);
 	return result;
 }
 
-string vformat(string fmt, va_list args) {
+string vFormat(string fmt, va_list args) {
 	char *pBuffer = NULL;
 	if (vasprintf(&pBuffer, STR(fmt), args) == -1) {
 		ASSERT("vasprintf failed");
@@ -92,15 +92,15 @@ bool isNumeric(string value) {
 	return value == format("%d", atoi(STR(value)));
 }
 
-string lowercase(string value) {
-	return changecase(value, true);
+string lowerCase(string value) {
+	return changeCase(value, true);
 }
 
-string uppercase(string value) {
-	return changecase(value, false);
+string upperCase(string value) {
+	return changeCase(value, false);
 }
 
-void ltrim(string &value) {
+void lTrim(string &value) {
 	string::size_type i = 0;
 	for (i = 0; i < value.length(); i++) {
 		if (value[i] != ' ' &&
@@ -112,7 +112,7 @@ void ltrim(string &value) {
 	value = value.substr(i);
 }
 
-void rtrim(string &value) {
+void rTrim(string &value) {
 	int32_t i = 0;
 	for (i = (int32_t) value.length() - 1; i >= 0; i--) {
 		if (value[i] != ' ' &&
@@ -125,8 +125,8 @@ void rtrim(string &value) {
 }
 
 void trim(string &value) {
-	ltrim(value);
-	rtrim(value);
+	lTrim(value);
+	rTrim(value);
 }
 
 void replace(string &target, string search, string replacement) {
@@ -183,7 +183,7 @@ map<string, string> mapping(string str, string separator1, string separator2, bo
 	return result;
 }
 
-string changecase(string &value, bool lowerCase) {
+string changeCase(string &value, bool lowerCase) {
 	int32_t len = value.length();
 	string newvalue(value);
 	for (string::size_type i = 0, l = newvalue.length(); i < l; ++i)
@@ -208,17 +208,17 @@ bool HandlerRoutine(uint32_t dwCtrlType) {
 	return false;
 }
 
-void InstallConfRereadSignal(SignalFnc pConfRereadSignalFnc) {
+void installConfRereadSignal(SignalFnc pConfRereadSignalFnc) {
 	_signalHandlers[CTRL_BREAK_EVENT] = pConfRereadSignalFnc;
 	SetConsoleCtrlHandler((PHANDLER_ROUTINE) HandlerRoutine, TRUE);
 }
 
-void InstallQuitSignal(SignalFnc pQuitSignalFnc) {
+void installQuitSignal(SignalFnc pQuitSignalFnc) {
 	_signalHandlers[CTRL_C_EVENT] = pQuitSignalFnc;
 	SetConsoleCtrlHandler((PHANDLER_ROUTINE) HandlerRoutine, TRUE);
 }
 
-double GetFileModificationDate(string path) {
+double getFileModificationDate(string path) {
 	struct _stat64 s;
 	if (_stat64(STR(path), &s) != 0) {
 		FATAL("Unable to stat file %s", STR(path));
@@ -262,7 +262,7 @@ int inet_aton(const char *pStr, struct in_addr *pRes) {
 	return true;
 }
 
-bool SetFdNonBlock(int32_t fd) {
+bool setFdNonBlock(int32_t fd) {
 	u_long iMode = 1; // 0 for blocking, anything else for nonblocking
 
 	if (ioctlsocket(fd, FIONBIO, &iMode) < 0) {
@@ -273,11 +273,11 @@ bool SetFdNonBlock(int32_t fd) {
 	return true;
 }
 
-bool SetFdNoSIGPIPE(int32_t fd) {
+bool setFdNoSIGPIPE(int32_t fd) {
 	return true;
 }
 
-bool SetFdKeepAlive(int32_t fd) {
+bool setFdKeepAlive(int32_t fd) {
 	BOOL value = TRUE;
 	if (setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, (char *)&value, sizeof(BOOL)) == SOCKET_ERROR) {
 		FATAL("Error #%u", WSAGetLastError());
@@ -286,7 +286,7 @@ bool SetFdKeepAlive(int32_t fd) {
 	return true;
 }
 
-bool SetFdNoNagle(int32_t fd) {
+bool setFdNoNagle(int32_t fd) {
 	BOOL value = TRUE;
 	if (setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, (char *)&value, sizeof(BOOL)) == SOCKET_ERROR) {
 		FATAL("Error #%u", WSAGetLastError());
@@ -295,7 +295,7 @@ bool SetFdNoNagle(int32_t fd) {
 	return true;
 }
 
-bool SetFdReuseAddress(int32_t fd) {
+bool setFdReuseAddress(int32_t fd) {
 	BOOL value = TRUE;
 	if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (char *)&value, sizeof(BOOL)) == SOCKET_ERROR) {
 		FATAL("Error #%u", WSAGetLastError());
@@ -304,28 +304,28 @@ bool SetFdReuseAddress(int32_t fd) {
 	return true;
 }
 
-bool SetFdOptions(int32_t fd) {
-	if (!SetFdNonBlock(fd)) {
+bool setFdOptions(int32_t fd) {
+	if (!setFdNonBlock(fd)) {
 		FATAL("Unable to set non block");
 		return false;
 	}
 
-	if (!SetFdNoSIGPIPE(fd)) {
+	if (!setFdNoSIGPIPE(fd)) {
 		FATAL("Unable to set no SIGPIPE");
 		return false;
 	}
 
-	if (!SetFdKeepAlive(fd)) {
+	if (!setFdKeepAlive(fd)) {
 		FATAL("Unable to set keep alive");
 		return false;
 	}
 
-	if (!SetFdNoNagle(fd)) {
+	if (!setFdNoNagle(fd)) {
 		FATAL("Unable to disable Nagle algorithm");
 		return false;
 	}
 
-	if (!SetFdReuseAddress(fd)) {
+	if (!setFdReuseAddress(fd)) {
 		FATAL("Unable to enable reuse address");
 		return false;
 	}
@@ -342,7 +342,7 @@ string generateRandomString(uint32_t length) {
 	return result;
 }
 
-string GetHostByName(string name) {
+string getHostByName(string name) {
 	struct hostent *pHostEnt = gethostbyname(STR(name));
 	if (pHostEnt == NULL)
 		return "";
@@ -393,7 +393,8 @@ string normalizePath(string base, string file) {
 	}
 }
 
-bool ListFolder(string root, string path, vector<string> &result) {
+bool listFolder(string path, vector<string> &result, bool normalizeAllPaths,
+		bool includeFolders, bool recursive) {
 	WIN32_FIND_DATA ffd;
 	TCHAR szDir[MAX_PATH];
 	size_t length_of_arg;
@@ -447,7 +448,7 @@ bool ListFolder(string root, string path, vector<string> &result) {
 	return true;
 }
 
-bool DeleteFile(string path) {
+bool deleteFile(string path) {
 	if (remove(STR(path)) != 0) {
 		FATAL("Unable to delete file `%s`", STR(path));
 		return false;
@@ -455,7 +456,7 @@ bool DeleteFile(string path) {
 	return true;
 }
 
-bool MoveFile(string src, string dst) {
+bool moveFile(string src, string dst) {
 	if (rename(STR(src), STR(dst)) != 0) {
 		FATAL("Unable to move file from `%s` to `%s`",
 				STR(src), STR(dst));

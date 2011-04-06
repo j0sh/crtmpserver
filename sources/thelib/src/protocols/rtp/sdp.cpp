@@ -327,9 +327,9 @@ bool SDP::ParseSDPLineA(string &attributeName, Variant &value, string line) {
 		if ((parts.size() != 2) && (parts.size() != 3))
 			return false;
 		value["encodingName"] = parts[0];
-		if (lowercase((string) value["encodingName"]) == "h264") {
+		if (lowerCase((string) value["encodingName"]) == "h264") {
 			value["encodingName"] = (uint64_t) CODEC_VIDEO_AVC;
-		} else if ((string) lowercase(value["encodingName"]) == "mpeg4-generic") {
+		} else if ((string) lowerCase(value["encodingName"]) == "mpeg4-generic") {
 			value["encodingName"] = (uint64_t) CODEC_AUDIO_AAC;
 		} else {
 			FATAL("Invalid codec");
@@ -452,10 +452,9 @@ bool SDP::ParseSDPLineO(Variant &result, string line) {
 		return false;
 	}
 
-	string ip = GetHostByName(result["address"]);
+	string ip = getHostByName(result["address"]);
 	if (ip == "") {
-		FATAL("Invalid address: %s", STR(result["address"]));
-		return false;
+		WARN("Invalid address: %s", STR(result["address"]));
 	}
 	result["ip_address"] = ip;
 
@@ -610,7 +609,7 @@ Variant SDP::ParseAudioTrack(Variant &track) {
 		FATAL("Invalid fmtp line:\n%s", STR(fmtp.ToString()));
 		return Variant();
 	}
-	if (lowercase((string) fmtp.GetValue("mode", false)) != "aac-hbr") {
+	if (lowerCase((string) fmtp.GetValue("mode", false)) != "aac-hbr") {
 		FATAL("Invalid fmtp line:\n%s", STR(fmtp.ToString()));
 		return Variant();
 	}

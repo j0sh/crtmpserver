@@ -19,7 +19,6 @@ CCC=g++
 CXX=g++
 FC=gfortran
 AS=as
-PROC=proc
 
 # Macros
 CND_PLATFORM=GNU-MacOSX
@@ -75,37 +74,37 @@ LDLIBSOPTIONS=-L../thelib/../Debug/GNU-MacOSX -lthelib -L../common/dist/Debug/GN
 ${OBJECTDIR}/_ext/1702679040/controller.o: ../../../../sources/applications/samplefactory/src/controller.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1702679040
 	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/samplefactory/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1702679040/controller.o ../../../../sources/applications/samplefactory/src/controller.cpp
+	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTMP -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/samplefactory/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1702679040/controller.o ../../../../sources/applications/samplefactory/src/controller.cpp
 
 ${OBJECTDIR}/_ext/1702679040/rtmpappprotocolhandler.o: ../../../../sources/applications/samplefactory/src/rtmpappprotocolhandler.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1702679040
 	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/samplefactory/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1702679040/rtmpappprotocolhandler.o ../../../../sources/applications/samplefactory/src/rtmpappprotocolhandler.cpp
+	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTMP -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/samplefactory/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1702679040/rtmpappprotocolhandler.o ../../../../sources/applications/samplefactory/src/rtmpappprotocolhandler.cpp
 
 ${OBJECTDIR}/_ext/1702679040/samplefactory.o: ../../../../sources/applications/samplefactory/src/samplefactory.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1702679040
 	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/samplefactory/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1702679040/samplefactory.o ../../../../sources/applications/samplefactory/src/samplefactory.cpp
+	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTMP -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/samplefactory/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1702679040/samplefactory.o ../../../../sources/applications/samplefactory/src/samplefactory.cpp
 
 ${OBJECTDIR}/_ext/1702679040/samplefactoryapplication.o: ../../../../sources/applications/samplefactory/src/samplefactoryapplication.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1702679040
 	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/samplefactory/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1702679040/samplefactoryapplication.o ../../../../sources/applications/samplefactory/src/samplefactoryapplication.cpp
+	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTMP -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/samplefactory/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1702679040/samplefactoryapplication.o ../../../../sources/applications/samplefactory/src/samplefactoryapplication.cpp
 
 ${OBJECTDIR}/_ext/1702679040/protocolfactory.o: ../../../../sources/applications/samplefactory/src/protocolfactory.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1702679040
 	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/samplefactory/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1702679040/protocolfactory.o ../../../../sources/applications/samplefactory/src/protocolfactory.cpp
+	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTMP -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/samplefactory/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1702679040/protocolfactory.o ../../../../sources/applications/samplefactory/src/protocolfactory.cpp
 
 ${OBJECTDIR}/_ext/1702679040/dbaccessprotocolhandler.o: ../../../../sources/applications/samplefactory/src/dbaccessprotocolhandler.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1702679040
 	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/samplefactory/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1702679040/dbaccessprotocolhandler.o ../../../../sources/applications/samplefactory/src/dbaccessprotocolhandler.cpp
+	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTMP -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/samplefactory/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1702679040/dbaccessprotocolhandler.o ../../../../sources/applications/samplefactory/src/dbaccessprotocolhandler.cpp
 
 ${OBJECTDIR}/_ext/1702679040/dbaccessprotocol.o: ../../../../sources/applications/samplefactory/src/dbaccessprotocol.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1702679040
 	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/samplefactory/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1702679040/dbaccessprotocol.o ../../../../sources/applications/samplefactory/src/dbaccessprotocol.cpp
+	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTMP -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/samplefactory/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1702679040/dbaccessprotocol.o ../../../../sources/applications/samplefactory/src/dbaccessprotocol.cpp
 
 # Subprojects
 .build-subprojects:

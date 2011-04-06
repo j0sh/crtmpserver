@@ -106,7 +106,7 @@ void Logger::Log(int32_t level, string fileName, uint32_t lineNumber,
 
 	va_list arguments;
 	va_start(arguments, formatString);
-	string message = vformat(formatString, arguments);
+	string message = vFormat(formatString, arguments);
 	va_end(arguments);
 
 	FOR_VECTOR(_pLogger->_logLocations, i) {

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://www.netbeans.org/ns/project/1">
+    <type>org.netbeans.modules.cnd.makeproject</type>
+    <configuration>
+        <data xmlns="http://www.netbeans.org/ns/make-project/1">
+            <name>vmapp</name>
+            <make-project-type>0</make-project-type>
+            <c-extensions/>
+            <cpp-extensions>cpp</cpp-extensions>
+            <header-extensions>h</header-extensions>
+            <sourceEncoding>UTF-8</sourceEncoding>
+            <make-dep-projects>
+                <make-dep-project>../thelib</make-dep-project>
+                <make-dep-project>../common</make-dep-project>
+            </make-dep-projects>
+            <sourceRootList>
+                <sourceRootElem>../../../sources/applications/luavmapp/include</sourceRootElem>
+                <sourceRootElem>../../../sources/applications/luavmapp/src</sourceRootElem>
+                <sourceRootElem>../../../../sources/applications/luavmapp/include/vm</sourceRootElem>
+                <sourceRootElem>../../../../sources/applications/luavmapp/src/vm</sourceRootElem>
+                <sourceRootElem>../../../../sources/applications/vmapp/include/vm</sourceRootElem>
+                <sourceRootElem>../../../../sources/applications/vmapp/src/vm</sourceRootElem>
+                <sourceRootElem>../../../../sources/applications/vmapp/include/api</sourceRootElem>
+            </sourceRootList>
+            <confList>
+                <confElem>
+                    <name>Debug</name>
+                    <type>2</type>
+                </confElem>
+                <confElem>
+                    <name>Release</name>
+                    <type>2</type>
+                </confElem>
+            </confList>
+        </data>
+    </configuration>
+</project>

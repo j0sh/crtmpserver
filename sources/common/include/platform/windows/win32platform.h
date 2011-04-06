@@ -161,36 +161,38 @@ struct msghdr {
 #define FD_COPY(f, t)   (void)(*(t) = *(f))
 
 DLLEXP string format(string fmt, ...);
-DLLEXP string vformat(string fmt, va_list args);
+DLLEXP string vFormat(string fmt, va_list args);
 DLLEXP void replace(string &target, string search, string replacement);
 DLLEXP bool fileExists(string path);
-DLLEXP string lowercase(string value);
-DLLEXP string uppercase(string value);
-DLLEXP string changecase(string &value, bool lowerCase);
+DLLEXP string lowerCase(string value);
+DLLEXP string upperCase(string value);
+DLLEXP string changeCase(string &value, bool lowerCase);
 DLLEXP string tagToString(uint64_t tag);
-DLLEXP bool SetFdNonBlock(int32_t fd);
-DLLEXP bool SetFdNoSIGPIPE(int32_t fd);
-DLLEXP bool SetFdKeepAlive(int32_t fd);
-DLLEXP bool SetFdNoNagle(int32_t fd);
-DLLEXP bool SetFdReuseAddress(int32_t fd);
-DLLEXP bool SetFdOptions(int32_t fd);
-DLLEXP bool DeleteFile(string path);
-DLLEXP string GetHostByName(string name);
+DLLEXP bool setFdNonBlock(int32_t fd);
+DLLEXP bool setFdNoSIGPIPE(int32_t fd);
+DLLEXP bool setFdKeepAlive(int32_t fd);
+DLLEXP bool setFdNoNagle(int32_t fd);
+DLLEXP bool setFdReuseAddress(int32_t fd);
+DLLEXP bool setFdOptions(int32_t fd);
+DLLEXP bool deleteFile(string path);
+DLLEXP string getHostByName(string name);
 DLLEXP bool isNumeric(string value);
 DLLEXP void split(string str, string separator, vector<string> &result);
 DLLEXP uint64_t getTagMask(uint64_t tag);
 DLLEXP string generateRandomString(uint32_t length);
-DLLEXP void ltrim(string &value);
-DLLEXP void rtrim(string &value);
+DLLEXP void lTrim(string &value);
+DLLEXP void rTrim(string &value);
 DLLEXP void trim(string &value);
 DLLEXP map<string, string> mapping(string str, string separator1, string separator2, bool trimStrings);
 DLLEXP void splitFileName(string fileName, string &name, string &extension, char separator = '.');
-DLLEXP double GetFileModificationDate(string path);
+DLLEXP double getFileModificationDate(string path);
 DLLEXP string normalizePath(string base, string file);
-DLLEXP bool ListFolder(string root, string path, vector<string> &result);
-DLLEXP bool MoveFile(string src, string dst);
-DLLEXP void InstallQuitSignal(SignalFnc pQuitSignalFnc);
-DLLEXP void InstallConfRereadSignal(SignalFnc pConfRereadSignalFnc);
+DLLEXP bool listFolder(string path, vector<string> &result,
+		bool normalizeAllPaths = true, bool includeFolders = false,
+		bool recursive = true);
+DLLEXP bool moveFile(string src, string dst);
+DLLEXP void installQuitSignal(SignalFnc pQuitSignalFnc);
+DLLEXP void installConfRereadSignal(SignalFnc pConfRereadSignalFnc);
 DLLEXP time_t timegm(struct tm *tm);
 DLLEXP char *strptime(const char *buf, const char *fmt, struct tm *timeptr);
 DLLEXP int strcasecmp(const char *s1, const char *s2);

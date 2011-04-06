@@ -99,7 +99,7 @@ public:
 			return 0;
 		}
 
-		if (!SetFdOptions(fd)) {
+		if (!setFdOptions(fd)) {
 			FATAL("Unable to set socket options");
 			return false;
 		}

@@ -49,7 +49,7 @@ namespace app_applestreamingclient {
 		M3U8AppProtocolHandler *_pM3U8Handler;
 		KeyAppProtocolHandler *_pKeyHandler;
 		TSAppProtocolHandler *_pTSHandler;
-		HTTPBuffAppProtocolHandler *_pHTTPBuff;
+		HTTPBuffAppProtocolHandler *_pHTTPBuffHandler;
 		AESAppProtocolHandler *_pAESHandler;
 		RTSPAppProtocolHandler *_pRTSPHandler;
 		VariantAppProtocolHandler *_pVariantHandler;

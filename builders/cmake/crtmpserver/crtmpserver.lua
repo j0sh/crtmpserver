@@ -286,8 +286,9 @@ configuration=
 				}]]--,
 				{
 					targetUri="rtmp://localhost/vod",
-					targetStreamType="record", -- (live, record or append)
-					emulateUserAgent="My user agent"
+					targetStreamType="live", -- (live, record or append)
+					emulateUserAgent="My user agent",
+					localStreamName="stream1"
 				},
 			},
 			--[[externalStreams = 
@@ -347,6 +348,25 @@ configuration=
 			--validateHandshake=true,
 			--default=true,
 		},
+		{
+			name="vmapp",
+			description="An application demonstrating the use of virtual machines",
+			protocol="dynamiclinklibrary",
+			vmType="lua",
+			script="testapp.lua",
+			aliases=
+			{
+				"lua"
+			},
+			acceptors=
+			{
+				{
+					ip="0.0.0.0",
+					port=6544,
+					protocol="inboundTcpTs"
+				}
+			}
+        },
 		--#INSERTION_MARKER# DO NOT REMOVE THIS. USED BY appscaffold SCRIPT.
 	}
 }

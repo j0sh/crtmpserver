@@ -49,6 +49,7 @@
           <preprocessorList>
             <Elem>OSX</Elem>
             <Elem>VM_LUA</Elem>
+            <Elem>HAS_LUA</Elem>
           </preprocessorList>
         </ccTool>
         <linkerTool>

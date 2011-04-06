@@ -163,11 +163,12 @@ ENDIF(NOT TINYXML_FOUND)
 ADD_SUBDIRECTORY(common common)
 ADD_SUBDIRECTORY(thelib thelib)
 ADD_SUBDIRECTORY(crtmpserver crtmpserver)
-ADD_SUBDIRECTORY(applications applications)
-#ADD_SUBDIRECTORY(androidapplestreaming androidapplestreaming)
 
 ADD_DEFINITIONS(-DVM_LUA)
 ADD_SUBDIRECTORY(vm vm)
 ADD_SUBDIRECTORY(vmtests vmtests)
+ADD_SUBDIRECTORY(applications applications)
+#ADD_SUBDIRECTORY(androidapplestreaming androidapplestreaming)
+
 ADD_SUBDIRECTORY(tests)
 

@@ -59,7 +59,7 @@ bool TCPAcceptor::StartAccept(BaseClientApplication *pApplication) {
 		return false;
 	}
 
-	if (!SetFdOptions(_inboundFd)) {
+	if (!setFdOptions(_inboundFd)) {
 		FATAL("Unable to set socket options");
 		return false;
 	}
@@ -126,7 +126,7 @@ bool TCPAcceptor::OnConnectionAvailable(struct kevent &event) {
 			STR(_ipAddress),
 			_port);
 
-	if (!SetFdOptions(_inboundFd)) {
+	if (!setFdOptions(_inboundFd)) {
 		FATAL("Unable to set socket options");
 		return false;
 	}

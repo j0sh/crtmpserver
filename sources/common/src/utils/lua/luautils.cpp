@@ -24,15 +24,16 @@
 
 void * _lua_alloc(void *ud, void *ptr, size_t osize, size_t nsize) {
 	if (nsize == 0) {
-		free(ptr);
+		if (ptr != NULL)
+			free(ptr);
 		return NULL;
 	} else {
 		return realloc(ptr, nsize);
 	}
 }
 
-lua_State * CreateLuaState() {
-	lua_State *pResult = lua_newstate(_lua_alloc, NULL);
+lua_State * CreateLuaState(void *pOpaque) {
+	lua_State *pResult = lua_newstate(_lua_alloc, pOpaque);
 	luaL_openlibs(pResult);
 	return pResult;
 }
@@ -41,26 +42,29 @@ void DestroyLuaState(lua_State *pLuaState) {
 	lua_close(pLuaState);
 }
 
-bool PopVariant(lua_State *pLuaState, Variant &variant) {
+bool PopVariant(lua_State *pLuaState, Variant &variant, int32_t idx, bool pop) {
 	variant.Reset();
-	int32_t type = lua_type(pLuaState, -1);
+	int32_t type = lua_type(pLuaState, idx);
 	switch (type) {
 		case LUA_TNIL:
 		{
 			variant.Reset();
-			lua_pop(pLuaState, 1);
+			if (pop)
+				lua_remove(pLuaState, idx);
 			break;
 		}
 		case LUA_TBOOLEAN:
 		{
-			variant = (bool)(lua_toboolean(pLuaState, -1) != 0);
-			lua_pop(pLuaState, 1);
+			variant = (bool)(lua_toboolean(pLuaState, idx) != 0);
+			if (pop)
+				lua_remove(pLuaState, idx);
 			break;
 		}
 		case LUA_TNUMBER:
 		{
-			lua_Number luaNumber = lua_tonumber(pLuaState, -1);
-			lua_pop(pLuaState, 1);
+			lua_Number luaNumber = lua_tonumber(pLuaState, idx);
+			if (pop)
+				lua_remove(pLuaState, idx);
 			variant = (double) luaNumber;
 			variant.Compact();
 
@@ -68,8 +72,9 @@ bool PopVariant(lua_State *pLuaState, Variant &variant) {
 		}
 		case LUA_TSTRING:
 		{
-			string nullable = lua_tostring(pLuaState, -1);
-			lua_pop(pLuaState, 1);
+			string nullable = lua_tostring(pLuaState, idx);
+			if (pop)
+				lua_remove(pLuaState, idx);
 			if (nullable == VAR_NULL_VALUE)
 				variant = Variant();
 			else
@@ -79,19 +84,16 @@ bool PopVariant(lua_State *pLuaState, Variant &variant) {
 		case LUA_TTABLE:
 		{
 			lua_pushnil(pLuaState);
-			while (lua_next(pLuaState, -2) != 0) {
+			while (lua_next(pLuaState, idx) != 0) {
 				Variant value;
-				if (!PopVariant(pLuaState, value))
+				if (!PopVariant(pLuaState, value, lua_gettop(pLuaState)))
 					return false;
 
 				Variant key;
-				if (!PopVariant(pLuaState, key))
+				if (!PopVariant(pLuaState, key, lua_gettop(pLuaState), false))
 					return false;
 
 				variant[key] = value;
-
-				if (!PushVariant(pLuaState, key))
-					return false;
 			}
 
 			bool isArray = true;
@@ -109,7 +111,8 @@ bool PopVariant(lua_State *pLuaState, Variant &variant) {
 			} else {
 				variant.ConvertToTimestamp();
 			}
-			lua_pop(pLuaState, 1);
+			if (pop)
+				lua_remove(pLuaState, idx);
 			break;
 		}
 		default:
@@ -118,6 +121,20 @@ bool PopVariant(lua_State *pLuaState, Variant &variant) {
 			return false;
 			break;
 		}
+	}
+	return true;
+}
+
+bool PopStack(lua_State *pLuaState, Variant &variant) {
+	variant.Reset();
+	variant.IsArray(true);
+	while (lua_gettop(pLuaState) > 0) {
+		Variant temp;
+		if (!PopVariant(pLuaState, temp)) {
+			FATAL("Unable to pop variant");
+			return false;
+		}
+		variant.PushToArray(temp);
 	}
 	return true;
 }
@@ -311,9 +328,10 @@ bool PushVariant(lua_State *pLuaState,
 }
 
 bool EvalLuaExpression(lua_State *pLuaState, string expression) {
-	luaL_loadstring(pLuaState, STR("return " + expression));
-	if (lua_pcall(pLuaState, 0, 1, 0) != 0) {
-		FATAL("Unable to evaluate `%s`", STR(expression));
+	if (luaL_dostring(pLuaState, STR("return " + expression)) != 0) {
+		Variant v;
+		PopStack(pLuaState, v);
+		FATAL("Unable to evaluate expression %s\n%s", STR(expression), STR(v.ToString()));
 		return false;
 	}
 	return true;
@@ -328,7 +346,7 @@ bool LoadLuaScriptFromFile(string file, lua_State *pLuaState, bool pCall) {
 	}
 
 	if (pCall) {
-		if (lua_pcall(pLuaState, 0, 0, 0) != 0) {
+		if (lua_pcall(pLuaState, 0, LUA_MULTRET, 0) != 0) {
 			FATAL("Error parsing file %s: %s",
 					STR(file),
 					lua_tostring(pLuaState, -1));
@@ -380,7 +398,7 @@ bool ReadLuaState(lua_State *pLuaState, string node, Variant &configuration) {
 }
 
 bool ReadLuaFile(string fileName, string section, Variant &configuration) {
-	lua_State *pLuaState = CreateLuaState();
+	lua_State *pLuaState = CreateLuaState(NULL);
 
 	if (!LoadLuaScriptFromFile(fileName, pLuaState)) {
 		DestroyLuaState(pLuaState);
@@ -393,7 +411,7 @@ bool ReadLuaFile(string fileName, string section, Variant &configuration) {
 }
 
 bool ReadLuaString(string script, string section, Variant &configuration) {
-	lua_State *pLuaState = CreateLuaState();
+	lua_State *pLuaState = CreateLuaState(NULL);
 
 	if (!LoadLuaScriptFromString(script, pLuaState)) {
 		DestroyLuaState(pLuaState);

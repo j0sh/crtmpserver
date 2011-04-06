@@ -64,55 +64,55 @@ Variant PrepareTestsSuite() {
 	Variant functionCall;
 	functionCall[VM_TEST_DESCRIPTION] = "Testing function call";
 	functionCall[VM_TEST_TYPE] = VM_TEST_TYPE_ECHO_FUNCTION_CALL;
-	Variant params;
+	Variant complexParameter;
 
-	params["00_bool_true"] = (bool)true;
-	params["01_bool_false"] = (bool)false;
+	complexParameter["00_bool_true"] = (bool)true;
+	complexParameter["01_bool_false"] = (bool)false;
 
-	params["02_uint8_t_max"] = (uint8_t) UINT8_MAX;
-	params["03_int8_t_max"] = (int8_t) INT8_MAX;
-	params["04_int8_t_min"] = (int8_t) INT8_MIN;
+	complexParameter["02_uint8_t_max"] = (uint8_t) UINT8_MAX;
+	complexParameter["03_int8_t_max"] = (int8_t) INT8_MAX;
+	complexParameter["04_int8_t_min"] = (int8_t) INT8_MIN;
 
-	params["05_uint16_t_max"] = (uint16_t) UINT16_MAX;
-	params["06_int16_t_max"] = (int16_t) INT16_MAX;
-	params["07_int16_t_min"] = (int16_t) INT16_MIN;
+	complexParameter["05_uint16_t_max"] = (uint16_t) UINT16_MAX;
+	complexParameter["06_int16_t_max"] = (int16_t) INT16_MAX;
+	complexParameter["07_int16_t_min"] = (int16_t) INT16_MIN;
 
-	params["08_uint32_t_max"] = (uint32_t) UINT32_MAX;
-	params["09_int32_t_max"] = (int32_t) INT32_MAX;
-	params["10_int32_t_min"] = (int32_t) INT32_MIN;
+	complexParameter["08_uint32_t_max"] = (uint32_t) UINT32_MAX;
+	complexParameter["09_int32_t_max"] = (int32_t) INT32_MAX;
+	complexParameter["10_int32_t_min"] = (int32_t) INT32_MIN;
 
-	params["11_uint64_t_max"] = (uint64_t) UINT64_MAX;
-	params["12_int64_t_max"] = (int64_t) INT64_MAX;
-	params["13_int64_t_min"] = (int64_t) INT64_MIN;
+	complexParameter["11_uint64_t_max"] = (uint64_t) UINT64_MAX;
+	complexParameter["12_int64_t_max"] = (int64_t) INT64_MAX;
+	complexParameter["13_int64_t_min"] = (int64_t) INT64_MIN;
 
-	params["14_double"] = 123.5;
+	complexParameter["14_double"] = 123.5;
 
-	params["15_string"] = "some string...";
+	complexParameter["15_string"] = "some string...";
 
-	params["16_undefined"] = Variant();
-	params["16_undefined"].Reset(true);
+	complexParameter["16_undefined"] = Variant();
+	complexParameter["16_undefined"].Reset(true);
 
-	params["17_null"] = Variant();
+	complexParameter["17_null"] = Variant();
 
-	params["18_date"] = Variant(1979, 10, 31);
+	complexParameter["18_date"] = Variant(1979, 10, 31);
 
-	params["19_time"] = Variant(13, 14, 15, 0);
+	complexParameter["19_time"] = Variant(13, 14, 15, 0);
 
-	params["20_timestamp"] = Variant(1979, 10, 31, 13, 14, 15, 0);
+	complexParameter["20_timestamp"] = Variant(1979, 10, 31, 13, 14, 15, 0);
 
-	params["21_arraySample"].PushToArray("one");
-	params["21_arraySample"].PushToArray((uint32_t) 1);
-	params["21_arraySample"].PushToArray((uint32_t) 127);
-	params["21_arraySample"].PushToArray((uint32_t) 128);
-	params["21_arraySample"].PushToArray((uint32_t) 32767);
-	params["21_arraySample"].PushToArray((uint32_t) 32768);
-	params["21_arraySample"].PushToArray((uint32_t) 0x7fffffffUL);
-	params["21_arraySample"].PushToArray((uint32_t) 0x80000000UL);
-	params["21_arraySample"].PushToArray(3.2);
+	complexParameter["21_arraySample"].PushToArray("one");
+	complexParameter["21_arraySample"].PushToArray((uint32_t) 1);
+	complexParameter["21_arraySample"].PushToArray((uint32_t) 127);
+	complexParameter["21_arraySample"].PushToArray((uint32_t) 128);
+	complexParameter["21_arraySample"].PushToArray((uint32_t) 32767);
+	complexParameter["21_arraySample"].PushToArray((uint32_t) 32768);
+	complexParameter["21_arraySample"].PushToArray((uint32_t) 0x7fffffffUL);
+	complexParameter["21_arraySample"].PushToArray((uint32_t) 0x80000000UL);
+	complexParameter["21_arraySample"].PushToArray(3.2);
 
-	params["22_sampleInnerMap"] = Variant(params);
+	complexParameter["22_sampleInnerMap"] = Variant(complexParameter);
 
-	functionCall[VM_TEST_FUNCTION_PARAMETERS] = params;
+	functionCall[VM_TEST_FUNCTION_PARAMETERS].PushToArray(complexParameter);
 	result.PushToArray(functionCall);
 
 	result.Compact();
@@ -156,14 +156,14 @@ bool RunTestEchoFunctionCall(BaseVM *pVM, Variant &test) {
 
 
 	//2. Do the call
-	if (!pVM->Call(VM_TEST_TYPE_ECHO_FUNCTION_CALL, input[VM_TEST_FUNCTION_PARAMETERS], result)) {
+	if (!pVM->CallWithParams(VM_TEST_TYPE_ECHO_FUNCTION_CALL, input[VM_TEST_FUNCTION_PARAMETERS], result)) {
 		FATAL("Calling %s failed", VM_TEST_TYPE_ECHO_FUNCTION_CALL);
 		return false;
 	}
 
 	//3. Prepare the wanted/got data
 	Variant wantedVariant;
-	wantedVariant.PushToArray(input[VM_TEST_FUNCTION_PARAMETERS]);
+	wantedVariant.PushToArray(input[VM_TEST_FUNCTION_PARAMETERS][(uint32_t) 0]);
 	wantedVariant[(uint32_t) 0]["____THIS_IS_ADDED____"] = "____THIS_IS_ADDED____";
 	string wanted = "";
 	if (!wantedVariant.SerializeToBin(wanted)) {
@@ -191,7 +191,7 @@ bool RunTestEchoFunctionCall(BaseVM *pVM, Variant &test) {
 			}
 		}
 		FINEST("w:\n%s\ng:\n%s", STR(wantedBuffer), STR(gotBuffer));
-		FATAL("wnated:\n%s", STR(wantedVariant.ToString()));
+		FATAL("wanted:\n%s", STR(wantedVariant.ToString()));
 		FATAL("got:\n%s", STR(result.ToString()));
 
 		return false;

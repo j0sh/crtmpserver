@@ -58,6 +58,7 @@
             <Elem>HAS_PROTOCOL_TS</Elem>
             <Elem>HAS_LUA</Elem>
             <Elem>HAS_PROTOCOL_RTMFP</Elem>
+            <Elem>HAS_PROTOCOL_LIVEFLV</Elem>
           </preprocessorList>
         </ccTool>
         <linkerTool>

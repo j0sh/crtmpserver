@@ -328,8 +328,8 @@ bool BaseHTTPProtocol::ParseHeaders(IOBuffer& buffer) {
 		_chunkedContent = false;
 		_lastChunk = false;
 	} else if (_headers[HTTP_HEADERS].HasKey(HTTP_HEADERS_TRANSFER_ENCODING, false)) {
-		if (lowercase(_headers[HTTP_HEADERS].GetValue(HTTP_HEADERS_TRANSFER_ENCODING, false)) !=
-				lowercase(HTTP_HEADERS_TRANSFER_ENCODING_CHUNKED)) {
+		if (lowerCase(_headers[HTTP_HEADERS].GetValue(HTTP_HEADERS_TRANSFER_ENCODING, false)) !=
+				lowerCase(HTTP_HEADERS_TRANSFER_ENCODING_CHUNKED)) {
 			FATAL("The only supported %s is %s",
 					HTTP_HEADERS_TRANSFER_ENCODING,
 					HTTP_HEADERS_TRANSFER_ENCODING_CHUNKED);

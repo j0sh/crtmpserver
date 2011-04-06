@@ -55,7 +55,7 @@ bool parseURI(string stringUri, URI &uri) {
 	if (components[0][components[0].size() - 1] != ':')
 		return false;
 
-	uri.scheme = lowercase(components[0].substr(0, components[0].size() - 1));
+	uri.scheme = lowerCase(components[0].substr(0, components[0].size() - 1));
 	LOG_URI_SPLIT("uri.scheme: %s", STR(uri.scheme));
 
 
@@ -245,7 +245,7 @@ bool URI::FromString(string stringUri, bool resolveHost, URI &uri) {
 	}
 
 	if (resolveHost) {
-		uri.ip = GetHostByName(uri.host);
+		uri.ip = getHostByName(uri.host);
 		if (uri.ip == "") {
 			FATAL("Unable to resolve host: %s", STR(uri.host));
 			uri.Reset();

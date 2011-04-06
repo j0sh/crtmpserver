@@ -46,6 +46,7 @@
             <Elem>OSX</Elem>
             <Elem>NET_KQUEUE</Elem>
             <Elem>HAS_PROTOCOL_RTMP</Elem>
+            <Elem>HAS_PROTOCOL_HTTP</Elem>
           </preprocessorList>
         </ccTool>
         <linkerTool>

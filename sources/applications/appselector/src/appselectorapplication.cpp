@@ -45,12 +45,17 @@ AppSelectorApplication::~AppSelectorApplication() {
 #ifdef HAS_PROTOCOL_RTMP
 	UnRegisterAppProtocolHandler(PT_INBOUND_RTMP);
 	UnRegisterAppProtocolHandler(PT_OUTBOUND_RTMP);
-	delete _pRTMPHandler;
+	if (_pRTMPHandler != NULL) {
+		delete _pRTMPHandler;
+		_pRTMPHandler = NULL;
+	}
 #endif /* HAS_PROTOCOL_RTMP */
 #ifdef HAS_PROTOCOL_HTTP
 	UnRegisterAppProtocolHandler(PT_INBOUND_HTTP);
 	UnRegisterAppProtocolHandler(PT_OUTBOUND_HTTP);
-	delete _pHTTPHandler;
+	if (_pHTTPHandler != NULL) {
+		delete _pHTTPHandler;
+		_pHTTPHandler = NULL;
+	}
 #endif /* HAS_PROTOCOL_HTTP */
 }
-

@@ -134,36 +134,38 @@ typedef struct _select_event {
 } select_event;
 
 string format(string fmt, ...);
-string vformat(string fmt, va_list args);
+string vFormat(string fmt, va_list args);
 void replace(string &target, string search, string replacement);
 bool fileExists(string path);
-string lowercase(string value);
-string uppercase(string value);
-string changecase(string &value, bool lowerCase);
+string lowerCase(string value);
+string upperCase(string value);
+string changeCase(string &value, bool lowerCase);
 string tagToString(uint64_t tag);
-bool SetFdNonBlock(int32_t fd);
-bool SetFdNoSIGPIPE(int32_t fd);
-bool SetFdKeepAlive(int32_t fd);
-bool SetFdNoNagle(int32_t fd);
-bool SetFdReuseAddress(int32_t fd);
-bool SetFdOptions(int32_t fd);
-bool DeleteFile(string path);
-string GetHostByName(string name);
+bool setFdNonBlock(int32_t fd);
+bool setFdNoSIGPIPE(int32_t fd);
+bool setFdKeepAlive(int32_t fd);
+bool setFdNoNagle(int32_t fd);
+bool setFdReuseAddress(int32_t fd);
+bool setFdOptions(int32_t fd);
+bool deleteFile(string path);
+string getHostByName(string name);
 bool isNumeric(string value);
 void split(string str, string separator, vector<string> &result);
 uint64_t getTagMask(uint64_t tag);
 string generateRandomString(uint32_t length);
-void ltrim(string &value);
-void rtrim(string &value);
+void lTrim(string &value);
+void rTrim(string &value);
 void trim(string &value);
 map<string, string> mapping(string str, string separator1, string separator2, bool trimStrings);
 void splitFileName(string fileName, string &name, string &extension, char separator = '.');
-double GetFileModificationDate(string path);
+double getFileModificationDate(string path);
 string normalizePath(string base, string file);
-bool ListFolder(string root, string path, vector<string> &result);
-bool MoveFile(string src, string dst);
-void InstallQuitSignal(SignalFnc pQuitSignalFnc);
-void InstallConfRereadSignal(SignalFnc pConfRereadSignalFnc);
+bool listFolder(string path, vector<string> &result,
+		bool normalizeAllPaths = true, bool includeFolders = false,
+		bool recursive = true);
+bool moveFile(string src, string dst);
+void installQuitSignal(SignalFnc pQuitSignalFnc);
+void installConfRereadSignal(SignalFnc pConfRereadSignalFnc);
 time_t timegm(struct tm *tm);
 
 #endif /* _ANDROIDPLATFORM_H */

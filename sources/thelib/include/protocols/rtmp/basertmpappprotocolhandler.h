@@ -117,7 +117,13 @@ public:
 	 * This will generate all the meta and seek files inside the mediaFolder
 	 * */
 	void GenerateMetaFiles();
-protected:
+
+	//TODO: Commenting ou the protected section bellow is a quite nasty hack
+	//It is done to support virtual machines and out-of-hierarchy calls
+	//for the base class. This should be definitely removed and re-factored
+	//properly. I will leave it here for the time being
+	//protected:
+
 	/*
 	 * The following list of functions are called when the corresponding
 	 * message is received. All of them have the same parameters

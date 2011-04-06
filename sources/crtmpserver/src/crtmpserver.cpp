@@ -135,13 +135,13 @@ bool Initialize() {
 	string extension;
 	splitFileName(configFilePath, fileName, extension);
 
-	if (lowercase(extension) == "xml") {
+	if (lowerCase(extension) == "xml") {
 		if (!gRs.pConfigFile->LoadXmlFile(configFilePath,
 				(bool)gRs.commandLine["arguments"]["--daemon"])) {
 			FATAL("Unable to load file %s", STR(configFilePath));
 			return false;
 		}
-	} else if (lowercase(extension) == "lua") {
+	} else if (lowerCase(extension) == "lua") {
 #ifdef HAS_LUA
 		if (!gRs.pConfigFile->LoadLuaFile(configFilePath,
 				(bool)gRs.commandLine["arguments"]["--daemon"])) {
@@ -214,10 +214,10 @@ bool Initialize() {
 	}
 
 	INFO("Install the quit signal");
-	InstallQuitSignal(QuitSignalHandler);
+	installQuitSignal(QuitSignalHandler);
 
 	INFO("Install the conf re-read signal");
-	InstallConfRereadSignal(ConfRereadSignalHandler);
+	installConfRereadSignal(ConfRereadSignalHandler);
 
 	return true;
 }

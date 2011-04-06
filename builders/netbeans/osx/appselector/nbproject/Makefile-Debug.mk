@@ -19,7 +19,6 @@ CCC=g++
 CXX=g++
 FC=gfortran
 AS=as
-PROC=proc
 
 # Macros
 CND_PLATFORM=GNU-MacOSX
@@ -72,22 +71,22 @@ LDLIBSOPTIONS=-L../common/dist/Debug/GNU-MacOSX -lcommon -L../thelib/../Debug/GN
 ${OBJECTDIR}/_ext/1538082400/rtmpappprotocolhandler.o: ../../../../sources/applications/appselector/src/rtmpappprotocolhandler.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1538082400
 	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTMP -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/appselector/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1538082400/rtmpappprotocolhandler.o ../../../../sources/applications/appselector/src/rtmpappprotocolhandler.cpp
+	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/appselector/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1538082400/rtmpappprotocolhandler.o ../../../../sources/applications/appselector/src/rtmpappprotocolhandler.cpp
 
 ${OBJECTDIR}/_ext/1538082400/appselector.o: ../../../../sources/applications/appselector/src/appselector.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1538082400
 	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTMP -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/appselector/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1538082400/appselector.o ../../../../sources/applications/appselector/src/appselector.cpp
+	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/appselector/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1538082400/appselector.o ../../../../sources/applications/appselector/src/appselector.cpp
 
 ${OBJECTDIR}/_ext/1538082400/appselectorapplication.o: ../../../../sources/applications/appselector/src/appselectorapplication.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1538082400
 	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTMP -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/appselector/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1538082400/appselectorapplication.o ../../../../sources/applications/appselector/src/appselectorapplication.cpp
+	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/appselector/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1538082400/appselectorapplication.o ../../../../sources/applications/appselector/src/appselectorapplication.cpp
 
 ${OBJECTDIR}/_ext/1538082400/httpappprotocolhandler.o: ../../../../sources/applications/appselector/src/httpappprotocolhandler.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1538082400
 	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTMP -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/appselector/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1538082400/httpappprotocolhandler.o ../../../../sources/applications/appselector/src/httpappprotocolhandler.cpp
+	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/appselector/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1538082400/httpappprotocolhandler.o ../../../../sources/applications/appselector/src/httpappprotocolhandler.cpp
 
 # Subprojects
 .build-subprojects:

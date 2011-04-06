@@ -19,7 +19,6 @@ CCC=g++
 CXX=g++
 FC=gfortran
 AS=as
-PROC=proc
 
 # Macros
 CND_PLATFORM=GNU-MacOSX
@@ -68,12 +67,12 @@ ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libvm.dylib: ${OBJECTFILES}
 ${OBJECTDIR}/_ext/910696451/basevm.o: ../../../../sources/vm/src/basevm.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/910696451
 	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DVM_LUA -I../../../../sources/common/include -I../../../../sources/vm/include -I../../../../3rdparty/v8/include -I/opt/local/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/910696451/basevm.o ../../../../sources/vm/src/basevm.cpp
+	$(COMPILE.cc) -g -DOSX -DVM_LUA -DHAS_LUA -I../../../../sources/common/include -I../../../../sources/vm/include -I../../../../3rdparty/v8/include -I/opt/local/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/910696451/basevm.o ../../../../sources/vm/src/basevm.cpp
 
 ${OBJECTDIR}/_ext/491298005/basevmlua.o: ../../../../sources/vm/src/vmlua/basevmlua.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/491298005
 	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DVM_LUA -I../../../../sources/common/include -I../../../../sources/vm/include -I../../../../3rdparty/v8/include -I/opt/local/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/491298005/basevmlua.o ../../../../sources/vm/src/vmlua/basevmlua.cpp
+	$(COMPILE.cc) -g -DOSX -DVM_LUA -DHAS_LUA -I../../../../sources/common/include -I../../../../sources/vm/include -I../../../../3rdparty/v8/include -I/opt/local/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/491298005/basevmlua.o ../../../../sources/vm/src/vmlua/basevmlua.cpp
 
 # Subprojects
 .build-subprojects:

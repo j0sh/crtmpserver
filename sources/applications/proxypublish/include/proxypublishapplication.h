@@ -44,11 +44,11 @@ namespace app_proxypublish {
 		RTMPAppProtocolHandler *_pRTMPHandler;
 #endif /* HAS_PROTOCOL_RTMP */
 #ifdef HAS_PROTOCOL_LIVEFLV
-		LiveFLVAppProtocolHandler *_pLiveFLV;
+		LiveFLVAppProtocolHandler *_pLiveFLVHandler;
 #endif /* HAS_PROTOCOL_LIVEFLV */
 #ifdef HAS_PROTOCOL_RTP
-		RTPAppProtocolHandler *_pRTP;
-		RTSPAppProtocolHandler *_pRTSP;
+		RTPAppProtocolHandler *_pRTPHandler;
+		RTSPAppProtocolHandler *_pRTSPHandler;
 #endif /* HAS_PROTOCOL_RTP */
 		map<uint32_t, uint32_t> _protocolsToStream;
 		map<uint32_t, map<uint32_t, uint32_t> >_streamToProtocols;

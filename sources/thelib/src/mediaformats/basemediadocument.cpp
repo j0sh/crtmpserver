@@ -96,8 +96,8 @@ bool BaseMediaDocument::Process() {
 				(double) _mediaFile.Size() / (double) totalSeconds / 1024.00 * 8.0);
 	}
 
-	MoveFile(_seekFilePath + ".tmp", _seekFilePath);
-	MoveFile(_metaFilePath + ".tmp", _metaFilePath);
+	moveFile(_seekFilePath + ".tmp", _seekFilePath);
+	moveFile(_metaFilePath + ".tmp", _metaFilePath);
 
 	chmod(STR(_seekFilePath), S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
 	chmod(STR(_metaFilePath), S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);

@@ -35,8 +35,8 @@ private:
 	//genericfunctionality.h
 	void test_Endianess();
 	void test_isNumeric();
-	void test_lowercase();
-	void test_uppercase();
+	void test_lowerCase();
+	void test_upperCase();
 	void test_ltrim();
 	void test_rtrim();
 	void test_trim();
@@ -53,7 +53,7 @@ private:
 	void test_unb64();
 	void test_unhex();
 	void test_ParseURL();
-	void test_SetFdOptions();
+	void test_setFdOptions();
 };
 
 #endif /* __COMMONTESTSSUITE_H */

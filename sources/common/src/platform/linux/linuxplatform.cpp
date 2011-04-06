@@ -36,12 +36,12 @@ string format(string fmt, ...) {
 	string result = "";
 	va_list arguments;
 	va_start(arguments, fmt);
-	result = vformat(fmt, arguments);
+	result = vFormat(fmt, arguments);
 	va_end(arguments);
 	return result;
 }
 
-string vformat(string fmt, va_list args) {
+string vFormat(string fmt, va_list args) {
 	char *pBuffer = NULL;
 	if (vasprintf(&pBuffer, STR(fmt), args) == -1) {
 		assert(false);
@@ -74,15 +74,15 @@ bool fileExists(string path) {
 	}
 }
 
-string lowercase(string value) {
-	return changecase(value, true);
+string lowerCase(string value) {
+	return changeCase(value, true);
 }
 
-string uppercase(string value) {
-	return changecase(value, false);
+string upperCase(string value) {
+	return changeCase(value, false);
 }
 
-string changecase(string &value, bool lowerCase) {
+string changeCase(string &value, bool lowerCase) {
 	string result = "";
 	for (string::size_type i = 0; i < value.length(); i++) {
 		if (lowerCase)
@@ -104,7 +104,7 @@ string tagToString(uint64_t tag) {
 	return result;
 }
 
-bool SetFdNonBlock(int32_t fd) {
+bool setFdNonBlock(int32_t fd) {
 	int32_t arg;
 	if ((arg = fcntl(fd, F_GETFL, NULL)) < 0) {
 		int32_t err = errno;
@@ -121,13 +121,13 @@ bool SetFdNonBlock(int32_t fd) {
 	return true;
 }
 
-bool SetFdNoSIGPIPE(int32_t fd) {
+bool setFdNoSIGPIPE(int32_t fd) {
 	//This is not needed because we use MSG_NOSIGNAL when using
 	//send/write functions
 	return true;
 }
 
-bool SetFdKeepAlive(int32_t fd) {
+bool setFdKeepAlive(int32_t fd) {
 	int32_t one = 1;
 	if (setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE,
 			(const char*) & one, sizeof (one)) != 0) {
@@ -137,7 +137,7 @@ bool SetFdKeepAlive(int32_t fd) {
 	return true;
 }
 
-bool SetFdNoNagle(int32_t fd) {
+bool setFdNoNagle(int32_t fd) {
 	int32_t one = 1;
 	if (setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, (char *) & one, sizeof (one)) != 0) {
 		FATAL("Unable to disable Nagle");
@@ -146,7 +146,7 @@ bool SetFdNoNagle(int32_t fd) {
 	return true;
 }
 
-bool SetFdReuseAddress(int32_t fd) {
+bool setFdReuseAddress(int32_t fd) {
 	int32_t one = 1;
 	if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (char *) & one, sizeof (one)) != 0) {
 		FATAL("Unable to reuse address");
@@ -161,28 +161,28 @@ bool SetFdReuseAddress(int32_t fd) {
 	return true;
 }
 
-bool SetFdOptions(int32_t fd) {
-	if (!SetFdNonBlock(fd)) {
+bool setFdOptions(int32_t fd) {
+	if (!setFdNonBlock(fd)) {
 		FATAL("Unable to set non block");
 		return false;
 	}
 
-	if (!SetFdNoSIGPIPE(fd)) {
+	if (!setFdNoSIGPIPE(fd)) {
 		FATAL("Unable to set no SIGPIPE");
 		return false;
 	}
 
-	if (!SetFdKeepAlive(fd)) {
+	if (!setFdKeepAlive(fd)) {
 		FATAL("Unable to set keep alive");
 		return false;
 	}
 
-	if (!SetFdNoNagle(fd)) {
+	if (!setFdNoNagle(fd)) {
 		FATAL("Unable to disable Nagle algorithm");
 		return false;
 	}
 
-	if (!SetFdReuseAddress(fd)) {
+	if (!setFdReuseAddress(fd)) {
 		FATAL("Unable to enable reuse address");
 		return false;
 	}
@@ -190,7 +190,7 @@ bool SetFdOptions(int32_t fd) {
 	return true;
 }
 
-bool DeleteFile(string path) {
+bool deleteFile(string path) {
 	if (remove(STR(path)) != 0) {
 		FATAL("Unable to delete file `%s`", STR(path));
 		return false;
@@ -198,7 +198,7 @@ bool DeleteFile(string path) {
 	return true;
 }
 
-string GetHostByName(string name) {
+string getHostByName(string name) {
 	struct hostent *pHostEnt = gethostbyname(STR(name));
 	if (pHostEnt == NULL)
 		return "";
@@ -247,7 +247,7 @@ string generateRandomString(uint32_t length) {
 	return result;
 }
 
-void ltrim(string &value) {
+void lTrim(string &value) {
 	string::size_type i = 0;
 	for (i = 0; i < value.length(); i++) {
 		if (value[i] != ' ' &&
@@ -259,7 +259,7 @@ void ltrim(string &value) {
 	value = value.substr(i);
 }
 
-void rtrim(string &value) {
+void rTrim(string &value) {
 	int32_t i = 0;
 	for (i = (int32_t) value.length() - 1; i >= 0; i--) {
 		if (value[i] != ' ' &&
@@ -272,8 +272,8 @@ void rtrim(string &value) {
 }
 
 void trim(string &value) {
-	ltrim(value);
-	rtrim(value);
+	lTrim(value);
+	rTrim(value);
 }
 
 map<string, string> mapping(string str, string separator1, string separator2, bool trimStrings) {
@@ -314,7 +314,7 @@ void splitFileName(string fileName, string &name, string & extension, char separ
 	extension = fileName.substr(dotPosition + 1);
 }
 
-double GetFileModificationDate(string path) {
+double getFileModificationDate(string path) {
 	struct stat s;
 	if (stat(STR(path), &s) != 0) {
 		FATAL("Unable to stat file %s", STR(path));
@@ -356,11 +356,13 @@ string normalizePath(string base, string file) {
 	}
 }
 
-bool ListFolder(string root, string path, vector<string> &result) {
+bool listFolder(string path, vector<string> &result, bool normalizeAllPaths,
+		bool includeFolders, bool recursive) {
 	if (path == "")
-		return true;
-	if (path[path.size() - 1] == '/')
-		path = path.substr(0, path.size() - 1);
+		path = ".";
+	if (path[path.size() - 1] != PATH_SEPARATOR)
+		path += PATH_SEPARATOR;
+
 	DIR *pDir = NULL;
 	pDir = opendir(STR(path));
 	if (pDir == NULL) {
@@ -369,30 +371,40 @@ bool ListFolder(string root, string path, vector<string> &result) {
 		return false;
 	}
 
-	struct dirent *pDirent;
-	struct stat entryStat;
-	memset(&entryStat, 0, sizeof (entryStat));
+	struct dirent *pDirent = NULL;
 	while ((pDirent = readdir(pDir)) != NULL) {
 		string entry = pDirent->d_name;
-		if (entry == "." || entry == "..") {
+		if ((entry == ".")
+				|| (entry == "..")) {
 			continue;
 		}
-		entry = path + "/" + entry;
-		if (stat(STR(entry), &entryStat) != 0) {
-			FINEST("%d %s", errno, strerror(errno));
-			continue;
+		if (normalizeAllPaths) {
+			entry = normalizePath(path, entry);
+		} else {
+			entry = path + entry;
 		}
-		ADD_VECTOR_END(result, entry.substr(root.size(), -1));
-		if (entryStat.st_mode & S_IFDIR) {
-			ListFolder(root, entry, result);
+		if (entry == "")
+			continue;
+
+		if (pDirent->d_type == DT_DIR) {
+			if (includeFolders) {
+				ADD_VECTOR_END(result, entry);
+			}
+			if (recursive) {
+				if (!listFolder(entry, result, normalizeAllPaths, includeFolders, recursive)) {
+					FATAL("Unable to list folder");
+					return false;
+				}
+			}
+		} else {
+			ADD_VECTOR_END(result, entry);
 		}
 	}
 
-	closedir(pDir);
 	return true;
 }
 
-bool MoveFile(string src, string dst) {
+bool moveFile(string src, string dst) {
 	if (rename(STR(src), STR(dst)) != 0) {
 		FATAL("Unable to move file from `%s` to `%s`",
 				STR(src), STR(dst));
@@ -401,16 +413,16 @@ bool MoveFile(string src, string dst) {
 	return true;
 }
 
-void SignalHandler(int sig) {
+void signalHandler(int sig) {
 	if (!MAP_HAS1(_signalHandlers, sig))
 		return;
 	_signalHandlers[sig]();
 }
 
-void InstallSignal(int sig, SignalFnc pSignalFnc) {
+void installSignal(int sig, SignalFnc pSignalFnc) {
 	_signalHandlers[sig] = pSignalFnc;
 	struct sigaction action;
-	action.sa_handler = SignalHandler;
+	action.sa_handler = signalHandler;
 	action.sa_flags = 0;
 	if (sigemptyset(&action.sa_mask) != 0) {
 		ASSERT("Unable to install the quit signal");
@@ -422,12 +434,12 @@ void InstallSignal(int sig, SignalFnc pSignalFnc) {
 	}
 }
 
-void InstallQuitSignal(SignalFnc pQuitSignalFnc) {
-	InstallSignal(SIGINT, pQuitSignalFnc);
+void installQuitSignal(SignalFnc pQuitSignalFnc) {
+	installSignal(SIGINT, pQuitSignalFnc);
 }
 
-void InstallConfRereadSignal(SignalFnc pConfRereadSignalFnc) {
-	InstallSignal(SIGHUP, pConfRereadSignalFnc);
+void installConfRereadSignal(SignalFnc pConfRereadSignalFnc) {
+	installSignal(SIGHUP, pConfRereadSignalFnc);
 }
 
 #endif /* LINUX */

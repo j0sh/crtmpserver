@@ -28,10 +28,11 @@ extern "C" {
 #include "platform/platform.h"
 #include "utils/misc/variant.h"
 
-DLLEXP lua_State *CreateLuaState();
+DLLEXP lua_State *CreateLuaState(void *pOpaque);
 DLLEXP void DestroyLuaState(lua_State *pLuaState);
 
-DLLEXP bool PopVariant(lua_State *pLuaState, Variant &variant);
+DLLEXP bool PopVariant(lua_State *pLuaState, Variant &variant, int32_t idx = 1, bool pop = true);
+DLLEXP bool PopStack(lua_State *pLuaState, Variant &variant);
 DLLEXP bool PushVariant(lua_State *pLuaState, Variant &variant,
 		bool substituteNullables = false);
 DLLEXP bool EvalLuaExpression(lua_State *pLuaState, string expression);

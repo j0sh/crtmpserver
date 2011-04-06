@@ -1,21 +1,21 @@
 /* 
-*  Copyright (c) 2010,
-*  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
-*  
-*  This file is part of crtmpserver.
-*  crtmpserver is free software: you can redistribute it and/or modify
-*  it under the terms of the GNU General Public License as published by
-*  the Free Software Foundation, either version 3 of the License, or
-*  (at your option) any later version.
-*  
-*  crtmpserver is distributed in the hope that it will be useful,
-*  but WITHOUT ANY WARRANTY; without even the implied warranty of
-*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*  GNU General Public License for more details.
-*  
-*  You should have received a copy of the GNU General Public License
-*  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ *  Copyright (c) 2010,
+ *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
+ *  
+ *  This file is part of crtmpserver.
+ *  crtmpserver is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *  
+ *  crtmpserver is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *  
+ *  You should have received a copy of the GNU General Public License
+ *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 
 #ifdef HAS_PROTOCOL_RTMP
@@ -23,26 +23,26 @@
 #define	_AMFTYPES_H
 
 /*AMF0_P_Number = 0x00,
-    AMF0_P_Boolean = 0x01,
-    AMF0_P_String = 0x02,
-    AMF0_P_Object = 0x03,
-    AMF0_P_MovieClip = 0x04,
-    AMF0_P_Null = 0x05,
-    AMF0_P_Undefined = 0x06,
-    AMF0_P_Reference = 0x07,
-    AMF0_P_MixedArray = 0x08,
-    AMF0_P_EndOfObject = 0x09,
-    AMF0_P_Array = 0x0a,
-    AMF0_P_Date = 0x0b,
-    AMF0_P_LongString = 0x0c,
-    AMF0_P_Unsupported = 0x0d,
-    AMF0_P_Recordset = 0x0e,
-    AMF0_P_XML = 0x0f,
-    AMF0_P_TypedObject = 0x10,
-    AMF0_P_AMF3_data = 0x11,
-    AMF0_P_NS_Int16 = 0xf0,
-    AMF0_P_NS_Int32 = 0xf1,
-    AMF0_P_uninitialized = 0xff*/
+	AMF0_P_Boolean = 0x01,
+	AMF0_P_String = 0x02,
+	AMF0_P_Object = 0x03,
+	AMF0_P_MovieClip = 0x04,
+	AMF0_P_Null = 0x05,
+	AMF0_P_Undefined = 0x06,
+	AMF0_P_Reference = 0x07,
+	AMF0_P_MixedArray = 0x08,
+	AMF0_P_EndOfObject = 0x09,
+	AMF0_P_Array = 0x0a,
+	AMF0_P_Date = 0x0b,
+	AMF0_P_LongString = 0x0c,
+	AMF0_P_Unsupported = 0x0d,
+	AMF0_P_Recordset = 0x0e,
+	AMF0_P_XML = 0x0f,
+	AMF0_P_TypedObject = 0x10,
+	AMF0_P_AMF3_data = 0x11,
+	AMF0_P_NS_Int16 = 0xf0,
+	AMF0_P_NS_Int32 = 0xf1,
+	AMF0_P_uninitialized = 0xff*/
 
 #define AMF0_NUMBER         0x00
 #define AMF0_BOOLEAN        0x01

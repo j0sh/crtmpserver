@@ -308,7 +308,7 @@ string unhex(string source) {
 		FATAL("Invalid hex string: %s", STR(source));
 		return "";
 	}
-	source = lowercase(source);
+	source = lowerCase(source);
 	string result = "";
 	for (uint32_t i = 0; i < (source.length() / 2); i++) {
 		uint8_t val = 0;

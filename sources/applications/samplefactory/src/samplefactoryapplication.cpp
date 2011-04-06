@@ -45,13 +45,16 @@ SampleFactoryApplication::~SampleFactoryApplication() {
 	}
 #endif /* HAS_PROTOCOL_RTMP */
 
-	ProtocolFactoryManager::UnRegisterProtocolFactory(_pFactory);
-	delete _pFactory;
-
 	UnRegisterAppProtocolHandler(PT_DBACCESS);
 	if (_pDBAccessHandler != NULL) {
 		delete _pDBAccessHandler;
 		_pDBAccessHandler = NULL;
+	}
+
+	if (_pFactory != NULL) {
+		ProtocolFactoryManager::UnRegisterProtocolFactory(_pFactory);
+		delete _pFactory;
+		_pFactory = NULL;
 	}
 }
 

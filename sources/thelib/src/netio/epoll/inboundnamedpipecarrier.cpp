@@ -29,7 +29,7 @@ InboundNamedPipeCarrier::InboundNamedPipeCarrier(int32_t fd, string path)
 }
 
 InboundNamedPipeCarrier::~InboundNamedPipeCarrier() {
-	DeleteFile(_path);
+	deleteFile(_path);
 }
 
 InboundNamedPipeCarrier *InboundNamedPipeCarrier::Create(string path,
@@ -46,7 +46,7 @@ InboundNamedPipeCarrier *InboundNamedPipeCarrier::Create(string path,
 		int err = errno;
 		FATAL("Unable to open named pipe %s:%s (%d)",
 				STR(path), strerror(err), err);
-		DeleteFile(path);
+		deleteFile(path);
 		return NULL;
 	}
 

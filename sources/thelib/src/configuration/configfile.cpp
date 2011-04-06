@@ -780,6 +780,8 @@ bool ConfigFile::ConfigureApplication(Variant &node) {
 			return false;
 		}
 
+		pApplication->GetConfiguration()["id"] = (uint32_t) pApplication->GetId();
+
 		if (!ClientApplicationManager::RegisterApplication(pApplication)) {
 			FATAL("Unable to register application %s", STR(node.ToString()));
 			return false;

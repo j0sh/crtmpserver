@@ -171,7 +171,7 @@ bool InNetRTMPStream::RecordFLV(Variant &meta, bool append) {
 	if (append) {
 		WARN("append not supported yet. File will be overwritten");
 	}
-	DeleteFile(fileName);
+	deleteFile(fileName);
 
 	//3. Create the out file
 	_pOutFileRTMPFLVStream = new OutFileRTMPFLVStream(_pProtocol,

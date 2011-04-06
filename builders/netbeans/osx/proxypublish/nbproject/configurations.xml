@@ -51,6 +51,7 @@
             <Elem>NET_KQUEUE</Elem>
             <Elem>HAS_PROTOCOL_RTMP</Elem>
             <Elem>HAS_PROTOCOL_RTP</Elem>
+            <Elem>HAS_PROTOCOL_LIVEFLV</Elem>
           </preprocessorList>
         </ccTool>
         <linkerTool>

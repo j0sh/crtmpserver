@@ -32,8 +32,8 @@ CommonTestsSuite::~CommonTestsSuite() {
 void CommonTestsSuite::Run() {
 	test_Endianess();
 	test_isNumeric();
-	test_lowercase();
-	test_uppercase();
+	test_lowerCase();
+	test_upperCase();
 	test_ltrim();
 	test_rtrim();
 	test_trim();
@@ -50,7 +50,7 @@ void CommonTestsSuite::Run() {
 	test_unb64();
 	test_unhex();
 	test_ParseURL();
-	test_SetFdOptions();
+	test_setFdOptions();
 }
 
 void CommonTestsSuite::test_Endianess() {
@@ -337,12 +337,12 @@ void CommonTestsSuite::test_isNumeric() {
 	TS_ASSERT(isNumeric("-2147483648"));
 }
 
-void CommonTestsSuite::test_lowercase() {
-	TS_ASSERT(lowercase("TeXt") == "text");
-	TS_ASSERT(lowercase("TEXT") == "text");
-	TS_ASSERT(lowercase("text") == "text");
-	TS_ASSERT(lowercase("") == "");
-	TS_ASSERT(lowercase(" ") == " ");
+void CommonTestsSuite::test_lowerCase() {
+	TS_ASSERT(lowerCase("TeXt") == "text");
+	TS_ASSERT(lowerCase("TEXT") == "text");
+	TS_ASSERT(lowerCase("text") == "text");
+	TS_ASSERT(lowerCase("") == "");
+	TS_ASSERT(lowerCase(" ") == " ");
 	string testString;
 	for (int c = -128; c <= 255; c++)
 		testString += (char) c;
@@ -354,15 +354,15 @@ void CommonTestsSuite::test_lowercase() {
 			lowerString += (char) c;
 	}
 	TS_ASSERT(testString != lowerString);
-	TS_ASSERT(lowercase(testString) == lowerString);
+	TS_ASSERT(lowerCase(testString) == lowerString);
 }
 
-void CommonTestsSuite::test_uppercase() {
-	TS_ASSERT(uppercase("TeXt") == "TEXT");
-	TS_ASSERT(uppercase("TEXT") == "TEXT");
-	TS_ASSERT(uppercase("text") == "TEXT");
-	TS_ASSERT(uppercase("") == "");
-	TS_ASSERT(uppercase(" ") == " ");
+void CommonTestsSuite::test_upperCase() {
+	TS_ASSERT(upperCase("TeXt") == "TEXT");
+	TS_ASSERT(upperCase("TEXT") == "TEXT");
+	TS_ASSERT(upperCase("text") == "TEXT");
+	TS_ASSERT(upperCase("") == "");
+	TS_ASSERT(upperCase(" ") == " ");
 	string testString;
 	for (int c = -128; c <= 255; c++)
 		testString += (char) c;
@@ -374,38 +374,38 @@ void CommonTestsSuite::test_uppercase() {
 			upperString += (char) c;
 	}
 	TS_ASSERT(testString != upperString);
-	TS_ASSERT(uppercase(testString) == upperString);
+	TS_ASSERT(upperCase(testString) == upperString);
 }
 
 void CommonTestsSuite::test_ltrim() {
 	string str;
 
 	str = "";
-	ltrim(str);
+	lTrim(str);
 	TS_ASSERT(str == "");
 
 	str = " ";
-	ltrim(str);
+	lTrim(str);
 	TS_ASSERT(str == "");
 
 	str = " b";
-	ltrim(str);
+	lTrim(str);
 	TS_ASSERT(str == "b");
 
 	str = " bb";
-	ltrim(str);
+	lTrim(str);
 	TS_ASSERT(str == "bb");
 
 	str = " bb ";
-	ltrim(str);
+	lTrim(str);
 	TS_ASSERT(str == "bb ");
 
 	str = " bb b";
-	ltrim(str);
+	lTrim(str);
 	TS_ASSERT(str == "bb b");
 
 	str = " bb b ";
-	ltrim(str);
+	lTrim(str);
 	TS_ASSERT(str == "bb b ");
 }
 
@@ -413,31 +413,31 @@ void CommonTestsSuite::test_rtrim() {
 	string str;
 
 	str = "";
-	rtrim(str);
+	rTrim(str);
 	TS_ASSERT(str == "");
 
 	str = " ";
-	rtrim(str);
+	rTrim(str);
 	TS_ASSERT(str == "");
 
 	str = " b";
-	rtrim(str);
+	rTrim(str);
 	TS_ASSERT(str == " b");
 
 	str = " bb";
-	rtrim(str);
+	rTrim(str);
 	TS_ASSERT(str == " bb");
 
 	str = " bb ";
-	rtrim(str);
+	rTrim(str);
 	TS_ASSERT(str == " bb");
 
 	str = " bb b";
-	rtrim(str);
+	rTrim(str);
 	TS_ASSERT(str == " bb b");
 
 	str = " bb b ";
-	rtrim(str);
+	rTrim(str);
 	TS_ASSERT(str == " bb b");
 }
 
@@ -912,19 +912,19 @@ void CommonTestsSuite::test_ParseURL() {
 	TS_ASSERT(uri.fullDocumentPath == "/stiintza");
 }
 
-void CommonTestsSuite::test_SetFdOptions() {
+void CommonTestsSuite::test_setFdOptions() {
 	InitNetworking();
 	int32_t fd = socket(AF_INET, SOCK_STREAM, 0);
 	TS_ASSERT(fd > 0);
-	TS_ASSERT(SetFdNoSIGPIPE(fd));
-	TS_ASSERT(SetFdNonBlock(fd));
-	TS_ASSERT(SetFdNoNagle(fd));
-	TS_ASSERT(SetFdKeepAlive(fd));
-	TS_ASSERT(SetFdReuseAddress(fd));
+	TS_ASSERT(setFdNoSIGPIPE(fd));
+	TS_ASSERT(setFdNonBlock(fd));
+	TS_ASSERT(setFdNoNagle(fd));
+	TS_ASSERT(setFdKeepAlive(fd));
+	TS_ASSERT(setFdReuseAddress(fd));
 	CLOSE_SOCKET(fd);
 	fd = -1;
 	fd = socket(AF_INET, SOCK_STREAM, 0);
 	TS_ASSERT(fd > 0);
-	TS_ASSERT(SetFdOptions(fd));
+	TS_ASSERT(setFdOptions(fd));
 	CLOSE_SOCKET(fd);
 }

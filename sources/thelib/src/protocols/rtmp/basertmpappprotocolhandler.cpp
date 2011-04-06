@@ -306,8 +306,7 @@ bool BaseRTMPAppProtocolHandler::InboundMessageAvailable(BaseRTMPProtocol *pFrom
 
 void BaseRTMPAppProtocolHandler::GenerateMetaFiles() {
 	vector<string> files;
-	if (!ListFolder(_configuration[CONF_APPLICATION_MEDIAFOLDER],
-			_configuration[CONF_APPLICATION_MEDIAFOLDER],
+	if (!listFolder(_configuration[CONF_APPLICATION_MEDIAFOLDER],
 			files)) {
 		FATAL("Unable to list folder %s",
 				STR(_configuration[CONF_APPLICATION_MEDIAFOLDER]));
@@ -320,7 +319,7 @@ void BaseRTMPAppProtocolHandler::GenerateMetaFiles() {
 		file = VECTOR_VAL(i);
 
 		splitFileName(file, name, extension);
-		extension = lowercase(extension);
+		extension = lowerCase(extension);
 
 		if (extension != MEDIA_TYPE_FLV
 				&& extension != MEDIA_TYPE_MP3
@@ -356,7 +355,7 @@ void BaseRTMPAppProtocolHandler::GenerateMetaFiles() {
 
 bool BaseRTMPAppProtocolHandler::ProcessWinAckSize(BaseRTMPProtocol *pFrom,
 		Variant &request) {
-	if (request[RM_WINACKSIZE] != V_UINT32) {
+	if (request[RM_WINACKSIZE] != _V_NUMERIC) {
 		FATAL("Invalid message: %s", STR(request.ToString()));
 		return false;
 	}
@@ -382,7 +381,7 @@ bool BaseRTMPAppProtocolHandler::ProcessAck(BaseRTMPProtocol *pFrom,
 
 bool BaseRTMPAppProtocolHandler::ProcessChunkSize(BaseRTMPProtocol *pFrom,
 		Variant &request) {
-	if (request[RM_CHUNKSIZE] != V_UINT32) {
+	if (request[RM_CHUNKSIZE] != _V_NUMERIC) {
 		FATAL("Invalid message: %s", STR(request.ToString()));
 		return false;
 	}
@@ -1506,12 +1505,12 @@ string BaseRTMPAppProtocolHandler::GetAuthPassword(string user) {
 	splitFileName(usersFile, fileName, extension);
 	Variant users;
 
-	if (lowercase(extension) == "xml") {
+	if (lowerCase(extension) == "xml") {
 		if (!Variant::DeserializeFromXmlFile(usersFile, users)) {
 			FATAL("Unable to read users file: `%s`", STR(usersFile));
 			return "";
 		}
-	} else if (lowercase(extension) == "lua") {
+	} else if (lowerCase(extension) == "lua") {
 #ifdef HAS_LUA
 		if (!ReadLuaFile(usersFile, "users", users)) {
 			FATAL("Unable to read users file: `%s`", STR(usersFile));
@@ -1569,7 +1568,7 @@ Variant BaseRTMPAppProtocolHandler::GetMetaData(string streamName,
 		result[META_MEDIA_TYPE] = MEDIA_TYPE_LIVE_OR_FLV;
 	} else {
 		//some other type
-		result[META_MEDIA_TYPE] = lowercase(parts[0]);
+		result[META_MEDIA_TYPE] = lowerCase(parts[0]);
 	}
 
 	//3. Establish the final file name we are searching for. If the
@@ -1585,7 +1584,16 @@ Variant BaseRTMPAppProtocolHandler::GetMetaData(string streamName,
 	result[META_SERVER_FILE_NAME] = searchFor;
 	result[META_SERVER_MEDIA_DIR] = _mediaFolder;
 
-	result[META_SERVER_FULL_PATH] = normalizePath(_mediaFolder, searchFor);
+	if (searchFor[0] == PATH_SEPARATOR) {
+		string mediaFolderNormalizedPath = normalizePath(_mediaFolder, "");
+		if (searchFor.find(mediaFolderNormalizedPath) == 0) {
+			result[META_SERVER_FULL_PATH] = searchFor;
+		} else {
+			result[META_SERVER_FULL_PATH] = "";
+		}
+	} else {
+		result[META_SERVER_FULL_PATH] = normalizePath(_mediaFolder, searchFor);
+	}
 
 	if (!result.HasKey(META_SERVER_FULL_PATH))
 		result[META_SERVER_FULL_PATH] = "";
@@ -1599,10 +1607,11 @@ Variant BaseRTMPAppProtocolHandler::GetMetaData(string streamName,
 	string metaPath = (string) result[META_SERVER_FULL_PATH] + "."MEDIA_TYPE_META;
 	string seekPath = (string) result[META_SERVER_FULL_PATH] + "."MEDIA_TYPE_SEEK;
 	if (fileExists(metaPath) && fileExists(seekPath)) {
-		if (GetFileModificationDate(metaPath) >= GetFileModificationDate(result[META_SERVER_FULL_PATH])) {
+		if (getFileModificationDate(metaPath) >= getFileModificationDate(result[META_SERVER_FULL_PATH])) {
 			if (!Variant::DeserializeFromXmlFile(metaPath, result)) {
 				WARN("Unable to deserialize the meta file %s. Rebuilding it", STR(metaPath));
 			} else {
+				result[META_REQUESTED_STREAM_NAME] = streamName;
 				return result;
 			}
 		} else {

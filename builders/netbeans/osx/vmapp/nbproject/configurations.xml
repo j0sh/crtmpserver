@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="79">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <logicalFolder name="HeaderFiles"
+                   displayName="Header Files"
+                   projectFiles="true">
+      <logicalFolder name="vm" displayName="vm" projectFiles="true">
+        <logicalFolder name="lua" displayName="lua" projectFiles="true">
+          <itemPath>../../../../sources/applications/vmapp/include/vm/lua/luaapi_application.h</itemPath>
+          <itemPath>../../../../sources/applications/vmapp/include/vm/lua/luaapi_generics.h</itemPath>
+          <itemPath>../../../../sources/applications/vmapp/include/vm/lua/luaapi_helpers.h</itemPath>
+          <itemPath>../../../../sources/applications/vmapp/include/vm/lua/luaappvirtualmachine.h</itemPath>
+        </logicalFolder>
+        <itemPath>../../../../sources/applications/vmapp/include/vm/baseappvirtualmachine.h</itemPath>
+      </logicalFolder>
+      <itemPath>../../../../sources/applications/vmapp/include/rtmpappprotocolhandler.h</itemPath>
+      <itemPath>../../../../sources/applications/vmapp/include/rtpappprotocolhandler.h</itemPath>
+      <itemPath>../../../../sources/applications/vmapp/include/rtspappprotocolhandler.h</itemPath>
+      <itemPath>../../../../sources/applications/vmapp/include/vmapp.h</itemPath>
+      <itemPath>../../../../sources/applications/vmapp/include/vmappapplication.h</itemPath>
+    </logicalFolder>
+    <logicalFolder name="SourceFiles"
+                   displayName="Source Files"
+                   projectFiles="true">
+      <logicalFolder name="vm" displayName="vm" projectFiles="true">
+        <logicalFolder name="lua" displayName="lua" projectFiles="true">
+          <itemPath>../../../../sources/applications/vmapp/src/vm/lua/luaapi_application.cpp</itemPath>
+          <itemPath>../../../../sources/applications/vmapp/src/vm/lua/luaapi_generics.cpp</itemPath>
+          <itemPath>../../../../sources/applications/vmapp/src/vm/lua/luaappvirtualmachine.cpp</itemPath>
+        </logicalFolder>
+        <itemPath>../../../../sources/applications/vmapp/src/vm/baseappvirtualmachine.cpp</itemPath>
+      </logicalFolder>
+      <itemPath>../../../../sources/applications/vmapp/src/rtmpappprotocolhandler.cpp</itemPath>
+      <itemPath>../../../../sources/applications/vmapp/src/rtpappprotocolhandler.cpp</itemPath>
+      <itemPath>../../../../sources/applications/vmapp/src/rtspappprotocolhandler.cpp</itemPath>
+      <itemPath>../../../../sources/applications/vmapp/src/vmapp.cpp</itemPath>
+      <itemPath>../../../../sources/applications/vmapp/src/vmappapplication.cpp</itemPath>
+    </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false">
+      <itemPath>Makefile.nb</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <sourceRootList>
+    <Elem>../../../sources/applications/luavmapp/include</Elem>
+    <Elem>../../../sources/applications/luavmapp/src</Elem>
+    <Elem>../../../../sources/applications/luavmapp/include/vm</Elem>
+    <Elem>../../../../sources/applications/luavmapp/src/vm</Elem>
+    <Elem>../../../../sources/applications/vmapp/include/vm</Elem>
+    <Elem>../../../../sources/applications/vmapp/src/vm</Elem>
+    <Elem>../../../../sources/applications/vmapp/include/api</Elem>
+  </sourceRootList>
+  <projectmakefile>Makefile.nb</projectmakefile>
+  <confs>
+    <conf name="Debug" type="2">
+      <toolsSet>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
+        <compilerSet>GNU|GNU</compilerSet>
+      </toolsSet>
+      <compileType>
+        <ccTool>
+          <incDir>
+            <pElem>/opt/local/include</pElem>
+            <pElem>../../../../sources/common/include</pElem>
+            <pElem>../../../../sources/thelib/include</pElem>
+            <pElem>../../../../sources/applications/vmapp/include</pElem>
+            <pElem>../../../../sources/vm/include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>OSX</Elem>
+            <Elem>NET_KQUEUE</Elem>
+            <Elem>HAS_PROTOCOL_RTMP</Elem>
+            <Elem>VM_LUA</Elem>
+            <Elem>HAS_LUA</Elem>
+          </preprocessorList>
+        </ccTool>
+        <linkerTool>
+          <output>../${CND_CONF}/${CND_PLATFORM}/applications/luavmapp/libluavmapp.dylib</output>
+          <linkerLibItems>
+            <linkerLibProjectItem>
+              <makeArtifact PL="../thelib"
+                            CT="2"
+                            CN="Debug"
+                            AC="true"
+                            BL="true"
+                            WD="../thelib"
+                            BC="${MAKE}  -f Makefile.nb CONF=Debug"
+                            CC="${MAKE}  -f Makefile.nb CONF=Debug clean"
+                            OP="../Debug/GNU-MacOSX/libthelib.dylib">
+              </makeArtifact>
+            </linkerLibProjectItem>
+            <linkerLibProjectItem>
+              <makeArtifact PL="../common"
+                            CT="2"
+                            CN="Debug"
+                            AC="true"
+                            BL="true"
+                            WD="../common"
+                            BC="${MAKE}  -f Makefile.nb CONF=Debug"
+                            CC="${MAKE}  -f Makefile.nb CONF=Debug clean"
+                            OP="dist/Debug/GNU-MacOSX/libcommon.dylib">
+              </makeArtifact>
+            </linkerLibProjectItem>
+          </linkerLibItems>
+        </linkerTool>
+      </compileType>
+    </conf>
+    <conf name="Release" type="2">
+      <toolsSet>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
+        <compilerSet>GNU|GNU</compilerSet>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <developmentMode>5</developmentMode>
+        </cTool>
+        <ccTool>
+          <developmentMode>5</developmentMode>
+          <incDir>
+            <pElem>/opt/local/include</pElem>
+            <pElem>../../../../sources/common/include</pElem>
+            <pElem>../../../../sources/thelib/include</pElem>
+            <pElem>../../../../sources/applications/luavmapp/include</pElem>
+            <pElem>../../../../sources/vm/include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>OSX</Elem>
+            <Elem>NET_KQUEUE</Elem>
+          </preprocessorList>
+        </ccTool>
+        <fortranCompilerTool>
+          <developmentMode>5</developmentMode>
+        </fortranCompilerTool>
+        <linkerTool>
+          <output>../${CND_CONF}/${CND_PLATFORM}/applications/luavmapp/libluavmapp.dylib</output>
+          <linkerLibItems>
+            <linkerLibProjectItem>
+              <makeArtifact PL="../common"
+                            CT="2"
+                            CN="Release"
+                            AC="false"
+                            BL="true"
+                            WD="../common"
+                            BC="${MAKE}  -f Makefile.nb CONF=Release"
+                            CC="${MAKE}  -f Makefile.nb CONF=Release clean"
+                            OP="dist/Release/GNU-MacOSX/libcommon.dylib">
+              </makeArtifact>
+            </linkerLibProjectItem>
+            <linkerLibProjectItem>
+              <makeArtifact PL="../thelib"
+                            CT="2"
+                            CN="Release"
+                            AC="false"
+                            BL="true"
+                            WD="../thelib"
+                            BC="${MAKE}  -f Makefile.nb CONF=Release"
+                            CC="${MAKE}  -f Makefile.nb CONF=Release clean"
+                            OP="../Release/GNU-MacOSX/libthelib.dylib">
+              </makeArtifact>
+            </linkerLibProjectItem>
+          </linkerLibItems>
+        </linkerTool>
+      </compileType>
+    </conf>
+  </confs>
+</configurationDescriptor>

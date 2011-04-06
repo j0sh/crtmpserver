@@ -24,6 +24,8 @@
 #include "common.h"
 
 class BaseVM {
+private:
+	Variant _emptyParams;
 public:
 	BaseVM();
 	virtual ~BaseVM();
@@ -34,7 +36,9 @@ public:
 	virtual bool Shutdown() = 0;
 	virtual bool LoadScriptFile(string scriptFileName, string scriptName) = 0;
 	virtual bool LoadScriptString(string scriptContent, string scriptName) = 0;
-	virtual bool Call(string functionName, Variant &parameters, Variant &results) = 0;
+	virtual bool HasFunction(string functionName) = 0;
+	virtual bool CallWithParams(string functionName, Variant &parameters, Variant &results) = 0;
+	virtual bool CallWithoutParams(string functionName, Variant &results) = 0;
 };
 
 #endif	/* _BASEVM_H */

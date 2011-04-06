@@ -19,7 +19,6 @@ CCC=g++
 CXX=g++
 FC=gfortran
 AS=as
-PROC=proc
 
 # Macros
 CND_PLATFORM=GNU-MacOSX
@@ -48,21 +47,19 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/674965218/crypto.o \
 	${OBJECTDIR}/_ext/1145168487/timegm.o \
 	${OBJECTDIR}/_ext/1874657879/logcatloglocation.o \
+	${OBJECTDIR}/_ext/1545610023/dfreebsdplatform.o \
 	${OBJECTDIR}/_ext/230374975/win32platform.o \
-	${OBJECTDIR}/_ext/765644641/tinyxmlerror.o \
 	${OBJECTDIR}/_ext/1912657765/openbsdplatform.o \
-	${OBJECTDIR}/_ext/765644641/tinyxmlparser.o \
 	${OBJECTDIR}/_ext/674965218/file.o \
 	${OBJECTDIR}/_ext/1145168487/solarisplatform.o \
 	${OBJECTDIR}/_ext/1874657879/consoleloglocation.o \
 	${OBJECTDIR}/_ext/872974544/osxplatform.o \
 	${OBJECTDIR}/_ext/674965218/timersmanager.o \
-	${OBJECTDIR}/_ext/765644641/tinyxml.o \
 	${OBJECTDIR}/_ext/1874657879/logger.o \
 	${OBJECTDIR}/_ext/714509122/luautils.o \
 	${OBJECTDIR}/_ext/674965218/uri.o \
-	${OBJECTDIR}/_ext/1998150091/baseplatform.o \
 	${OBJECTDIR}/_ext/230374975/strncasecmp.o \
+	${OBJECTDIR}/_ext/1998150091/baseplatform.o \
 	${OBJECTDIR}/_ext/1267630661/mempool.o \
 	${OBJECTDIR}/_ext/1406839728/linuxplatform.o \
 	${OBJECTDIR}/_ext/1980509653/androidplatform.o
@@ -157,25 +154,20 @@ ${OBJECTDIR}/_ext/1874657879/logcatloglocation.o: ../../../../sources/common/src
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -DOSX -DUSE_MEM_POOL -DDEBUG_MEM_POOL -DLITTLE_ENDIAN_SHORT_ALIGNED -DHAS_LUA -I/opt/local/include -I../../../../sources/common/include -I/opt/local/include/libxml2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1874657879/logcatloglocation.o ../../../../sources/common/src/utils/logging/logcatloglocation.cpp
 
+${OBJECTDIR}/_ext/1545610023/dfreebsdplatform.o: ../../../../sources/common/src/platform/dfreebsd/dfreebsdplatform.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1545610023
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -DOSX -DUSE_MEM_POOL -DDEBUG_MEM_POOL -DLITTLE_ENDIAN_SHORT_ALIGNED -DHAS_LUA -I/opt/local/include -I../../../../sources/common/include -I/opt/local/include/libxml2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1545610023/dfreebsdplatform.o ../../../../sources/common/src/platform/dfreebsd/dfreebsdplatform.cpp
+
 ${OBJECTDIR}/_ext/230374975/win32platform.o: ../../../../sources/common/src/platform/windows/win32platform.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/230374975
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -DOSX -DUSE_MEM_POOL -DDEBUG_MEM_POOL -DLITTLE_ENDIAN_SHORT_ALIGNED -DHAS_LUA -I/opt/local/include -I../../../../sources/common/include -I/opt/local/include/libxml2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/230374975/win32platform.o ../../../../sources/common/src/platform/windows/win32platform.cpp
 
-${OBJECTDIR}/_ext/765644641/tinyxmlerror.o: ../../../../sources/common/src/utils/tinyxml/tinyxmlerror.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/765644641
-	${RM} $@.d
-	$(COMPILE.cc) -O2 -DOSX -DUSE_MEM_POOL -DDEBUG_MEM_POOL -DLITTLE_ENDIAN_SHORT_ALIGNED -DHAS_LUA -I/opt/local/include -I../../../../sources/common/include -I/opt/local/include/libxml2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/765644641/tinyxmlerror.o ../../../../sources/common/src/utils/tinyxml/tinyxmlerror.cpp
-
 ${OBJECTDIR}/_ext/1912657765/openbsdplatform.o: ../../../../sources/common/src/platform/openbsd/openbsdplatform.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1912657765
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -DOSX -DUSE_MEM_POOL -DDEBUG_MEM_POOL -DLITTLE_ENDIAN_SHORT_ALIGNED -DHAS_LUA -I/opt/local/include -I../../../../sources/common/include -I/opt/local/include/libxml2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1912657765/openbsdplatform.o ../../../../sources/common/src/platform/openbsd/openbsdplatform.cpp
-
-${OBJECTDIR}/_ext/765644641/tinyxmlparser.o: ../../../../sources/common/src/utils/tinyxml/tinyxmlparser.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/765644641
-	${RM} $@.d
-	$(COMPILE.cc) -O2 -DOSX -DUSE_MEM_POOL -DDEBUG_MEM_POOL -DLITTLE_ENDIAN_SHORT_ALIGNED -DHAS_LUA -I/opt/local/include -I../../../../sources/common/include -I/opt/local/include/libxml2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/765644641/tinyxmlparser.o ../../../../sources/common/src/utils/tinyxml/tinyxmlparser.cpp
 
 ${OBJECTDIR}/_ext/674965218/file.o: ../../../../sources/common/src/utils/misc/file.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/674965218
@@ -202,11 +194,6 @@ ${OBJECTDIR}/_ext/674965218/timersmanager.o: ../../../../sources/common/src/util
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -DOSX -DUSE_MEM_POOL -DDEBUG_MEM_POOL -DLITTLE_ENDIAN_SHORT_ALIGNED -DHAS_LUA -I/opt/local/include -I../../../../sources/common/include -I/opt/local/include/libxml2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/674965218/timersmanager.o ../../../../sources/common/src/utils/misc/timersmanager.cpp
 
-${OBJECTDIR}/_ext/765644641/tinyxml.o: ../../../../sources/common/src/utils/tinyxml/tinyxml.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/765644641
-	${RM} $@.d
-	$(COMPILE.cc) -O2 -DOSX -DUSE_MEM_POOL -DDEBUG_MEM_POOL -DLITTLE_ENDIAN_SHORT_ALIGNED -DHAS_LUA -I/opt/local/include -I../../../../sources/common/include -I/opt/local/include/libxml2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/765644641/tinyxml.o ../../../../sources/common/src/utils/tinyxml/tinyxml.cpp
-
 ${OBJECTDIR}/_ext/1874657879/logger.o: ../../../../sources/common/src/utils/logging/logger.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1874657879
 	${RM} $@.d
@@ -222,15 +209,15 @@ ${OBJECTDIR}/_ext/674965218/uri.o: ../../../../sources/common/src/utils/misc/uri
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -DOSX -DUSE_MEM_POOL -DDEBUG_MEM_POOL -DLITTLE_ENDIAN_SHORT_ALIGNED -DHAS_LUA -I/opt/local/include -I../../../../sources/common/include -I/opt/local/include/libxml2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/674965218/uri.o ../../../../sources/common/src/utils/misc/uri.cpp
 
-${OBJECTDIR}/_ext/1998150091/baseplatform.o: ../../../../sources/common/src/platform/baseplatform.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/1998150091
-	${RM} $@.d
-	$(COMPILE.cc) -O2 -DOSX -DUSE_MEM_POOL -DDEBUG_MEM_POOL -DLITTLE_ENDIAN_SHORT_ALIGNED -DHAS_LUA -I/opt/local/include -I../../../../sources/common/include -I/opt/local/include/libxml2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1998150091/baseplatform.o ../../../../sources/common/src/platform/baseplatform.cpp
-
 ${OBJECTDIR}/_ext/230374975/strncasecmp.o: ../../../../sources/common/src/platform/windows/strncasecmp.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/230374975
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -DOSX -DUSE_MEM_POOL -DDEBUG_MEM_POOL -DLITTLE_ENDIAN_SHORT_ALIGNED -DHAS_LUA -I/opt/local/include -I../../../../sources/common/include -I/opt/local/include/libxml2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/230374975/strncasecmp.o ../../../../sources/common/src/platform/windows/strncasecmp.cpp
+
+${OBJECTDIR}/_ext/1998150091/baseplatform.o: ../../../../sources/common/src/platform/baseplatform.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1998150091
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -DOSX -DUSE_MEM_POOL -DDEBUG_MEM_POOL -DLITTLE_ENDIAN_SHORT_ALIGNED -DHAS_LUA -I/opt/local/include -I../../../../sources/common/include -I/opt/local/include/libxml2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1998150091/baseplatform.o ../../../../sources/common/src/platform/baseplatform.cpp
 
 ${OBJECTDIR}/_ext/1267630661/mempool.o: ../../../../sources/common/src/utils/mempool/mempool.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1267630661
