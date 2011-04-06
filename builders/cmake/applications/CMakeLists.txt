@@ -12,6 +12,4 @@ ADD_SUBDIRECTORY(proxypublish proxypublish)
 ADD_SUBDIRECTORY(stresstest stresstest)
 ADD_SUBDIRECTORY(applestreamingclient applestreamingclient)
 ADD_SUBDIRECTORY(vmapp vmapp)
-ADD_SUBDIRECTORY(houseband houseband)
-ADD_SUBDIRECTORY(vbrick vbrick)
 
