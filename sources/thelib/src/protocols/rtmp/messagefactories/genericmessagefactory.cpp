@@ -83,8 +83,11 @@ Variant GenericMessageFactory::GetInvoke(uint32_t channelId, uint32_t streamId,
 	M_INVOKE_ID(result) = (double) requestId;
 	M_INVOKE_FUNCTION(result) = functionName;
 
-	for (uint32_t i = 0; i < parameters.MapSize(); i++) {
-		M_INVOKE_PARAM(result, i) = parameters[i];
+	uint32_t index = 0;
+
+	FOR_MAP(parameters, string, Variant, i) {
+		M_INVOKE_PARAM(result, index) = MAP_VAL(i);
+		index++;
 	}
 
 	return result;

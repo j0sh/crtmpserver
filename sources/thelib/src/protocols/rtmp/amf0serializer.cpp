@@ -253,6 +253,9 @@ bool AMF0Serializer::WriteObject(IOBuffer &buffer, Variant &variant,
 
 	FOR_MAP(temp, string, Variant, i) {
 		string key = MAP_KEY(i);
+		if (key.find(VAR_INDEX_VALUE) == 0) {
+			key = key.substr(VAR_INDEX_VALUE_LEN);
+		}
 		if (!WriteShortString(buffer, key, false)) {
 			FATAL("Unable to serialize key");
 			return false;
@@ -379,8 +382,8 @@ bool AMF0Serializer::WriteMixedArray(IOBuffer &buffer, Variant &variant,
 
 	FOR_MAP(temp, string, Variant, i) {
 		string key = MAP_KEY(i);
-		if (key.find("__index__value__") == 0) {
-			key = key.substr(16);
+		if (key.find(VAR_INDEX_VALUE) == 0) {
+			key = key.substr(VAR_INDEX_VALUE_LEN);
 		}
 		if (!WriteShortString(buffer, key, false)) {
 			FATAL("Unable to serialize key");

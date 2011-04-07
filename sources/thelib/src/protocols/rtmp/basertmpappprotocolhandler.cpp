@@ -1094,9 +1094,6 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokeGeneric(BaseRTMPProtocol *pFrom,
 bool BaseRTMPAppProtocolHandler::ProcessInvokeResult(BaseRTMPProtocol *pFrom,
 		Variant & result) {
 	if (!MAP_HAS2(_resultMessageTracking, pFrom->GetId(), M_INVOKE_ID(result))) {
-		WARN("Unable to track response from PID %u:\n%s",
-				pFrom->GetId(), STR(result.ToString()));
-
 		return true;
 	}
 	return ProcessInvokeResult(pFrom,
@@ -1114,11 +1111,7 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokeResult(BaseRTMPProtocol *pFrom,
 	} else if (functionName == RM_INVOKE_FUNCTION_FCSUBSCRIBE) {
 		return ProcessInvokeFCSubscribeResult(pFrom, request, response);
 	} else {
-		FATAL("Invoke result not yet implemented: Request:\n%s\nResponse:\n%s",
-				STR(request.ToString()),
-				STR(response.ToString()));
-
-		return false;
+		return ProcessInvokeGenericResult(pFrom, request, response);
 	}
 }
 
@@ -1303,6 +1296,14 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokeCreateStreamResult(BaseRTMPProtoco
 
 bool BaseRTMPAppProtocolHandler::ProcessInvokeFCSubscribeResult(BaseRTMPProtocol *pFrom,
 		Variant &request, Variant &response) {
+	return true;
+}
+
+bool BaseRTMPAppProtocolHandler::ProcessInvokeGenericResult(BaseRTMPProtocol *pFrom,
+		Variant &request, Variant &response) {
+	WARN("Invoke result not yet implemented: Request:\n%s\nResponse:\n%s",
+			STR(request.ToString()),
+			STR(response.ToString()));
 	return true;
 }
 
@@ -1644,15 +1645,14 @@ bool BaseRTMPAppProtocolHandler::SendRTMPMessage(BaseRTMPProtocol *pTo,
 		{
 			if (M_INVOKE_FUNCTION(message) != RM_INVOKE_FUNCTION_RESULT) {
 				uint32_t invokeId = 0;
-				if (trackResponse) {
-					if (!MAP_HAS1(_nextInvokeId, pTo->GetId())) {
-						FATAL("Unable to get next invoke ID");
-						return false;
-					}
-					invokeId = _nextInvokeId[pTo->GetId()];
-					_nextInvokeId[pTo->GetId()] = invokeId + 1;
+				if (!MAP_HAS1(_nextInvokeId, pTo->GetId())) {
+					FATAL("Unable to get next invoke ID");
+					return false;
 				}
+				invokeId = _nextInvokeId[pTo->GetId()];
+				_nextInvokeId[pTo->GetId()] = invokeId + 1;
 				M_INVOKE_ID(message) = invokeId;
+				
 				if (trackResponse)
 					_resultMessageTracking[pTo->GetId()][invokeId] = message;
 				return pTo->SendMessage(message);

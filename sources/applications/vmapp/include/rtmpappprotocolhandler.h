@@ -91,6 +91,8 @@ namespace app_vmapp {
 				Variant &request, Variant &response);
 		virtual bool ProcessInvokeFCSubscribeResult(BaseRTMPProtocol *pFrom,
 				Variant &request, Variant &response);
+		virtual bool ProcessInvokeGenericResult(BaseRTMPProtocol *pFrom,
+			Variant &request, Variant &response);
 	};
 }
 #endif	/* _RTMPAPPPROTOCOLHANDLER_H */

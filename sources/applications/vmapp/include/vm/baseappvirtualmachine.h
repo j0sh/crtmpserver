@@ -82,6 +82,7 @@ namespace app_vmapp {
 		handlers_rtmp_processInvokeConnectResult,
 		handlers_rtmp_processInvokeCreateStreamResult,
 		handlers_rtmp_processInvokeFCSubscribeResult,
+		handlers_rtmp_processInvokeGenericResult,
 		handlers_mpegts_preRegisterProtocol,
 		handlers_mpegts_postRegisterProtocol,
 		handlers_mpegts_preUnRegisterProtocol,

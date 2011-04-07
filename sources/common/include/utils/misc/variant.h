@@ -111,9 +111,6 @@ public:
 	Variant(const char *pValue);
 	Variant(const string &value);
 
-	Variant(const string &key, const Variant &value);
-	Variant(const string &typeName, const string &key, const Variant &value);
-
 	virtual ~Variant();
 
 	void Reset(bool isUndefined = false);

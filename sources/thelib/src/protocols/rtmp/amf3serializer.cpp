@@ -552,7 +552,6 @@ bool AMF3Serializer::ReadObject(IOBuffer &buffer, Variant &variant, bool readTyp
 			return false;
 		}
 	}
-	FINEST("Done reading trait values");
 
 	bool readDynamicPoperties = false;
 
@@ -597,11 +596,8 @@ bool AMF3Serializer::WriteObject(IOBuffer &buffer, Variant &variant, bool writeT
 		return false;
 	}
 
-	Variant key = "";
-
 	FOR_MAP(variant, string, Variant, i) {
-		key = MAP_KEY(i);
-		if (!WriteString(buffer, key, false)) {
+		if (!WriteString(buffer, MAP_KEY(i), false)) {
 			FATAL("Unable to write key");
 			return false;
 		}
@@ -611,8 +607,7 @@ bool AMF3Serializer::WriteObject(IOBuffer &buffer, Variant &variant, bool writeT
 		}
 	}
 
-	key = "";
-	if (!WriteString(buffer, key, false)) {
+	if (!WriteString(buffer, "", false)) {
 		FATAL("Unable to write key");
 		return false;
 	}

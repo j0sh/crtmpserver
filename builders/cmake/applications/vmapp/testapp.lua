@@ -1,41 +1,5 @@
 require "crtmpserverdefaults"
 
-function table.val_to_str ( v )
-  if "string" == type( v ) then
-    v = string.gsub( v, "\n", "\\n" )
-    if string.match( string.gsub(v,"[^'\"]",""), '^"+$' ) then
-      return "'" .. v .. "'"
-    end
-    return '"' .. string.gsub(v,'"', '\\"' ) .. '"'
-  else
-    return "table" == type( v ) and table.tostring( v ) or
-      tostring( v )
-  end
-end
-
-function table.key_to_str ( k )
-  if "string" == type( k ) and string.match( k, "^[_%a][_%a%d]*$" ) then
-    return k
-  else
-    return "[" .. table.val_to_str( k ) .. "]"
-  end
-end
-
-function table.tostring( tbl )
-  local result, done = {}, {}
-  for k, v in ipairs( tbl ) do
-    table.insert( result, table.val_to_str( v ) )
-    done[ k ] = true
-  end
-  for k, v in pairs( tbl ) do
-    if not done[ k ] then
-      table.insert( result,
-        table.key_to_str( k ) .. "=" .. table.val_to_str( v ) )
-    end
-  end
-  return "{" .. table.concat( result, "," ) .. "}"
-end
-
 -- Print anything - including nested tables
 function table_print (tt, indent, done)
   done = done or {}
@@ -61,25 +25,25 @@ function table_print (tt, indent, done)
   end
 end
 
-customhandlers.application.initCompleted=function()
-	table_print(_G);
-	crtmpserver.handlers.application.pullExternalStream({uri="rtmp://edge01.fms.dutchview.nl/botr/bunny",localStreamName="gigi"});
-	--crtmpserver.handlers.rtmp.generateMetaFiles();
-	--print(table.tostring(crtmpserver.handlers.rtmp.getMetaData("mp4:lg.mp4")));
-	--print(table.tostring(crtmpserver.handlers.rtmp.getMetaData("mp4:test1/lg.mp4")));
-	return true;
+customhandlers.rtmp.processInvokeGeneric = function(protocolId,request)
+	print (request.invoke.functionName.." invoked. Parameters");
+	table_print(request.invoke.parameters);
+	if request.invoke.functionName == "ClientServerWithResponse" then
+		return crtmpserver.handlers.rtmp.sendResponse(protocolId,request,{"some complex object",subObject={doubleVal=1.2, str="string value",true,123.45}});
+	elseif request.invoke.functionName == "ClientServerWithoutResponse" then
+		return true;
+	elseif request.invoke.functionName == "TriggerServerClientWithResponse" then
+		return crtmpserver.handlers.rtmp.sendRequest(protocolId,"ServerClientWithResponse",true,{"some complex object",subObject={doubleVal=1.2, str="string value",true,123.45}},true,123.456,"someString");
+	elseif request.invoke.functionName == "TriggerServerClientWithoutResponse" then
+        return crtmpserver.handlers.rtmp.sendRequest(protocolId,"ServerClientWithoutResponse",false,{"some complex object",subObject={doubleVal=1.2, str="string value",true,123.45}},true,123.456,"someString");
+	else
+		return crtmpserver.handlers.rtmp.processInvokeGeneric(protocolId,request)
+	end
 end
 
-customhandlers.rtmp.pullExternalStream=function(uri,streamConfig)
-	print(table.tostring(uri));
-	print(table.tostring(streamConfig));
-	return crtmpserver.handlers.rtmp.pullExternalStream(uri,streamConfig);
+customhandlers.rtmp.processInvokeGenericResult = function(protocolId,request,response)
+	print("We have a response from one of our previous requests");
+	table_print({request=request,response=response});
+	return false;
 end
-
---customhandlers.rtmp.processInvokePlay = function(protocolId,request)
---	if not crtmpserver.application.pullExternalStream({uri="rtmp://edge01.fms.dutchview.nl/botr/bunny",localStreamName="gigi"}) then
---		return false;
---	end
---	return crtmpserver.handlers.rtmp.processInvokePublish(protocolId,request);
---end
 

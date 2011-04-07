@@ -302,3 +302,11 @@ bool RTMPAppProtocolHandler::ProcessInvokeFCSubscribeResult(BaseRTMPProtocol *pF
 	else
 		return BaseRTMPAppProtocolHandler::ProcessInvokeFCSubscribeResult(pFrom, request, response);
 }
+
+bool RTMPAppProtocolHandler::ProcessInvokeGenericResult(BaseRTMPProtocol *pFrom,
+		Variant &request, Variant &response) {
+	if (_pAppVM->HasFunction(handlers_rtmp_processInvokeGenericResult))
+		return _pAppVM->Call(handlers_rtmp_processInvokeGenericResult, pFrom, request, response);
+	else
+		return BaseRTMPAppProtocolHandler::ProcessInvokeGenericResult(pFrom, request, response);
+}

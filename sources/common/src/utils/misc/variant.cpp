@@ -188,26 +188,6 @@ Variant::Variant(const string &val) {
 	_value.s = new string(val);
 }
 
-Variant::Variant(const string &key, const Variant &value) {
-	CONSTRUCTOR;
-	_type = V_MAP;
-	memset(&_value, 0, sizeof (_value));
-	DYNAMIC_ALLOC("_value.m");
-	_value.m = new VariantMap();
-	_value.m->children[key] = value;
-}
-
-Variant::Variant(const string &typeName, const string &key, const Variant &value) {
-	CONSTRUCTOR;
-	_type = V_TYPED_MAP;
-	memset(&_value, 0, sizeof (_value));
-	DYNAMIC_ALLOC("_value.m");
-	_value.m = new VariantMap();
-	_value.m->typeName = typeName;
-	if (key != "")
-		_value.m->children[key] = value;
-}
-
 Variant::~Variant() {
 	DESTRUCTOR;
 	Reset();
@@ -712,13 +692,13 @@ Variant& Variant::operator[](const char *key) {
 
 Variant& Variant::operator[](const double &key) {
 	stringstream ss;
-	ss << "__index__value__" << key;
+	ss << VAR_INDEX_VALUE << key;
 	return operator[](ss.str());
 }
 
 Variant& Variant::operator[](const uint32_t &key) {
 	stringstream ss;
-	ss << "__index__value__" << key;
+	ss << VAR_INDEX_VALUE << key;
 	return operator[](ss.str());
 }
 
@@ -735,11 +715,8 @@ Variant& Variant::operator[](Variant &key) {
 		case V_UINT32:
 		case V_UINT64:
 		case V_DOUBLE:
-		case V_TIMESTAMP:
-		case V_DATE:
-		case V_TIME:
 		{
-			ss << "__index__value__" << STR(key);
+			ss << VAR_INDEX_VALUE << STR(key);
 			break;
 		}
 		case V_STRING:
@@ -749,8 +726,11 @@ Variant& Variant::operator[](Variant &key) {
 		}
 		case V_NULL:
 		case V_UNDEFINED:
-		case V_TYPED_MAP:
+		case V_DATE:
+		case V_TIME:
+		case V_TIMESTAMP:
 		case V_MAP:
+		case V_TYPED_MAP:
 		default:
 		{
 			ASSERT("Variant has invalid type to be used as an index: %s", STR(key.ToString()));
@@ -854,7 +834,7 @@ void Variant::RemoveAt(const uint32_t index) {
 		ASSERT("RemoveKey failed: %s", STR(ToString()));
 		return;
 	}
-	_value.m->children.erase(format("__index__value__%u", index));
+	_value.m->children.erase(format(VAR_INDEX_VALUE"%u", index));
 }
 
 void Variant::RemoveAllKeys() {
@@ -885,7 +865,7 @@ uint32_t Variant::MapDenseSize() {
 
 	uint32_t denseCount = 0;
 	for (denseCount = 0; denseCount < MapSize(); denseCount++) {
-		if (!MAP_HAS1(_value.m->children, format("__index__value__%u", denseCount)))
+		if (!MAP_HAS1(_value.m->children, format(VAR_INDEX_VALUE"%u", denseCount)))
 			break;
 	}
 

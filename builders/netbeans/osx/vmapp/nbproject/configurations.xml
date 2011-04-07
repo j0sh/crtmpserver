@@ -8,7 +8,10 @@
         <logicalFolder name="lua" displayName="lua" projectFiles="true">
           <itemPath>../../../../sources/applications/vmapp/include/vm/lua/luaapi_application.h</itemPath>
           <itemPath>../../../../sources/applications/vmapp/include/vm/lua/luaapi_generics.h</itemPath>
+          <itemPath>../../../../sources/applications/vmapp/include/vm/lua/luaapi_handler_mpegts.h</itemPath>
+          <itemPath>../../../../sources/applications/vmapp/include/vm/lua/luaapi_handler_rtmp.h</itemPath>
           <itemPath>../../../../sources/applications/vmapp/include/vm/lua/luaapi_helpers.h</itemPath>
+          <itemPath>../../../../sources/applications/vmapp/include/vm/lua/luaapi_protocols.h</itemPath>
           <itemPath>../../../../sources/applications/vmapp/include/vm/lua/luaappvirtualmachine.h</itemPath>
         </logicalFolder>
         <itemPath>../../../../sources/applications/vmapp/include/vm/baseappvirtualmachine.h</itemPath>
@@ -16,6 +19,7 @@
       <itemPath>../../../../sources/applications/vmapp/include/rtmpappprotocolhandler.h</itemPath>
       <itemPath>../../../../sources/applications/vmapp/include/rtpappprotocolhandler.h</itemPath>
       <itemPath>../../../../sources/applications/vmapp/include/rtspappprotocolhandler.h</itemPath>
+      <itemPath>../../../../sources/applications/vmapp/include/tsappprotocolhandler.h</itemPath>
       <itemPath>../../../../sources/applications/vmapp/include/vmapp.h</itemPath>
       <itemPath>../../../../sources/applications/vmapp/include/vmappapplication.h</itemPath>
     </logicalFolder>
@@ -26,6 +30,8 @@
         <logicalFolder name="lua" displayName="lua" projectFiles="true">
           <itemPath>../../../../sources/applications/vmapp/src/vm/lua/luaapi_application.cpp</itemPath>
           <itemPath>../../../../sources/applications/vmapp/src/vm/lua/luaapi_generics.cpp</itemPath>
+          <itemPath>../../../../sources/applications/vmapp/src/vm/lua/luaapi_handler_mpegts.cpp</itemPath>
+          <itemPath>../../../../sources/applications/vmapp/src/vm/lua/luaapi_handler_rtmp.cpp</itemPath>
           <itemPath>../../../../sources/applications/vmapp/src/vm/lua/luaappvirtualmachine.cpp</itemPath>
         </logicalFolder>
         <itemPath>../../../../sources/applications/vmapp/src/vm/baseappvirtualmachine.cpp</itemPath>
@@ -33,6 +39,7 @@
       <itemPath>../../../../sources/applications/vmapp/src/rtmpappprotocolhandler.cpp</itemPath>
       <itemPath>../../../../sources/applications/vmapp/src/rtpappprotocolhandler.cpp</itemPath>
       <itemPath>../../../../sources/applications/vmapp/src/rtspappprotocolhandler.cpp</itemPath>
+      <itemPath>../../../../sources/applications/vmapp/src/tsappprotocolhandler.cpp</itemPath>
       <itemPath>../../../../sources/applications/vmapp/src/vmapp.cpp</itemPath>
       <itemPath>../../../../sources/applications/vmapp/src/vmappapplication.cpp</itemPath>
     </logicalFolder>

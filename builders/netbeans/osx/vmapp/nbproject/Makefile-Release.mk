@@ -34,7 +34,10 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
+	${OBJECTDIR}/_ext/466364438/tsappprotocolhandler.o \
+	${OBJECTDIR}/_ext/581372517/luaapi_handler_rtmp.o \
 	${OBJECTDIR}/_ext/581372517/luaappvirtualmachine.o \
+	${OBJECTDIR}/_ext/581372517/luaapi_handler_mpegts.o \
 	${OBJECTDIR}/_ext/466364438/rtspappprotocolhandler.o \
 	${OBJECTDIR}/_ext/466364438/rtpappprotocolhandler.o \
 	${OBJECTDIR}/_ext/466364438/vmappapplication.o \
@@ -73,10 +76,25 @@ LDLIBSOPTIONS=-L../common/dist/Release/GNU-MacOSX -lcommon -L../thelib/../Releas
 	${MKDIR} -p ../${CND_CONF}/${CND_PLATFORM}/applications/luavmapp
 	${LINK.cc} -dynamiclib -install_name libluavmapp.dylib -o ../${CND_CONF}/${CND_PLATFORM}/applications/luavmapp/libluavmapp.dylib -fPIC ${OBJECTFILES} ${LDLIBSOPTIONS} 
 
+${OBJECTDIR}/_ext/466364438/tsappprotocolhandler.o: ../../../../sources/applications/vmapp/src/tsappprotocolhandler.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/466364438
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/luavmapp/include -I../../../../sources/vm/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/466364438/tsappprotocolhandler.o ../../../../sources/applications/vmapp/src/tsappprotocolhandler.cpp
+
+${OBJECTDIR}/_ext/581372517/luaapi_handler_rtmp.o: ../../../../sources/applications/vmapp/src/vm/lua/luaapi_handler_rtmp.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/581372517
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/luavmapp/include -I../../../../sources/vm/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/581372517/luaapi_handler_rtmp.o ../../../../sources/applications/vmapp/src/vm/lua/luaapi_handler_rtmp.cpp
+
 ${OBJECTDIR}/_ext/581372517/luaappvirtualmachine.o: ../../../../sources/applications/vmapp/src/vm/lua/luaappvirtualmachine.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/581372517
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/luavmapp/include -I../../../../sources/vm/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/581372517/luaappvirtualmachine.o ../../../../sources/applications/vmapp/src/vm/lua/luaappvirtualmachine.cpp
+
+${OBJECTDIR}/_ext/581372517/luaapi_handler_mpegts.o: ../../../../sources/applications/vmapp/src/vm/lua/luaapi_handler_mpegts.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/581372517
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/luavmapp/include -I../../../../sources/vm/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/581372517/luaapi_handler_mpegts.o ../../../../sources/applications/vmapp/src/vm/lua/luaapi_handler_mpegts.cpp
 
 ${OBJECTDIR}/_ext/466364438/rtspappprotocolhandler.o: ../../../../sources/applications/vmapp/src/rtspappprotocolhandler.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/466364438

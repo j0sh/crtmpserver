@@ -318,9 +318,11 @@ bool LuaAppVirtualMachine::BindAPIHandlersRTMP() {
 		{"processInvokeConnectResult", luaapi_handler_rtmp_processInvokeConnectResult},
 		{"processInvokeCreateStreamResult", luaapi_handler_rtmp_processInvokeCreateStreamResult},
 		{"processInvokeFCSubscribeResult", luaapi_handler_rtmp_processInvokeFCSubscribeResult},
+		{"processInvokeGenericResult", luaapi_handler_rtmp_processInvokeGenericResult},
 		{"generateMetaFiles", luaapi_handler_rtmp_generateMetaFiles},
 		{"getMetaData", luaapi_handler_rtmp_getMetaData},
-		{"sendRTMPMessage", luaapi_handler_rtmp_sendRTMPMessage},
+		{"sendRequest", luaapi_handler_rtmp_sendRequest},
+		{"sendResponse", luaapi_handler_rtmp_sendResponse},
 		{NULL, NULL}
 	};
 	return _pVM->RegisterAPI("crtmpserver.handlers.rtmp", functions);
@@ -389,6 +391,7 @@ bool LuaAppVirtualMachine::GetFunctionsMappings() {
 	_functionsMappingIds[handlers_rtmp_processInvokeConnectResult] = _pVM->GetFunctionReference("customhandlers.rtmp.processInvokeConnectResult");
 	_functionsMappingIds[handlers_rtmp_processInvokeCreateStreamResult] = _pVM->GetFunctionReference("customhandlers.rtmp.processInvokeCreateStreamResult");
 	_functionsMappingIds[handlers_rtmp_processInvokeFCSubscribeResult] = _pVM->GetFunctionReference("customhandlers.rtmp.processInvokeFCSubscribeResult");
+	_functionsMappingIds[handlers_rtmp_processInvokeGenericResult] = _pVM->GetFunctionReference("customhandlers.rtmp.processInvokeGenericResult");
 	_functionsMappingIds[handlers_mpegts_preRegisterProtocol] = _pVM->GetFunctionReference("customhandlers.mpegts.preRegisterProtocol");
 	_functionsMappingIds[handlers_mpegts_postRegisterProtocol] = _pVM->GetFunctionReference("customhandlers.mpegts.postRegisterProtocol");
 	_functionsMappingIds[handlers_mpegts_preUnRegisterProtocol] = _pVM->GetFunctionReference("customhandlers.mpegts.preUnRegisterProtocol");

@@ -53,6 +53,7 @@ customhandlers=
 		processInvokeConnectResult=crtmpserver.handlers.rtmp.processInvokeConnectResult,
 		processInvokeCreateStreamResult=crtmpserver.handlers.rtmp.processInvokeCreateStreamResult,
 		processInvokeFCSubscribeResult=crtmpserver.handlers.rtmp.processInvokeFCSubscribeResult,
+		processInvokeGenericResult=crtmpserver.handlers.rtmp.processInvokeGenericResult,
 	},
 	mpegts=
 	{

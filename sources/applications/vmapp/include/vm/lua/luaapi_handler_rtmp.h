@@ -37,19 +37,10 @@ if ((pProtocol->GetType() != PT_INBOUND_RTMP) \
 } \
 do{}while(0)
 
-#define LUA_HANDLER_RTMP_GET_PROTOCOL_HANDLER_BY_PROTOCOL(pHandler,pApplication,pProtocol,L) \
-BaseRTMPAppProtocolHandler *pHandler = \
-	pApplication->GetProtocolHandler<BaseRTMPAppProtocolHandler > (pProtocol); \
-if (pHandler == NULL) {\
-	lua_pushboolean(L, false); \
-	return 1; \
-} \
-do{}while(0)
-
-#define LUA_HANDLER_RTMP_GET_PROTOCOL_HANDLER_BY_SCHEME(pHandler,pApplication,scheme,L) \
+#define LUA_HANDLER_RTMP_GET_HANDLER(pHandler,pApplication,L) \
 BaseRTMPAppProtocolHandler *pHandler = NULL; \
 do{ \
-	string ____tempString=scheme; \
+	string ____tempString="rtmp"; \
 	pHandler=pApplication->GetProtocolHandler<BaseRTMPAppProtocolHandler > (____tempString); \
 	if (pHandler == NULL) {\
 		lua_pushboolean(L, false); \
@@ -92,9 +83,11 @@ namespace app_vmapp {
 	int luaapi_handler_rtmp_processInvokeConnectResult(lua_State *L);
 	int luaapi_handler_rtmp_processInvokeCreateStreamResult(lua_State *L);
 	int luaapi_handler_rtmp_processInvokeFCSubscribeResult(lua_State *L);
+	int luaapi_handler_rtmp_processInvokeGenericResult(lua_State *L);
 	int luaapi_handler_rtmp_generateMetaFiles(lua_State *L);
 	int luaapi_handler_rtmp_getMetaData(lua_State *L);
-	int luaapi_handler_rtmp_sendRTMPMessage(lua_State *L);
+	int luaapi_handler_rtmp_sendRequest(lua_State *L);
+	int luaapi_handler_rtmp_sendResponse(lua_State *L);
 }
 
 #endif	/* _LUAAPI_HANDLER_RTMP_H */

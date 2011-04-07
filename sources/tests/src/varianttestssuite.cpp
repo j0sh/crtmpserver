@@ -56,8 +56,11 @@ VariantTestsSuite::VariantTestsSuite()
 	_timestampVar2 = Variant(1979, 10, 31, 12, 13, 14, 0);
 	_pcharVar = Variant((char *) "test");
 	_stringVar = Variant(string("test"));
-	_mapVar = Variant("test", "test");
-	_namedMapVar = Variant("test", "test", "test");
+	_mapVar.Reset();
+	_mapVar["test"] = "test";
+	_namedMapVar.Reset();
+	_namedMapVar["test"] = "test";
+	_namedMapVar.SetTypeName("test");
 	_referenceVariant1 = Variant(_noParamsVar);
 	_referenceVariant2 = Variant(_boolVar1);
 	_referenceVariant3 = Variant(_boolVar2);

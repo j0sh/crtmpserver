@@ -23,6 +23,7 @@
 #include "protocols/rtmp/basertmpappprotocolhandler.h"
 #include "protocols/protocolmanager.h"
 #include "vm/baseappvirtualmachine.h"
+#include "protocols/rtmp/messagefactories/messagefactories.h"
 
 #define LUA_HANDLER_RTMP_STANDARD_CALL(luaapi_handler_rtmp_H,NH) \
 int luaapi_handler_rtmp_H(lua_State *L) { \
@@ -31,7 +32,7 @@ int luaapi_handler_rtmp_H(lua_State *L) { \
 	LUA_READ_PARAM(params, Variant, V_MAP, request, Variant(), 1, true); \
 	LUA_GET_APPLICATION(pApp, L); \
 	LUA_HANDLER_RTMP_GET_PROTOCOL(pProtocol, protocolId, L); \
-	LUA_HANDLER_RTMP_GET_PROTOCOL_HANDLER_BY_PROTOCOL(pHandler, pApp, pProtocol, L); \
+	LUA_HANDLER_RTMP_GET_HANDLER(pHandler, pApp, L); \
 	bool result = pHandler->BaseRTMPAppProtocolHandler::NH( \
 		(BaseRTMPProtocol*) pProtocol, request); \
 	lua_pushboolean(L, result); \
@@ -46,7 +47,7 @@ int luaapi_handler_rtmp_H(lua_State *L) { \
 	LUA_READ_PARAM(params, Variant, V_MAP, response, Variant(), 2, true); \
 	LUA_GET_APPLICATION(pApp, L); \
 	LUA_HANDLER_RTMP_GET_PROTOCOL(pProtocol, protocolId, L); \
-	LUA_HANDLER_RTMP_GET_PROTOCOL_HANDLER_BY_PROTOCOL(pHandler, pApp, pProtocol, L); \
+	LUA_HANDLER_RTMP_GET_HANDLER(pHandler, pApp, L); \
 	bool result = pHandler->BaseRTMPAppProtocolHandler::NH( \
 		(BaseRTMPProtocol*) pProtocol, request,response); \
 	lua_pushboolean(L, result); \
@@ -67,7 +68,7 @@ namespace app_vmapp {
 			return 1;
 		}
 		LUA_GET_APPLICATION(pApp, L);
-		LUA_HANDLER_RTMP_GET_PROTOCOL_HANDLER_BY_SCHEME(pHandler, pApp, "rtmp", L);
+		LUA_HANDLER_RTMP_GET_HANDLER(pHandler, pApp, L);
 		bool result = pHandler->BaseRTMPAppProtocolHandler::PullExternalStream(uri, streamConfig);
 		lua_pushboolean(L, result);
 		return 1;
@@ -83,7 +84,7 @@ namespace app_vmapp {
 		LUA_READ_PARAM(params, uint32_t, _V_NUMERIC, protocolId, 0, 0, true);
 		LUA_GET_APPLICATION(pApp, L);
 		LUA_HANDLER_RTMP_GET_PROTOCOL(pProtocol, protocolId, L);
-		LUA_HANDLER_RTMP_GET_PROTOCOL_HANDLER_BY_PROTOCOL(pHandler, pApp, pProtocol, L);
+		LUA_HANDLER_RTMP_GET_HANDLER(pHandler, pApp, L);
 		if (pProtocol->GetType() != PT_OUTBOUND_RTMP) {
 			FATAL("Protocol %d has invalid type", protocolId);
 			lua_pushboolean(L, false);
@@ -130,10 +131,11 @@ namespace app_vmapp {
 	LUA_HANDLER_RTMP_STANDARD_RESPONSE_CALL(luaapi_handler_rtmp_processInvokeConnectResult, ProcessInvokeConnectResult);
 	LUA_HANDLER_RTMP_STANDARD_RESPONSE_CALL(luaapi_handler_rtmp_processInvokeCreateStreamResult, ProcessInvokeCreateStreamResult);
 	LUA_HANDLER_RTMP_STANDARD_RESPONSE_CALL(luaapi_handler_rtmp_processInvokeFCSubscribeResult, ProcessInvokeFCSubscribeResult);
+	LUA_HANDLER_RTMP_STANDARD_RESPONSE_CALL(luaapi_handler_rtmp_processInvokeGenericResult, ProcessInvokeGenericResult);
 
 	int luaapi_handler_rtmp_generateMetaFiles(lua_State *L) {
 		LUA_GET_APPLICATION(pApp, L);
-		LUA_HANDLER_RTMP_GET_PROTOCOL_HANDLER_BY_SCHEME(pHandler, pApp, "rtmp", L);
+		LUA_HANDLER_RTMP_GET_HANDLER(pHandler, pApp, L);
 		pHandler->BaseRTMPAppProtocolHandler::GenerateMetaFiles();
 		lua_pushboolean(L, true);
 		return 1;
@@ -143,7 +145,7 @@ namespace app_vmapp {
 		LUA_INIT_PARAMS(params, L);
 		LUA_READ_PARAM(params, string, V_STRING, streamName, "", 0, true);
 		LUA_GET_APPLICATION(pApp, L);
-		LUA_HANDLER_RTMP_GET_PROTOCOL_HANDLER_BY_SCHEME(pHandler, pApp, "rtmp", L);
+		LUA_HANDLER_RTMP_GET_HANDLER(pHandler, pApp, L);
 		Variant result = pHandler->BaseRTMPAppProtocolHandler::GetMetaData(streamName, true);
 		if (!PushVariant(L, result)) {
 			lua_pushboolean(L, false);
@@ -151,8 +153,36 @@ namespace app_vmapp {
 		return 1;
 	}
 
-	int luaapi_handler_rtmp_sendRTMPMessage(lua_State *L) {
-		NYIA;
-		return 0;
+	int luaapi_handler_rtmp_sendRequest(lua_State *L) {
+		LUA_INIT_PARAMS(params, L);
+		LUA_READ_PARAM(params, uint32_t, _V_NUMERIC, protocolId, 0, 0, true);
+		LUA_READ_PARAM(params, string, V_STRING, functionName, "", 1, true);
+		LUA_READ_PARAM(params, bool, V_BOOL, trackResponse, false, 2, true);
+		LUA_GET_APPLICATION(pApp, L);
+		LUA_HANDLER_RTMP_GET_PROTOCOL(pProtocol, protocolId, L);
+		LUA_HANDLER_RTMP_GET_HANDLER(pHandler, pApp, L);
+		params.RemoveAt(0);
+		params.RemoveAt(1);
+		params[(uint32_t) 2] = Variant();
+		Variant request = GenericMessageFactory::GetInvoke(3, 0, 0, false, 0,
+				functionName, params);
+		lua_pushboolean(L, pHandler->SendRTMPMessage(
+				(BaseRTMPProtocol *) pProtocol, request, trackResponse));
+		return 1;
+	}
+
+	int luaapi_handler_rtmp_sendResponse(lua_State *L) {
+		LUA_INIT_PARAMS(params, L);
+		LUA_READ_PARAM(params, uint32_t, _V_NUMERIC, protocolId, 0, 0, true);
+		LUA_READ_PARAM(params, Variant, V_MAP, request, Variant(), 1, true);
+		LUA_GET_APPLICATION(pApp, L);
+		LUA_HANDLER_RTMP_GET_PROTOCOL(pProtocol, protocolId, L);
+		LUA_HANDLER_RTMP_GET_HANDLER(pHandler, pApp, L);
+		params.RemoveAt(0);
+		params[(uint32_t) 1] = Variant();
+		Variant response = GenericMessageFactory::GetInvokeResult(request, params);
+		lua_pushboolean(L, pHandler->SendRTMPMessage(
+				(BaseRTMPProtocol *) pProtocol, response));
+		return 1;
 	}
 }

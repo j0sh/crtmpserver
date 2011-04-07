@@ -107,9 +107,9 @@ jobject VariantToJObject(Variant &value, JNIEnv* pEnv) {
 
 			FOR_MAP(value, string, Variant, i) {
 				jobject key = NULL;
-				if (MAP_KEY(i).find("__index__value__") == 0) {
+				if (MAP_KEY(i).find(VAR_INDEX_VALUE) == 0) {
 					key = pEnv->NewObject(longClazz, longConstructor,
-							(int64_t) atol(STR(MAP_KEY(i).substr(16))));
+							(int64_t) atol(STR(MAP_KEY(i).substr(VAR_INDEX_VALUE_LEN))));
 				} else {
 					key = pEnv->NewStringUTF(STR(MAP_KEY(i)));
 				}
