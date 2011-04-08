@@ -38,6 +38,7 @@ InboundHTTP4RTMP::~InboundHTTP4RTMP() {
 }
 
 bool InboundHTTP4RTMP::Initialize(Variant &parameters) {
+	GetCustomParameters()=parameters;
 	return true;
 }
 
@@ -151,6 +152,7 @@ BaseProtocol *InboundHTTP4RTMP::Bind(string sid) {
 			pResult = ProtocolManager::GetProtocol(_protocolsBySid[sid]);
 		} else {
 			pResult = new InboundRTMPProtocol();
+			pResult->Initialize(GetCustomParameters());
 			pResult->SetApplication(GetApplication());
 			_protocolsBySid[sid] = pResult->GetId();
 			SetNearProtocol(pResult);
