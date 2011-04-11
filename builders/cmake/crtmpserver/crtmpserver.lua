@@ -353,10 +353,11 @@ configuration=
 			description="An application demonstrating the use of virtual machines",
 			protocol="dynamiclinklibrary",
 			vmType="lua",
-			script="testapp.lua",
+			script="flvplayback.lua",
 			aliases=
 			{
-				"lua"
+				"flvplayback",
+				"vod"
 			},
 			acceptors=
 			{
