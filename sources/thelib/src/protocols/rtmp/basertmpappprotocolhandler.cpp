@@ -711,7 +711,7 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokeSeek(BaseRTMPProtocol *pFrom,
 	//1. Read stream index and offset in millisecond
 	uint32_t streamId = VH_SI(request);
 	double timeOffset = 0.0;
-	if ((VariantType) M_INVOKE_PARAM(request, 1) == V_DOUBLE)
+	if (M_INVOKE_PARAM(request, 1) == _V_NUMERIC)
 		timeOffset = M_INVOKE_PARAM(request, 1);
 
 	//2. Find the corresponding outbound stream
@@ -1652,7 +1652,7 @@ bool BaseRTMPAppProtocolHandler::SendRTMPMessage(BaseRTMPProtocol *pTo,
 				invokeId = _nextInvokeId[pTo->GetId()];
 				_nextInvokeId[pTo->GetId()] = invokeId + 1;
 				M_INVOKE_ID(message) = invokeId;
-				
+
 				if (trackResponse)
 					_resultMessageTracking[pTo->GetId()][invokeId] = message;
 				return pTo->SendMessage(message);
