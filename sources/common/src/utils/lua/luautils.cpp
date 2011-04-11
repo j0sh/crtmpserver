@@ -83,6 +83,7 @@ bool PopVariant(lua_State *pLuaState, Variant &variant, int32_t idx, bool pop) {
 		}
 		case LUA_TTABLE:
 		{
+			bool isArray = true;
 			lua_pushnil(pLuaState);
 			while (lua_next(pLuaState, idx) != 0) {
 				Variant value;
@@ -94,15 +95,9 @@ bool PopVariant(lua_State *pLuaState, Variant &variant, int32_t idx, bool pop) {
 					return false;
 
 				variant[key] = value;
+				isArray &= (key == _V_NUMERIC);
 			}
 
-			bool isArray = true;
-			for (uint32_t i = 0; i < variant.MapSize(); i++) {
-				if (!variant.HasKey(format(VAR_INDEX_VALUE"%u", i))) {
-					isArray = false;
-					break;
-				}
-			}
 			variant.IsArray(isArray);
 
 			if (variant.HasKey(VAR_MAP_NAME)) {

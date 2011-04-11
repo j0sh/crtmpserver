@@ -25,6 +25,7 @@
 namespace app_vmapp {
 	int luaapi_generics_listFolder(lua_State *L);
 	int luaapi_generics_normalizePath(lua_State *L);
+	int luaapi_generics_splitFileName(lua_State *L);
 };
 
 #endif	/* _LUAAPI_GENERICS_H */

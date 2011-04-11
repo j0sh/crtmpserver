@@ -241,6 +241,7 @@ bool LuaAppVirtualMachine::BindAPIGenerics() {
 	struct luaL_Reg functions[] = {
 		{"listFolder", luaapi_generics_listFolder},
 		{"normalizePath", luaapi_generics_normalizePath},
+		{"splitFileName", luaapi_generics_splitFileName},
 		{NULL, NULL}
 	};
 	return _pVM->RegisterAPI("crtmpserver", functions);
