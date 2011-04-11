@@ -403,6 +403,11 @@ void BaseProtocol::GetStats(Variant &info) {
 	queryTimestamp /= (double) CLOCKS_PER_SECOND;
 	queryTimestamp *= 1000.00;
 	info["queryTimestamp"] = queryTimestamp;
+	info["isEnqueueForDelete"] = (bool)IsEnqueueForDelete();
+	if (_pApplication != NULL)
+		info["applicationId"] = _pApplication->GetId();
+	else
+		info["applicationId"] = (uint32_t) 0;
 }
 
 string BaseProtocol::ToString(uint32_t currentId) {

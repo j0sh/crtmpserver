@@ -22,32 +22,6 @@
 
 #include "common.h"
 
-#define LUA_HANDLER_RTMP_GET_PROTOCOL(pProtocol,protocolId,L) \
-BaseProtocol *pProtocol = ProtocolManager::GetProtocol(protocolId); \
-if (pProtocol == NULL) { \
-	FATAL("Protocol %d not available",protocolId); \
-	lua_pushboolean(L, false); \
-	return 1; \
-} \
-if ((pProtocol->GetType() != PT_INBOUND_RTMP) \
-		&& (pProtocol->GetType() != PT_OUTBOUND_RTMP)) { \
-	FATAL("Protocol %d has invalid type",protocolId); \
-	lua_pushboolean(L, false); \
-	return 1; \
-} \
-do{}while(0)
-
-#define LUA_HANDLER_RTMP_GET_HANDLER(pHandler,pApplication,L) \
-BaseRTMPAppProtocolHandler *pHandler = NULL; \
-do{ \
-	string ____tempString="rtmp"; \
-	pHandler=pApplication->GetProtocolHandler<BaseRTMPAppProtocolHandler > (____tempString); \
-	if (pHandler == NULL) {\
-		lua_pushboolean(L, false); \
-		return 1; \
-	} \
-} while(0)
-
 namespace app_vmapp {
 	int luaapi_handler_rtmp_pullExternalStream(lua_State *L);
 	int luaapi_handler_rtmp_pushLocalStream(lua_State *L);

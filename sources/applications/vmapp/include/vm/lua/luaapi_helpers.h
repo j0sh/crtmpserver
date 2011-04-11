@@ -32,6 +32,15 @@ do { \
 	pApp = (BaseClientApplication *) ___pTempPointer; \
 } while (0);
 
+#define LUA_GET_PROTOCOL(pProtocol,protocolId,L) \
+BaseProtocol *pProtocol = ProtocolManager::GetProtocol(protocolId); \
+if (pProtocol == NULL) { \
+	FATAL("Protocol %d not available",protocolId); \
+	lua_pushboolean(L, false); \
+	return 1; \
+} \
+do{}while(0)
+
 #define LUA_INIT_PARAMS(params, L) \
 Variant params; \
 if (!PopStack((L), params)) { \

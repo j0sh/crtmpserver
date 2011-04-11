@@ -25,6 +25,27 @@
 #include "vm/baseappvirtualmachine.h"
 #include "protocols/rtmp/messagefactories/messagefactories.h"
 
+#define LUA_HANDLER_RTMP_GET_PROTOCOL(pProtocol,protocolId,L) \
+LUA_GET_PROTOCOL(pProtocol,protocolId,L); \
+if ((pProtocol->GetType() != PT_INBOUND_RTMP) \
+		&& (pProtocol->GetType() != PT_OUTBOUND_RTMP)) { \
+	FATAL("Protocol %d has invalid type",protocolId); \
+	lua_pushboolean(L, false); \
+	return 1; \
+} \
+do{}while(0)
+
+#define LUA_HANDLER_RTMP_GET_HANDLER(pHandler,pApplication,L) \
+BaseRTMPAppProtocolHandler *pHandler = NULL; \
+do{ \
+	string ____tempString="rtmp"; \
+	pHandler=pApplication->GetProtocolHandler<BaseRTMPAppProtocolHandler > (____tempString); \
+	if (pHandler == NULL) {\
+		lua_pushboolean(L, false); \
+		return 1; \
+	} \
+} while(0)
+
 #define LUA_HANDLER_RTMP_STANDARD_CALL(luaapi_handler_rtmp_H,NH) \
 int luaapi_handler_rtmp_H(lua_State *L) { \
 	LUA_INIT_PARAMS(params, L); \

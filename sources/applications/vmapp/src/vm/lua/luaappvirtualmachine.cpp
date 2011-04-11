@@ -21,6 +21,7 @@
 #include "vm/lua/luaapi_helpers.h"
 #include "vm/lua/luaapi_generics.h"
 #include "vm/lua/luaapi_application.h"
+#include "vm/lua/luaapi_protocols.h"
 #include "vm/lua/luaapi_handler_rtmp.h"
 #include "vmlua/basevmlua.h"
 #include "application/baseclientapplication.h"
@@ -211,6 +212,11 @@ bool LuaAppVirtualMachine::BindAPI() {
 		return false;
 	}
 
+	if (!BindAPIProtocols()) {
+		FATAL("Unable to bind generics API");
+		return false;
+	}
+
 	if (!BindAPIHandlers()) {
 		FATAL("Unable to bind handlers API");
 		return false;
@@ -256,6 +262,16 @@ bool LuaAppVirtualMachine::BindAPIApplication() {
 		{NULL, NULL}
 	};
 	return _pVM->RegisterAPI("crtmpserver.handlers.application", functions);
+}
+
+bool LuaAppVirtualMachine::BindAPIProtocols() {
+	struct luaL_Reg functions[] = {
+		{"getStackInfo", luaapi_protocols_getConfig},
+		{"enqueueForDelete", luaapi_protocols_enqueueForDelete},
+		{"gracefullyEnqueueForDelete", luaapi_protocols_gracefullyEnqueueForDelete},
+		{NULL, NULL}
+	};
+	return _pVM->RegisterAPI("crtmpserver.protocols", functions);
 }
 
 bool LuaAppVirtualMachine::BindAPIHandlers() {

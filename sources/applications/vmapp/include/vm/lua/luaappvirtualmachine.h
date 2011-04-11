@@ -55,6 +55,7 @@ namespace app_vmapp {
 	private:
 		bool BindAPIGenerics();
 		bool BindAPIApplication();
+		bool BindAPIProtocols();
 		bool BindAPIHandlers();
 		bool BindAPIHandlersRTMP();
 		bool BindAPIHandlersRTSP();
