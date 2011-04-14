@@ -17,6 +17,7 @@
  *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifdef HAS_LUA
 #include "vm/lua/luaapi_generics.h"
 #include "vm/lua/luaapi_helpers.h"
 
@@ -68,3 +69,4 @@ namespace app_vmapp {
 		return 1;
 	}
 }
+#endif	/* HAS_LUA */

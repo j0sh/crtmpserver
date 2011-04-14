@@ -18,7 +18,7 @@
  */
 
 
-#ifdef VM_LUA
+#ifdef HAS_LUA
 
 #include "vmlua/basevmlua.h"
 
@@ -246,6 +246,6 @@ bool BaseVMLua::Call(bool hasParams, Variant &parameters, Variant &results) {
 	return true;
 }
 
-#endif /* VM_LUA */
+#endif /* HAS_LUA */
 
 

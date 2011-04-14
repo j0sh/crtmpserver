@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configurationDescriptor version="79">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <logicalFolder name="f1" displayName="apps" projectFiles="true" kind="ROOT">
+      <itemPath>../../../cmake/applications/vmapp/crtmpserverdefaults.lua</itemPath>
+      <itemPath>../../../cmake/applications/vmapp/flvplayback.lua</itemPath>
+      <itemPath>../../../cmake/applications/vmapp/testapp.lua</itemPath>
+    </logicalFolder>
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
@@ -32,6 +37,7 @@
           <itemPath>../../../../sources/applications/vmapp/src/vm/lua/luaapi_generics.cpp</itemPath>
           <itemPath>../../../../sources/applications/vmapp/src/vm/lua/luaapi_handler_mpegts.cpp</itemPath>
           <itemPath>../../../../sources/applications/vmapp/src/vm/lua/luaapi_handler_rtmp.cpp</itemPath>
+          <itemPath>../../../../sources/applications/vmapp/src/vm/lua/luaapi_protocols.cpp</itemPath>
           <itemPath>../../../../sources/applications/vmapp/src/vm/lua/luaappvirtualmachine.cpp</itemPath>
         </logicalFolder>
         <itemPath>../../../../sources/applications/vmapp/src/vm/baseappvirtualmachine.cpp</itemPath>
@@ -78,8 +84,8 @@
             <Elem>OSX</Elem>
             <Elem>NET_KQUEUE</Elem>
             <Elem>HAS_PROTOCOL_RTMP</Elem>
-            <Elem>VM_LUA</Elem>
             <Elem>HAS_LUA</Elem>
+			<Elem>HAS_V8</Elem>
           </preprocessorList>
         </ccTool>
         <linkerTool>

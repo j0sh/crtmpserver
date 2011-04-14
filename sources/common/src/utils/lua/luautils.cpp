@@ -292,7 +292,8 @@ bool PushVariant(lua_State *pLuaState,
 
 			FOR_MAP(variant, string, Variant, i) {
 				if (MAP_KEY(i).find(VAR_INDEX_VALUE) == 0) {
-					string temp = MAP_KEY(i).substr(16, string::npos);
+					string temp = MAP_KEY(i).substr(VAR_INDEX_VALUE_LEN,
+							string::npos);
 					char *error = NULL;
 					double index = strtod(STR(temp), &error);
 					if (error == STR(temp) + temp.size()) {

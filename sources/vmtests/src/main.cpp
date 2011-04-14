@@ -19,20 +19,30 @@
 
 
 #include "common.h"
+#include "basevm.h"
 #include "testvmlua.h"
+#include "testvmv8.h"
 
 #define VM_TEST_DESCRIPTION "description"
 #define VM_TEST_TYPE "type"
 #define VM_TEST_TYPE_ECHO_FUNCTION_CALL "echoFunctionCall"
+#define VM_TEST_TYPE_TEST_FUNCTION_EXISTENCE "hasFunction"
 #define VM_TEST_FUNCTION_NAME "functionName"
 #define VM_TEST_FUNCTION_PARAMETERS "functionParameters"
+#define VM_TEST_WANTED_RESULT "wantedResult"
 
 Variant PrepareTestsSuite();
 void PreProcessData(Variant &variant, bool has64bit, bool hasUndefined);
 bool RunTestEchoFunctionCall(BaseVM *pVM, Variant &test);
+bool RunTestFunctionExistence(BaseVM *pVM, Variant &test);
 bool RunTest(BaseVM *pVM, Variant &test);
 bool TestVM(BaseVM *pVM, vector<string> &scriptFiles, Variant &testSuite);
+#ifdef HAS_LUA
 bool TestLuaVM(Variant &testSuite);
+#endif /* HAS_LUA */
+#ifdef HAS_V8
+bool TestV8VM(Variant &testSuite);
+#endif /* HAS_V8 */
 
 int main(int argc, char **argv) {
 	//1. Init the logger
@@ -46,10 +56,26 @@ int main(int argc, char **argv) {
 
 	bool result = true;
 
+#ifdef HAS_LUA
 	FINEST("Run lua");
 	if (!TestLuaVM(testSuite)) {
 		FATAL("Lua VM tests failed");
 		result &= false;
+	}
+#endif /* HAS_LUA */
+
+#ifdef HAS_V8
+	FINEST("Run v8");
+	if (!TestV8VM(testSuite)) {
+		FATAL("V8 VM tests failed");
+		result &= false;
+	}
+#endif /* HAS_V8 */
+
+	if (result) {
+		FINEST("Tests completed successfully");
+	} else {
+		FINEST("Tests completed with errors");
 	}
 
 	Logger::Free(false);
@@ -60,10 +86,22 @@ int main(int argc, char **argv) {
 Variant PrepareTestsSuite() {
 	Variant result;
 
+	Variant functionExistence;
+	functionExistence[VM_TEST_TYPE] = VM_TEST_TYPE_TEST_FUNCTION_EXISTENCE;
+	functionExistence[VM_TEST_DESCRIPTION] = "Testing function existence";
+	functionExistence[VM_TEST_FUNCTION_NAME] = VM_TEST_TYPE_ECHO_FUNCTION_CALL;
+	functionExistence[VM_TEST_WANTED_RESULT] = (bool)true;
+	result.PushToArray(functionExistence);
+
+	functionExistence[VM_TEST_FUNCTION_NAME] = "___missingFunction____";
+	functionExistence[VM_TEST_WANTED_RESULT] = (bool)false;
+	result.PushToArray(functionExistence);
+
 	//1. Call function
 	Variant functionCall;
 	functionCall[VM_TEST_DESCRIPTION] = "Testing function call";
 	functionCall[VM_TEST_TYPE] = VM_TEST_TYPE_ECHO_FUNCTION_CALL;
+	functionCall[VM_TEST_FUNCTION_NAME] = VM_TEST_TYPE_ECHO_FUNCTION_CALL;
 	Variant complexParameter;
 
 	complexParameter["00_bool_true"] = (bool)true;
@@ -94,11 +132,11 @@ Variant PrepareTestsSuite() {
 
 	complexParameter["17_null"] = Variant();
 
-	complexParameter["18_date"] = Variant(1979, 10, 31);
-
-	complexParameter["19_time"] = Variant(13, 14, 15, 0);
-
-	complexParameter["20_timestamp"] = Variant(1979, 10, 31, 13, 14, 15, 0);
+	//	complexParameter["18_date"] = Variant(1979, 10, 31);
+	//
+	//	complexParameter["19_time"] = Variant(13, 14, 15, 0);
+	//
+	//	complexParameter["20_timestamp"] = Variant(1979, 10, 31, 13, 14, 15, 0);
 
 	complexParameter["21_arraySample"].PushToArray("one");
 	complexParameter["21_arraySample"].PushToArray((uint32_t) 1);
@@ -157,7 +195,7 @@ bool RunTestEchoFunctionCall(BaseVM *pVM, Variant &test) {
 
 	//2. Do the call
 	if (!pVM->CallWithParams(VM_TEST_TYPE_ECHO_FUNCTION_CALL, input[VM_TEST_FUNCTION_PARAMETERS], result)) {
-		FATAL("Calling %s failed", VM_TEST_TYPE_ECHO_FUNCTION_CALL);
+		FATAL("Calling %s failed", STR(test[VM_TEST_FUNCTION_NAME]));
 		return false;
 	}
 
@@ -201,13 +239,20 @@ bool RunTestEchoFunctionCall(BaseVM *pVM, Variant &test) {
 	return true;
 }
 
+bool RunTestFunctionExistence(BaseVM *pVM, Variant &test) {
+	string functionName = test[VM_TEST_FUNCTION_NAME];
+	bool hasFunction = pVM->HasFunction(functionName);
+	return hasFunction == ((bool)test[VM_TEST_WANTED_RESULT]);
+}
+
 bool RunTest(BaseVM *pVM, Variant &test) {
-	FINEST("Running test %s", STR(test[VM_TEST_TYPE]));
+	FINEST("%s", STR(test[VM_TEST_DESCRIPTION]));
 	if (test[VM_TEST_TYPE] == VM_TEST_TYPE_ECHO_FUNCTION_CALL) {
 		return RunTestEchoFunctionCall(pVM, test);
+	} else if (test[VM_TEST_TYPE] == VM_TEST_TYPE_TEST_FUNCTION_EXISTENCE) {
+		return RunTestFunctionExistence(pVM, test);
 	} else {
 		FATAL("Invalid test:\n%s", STR(test.ToString()));
-
 		return false;
 	}
 }
@@ -241,17 +286,17 @@ bool TestVM(BaseVM *pVM, vector<string> &scriptFiles, Variant &testSuite) {
 	//4. clear the vm
 	if (!pVM->Shutdown()) {
 		FATAL("Unable to shutdown the VM");
-
 		return false;
 	}
 
 	//5. We are done
 	return true;
 }
+#ifdef HAS_LUA
 
 bool TestLuaVM(Variant &testSuite) {
 	//1. Create the VM
-	BaseVM *pVM = new TestVMLua();
+	TestVMLua VM;
 
 	//2. Prepare the scripts locations
 	vector<string> scriptFiles;
@@ -259,15 +304,33 @@ bool TestLuaVM(Variant &testSuite) {
 	ADD_VECTOR_END(scriptFiles, "./utils.lua");
 
 	//3. Test the machine
-	if (!TestVM(pVM, scriptFiles, testSuite)) {
-		FATAL("TestVM failed");
+	if (!TestVM(&VM, scriptFiles, testSuite)) {
+		FATAL("TestLuaVM failed");
 		return false;
 	}
-
-	//4. delete the vm
-	delete pVM;
 
 	//5. We are done here
 	return true;
 }
+#endif /* HAS_LUA */
 
+#ifdef HAS_V8
+
+bool TestV8VM(Variant &testSuite) {
+	//1. Create the VM
+	TestVMV8 VM;
+
+	//2. Prepare the scripts locations
+	vector<string> scriptFiles;
+	ADD_VECTOR_END(scriptFiles, "./vmtests.js");
+
+	//3. Test the machine
+	if (!TestVM(&VM, scriptFiles, testSuite)) {
+		FATAL("TestV8VM failed");
+		return false;
+	}
+
+	//5. We are done here
+	return true;
+}
+#endif /* HAS_V8 */

@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -17,24 +17,21 @@
  *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifdef HAS_V8
+#ifndef _TESTVMV8_H
+#define	_TESTVMV8_H
 
-#ifdef HAS_LUA
+#include "vmv8/basevmv8.h"
 
-#ifndef _TESTVMLUA_H
-#define	_TESTVMLUA_H
-
-#include "vmlua/basevmlua.h"
-
-class TestVMLua
-: public BaseVMLua {
+class TestVMV8 
+:public BaseVMV8{
 public:
-	TestVMLua();
-	virtual ~TestVMLua();
+	TestVMV8();
+	virtual ~TestVMV8();
 private:
 
 };
 
 
-#endif	/* _TESTVMLUA_H */
-#endif	/* HAS_LUA */
-
+#endif	/* _TESTVMV8_H */
+#endif	/* HAS_V8 */

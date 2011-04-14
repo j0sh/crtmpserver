@@ -17,6 +17,7 @@
  *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifdef HAS_LUA
 #include "vm/lua/luaappvirtualmachine.h"
 #include "vm/lua/luaapi_helpers.h"
 #include "vm/lua/luaapi_generics.h"
@@ -452,3 +453,4 @@ void LuaAppVirtualMachine::Shutdown() {
 		_pVM = NULL;
 	}
 }
+#endif	/* HAS_LUA */

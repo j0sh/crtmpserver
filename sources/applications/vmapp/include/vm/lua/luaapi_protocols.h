@@ -17,6 +17,7 @@
  *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifdef HAS_LUA
 #ifndef _LUAAPI_PROTOCOLS_H
 #define	_LUAAPI_PROTOCOLS_H
 
@@ -27,4 +28,4 @@ namespace app_vmapp {
 }
 
 #endif	/* _LUAAPI_PROTOCOLS_H */
-
+#endif	/* HAS_LUA */

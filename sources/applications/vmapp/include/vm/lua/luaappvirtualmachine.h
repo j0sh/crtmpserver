@@ -17,6 +17,7 @@
  *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifdef HAS_LUA
 #ifndef _LUAAPPVIRTUALMACHINE_H
 #define	_LUAAPPVIRTUALMACHINE_H
 
@@ -68,4 +69,4 @@ namespace app_vmapp {
 }
 
 #endif	/* _LUAAPPVIRTUALMACHINE_H */
-
+#endif	/* HAS_LUA */

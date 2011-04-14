@@ -25,7 +25,7 @@
       <nativedebugger version="1">
         <engine>gdb</engine>
       </nativedebugger>
-      <runprofile version="8">
+      <runprofile version="9">
         <runcommandpicklist>
           <runcommandpicklistitem>"${OUTPUT_PATH}"</runcommandpicklistitem>
         </runcommandpicklist>
@@ -61,7 +61,7 @@
       <nativedebugger version="1">
         <engine>gdb</engine>
       </nativedebugger>
-      <runprofile version="8">
+      <runprofile version="9">
         <runcommandpicklist>
           <runcommandpicklistitem>"${OUTPUT_PATH}"</runcommandpicklistitem>
         </runcommandpicklist>

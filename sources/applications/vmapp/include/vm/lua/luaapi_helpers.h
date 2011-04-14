@@ -17,6 +17,7 @@
  *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifdef HAS_LUA
 #ifndef _LUAAPI_HELPERS_H
 #define	_LUAAPI_HELPERS_H
 
@@ -79,4 +80,4 @@ if(!(params).HasKey((key),(caseSensitive))) { \
 }
 
 #endif	/* _LUAAPI_HELPERS_H */
-
+#endif	/* HAS_LUA */

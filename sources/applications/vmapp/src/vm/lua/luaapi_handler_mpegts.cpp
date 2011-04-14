@@ -17,8 +17,9 @@
  *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
+#ifdef HAS_LUA
 #include "vm/lua/luaapi_handler_mpegts.h"
 namespace app_vmapp {
 
 }
+#endif	/* HAS_LUA */

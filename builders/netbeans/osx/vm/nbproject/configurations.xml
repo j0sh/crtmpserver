@@ -7,6 +7,9 @@
       <logicalFolder name="vmlua" displayName="vmlua" projectFiles="true">
         <itemPath>../../../../sources/vm/include/vmlua/basevmlua.h</itemPath>
       </logicalFolder>
+      <logicalFolder name="vmv8" displayName="vmv8" projectFiles="true">
+        <itemPath>../../../../sources/vm/include/vmv8/basevmv8.h</itemPath>
+      </logicalFolder>
       <itemPath>../../../../sources/vm/include/basevm.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
@@ -18,6 +21,9 @@
                    projectFiles="true">
       <logicalFolder name="vmlua" displayName="vmlua" projectFiles="true">
         <itemPath>../../../../sources/vm/src/vmlua/basevmlua.cpp</itemPath>
+      </logicalFolder>
+      <logicalFolder name="vmv8" displayName="vmv8" projectFiles="true">
+        <itemPath>../../../../sources/vm/src/vmv8/basevmv8.cpp</itemPath>
       </logicalFolder>
       <itemPath>../../../../sources/vm/src/basevm.cpp</itemPath>
     </logicalFolder>
@@ -45,11 +51,12 @@
             <pElem>../../../../sources/vm/include</pElem>
             <pElem>../../../../3rdparty/v8/include</pElem>
             <pElem>/opt/local/include</pElem>
+            <pElem>../../../../../v8/include</pElem>
           </incDir>
           <preprocessorList>
             <Elem>OSX</Elem>
-            <Elem>VM_LUA</Elem>
             <Elem>HAS_LUA</Elem>
+            <Elem>HAS_V8</Elem>
           </preprocessorList>
         </ccTool>
         <linkerTool>
@@ -90,7 +97,8 @@
           </incDir>
           <preprocessorList>
             <Elem>OSX</Elem>
-            <Elem>VM_LUA</Elem>
+            <Elem>HAS_LUA</Elem>
+			<Elem>HAS_V8</Elem>
           </preprocessorList>
         </ccTool>
         <fortranCompilerTool>

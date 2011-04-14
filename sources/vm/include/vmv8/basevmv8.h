@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -17,23 +17,22 @@
  *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifdef HAS_LUA
-#ifndef _BASEVMLUA_H
-#define	_BASEVMLUA_H
+#ifdef HAS_V8
+#ifndef _BASEVMV8_H
+#define	_BASEVMV8_H
 
 #include "basevm.h"
+#include "v8.h"
+using namespace v8;
 
-class DLLEXP BaseVMLua
+class BaseVMV8
 : public BaseVM {
 private:
-	lua_State *_pGlobalState;
-	void *_pOpaque;
-	Variant _dummy;
+	Persistent<Context> _context;
 public:
-	BaseVMLua();
-	virtual ~BaseVMLua();
+	BaseVMV8();
+	virtual ~BaseVMV8();
 
-	void SetOpaque(void *pOpaque);
 	virtual bool Supports64bit();
 	virtual bool SupportsUndefined();
 	virtual bool Initialize();
@@ -43,16 +42,13 @@ public:
 	virtual bool HasFunction(string functionName);
 	virtual bool CallWithParams(string functionName, Variant &parameters, Variant &results);
 	virtual bool CallWithoutParams(string functionName, Variant &results);
-	virtual bool CallWithParams(int functionRef, Variant &parameters, Variant &results);
-	virtual bool CallWithoutParams(int functionRef, Variant &results);
-	bool AddPackagePath(string path);
-	bool RegisterAPI(string name, luaL_Reg *pAPI);
-	int GetFunctionReference(string path);
+protected:
+	static string GetErrorString(TryCatch &tryCatch);
 private:
-	bool Call(bool hasParams, Variant &parameters, Variant &results);
+	static bool VariantToV8Value(Variant &variant, Handle<Value> &val);
+	static bool V8ValueToVariant(Local<Value> &value, Variant &variant);
 };
 
-
-#endif	/* _BASEVMLUA_H */
-#endif /* HAS_LUA */
+#endif	/* _BASEVMV8_H */
+#endif	/* HAS_V8 */
 

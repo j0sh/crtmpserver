@@ -18,7 +18,7 @@
  */
 
 
-#ifdef VM_LUA
+#ifdef HAS_LUA
 
 #include "testvmlua.h"
 
@@ -30,6 +30,6 @@ TestVMLua::TestVMLua()
 TestVMLua::~TestVMLua() {
 }
 
-#endif	/* VM_LUA */
+#endif	/* HAS_LUA */
 
 

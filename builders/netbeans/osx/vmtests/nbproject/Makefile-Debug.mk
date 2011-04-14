@@ -19,7 +19,6 @@ CCC=g++
 CXX=g++
 FC=gfortran
 AS=as
-PROC=proc
 
 # Macros
 CND_PLATFORM=GNU-MacOSX
@@ -36,7 +35,8 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 # Object Files
 OBJECTFILES= \
 	${OBJECTDIR}/_ext/1218434808/main.o \
-	${OBJECTDIR}/_ext/1218434808/testvmlua.o
+	${OBJECTDIR}/_ext/1218434808/testvmlua.o \
+	${OBJECTDIR}/_ext/1218434808/testvmv8.o
 
 
 # C Compiler Flags
@@ -70,12 +70,17 @@ ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/vmtests: ${OBJECTFILES}
 ${OBJECTDIR}/_ext/1218434808/main.o: ../../../../sources/vmtests/src/main.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1218434808
 	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DVM_LUA -I../../../../sources/common/include -I../../../../sources/vm/include -I../../../../sources/vmtests/include -I../../../../3rdparty/v8/include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1218434808/main.o ../../../../sources/vmtests/src/main.cpp
+	$(COMPILE.cc) -g -DOSX -DVM_LUA -DVM_V8 -I../../../../sources/common/include -I../../../../sources/vm/include -I../../../../sources/vmtests/include -I../../../../../v8/include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1218434808/main.o ../../../../sources/vmtests/src/main.cpp
 
 ${OBJECTDIR}/_ext/1218434808/testvmlua.o: ../../../../sources/vmtests/src/testvmlua.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1218434808
 	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DVM_LUA -I../../../../sources/common/include -I../../../../sources/vm/include -I../../../../sources/vmtests/include -I../../../../3rdparty/v8/include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1218434808/testvmlua.o ../../../../sources/vmtests/src/testvmlua.cpp
+	$(COMPILE.cc) -g -DOSX -DVM_LUA -DVM_V8 -I../../../../sources/common/include -I../../../../sources/vm/include -I../../../../sources/vmtests/include -I../../../../../v8/include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1218434808/testvmlua.o ../../../../sources/vmtests/src/testvmlua.cpp
+
+${OBJECTDIR}/_ext/1218434808/testvmv8.o: ../../../../sources/vmtests/src/testvmv8.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1218434808
+	${RM} $@.d
+	$(COMPILE.cc) -g -DOSX -DVM_LUA -DVM_V8 -I../../../../sources/common/include -I../../../../sources/vm/include -I../../../../sources/vmtests/include -I../../../../../v8/include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1218434808/testvmv8.o ../../../../sources/vmtests/src/testvmv8.cpp
 
 # Subprojects
 .build-subprojects:

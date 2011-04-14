@@ -31,10 +31,15 @@ BaseAppVirtualMachine *BaseAppVirtualMachine::GetVM(string type, string script,
 	BaseAppVirtualMachine *pResult = NULL;
 
 	//1. Instantiate the VM
-	if (type == "lua") {
+	if (false) {
+
+	}
+#ifdef HAS_LUA
+	else if (type == "lua") {
 		pResult = new LuaAppVirtualMachine();
 		pResult->_pApplication = pApplication;
 	}
+#endif /* HAS_LUA */
 	if (pResult == NULL) {
 		FATAL("No machine with type %s available", STR(type));
 		return NULL;

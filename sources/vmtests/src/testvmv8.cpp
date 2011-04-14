@@ -17,24 +17,14 @@
  *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifdef HAS_V8
+#include "testvmv8.h"
 
-#ifdef HAS_LUA
+TestVMV8::TestVMV8() {
 
-#ifndef _TESTVMLUA_H
-#define	_TESTVMLUA_H
+}
 
-#include "vmlua/basevmlua.h"
+TestVMV8::~TestVMV8() {
+}
 
-class TestVMLua
-: public BaseVMLua {
-public:
-	TestVMLua();
-	virtual ~TestVMLua();
-private:
-
-};
-
-
-#endif	/* _TESTVMLUA_H */
-#endif	/* HAS_LUA */
-
+#endif /* HAS_V8 */

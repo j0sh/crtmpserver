@@ -135,7 +135,12 @@ configuration=
 			},
 			externalStreams = 
 			{
-				--[[{
+				--[[
+				{
+					uri="rtsp://a1956.l1857055475.c18570.g.lq.akamaistream.net/D/1956/18570/v0001/reflector:55475",
+					localStreamName="test_aaa",
+				},
+				{
 					uri="rtsp://0.0.0.0:2323/test.sdp",
 					localStreamName="stream-1-udp"
 				},
@@ -348,7 +353,7 @@ configuration=
 			--validateHandshake=true,
 			--default=true,
 		},
-		--[[{
+		{
 			name="vmapp",
 			description="An application demonstrating the use of virtual machines",
 			protocol="dynamiclinklibrary",
@@ -356,8 +361,8 @@ configuration=
 			script="flvplayback.lua",
 			aliases=
 			{
-				"flvplayback",
-				"vod"
+				"flvplayback1",
+				"vod1"
 			},
 			acceptors=
 			{
@@ -367,7 +372,7 @@ configuration=
 					protocol="inboundTcpTs"
 				}
 			}
-		},]]--
+		},
 		--#INSERTION_MARKER# DO NOT REMOVE THIS. USED BY appscaffold SCRIPT.
 	}
 }

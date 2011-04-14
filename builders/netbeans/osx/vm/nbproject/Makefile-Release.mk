@@ -34,6 +34,7 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
+	${OBJECTDIR}/_ext/431490565/basevmv8.o \
 	${OBJECTDIR}/_ext/910696451/basevm.o \
 	${OBJECTDIR}/_ext/491298005/basevmlua.o
 
@@ -63,6 +64,11 @@ ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libvm.dylib: ../common/dist/Release/G
 ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libvm.dylib: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
 	${LINK.cc} ../../../../3rdparty/v8/libv8.a -dynamiclib -install_name libvm.dylib -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libvm.dylib -fPIC ${OBJECTFILES} ${LDLIBSOPTIONS} 
+
+${OBJECTDIR}/_ext/431490565/basevmv8.o: ../../../../sources/vm/src/vmv8/basevmv8.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/431490565
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -DOSX -DVM_LUA -I../../../../sources/common/include -I../../../../sources/vm/include -I../../../../3rdparty/v8/include -I/opt/local/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/431490565/basevmv8.o ../../../../sources/vm/src/vmv8/basevmv8.cpp
 
 ${OBJECTDIR}/_ext/910696451/basevm.o: ../../../../sources/vm/src/basevm.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/910696451
