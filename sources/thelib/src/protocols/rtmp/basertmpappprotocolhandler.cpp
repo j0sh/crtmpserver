@@ -101,7 +101,7 @@ void BaseRTMPAppProtocolHandler::RegisterProtocol(BaseProtocol *pProtocol) {
 	if (MAP_HAS1(_connections, pProtocol->GetId()))
 		return;
 	_connections[pProtocol->GetId()] = (BaseRTMPProtocol *) pProtocol;
-	_nextInvokeId[pProtocol->GetId()] = 1;
+	_nextInvokeId[pProtocol->GetId()] = 0;
 }
 
 void BaseRTMPAppProtocolHandler::UnRegisterProtocol(BaseProtocol *pProtocol) {
@@ -1649,12 +1649,14 @@ bool BaseRTMPAppProtocolHandler::SendRTMPMessage(BaseRTMPProtocol *pTo,
 					FATAL("Unable to get next invoke ID");
 					return false;
 				}
-				invokeId = _nextInvokeId[pTo->GetId()];
-				_nextInvokeId[pTo->GetId()] = invokeId + 1;
-				M_INVOKE_ID(message) = invokeId;
-
-				if (trackResponse)
+				if (trackResponse) {
+					invokeId = _nextInvokeId[pTo->GetId()];
+					_nextInvokeId[pTo->GetId()] = invokeId + 1;
+					M_INVOKE_ID(message) = invokeId;
 					_resultMessageTracking[pTo->GetId()][invokeId] = message;
+				} else {
+					M_INVOKE_ID(message) = (uint32_t) 0;
+				}
 				return pTo->SendMessage(message);
 			} else {
 				return pTo->SendMessage(message);
