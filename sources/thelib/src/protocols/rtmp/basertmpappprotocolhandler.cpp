@@ -101,7 +101,7 @@ void BaseRTMPAppProtocolHandler::RegisterProtocol(BaseProtocol *pProtocol) {
 	if (MAP_HAS1(_connections, pProtocol->GetId()))
 		return;
 	_connections[pProtocol->GetId()] = (BaseRTMPProtocol *) pProtocol;
-	_nextInvokeId[pProtocol->GetId()] = 0;
+	_nextInvokeId[pProtocol->GetId()] = 1;
 }
 
 void BaseRTMPAppProtocolHandler::UnRegisterProtocol(BaseProtocol *pProtocol) {
