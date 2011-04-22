@@ -61,14 +61,14 @@ TSPacketPAT::operator string() {
 	result += format("lastSectionNumber:      %hhu\n", _lastSectionNumber);
 	result += format("crc:                    %x\n", _crc);
 	result += format("entriesCount:           %u\n", _entriesCount);
-	result += format("NIT count:              %zu\n", _networkPids.size());
+	result += format("NIT count:              %"PRIz"u\n", _networkPids.size());
 	if (_networkPids.size() > 0) {
 
 		FOR_MAP(_networkPids, uint16_t, uint16_t, i) {
 			result += format("\tNIT %hu: %hu\n", MAP_KEY(i), MAP_VAL(i));
 		}
 	}
-	result += format("PMT count:              %zu\n", _programPids.size());
+	result += format("PMT count:              %"PRIz"u\n", _programPids.size());
 	if (_programPids.size() > 0) {
 
 		FOR_MAP(_programPids, uint16_t, uint16_t, i) {

@@ -339,7 +339,7 @@ bool RTSPProtocol::SendMessage(Variant &headers, string &content) {
 
 	//2. Add the content length if required
 	if (content.size() > 0) {
-		headers[RTSP_HEADERS][RTSP_HEADERS_CONTENT_LENGTH] = format("%zu", content.size());
+		headers[RTSP_HEADERS][RTSP_HEADERS_CONTENT_LENGTH] = format("%"PRIz"u", content.size());
 	}
 
 	//3. Write the headers
@@ -566,7 +566,7 @@ bool RTSPProtocol::HandleRTSPMessage(IOBuffer &buffer) {
 		_inboundContent += string((char *) GETIBPOINTER(buffer), chunkLength);
 		buffer.Ignore(chunkLength);
 		if (_inboundContent.size() < _contentLength) {
-			FINEST("Not enough data. Wanted: %u; got: %zu", _contentLength, _inboundContent.size());
+			FINEST("Not enough data. Wanted: %u; got: %"PRIz"u", _contentLength, _inboundContent.size());
 			return true;
 		}
 	}

@@ -223,7 +223,7 @@ uint32_t Playlist::GetIndex(uint32_t &sequence) {
 	//2. We don't have it, and is a 0 value, that means it was never initialized
 	if (sequence == 0) {
 		FINEST("sequence is 0");
-		FINEST("_itemMediaSequences.size(): %zu", _itemMediaSequences.size());
+		FINEST("_itemMediaSequences.size(): %"PRIz"u", _itemMediaSequences.size());
 		if (_itemMediaSequences.size() != 0) {
 			//3. We have stuff. Init and return
 			FINEST("Return the first entry");

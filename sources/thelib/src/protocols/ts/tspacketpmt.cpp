@@ -48,13 +48,13 @@ TSPacketPMT::operator string() {
 	result += format("reserved5:              %hhu\n", _reserved5);
 	result += format("programInfoLength:      %hu\n", _programInfoLength);
 	result += format("crc:                    %x\n", _crc);
-	result += format("descriptors count:      %zu\n", _programInfoDescriptors.size());
+	result += format("descriptors count:      %"PRIz"u\n", _programInfoDescriptors.size());
 	for (uint32_t i = 0; i < _programInfoDescriptors.size(); i++) {
 		result += format("\t%s", STR(_programInfoDescriptors[i]));
 		if (i != _programInfoDescriptors.size() - 1)
 			result += "\n";
 	}
-	result += format("streams count:          %zu\n", _streams.size());
+	result += format("streams count:          %"PRIz"u\n", _streams.size());
 
 	FOR_MAP(_streams, uint16_t, TSStreamInfo, i) {
 		result += format("\t%hu: %s\n", MAP_KEY(i), STR(MAP_VAL(i).toString(1)));

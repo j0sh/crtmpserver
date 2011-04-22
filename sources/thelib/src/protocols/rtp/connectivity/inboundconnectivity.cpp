@@ -152,7 +152,7 @@ bool InboundConnectivity::Initialize(Variant &videoTrack, Variant &audioTrack,
 	map<uint32_t, BaseOutStream *> subscribedOutStreams =
 			pApplication->GetStreamsManager()->GetWaitingSubscribers(
 			streamName, _pInStream->GetType());
-	FINEST("subscribedOutStreams count: %zu", subscribedOutStreams.size());
+	FINEST("subscribedOutStreams count: %"PRIz"u", subscribedOutStreams.size());
 
 
 	//9. Bind the waiting subscribers

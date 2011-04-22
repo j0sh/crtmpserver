@@ -23,6 +23,11 @@
 
 #include "platform/baseplatform.h"
 
+#ifndef PRIz
+#define PRIz "z"
+#endif /* PRIz */
+
+
 //platform includes
 #define __STDC_FORMAT_MACROS
 #include <inttypes.h>

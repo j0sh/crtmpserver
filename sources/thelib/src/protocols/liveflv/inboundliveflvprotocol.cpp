@@ -236,7 +236,7 @@ bool InboundLiveFLVProtocol::InitializeStream(string streamName) {
 	map<uint32_t, BaseOutStream *> subscribedOutStreams =
 			GetApplication()->GetStreamsManager()->GetWaitingSubscribers(
 			streamName, _pStream->GetType());
-	FINEST("subscribedOutStreams count: %zu", subscribedOutStreams.size());
+	FINEST("subscribedOutStreams count: %"PRIz"u", subscribedOutStreams.size());
 
 
 	//7. Bind the waiting subscribers

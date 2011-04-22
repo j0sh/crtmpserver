@@ -38,6 +38,10 @@
 #define PRIX64 "llX"
 #endif /* PRIX64 */
 
+#ifndef PRIz
+#define PRIz "I"
+#endif /* PRIz */
+
 #include "platform/baseplatform.h"
 #include <assert.h>
 #include <time.h>

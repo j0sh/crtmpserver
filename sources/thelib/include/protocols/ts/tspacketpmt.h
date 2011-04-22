@@ -56,7 +56,7 @@ typedef struct _TSStreamInfo {
 	}
 
 	string toString(int32_t indent) {
-		string result = format("%sstreamType: %hhx; elementaryPID: %hu; esInfoLength: %hu; descriptors count: %zu\n",
+		string result = format("%sstreamType: %hhx; elementaryPID: %hu; esInfoLength: %hu; descriptors count: %"PRIz"u\n",
 				STR(string(indent, '\t')),
 				streamType, elementaryPID, esInfoLength, esDescriptors.size());
 		for (uint32_t i = 0; i < esDescriptors.size(); i++) {

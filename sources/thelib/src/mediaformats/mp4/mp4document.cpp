@@ -471,16 +471,16 @@ bool MP4Document::BuildFrames(bool audio) {
 	if (pCTSS != NULL) {
 		compositionOffsets = pCTSS->GetEntries();
 		if (sampleSize.size() != compositionOffsets.size()) {
-			WARN("composition offsets count != samples count; compositionOffsets: %zu; sampleSize.size: %zu",
+			WARN("composition offsets count != samples count; compositionOffsets: %"PRIz"u; sampleSize.size: %"PRIz"u",
 					compositionOffsets.size(),
 					sampleSize.size());
 			for (uint32_t i = compositionOffsets.size(); i < sampleSize.size(); i++)
 				ADD_VECTOR_END(compositionOffsets, 0);
-			WARN("composition offsets padded with 0. Now size is %zu",
+			WARN("composition offsets padded with 0. Now size is %"PRIz"u",
 					compositionOffsets.size());
 		}
 	}
-	INFO("audio: %hhu; keyFrames: %zu; frames: %zu; compositionOffsets: %zu",
+	INFO("audio: %hhu; keyFrames: %"PRIz"u; frames: %"PRIz"u; compositionOffsets: %"PRIz"u",
 			audio, keyFrames.size(), sampleSize.size(), compositionOffsets.size());
 
 	uint32_t timeScale = pMDHD->GetTimeScale();

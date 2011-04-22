@@ -88,6 +88,9 @@
     <ClCompile Include="..\..\..\sources\applications\vmapp\src\vm\baseappvirtualmachine.cpp">
       <Filter>Source Files\vm</Filter>
     </ClCompile>
+    <ClCompile Include="..\dummy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\..\sources\applications\vmapp\src\vm\lua\luaapi_application.cpp">
       <Filter>Source Files\vm\lua</Filter>
     </ClCompile>
@@ -100,11 +103,11 @@
     <ClCompile Include="..\..\..\sources\applications\vmapp\src\vm\lua\luaapi_handler_rtmp.cpp">
       <Filter>Source Files\vm\lua</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\sources\applications\vmapp\src\vm\lua\luaappvirtualmachine.cpp">
+    <ClCompile Include="..\..\..\sources\applications\vmapp\src\vm\lua\luaapi_protocols.cpp">
       <Filter>Source Files\vm\lua</Filter>
     </ClCompile>
-    <ClCompile Include="..\dummy.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\..\..\sources\applications\vmapp\src\vm\lua\luaappvirtualmachine.cpp">
+      <Filter>Source Files\vm\lua</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

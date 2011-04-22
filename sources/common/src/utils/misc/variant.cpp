@@ -331,7 +331,7 @@ string Variant::ToString(string name, uint32_t indent) {
 		}
 		case V_BYTEARRAY:
 		{
-			result += format("%s<BYTEARRAY name=\"%s\">%zu bytes</BYTEARRAY>",
+			result += format("%s<BYTEARRAY name=\"%s\">%"PRIz"u bytes</BYTEARRAY>",
 					STR(strIndent), STR(name), _value.s->length());
 			break;
 		}

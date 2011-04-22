@@ -80,7 +80,7 @@ bool BaseMediaDocument::Process() {
 
 	GETCLOCKS(endTime);
 
-	INFO("%zu frames computed in %.2f seconds at a speed of %.2f FPS",
+	INFO("%"PRIz"u frames computed in %.2f seconds at a speed of %.2f FPS",
 			_frames.size(),
 			(endTime - startTime) / (double) CLOCKS_PER_SECOND,
 			(double) _frames.size() / ((endTime - startTime) / (double) CLOCKS_PER_SECOND));

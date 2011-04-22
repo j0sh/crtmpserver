@@ -43,10 +43,6 @@
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)applications\$(ProjectName)\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Configuration)\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\OpenSSL-Win32\include;$(IncludePath)</IncludePath>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\OpenSSL-Win32\include;$(IncludePath)</IncludePath>
-    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\OpenSSL-Win32\lib;$(LibraryPath)</LibraryPath>
-    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\OpenSSL-Win32\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -64,7 +60,7 @@
       <ForcedIncludeFiles>common.h</ForcedIncludeFiles>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>libeay32.lib;ssleay32.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)\$(ProjectName).dll</OutputFile>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -94,7 +90,7 @@ mkdir "$(OutDir)\mediaFolder"
       <ForcedIncludeFiles>common.h</ForcedIncludeFiles>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>libeay32.lib;ssleay32.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)\$(ProjectName).dll</OutputFile>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -156,6 +152,7 @@ mkdir "$(OutDir)\mediaFolder"
     <ClCompile Include="..\..\..\sources\applications\vmapp\src\vm\lua\luaapi_generics.cpp" />
     <ClCompile Include="..\..\..\sources\applications\vmapp\src\vm\lua\luaapi_handler_mpegts.cpp" />
     <ClCompile Include="..\..\..\sources\applications\vmapp\src\vm\lua\luaapi_handler_rtmp.cpp" />
+    <ClCompile Include="..\..\..\sources\applications\vmapp\src\vm\lua\luaapi_protocols.cpp" />
     <ClCompile Include="..\..\..\sources\applications\vmapp\src\vm\lua\luaappvirtualmachine.cpp" />
     <ClCompile Include="..\dummy.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

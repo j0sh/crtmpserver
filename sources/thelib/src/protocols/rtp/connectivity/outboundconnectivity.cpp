@@ -26,7 +26,7 @@
 //#define RTP_DEBUG
 #ifdef RTP_DEBUG
 #define RTP_DEBUG_MESSAGE(sent) \
-string message = format("%zu %02hhx-%02hhx-%02hhx%02hhx-%02hhx%02hhx%02hhx%02hhx-%02hhx%02hhx%02hhx%02hhx", \
+string message = format("%"PRIz"u %02hhx-%02hhx-%02hhx%02hhx-%02hhx%02hhx%02hhx%02hhx-%02hhx%02hhx%02hhx%02hhx", \
     _videoData.msg_iov[0].iov_len, \
     ((uint8_t *) _videoData.msg_iov[0].iov_base)[0], \
     ((uint8_t *) _videoData.msg_iov[0].iov_base)[1], \
