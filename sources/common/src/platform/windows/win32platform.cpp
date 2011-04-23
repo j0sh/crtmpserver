@@ -58,9 +58,7 @@ int vasprintf(char **strp, const char *fmt, va_list ap, int size) {
 }
 
 bool fileExists(string path) {
-	char *lpStr2;
-	lpStr2 = (char *) path.c_str();
-
+	char *lpStr2=(char *) path.c_str();
 	if (PathFileExists(lpStr2))
 		return true;
 	else
@@ -368,6 +366,8 @@ void splitFileName(string fileName, string &name, string & extension, char separ
 }
 
 string normalizePath(string base, string file) {
+	if((base=="")||(base[base.size()-1]!=PATH_SEPARATOR))
+		base+=PATH_SEPARATOR;
 	char dummy1[MAX_PATH ];
 	char dummy2[MAX_PATH ];
 	if (GetFullPathName(STR(base), MAX_PATH, dummy1, NULL) == 0)
@@ -397,51 +397,64 @@ bool listFolder(string path, vector<string> &result, bool normalizeAllPaths,
 		bool includeFolders, bool recursive) {
 	WIN32_FIND_DATA ffd;
 	TCHAR szDir[MAX_PATH];
-	size_t length_of_arg;
 	HANDLE hFind = INVALID_HANDLE_VALUE;
 	DWORD dwError = 0;
 
 	// Check that the input path plus 3 is not longer than MAX_PATH.
 	// Three characters are for the "\*" plus NULL appended below.
-
-	StringCchLength(path.c_str(), MAX_PATH, &length_of_arg);
-
-	if (length_of_arg > (MAX_PATH - 3)) {
+	if (path.size() > (MAX_PATH - 3)) {
 		WARN("Directory path is too long: %s.", path.c_str());
 		return false;
 	}
-
-	FINEST("Target directory: %s", path.c_str());
 
 	// Prepare string for use with FindFile functions.  First, copy the
 	// string to a buffer, then append '\*' to the directory name.
 
 	StringCchCopy(szDir, MAX_PATH, path.c_str());
-	StringCchCat(szDir, MAX_PATH, TEXT("\\*.*"));
+	StringCchCat(szDir, MAX_PATH, TEXT("\\*"));
 
 	// Find the first file in the directory.
 
 	hFind = FindFirstFile(szDir, &ffd);
-
-	if (INVALID_HANDLE_VALUE == hFind) {
-		WARN("Invalid handle for FindFirstFile");
+	if(hFind==INVALID_HANDLE_VALUE){
+		FATAL("Unable to open folder %s",STR(path));
 		return false;
 	}
 
 	do {
-		if (lstrcmp(ffd.cFileName, TEXT(".")) == 0 || lstrcmp(ffd.cFileName, TEXT("..")) == 0)
+		string entry = ffd.cFileName;
+		if ((entry == ".") || (entry == "..")) {
+			continue;
+		}
+
+		if (normalizeAllPaths) {
+			entry = normalizePath(path, entry);
+		} else {
+			entry = path + entry;
+		}
+		if (entry == "")
 			continue;
 
 		if (ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
-			WARN("Subdirectory listing not implemented");
-		} else {
-			result.push_back(ffd.cFileName);
+			if (includeFolders) {
+				ADD_VECTOR_END(result, entry);
+			}
+			if (recursive) {
+				if (!listFolder(entry, result, normalizeAllPaths, includeFolders, recursive)) {
+					FATAL("Unable to list folder");
+					FindClose(hFind);
+					return false;
+				}
+			}
+		}  else {
+			ADD_VECTOR_END(result, entry);
 		}
 	} while (FindNextFile(hFind, &ffd) != 0);
 
 	dwError = GetLastError();
 	if (dwError != ERROR_NO_MORE_FILES) {
 		WARN("Unable to find first file");
+		FindClose(hFind);
 		return false;
 	}
 	FindClose(hFind);

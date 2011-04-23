@@ -62,7 +62,12 @@ bool RTMPAppProtocolHandler::ProcessGetAvailableFlvs(BaseRTMPProtocol *pFrom, Va
 	}
 
 	string file, name, extension;
-	size_t normalizedMediaFolderSize=normalizePath(_configuration[CONF_APPLICATION_MEDIAFOLDER],"").size()+1;
+	size_t normalizedMediaFolderSize=0;
+	string mediaFolderPath=normalizePath(_configuration[CONF_APPLICATION_MEDIAFOLDER],"");
+	if((mediaFolderPath!="")&&(mediaFolderPath[mediaFolderPath.size()-1]==PATH_SEPARATOR))
+		normalizedMediaFolderSize=mediaFolderPath.size();
+	else
+		normalizedMediaFolderSize=mediaFolderPath.size()+1;
 
 	FOR_VECTOR_ITERATOR(string, files, i) {
 		file = VECTOR_VAL(i).substr(normalizedMediaFolderSize);
