@@ -2,3 +2,4 @@
 11_change_log_location.diff
 13_disable_lua_config_install.diff
 15_use_system_lua.diff
+16_disable_application_vmapp.diff

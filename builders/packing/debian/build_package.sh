@@ -92,7 +92,7 @@ else
 		exit $result
 	fi
 	SVER="0.`svnversion -n ${ORIGPATH}/sources | tr -d 'M|S|P'`"
-	find $ORIGPATH -name '.svn' -type d -exec rm -rf {} \;  2>/dev/null
+#	find $ORIGPATH -name '.svn' -type d -exec rm -rf {} \;  2>/dev/null
 fi
 
 DEBPATH="`pwd`/crtmpserver-${SVER}"
@@ -152,7 +152,7 @@ find ${DEBPATH} -name CMakeLists.txt -type f -exec sed -r -i -f fix_paths.sed {}
 
 ############ Prepare debian sources
 echo "************ Hit <ENTER> here *****************"
-find $DEBPATH -name '.svn' -type d -exec rm -rf {} \;
+find $DEBPATH -name '.svn' -type d -exec rm -rf {} \; > /dev/null 2>&1
 cd $DEBPATH
 dh_make -c gpl3 -e jet@jet.kiev.ua -s -p crtmpserver --createorig
 cd ../

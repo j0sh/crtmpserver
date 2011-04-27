@@ -3,16 +3,17 @@
 #export DH_VERBOSE=1
 
 DEB_BUILDDIR = obj-$(DEB_BUILD_GNU_TYPE)
+DEB_PACKAGE_VERSION  := $(shell dpkg-parsechangelog | awk '/^Version/ {print $$2}')
+DEB_UPSTREAM_VERSION := $(shell echo $(DEB_PACKAGE_VERSION) | cut -d '-' -f 1 | sed s,~,_, )
+DEB_CONFIGURE_FLAGS = \
+					-DCRTMPSERVER_INSTALL_PREFIX=/usr \
+					-DCMAKE_VERBOSE_MAKEFILE=OFF \
+					-DTEMP_FRAMEWORK_VER="$(DEB_UPSTREAM_VERSION)" \
+					-DCRTMPSERVER_SOURCES_ROOT=$(CURDIR)
 
 %:
 	dh $@ 
 
 override_dh_auto_configure:
-	mkdir -p $(DEB_BUILDDIR)
-	cd $(DEB_BUILDDIR) && cmake ..	-DCRTMPSERVER_INSTALL_PREFIX=/usr \
-					-DCMAKE_VERBOSE_MAKEFILE=OFF \
-					-DTEMP_FRAMEWORK_VER=${SVER} \
-					-DCRTMPSERVER_SOURCES_ROOT=${DEBPATH} \
-					-DCRTMPSERVER_3RDPARTY_ROOT=${DEBPATH}
-
+	dh_auto_configure -- $(DEB_CONFIGURE_FLAGS)
 
