@@ -2,7 +2,8 @@ cmake_minimum_required(VERSION 2.6)
 PROJECT(applications)
 
 SET(CRTMPSERVER_ROOT "${CRTMPSERVER_ROOT}/applications")
-
+SET(ACTIVE_APPS "")
+SET(ACTIVE_APPS_LIBS "")
 ADD_SUBDIRECTORY(flvplayback flvplayback)
 ADD_SUBDIRECTORY(appselector appselector)
 ADD_SUBDIRECTORY(samplefactory samplefactory)
