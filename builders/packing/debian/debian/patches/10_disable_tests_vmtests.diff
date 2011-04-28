@@ -1,13 +1,9 @@
-Description: disable vm, tests and vmtests.
+Description: disable tests and vmtests.
 
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -184,10 +184,10 @@
- #ADD_DEFINITIONS(-DHAS_SAFE_LOGGER)
- ADD_SUBDIRECTORY(common common)
- ADD_SUBDIRECTORY(thelib thelib)
--ADD_SUBDIRECTORY(vm vm)
-+#ADD_SUBDIRECTORY(vm vm)
+@@ -184,7 +184,7 @@
+ ADD_SUBDIRECTORY(vm vm)
  ADD_SUBDIRECTORY(applications applications)
  ADD_SUBDIRECTORY(crtmpserver crtmpserver)
 -ADD_SUBDIRECTORY(vmtests vmtests)

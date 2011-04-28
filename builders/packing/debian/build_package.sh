@@ -4,7 +4,7 @@ SVNPATH="https://rtmpd.com/crtmpserver/trunk"
 ORIGPATH="crtmpserver-original"
 DEBPATH="crtmpserver-`date +%Y%m%d`"
 LOGFILE="install.log"
-APPS="admin applestreamingclient appselector flvplayback proxypublish samplefactory stresstest vptests"
+APPS="admin applestreamingclient appselector flvplayback proxypublish samplefactory stresstest vmapp vptests"
 PATCHDIR="patches"
 PATCHLIST="list"
 STARTPWD=`pwd`
@@ -42,14 +42,14 @@ copyProject() {
 		mkdir -p "$DEBPATH/$1"
 	fi
 
-	cp $ORIGPATH/builders/cmake/$1/CMakeLists.txt $DEBPATH/$1
+	cp $ORIGPATH/builders/cmake/$1/* $DEBPATH/$1 2>/dev/null
 	if [ -d "$ORIGPATH/sources/$1/include" ]; then 
 		mkdir -p $DEBPATH/$1/include
-		cp -r $ORIGPATH/sources/$1/include/* $DEBPATH/$1/include
+		cp -r $ORIGPATH/sources/$1/include/* $DEBPATH/$1/include  2>/dev/null
 	fi
 	if [ -d "$ORIGPATH/sources/$1/src" ]; then
 		mkdir -p $DEBPATH/$1/src
-		cp -r $ORIGPATH/sources/$1/src/* $DEBPATH/$1/src
+		cp -r $ORIGPATH/sources/$1/src/* $DEBPATH/$1/src  2>/dev/null
 	fi
 }
 
@@ -131,10 +131,14 @@ copyProject "common"
 echo "Processing thelib"
 copyProject "thelib"
 
+############# VM
+echo "Processing vm"
+copyProject "vm"
+
 ############# rtmpserver
 echo "Processing crtmpserver"
 copyProject "crtmpserver"
-cp $ORIGPATH/builders/cmake/crtmpserver/crtmpserver.lua $DEBPATH/crtmpserver
+#cp $ORIGPATH/builders/cmake/crtmpserver/crtmpserver.lua $DEBPATH/crtmpserver
 
 ############ applications ##################
 echo "Processing applications"

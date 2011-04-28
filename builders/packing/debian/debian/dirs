@@ -1,3 +1,4 @@
 usr/sbin
 etc/crtmpserver
+etc/crtmpserver/vmapp
 var/log/crtmpserver

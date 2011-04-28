@@ -1,1 +1,4 @@
 crtmpserver/crtmpserver.lua etc/crtmpserver
+applications/vmapp/flvplayback.lua usr/lib/crtmpserver/applications/vmapp
+applications/vmapp/crtmpserverdefaults.lua usr/lib/crtmpserver/applications/vmapp
+applications/vmapp/testapp.lua usr/lib/crtmpserver/applications/vmapp
