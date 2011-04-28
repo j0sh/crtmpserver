@@ -1,0 +1,13 @@
+Description: disable link crtmpserver binary with VM
+
+--- a/crtmpserver/CMakeLists.txt
++++ b/crtmpserver/CMakeLists.txt
+@@ -31,7 +31,7 @@
+ 	${LUA_LIBRARY_PATH}
+ 	common
+ 	thelib
+-	vm
++#	vm
+ 	${APPS_LIBS}
+ )
+ 

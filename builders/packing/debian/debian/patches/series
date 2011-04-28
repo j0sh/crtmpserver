@@ -4,3 +4,4 @@
 13_disable_lua_config_install.diff
 15_use_system_lua.diff
 16_disable_application_vmapp.diff
+18_disable_link_with_vm.diff
