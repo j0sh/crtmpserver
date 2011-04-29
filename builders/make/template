@@ -7,8 +7,8 @@ __APPNAME___OBJS=$(__APPNAME___SRCS:.cpp=.__appname__.o)
 __appname__: thelib $(__APPNAME___OBJS)
 	@mkdir -p $(OUTPUT_DYNAMIC)/applications/__appname__/mediaFolder
 	@mkdir -p $(OUTPUT_STATIC)/applications/__appname__/mediaFolder
-	$(CXX)  -shared $(__APPNAME___LIBS) -o $(call dynamic_lib_name,__appname__,/applications/__appname__) $(call dynamic_lib_flags,__appname__) $(__APPNAME___OBJS)
+	$(CXXCOMPILER)  -shared $(__APPNAME___LIBS) -o $(call dynamic_lib_name,__appname__,/applications/__appname__) $(call dynamic_lib_flags,__appname__) $(__APPNAME___OBJS)
 
 %.__appname__.o: %.cpp
-	$(CXX) $(COMPILE_FLAGS) $(DEFINES) $(__APPNAME___INCLUDE) -c $< -o $@
+	$(CXXCOMPILER) $(COMPILE_FLAGS) $(DEFINES) $(__APPNAME___INCLUDE) -c $< -o $@
 

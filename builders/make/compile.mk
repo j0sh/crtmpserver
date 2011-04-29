@@ -48,21 +48,26 @@ FEATURES_DEFINES = \
 	-DHAS_MEDIA_MP4 \
 	-DHAS_MEDIA_FLV
 
+
 DEFINES = $(PLATFORM_DEFINES) $(FEATURES_DEFINES)
 
 #library paths
 SSL_INCLUDE=-I$(SSL_BASE)/include
 SSL_LIB=-L$(SSL_BASE)/lib -lssl -lcrypto
 
-
 #lua
 LUA_INCLUDE=-I$(PROJECT_BASE_PATH)/3rdparty/lua-dev
 LUA_SRCS = $(shell find $(PROJECT_BASE_PATH)/3rdparty/lua-dev -type f -name "*.c")
 LUA_OBJS = $(LUA_SRCS:.c=.lua.o)
 
+#tinyxml
+TINYXML_INCLUDE=-I$(PROJECT_BASE_PATH)/3rdparty/tinyxml
+TINYXML_SRCS = $(shell find $(PROJECT_BASE_PATH)/3rdparty/tinyxml -type f -name "*.cpp")
+TINYXML_OBJS = $(TINYXML_SRCS:.cpp=.tinyxml.o)
+
 #common
-COMMON_INCLUDE=$(LUA_INCLUDE) $(SSL_INCLUDE) -I$(PROJECT_BASE_PATH)/sources/common/include
-COMMON_LIBS=$(SSL_LIB) -L$(OUTPUT_DYNAMIC) -llua
+COMMON_INCLUDE=$(LUA_INCLUDE) $(TINYXML_INCLUDE) $(SSL_INCLUDE) -I$(PROJECT_BASE_PATH)/sources/common/include
+COMMON_LIBS=$(SSL_LIB) -L$(OUTPUT_DYNAMIC) -llua -ltinyxml
 COMMON_SRCS = $(shell find $(PROJECT_BASE_PATH)/sources/common/src -type f -name "*.cpp")
 COMMON_OBJS = $(COMMON_SRCS:.cpp=.common.o)
 
@@ -99,8 +104,14 @@ lua: create_output_dirs $(LUA_OBJS)
 
 %.lua.o: %.c
 	$(CCOMPILER) $(COMPILE_FLAGS) -c $< -o $@
-	
-common: lua $(COMMON_OBJS)
+
+tinyxml: lua $(TINYXML_OBJS)
+	$(CXXCOMPILER) -shared -o $(call dynamic_lib_name,tinyxml,) $(call dynamic_lib_flags,tinyxml) $(TINYXML_OBJS)
+
+%.tinyxml.o: %.cpp
+	$(CXXCOMPILER) $(COMPILE_FLAGS) $(DEFINES) $(COMMON_INCLUDE) -c $< -o $@
+
+common: tinyxml $(COMMON_OBJS)
 	$(CXXCOMPILER) -shared $(COMMON_LIBS) -o $(call dynamic_lib_name,common,) $(call dynamic_lib_flags,common) $(COMMON_OBJS)
 
 %.common.o: %.cpp
@@ -117,6 +128,7 @@ tests: thelib $(TESTS_OBJS)
 	$(CXXCOMPILER)  $(SSL_LIB) -o $(call static_exec_name,tests) $(call static_exec_flags,tests) \
 		$(TESTS_OBJS) \
 		$(LUA_OBJS) \
+		$(TINYXML_OBJS) \
 		$(COMMON_OBJS) \
 		$(THELIB_OBJS)
 
@@ -128,6 +140,7 @@ crtmpserver: applications $(CRTMPSERVER_OBJS_DYNAMIC) $(CRTMPSERVER_OBJS_STATIC)
 	$(CXXCOMPILER) $(SSL_LIB) -o $(call static_exec_name,crtmpserver,) $(call static_exec_flags,crtmpserver) \
 		$(CRTMPSERVER_OBJS_STATIC) \
 		$(LUA_OBJS) \
+		$(TINYXML_OBJS) \
 		$(COMMON_OBJS) \
 		$(THELIB_OBJS) \
 		$(ALL_APPS_OBJS)

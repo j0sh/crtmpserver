@@ -17,7 +17,7 @@
 
 
 #toolchain paths
-TOOLCHAIN_BASE=/home/shiretu/work/hisi/hisi-linux/x86-arm/gcc-3.4.3-uClibc-0.9.28
+TOOLCHAIN_BASE=/home/shiretu/hisi-linux/x86-arm/gcc-3.4.3-uClibc-0.9.28
 TOOLCHAIN_PREFIX=/usr/bin/arm-hismall-linux-
 #output settings
 STATIC_LIB_SUFIX=.a
@@ -40,5 +40,5 @@ PLATFORM_DEFINES = \
 	-DAPPLY_DOUBLE_QUIRK \
 	-DNET_EPOLL
 
-SSL_BASE=/home/shiretu/work/hisi/openssl-dist
+SSL_BASE=/home/shiretu/hisi-openssl-dist
 
