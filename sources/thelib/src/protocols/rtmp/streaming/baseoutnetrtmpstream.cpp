@@ -82,20 +82,32 @@ BaseOutNetRTMPStream *BaseOutNetRTMPStream::GetInstance(BaseProtocol *pProtocol,
 		string name, uint32_t rtmpStreamId,
 		uint32_t chunkSize,
 		uint64_t inStreamType) {
+	BaseOutNetRTMPStream *pResult=NULL;
 	if (TAG_KIND_OF(inStreamType, ST_IN_NET_RTMP)
 			|| TAG_KIND_OF(inStreamType, ST_IN_NET_LIVEFLV)
 			|| TAG_KIND_OF(inStreamType, ST_IN_FILE_RTMP)) {
-		return new OutNetRTMP4RTMPStream(pProtocol, pStreamsManager, name,
+		pResult=new OutNetRTMP4RTMPStream(pProtocol, pStreamsManager, name,
 				rtmpStreamId, chunkSize);
 	} else if (TAG_KIND_OF(inStreamType, ST_IN_NET_TS)
 			|| TAG_KIND_OF(inStreamType, ST_IN_NET_RTP)) {
-		return new OutNetRTMP4TSStream(pProtocol, pStreamsManager, name,
+		pResult=new OutNetRTMP4TSStream(pProtocol, pStreamsManager, name,
 				rtmpStreamId, chunkSize);
 	} else {
 		FATAL("Can't instantiate a network rtmp outbound stream for type %s",
 				STR(tagToString(inStreamType)));
-		return NULL;
 	}
+
+	if(pResult!=NULL) {
+		if((pResult->_pChannelAudio==NULL)
+			||(pResult->_pChannelVideo==NULL)
+			||(pResult->_pChannelCommands==NULL)){
+			FATAL("No more channels left");
+			delete pResult;
+			pResult=NULL;
+		}
+	}
+
+	return pResult;
 }
 
 BaseOutNetRTMPStream::~BaseOutNetRTMPStream() {
@@ -799,6 +811,10 @@ bool BaseOutNetRTMPStream::AllowExecution(uint32_t totalProcessed, uint32_t data
 }
 
 void BaseOutNetRTMPStream::InternalReset() {
+	if((_pChannelAudio==NULL)
+            ||(_pChannelVideo==NULL)
+            ||(_pChannelCommands==NULL))
+		return;
 	_deltaAudioTime = -1;
 	_deltaVideoTime = -1;
 	_pDeltaAudioTime = &_deltaAudioTime;
