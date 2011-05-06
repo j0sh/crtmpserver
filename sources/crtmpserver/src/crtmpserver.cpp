@@ -307,8 +307,10 @@ void NormalizeCommandLine(string configFile) {
 	gRs.commandLine["--help"] = (bool)tmp;
 	tmp = (gRs.commandLine["--version"] != V_NULL);
 	gRs.commandLine["--version"] = (bool)tmp;
-	gRs.commandLine["arguments"]["--use-implicit-console-appender"] = (bool)gRs.commandLine["arguments"].HasKey("--use-implicit-console-appender");
-	gRs.commandLine["arguments"]["--daemon"] = (bool)gRs.commandLine["arguments"].HasKey("--daemon");
+	tmp = (gRs.commandLine["arguments"]["--use-implicit-console-appender"] != V_NULL);
+	gRs.commandLine["arguments"]["--use-implicit-console-appender"] = (bool)tmp;
+	tmp = (gRs.commandLine["arguments"]["--daemon"] != V_NULL);
+	gRs.commandLine["arguments"]["--daemon"] = (bool)tmp;
 	if (gRs.commandLine["arguments"].HasKey("--uid")) {
 		gRs.commandLine["arguments"]["--uid"] = (uint32_t) atoi(STR(gRs.commandLine["arguments"]["--uid"]));
 	} else {
