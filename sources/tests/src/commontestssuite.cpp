@@ -97,6 +97,7 @@ void CommonTestsSuite::test_Endianess() {
 
 	pBuffer = NULL;
 	EHTOND(d, ui64);
+	printf("\n%016llx\n",ui64);
 	pBuffer = (uint8_t *) & ui64;
 	TS_ASSERT(pBuffer[0] == 0x40);
 	TS_ASSERT(pBuffer[1] == 0x5e);
@@ -277,7 +278,8 @@ void CommonTestsSuite::test_Endianess() {
 #ifdef BIG_ENDIAN_BYTE_ALIGNED
 	TS_ASSERT(ENTOHA(0x02030401) == 0x01020304);
 	TS_ASSERT(ENTOHLL(0x0102030405060708LL) == 0x0102030405060708LL);
-#error ENTOHD not tested
+	ENTOHD(0x405EDD2F1A9FBE77LL, tempDoubleVal);
+	TS_ASSERT(d == tempDoubleVal);
 #endif /* BIG_ENDIAN_BYTE_ALIGNED */
 
 #ifdef BIG_ENDIAN_SHORT_ALIGNED

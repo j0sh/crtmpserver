@@ -303,8 +303,10 @@ void PrintVersion() {
 void NormalizeCommandLine(string configFile) {
 	gRs.commandLine["arguments"]["configFile"] = configFile;
 	gRs.commandLine["arguments"].RemoveKey(configFile);
-	gRs.commandLine["arguments"]["--help"] = (bool)gRs.commandLine["arguments"].HasKey("--help");
-	gRs.commandLine["arguments"]["--version"] = (bool)gRs.commandLine["arguments"].HasKey("--version");
+	bool tmp = (gRs.commandLine["--help"] != V_NULL);
+	gRs.commandLine["--help"] = (bool)tmp;
+	tmp = (gRs.commandLine["--version"] != V_NULL);
+	gRs.commandLine["--version"] = (bool)tmp;
 	gRs.commandLine["arguments"]["--use-implicit-console-appender"] = (bool)gRs.commandLine["arguments"].HasKey("--use-implicit-console-appender");
 	gRs.commandLine["arguments"]["--daemon"] = (bool)gRs.commandLine["arguments"].HasKey("--daemon");
 	if (gRs.commandLine["arguments"].HasKey("--uid")) {
