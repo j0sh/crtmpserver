@@ -97,7 +97,6 @@ void CommonTestsSuite::test_Endianess() {
 
 	pBuffer = NULL;
 	EHTOND(d, ui64);
-	printf("\n%016llx\n",ui64);
 	pBuffer = (uint8_t *) & ui64;
 	TS_ASSERT(pBuffer[0] == 0x40);
 	TS_ASSERT(pBuffer[1] == 0x5e);
