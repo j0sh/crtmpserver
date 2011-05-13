@@ -36,6 +36,7 @@ private:
 	vector<uint64_t> _protocolChain;
 	bool _closeSocket;
 	Variant _customParameters;
+	bool _success;
 public:
 
 	TCPConnector(int32_t fd, string ip, uint16_t port,
@@ -46,9 +47,13 @@ public:
 		_protocolChain = protocolChain;
 		_closeSocket = true;
 		_customParameters = customParameters;
+		_success = false;
 	}
 
 	virtual ~TCPConnector() {
+		if (!_success) {
+			T::SignalProtocolCreated(NULL, _customParameters);
+		}
 		if (_closeSocket) {
 			close(_inboundFd);
 		}
@@ -63,20 +68,18 @@ public:
 		IOHandlerManager::EnqueueForDelete(this);
 
 		if ((event.events & EPOLLERR) != 0) {
-			DEBUG("***CONNECT ERROR: Unable to connect to: %s:%hu",
-					STR(_ip),
+			DEBUG("***CONNECT ERROR: Unable to connect to: %s:%hu", STR(_ip),
 					_port);
-			T::SignalProtocolCreated(NULL, _customParameters);
 			_closeSocket = true;
 			return false;
 		}
 
-		BaseProtocol *pProtocol = ProtocolFactoryManager::CreateProtocolChain(_protocolChain, _customParameters);
+		BaseProtocol *pProtocol = ProtocolFactoryManager::CreateProtocolChain(
+				_protocolChain, _customParameters);
 
 
 		if (pProtocol == NULL) {
 			FATAL("Unable to create protocol chain");
-			T::SignalProtocolCreated(NULL, _customParameters);
 			_closeSocket = true;
 			return false;
 		}
@@ -91,6 +94,7 @@ public:
 			_closeSocket = true;
 			return false;
 		}
+		_success = true;
 
 		_closeSocket = false;
 		return true;
@@ -101,12 +105,14 @@ public:
 
 		int32_t fd = (int32_t) socket(PF_INET, SOCK_STREAM, 0);
 		if (fd < 0) {
+			T::SignalProtocolCreated(NULL, customParameters);
 			int err = errno;
 			FATAL("Unable to create fd: %s(%d)", strerror(err), err);
 			return 0;
 		}
 
 		if (!setFdOptions(fd)) {
+			T::SignalProtocolCreated(NULL, customParameters);
 			FATAL("Unable to set socket options");
 			return false;
 		}
@@ -142,9 +148,8 @@ public:
 		if (connect(_inboundFd, (sockaddr *) & address, sizeof (address)) != 0) {
 			int err = errno;
 			if (err != EINPROGRESS) {
-				FATAL("Unable to connect to %s:%hu (%d) (%s)", STR(_ip), _port, err,
-						strerror(err));
-				T::SignalProtocolCreated(NULL, _customParameters);
+				FATAL("Unable to connect to %s:%hu (%d) (%s)", STR(_ip), _port,
+						err, strerror(err));
 				_closeSocket = true;
 				return false;
 			}
