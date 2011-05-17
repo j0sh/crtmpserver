@@ -105,7 +105,7 @@
 			public function SeekTo(seekPos:Number):void{
 				if(_stream==null)
 					return;
-				_stream.seek(30);
+				_stream.seek(seekPos);
 			}
 			
 			public function Pause():void{

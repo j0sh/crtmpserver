@@ -141,6 +141,18 @@
             private function Resume():void{
             	video.Resume();
             }
+			
+			private function Next():void{
+				if(dgFlvs.selectedIndex<0){
+					Alert.show("Please select a flv first");
+					return;
+				}
+				if((dgFlvs.selectedIndex+1)<_availableFlvs.length){
+					dgFlvs.selectedIndex++;
+					InitializeVideo(_availableFlvs[dgFlvs.selectedIndex].flvName);
+					video.SeekTo(5);
+				}
+			}
 		]]>
 	</mx:Script>
 	<mx:HBox width="100%" height="100%">
@@ -154,6 +166,7 @@
 			<mx:Button id="seek" click="SeekTo()" label="seekTo 00:30"/>
 			<mx:Button id="pause" click="Pause()" label="Pause"/>
 			<mx:Button id="resume" click="Resume()" label="Resume"/>
+			<mx:Button id="next" click="Next()" label="Next"/>
 			<mx:Label id="cplabel" />
 			<mx:Panel width="100%" height="100%" title="Available FLVs">
 				<mx:DataGrid id="dgFlvs" width="100%" height="100%" headerHeight="0" dataProvider="{AvailableFlvs}" alternatingItemColors="[#030303, #404040]">
