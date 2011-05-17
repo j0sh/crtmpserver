@@ -28,7 +28,8 @@
 BaseOutNetRTPUDPStream::BaseOutNetRTPUDPStream(BaseProtocol *pProtocol,
 		StreamsManager *pStreamsManager, string name)
 : BaseOutNetStream(NULL /*FIXME pProtocol*/, pStreamsManager, ST_OUT_NET_RTP, name) {
-	_ssrc = 12;
+	_audioSsrc = 0x80000000 | (rand()&0x00ffffff);
+	_videoSsrc = _audioSsrc + 1;
 	_pConnectivity = NULL;
 	_videoCounter = rand();
 	_audioCounter = rand();
@@ -50,8 +51,12 @@ void BaseOutNetRTPUDPStream::HasAudioVideo(bool hasAudio, bool hasVideo) {
 	_hasVideo = hasVideo;
 }
 
-uint32_t BaseOutNetRTPUDPStream::SSRC() {
-	return _ssrc;
+uint32_t BaseOutNetRTPUDPStream::AudioSSRC() {
+	return _audioSsrc;
+}
+
+uint32_t BaseOutNetRTPUDPStream::VideoSSRC() {
+	return _videoSsrc;
 }
 
 uint16_t BaseOutNetRTPUDPStream::VideoCounter() {

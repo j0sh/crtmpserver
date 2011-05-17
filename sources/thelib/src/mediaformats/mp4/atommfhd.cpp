@@ -17,34 +17,21 @@
  *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "mediaformats/mp4/atommfhd.h"
 
-#ifdef HAS_PROTOCOL_RTMP
-#ifndef _INFILERTMPFLVSTREAM_H
-#define	_INFILERTMPFLVSTREAM_H
+AtomMFHD::AtomMFHD(MP4Document *pDocument, uint32_t type, uint64_t size,
+		uint64_t start)
+: VersionedAtom(pDocument, type, size, start) {
+	_sequenceNumber = 0;
+}
 
-#include "protocols/rtmp/streaming/infilertmpstream.h"
-#include "protocols/rtmp/amf0serializer.h"
+AtomMFHD::~AtomMFHD() {
+}
 
-class DLLEXP InFileRTMPFLVStream
-: public InFileRTMPStream {
-private:
-	IOBuffer _metadataBuffer;
-	AMF0Serializer _amfSerializer;
-	string _metadataName;
-	Variant _metadataParameters;
-	Variant _tempVariant;
-public:
-	InFileRTMPFLVStream(BaseProtocol *pProtocol,
-			StreamsManager *pStreamsManager, string name);
-	virtual ~InFileRTMPFLVStream();
-protected:
-	virtual bool BuildFrame(FileClass *pFile, MediaFrame &mediaFrame,
-			IOBuffer &buffer);
-	virtual bool FeedMetaData(FileClass *pFile, MediaFrame &mediaFrame);
-};
-
-
-#endif	/* _INFILERTMPFLVSTREAM_H */
-
-#endif /* HAS_PROTOCOL_RTMP */
-
+bool AtomMFHD::ReadData() {
+	if (!ReadInt32(_sequenceNumber)) {
+		FATAL("Unable to read creation time");
+		return false;
+	}
+	return true;
+}

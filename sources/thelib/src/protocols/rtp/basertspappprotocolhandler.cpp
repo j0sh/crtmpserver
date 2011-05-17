@@ -417,7 +417,8 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPRequestSetupOutbound(RTSPProtocol *pF
 			STR(clientPorts),
 			isAudioTrack ? STR(pOutboundConnectivity->GetAudioServerPorts())
 			: STR(pOutboundConnectivity->GetVideoServerPorts()),
-			pOutboundConnectivity->GetSSRC()));
+			isAudioTrack ? pOutboundConnectivity->GetAudioSSRC()
+			: pOutboundConnectivity->GetVideoSSRC()));
 
 	//10. Done
 	return pFrom->SendResponseMessage();
@@ -547,8 +548,11 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPRequestPlay(RTSPProtocol *pFrom,
 		videoDataAddress.sin_port = EHTONS(videoDataPortNumber);
 		sockaddr_in videoRtcpAddress = ((TCPCarrier *) pFrom->GetIOHandler())->GetFarEndpointAddress();
 		videoRtcpAddress.sin_port = EHTONS(videoRtcpPortNumber);
-		pOutboundConnectivity->RegisterUDPVideoClient(pFrom->GetId(),
-				videoDataAddress, videoRtcpAddress);
+		if (!pOutboundConnectivity->RegisterUDPVideoClient1(pFrom->GetId(),
+				videoDataAddress, videoRtcpAddress)) {
+			FATAL("Unable to register video stream");
+			return false;
+		}
 	}
 
 	//5. Register the audio
@@ -557,8 +561,11 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPRequestPlay(RTSPProtocol *pFrom,
 		audioDataAddress.sin_port = EHTONS(audioDataPortNumber);
 		sockaddr_in audioRtcpAddress = ((TCPCarrier *) pFrom->GetIOHandler())->GetFarEndpointAddress();
 		audioRtcpAddress.sin_port = EHTONS(audioRtcpPortNumber);
-		pOutboundConnectivity->RegisterUDPAudioClient(pFrom->GetId(),
-				audioDataAddress, audioRtcpAddress);
+		if (!pOutboundConnectivity->RegisterUDPAudioClient1(pFrom->GetId(),
+				audioDataAddress, audioRtcpAddress)) {
+			FATAL("Unable to register audio stream");
+			return false;
+		}
 	}
 
 	//6. prepare the response

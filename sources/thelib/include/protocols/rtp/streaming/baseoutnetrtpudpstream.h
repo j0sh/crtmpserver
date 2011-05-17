@@ -29,7 +29,8 @@ class OutboundConnectivity;
 class DLLEXP BaseOutNetRTPUDPStream
 : public BaseOutNetStream {
 protected:
-	uint32_t _ssrc;
+	uint32_t _audioSsrc;
+	uint32_t _videoSsrc;
 	OutboundConnectivity *_pConnectivity;
 	uint16_t _videoCounter;
 	uint16_t _audioCounter;
@@ -44,7 +45,8 @@ public:
 	void SetConnectivity(OutboundConnectivity *pConnectivity);
 	void HasAudioVideo(bool hasAudio, bool hasVideo);
 
-	uint32_t SSRC();
+	uint32_t AudioSSRC();
+	uint32_t VideoSSRC();
 	uint16_t VideoCounter();
 	uint16_t AudioCounter();
 

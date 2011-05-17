@@ -36,7 +36,7 @@ OutNetRTPUDPH264Stream::OutNetRTPUDPH264Stream(BaseProtocol *pProtocol,
 	_videoData.msg_namelen = sizeof (sockaddr_in);
 	_videoData.msg_iov[0].iov_base = new uint8_t[14];
 	((uint8_t *) _videoData.msg_iov[0].iov_base)[0] = 0x80;
-	EHTONLP(((uint8_t *) _videoData.msg_iov[0].iov_base) + 8, _ssrc);
+	EHTONLP(((uint8_t *) _videoData.msg_iov[0].iov_base) + 8, _videoSsrc);
 	_pSPS = NULL;
 	_SPSLen = 0;
 	_pPPS = NULL;
@@ -50,7 +50,7 @@ OutNetRTPUDPH264Stream::OutNetRTPUDPH264Stream(BaseProtocol *pProtocol,
 	_audioData.msg_iov[0].iov_base = new uint8_t[14];
 	((uint8_t *) _audioData.msg_iov[0].iov_base)[0] = 0x80;
 	((uint8_t *) _audioData.msg_iov[0].iov_base)[1] = 0xe0;
-	EHTONLP(((uint8_t *) _audioData.msg_iov[0].iov_base) + 8, _ssrc);
+	EHTONLP(((uint8_t *) _audioData.msg_iov[0].iov_base) + 8, _audioSsrc);
 	_audioData.msg_iov[1].iov_len = 0;
 	_audioData.msg_iov[1].iov_base = new uint8_t[16];
 	_audioPacketsCount = 0;
@@ -74,46 +74,79 @@ OutNetRTPUDPH264Stream::~OutNetRTPUDPH264Stream() {
 bool OutNetRTPUDPH264Stream::FeedDataVideo(uint8_t *pData, uint32_t dataLength,
 		uint32_t processedLength, uint32_t totalLength,
 		double absoluteTimestamp, bool isAudio) {
+	//1. Test and see if this is an inbound RTMP stream. If so,
+	//we have to strip out the RTMP 9 bytes header
 	if (_pInStream->GetType() == ST_IN_NET_RTMP) {
+		//2. Test and see if we have a brand new packet
 		if (processedLength == 0) {
+			//3. This must be a payload packet, not codec setup
 			if (pData[1] != 1)
 				return true;
+			//4. since this is a brand new packet, empty previous buffer
 			_videoBuffer.IgnoreAll();
 		}
+
+		//5. Store the data into the buffer
 		_videoBuffer.ReadFromBuffer(pData, dataLength);
+
+		//6. Test and see if this is the last chunk of the RTMP packet
 		if (dataLength + processedLength == totalLength) {
-			//Last chunk. Do the damage
+			//7. This is the last chunk. Get the pointer and length
 			pData = GETIBPOINTER(_videoBuffer);
 			uint32_t dataLength = GETAVAILABLEBYTESCOUNT(_videoBuffer);
+
+			//8. We must have at least 9 bytes (RTMP header size)
 			if (dataLength < 9) {
 				WARN("Bogus packet");
 				return true;
 			}
+
+			//9. Read the composition timestamp and add it to the
+			//absolute timestamp
+			uint32_t compositionTimeStamp=(ENTOHLP(pData+1))&0x00ffffff;
+			absoluteTimestamp+=compositionTimeStamp;
+			
+			//10. Ignore RTMP header and composition offset
 			pData += 5;
 			dataLength -= 5;
-			uint32_t chunkSize = 0;
-			uint32_t tsIncrement = 0;
+
+			uint32_t nalSize = 0;
+			//uint32_t tsIncrement = 0;
+
+			//11. Start looping over the RTMP payload. Each NAL has a 4 bytes
+			//header indicating the length of the following NAL
 			while (dataLength >= 4) {
-				chunkSize = ENTOHLP(pData);
-				if (chunkSize > (dataLength - 4)) {
+				//12. Read the nal size and compare it to the actual amount
+				//of data remaining on the buffer
+				nalSize = ENTOHLP(pData);
+				if (nalSize > (dataLength - 4)) {
 					WARN("Bogus packet");
 					return true;
 				}
+
+				//13. skip theNAL size field
 				pData += 4;
 				dataLength -= 4;
-				if (chunkSize == 0)
+
+				//14. Is this a 0 sized NAL? if so, skip it
+				if (nalSize == 0)
 					continue;
-				if (!FeedDataVideoFUA(pData, chunkSize, 0, chunkSize,
-						absoluteTimestamp + (double) tsIncrement / 90000.00)) {
+
+				//15. Feed the NAL unit using RTP FUA
+				if (!FeedDataVideoFUA(pData, nalSize, 0, nalSize,
+						absoluteTimestamp )) { //+ (double) tsIncrement / 90000.00)) {
 					FATAL("Unable to feed data");
 					return false;
 				}
-				pData += chunkSize;
-				dataLength -= chunkSize;
+
+				//16. move to the next NAL
+				pData += nalSize;
+				dataLength -= nalSize;
 			}
 		}
 		return true;
 	} else {
+		//17. This is NAL stream. Feed it as it is
 		return FeedDataVideoFUA(pData, dataLength, processedLength, totalLength,
 				absoluteTimestamp);
 	}
@@ -133,7 +166,7 @@ void OutNetRTPUDPH264Stream::SignalAttachedToInStream() {
 	_pSPS = new uint8_t[_SPSLen];
 	_pSPS[0] = 0x80;
 	_pSPS[1] = 0xE1;
-	EHTONLP(_pSPS + 8, _ssrc);
+	EHTONLP(_pSPS + 8, _videoSsrc);
 	memcpy(_pSPS + 12, pCapabilities->avc._pSPS,
 			pCapabilities->avc._spsLength);
 
@@ -141,7 +174,7 @@ void OutNetRTPUDPH264Stream::SignalAttachedToInStream() {
 	_pPPS = new uint8_t[_PPSLen];
 	_pPPS[0] = 0x80;
 	_pPPS[1] = 0xE1;
-	EHTONLP(_pPPS + 8, _ssrc);
+	EHTONLP(_pPPS + 8, _videoSsrc);
 	memcpy(_pPPS + 12, pCapabilities->avc._pPPS,
 			pCapabilities->avc._ppsLength);
 }
@@ -149,11 +182,11 @@ void OutNetRTPUDPH264Stream::SignalAttachedToInStream() {
 bool OutNetRTPUDPH264Stream::FeedDataVideoFUA(uint8_t *pData, uint32_t dataLength,
 		uint32_t processedLength, uint32_t totalLength,
 		double absoluteTimestamp) {
-	if (
-			(NALU_TYPE(pData[0]) != NALU_TYPE_SLICE)
-			&& (NALU_TYPE(pData[0]) != NALU_TYPE_IDR)) {
-		return true;
-	}
+	//1. We are only going to send IDR and SLICE nals
+	//	if ((NALU_TYPE(pData[0]) != NALU_TYPE_SLICE)
+	//			&& (NALU_TYPE(pData[0]) != NALU_TYPE_IDR)) {
+	//		return true;
+	//	}
 
 	uint32_t sentAmount = 0;
 	uint32_t chunkSize = 0;
@@ -205,7 +238,7 @@ bool OutNetRTPUDPH264Stream::FeedDataVideoFUA(uint8_t *pData, uint32_t dataLengt
 			}
 		}
 
-		_pConnectivity->FeedVideoData(_videoData);
+		_pConnectivity->FeedVideoData(_videoData, absoluteTimestamp);
 		sentAmount += chunkSize;
 		pData += chunkSize;
 	}
@@ -241,7 +274,7 @@ bool OutNetRTPUDPH264Stream::FeedDataAudioMPEG4Generic_aggregate(uint8_t *pData,
 		EHTONSP(((uint8_t *) _audioData.msg_iov[0].iov_base) + 12,
 				_audioData.msg_iov[1].iov_len * 8);
 
-		_pConnectivity->FeedAudioData(_audioData);
+		_pConnectivity->FeedAudioData(_audioData, absoluteTimestamp);
 
 		_audioBuffer.IgnoreAll();
 		_audioData.msg_iov[1].iov_len = 0;
@@ -266,63 +299,81 @@ bool OutNetRTPUDPH264Stream::FeedDataAudioMPEG4Generic_one_by_one(uint8_t *pData
 	//1. Take care of chunked content first
 	//this will update pData and dataLength if necessary
 	if (dataLength != totalLength) {
-		//chunked
+		//2. This is chunked content. Test if this is the first chunk from the
+		//packet
 		if (processedLength == 0) {
-			//beginning of the packet
+			//3. This is the first chunk of the packet.
+			//Empty the old buffer and store this new chunk
 			_audioBuffer.IgnoreAll();
 			_audioBuffer.ReadFromBuffer(pData, dataLength);
 			return true;
 		} else {
+			//4. This is not the first chunk. Test to see if this is
+			//the last chunk or not
 			if (totalLength < processedLength + dataLength) {
-				//middle
+				//5. This is not the last chunk of the packet.
+				//Test and see if we have any previous data inside the buffer
+				//if we don't, that means we didn't catch the beginning
+				//of the packet so we discard everything
 				if (GETAVAILABLEBYTESCOUNT(_audioBuffer) == 0) {
-					//we don't have the beginning of the packet. We started
-					//directly in the middle
 					return true;
 				}
+
+				//6. Store the data
 				_audioBuffer.ReadFromBuffer(pData, dataLength);
+
+				//7. Done
 				return true;
 			} else {
-				//last
+				//8. This is the last chunk of the packet.
+				//Test and see if we have any previous data inside the buffer
+				//if we don't, that means we didn't catch the beginning
+				//of the packet so we discard everything
 				if (GETAVAILABLEBYTESCOUNT(_audioBuffer) == 0) {
-					//we don't have the beginning of the packet. We started
-					//directly in the middle
 					return true;
 				}
+
+				//9. Store the data
 				_audioBuffer.ReadFromBuffer(pData, dataLength);
+
+				//10. Get the buffer and its length
 				pData = GETIBPOINTER(_audioBuffer);
 				dataLength = GETAVAILABLEBYTESCOUNT(_audioBuffer);
+
+				//11. Do a final test and see if we have all the data
 				if (dataLength != totalLength) {
-					ASSERT("We should not be here!!!!");
+					FATAL("Invalid data length");
 					return false;
 				}
 			}
 		}
 	}
 
-
-	//2. Do we have enough data?
-	if (dataLength <= 7) {
-		WARN("Bogus AAC packet");
-		_audioBuffer.IgnoreAll();
-		return true;
-	}
-
 	//3. Take care of the RTMP headers if necessary
 	if (_pInStream->GetType() == ST_IN_NET_RTMP) {
-		if (pData[1] != 1) {
-			WARN("This is a RTMP audio config packet");
-			_audioBuffer.IgnoreAll();
-			return true;
-		}
-		if (dataLength <= 9) {
+		//2. Do we have enough data to read the RTMP header?
+		if (dataLength <= 2) {
 			WARN("Bogus AAC packet");
 			_audioBuffer.IgnoreAll();
 			return true;
 		}
 
+		//3. Is this a RTMP codec setup? If so, ignore it
+		if (pData[1] != 1) {
+			_audioBuffer.IgnoreAll();
+			return true;
+		}
+
+		//4. Skip the RTMP header
 		dataLength -= 2;
 		pData += 2;
+	}
+
+	//4. Do we have enough data to detect the ADTS header presence?
+	if (dataLength <= 2) {
+		WARN("Bogus AAC packet");
+		_audioBuffer.IgnoreAll();
+		return true;
 	}
 
 	//4. The packet might start with an ADTS header. Remove it if necessary
@@ -370,7 +421,7 @@ bool OutNetRTPUDPH264Stream::FeedDataAudioMPEG4Generic_one_by_one(uint8_t *pData
 	_audioData.msg_iov[2].iov_len = dataLength - adtsHeaderLength;
 	_audioData.msg_iov[2].iov_base = pData + adtsHeaderLength;
 
-	if (!_pConnectivity->FeedAudioData(_audioData)) {
+	if (!_pConnectivity->FeedAudioData(_audioData, absoluteTimestamp)) {
 		FATAL("Unable to feed data");
 		_audioBuffer.IgnoreAll();
 		return false;

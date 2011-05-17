@@ -24,6 +24,7 @@
 #include "common.h"
 #include "mediaformats/mediaframe.h"
 #include "mediaformats/mediafile.h"
+#include "streaming/streamcapabilities.h"
 
 class BaseMediaDocument {
 protected:
@@ -37,6 +38,7 @@ protected:
 	string _metaFilePath;
 	bool _keyframeSeek;
 	uint32_t _seekGranularity;
+	StreamCapabilities _streamCapabilities;
 public:
 	BaseMediaDocument(Variant &metadata);
 	virtual ~BaseMediaDocument();

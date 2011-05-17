@@ -43,6 +43,7 @@ public:
 	AtomTKHD(MP4Document *pDocument, uint32_t type, uint64_t size, uint64_t start);
 	virtual ~AtomTKHD();
 
+	uint32_t GetTrackId();
 	uint32_t GetWidth();
 	uint32_t GetHeight();
 protected:

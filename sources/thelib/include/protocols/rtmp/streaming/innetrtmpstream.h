@@ -26,7 +26,7 @@
 #include "streaming/streamcapabilities.h"
 
 class BaseRTMPProtocol;
-class OutFileRTMPFLVStream;
+class BaseOutStream;
 
 class DLLEXP InNetRTMPStream
 : public BaseInNetStream {
@@ -40,7 +40,7 @@ private:
 	IOBuffer _audioCodecInit;
 	double _lastAudioTime;
 	Variant _lastStreamMessage;
-	OutFileRTMPFLVStream *_pOutFileRTMPFLVStream;
+	BaseOutStream *_pOutFileRTMPFLVStream;
 	StreamCapabilities _streamCapabilities;
 
 	uint64_t _audioPacketsCount;

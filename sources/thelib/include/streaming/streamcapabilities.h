@@ -39,6 +39,8 @@ struct _VIDEO_AVC {
 	bool Init(uint8_t *pSPS, uint32_t spsLength, uint8_t *pPPS, uint32_t ppsLength);
 	void Clear();
 
+	bool Serialize(IOBuffer &dest);
+	static bool Deserialize(IOBuffer &src, _VIDEO_AVC &dest);
 	DLLEXP operator string();
 };
 
@@ -56,6 +58,8 @@ struct _AUDIO_AAC {
 	void Clear();
 	DLLEXP string GetRTSPFmtpConfig();
 
+	bool Serialize(IOBuffer &dest);
+	static bool Deserialize(IOBuffer &src, _AUDIO_AAC &dest);
 	operator string();
 };
 
@@ -70,11 +74,16 @@ public:
 	virtual ~StreamCapabilities();
 
 	bool InitAudioAAC(uint8_t *pBuffer, uint32_t length);
-	bool InitVideoH264(uint8_t *pSPS, uint32_t spsLength, uint8_t *pPPS, uint32_t ppsLength);
+	bool InitAudioMP3();
+	bool InitVideoH264(uint8_t *pSPS, uint32_t spsLength, uint8_t *pPPS,
+			uint32_t ppsLength);
 
 	void ClearVideo();
 	void ClearAudio();
 	void Clear();
+	
+	bool Serialize(IOBuffer &dest);
+	static bool Deserialize(IOBuffer &src, StreamCapabilities &capabilities);
 };
 
 #endif	/* _STRAMCAPABILITIES_H */

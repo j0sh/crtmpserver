@@ -28,7 +28,7 @@ AtomSTSC::~AtomSTSC() {
 }
 
 vector<uint32_t> AtomSTSC::GetEntries(uint32_t totalChunksCount) {
-	if (_normalizedEntries.size() != 0)
+	if ((_normalizedEntries.size() != 0) || (_stscEntries.size() == 0))
 		return _normalizedEntries;
 
 	//1. Expand the table

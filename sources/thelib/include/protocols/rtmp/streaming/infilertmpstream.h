@@ -24,6 +24,7 @@
 
 #include "streaming/baseinfilestream.h"
 #include "protocols/rtmp/header.h"
+#include "protocols/rtmp/amf0serializer.h"
 
 
 class BaseRTMPProtocol;
@@ -31,13 +32,68 @@ class StreamsManager;
 
 class DLLEXP InFileRTMPStream
 : public BaseInFileStream {
+private:
+
+	class BaseBuilder {
+	public:
+		virtual bool BuildFrame(FileClass *pFile, MediaFrame &mediaFrame,
+				IOBuffer &buffer) = 0;
+	};
+
+	class AVCBuilder : public BaseBuilder {
+	private:
+		uint8_t _videoCodecHeaderInit[5];
+		uint8_t _videoCodecHeaderKeyFrame[2];
+		uint8_t _videoCodecHeader[2];
+	public:
+		AVCBuilder();
+		virtual bool BuildFrame(FileClass *pFile, MediaFrame &mediaFrame,
+				IOBuffer &buffer);
+	};
+
+	class AACBuilder : public BaseBuilder {
+	private:
+		uint8_t _audioCodecHeaderInit[2];
+		uint8_t _audioCodecHeader[2];
+	public:
+		AACBuilder();
+		virtual bool BuildFrame(FileClass *pFile, MediaFrame &mediaFrame,
+				IOBuffer &buffer);
+	};
+
+	class MP3Builder : public BaseBuilder {
+	private:
+
+	public:
+		MP3Builder();
+		virtual bool BuildFrame(FileClass *pFile, MediaFrame &mediaFrame,
+				IOBuffer &buffer);
+	};
+
+	class PassThroughBuilder : public BaseBuilder {
+	public:
+		PassThroughBuilder();
+		virtual bool BuildFrame(FileClass *pFile, MediaFrame &mediaFrame,
+				IOBuffer &buffer);
+	};
+private:
+	BaseBuilder *_pAudioBuilder;
+	BaseBuilder *_pVideoBuilder;
+
+	IOBuffer _metadataBuffer;
+	AMF0Serializer _amfSerializer;
+	string _metadataName;
+	Variant _metadataParameters;
+	Variant _tempVariant;
 protected:
 	Variant _completeMetadata;
 	uint32_t _chunkSize;
 public:
 	InFileRTMPStream(BaseProtocol *pProtocol, StreamsManager *pStreamsManager,
-			uint64_t type, string name);
+			string name);
 	virtual ~InFileRTMPStream();
+
+	virtual bool Initialize(int32_t clientSideBufferLength);
 
 	virtual bool FeedData(uint8_t *pData, uint32_t dataLength,
 			uint32_t processedLength, uint32_t totalLength,
@@ -54,6 +110,10 @@ public:
 	Variant GetCompleteMetadata();
 	virtual void SignalOutStreamAttached(BaseOutStream *pOutStream);
 	virtual void SignalOutStreamDetached(BaseOutStream *pOutStream);
+
+	virtual bool BuildFrame(FileClass *pFile, MediaFrame &mediaFrame,
+			IOBuffer &buffer);
+	virtual bool FeedMetaData(FileClass *pFile, MediaFrame &mediaFrame);
 
 };
 

@@ -74,40 +74,46 @@ while (0)
 
 OutboundConnectivity::OutboundConnectivity()
 : BaseConnectivity() {
+	_pOutStream = NULL;
+
+	memset(&_dataMessage, 0, sizeof (_dataMessage));
+	_dataMessage.msg_iov = new iovec[1];
+	_dataMessage.msg_iovlen = 1;
+	_dataMessage.msg_namelen = sizeof (sockaddr_in);
+
+	memset(&_rtcpMessage, 0, sizeof (_rtcpMessage));
+	_rtcpMessage.msg_iov = new iovec[1];
+	_rtcpMessage.msg_iovlen = 1;
+	_rtcpMessage.msg_namelen = sizeof (sockaddr_in);
+	_rtcpMessage.msg_iov[0].iov_len = 28;
+	_rtcpMessage.msg_iov[0].iov_base = new uint8_t[_rtcpMessage.msg_iov[0].iov_len];
+	((uint8_t *) _rtcpMessage.msg_iov[0].iov_base)[0] = 0x80; //V,P,RC
+	((uint8_t *) _rtcpMessage.msg_iov[0].iov_base)[1] = 0xc8; //PT=SR=200
+	EHTONSP(((uint8_t *) _rtcpMessage.msg_iov[0].iov_base) + 2, 6); //length
+	EHTONLP(((uint8_t *) _rtcpMessage.msg_iov[0].iov_base) + 4, 0); //SSRC
+	_pRTCPNTP = ((uint8_t *) _rtcpMessage.msg_iov[0].iov_base) + 8;
+	_pRTCPRTP = ((uint8_t *) _rtcpMessage.msg_iov[0].iov_base) + 16;
+	_pRTCPSPC = ((uint8_t *) _rtcpMessage.msg_iov[0].iov_base) + 20;
+	_pRTCPSOC = ((uint8_t *) _rtcpMessage.msg_iov[0].iov_base) + 24;
+
+	_hasAudio = false;
+	_hasVideo = false;
 	_videoDataFd = -1;
 	_videoDataPort = 0;
 	_videoRTCPFd = -1;
 	_videoRTCPPort = 0;
-	_videoPacketsCount = 0;
-	_videoBytesCount = 0;
-	_videoFirstRtp = 0;
-	_videoRtpTs = 0;
-	_videoRtcpSent = false;
-
 	_audioDataFd = -1;
 	_audioDataPort = 0;
 	_audioRTCPFd = -1;
 	_audioRTCPPort = 0;
-	_audioPacketsCount = 0;
-	_audioBytesCount = 0;
-	_audioFirstRtp = 0;
-	_videoRtpTs = 0;
-	_audioRtcpSent = false;
 
-	_pOutStream = NULL;
-	memset(&_message, 0, sizeof (_message));
-	_message.msg_iov = new iovec[1];
-	_message.msg_iovlen = 1;
-	_message.msg_namelen = sizeof (sockaddr_in);
-
-	_startupTime = 0;
-
-	_hasAudio = false;
-	_hasVideo = false;
+	_startupTime = (uint64_t) time(NULL);
 }
 
 OutboundConnectivity::~OutboundConnectivity() {
-	delete[] _message.msg_iov;
+	delete[] _dataMessage.msg_iov;
+	delete[] ((uint8_t *) _rtcpMessage.msg_iov[0].iov_base);
+	delete[] _rtcpMessage.msg_iov;
 	if (_pOutStream != NULL) {
 		delete _pOutStream;
 	}
@@ -143,9 +149,15 @@ string OutboundConnectivity::GetAudioServerPorts() {
 	return format("%hu-%hu", _audioDataPort, _audioRTCPPort);
 }
 
-uint32_t OutboundConnectivity::GetSSRC() {
+uint32_t OutboundConnectivity::GetAudioSSRC() {
 	if (_pOutStream != NULL)
-		return _pOutStream->SSRC();
+		return _pOutStream->AudioSSRC();
+	return 0;
+}
+
+uint32_t OutboundConnectivity::GetVideoSSRC() {
+	if (_pOutStream != NULL)
+		return _pOutStream->VideoSSRC();
 	return 0;
 }
 
@@ -153,17 +165,17 @@ uint16_t OutboundConnectivity::GetLastVideoSequence() {
 	return _pOutStream->VideoCounter();
 }
 
-uint32_t OutboundConnectivity::GetLastVideoRTPTimestamp() {
-	return _videoRtpTs;
-}
-
 uint16_t OutboundConnectivity::GetLastAudioSequence() {
 	return _pOutStream->AudioCounter();
 }
 
-uint32_t OutboundConnectivity::GetLastAudioRTPTimestamp() {
-	return _audioRtpTs;
-}
+//uint32_t OutboundConnectivity::GetLastVideoRTPTimestamp() {
+//	return _videoRtpTs;
+//}
+//
+//uint32_t OutboundConnectivity::GetLastAudioRTPTimestamp() {
+//	return _audioRtpTs;
+//}
 
 void OutboundConnectivity::HasAudio(bool value) {
 	_hasAudio = value;
@@ -175,90 +187,80 @@ void OutboundConnectivity::HasVideo(bool value) {
 	_pOutStream->HasAudioVideo(_hasAudio, _hasVideo);
 }
 
-void OutboundConnectivity::RegisterUDPVideoClient(uint32_t protocolId,
+bool OutboundConnectivity::RegisterUDPVideoClient1(uint32_t rtspProtocolId,
 		sockaddr_in &data, sockaddr_in &rtcp) {
-	_udpVideoDataClients[protocolId] = data;
-	_udpVideoRTCPClients[protocolId] = rtcp;
+	if (!MAP_HAS1(_clients, rtspProtocolId))
+		_clients[rtspProtocolId] = RTPClient();
+
+	RTPClient &client = _clients[rtspProtocolId];
+	if (client.hasVideo) {
+		FATAL("Client already registered for video feed");
+		return false;
+	}
+	client.hasVideo = true;
+	client.isUdp = true;
+	client.videoDataAddress = data;
+	client.videoRtcpAddress = rtcp;
+	return true;
 }
 
-void OutboundConnectivity::RegisterUDPAudioClient(uint32_t protocolId,
+bool OutboundConnectivity::RegisterUDPAudioClient1(uint32_t rtspProtocolId,
 		sockaddr_in &data, sockaddr_in &rtcp) {
-	_udpAudioDataClients[protocolId] = data;
-	_udpAudioRTCPClients[protocolId] = rtcp;
-}
+	if (!MAP_HAS1(_clients, rtspProtocolId))
+		_clients[rtspProtocolId] = RTPClient();
 
-void OutboundConnectivity::RegisterTCPClient(uint32_t protocolId) {
-	_tcpClients[protocolId] = protocolId;
+	RTPClient &client = _clients[rtspProtocolId];
+	if (client.hasAudio) {
+		FATAL("Client already registered for audio feed");
+		return false;
+	}
+	client.hasAudio = true;
+	client.isUdp = true;
+	client.audioDataAddress = data;
+	client.audioRtcpAddress = rtcp;
+	return true;
 }
 
 void OutboundConnectivity::UnRegisterClient(uint32_t protocolId) {
-	_udpVideoDataClients.erase(protocolId);
-	_udpVideoRTCPClients.erase(protocolId);
-	_udpAudioDataClients.erase(protocolId);
-	_udpAudioRTCPClients.erase(protocolId);
-	_tcpClients.erase(protocolId);
+	if (MAP_HAS1(_clients, protocolId))
+		_clients.erase(protocolId);
 }
 
 bool OutboundConnectivity::HasClients() {
-	return (_udpVideoDataClients.size() != 0)
-			|| (_udpVideoRTCPClients.size() != 0)
-			|| (_udpAudioDataClients.size() != 0)
-			|| (_udpAudioRTCPClients.size() != 0)
-			|| (_tcpClients.size() != 0);
+	return _clients.size() != 0;
 }
 
 void OutboundConnectivity::SignalDetachedFromInStream() {
 
-	FOR_MAP(_udpVideoDataClients, uint32_t, sockaddr_in, i) {
-		BaseProtocol *pProtocol = ProtocolManager::GetProtocol(MAP_KEY(i));
-		if (pProtocol != NULL)
-			pProtocol->EnqueueForDelete();
-	}
-
-	FOR_MAP(_udpVideoRTCPClients, uint32_t, sockaddr_in, i) {
-		BaseProtocol *pProtocol = ProtocolManager::GetProtocol(MAP_KEY(i));
-		if (pProtocol != NULL)
-			pProtocol->EnqueueForDelete();
-	}
-
-	FOR_MAP(_udpAudioDataClients, uint32_t, sockaddr_in, i) {
-		BaseProtocol *pProtocol = ProtocolManager::GetProtocol(MAP_KEY(i));
-		if (pProtocol != NULL)
-			pProtocol->EnqueueForDelete();
-	}
-
-	FOR_MAP(_udpAudioRTCPClients, uint32_t, sockaddr_in, i) {
-		BaseProtocol *pProtocol = ProtocolManager::GetProtocol(MAP_KEY(i));
-		if (pProtocol != NULL)
-			pProtocol->EnqueueForDelete();
-	}
-
-	FOR_MAP(_tcpClients, uint32_t, uint32_t, i) {
+	FOR_MAP(_clients, uint32_t, RTPClient, i) {
 		BaseProtocol *pProtocol = ProtocolManager::GetProtocol(MAP_KEY(i));
 		if (pProtocol != NULL)
 			pProtocol->EnqueueForDelete();
 	}
 }
 
-bool OutboundConnectivity::FeedVideoData(uint8_t *pBuffer, uint32_t length) {
-	_message.msg_iov[0].iov_base = pBuffer;
-	_message.msg_iov[0].iov_len = length;
-	return FeedVideoData(_message);
+bool OutboundConnectivity::FeedVideoData(uint8_t *pBuffer, uint32_t length,
+		double absoluteTimestamp) {
+	_dataMessage.msg_iov[0].iov_base = pBuffer;
+	_dataMessage.msg_iov[0].iov_len = length;
+	return FeedVideoData(_dataMessage, absoluteTimestamp);
 }
 
-bool OutboundConnectivity::FeedAudioData(uint8_t *pBuffer, uint32_t length) {
-	_message.msg_iov[0].iov_base = pBuffer;
-	_message.msg_iov[0].iov_len = length;
-	return FeedAudioData(_message);
+bool OutboundConnectivity::FeedAudioData(uint8_t *pBuffer, uint32_t length,
+		double absoluteTimestamp) {
+	_dataMessage.msg_iov[0].iov_base = pBuffer;
+	_dataMessage.msg_iov[0].iov_len = length;
+	return FeedAudioData(_dataMessage, absoluteTimestamp);
 }
 
-bool OutboundConnectivity::FeedVideoData(msghdr &message) {
-	_videoRtpTs = ENTOHLP(((uint8_t *) message.msg_iov[0].iov_base) + 4);
-	if (!FeedVideoDataUDP(message)) {
+bool OutboundConnectivity::FeedVideoData(msghdr &message,
+		double absoluteTimestamp) {
+	//	_videoRtpTs = ENTOHLP(((uint8_t *) message.msg_iov[0].iov_base) + 4);
+	if (!FeedDataUDP(message, absoluteTimestamp, false)) {
 		FATAL("Unable to feed video UDP clients");
 		return false;
 	}
-	if (!FeedVideoDataTCP(message)) {
+	if (!FeedDataTCP(message, absoluteTimestamp, false)) {
 		FATAL("Unable to feed video TCP clients");
 		return false;
 	}
@@ -266,13 +268,14 @@ bool OutboundConnectivity::FeedVideoData(msghdr &message) {
 	return true;
 }
 
-bool OutboundConnectivity::FeedAudioData(msghdr &message) {
-	_audioRtpTs = ENTOHLP(((uint8_t *) message.msg_iov[0].iov_base) + 4);
-	if (!FeedAudioDataUDP(message)) {
+bool OutboundConnectivity::FeedAudioData(msghdr &message,
+		double absoluteTimestamp) {
+	//	_audioRtpTs = ENTOHLP(((uint8_t *) message.msg_iov[0].iov_base) + 4);
+	if (!FeedDataUDP(message, absoluteTimestamp, true)) {
 		FATAL("Unable to feed audio UDP clients");
 		return false;
 	}
-	if (!FeedAudioDataTCP(message)) {
+	if (!FeedDataTCP(message, absoluteTimestamp, true)) {
 		FATAL("Unable to feed audio TCP clients");
 		return false;
 	}
@@ -337,168 +340,231 @@ bool OutboundConnectivity::InitializePorts(int32_t &dataFd, uint16_t &dataPort,
 		c+=m.msg_iov[i].iov_len-12; \
 	}
 
-bool OutboundConnectivity::FeedVideoDataUDP(msghdr &message) {
-	RTP_SEND_MESSAGE(_videoDataFd, _udpVideoDataClients, message);
-	_videoPacketsCount++;
-	COMPUTE_BYTES_COUNT(message, _videoBytesCount);
-	if (((_videoPacketsCount % 300) == 0) || _videoPacketsCount <= 2) {
-		uint8_t buff[28];
-		if (CreateRTCPPacket(buff,
-				(uint8_t *) message.msg_iov[0].iov_base,
-				_pOutStream->SSRC(),
-				90000,
-				_videoPacketsCount,
-				_videoBytesCount,
-				false)) {
-			_message.msg_iov[0].iov_base = buff;
-			_message.msg_iov[0].iov_len = 28;
-
-			RTP_SEND_MESSAGE(_videoRTCPFd, _udpVideoRTCPClients, _message);
-		}
-	}
-	return true;
-}
-
-bool OutboundConnectivity::FeedVideoDataTCP(msghdr &message) {
-	return true;
-}
-
-bool OutboundConnectivity::FeedAudioDataUDP(msghdr &message) {
-	RTP_SEND_MESSAGE(_audioDataFd, _udpAudioDataClients, message);
-	_audioPacketsCount++;
-	COMPUTE_BYTES_COUNT(message, _audioBytesCount);
-	if (((_audioPacketsCount % 300) == 0) || (_audioPacketsCount <= 2)) {
-		uint8_t buff[28];
-		if (CreateRTCPPacket(buff,
-				(uint8_t *) message.msg_iov[0].iov_base,
-				_pOutStream->SSRC(),
-				_pOutStream->GetCapabilities()->aac._sampleRate,
-				_audioPacketsCount,
-				_audioBytesCount,
-				true)) {
-			_message.msg_iov[0].iov_base = buff;
-			_message.msg_iov[0].iov_len = 28;
-
-			RTP_SEND_MESSAGE(_audioRTCPFd, _udpAudioRTCPClients, _message);
-		}
-	}
-	return true;
-}
-
-bool OutboundConnectivity::FeedAudioDataTCP(msghdr &message) {
-	return true;
-}
-
-bool OutboundConnectivity::CreateRTCPPacket_mystyle(uint8_t *pDest, uint8_t *pSrc,
-		uint32_t ssrc, uint32_t rate, uint32_t packetsCount, uint32_t bytesCount,
+bool OutboundConnectivity::FeedDataUDP(msghdr &message, double absoluteTimestamp,
 		bool isAudio) {
+	if (absoluteTimestamp == 0)
+		return true;
 
-	//1. V,P,RC
-	pDest[0] = 0x80;
-
-	//2. PT
-	pDest[1] = 0xc8;
-
-	//3. Length
-	pDest[2] = 0x00;
-	pDest[3] = 0x06;
-
-	//4. ssrc
-	EHTONLP(pDest + 4, ssrc); //SSRC
-
-	//5. setup the startup time
-	if (_startupTime == 0) {
-		GETCLOCKS(_startupTime);
+	int32_t dataFd = isAudio ? _audioDataFd : _videoDataFd;
+	int32_t rtcpFd = isAudio ? _audioRTCPFd : _videoRTCPFd;
+	uint32_t rate = isAudio ? _pOutStream->GetCapabilities()->aac._sampleRate : 90000.0;
+	uint32_t ssrc = isAudio ? _pOutStream->AudioSSRC() : _pOutStream->VideoSSRC();
+	uint32_t messageLength = 0;
+	for (int i = 0; i < message.msg_iovlen; i++) {
+		messageLength += message.msg_iov[i].iov_len;
 	}
 
-	if (isAudio) {
-		if (_audioFirstRtp == 0) {
-			_audioFirstRtp = ENTOHLP(pSrc + 4);
+	FOR_MAP(_clients, uint32_t, RTPClient, i) {
+		RTPClient &client = MAP_VAL(i);
+		bool &hasTrack = isAudio ? client.hasAudio : client.hasVideo;
+		sockaddr_in &dataAddress = isAudio ? client.audioDataAddress : client.videoDataAddress;
+		uint32_t &packetsCount = isAudio ? client.audioPacketsCount : client.videoPacketsCount;
+		uint32_t &bytesCount = isAudio ? client.audioBytesCount : client.videoBytesCount;
+		uint32_t &startRTP = isAudio ? client.audioStartRTP : client.videoStartRTP;
+		double &startTS = isAudio ? client.audioStartTS : client.videoStartTS;
+		if (!hasTrack)
+			continue;
+
+		if (startRTP == 0xffffffff) {
+			startRTP = ENTOHLP(((uint8_t *) message.msg_iov[0].iov_base) + 4);
+			startTS = absoluteTimestamp;
+		}
+
+
+		//		uint32_t rtp = ENTOHLP(((uint8_t *) message.msg_iov[0].iov_base) + 4);
+		//		FINEST("%c %u %u %.2f", isAudio ? 'A' : 'V', rtp, rate, (double) rtp / (double) rate);
+
+		if ((packetsCount % 500) == 0) {
+			FINEST("Send %c RTCP: %u", isAudio ? 'A' : 'V', packetsCount);
+			EHTONLP(((uint8_t *) _rtcpMessage.msg_iov[0].iov_base) + 4, ssrc); //SSRC
+
+
+			//NTP
+			uint32_t integerValue = (uint32_t) (absoluteTimestamp / 1000.0);
+			double fractionValue = (absoluteTimestamp / 1000.0 - ((uint32_t) (absoluteTimestamp / 1000.0)))*4294967296.0;
+			uint64_t ntpVal = (_startupTime + integerValue + 2208988800ULL) << 32;
+			ntpVal |= (uint32_t) fractionValue;
+			EHTONLLP(_pRTCPNTP, ntpVal);
+
+			//RTP
+			uint64_t rtp = (uint64_t) (((double) (integerValue) + fractionValue / 4294967296.0) * (double) rate);
+			rtp &= 0xffffffff;
+			EHTONLP(_pRTCPRTP, (uint32_t) rtp);
+
+			//packet count
+			EHTONLP(_pRTCPSPC, packetsCount);
+
+			//octet count
+			EHTONLP(_pRTCPSOC, bytesCount);
+			FINEST("\n%s", STR(IOBuffer::DumpBuffer(((uint8_t *) _rtcpMessage.msg_iov[0].iov_base),
+					_rtcpMessage.msg_iov[0].iov_len)));
+
+			sockaddr_in &rtcpAddress = isAudio ? client.audioRtcpAddress : client.videoRtcpAddress;
+			_rtcpMessage.msg_name = &rtcpAddress;
+			if (sendmsg(rtcpFd, &_rtcpMessage, 0) <= 0) {
+				FATAL("Unable to send message");
+				return false;
+			}
+		}
+
+		message.msg_name = &dataAddress;
+		if (sendmsg(dataFd, &message, 0) <= 0) {
+			FATAL("Unable to send message");
 			return false;
 		}
-	} else {
-		if (_videoFirstRtp == 0) {
-			_videoFirstRtp = ENTOHLP(pSrc + 4);
-			return false;
-		}
+
+		packetsCount++;
+		bytesCount += messageLength;
 	}
-
-	uint32_t &firstRtp = isAudio ? _audioFirstRtp : _videoFirstRtp;
-
-	//6. Get the current time
-	double currentTime;
-	GETCLOCKS(currentTime);
-
-	//7. NTP
-	uint64_t ntp;
-	GETCUSTOMNTP(ntp, currentTime);
-	EHTONLLP(pDest + 8, ntp);
-
-	//6. RTP
-	double rtpDouble = ((currentTime - _startupTime) / (double) CLOCKS_PER_SECOND) * rate;
-	uint32_t rtp = (uint32_t) rtpDouble + firstRtp;
-	EHTONLP(pDest + 16, rtp);
-
-	//7. sender's packet count
-	EHTONLP(pDest + 20, packetsCount);
-
-	//8. sender's octet count
-	EHTONLP(pDest + 24, bytesCount);
-
 	return true;
 }
 
-bool OutboundConnectivity::CreateRTCPPacket_mystyle_only_once(uint8_t *pDest, uint8_t *pSrc,
-		uint32_t ssrc, uint32_t rate, uint32_t packetsCount,
-		uint32_t bytesCount, bool isAudio) {
-	bool &rtcpSent = isAudio ? _audioRtcpSent : _videoRtcpSent;
-	if (rtcpSent)
-		return false;
-
-	rtcpSent = CreateRTCPPacket_mystyle(pDest, pSrc, ssrc, rate, packetsCount,
-			bytesCount, isAudio);
-	return rtcpSent;
-}
-
-bool OutboundConnectivity::CreateRTCPPacket_live555style(uint8_t *pDest, uint8_t *pSrc,
-		uint32_t ssrc, uint32_t rate, uint32_t packetsCount, uint32_t bytesCount,
+bool OutboundConnectivity::FeedDataTCP(msghdr &message, double absoluteTimestamp,
 		bool isAudio) {
-
-	//1. V,P,RC
-	pDest[0] = 0x80;
-
-	//2. PT
-	pDest[1] = 0xc8;
-
-	//3. Length
-	pDest[2] = 0x00;
-	pDest[3] = 0x06;
-
-	//4. ssrc
-	EHTONLP(pDest + 4, ssrc); //SSRC
-
-	//5. NTP
-	struct timeval timeNow;
-	gettimeofday(&timeNow, NULL);
-	EHTONLP(pDest + 8, timeNow.tv_sec + 0x83AA7E80);
-	double fractionalPart = (timeNow.tv_usec / 15625.0)*0x04000000; // 2^32/10^6
-	EHTONLP(pDest + 12, (uint32_t) fractionalPart);
-
-	//6. RTP
-	EHTONLP(pDest + 16, ToRTPTS(timeNow, rate));
-
-	//7. sender's packet count
-	EHTONLP(pDest + 20, packetsCount);
-
-	//8. sender's octet count
-	EHTONLP(pDest + 24, bytesCount);
-
 	return true;
 }
 
-bool OutboundConnectivity::CreateRTCPPacket_none(uint8_t *pDest, uint8_t *pSrc,
-		uint32_t ssrc, uint32_t rate, uint32_t packetsCount,
-		uint32_t bytesCount, bool isAudio) {
-	return false;
-}
+//bool OutboundConnectivity::FeedAudioDataUDP(msghdr &message) {
+//	//	RTP_SEND_MESSAGE(_audioDataFd, _udpAudioDataClients, message);
+//	//	_audioPacketsCount++;
+//	//	COMPUTE_BYTES_COUNT(message, _audioBytesCount);
+//	//	if (((_audioPacketsCount % 300) == 0) || (_audioPacketsCount <= 2)) {
+//	//		uint8_t buff[28];
+//	//		if (CreateRTCPPacket(buff,
+//	//				(uint8_t *) message.msg_iov[0].iov_base,
+//	//				_pOutStream->SSRC(),
+//	//				_pOutStream->GetCapabilities()->aac._sampleRate,
+//	//				_audioPacketsCount,
+//	//				_audioBytesCount,
+//	//				true)) {
+//	//			_message.msg_iov[0].iov_base = buff;
+//	//			_message.msg_iov[0].iov_len = 28;
+//	//
+//	//			RTP_SEND_MESSAGE(_audioRTCPFd, _udpAudioRTCPClients, _message);
+//	//		}
+//	//	}
+//	//	return true;
+//	NYIA;
+//}
+//
+//bool OutboundConnectivity::FeedAudioDataTCP(msghdr &message) {
+//	return true;
+//}
+
+//bool OutboundConnectivity::CreateRTCPPacket_mystyle(uint8_t *pDest, uint8_t *pSrc,
+//		uint32_t ssrc, uint32_t rate, uint32_t packetsCount, uint32_t bytesCount,
+//		bool isAudio) {
+//
+//	//	//1. V,P,RC
+//	//	pDest[0] = 0x80;
+//	//
+//	//	//2. PT
+//	//	pDest[1] = 0xc8;
+//	//
+//	//	//3. Length
+//	//	pDest[2] = 0x00;
+//	//	pDest[3] = 0x06;
+//	//
+//	//	//4. ssrc
+//	//	EHTONLP(pDest + 4, ssrc); //SSRC
+//	//
+//	//	//5. setup the startup time
+//	//	if (_startupTime == 0) {
+//	//		GETCLOCKS(_startupTime);
+//	//	}
+//	//
+//	//	if (isAudio) {
+//	//		if (_audioFirstRtp == 0) {
+//	//			_audioFirstRtp = ENTOHLP(pSrc + 4);
+//	//			return false;
+//	//		}
+//	//	} else {
+//	//		if (_videoFirstRtp == 0) {
+//	//			_videoFirstRtp = ENTOHLP(pSrc + 4);
+//	//			return false;
+//	//		}
+//	//	}
+//	//
+//	//	uint32_t &firstRtp = isAudio ? _audioFirstRtp : _videoFirstRtp;
+//	//
+//	//	//6. Get the current time
+//	//	double currentTime;
+//	//	GETCLOCKS(currentTime);
+//	//
+//	//	//7. NTP
+//	//	uint64_t ntp;
+//	//	GETCUSTOMNTP(ntp, currentTime);
+//	//	EHTONLLP(pDest + 8, ntp);
+//	//
+//	//	//6. RTP
+//	//	double rtpDouble = ((currentTime - _startupTime) / (double) CLOCKS_PER_SECOND) * rate;
+//	//	uint32_t rtp = (uint32_t) rtpDouble + firstRtp;
+//	//	EHTONLP(pDest + 16, rtp);
+//	//
+//	//	//7. sender's packet count
+//	//	EHTONLP(pDest + 20, packetsCount);
+//	//
+//	//	//8. sender's octet count
+//	//	EHTONLP(pDest + 24, bytesCount);
+//	//
+//	//	return true;
+//	NYIA;
+//}
+//
+//bool OutboundConnectivity::CreateRTCPPacket_mystyle_only_once(uint8_t *pDest, uint8_t *pSrc,
+//		uint32_t ssrc, uint32_t rate, uint32_t packetsCount,
+//		uint32_t bytesCount, bool isAudio) {
+//	//	bool &rtcpSent = isAudio ? _audioRtcpSent : _videoRtcpSent;
+//	//	if (rtcpSent)
+//	//		return false;
+//	//
+//	//	rtcpSent = CreateRTCPPacket_mystyle(pDest, pSrc, ssrc, rate, packetsCount,
+//	//			bytesCount, isAudio);
+//	//	return rtcpSent;
+//	NYIA;
+//}
+//
+//bool OutboundConnectivity::CreateRTCPPacket_live555style(uint8_t *pDest, uint8_t *pSrc,
+//		uint32_t ssrc, uint32_t rate, uint32_t packetsCount, uint32_t bytesCount,
+//		bool isAudio) {
+//
+//	//	//1. V,P,RC
+//	//	pDest[0] = 0x80;
+//	//
+//	//	//2. PT
+//	//	pDest[1] = 0xc8;
+//	//
+//	//	//3. Length
+//	//	pDest[2] = 0x00;
+//	//	pDest[3] = 0x06;
+//	//
+//	//	//4. ssrc
+//	//	EHTONLP(pDest + 4, ssrc); //SSRC
+//	//
+//	//	//5. NTP
+//	//	struct timeval timeNow;
+//	//	gettimeofday(&timeNow, NULL);
+//	//	EHTONLP(pDest + 8, timeNow.tv_sec + 0x83AA7E80);
+//	//	double fractionalPart = (timeNow.tv_usec / 15625.0)*0x04000000; // 2^32/10^6
+//	//	EHTONLP(pDest + 12, (uint32_t) fractionalPart);
+//	//
+//	//	//6. RTP
+//	//	EHTONLP(pDest + 16, ToRTPTS(timeNow, rate));
+//	//
+//	//	//7. sender's packet count
+//	//	EHTONLP(pDest + 20, packetsCount);
+//	//
+//	//	//8. sender's octet count
+//	//	EHTONLP(pDest + 24, bytesCount);
+//	//
+//	//	return true;
+//	NYIA;
+//}
+//
+//bool OutboundConnectivity::CreateRTCPPacket_none(uint8_t *pDest, uint8_t *pSrc,
+//		uint32_t ssrc, uint32_t rate, uint32_t packetsCount,
+//		uint32_t bytesCount, bool isAudio) {
+//	//	return false;
+//	NYIA;
+//}
 #endif /* HAS_PROTOCOL_RTP */

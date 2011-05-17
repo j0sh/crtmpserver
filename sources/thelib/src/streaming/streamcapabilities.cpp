@@ -284,18 +284,18 @@ bool ReadPPS(BitArray &ba, Variant &v) {
 bool _VIDEO_AVC::Init(uint8_t *pSPS, uint32_t spsLength, uint8_t *pPPS,
 		uint32_t ppsLength) {
 	Clear();
-	if((spsLength<=0)
-		||(spsLength>65535)
-		||(ppsLength<=0)
-		||(ppsLength>65535)){
-			FATAL("Invalid SPS/PPS lengths");
-			return false;
+	if ((spsLength <= 0)
+			|| (spsLength > 65535)
+			|| (ppsLength <= 0)
+			|| (ppsLength > 65535)) {
+		FATAL("Invalid SPS/PPS lengths");
+		return false;
 	}
-	_spsLength = (uint16_t)spsLength;
+	_spsLength = (uint16_t) spsLength;
 	_pSPS = new uint8_t[_spsLength];
 	memcpy(_pSPS, pSPS, _spsLength);
 
-	_ppsLength = (uint16_t)ppsLength;
+	_ppsLength = (uint16_t) ppsLength;
 	_pPPS = new uint8_t[_ppsLength];
 	memcpy(_pPPS, pPPS, _ppsLength);
 
@@ -333,6 +333,41 @@ void _VIDEO_AVC::Clear() {
 	}
 	_ppsLength = 0;
 	_rate = 0;
+}
+
+bool _VIDEO_AVC::Serialize(IOBuffer &dest) {
+	uint8_t temp[sizeof (_spsLength) + sizeof (_ppsLength)];
+	EHTONSP(temp, _spsLength);
+	dest.ReadFromBuffer(temp, sizeof (_spsLength));
+	dest.ReadFromBuffer(_pSPS, _spsLength);
+	EHTONSP(temp, _ppsLength);
+	dest.ReadFromBuffer(temp, sizeof (_ppsLength));
+	dest.ReadFromBuffer(_pPPS, _ppsLength);
+	return true;
+}
+
+bool _VIDEO_AVC::Deserialize(IOBuffer &src, _VIDEO_AVC &dest) {
+	dest.Clear();
+	uint8_t *pBuffer = GETIBPOINTER(src);
+	uint32_t length = GETAVAILABLEBYTESCOUNT(src);
+	if (length<sizeof (dest._spsLength)) {
+		FATAL("Not enough data");
+		return false;
+	}
+	dest._spsLength = ENTOHSP(pBuffer);
+	if (length<sizeof (dest._spsLength) + dest._spsLength + sizeof (dest._ppsLength)) {
+		FATAL("Not enough data");
+		return false;
+	}
+	dest._ppsLength = ENTOHSP(pBuffer + sizeof (dest._spsLength) + dest._spsLength);
+	if (!dest.Init(
+			pBuffer + sizeof (dest._spsLength), dest._spsLength,
+			pBuffer + sizeof (dest._spsLength) + dest._spsLength + sizeof (dest._ppsLength), dest._ppsLength)) {
+		FATAL("Unable to init AVC");
+		return false;
+	}
+
+	return src.Ignore(sizeof (dest._spsLength) + dest._spsLength + sizeof (dest._ppsLength) + dest._ppsLength);
 }
 
 _VIDEO_AVC::operator string() {
@@ -443,6 +478,34 @@ string _AUDIO_AAC::GetRTSPFmtpConfig() {
 	return "config=" + result;
 }
 
+bool _AUDIO_AAC::Serialize(IOBuffer &dest) {
+	uint8_t temp[sizeof (_aacLength)];
+	EHTONLP(temp, _aacLength);
+	dest.ReadFromBuffer(temp, sizeof (_aacLength));
+	dest.ReadFromBuffer(_pAAC, _aacLength);
+	return true;
+}
+
+bool _AUDIO_AAC::Deserialize(IOBuffer &src, _AUDIO_AAC &dest) {
+	dest.Clear();
+	uint8_t *pBuffer = GETIBPOINTER(src);
+	uint32_t length = GETAVAILABLEBYTESCOUNT(src);
+	if (length<sizeof (dest._aacLength)) {
+		FATAL("Not enough data");
+		return false;
+	}
+	dest._aacLength = ENTOHLP(pBuffer);
+	if (length<sizeof (dest._aacLength) + dest._aacLength) {
+		FATAL("Not enough data");
+		return false;
+	}
+	if (!dest.Init(pBuffer + sizeof (dest._aacLength), dest._aacLength)) {
+		FATAL("Unable to init AAC");
+		return false;
+	}
+	return src.Ignore(sizeof (dest._aacLength) + dest._aacLength);
+}
+
 _AUDIO_AAC::operator string() {
 	string result;
 	result += format("_aacLength: %u\n", _aacLength);
@@ -469,6 +532,12 @@ bool StreamCapabilities::InitAudioAAC(uint8_t *pBuffer, uint32_t length) {
 		return false;
 	}
 	audioCodecId = CODEC_AUDIO_AAC;
+	return true;
+}
+
+bool StreamCapabilities::InitAudioMP3() {
+	ClearAudio();
+	audioCodecId = CODEC_AUDIO_MP3;
 	return true;
 }
 
@@ -516,4 +585,82 @@ void StreamCapabilities::ClearAudio() {
 void StreamCapabilities::Clear() {
 	ClearVideo();
 	ClearAudio();
+}
+
+bool StreamCapabilities::Serialize(IOBuffer &dest) {
+	uint8_t temp[16];
+	EHTONLLP(temp, videoCodecId);
+	EHTONLLP(temp + 8, audioCodecId);
+	dest.ReadFromBuffer(temp, 16);
+	switch (videoCodecId) {
+		case CODEC_VIDEO_AVC:
+		{
+			if (!avc.Serialize(dest)) {
+				FATAL("Unable to serialize avc");
+				return false;
+			}
+			break;
+		}
+		default:
+		{
+			break;
+		}
+	}
+	switch (audioCodecId) {
+		case CODEC_AUDIO_AAC:
+		{
+			if (!aac.Serialize(dest)) {
+				FATAL("Unable to serialize aac");
+				return false;
+			}
+			break;
+		}
+		default:
+		{
+			break;
+		}
+	}
+	return true;
+}
+
+bool StreamCapabilities::Deserialize(IOBuffer &src, StreamCapabilities &capabilities) {
+	uint8_t *pBuffer = GETIBPOINTER(src);
+	uint32_t length = GETAVAILABLEBYTESCOUNT(src);
+	if (length < 16) {
+		FATAL("Not enough data");
+		return false;
+	}
+	capabilities.Clear();
+	capabilities.videoCodecId = ENTOHLLP(pBuffer);
+	capabilities.audioCodecId = ENTOHLLP(pBuffer + 8);
+	src.Ignore(16);
+	switch (capabilities.videoCodecId) {
+		case CODEC_VIDEO_AVC:
+		{
+			if (!_VIDEO_AVC::Deserialize(src, capabilities.avc)) {
+				FATAL("Unable to deserialize avc");
+				return false;
+			}
+			break;
+		}
+		default:
+		{
+			break;
+		}
+	}
+	switch (capabilities.audioCodecId) {
+		case CODEC_AUDIO_AAC:
+		{
+			if (!_AUDIO_AAC::Deserialize(src, capabilities.aac)) {
+				FATAL("Unable to deserialize aac");
+				return false;
+			}
+			break;
+		}
+		default:
+		{
+			break;
+		}
+	}
+	return true;
 }

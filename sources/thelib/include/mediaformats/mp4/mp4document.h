@@ -27,9 +27,16 @@
 #define A_NULL (0x00000000)
 #define A_FTYP (0x66747970)
 #define A_MOOV (0x6d6f6f76)
+#define A_MOOF (0x6d6f6f66)
 #define A_MVHD (0x6d766864)
+#define A_MFHD (0x6d666864)
+#define A_MVEX (0x6d766578)
 #define A_TRAK (0x7472616b)
+#define A_TRAF (0x74726166)
+#define A_TREX (0x74726578)
+#define A_TRUN (0x7472756e)
 #define A_TKHD (0x746b6864)
+#define A_TFHD (0x74666864)
 #define A_MDIA (0x6d646961)
 #define A_MDHD (0x6d646864)
 #define A_HDLR (0x68646c72)
@@ -48,6 +55,7 @@
 #define A_STSS (0x73747373)
 #define A_URL (0x75726c20)
 #define A_MP4A (0x6d703461)
+#define A_MP3 (0x2e6d7033)
 #define A_AVC1 (0x61766331)
 #define A_ESDS (0x65736473)
 #define A_VIDE (0x76696465)
@@ -63,7 +71,9 @@
 #define A_PGAP (0x70676170)
 #define A_TMPO (0x746d706f)
 #define A__TOO (0xa9746f6f)
-#define A__ART (0xa9415254)
+#define A__ART1 (0xa9415254)
+#define A__ART2 (0xa9617274)
+#define A__PRT (0xa9707274)
 #define A__ALB (0xa9616c62)
 #define A_GNRE (0x676e7265)
 #define A_TRKN (0x74726b6e)
@@ -91,19 +101,9 @@
 class BaseAtom;
 class AtomFTYP;
 class AtomMOOV;
+class AtomMOOF;
 class AtomTRAK;
-class AtomMDIA;
-class AtomMDHD;
-class AtomSTBL;
-class AtomSTSD;
-class AtomSTSZ;
-class AtomSTCO;
-class AtomSTSC;
-class AtomSTSS;
-class AtomSTTS;
-class AtomAVC1;
-class AtomAVCC;
-class AtomESDS;
+class AtomTRAF;
 
 class MP4Document
 : public BaseMediaDocument {
@@ -112,6 +112,7 @@ private:
 	vector<BaseAtom *> _topAtoms;
 	AtomFTYP *_pFTYP;
 	AtomMOOV *_pMOOV;
+	vector<AtomMOOF*> _moof;
 public:
 	MP4Document(Variant &metadata);
 	virtual ~MP4Document();
@@ -125,7 +126,9 @@ protected:
 private:
 	string Hierarchy();
 	AtomTRAK * GetTRAK(bool audio);
-	bool BuildFrames(bool audio);
+	AtomTRAF * GetTRAF(AtomMOOF *pMOOF, bool audio);
+	bool BuildMOOVFrames(bool audio);
+	bool BuildMOOFFrames(AtomMOOF *pMOOF, bool audio);
 };
 
 #endif	/* _MP4DOCUMENT_H */

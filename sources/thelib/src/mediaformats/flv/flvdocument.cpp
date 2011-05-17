@@ -23,7 +23,8 @@
 
 FLVDocument::FLVDocument(Variant &metadata)
 : BaseMediaDocument(metadata) {
-
+	_streamCapabilities.audioCodecId = CODEC_AUDIO_PASS_THROUGH;
+	_streamCapabilities.videoCodecId = CODEC_VIDEO_PASS_THROUGH;
 }
 
 FLVDocument::~FLVDocument() {
@@ -135,7 +136,7 @@ bool FLVDocument::BuildFrames() {
 			} else {
 				frame.isBinaryHeader = false;
 			}
-		} else {
+		} else if (frame.type == MEDIAFRAME_TYPE_AUDIO) {
 			frame.isKeyFrame = true;
 			uint8_t byte = 0;
 			if (!_mediaFile.PeekUI8(&byte)) {

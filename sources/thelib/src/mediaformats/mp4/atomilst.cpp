@@ -45,7 +45,9 @@ bool AtomILST::AtomCreated(BaseAtom *pAtom) {
 		case A_PGAP:
 		case A_TMPO:
 		case A__TOO:
-		case A__ART:
+		case A__ART1:
+		case A__ART2:
+		case A__PRT:
 		case A__ALB:
 		case A_GNRE:
 		case A_TRKN:

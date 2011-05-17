@@ -115,7 +115,8 @@ map<uint8_t, map<uint8_t, map<uint8_t, map<uint8_t, map<uint8_t, uint64_t > > > 
 
 MP3Document::MP3Document(Variant &metadata)
 : BaseMediaDocument(metadata) {
-
+	_streamCapabilities.audioCodecId = CODEC_AUDIO_MP3;
+	_streamCapabilities.videoCodecId = CODEC_VIDEO_UNKNOWN;
 }
 
 MP3Document::~MP3Document() {

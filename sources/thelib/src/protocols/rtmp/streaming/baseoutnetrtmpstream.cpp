@@ -837,6 +837,12 @@ void BaseOutNetRTMPStream::InternalReset() {
 
 	_attachedStreamType = 0;
 	_completeMetadata = Variant();
+	if ((_pInStream != NULL)
+			&& (TAG_KIND_OF(_pInStream->GetType(), ST_IN_FILE_RTMP))) {
+		InFileRTMPStream *pInFileRTMPStream = (InFileRTMPStream *) _pInStream;
+		_completeMetadata = pInFileRTMPStream->GetCompleteMetadata();
+
+	}
 }
 
 void BaseOutNetRTMPStream::FixTimeBase() {

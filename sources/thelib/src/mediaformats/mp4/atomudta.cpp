@@ -44,7 +44,9 @@ bool AtomUDTA::AtomCreated(BaseAtom *pAtom) {
 			return true;
 		case A_NAME:
 		case A__ALB:
-		case A__ART:
+		case A__ART1:
+		case A__ART2:
+		case A__PRT:
 		case A__CMT:
 		case A__CPY:
 		case A__DES:

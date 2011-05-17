@@ -33,7 +33,11 @@ bool IgnoredAtom::IsIgnored() {
 }
 
 bool IgnoredAtom::Read() {
-	return SkipRead();
+	return SkipRead(
+			(_type != 0x736b6970) //skip
+			&& (_type != 0x66726565) //free
+			&& (_type != 0x6d646174) //mdat
+			);
 }
 
 string IgnoredAtom::Hierarchy(uint32_t indent) {

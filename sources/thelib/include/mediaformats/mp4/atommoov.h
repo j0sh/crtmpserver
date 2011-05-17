@@ -23,7 +23,7 @@
 
 #include "mediaformats/mp4/boxatom.h"
 
-
+class AtomMVEX;
 class AtomMVHD;
 class AtomTRAK;
 class AtomUDTA;
@@ -32,6 +32,7 @@ class AtomMETA;
 class AtomMOOV
 : public BoxAtom {
 private:
+	AtomMVEX *_pMVEX;
 	AtomMVHD *_pMVHD;
 	vector<AtomTRAK *> _tracks;
 	AtomUDTA *_pUDTA;

@@ -46,7 +46,7 @@ private:
 public:
 	AtomTRAK(MP4Document *pDocument, uint32_t type, uint64_t size, uint64_t start);
 	virtual ~AtomTRAK();
-
+	uint32_t GetId();
 protected:
 	virtual bool AtomCreated(BaseAtom *pAtom);
 };

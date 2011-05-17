@@ -24,6 +24,7 @@
 
 AtomMOOV::AtomMOOV(MP4Document *pDocument, uint32_t type, uint64_t size, uint64_t start)
 : BoxAtom(pDocument, type, size, start) {
+	_pMVEX = NULL;
 	_pMVHD = NULL;
 	_pUDTA = NULL;
 	_pMETA = NULL;
@@ -38,6 +39,9 @@ vector<AtomTRAK *> AtomMOOV::GetTracks() {
 
 bool AtomMOOV::AtomCreated(BaseAtom *pAtom) {
 	switch (pAtom->GetTypeNumeric()) {
+		case A_MVEX:
+			_pMVEX = (AtomMVEX *) pAtom;
+			return true;
 		case A_MVHD:
 			_pMVHD = (AtomMVHD *) pAtom;
 			return true;

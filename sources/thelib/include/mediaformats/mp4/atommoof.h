@@ -17,33 +17,27 @@
  *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifdef HAS_MEDIA_MP4
+#ifndef _ATOMMOOF_H
+#define	_ATOMMOOF_H
 
-#ifdef HAS_PROTOCOL_RTMP
-#ifndef _INFILERTMPMP4STREAM_H
-#define	_INFILERTMPMP4STREAM_H
+#include "mediaformats/mp4/boxatom.h"
 
-#include "protocols/rtmp/streaming/infilertmpstream.h"
+class AtomMFHD;
+class AtomTRAF;
 
-class DLLEXP InFileRTMPMP4Stream
-: public InFileRTMPStream {
+class AtomMOOF
+: public BoxAtom {
 private:
-	uint8_t _videoCodecHeaderInit[5];
-	uint8_t _videoCodecHeaderKeyFrame[2];
-	uint8_t _videoCodecHeader[2];
-	uint8_t _audioCodecHeaderInit[2];
-	uint8_t _audioCodecHeader[2];
+	AtomMFHD *_pMFHD;
+	map<uint32_t, AtomTRAF *> _trafs;
 public:
-	InFileRTMPMP4Stream(BaseProtocol *pProtocol, StreamsManager *pStreamsManager,
-			string name);
-	virtual ~InFileRTMPMP4Stream();
+	AtomMOOF(MP4Document *pDocument, uint32_t type, uint64_t size, uint64_t start);
+	virtual ~AtomMOOF();
+	map<uint32_t, AtomTRAF *> &GetTrafs();
 protected:
-	virtual bool BuildFrame(FileClass *pFile, MediaFrame &mediaFrame,
-			IOBuffer &buffer);
-	virtual bool FeedMetaData(FileClass *pFile, MediaFrame &mediaFrame);
+	virtual bool AtomCreated(BaseAtom *pAtom);
 };
 
-
-#endif	/* _INFILERTMPMP4STREAM_H */
-
-#endif /* HAS_PROTOCOL_RTMP */
-
+#endif	/* _ATOMMOOF_H */
+#endif	/* HAS_MEDIA_MP4 */

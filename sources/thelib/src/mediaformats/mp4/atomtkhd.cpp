@@ -40,6 +40,10 @@ AtomTKHD::AtomTKHD(MP4Document *pDocument, uint32_t type, uint64_t size, uint64_
 AtomTKHD::~AtomTKHD() {
 }
 
+uint32_t AtomTKHD::GetTrackId() {
+	return _trackId;
+}
+
 uint32_t AtomTKHD::GetWidth() {
 	return _trackWidth >> 16;
 }

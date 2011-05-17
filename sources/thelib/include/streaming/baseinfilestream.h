@@ -77,6 +77,14 @@ private:
 	//current state info
 	bool _paused;
 	bool _audioVideoCodecsSent;
+	
+	//seek offsets
+	uint64_t _seekBaseOffset;
+	uint64_t _framesBaseOffset;
+	uint64_t _timeToIndexOffset;
+	
+	//stream capabilities
+	StreamCapabilities _streamCapabilities;
 public:
 	BaseInFileStream(BaseProtocol *pProtocol, StreamsManager *pStreamsManager,
 			uint64_t type, string name);
@@ -97,7 +105,7 @@ public:
 		@brief This will initialize the stream internally.
 		@param clientSideBufferLength - the client side buffer length expressed in seconds
 	*/
-	bool Initialize(int32_t clientSideBufferLength);
+	virtual bool Initialize(int32_t clientSideBufferLength);
 
 	/*!
 		@brief Called when a play command was issued

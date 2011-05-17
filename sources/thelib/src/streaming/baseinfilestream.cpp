@@ -78,6 +78,12 @@ BaseInFileStream::BaseInFileStream(BaseProtocol *pProtocol,
 	//current state info
 	_paused = true;
 	_audioVideoCodecsSent = false;
+
+	_seekBaseOffset = 0;
+	_framesBaseOffset = 0;
+	_timeToIndexOffset = 0;
+
+	_streamCapabilities.Clear();
 }
 
 BaseInFileStream::~BaseInFileStream() {
@@ -91,8 +97,7 @@ BaseInFileStream::~BaseInFileStream() {
 }
 
 StreamCapabilities * BaseInFileStream::GetCapabilities() {
-	NYI;
-	return NULL;
+	return &_streamCapabilities;
 }
 
 bool BaseInFileStream::ResolveCompleteMetadata(Variant &metaData) {
@@ -179,7 +184,28 @@ bool BaseInFileStream::Initialize(int32_t clientSideBufferLength) {
 		return false;
 	}
 
-	//3. Compute the optimal window size by reading the biggest frame size
+	//3. read stream capabilities
+	uint32_t streamCapabilitiesSize = 0;
+	IOBuffer raw;
+	if (!_pSeekFile->ReadUI32(&streamCapabilitiesSize, false)) {
+		FATAL("Unable to read stream Capabilities Size");
+		return false;
+	}
+	if (!raw.ReadFromFs(*_pSeekFile, streamCapabilitiesSize)) {
+		FATAL("Unable to read raw stream Capabilities");
+		return false;
+	}
+	if (!StreamCapabilities::Deserialize(raw, _streamCapabilities)) {
+		FATAL("Unable to deserialize stream Capabilities");
+		return false;
+	}
+
+	//4. compute offsets
+	_seekBaseOffset = _pSeekFile->Cursor();
+	_framesBaseOffset = _seekBaseOffset + 4;
+
+
+	//5. Compute the optimal window size by reading the biggest frame size
 	//from the seek file.
 	if (!_pSeekFile->SeekTo(_pSeekFile->Size() - 8)) {
 		FATAL("Unable to seek to %"PRIu64" position", _pSeekFile->Cursor() - 8);
@@ -206,11 +232,15 @@ bool BaseInFileStream::Initialize(int32_t clientSideBufferLength) {
 	}
 
 	//4. Read the frames count from the file
-	_pSeekFile->SeekBegin();
+	if (!_pSeekFile->SeekTo(_seekBaseOffset)) {
+		FATAL("Unable to seek to _seekBaseOffset: %"PRIu64, _seekBaseOffset);
+		return false;
+	}
 	if (!_pSeekFile->ReadUI32(&_totalFrames, false)) {
 		FATAL("Unable to read the frames count");
 		return false;
 	}
+	_timeToIndexOffset = _framesBaseOffset + _totalFrames * sizeof (MediaFrame);
 
 	//5. Set the client side buffer length
 	_clientSideBufferLength = clientSideBufferLength;
@@ -311,7 +341,7 @@ bool BaseInFileStream::InternalSeek(double &absoluteTimestamp) {
 	_audioVideoCodecsSent = false;
 
 	//1. Switch to millisecond->FrameIndex table
-	if (!_pSeekFile->SeekTo(4 + _totalFrames * sizeof (MediaFrame))) {
+	if (!_pSeekFile->SeekTo(_timeToIndexOffset)) {
 		FATAL("Failed to seek to ms->FrameIndex table");
 		return false;
 	}
@@ -337,7 +367,7 @@ bool BaseInFileStream::InternalSeek(double &absoluteTimestamp) {
 	}
 
 	//7. Position the seek file to that particular frame
-	if (!_pSeekFile->SeekTo(4 + frameIndex * sizeof (MediaFrame))) {
+	if (!_pSeekFile->SeekTo(_framesBaseOffset + frameIndex * sizeof (MediaFrame))) {
 		FATAL("Unablt to seek inside seek file");
 		return false;
 	}
@@ -356,7 +386,7 @@ bool BaseInFileStream::InternalSeek(double &absoluteTimestamp) {
 	absoluteTimestamp = _currentFrame.absoluteTime;
 
 	//10. Go back on the frame of interest
-	if (!_pSeekFile->SeekTo(4 + frameIndex * sizeof (MediaFrame))) {
+	if (!_pSeekFile->SeekTo(_framesBaseOffset + frameIndex * sizeof (MediaFrame))) {
 		FATAL("Unablt to seek inside seek file");
 		return false;
 	}
@@ -394,7 +424,7 @@ bool BaseInFileStream::Feed() {
 	}
 
 	//4. Read the current frame from the seeking file
-	if (!_pSeekFile->SeekTo(4 + _currentFrameIndex * sizeof (MediaFrame))) {
+	if (!_pSeekFile->SeekTo(_framesBaseOffset + _currentFrameIndex * sizeof (MediaFrame))) {
 		FATAL("Unablt to seek inside seek file");
 		return false;
 	}
@@ -510,7 +540,7 @@ void BaseInFileStream::ReleaseFile(File *pFile) {
 bool BaseInFileStream::SendCodecs() {
 	//1. Read the first frame
 	MediaFrame frame1;
-	if (!_pSeekFile->SeekTo(4 + 0 * sizeof (MediaFrame))) {
+	if (!_pSeekFile->SeekTo(_framesBaseOffset + 0 * sizeof (MediaFrame))) {
 		FATAL("Unablt to seek inside seek file");
 		return false;
 	}
@@ -521,7 +551,7 @@ bool BaseInFileStream::SendCodecs() {
 
 	//2. Read the second frame
 	MediaFrame frame2;
-	if (!_pSeekFile->SeekTo(4 + 1 * sizeof (MediaFrame))) {
+	if (!_pSeekFile->SeekTo(_framesBaseOffset + 1 * sizeof (MediaFrame))) {
 		FATAL("Unablt to seek inside seek file");
 		return false;
 	}
@@ -532,7 +562,7 @@ bool BaseInFileStream::SendCodecs() {
 
 	//3. Read the current frame to pickup the timestamp from it
 	MediaFrame currentFrame;
-	if (!_pSeekFile->SeekTo(4 + _currentFrameIndex * sizeof (MediaFrame))) {
+	if (!_pSeekFile->SeekTo(_framesBaseOffset + _currentFrameIndex * sizeof (MediaFrame))) {
 		FATAL("Unablt to seek inside seek file");
 		return false;
 	}

@@ -21,6 +21,7 @@
 #include "mediaformats/mp4/atomtrak.h"
 
 #include "mediaformats/mp4/mp4document.h"
+#include "mediaformats/mp4/atomtkhd.h"
 
 AtomTRAK::AtomTRAK(MP4Document *pDocument, uint32_t type, uint64_t size, uint64_t start)
 : BoxAtom(pDocument, type, size, start) {
@@ -34,6 +35,12 @@ AtomTRAK::AtomTRAK(MP4Document *pDocument, uint32_t type, uint64_t size, uint64_
 }
 
 AtomTRAK::~AtomTRAK() {
+}
+
+uint32_t AtomTRAK::GetId() {
+	if (_pTKHD != NULL)
+		return _pTKHD->GetTrackId();
+	return 0;
 }
 
 bool AtomTRAK::AtomCreated(BaseAtom *pAtom) {

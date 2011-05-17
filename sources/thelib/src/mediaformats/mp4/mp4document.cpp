@@ -19,42 +19,49 @@
 
 #ifdef HAS_MEDIA_MP4
 #include "mediaformats/mp4/mp4document.h"
-#include "mediaformats/mp4/baseatom.h"
-#include "mediaformats/mp4/atomudta.h"
-#include "mediaformats/mp4/atomftyp.h"
-#include "mediaformats/mp4/atommoov.h"
-#include "mediaformats/mp4/atommvhd.h"
-#include "mediaformats/mp4/atomtrak.h"
-#include "mediaformats/mp4/atomtkhd.h"
-#include "mediaformats/mp4/atommdia.h"
-#include "mediaformats/mp4/atommdhd.h"
-#include "mediaformats/mp4/atomhdlr.h"
-#include "mediaformats/mp4/atomminf.h"
-#include "mediaformats/mp4/atomsmhd.h"
-#include "mediaformats/mp4/atomdinf.h"
-#include "mediaformats/mp4/atomstbl.h"
-#include "mediaformats/mp4/atomvmhd.h"
-#include "mediaformats/mp4/atomdref.h"
-#include "mediaformats/mp4/atomstsd.h"
-#include "mediaformats/mp4/atomstts.h"
-#include "mediaformats/mp4/atomstsc.h"
-#include "mediaformats/mp4/atomstsz.h"
-#include "mediaformats/mp4/atomstco.h"
-#include "mediaformats/mp4/atomctts.h"
-#include "mediaformats/mp4/atomstss.h"
-#include "mediaformats/mp4/atomurl.h"
-#include "mediaformats/mp4/atommp4a.h"
 #include "mediaformats/mp4/atomavc1.h"
-#include "mediaformats/mp4/atomesds.h"
 #include "mediaformats/mp4/atomavcc.h"
-#include "mediaformats/mp4/atomwave.h"
-#include "mediaformats/mp4/atommeta.h"
-#include "mediaformats/mp4/atomilst.h"
-#include "mediaformats/mp4/atomdata.h"
-#include "mediaformats/mp4/atomnull.h"
-#include "mediaformats/mp4/atommetafield.h"
-#include "mediaformats/mp4/ignoredatom.h"
 #include "mediaformats/mp4/atomco64.h"
+#include "mediaformats/mp4/atomctts.h"
+#include "mediaformats/mp4/atomdata.h"
+#include "mediaformats/mp4/atomdinf.h"
+#include "mediaformats/mp4/atomdref.h"
+#include "mediaformats/mp4/atomesds.h"
+#include "mediaformats/mp4/atomftyp.h"
+#include "mediaformats/mp4/atomhdlr.h"
+#include "mediaformats/mp4/atomilst.h"
+#include "mediaformats/mp4/atommdhd.h"
+#include "mediaformats/mp4/atommdia.h"
+#include "mediaformats/mp4/atommeta.h"
+#include "mediaformats/mp4/atommetafield.h"
+#include "mediaformats/mp4/atommfhd.h"
+#include "mediaformats/mp4/atomminf.h"
+#include "mediaformats/mp4/atommoof.h"
+#include "mediaformats/mp4/atommoov.h"
+#include "mediaformats/mp4/atommp4a.h"
+#include "mediaformats/mp4/atommvex.h"
+#include "mediaformats/mp4/atommvhd.h"
+#include "mediaformats/mp4/atomnull.h"
+#include "mediaformats/mp4/atomsmhd.h"
+#include "mediaformats/mp4/atomstbl.h"
+#include "mediaformats/mp4/atomstco.h"
+#include "mediaformats/mp4/atomstsc.h"
+#include "mediaformats/mp4/atomstsd.h"
+#include "mediaformats/mp4/atomstss.h"
+#include "mediaformats/mp4/atomstsz.h"
+#include "mediaformats/mp4/atomstts.h"
+#include "mediaformats/mp4/atomtfhd.h"
+#include "mediaformats/mp4/atomtkhd.h"
+#include "mediaformats/mp4/atomtraf.h"
+#include "mediaformats/mp4/atomtrak.h"
+#include "mediaformats/mp4/atomtrex.h"
+#include "mediaformats/mp4/atomtrun.h"
+#include "mediaformats/mp4/atomudta.h"
+#include "mediaformats/mp4/atomurl.h"
+#include "mediaformats/mp4/atomvmhd.h"
+#include "mediaformats/mp4/atomwave.h"
+#include "mediaformats/mp4/baseatom.h"
+#include "mediaformats/mp4/ignoredatom.h"
 
 //TODO: See how the things are impemented inside mp4v2. Good source
 //for looking at the avcC atom format for exampl
@@ -123,14 +130,35 @@ BaseAtom * MP4Document::ReadAtom(BaseAtom *pParentAtom) {
 		case A_MOOV:
 			pAtom = new AtomMOOV(this, type, size, currentPos);
 			break;
+		case A_MOOF:
+			pAtom = new AtomMOOF(this, type, size, currentPos);
+			break;
+		case A_MVEX:
+			pAtom = new AtomMVEX(this, type, size, currentPos);
+			break;
 		case A_MVHD:
 			pAtom = new AtomMVHD(this, type, size, currentPos);
+			break;
+		case A_MFHD:
+			pAtom = new AtomMFHD(this, type, size, currentPos);
 			break;
 		case A_TRAK:
 			pAtom = new AtomTRAK(this, type, size, currentPos);
 			break;
+		case A_TRAF:
+			pAtom = new AtomTRAF(this, type, size, currentPos);
+			break;
+		case A_TREX:
+			pAtom = new AtomTREX(this, type, size, currentPos);
+			break;
+		case A_TRUN:
+			pAtom = new AtomTRUN(this, type, size, currentPos);
+			break;
 		case A_TKHD:
 			pAtom = new AtomTKHD(this, type, size, currentPos);
+			break;
+		case A_TFHD:
+			pAtom = new AtomTFHD(this, type, size, currentPos);
 			break;
 		case A_MDIA:
 			pAtom = new AtomMDIA(this, type, size, currentPos);
@@ -224,12 +252,14 @@ BaseAtom * MP4Document::ReadAtom(BaseAtom *pParentAtom) {
 		case A__GRP:
 		case A__LYR:
 		case A__NAM:
+		case A__ART1:
+		case A__ART2:
+		case A__PRT:
 		case A__TOO:
 		case A__DAY:
 		case A__CMT:
 		case A__CPY:
 		case A__DES:
-		case A__ART:
 		case A__ALB:
 		case A_TRKN:
 		case A_CPIL:
@@ -278,7 +308,7 @@ bool MP4Document::ParseDocument() {
 	while (!_mediaFile.Failed()) {
 		uint64_t currentPos = _mediaFile.Cursor();
 		if (currentPos == _mediaFile.Size()) {
-			FINEST("\n%s", STR(Hierarchy()));
+			//FINEST("\n%s", STR(Hierarchy()));
 			return true;
 		}
 		BaseAtom *pAtom = ReadAtom(NULL);
@@ -293,6 +323,9 @@ bool MP4Document::ParseDocument() {
 					break;
 				case A_MOOV:
 					_pMOOV = (AtomMOOV *) pAtom;
+					break;
+				case A_MOOF:
+					ADD_VECTOR_END(_moof, (AtomMOOF *) pAtom);
 					break;
 				default:
 				{
@@ -329,16 +362,27 @@ bool MP4Document::BuildFrames() {
 
 	if (pESDS != NULL) {
 		//Build audio frames
-		if (!BuildFrames(true)) {
-			FATAL("Unable to build audio frames");
+		if (!BuildMOOVFrames(true)) {
+			FATAL("Unable to build audio frames from MOOV");
 			return false;
 		}
 	}
 
 	if (pAVCC != NULL) {
 		//Build video frames
-		if (!BuildFrames(false)) {
-			FATAL("Unable to build video frames");
+		if (!BuildMOOVFrames(false)) {
+			FATAL("Unable to build video frames from MOOV");
+			return false;
+		}
+	}
+
+	for (uint32_t i = 0; i < _moof.size(); i++) {
+		if (!BuildMOOFFrames(_moof[i], true)) {
+			FATAL("Unable to build audio frames from MOOF");
+			return false;
+		}
+		if (!BuildMOOFFrames(_moof[i], false)) {
+			FATAL("Unable to build video frames from MOOF");
 			return false;
 		}
 	}
@@ -357,9 +401,31 @@ bool MP4Document::BuildFrames() {
 		audioHeader.start = pESDS->GetExtraDataStart();
 		audioHeader.deltaTime = 0;
 		audioHeader.compositionOffset = 0;
-		FINEST("Start: %"PRIu64" (%"PRIx64"); Length: %"PRIu64" (%"PRIx64");",
-				audioHeader.start, audioHeader.start, audioHeader.length,
-				audioHeader.length);
+		IOBuffer raw;
+		if (!_mediaFile.SeekTo(audioHeader.start)) {
+			FATAL("Unable to seek into media file");
+			return false;
+		}
+		if (!raw.ReadFromFs(_mediaFile, audioHeader.length)) {
+			FATAL("Unable to read from media file");
+			return false;
+		}
+		if (!_streamCapabilities.InitAudioAAC(GETIBPOINTER(raw),
+				GETAVAILABLEBYTESCOUNT(raw))) {
+			FATAL("Unable to initialize AAC codec");
+			return false;
+		}
+		//		FINEST("Start: %"PRIu64" (%"PRIx64"); Length: %"PRIu64" (%"PRIx64");",
+		//				audioHeader.start, audioHeader.start, audioHeader.length,
+		//				audioHeader.length);
+	} else {
+		if ((pTrack = GetTRAK(true)) != NULL) {
+			BaseAtom *pMP3 = pTrack->GetPath(5, A_MDIA, A_MINF,
+					A_STBL, A_STSD, A_MP3);
+			if (pMP3 != NULL) {
+				_streamCapabilities.audioCodecId = CODEC_AUDIO_MP3;
+			}
+		}
 	}
 
 	//add binary video header
@@ -373,6 +439,37 @@ bool MP4Document::BuildFrames() {
 		videoHeader.start = pAVCC->GetExtraDataStart();
 		videoHeader.deltaTime = 0;
 		videoHeader.compositionOffset = 0;
+		IOBuffer raw;
+		if (!_mediaFile.SeekTo(videoHeader.start)) {
+			FATAL("Unable to seek into media file");
+			return false;
+		}
+		if (!raw.ReadFromFs(_mediaFile, videoHeader.length)) {
+			FATAL("Unable to read from media file");
+			return false;
+		}
+		if (GETAVAILABLEBYTESCOUNT(raw) < 8) {
+			FATAL("Invalid AVC codec bytes");
+			return false;
+		}
+		uint32_t spsLength = ENTOHSP(GETIBPOINTER(raw) + 6);
+		if (GETAVAILABLEBYTESCOUNT(raw) < 8 + spsLength + 1 + 2) {
+			FATAL("Invalid AVC codec bytes");
+			return false;
+		}
+		uint32_t ppsLength = ENTOHSP(GETIBPOINTER(raw) + 8 + spsLength + 1);
+		if (GETAVAILABLEBYTESCOUNT(raw) < 8 + spsLength + 3 + ppsLength) {
+			FATAL("Invalid AVC codec bytes");
+			return false;
+		}
+		if (!_streamCapabilities.InitVideoH264(
+				GETIBPOINTER(raw) + 8,
+				spsLength,
+				GETIBPOINTER(raw) + 8 + spsLength + 3,
+				ppsLength)) {
+			FATAL("Unable to initialize AVC codec");
+			return false;
+		}
 	}
 
 	if (pESDS != NULL) {
@@ -390,7 +487,7 @@ bool MP4Document::BuildFrames() {
 	return true;
 }
 
-bool MP4Document::BuildFrames(bool audio) {
+bool MP4Document::BuildMOOVFrames(bool audio) {
 	//1. Get the track
 	AtomTRAK *pTrack = GetTRAK(audio);
 	if (pTrack == NULL) {
@@ -484,7 +581,7 @@ bool MP4Document::BuildFrames(bool audio) {
 			audio, keyFrames.size(), sampleSize.size(), compositionOffsets.size());
 
 	uint32_t timeScale = pMDHD->GetTimeScale();
-	uint32_t totalTime = 0;
+	uint64_t totalTime = 0;
 	uint32_t localOffset = 0;
 	uint32_t startIndex = _frames.size();
 
@@ -536,6 +633,73 @@ bool MP4Document::BuildFrames(bool audio) {
 
 	FOR_VECTOR(keyFrames, i) {
 		_frames[startIndex + keyFrames[i] - 1].isKeyFrame = true;
+	}
+
+	return true;
+}
+
+bool MP4Document::BuildMOOFFrames(AtomMOOF *pMOOF, bool audio) {
+	AtomTRAF *pTraf = GetTRAF(pMOOF, audio);
+	if (pTraf == NULL) {
+		WARN("No %s fragmented track found", audio ? "audio" : "video");
+		return true;
+	}
+
+	AtomTFHD *pTfhd = (AtomTFHD *) pTraf->GetPath(1, A_TFHD);
+	if (pTfhd == NULL) {
+		FATAL("Invalid track. No TFHD atom");
+		return false;
+	}
+
+	AtomTRAK *pTrack = GetTRAK(audio);
+	if (pTrack == NULL) {
+		FATAL("no %s track", audio ? "Audio" : "Video");
+		return false;
+	}
+
+	AtomMDHD *pMDHD = (AtomMDHD *) pTrack->GetPath(2, A_MDIA, A_MDHD);
+	if (pMDHD == NULL) {
+		FATAL("no MDHD");
+		return false;
+	}
+
+	uint32_t timeScale = pMDHD->GetTimeScale();
+	uint64_t totalTime = 0;
+	int64_t absoluteOffset = pTfhd->GetBaseDataOffset();
+
+	uint32_t runSize = 0;
+	vector<AtomTRUN *> &runs = pTraf->GetRuns();
+	for (uint32_t runId = 0; runId < runs.size(); runId++) {
+		AtomTRUN *pRun = runs[runId];
+		vector<TRUNSample *> &samples = pRun->GetSamples();
+		runSize = 0;
+		for (uint32_t sampleId = 0; sampleId < samples.size(); sampleId++) {
+			TRUNSample *pSample = samples[sampleId];
+			MediaFrame frame = {0, 0, 0, 0, 0, 0, 0, 0};
+
+			frame.start = absoluteOffset + pRun->GetDataOffset() + runSize;
+			if (pSample->compositionTimeOffset != 0) {
+				double doubleVal = ((double) pSample->compositionTimeOffset / (double) timeScale)*(double) 1000.00;
+				frame.compositionOffset = (int32_t) doubleVal;
+			} else {
+				frame.compositionOffset = 0;
+			}
+
+			if (!audio) {
+				frame.isKeyFrame = ((pSample->flags & 0x00010000) == 0);
+			} else {
+				frame.isKeyFrame = false;
+			}
+			frame.length = pSample->size;
+			frame.type = audio ? MEDIAFRAME_TYPE_AUDIO : MEDIAFRAME_TYPE_VIDEO;
+			frame.deltaTime = ((double) pSample->duration / (double) timeScale)*(double) 1000.00;
+			frame.absoluteTime = ((double) totalTime / (double) timeScale)*(double) 1000.00;
+			frame.isBinaryHeader = false;
+			totalTime += pSample->duration;
+
+			ADD_VECTOR_END(_frames, frame);
+			runSize += pSample->size;
+		}
 	}
 
 	return true;
@@ -594,6 +758,27 @@ AtomTRAK * MP4Document::GetTRAK(bool audio) {
 			return tracks[i];
 	}
 	return NULL;
+}
+
+AtomTRAF * MP4Document::GetTRAF(AtomMOOF *pMOOF, bool audio) {
+	AtomTRAK *pTrak = GetTRAK(audio);
+	if (pTrak == NULL) {
+		FATAL("No track found");
+		return NULL;
+	}
+	uint32_t trackId = pTrak->GetId();
+	if (trackId == 0) {
+		FATAL("No track found");
+		return NULL;
+	}
+
+	map<uint32_t, AtomTRAF *> &trafs = pMOOF->GetTrafs();
+	if (!MAP_HAS1(trafs, trackId)) {
+		FATAL("No track found");
+		return NULL;
+	}
+
+	return trafs[trackId];
 }
 
 
