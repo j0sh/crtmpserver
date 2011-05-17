@@ -36,6 +36,8 @@ private:
 
 	class BaseBuilder {
 	public:
+		BaseBuilder();
+		virtual ~BaseBuilder();
 		virtual bool BuildFrame(FileClass *pFile, MediaFrame &mediaFrame,
 				IOBuffer &buffer) = 0;
 	};
@@ -47,6 +49,7 @@ private:
 		uint8_t _videoCodecHeader[2];
 	public:
 		AVCBuilder();
+		virtual ~AVCBuilder();
 		virtual bool BuildFrame(FileClass *pFile, MediaFrame &mediaFrame,
 				IOBuffer &buffer);
 	};
@@ -57,6 +60,7 @@ private:
 		uint8_t _audioCodecHeader[2];
 	public:
 		AACBuilder();
+		virtual ~AACBuilder();
 		virtual bool BuildFrame(FileClass *pFile, MediaFrame &mediaFrame,
 				IOBuffer &buffer);
 	};
@@ -66,6 +70,7 @@ private:
 
 	public:
 		MP3Builder();
+		virtual ~MP3Builder();
 		virtual bool BuildFrame(FileClass *pFile, MediaFrame &mediaFrame,
 				IOBuffer &buffer);
 	};
@@ -73,6 +78,7 @@ private:
 	class PassThroughBuilder : public BaseBuilder {
 	public:
 		PassThroughBuilder();
+		virtual ~PassThroughBuilder();
 		virtual bool BuildFrame(FileClass *pFile, MediaFrame &mediaFrame,
 				IOBuffer &buffer);
 	};

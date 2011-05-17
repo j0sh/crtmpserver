@@ -32,6 +32,14 @@
 #include "protocols/rtmp/basertmpprotocol.h"
 #include "protocols/rtmp/streaming/baseoutnetrtmpstream.h"
 
+InFileRTMPStream::BaseBuilder::BaseBuilder() {
+
+}
+
+InFileRTMPStream::BaseBuilder::~BaseBuilder() {
+
+}
+
 InFileRTMPStream::AVCBuilder::AVCBuilder() {
 	_videoCodecHeaderInit[0] = 0x17;
 	_videoCodecHeaderInit[1] = 0;
@@ -44,6 +52,10 @@ InFileRTMPStream::AVCBuilder::AVCBuilder() {
 
 	_videoCodecHeader[0] = 0x27;
 	_videoCodecHeader[1] = 1;
+}
+
+InFileRTMPStream::AVCBuilder::~AVCBuilder() {
+
 }
 
 bool InFileRTMPStream::AVCBuilder::BuildFrame(MmapFile* pFile, MediaFrame& mediaFrame, IOBuffer& buffer) {
@@ -81,6 +93,10 @@ InFileRTMPStream::AACBuilder::AACBuilder() {
 	_audioCodecHeader[1] = 0x01;
 }
 
+InFileRTMPStream::AACBuilder::~AACBuilder() {
+
+}
+
 bool InFileRTMPStream::AACBuilder::BuildFrame(MmapFile* pFile, MediaFrame& mediaFrame, IOBuffer& buffer) {
 	//1. add the binary header
 	if (mediaFrame.isBinaryHeader) {
@@ -108,6 +124,10 @@ InFileRTMPStream::MP3Builder::MP3Builder() {
 
 }
 
+InFileRTMPStream::MP3Builder::~MP3Builder() {
+
+}
+
 bool InFileRTMPStream::MP3Builder::BuildFrame(FileClass *pFile,
 		MediaFrame &mediaFrame, IOBuffer &buffer) {
 	buffer.ReadFromRepeat(0x2f, 1);
@@ -128,6 +148,10 @@ bool InFileRTMPStream::MP3Builder::BuildFrame(FileClass *pFile,
 }
 
 InFileRTMPStream::PassThroughBuilder::PassThroughBuilder() {
+
+}
+
+InFileRTMPStream::PassThroughBuilder::~PassThroughBuilder() {
 
 }
 
