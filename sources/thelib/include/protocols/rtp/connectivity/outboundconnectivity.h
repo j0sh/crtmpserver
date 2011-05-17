@@ -87,43 +87,14 @@ private:
 	int32_t _videoRTCPFd;
 	uint16_t _videoRTCPPort;
 
-
-	//	uint32_t _videoPacketsCount;
-	//	uint32_t _videoBytesCount;
-	//	uint32_t _videoFirstRtp;
-	//	uint32_t _videoRtpTs;
-	//	map<uint32_t, sockaddr_in> _udpVideoDataClients;
-	//	map<uint32_t, sockaddr_in> _udpVideoRTCPClients;
-	//	bool _videoRtcpSent;
-
 	int32_t _audioDataFd;
 	uint16_t _audioDataPort;
 	int32_t _audioRTCPFd;
 	uint16_t _audioRTCPPort;
-
-
-	//	uint32_t _audioPacketsCount;
-	//	uint32_t _audioBytesCount;
-	//	uint32_t _audioFirstRtp;
-	//	uint32_t _audioRtpTs;
-	//	map<uint32_t, sockaddr_in> _udpAudioDataClients;
-	//	map<uint32_t, sockaddr_in> _udpAudioRTCPClients;
-	//	bool _audioRtcpSent;
-
-	//map<uint32_t, uint32_t> _tcpClients;
-
-
-	//double _startupTime;
-
-
 public:
 	OutboundConnectivity();
 	virtual ~OutboundConnectivity();
-
 	bool Initialize();
-private:
-	BaseOutNetRTPUDPStream * GetOutStream();
-public:
 	void SetOutStream(BaseOutNetRTPUDPStream *pOutStream);
 	string GetVideoServerPorts();
 	string GetAudioServerPorts();
@@ -131,22 +102,15 @@ public:
 	uint32_t GetVideoSSRC();
 	uint16_t GetLastVideoSequence();
 	uint16_t GetLastAudioSequence();
-private:
-	//	uint32_t GetLastVideoRTPTimestamp();
-	//	uint32_t GetLastAudioRTPTimestamp();
-public:
 	void HasAudio(bool value);
 	void HasVideo(bool value);
 	bool RegisterUDPVideoClient1(uint32_t rtspProtocolId, sockaddr_in &data,
 			sockaddr_in &rtcp);
 	bool RegisterUDPAudioClient1(uint32_t rtspProtocolId, sockaddr_in &data,
 			sockaddr_in &rtcp);
-public:
 	void UnRegisterClient(uint32_t protocolId);
 	bool HasClients();
-
 	void SignalDetachedFromInStream();
-public:
 	bool FeedVideoData(uint8_t *pBuffer, uint32_t length, double absoluteTimestamp);
 	bool FeedAudioData(uint8_t *pBuffer, uint32_t length, double absoluteTimestamp);
 	bool FeedVideoData(msghdr &message, double absoluteTimestamp);
@@ -156,20 +120,6 @@ private:
 			int32_t &RTCPFd, uint16_t &RTCPPort);
 	bool FeedDataUDP(msghdr &message, double absoluteTimestamp, bool isAudio);
 	bool FeedDataTCP(msghdr &message, double absoluteTimestamp, bool isAudio);
-	//	bool FeedAudioDataUDP(msghdr &message);
-	//	bool FeedAudioDataTCP(msghdr &message);
-	//	bool CreateRTCPPacket_mystyle(uint8_t *pDest, uint8_t *pSrc,
-	//			uint32_t ssrc, uint32_t rate, uint32_t packetsCount,
-	//			uint32_t bytesCount, bool isAudio);
-	//	bool CreateRTCPPacket_mystyle_only_once(uint8_t *pDest, uint8_t *pSrc,
-	//			uint32_t ssrc, uint32_t rate, uint32_t packetsCount,
-	//			uint32_t bytesCount, bool isAudio);
-	//	bool CreateRTCPPacket_live555style(uint8_t *pDest, uint8_t *pSrc,
-	//			uint32_t ssrc, uint32_t rate, uint32_t packetsCount,
-	//			uint32_t bytesCount, bool isAudio);
-	//	bool CreateRTCPPacket_none(uint8_t *pDest, uint8_t *pSrc,
-	//			uint32_t ssrc, uint32_t rate, uint32_t packetsCount,
-	//			uint32_t bytesCount, bool isAudio);
 };
 
 
