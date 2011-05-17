@@ -40,9 +40,12 @@
           <itemPath>../../../../sources/thelib/include/mediaformats/mp4/atommdia.h</itemPath>
           <itemPath>../../../../sources/thelib/include/mediaformats/mp4/atommeta.h</itemPath>
           <itemPath>../../../../sources/thelib/include/mediaformats/mp4/atommetafield.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/mediaformats/mp4/atommfhd.h</itemPath>
           <itemPath>../../../../sources/thelib/include/mediaformats/mp4/atomminf.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/mediaformats/mp4/atommoof.h</itemPath>
           <itemPath>../../../../sources/thelib/include/mediaformats/mp4/atommoov.h</itemPath>
           <itemPath>../../../../sources/thelib/include/mediaformats/mp4/atommp4a.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/mediaformats/mp4/atommvex.h</itemPath>
           <itemPath>../../../../sources/thelib/include/mediaformats/mp4/atommvhd.h</itemPath>
           <itemPath>../../../../sources/thelib/include/mediaformats/mp4/atomnull.h</itemPath>
           <itemPath>../../../../sources/thelib/include/mediaformats/mp4/atomsmhd.h</itemPath>
@@ -53,8 +56,12 @@
           <itemPath>../../../../sources/thelib/include/mediaformats/mp4/atomstss.h</itemPath>
           <itemPath>../../../../sources/thelib/include/mediaformats/mp4/atomstsz.h</itemPath>
           <itemPath>../../../../sources/thelib/include/mediaformats/mp4/atomstts.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/mediaformats/mp4/atomtfhd.h</itemPath>
           <itemPath>../../../../sources/thelib/include/mediaformats/mp4/atomtkhd.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/mediaformats/mp4/atomtraf.h</itemPath>
           <itemPath>../../../../sources/thelib/include/mediaformats/mp4/atomtrak.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/mediaformats/mp4/atomtrex.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/mediaformats/mp4/atomtrun.h</itemPath>
           <itemPath>../../../../sources/thelib/include/mediaformats/mp4/atomudta.h</itemPath>
           <itemPath>../../../../sources/thelib/include/mediaformats/mp4/atomurl.h</itemPath>
           <itemPath>../../../../sources/thelib/include/mediaformats/mp4/atomvmhd.h</itemPath>
@@ -158,10 +165,6 @@
           </logicalFolder>
           <logicalFolder name="streaming" displayName="streaming" projectFiles="true">
             <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/baseoutnetrtmpstream.h</itemPath>
-            <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/infilertmpflvstream.h</itemPath>
-            <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/infilertmpmp3stream.h</itemPath>
-            <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/infilertmpmp4stream.h</itemPath>
-            <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/infilertmpnsvstream.h</itemPath>
             <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/infilertmpstream.h</itemPath>
             <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/innetrtmpstream.h</itemPath>
             <itemPath>../../../../sources/thelib/include/protocols/rtmp/streaming/outfilertmpflvstream.h</itemPath>
@@ -299,9 +302,12 @@
           <itemPath>../../../../sources/thelib/src/mediaformats/mp4/atommdia.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/mediaformats/mp4/atommeta.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/mediaformats/mp4/atommetafield.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/mediaformats/mp4/atommfhd.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/mediaformats/mp4/atomminf.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/mediaformats/mp4/atommoof.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/mediaformats/mp4/atommoov.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/mediaformats/mp4/atommp4a.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/mediaformats/mp4/atommvex.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/mediaformats/mp4/atommvhd.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/mediaformats/mp4/atomnull.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/mediaformats/mp4/atomsmhd.cpp</itemPath>
@@ -312,8 +318,12 @@
           <itemPath>../../../../sources/thelib/src/mediaformats/mp4/atomstss.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/mediaformats/mp4/atomstsz.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/mediaformats/mp4/atomstts.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/mediaformats/mp4/atomtfhd.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/mediaformats/mp4/atomtkhd.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/mediaformats/mp4/atomtraf.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/mediaformats/mp4/atomtrak.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/mediaformats/mp4/atomtrex.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/mediaformats/mp4/atomtrun.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/mediaformats/mp4/atomudta.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/mediaformats/mp4/atomurl.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/mediaformats/mp4/atomvmhd.cpp</itemPath>
@@ -408,10 +418,6 @@
           </logicalFolder>
           <logicalFolder name="streaming" displayName="streaming" projectFiles="true">
             <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/baseoutnetrtmpstream.cpp</itemPath>
-            <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/infilertmpflvstream.cpp</itemPath>
-            <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/infilertmpmp3stream.cpp</itemPath>
-            <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/infilertmpmp4stream.cpp</itemPath>
-            <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/infilertmpnsvstream.cpp</itemPath>
             <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/infilertmpstream.cpp</itemPath>
             <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/innetrtmpstream.cpp</itemPath>
             <itemPath>../../../../sources/thelib/src/protocols/rtmp/streaming/outfilertmpflvstream.cpp</itemPath>
