@@ -282,10 +282,10 @@ bool OutboundConnectivity::FeedDataUDP(msghdr &message, double absoluteTimestamp
 
 	int32_t dataFd = isAudio ? _audioDataFd : _videoDataFd;
 	int32_t rtcpFd = isAudio ? _audioRTCPFd : _videoRTCPFd;
-	uint32_t rate = isAudio ? _pOutStream->GetCapabilities()->aac._sampleRate : 90000.0;
+	double rate = isAudio ? _pOutStream->GetCapabilities()->aac._sampleRate : 90000.0;
 	uint32_t ssrc = isAudio ? _pOutStream->AudioSSRC() : _pOutStream->VideoSSRC();
 	uint32_t messageLength = 0;
-	for (int64_t i = 0; i < (int64_t) message.msg_iovlen; i++) {
+	for (int i = 0; i < message.msg_iovlen; i++) {
 		messageLength += message.msg_iov[i].iov_len;
 	}
 
@@ -305,10 +305,6 @@ bool OutboundConnectivity::FeedDataUDP(msghdr &message, double absoluteTimestamp
 			startTS = absoluteTimestamp;
 		}
 
-
-		//		uint32_t rtp = ENTOHLP(((uint8_t *) message.msg_iov[0].iov_base) + 4);
-		//		FINEST("%c %u %u %.2f", isAudio ? 'A' : 'V', rtp, rate, (double) rtp / (double) rate);
-
 		if ((packetsCount % 500) == 0) {
 			FINEST("Send %c RTCP: %u", isAudio ? 'A' : 'V', packetsCount);
 			EHTONLP(((uint8_t *) _rtcpMessage.msg_iov[0].iov_base) + 4, ssrc); //SSRC
@@ -322,7 +318,7 @@ bool OutboundConnectivity::FeedDataUDP(msghdr &message, double absoluteTimestamp
 			EHTONLLP(_pRTCPNTP, ntpVal);
 
 			//RTP
-			uint64_t rtp = (uint64_t) (((double) (integerValue) + fractionValue / 4294967296.0) * (double) rate);
+			uint64_t rtp = (uint64_t) (((double) (integerValue) + fractionValue / 4294967296.0) * rate);
 			rtp &= 0xffffffff;
 			EHTONLP(_pRTCPRTP, (uint32_t) rtp);
 
