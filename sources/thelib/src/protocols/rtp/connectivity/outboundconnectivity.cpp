@@ -285,7 +285,7 @@ bool OutboundConnectivity::FeedDataUDP(msghdr &message, double absoluteTimestamp
 	double rate = isAudio ? _pOutStream->GetCapabilities()->aac._sampleRate : 90000.0;
 	uint32_t ssrc = isAudio ? _pOutStream->AudioSSRC() : _pOutStream->VideoSSRC();
 	uint32_t messageLength = 0;
-	for (int i = 0; i < message.msg_iovlen; i++) {
+	for (uint32_t i = 0; i < (uint32_t) message.msg_iovlen; i++) {
 		messageLength += message.msg_iov[i].iov_len;
 	}
 
