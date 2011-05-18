@@ -61,7 +61,7 @@ bool InboundRTMPProtocol::PerformHandshake(IOBuffer &buffer) {
 				return false;
 			}
 
-			_currentFPVersion = ENTOHL(*((uint32_t *) (GETIBPOINTER(buffer) + 4))); //----MARKED-LONG---
+			_currentFPVersion = ENTOHLP(GETIBPOINTER(buffer) + 4);
 
 			switch (handshakeType) {
 				case 3: //plain
