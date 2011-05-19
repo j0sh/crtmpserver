@@ -332,8 +332,9 @@ bool SDP::ParseSDPLineA(string &attributeName, Variant &value, string line) {
 		} else if ((string) lowerCase(value["encodingName"]) == "mpeg4-generic") {
 			value["encodingName"] = (uint64_t) CODEC_AUDIO_AAC;
 		} else {
-			FATAL("Invalid codec");
-			return false;
+			WARN("Invalid codec");
+			value.Reset();
+			return true;
 		}
 		value["clockRate"] = (uint32_t) atoi(STR(parts[1]));
 		if (parts.size() == 3) {

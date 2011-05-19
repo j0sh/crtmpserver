@@ -50,6 +50,7 @@ RTSPProtocol::RTSPProtocol()
 	_requestSequence = 0;
 	_pOutboundConnectivity = NULL;
 	_pInboundConnectivity = NULL;
+	_basicAuthentication = "";
 }
 
 RTSPProtocol::~RTSPProtocol() {
@@ -108,6 +109,10 @@ void RTSPProtocol::GetStats(Variant &info) {
 			info["streams"].PushToArray(si);
 		}
 	}
+}
+
+void RTSPProtocol::SetBasicAuthentication(string userName, string password) {
+	_basicAuthentication = format("Basic %s", STR(b64(format("%s:%s", STR(userName), STR(password)))));
 }
 
 SDP &RTSPProtocol::GetInboundSDP() {
@@ -192,6 +197,11 @@ bool RTSPProtocol::SendRequestMessage() {
 
 	//2. Put our request sequence in place
 	_requestHeaders[RTSP_HEADERS][RTSP_HEADERS_CSEQ] = format("%u", ++_requestSequence);
+
+	//3. Put authentication if necessary
+	if (_basicAuthentication != "") {
+		_requestHeaders[RTSP_HEADERS][RTSP_HEADERS_AUTHORIZATION] = _basicAuthentication;
+	}
 
 	//3. send the mesage
 	return SendMessage(_requestHeaders, _requestContent);

@@ -908,6 +908,11 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPResponse404Play(RTSPProtocol *pFrom, 
 bool BaseRTSPAppProtocolHandler::Play(RTSPProtocol *pFrom) {
 	//1. Save the URL in the custom parameters
 	string uri = (string) pFrom->GetCustomParameters()["uri"]["fullUri"];
+	if ((pFrom->GetCustomParameters()["uri"]["userName"] == V_STRING)
+			&& (pFrom->GetCustomParameters()["uri"]["password"] == V_STRING)) {
+		pFrom->SetBasicAuthentication(pFrom->GetCustomParameters()["uri"]["userName"],
+				pFrom->GetCustomParameters()["uri"]["password"]);
+	}
 
 	//2. prepare the options command
 	pFrom->ClearRequestMessage();

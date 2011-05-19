@@ -56,6 +56,7 @@ protected:
 
 	OutboundConnectivity *_pOutboundConnectivity;
 	InboundConnectivity *_pInboundConnectivity;
+	string _basicAuthentication;
 public:
 	RTSPProtocol();
 	virtual ~RTSPProtocol();
@@ -68,6 +69,8 @@ public:
 	virtual bool SignalInputData(int32_t recvAmount);
 	virtual bool SignalInputData(IOBuffer &buffer);
 	virtual void GetStats(Variant &info);
+	
+	void SetBasicAuthentication(string userName, string password);
 
 	SDP &GetInboundSDP();
 

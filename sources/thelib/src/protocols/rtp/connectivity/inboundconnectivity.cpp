@@ -277,7 +277,7 @@ bool InboundConnectivity::SendRR(bool isAudio) {
 				return false;
 			}
 		} else {
-			WARN("Skip this RR because we don't have a valid address yet");
+			//WARN("Skip this RR because we don't have a valid address yet");
 		}
 		return true;
 	}
