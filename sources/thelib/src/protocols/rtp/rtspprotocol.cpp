@@ -473,15 +473,23 @@ bool RTSPProtocol::ParseNormalHeaders(IOBuffer &buffer) {
 	_inboundHeaders[RTSP_HEADERS].IsArray(false);
 	for (uint32_t i = 1; i < lines.size(); i++) {
 		string line = lines[i];
-		string::size_type splitterPos = line.find(": ");
+		string splitter = ": ";
+		string::size_type splitterPos = line.find(splitter);
 
 		if ((splitterPos == string::npos)
 				|| (splitterPos == 0)
-				|| (splitterPos == line.size() - 2)) {
-			WARN("Invalid header line: %s", STR(line));
-			continue;
+				|| (splitterPos == line.size() - splitter.length())) {
+			splitter = ":";
+			splitterPos = line.find(splitter);
+			if ((splitterPos == string::npos)
+					|| (splitterPos == 0)
+					|| (splitterPos == line.size() - splitter.length())) {
+				WARN("Invalid header line: %s", STR(line));
+				continue;
+			}
 		}
-		_inboundHeaders[RTSP_HEADERS][line.substr(0, splitterPos)] = line.substr(splitterPos + 2, string::npos);
+		_inboundHeaders[RTSP_HEADERS][line.substr(0, splitterPos)] =
+				line.substr(splitterPos + splitter.length(), string::npos);
 	}
 
 	//6. default a transfer type to Content-Length: 0 if necessary
