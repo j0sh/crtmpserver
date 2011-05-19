@@ -174,6 +174,17 @@ bool ReadSPS(BitArray &ba, Variant &v) {
 	READ_INT("reserved_zero_5bits", uint8_t, 5);
 	READ_INT("level_idc", uint8_t, 8);
 	READ_EG("seq_parameter_set_id", uint64_t);
+	if ((uint64_t) v["profile_idc"] >= 100) {
+		READ_EG("chroma_format_idc", uint64_t);
+		if ((uint64_t) v["chroma_format_idc"] == 3)
+			READ_BOOL("residual_colour_transform_flag");
+		READ_EG("bit_depth_luma_minus8", uint64_t);
+		READ_EG("bit_depth_chroma_minus8", uint64_t);
+		READ_BOOL("qpprime_y_zero_transform_bypass_flag");
+		READ_BOOL("seq_scaling_matrix_present_flag");
+		if ((bool)v["seq_scaling_matrix_present_flag"])
+			READ_INT("seq_scaling_list_present_flag", uint8_t, 8);
+	}
 	READ_EG("log2_max_frame_num_minus4", uint64_t);
 	READ_EG("pic_order_cnt_type", uint64_t);
 	if ((uint64_t) v["pic_order_cnt_type"] == 0) {
@@ -310,6 +321,9 @@ bool _VIDEO_AVC::Init(uint8_t *pSPS, uint32_t spsLength, uint8_t *pPPS,
 		_SPSInfo.Compact();
 		_width = ((uint32_t) _SPSInfo["pic_width_in_mbs_minus1"] + 1)*16;
 		_height = ((uint32_t) _SPSInfo["pic_height_in_map_units_minus1"] + 1)*16;
+//		FINEST("_width: %u (%u); _height: %u (%u)",
+//				_width, (uint32_t) _SPSInfo["pic_width_in_mbs_minus1"],
+//				_height, (uint32_t) _SPSInfo["pic_height_in_map_units_minus1"]);
 	}
 
 	BitArray ppsBa;
