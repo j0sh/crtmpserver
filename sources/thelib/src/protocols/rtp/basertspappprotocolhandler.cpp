@@ -140,6 +140,7 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPRequest(RTSPProtocol *pFrom,
 	string method = requestHeaders[RTSP_FIRST_LINE][RTSP_METHOD];
 	string requestSessionId = "";
 	string connectionSessionId = "";
+	vector<string> parts;
 	if (!requestHeaders[RTSP_HEADERS].HasKey(RTSP_HEADERS_CSEQ, false)) {
 		FATAL("Request doesn't have %s:\n%s", RTSP_HEADERS_CSEQ,
 				STR(requestHeaders.ToString()));
@@ -148,9 +149,16 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPRequest(RTSPProtocol *pFrom,
 	if (requestHeaders[RTSP_HEADERS].HasKey(RTSP_HEADERS_SESSION, false)) {
 		requestSessionId = (string) requestHeaders[RTSP_HEADERS].GetValue(
 				RTSP_HEADERS_SESSION, false);
+		split(requestSessionId, ";", parts);
+		if (parts.size() >= 1)
+			requestSessionId = parts[0];
 	}
 	if (pFrom->GetCustomParameters().HasKey(RTSP_HEADERS_SESSION)) {
 		connectionSessionId = (string) pFrom->GetCustomParameters()[RTSP_HEADERS_SESSION];
+		parts.clear();
+		split(connectionSessionId, ";", parts);
+		if (parts.size() >= 1)
+			connectionSessionId = parts[0];
 	}
 	if (requestSessionId != connectionSessionId) {
 		FATAL("Invalid session ID. Wanted: `%s`; Got: `%s`",
@@ -879,6 +887,9 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPResponse200Setup(
 	pFrom->PushRequestFirstLine(RTSP_METHOD_PLAY, uri, RTSP_VERSION_1_0);
 	pFrom->PushRequestHeader(RTSP_HEADERS_SESSION,
 			responseHeaders[RTSP_HEADERS].GetValue(RTSP_HEADERS_SESSION, false));
+
+	//4. Save the session ID
+	pFrom->GetCustomParameters()[RTSP_HEADERS_SESSION] = responseHeaders[RTSP_HEADERS].GetValue(RTSP_HEADERS_SESSION, false);
 
 	//4. Done
 
