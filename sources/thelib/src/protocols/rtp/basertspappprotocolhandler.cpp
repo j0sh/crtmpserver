@@ -157,8 +157,10 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPRequest(RTSPProtocol *pFrom,
 		connectionSessionId = (string) pFrom->GetCustomParameters()[RTSP_HEADERS_SESSION];
 		parts.clear();
 		split(connectionSessionId, ";", parts);
-		if (parts.size() >= 1)
+		if (parts.size() >= 1) {
 			connectionSessionId = parts[0];
+			pFrom->GetCustomParameters()[RTSP_HEADERS_SESSION] = connectionSessionId;
+		}
 	}
 	if (requestSessionId != connectionSessionId) {
 		FATAL("Invalid session ID. Wanted: `%s`; Got: `%s`",
@@ -239,6 +241,10 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPRequestOptions(RTSPProtocol *pFrom,
 		Variant &requestHeaders, string &requestContent) {
 	pFrom->PushResponseFirstLine(RTSP_VERSION_1_0, 200, "OK");
 	pFrom->PushResponseHeader(RTSP_HEADERS_PUBLIC, "DESCRIBE, OPTIONS, PAUSE, PLAY, SETUP, TEARDOWN, ANNOUNCE, RECORD");
+	if (pFrom->GetCustomParameters().HasKey(RTSP_HEADERS_SESSION)) {
+		pFrom->PushResponseHeader(RTSP_HEADERS_SESSION,
+				pFrom->GetCustomParameters()[RTSP_HEADERS_SESSION]);
+	}
 	return pFrom->SendResponseMessage();
 }
 
@@ -801,6 +807,11 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPResponse200Options(
 		return false;
 	}
 
+	if (pFrom->HasInboundConnectivity()) {
+		//FINEST("This is a keep alive timer....");
+		return true;
+	}
+
 	//5. Prepare the DESCRIBE method
 	string url = requestHeaders[RTSP_FIRST_LINE][RTSP_URL];
 	pFrom->ClearRequestMessage();
@@ -906,7 +917,7 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPResponse200Play(
 
 		return false;
 	}
-	return true;
+	return pFrom->EnableKeepAlive(10);
 }
 
 bool BaseRTSPAppProtocolHandler::HandleRTSPResponse404Play(RTSPProtocol *pFrom, Variant &requestHeaders,
@@ -931,8 +942,7 @@ bool BaseRTSPAppProtocolHandler::Play(RTSPProtocol *pFrom) {
 
 	//3. Send it
 	if (!pFrom->SendRequestMessage()) {
-		FATAL("Unable to send the %s request", RTSP_METHOD_DESCRIBE);
-
+		FATAL("Unable to send the %s request", RTSP_METHOD_OPTIONS);
 		return false;
 	}
 

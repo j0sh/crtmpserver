@@ -22,6 +22,7 @@
 #define	_RTSPPROTOCOL_H
 
 #include "protocols/baseprotocol.h"
+#include "protocols/timer/basetimerprotocol.h"
 #include "protocols/rtp/sdp.h"
 #include "streaming/baseoutnetrtpudpstream.h"
 
@@ -35,6 +36,17 @@ class InboundConnectivity;
 
 class DLLEXP RTSPProtocol
 : public BaseProtocol {
+private:
+
+	class RTSPKeepAliveTimer
+	: public BaseTimerProtocol {
+	private:
+		uint32_t _protocolId;
+	public:
+		RTSPKeepAliveTimer(uint32_t protocolId);
+		virtual ~RTSPKeepAliveTimer();
+		virtual bool TimePeriodElapsed();
+	};
 protected:
 	uint32_t _state;
 	bool _rtpData;
@@ -57,6 +69,8 @@ protected:
 	OutboundConnectivity *_pOutboundConnectivity;
 	InboundConnectivity *_pInboundConnectivity;
 	string _basicAuthentication;
+
+	uint32_t _keepAliveTimerId;
 public:
 	RTSPProtocol();
 	virtual ~RTSPProtocol();
@@ -69,8 +83,11 @@ public:
 	virtual bool SignalInputData(int32_t recvAmount);
 	virtual bool SignalInputData(IOBuffer &buffer);
 	virtual void GetStats(Variant &info);
-	
+
 	void SetBasicAuthentication(string userName, string password);
+	bool EnableKeepAlive(uint32_t period);
+	bool SendKeepAliveOptions();
+	bool HasInboundConnectivity();
 
 	SDP &GetInboundSDP();
 

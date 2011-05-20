@@ -164,6 +164,21 @@ bool ReadSPSVUI(BitArray &ba, Variant &v) {
 	return true;
 }
 
+bool scaling_list(BitArray &ba, uint8_t sizeOfScalingList) {
+	uint32_t nextScale = 8;
+	uint32_t lastScale = 8;
+	uint64_t delta_scale = 0;
+	for (uint8_t j = 0; j < sizeOfScalingList; j++) {
+		if (nextScale != 0) {
+			if (!ba.ReadExpGolomb(delta_scale))
+				return false;
+			nextScale = (lastScale + delta_scale + 256) % 256;
+		}
+		lastScale = (nextScale == 0) ? lastScale : nextScale;
+	}
+	return true;
+}
+
 bool ReadSPS(BitArray &ba, Variant &v) {
 	//7.3.2.1 Sequence parameter set RBSP syntax
 	//14496-10.pdf 43/280
@@ -182,8 +197,26 @@ bool ReadSPS(BitArray &ba, Variant &v) {
 		READ_EG("bit_depth_chroma_minus8", uint64_t);
 		READ_BOOL("qpprime_y_zero_transform_bypass_flag");
 		READ_BOOL("seq_scaling_matrix_present_flag");
-		if ((bool)v["seq_scaling_matrix_present_flag"])
-			READ_INT("seq_scaling_list_present_flag", uint8_t, 8);
+		if ((bool)v["seq_scaling_matrix_present_flag"]) {
+			for (uint8_t i = 0; i < 8; i++) {
+				uint8_t flag = 0;
+				CHECK_BA_LIMITS("seq_scaling_list_present_flag", 1);
+				flag = ba.ReadBits<uint8_t > (1);
+				if (flag) {
+					if (i < 6) {
+						if (!scaling_list(ba, 16)) {
+							FATAL("scaling_list failed");
+							return false;
+						}
+					} else {
+						if (!scaling_list(ba, 64)) {
+							FATAL("scaling_list failed");
+							return false;
+						}
+					}
+				}
+			}
+		}
 	}
 	READ_EG("log2_max_frame_num_minus4", uint64_t);
 	READ_EG("pic_order_cnt_type", uint64_t);
@@ -321,9 +354,9 @@ bool _VIDEO_AVC::Init(uint8_t *pSPS, uint32_t spsLength, uint8_t *pPPS,
 		_SPSInfo.Compact();
 		_width = ((uint32_t) _SPSInfo["pic_width_in_mbs_minus1"] + 1)*16;
 		_height = ((uint32_t) _SPSInfo["pic_height_in_map_units_minus1"] + 1)*16;
-//		FINEST("_width: %u (%u); _height: %u (%u)",
-//				_width, (uint32_t) _SPSInfo["pic_width_in_mbs_minus1"],
-//				_height, (uint32_t) _SPSInfo["pic_height_in_map_units_minus1"]);
+		//		FINEST("_width: %u (%u); _height: %u (%u)",
+		//				_width, (uint32_t) _SPSInfo["pic_width_in_mbs_minus1"],
+		//				_height, (uint32_t) _SPSInfo["pic_height_in_map_units_minus1"]);
 	}
 
 	BitArray ppsBa;

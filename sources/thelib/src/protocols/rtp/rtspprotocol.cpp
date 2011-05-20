@@ -32,6 +32,7 @@
 #include "netio/netio.h"
 #include "protocols/rtp/connectivity/outboundconnectivity.h"
 #include "protocols/rtp/connectivity/inboundconnectivity.h"
+#include "protocols/protocolmanager.h"
 
 #define RTSP_STATE_HEADERS 0
 #define RTSP_STATE_PAYLOAD 1
@@ -39,6 +40,28 @@
 #define RTSP_MAX_HEADERS_COUNT 64
 #define RTSP_MAX_HEADERS_SIZE 2048
 #define RTSP_MAX_CHUNK_SIZE 1024*128
+
+RTSPProtocol::RTSPKeepAliveTimer::RTSPKeepAliveTimer(uint32_t protocolId)
+: BaseTimerProtocol() {
+	_protocolId = protocolId;
+}
+
+RTSPProtocol::RTSPKeepAliveTimer::~RTSPKeepAliveTimer() {
+
+}
+
+bool RTSPProtocol::RTSPKeepAliveTimer::TimePeriodElapsed() {
+	RTSPProtocol *pProtocol = (RTSPProtocol *) ProtocolManager::GetProtocol(_protocolId);
+	if (pProtocol == NULL) {
+		FATAL("Unable to get parent protocol");
+		return false;
+	}
+	if (!pProtocol->SendKeepAliveOptions()) {
+		FATAL("Unable to send keep alive options");
+		return false;
+	}
+	return true;
+}
 
 RTSPProtocol::RTSPProtocol()
 : BaseProtocol(PT_RTSP) {
@@ -51,11 +74,15 @@ RTSPProtocol::RTSPProtocol()
 	_pOutboundConnectivity = NULL;
 	_pInboundConnectivity = NULL;
 	_basicAuthentication = "";
+	_keepAliveTimerId = 0;
 }
 
 RTSPProtocol::~RTSPProtocol() {
 	CloseOutboundConnectivity();
 	CloseInboundConnectivity();
+	if (ProtocolManager::GetProtocol(_keepAliveTimerId) != NULL) {
+		ProtocolManager::GetProtocol(_keepAliveTimerId)->EnqueueForDelete();
+	}
 }
 
 IOBuffer * RTSPProtocol::GetOutputBuffer() {
@@ -113,6 +140,25 @@ void RTSPProtocol::GetStats(Variant &info) {
 
 void RTSPProtocol::SetBasicAuthentication(string userName, string password) {
 	_basicAuthentication = format("Basic %s", STR(b64(format("%s:%s", STR(userName), STR(password)))));
+}
+
+bool RTSPProtocol::EnableKeepAlive(uint32_t period) {
+	RTSPKeepAliveTimer *pTimer = new RTSPKeepAliveTimer(GetId());
+	_keepAliveTimerId = pTimer->GetId();
+	return pTimer->EnqueueForTimeEvent(period);
+}
+
+bool RTSPProtocol::SendKeepAliveOptions() {
+	PushRequestFirstLine(RTSP_METHOD_OPTIONS, "*", RTSP_VERSION_1_0);
+	if (GetCustomParameters().HasKey(RTSP_HEADERS_SESSION)) {
+		PushResponseHeader(RTSP_HEADERS_SESSION,
+				GetCustomParameters()[RTSP_HEADERS_SESSION]);
+	}
+	return SendRequestMessage();
+}
+
+bool RTSPProtocol::HasInboundConnectivity() {
+	return (_pInboundConnectivity != NULL);
 }
 
 SDP &RTSPProtocol::GetInboundSDP() {
