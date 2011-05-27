@@ -452,7 +452,7 @@ bool RTMPProtocolSerializer::SerializeSharedObject(IOBuffer &buffer,
 
 				uint32_t length = buffer.GetCurrentWritePosition()
 						- rawLengthPosition - 4;
-				*(uint32_t *) (buffer.GetPointer() + rawLengthPosition) = EHTONL(length); //----MARKED-LONG---
+				EHTONLP(buffer.GetPointer() + rawLengthPosition,length);
 				break;
 			}
 			case SOT_SC_CLEAR_DATA:
