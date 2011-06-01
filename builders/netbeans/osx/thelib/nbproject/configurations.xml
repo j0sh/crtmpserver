@@ -123,6 +123,7 @@
       <logicalFolder name="protocols" displayName="protocols" projectFiles="true">
         <logicalFolder name="cli" displayName="cli" projectFiles="true">
           <itemPath>../../../../sources/thelib/include/protocols/cli/basecliappprotocolhandler.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/protocols/cli/http4cliprotocol.h</itemPath>
           <itemPath>../../../../sources/thelib/include/protocols/cli/inboundbasecliprotocol.h</itemPath>
           <itemPath>../../../../sources/thelib/include/protocols/cli/inboundjsoncliprotocol.h</itemPath>
         </logicalFolder>
@@ -140,6 +141,10 @@
           <itemPath>../../../../sources/thelib/include/protocols/liveflv/baseliveflvappprotocolhandler.h</itemPath>
           <itemPath>../../../../sources/thelib/include/protocols/liveflv/inboundliveflvprotocol.h</itemPath>
           <itemPath>../../../../sources/thelib/include/protocols/liveflv/innetliveflvstream.h</itemPath>
+        </logicalFolder>
+        <logicalFolder name="mms" displayName="mms" projectFiles="true">
+          <itemPath>../../../../sources/thelib/include/protocols/mms/basemmsappprotocolhandler.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/protocols/mms/mmsprotocol.h</itemPath>
         </logicalFolder>
         <logicalFolder name="rtmfp" displayName="rtmfp" projectFiles="true">
           <itemPath>../../../../sources/thelib/include/protocols/rtmfp/basertmfpappprotocolhandler.h</itemPath>
@@ -377,6 +382,7 @@
       <logicalFolder name="protocols" displayName="protocols" projectFiles="true">
         <logicalFolder name="cli" displayName="cli" projectFiles="true">
           <itemPath>../../../../sources/thelib/src/protocols/cli/basecliappprotocolhandler.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/protocols/cli/http4cliprotocol.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/protocols/cli/inboundbasecliprotocol.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/protocols/cli/inboundjsoncliprotocol.cpp</itemPath>
         </logicalFolder>
@@ -394,6 +400,10 @@
           <itemPath>../../../../sources/thelib/src/protocols/liveflv/baseliveflvappprotocolhandler.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/protocols/liveflv/inboundliveflvprotocol.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/protocols/liveflv/innetliveflvstream.cpp</itemPath>
+        </logicalFolder>
+        <logicalFolder name="mms" displayName="mms" projectFiles="true">
+          <itemPath>../../../../sources/thelib/src/protocols/mms/basemmsappprotocolhandler.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/protocols/mms/mmsprotocol.cpp</itemPath>
         </logicalFolder>
         <logicalFolder name="rtmfp" displayName="rtmfp" projectFiles="true">
           <itemPath>../../../../sources/thelib/src/protocols/rtmfp/basertmfpappprotocolhandler.cpp</itemPath>
@@ -559,6 +569,7 @@
             <Elem>HAS_PROTOCOL_CLI</Elem>
             <Elem>HAS_PROTOCOL_RTMFP</Elem>
             <Elem>HAS_MEDIA_NSV</Elem>
+            <Elem>HAS_PROTOCOL_MMS</Elem>
           </preprocessorList>
         </ccTool>
         <linkerTool>
