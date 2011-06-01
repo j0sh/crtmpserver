@@ -71,7 +71,7 @@
       <Message>Create the media folder</Message>
       <Command>rd /Q /S "$(OutDir)\mediaFolder"
 mkdir "$(OutDir)\mediaFolder"
-</Command>
+copy ..\..\..\builders\cmake\applications\vmapp\*.lua "$(OutDir)\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -103,7 +103,7 @@ mkdir "$(OutDir)\mediaFolder"
       <Message>Create the media folder</Message>
       <Command>rd /Q /S "$(OutDir)\mediaFolder"
 mkdir "$(OutDir)\mediaFolder"
-</Command>
+copy ..\..\..\builders\cmake\applications\vmapp\*.lua "$(OutDir)\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

@@ -263,33 +263,6 @@
     <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\sharedobjects\somanager.cpp">
       <Filter>Source Files\protocols\rtmp\sharedobjects</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\streaming\baseoutnetrtmpstream.cpp">
-      <Filter>Source Files\protocols\rtmp\streaming</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\streaming\infilertmpflvstream.cpp">
-      <Filter>Source Files\protocols\rtmp\streaming</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\streaming\infilertmpmp3stream.cpp">
-      <Filter>Source Files\protocols\rtmp\streaming</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\streaming\infilertmpmp4stream.cpp">
-      <Filter>Source Files\protocols\rtmp\streaming</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\streaming\infilertmpstream.cpp">
-      <Filter>Source Files\protocols\rtmp\streaming</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\streaming\innetrtmpstream.cpp">
-      <Filter>Source Files\protocols\rtmp\streaming</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\streaming\outnetrtmp4rtmpstream.cpp">
-      <Filter>Source Files\protocols\rtmp\streaming</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\streaming\outnetrtmp4tsstream.cpp">
-      <Filter>Source Files\protocols\rtmp\streaming</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\streaming\rtmpstream.cpp">
-      <Filter>Source Files\protocols\rtmp\streaming</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\messagefactories\connectionmessagefactory.cpp">
       <Filter>Source Files\protocols\rtmp\messagefactories</Filter>
     </ClCompile>
@@ -358,126 +331,6 @@
     </ClCompile>
     <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp3\mp3document.cpp">
       <Filter>Source Files\mediaformats\mp3</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomavc1.cpp">
-      <Filter>Source Files\mediaformats\mp4</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomavcc.cpp">
-      <Filter>Source Files\mediaformats\mp4</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomco64.cpp">
-      <Filter>Source Files\mediaformats\mp4</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomctts.cpp">
-      <Filter>Source Files\mediaformats\mp4</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomdata.cpp">
-      <Filter>Source Files\mediaformats\mp4</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomdinf.cpp">
-      <Filter>Source Files\mediaformats\mp4</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomdref.cpp">
-      <Filter>Source Files\mediaformats\mp4</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomesds.cpp">
-      <Filter>Source Files\mediaformats\mp4</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomftyp.cpp">
-      <Filter>Source Files\mediaformats\mp4</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomhdlr.cpp">
-      <Filter>Source Files\mediaformats\mp4</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomilst.cpp">
-      <Filter>Source Files\mediaformats\mp4</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atommdhd.cpp">
-      <Filter>Source Files\mediaformats\mp4</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atommdia.cpp">
-      <Filter>Source Files\mediaformats\mp4</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atommeta.cpp">
-      <Filter>Source Files\mediaformats\mp4</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atommetafield.cpp">
-      <Filter>Source Files\mediaformats\mp4</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomminf.cpp">
-      <Filter>Source Files\mediaformats\mp4</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atommoov.cpp">
-      <Filter>Source Files\mediaformats\mp4</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atommp4a.cpp">
-      <Filter>Source Files\mediaformats\mp4</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atommvhd.cpp">
-      <Filter>Source Files\mediaformats\mp4</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomnull.cpp">
-      <Filter>Source Files\mediaformats\mp4</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomsmhd.cpp">
-      <Filter>Source Files\mediaformats\mp4</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomstbl.cpp">
-      <Filter>Source Files\mediaformats\mp4</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomstco.cpp">
-      <Filter>Source Files\mediaformats\mp4</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomstsc.cpp">
-      <Filter>Source Files\mediaformats\mp4</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomstsd.cpp">
-      <Filter>Source Files\mediaformats\mp4</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomstss.cpp">
-      <Filter>Source Files\mediaformats\mp4</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomstsz.cpp">
-      <Filter>Source Files\mediaformats\mp4</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomstts.cpp">
-      <Filter>Source Files\mediaformats\mp4</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomtkhd.cpp">
-      <Filter>Source Files\mediaformats\mp4</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomtrak.cpp">
-      <Filter>Source Files\mediaformats\mp4</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomudta.cpp">
-      <Filter>Source Files\mediaformats\mp4</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomurl.cpp">
-      <Filter>Source Files\mediaformats\mp4</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomvmhd.cpp">
-      <Filter>Source Files\mediaformats\mp4</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomwave.cpp">
-      <Filter>Source Files\mediaformats\mp4</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\baseatom.cpp">
-      <Filter>Source Files\mediaformats\mp4</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\boxatom.cpp">
-      <Filter>Source Files\mediaformats\mp4</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\ignoredatom.cpp">
-      <Filter>Source Files\mediaformats\mp4</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\mp4document.cpp">
-      <Filter>Source Files\mediaformats\mp4</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\versionedatom.cpp">
-      <Filter>Source Files\mediaformats\mp4</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\versionedboxatom.cpp">
-      <Filter>Source Files\mediaformats\mp4</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\sources\thelib\src\streaming\baseinfilestream.cpp">
       <Filter>Source Files\streaming</Filter>
@@ -563,9 +416,6 @@
     <ClCompile Include="..\..\..\sources\thelib\src\streaming\nalutypes.cpp">
       <Filter>Source Files\streaming</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\streaming\outfilertmpflvstream.cpp">
-      <Filter>Source Files\protocols\rtmp\streaming</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\sources\thelib\src\protocols\ssl\basesslprotocol.cpp">
       <Filter>Source Files\protocols\ssl</Filter>
     </ClCompile>
@@ -605,11 +455,170 @@
     <ClCompile Include="..\..\..\sources\thelib\src\protocols\cli\inboundjsoncliprotocol.cpp">
       <Filter>Source Files\protocols\cli</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\streaming\infilertmpnsvstream.cpp">
-      <Filter>Source Files\protocols\rtmp\streaming</Filter>
-    </ClCompile>
     <ClCompile Include="..\dummy.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomavc1.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomavcc.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomco64.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomctts.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomdata.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomdinf.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomdref.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomesds.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomftyp.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomhdlr.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomilst.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atommdhd.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atommdia.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atommeta.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atommetafield.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atommfhd.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomminf.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atommoof.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atommoov.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atommp4a.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atommvex.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atommvhd.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomnull.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomsmhd.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomstbl.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomstco.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomstsc.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomstsd.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomstss.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomstsz.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomstts.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomtfhd.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomtkhd.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomtraf.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomtrak.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomtrex.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomtrun.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomudta.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomurl.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomvmhd.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomwave.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\baseatom.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\boxatom.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\ignoredatom.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\mp4document.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\versionedatom.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\versionedboxatom.cpp">
+      <Filter>Source Files\mediaformats\mp4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\streaming\baseoutnetrtmpstream.cpp">
+      <Filter>Source Files\protocols\rtmp\streaming</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\streaming\infilertmpstream.cpp">
+      <Filter>Source Files\protocols\rtmp\streaming</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\streaming\innetrtmpstream.cpp">
+      <Filter>Source Files\protocols\rtmp\streaming</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\streaming\outfilertmpflvstream.cpp">
+      <Filter>Source Files\protocols\rtmp\streaming</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\streaming\outnetrtmp4rtmpstream.cpp">
+      <Filter>Source Files\protocols\rtmp\streaming</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\streaming\outnetrtmp4tsstream.cpp">
+      <Filter>Source Files\protocols\rtmp\streaming</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\streaming\rtmpstream.cpp">
+      <Filter>Source Files\protocols\rtmp\streaming</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -724,33 +733,6 @@
     <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\sharedobjects\somanager.h">
       <Filter>Header Files\protocols\rtmp\sharedobjects</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\streaming\baseoutnetrtmpstream.h">
-      <Filter>Header Files\protocols\rtmp\streaming</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\streaming\infilertmpflvstream.h">
-      <Filter>Header Files\protocols\rtmp\streaming</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\streaming\infilertmpmp3stream.h">
-      <Filter>Header Files\protocols\rtmp\streaming</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\streaming\infilertmpmp4stream.h">
-      <Filter>Header Files\protocols\rtmp\streaming</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\streaming\infilertmpstream.h">
-      <Filter>Header Files\protocols\rtmp\streaming</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\streaming\innetrtmpstream.h">
-      <Filter>Header Files\protocols\rtmp\streaming</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\streaming\outnetrtmp4rtmpstream.h">
-      <Filter>Header Files\protocols\rtmp\streaming</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\streaming\outnetrtmp4tsstream.h">
-      <Filter>Header Files\protocols\rtmp\streaming</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\streaming\rtmpstream.h">
-      <Filter>Header Files\protocols\rtmp\streaming</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\messagefactories\connectionmessagefactory.h">
       <Filter>Header Files\protocols\rtmp\messagefactories</Filter>
     </ClInclude>
@@ -831,126 +813,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp3\mp3document.h">
       <Filter>Header Files\mediaformats\mp3</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomavc1.h">
-      <Filter>Header Files\mediaformats\mp4</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomavcc.h">
-      <Filter>Header Files\mediaformats\mp4</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomco64.h">
-      <Filter>Header Files\mediaformats\mp4</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomctts.h">
-      <Filter>Header Files\mediaformats\mp4</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomdata.h">
-      <Filter>Header Files\mediaformats\mp4</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomdinf.h">
-      <Filter>Header Files\mediaformats\mp4</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomdref.h">
-      <Filter>Header Files\mediaformats\mp4</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomesds.h">
-      <Filter>Header Files\mediaformats\mp4</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomftyp.h">
-      <Filter>Header Files\mediaformats\mp4</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomhdlr.h">
-      <Filter>Header Files\mediaformats\mp4</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomilst.h">
-      <Filter>Header Files\mediaformats\mp4</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atommdhd.h">
-      <Filter>Header Files\mediaformats\mp4</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atommdia.h">
-      <Filter>Header Files\mediaformats\mp4</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atommeta.h">
-      <Filter>Header Files\mediaformats\mp4</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atommetafield.h">
-      <Filter>Header Files\mediaformats\mp4</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomminf.h">
-      <Filter>Header Files\mediaformats\mp4</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atommoov.h">
-      <Filter>Header Files\mediaformats\mp4</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atommp4a.h">
-      <Filter>Header Files\mediaformats\mp4</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atommvhd.h">
-      <Filter>Header Files\mediaformats\mp4</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomnull.h">
-      <Filter>Header Files\mediaformats\mp4</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomsmhd.h">
-      <Filter>Header Files\mediaformats\mp4</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomstbl.h">
-      <Filter>Header Files\mediaformats\mp4</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomstco.h">
-      <Filter>Header Files\mediaformats\mp4</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomstsc.h">
-      <Filter>Header Files\mediaformats\mp4</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomstsd.h">
-      <Filter>Header Files\mediaformats\mp4</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomstss.h">
-      <Filter>Header Files\mediaformats\mp4</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomstsz.h">
-      <Filter>Header Files\mediaformats\mp4</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomstts.h">
-      <Filter>Header Files\mediaformats\mp4</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomtkhd.h">
-      <Filter>Header Files\mediaformats\mp4</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomtrak.h">
-      <Filter>Header Files\mediaformats\mp4</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomudta.h">
-      <Filter>Header Files\mediaformats\mp4</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomurl.h">
-      <Filter>Header Files\mediaformats\mp4</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomvmhd.h">
-      <Filter>Header Files\mediaformats\mp4</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomwave.h">
-      <Filter>Header Files\mediaformats\mp4</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\baseatom.h">
-      <Filter>Header Files\mediaformats\mp4</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\boxatom.h">
-      <Filter>Header Files\mediaformats\mp4</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\ignoredatom.h">
-      <Filter>Header Files\mediaformats\mp4</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\mp4document.h">
-      <Filter>Header Files\mediaformats\mp4</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\versionedatom.h">
-      <Filter>Header Files\mediaformats\mp4</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\versionedboxatom.h">
-      <Filter>Header Files\mediaformats\mp4</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\sources\thelib\include\streaming\baseinfilestream.h">
       <Filter>Header Files\streaming</Filter>
@@ -1051,9 +913,6 @@
     <ClInclude Include="..\..\..\sources\thelib\include\streaming\streamcapabilities.h">
       <Filter>Header Files\streaming</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\streaming\outfilertmpflvstream.h">
-      <Filter>Header Files\protocols\rtmp\streaming</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\sources\thelib\include\protocols\ssl\basesslprotocol.h">
       <Filter>Header Files\protocols\ssl</Filter>
     </ClInclude>
@@ -1093,8 +952,167 @@
     <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmfp\outboundrtmfpprotocol.h">
       <Filter>Header Files\protocols\rtmfp</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\streaming\infilertmpnsvstream.h">
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\streaming\baseoutnetrtmpstream.h">
       <Filter>Header Files\protocols\rtmp\streaming</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\streaming\infilertmpstream.h">
+      <Filter>Header Files\protocols\rtmp\streaming</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\streaming\innetrtmpstream.h">
+      <Filter>Header Files\protocols\rtmp\streaming</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\streaming\outfilertmpflvstream.h">
+      <Filter>Header Files\protocols\rtmp\streaming</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\streaming\outnetrtmp4rtmpstream.h">
+      <Filter>Header Files\protocols\rtmp\streaming</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\streaming\outnetrtmp4tsstream.h">
+      <Filter>Header Files\protocols\rtmp\streaming</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\streaming\rtmpstream.h">
+      <Filter>Header Files\protocols\rtmp\streaming</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomavc1.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomavcc.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomco64.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomctts.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomdata.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomdinf.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomdref.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomesds.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomftyp.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomhdlr.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomilst.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atommdhd.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atommdia.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atommeta.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atommetafield.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atommfhd.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomminf.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atommoof.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atommoov.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atommp4a.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atommvex.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atommvhd.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomnull.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomsmhd.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomstbl.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomstco.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomstsc.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomstsd.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomstss.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomstsz.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomstts.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomtfhd.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomtkhd.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomtraf.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomtrak.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomtrex.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomtrun.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomudta.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomurl.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomvmhd.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomwave.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\baseatom.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\boxatom.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\ignoredatom.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\mp4document.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\versionedatom.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\versionedboxatom.h">
+      <Filter>Header Files\mediaformats\mp4</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

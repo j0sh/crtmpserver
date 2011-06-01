@@ -58,7 +58,7 @@ InFileRTMPStream::AVCBuilder::~AVCBuilder() {
 
 }
 
-bool InFileRTMPStream::AVCBuilder::BuildFrame(MmapFile* pFile, MediaFrame& mediaFrame, IOBuffer& buffer) {
+bool InFileRTMPStream::AVCBuilder::BuildFrame(FileClass* pFile, MediaFrame& mediaFrame, IOBuffer& buffer) {
 	if (mediaFrame.isBinaryHeader) {
 		buffer.ReadFromBuffer(_videoCodecHeaderInit, sizeof (_videoCodecHeaderInit));
 	} else {
@@ -97,7 +97,7 @@ InFileRTMPStream::AACBuilder::~AACBuilder() {
 
 }
 
-bool InFileRTMPStream::AACBuilder::BuildFrame(MmapFile* pFile, MediaFrame& mediaFrame, IOBuffer& buffer) {
+bool InFileRTMPStream::AACBuilder::BuildFrame(FileClass* pFile, MediaFrame& mediaFrame, IOBuffer& buffer) {
 	//1. add the binary header
 	if (mediaFrame.isBinaryHeader) {
 		buffer.ReadFromBuffer(_audioCodecHeaderInit, sizeof (_audioCodecHeaderInit));
