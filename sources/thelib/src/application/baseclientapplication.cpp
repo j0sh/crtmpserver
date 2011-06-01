@@ -120,6 +120,11 @@ BaseAppProtocolHandler *BaseClientApplication::GetProtocolHandler(string &scheme
 		pResult = GetProtocolHandler(PT_RTSP);
 	}
 #endif /* HAS_PROTOCOL_RTP */
+#ifdef HAS_PROTOCOL_MMS
+	else if (scheme == "mms") {
+		pResult = GetProtocolHandler(PT_OUTBOUND_MMS);
+	}
+#endif /* HAS_PROTOCOL_MMS */
 	else {
 		WARN("scheme %s not recognized", STR(scheme));
 	}

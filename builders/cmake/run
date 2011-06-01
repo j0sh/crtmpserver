@@ -2,6 +2,7 @@ rm -rf ../../media/*.seek
 rm -rf ../../media/*.meta
 #./renamebadfiles.sh
 
+#COMPILE_STATIC=1 cmake .
 cmake .
 if [ "$?" -ne "0" ]; then
         echo "cmake failed";

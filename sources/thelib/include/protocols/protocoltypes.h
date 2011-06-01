@@ -72,8 +72,12 @@
 #define PT_INBOUND_RTP			MAKE_TAG4('I','R','T','P')
 #define PT_OUTBOUND_RTP			MAKE_TAG4('O','R','T','P')
 
+//MMS
+#define PT_OUTBOUND_MMS			MAKE_TAG3('M','M','S')
+
 //CLI protocols
 #define PT_INBOUND_JSONCLI		MAKE_TAG8('I','J','S','O','N','C','L','I')
+#define PT_HTTP_4_CLI			MAKE_TAG3('H','4','C')
 
 #endif	/* _PROTOCOLTYPES_H */
 

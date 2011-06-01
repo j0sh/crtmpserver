@@ -135,7 +135,10 @@ configuration=
 			},
 			externalStreams = 
 			{
-				--[[
+				--[[{
+					uri="mms://lr1w.latvijasradio.lv/pplr3s",
+					localStreamName="myMms"
+				},
 				{
 					uri="rtsp://a1956.l1857055475.c18570.g.lq.akamaistream.net/D/1956/18570/v0001/reflector:55475",
 					localStreamName="test_aaa",

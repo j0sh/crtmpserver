@@ -49,7 +49,7 @@ void InboundBaseCLIProtocol::SetApplication(BaseClientApplication *pApplication)
 }
 
 bool InboundBaseCLIProtocol::AllowFarProtocol(uint64_t type) {
-	return (type == PT_TCP) || (type == PT_INBOUND_HTTP);
+	return (type == PT_TCP) || (type == PT_HTTP_4_CLI);
 }
 
 bool InboundBaseCLIProtocol::AllowNearProtocol(uint64_t type) {

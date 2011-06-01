@@ -41,6 +41,7 @@
 #include "protocols/rtmp/inboundrtmpsdiscriminatorprotocol.h"
 #include "protocols/rtmfp/inboundrtmfpprotocol.h"
 #include "protocols/rtmfp/outboundrtmfpprotocol.h"
+#include "protocols/cli/http4cliprotocol.h"
 
 DefaultProtocolFactory::DefaultProtocolFactory()
 : BaseProtocolFactory() {
@@ -100,6 +101,7 @@ vector<uint64_t> DefaultProtocolFactory::HandledProtocols() {
 #endif /* HAS_PROTOCOL_RTP */
 #ifdef HAS_PROTOCOL_CLI
 	ADD_VECTOR_END(result, PT_INBOUND_JSONCLI);
+	ADD_VECTOR_END(result, PT_HTTP_4_CLI);
 #endif /* HAS_PROTOCOL_CLI */
 
 	return result;
@@ -289,6 +291,7 @@ vector<uint64_t> DefaultProtocolFactory::ResolveProtocolChain(string name) {
 	else if (name == CONF_PROTOCOL_INBOUND_HTTP_CLI_JSON) {
 		ADD_VECTOR_END(result, PT_TCP);
 		ADD_VECTOR_END(result, PT_INBOUND_HTTP);
+		ADD_VECTOR_END(result, PT_HTTP_4_CLI);
 		ADD_VECTOR_END(result, PT_INBOUND_JSONCLI);
 	}
 #endif /* HAS_PROTOCOL_HTTP */
@@ -386,6 +389,9 @@ BaseProtocol *DefaultProtocolFactory::SpawnProtocol(uint64_t type, Variant &para
 #ifdef HAS_PROTOCOL_CLI
 		case PT_INBOUND_JSONCLI:
 			pResult = new InboundJSONCLIProtocol();
+			break;
+		case PT_HTTP_4_CLI:
+			pResult=new HTTP4CLIProtocol();
 			break;
 #endif /* HAS_PROTOCOL_CLI */
 		default:

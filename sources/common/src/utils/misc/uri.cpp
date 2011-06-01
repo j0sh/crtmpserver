@@ -118,6 +118,7 @@ bool parseURI(string stringUri, URI &uri) {
 			___schemeToPort["rtsp"] = 554;
 			___schemeToPort["rtmp"] = 1935;
 			___schemeToPort["rtmpe"] = 1935;
+			___schemeToPort["mms"] = 1755;
 		}
 		if (MAP_HAS1(___schemeToPort, uri.scheme))
 			uri.port = ___schemeToPort[uri.scheme];

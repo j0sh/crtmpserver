@@ -19,6 +19,7 @@
 
 #ifdef HAS_PROTOCOL_CLI
 #include "protocols/cli/inboundjsoncliprotocol.h"
+#include "protocols/http/inboundhttpprotocol.h"
 
 InboundJSONCLIProtocol::InboundJSONCLIProtocol()
 : InboundBaseCLIProtocol(PT_INBOUND_JSONCLI) {
@@ -100,7 +101,7 @@ bool InboundJSONCLIProtocol::ParseCommand(string &command) {
 
 	//3. Append "cmd=" in front of the command
 	command = "cmd=" + command;
-	INFO("command: `%s`",STR(command));
+	//INFO("command: `%s`", STR(command));
 
 	//4. create the map
 	map<string, string> rawMap = mapping(command, " ", "=", true);
