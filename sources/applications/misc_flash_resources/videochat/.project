@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>flex</name>
-	<comment/>
+	<name>videochat</name>
+	<comment></comment>
 	<projects>
 	</projects>
 	<buildSpec>
@@ -16,4 +16,3 @@
 		<nature>com.adobe.flexbuilder.project.actionscriptnature</nature>
 	</natures>
 </projectDescription>
-

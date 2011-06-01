@@ -4,6 +4,8 @@
 	<mx:Script>
 		<![CDATA[
 			import com.rtmpd.generics.Logging;
+			
+			import mx.controls.Alert;
 			import mx.managers.PopUpManager;
 			private var _output:Object=null;
 			[Bindable] private var _isAuth:Boolean=false;

@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx" minWidth="640" minHeight="480" width="640" height="480"
+			   applicationComplete="ShowConnectWindow()" xmlns:components="com.rtmpd.generics.ui.components.*">
+	<fx:Script>
+		<![CDATA[
+			import com.rtmpd.generics.ui.components.ConnectWindow;
+			
+			import mx.controls.Alert;
+			import mx.controls.Button;
+			import mx.controls.Image;
+			import mx.utils.ObjectUtil;
+			private var _connectData:Object;
+			[Bindable] private var _engine:Engine;
+			[Bindable] private var _guestsList:SharedObject;
+			private var _chatWindow:TextArea;
+			private var _collimator:Image;
+			private var _chatLines:Array;
+			[Embed("collimator.gif")]         
+			private var _collimatorImg:Class;
+			private var _lastX:Number;
+			private var _lastY:Number;
+			private var _connectingString:String;
+			private var _streamName:String;
+			
+			
+			private function ShowConnectWindow():void{
+				try{
+					_connectingString=LoaderInfo(this.root.loaderInfo).parameters.streamer;
+					_streamName=LoaderInfo(this.root.loaderInfo).parameters.file;
+				}catch(e:Error){
+					_connectingString=null;
+				}
+				if((_streamName==null)||(_streamName=="")){
+					_streamName="mp4:lg.mp4";
+				}
+				_lastX=0;
+				_lastY=0;
+				_collimator=new Image();
+				_collimator.x=0;
+				_collimator.y=0;
+				_collimator.width=32;
+				_collimator.height=32;
+				_collimator.source=_collimatorImg;
+				_collimator.mouseEnabled=false;
+				_chatWindow=new TextArea();
+				_chatWindow.width=video.width;
+				_chatWindow.height=video.height;
+				_chatWindow.x=0;
+				_chatWindow.y=0;
+				_chatWindow.setStyle("backgroundColor","#000000");
+				_chatWindow.setStyle("contentBackgroundAlpha","0");					
+				_chatWindow.setStyle("borderStyle","none");
+				_chatWindow.setStyle("color","red");
+				_chatWindow.editable=false;
+				_chatWindow.mouseEnabled=false;
+				_chatLines=new Array();
+				_engine=new Engine();
+				_engine.addEventListener("IsConnectedEvent",IsConnectedEvent);
+				_connectData=new Object();
+				_connectData.client=this;
+				_connectData.done=function ():void{
+					this.client.Connect(this.completeUri,this.username,this.password);
+				};
+				if(_connectingString!=null){
+					_engine.Connect(_connectingString,"","");
+				}else{
+					ConnectWindow.ShowSimple(this,"rtmp","127.0.0.1","live",_connectData);
+				}
+			}
+			
+			public function Connect(uri:String,username:String,password:String):void{
+				_engine.Connect(uri,username,password);	
+			}
+			
+			private function IsConnectedEvent(evt:Event):void{
+				_guestsList=SharedObject.getRemote("guestsList",_engine.FlashConnection.uri);
+				_guestsList.addEventListener(SyncEvent.SYNC,GuestsSOSync);
+				_guestsList.connect(_engine.FlashConnection);
+				video.Initialize(_chatWindow,_collimator);
+				video.Play(_engine,_streamName);
+			}
+			
+			private function GuestsSOSync(evt:SyncEvent):void{
+				//Alert.show(ObjectUtil.toString(evt));
+				var i:Number=0;
+				for(i=0;i<evt.changeList.length;i++){
+					if(evt.changeList[i].name=="chatLine"){
+						var line:String=_guestsList.data.chatLine;
+						_chatLines.push(line);
+						UpdateChat();
+					}
+					if((evt.changeList[i].name=="X")||(evt.changeList[i].name=="Y")){
+						UpdateCollimator(_guestsList.data.X,_guestsList.data.Y);	
+					}
+				}
+			}
+			
+			private function UpdateChat():void{
+				_chatWindow.text="";
+				var i:Number=0;
+				_chatLines=_chatLines.slice(-19);	
+				for(i=0;i<_chatLines.length;i++){
+					_chatWindow.text+=_chatLines[i];
+				}
+			}
+
+			protected function txtInput_keyUpHandler(event:KeyboardEvent):void
+			{
+				if((event.charCode!=0x0d)
+					&&(event.charCode!=0x0a))
+					return;
+				var text:String=txtInput.text;
+				_guestsList.setProperty("chatLine",text);
+				txtInput.text="";
+				_guestsList.flush();
+			}
+
+
+			protected function video_mouseMoveHandler(event:MouseEvent):void
+			{
+				UpdateCollimator(event.localX,event.localY);
+			}
+			
+			private function UpdateCollimator(X:Number, Y:Number):void{
+				if(Math.abs(_lastX-X)>5){
+					_lastX=X;
+				}
+				if(Math.abs(_lastY-Y)>5){
+					_lastY=Y;
+				}
+				_collimator.x=_lastX-_collimator.width/2;
+				_collimator.y=_lastY-_collimator.height/2;
+				if((_guestsList.data.X==null)
+					||(_guestsList.data.X!=_lastX)){
+					_guestsList.setProperty("X",_lastX);
+				}
+				if((_guestsList.data.Y==null)
+					||(_guestsList.data.Y!=_lastY)){
+					_guestsList.setProperty("Y",_lastY);
+				}
+				_guestsList.flush();
+				UpdateChat();
+			}
+
+		]]>
+	</fx:Script>
+	<mx:VBox width="100%" height="100%" enabled="{_engine.IsConnected}">
+		<mx:HBox width="100%" height="100%">
+			<mx:Panel title="Video display" width="100%" height="100%" id="overlay">
+				<components:VideoPlayer width="100%" height="100%" id="video" mouseMove="video_mouseMoveHandler(event)" />
+			</mx:Panel>
+		</mx:HBox>
+		<mx:Panel title="chat" height="100" width="100%">
+			<mx:TextArea height="100%" width="100%" keyUp="txtInput_keyUpHandler(event)" id="txtInput"/>
+		</mx:Panel>
+	</mx:VBox>
+</s:Application>

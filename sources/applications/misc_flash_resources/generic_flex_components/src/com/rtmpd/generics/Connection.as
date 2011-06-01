@@ -53,6 +53,10 @@ package com.rtmpd.generics
 			return result;
 		}
 		
+		public function get FlashConnection():NetConnection{
+			return _connection;
+		}
+		
 		public function Call(functionName:String, resultCallback:Function, ... args):void{
 			if(!IsConnected)
 				return;

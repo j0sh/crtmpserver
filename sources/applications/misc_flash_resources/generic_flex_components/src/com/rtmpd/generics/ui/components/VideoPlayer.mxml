@@ -3,19 +3,16 @@
 	backgroundColor="black">
 	<mx:Script>
 		<![CDATA[
-//			import mx.controls.TextArea;
-//			import mx.controls.Button;
 			import com.rtmpd.generics.Connection;
 			import com.rtmpd.generics.Logging;
 			
+			import mx.controls.TextArea;
 			import mx.utils.ObjectUtil;
 			
 			private var _stream:NetStream;
 			private var _video:Video;
-//			private var _info:TextArea;
-//			private var _showInfo:Button;
 			
-			public function Initialize():void
+			public function Initialize(... args):void
 			{
 				try{	
 					if(_video!=null){
@@ -24,29 +21,10 @@
 					}
 					_video=new Video(width,height);
 					rawChildren.addChild(_video);
-					
-//					_info=new TextArea();
-//					_info.width=0;
-//					_info.height=0;
-//					_info.x=0;
-//					_info.y=0;
-//					_info.alpha=0.3;
-//					_info.setStyle("backgroundColor","#000000");
-//					_info.setStyle("borderStyle","none");
-//					_info.setStyle("color","white");
-//					_info.editable=false;
-//					rawChildren.addChild(_info);
-//					
-//					_showInfo=new Button();
-//					_showInfo.width=85;
-//					_showInfo.height=15;
-//					_showInfo.x=0;
-//					_showInfo.y=height-_showInfo.height;
-//					_showInfo.alpha=0.6;
-//					_showInfo.setStyle("borderStyle","none");
-//					_showInfo.label="Show info";
-//					_showInfo.addEventListener(MouseEvent.CLICK,ShowHideInfo);
-//					rawChildren.addChild(_showInfo);
+					var i:Number=0;
+					for(i=0;i<args.length;i++){
+						rawChildren.addChild(args[i]);
+					}
 					
 					Logging.Debug("VideoPlayer init done");
 				}catch(e:Error){
