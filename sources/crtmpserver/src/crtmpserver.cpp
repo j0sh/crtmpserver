@@ -354,9 +354,6 @@ extern "C" BaseClientApplication *GetApplication_appselector(Variant configurati
 #ifdef HAS_APP_FLVPLAYBACK
 extern "C" BaseClientApplication *GetApplication_flvplayback(Variant configuration);
 #endif
-#ifdef HAS_APP_HOUSEBAND
-extern "C" BaseClientApplication *GetApplication_houseband(Variant configuration);
-#endif
 #ifdef HAS_APP_PROXYPUBLISH
 extern "C" BaseClientApplication *GetApplication_proxypublish(Variant configuration);
 #endif
@@ -395,11 +392,6 @@ BaseClientApplication *SpawnApplication(Variant configuration) {
 #ifdef HAS_APP_FLVPLAYBACK
 	else if (configuration[CONF_APPLICATION_NAME] == "flvplayback") {
 		return GetApplication_flvplayback(configuration);
-	}
-#endif
-#ifdef HAS_APP_HOUSEBAND
-	else if (configuration[CONF_APPLICATION_NAME] == "houseband") {
-		return GetApplication_houseband(configuration);
 	}
 #endif
 #ifdef HAS_APP_PROXYPUBLISH
