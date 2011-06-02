@@ -17,7 +17,7 @@
  *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "HTTPDownloadProtocol.h"
+#include "httpdownloadprotocol.h"
 #include "localdefines.h"
 #include "protocols/protocolfactorymanager.h"
 #include "protocols/http/outboundhttpprotocol.h"
