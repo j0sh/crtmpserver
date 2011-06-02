@@ -19,7 +19,6 @@ CCC=g++
 CXX=g++
 FC=gfortran
 AS=as
-PROC=proc
 
 # Macros
 CND_PLATFORM=GNU-MacOSX
@@ -72,22 +71,22 @@ LDLIBSOPTIONS=-L../thelib/../Debug/GNU-MacOSX -lthelib -L../common/dist/Debug/GN
 ${OBJECTDIR}/_ext/573837895/vptestsapplication.o: ../../../../sources/applications/vptests/src/vptestsapplication.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/573837895
 	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTMP -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/vptests/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/573837895/vptestsapplication.o ../../../../sources/applications/vptests/src/vptestsapplication.cpp
+	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_VAR -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/vptests/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/573837895/vptestsapplication.o ../../../../sources/applications/vptests/src/vptestsapplication.cpp
 
 ${OBJECTDIR}/_ext/573837895/vptests.o: ../../../../sources/applications/vptests/src/vptests.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/573837895
 	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTMP -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/vptests/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/573837895/vptests.o ../../../../sources/applications/vptests/src/vptests.cpp
+	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_VAR -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/vptests/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/573837895/vptests.o ../../../../sources/applications/vptests/src/vptests.cpp
 
 ${OBJECTDIR}/_ext/573837895/rtmpappprotocolhandler.o: ../../../../sources/applications/vptests/src/rtmpappprotocolhandler.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/573837895
 	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTMP -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/vptests/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/573837895/rtmpappprotocolhandler.o ../../../../sources/applications/vptests/src/rtmpappprotocolhandler.cpp
+	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_VAR -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/vptests/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/573837895/rtmpappprotocolhandler.o ../../../../sources/applications/vptests/src/rtmpappprotocolhandler.cpp
 
 ${OBJECTDIR}/_ext/573837895/variantappprotocolhandler.o: ../../../../sources/applications/vptests/src/variantappprotocolhandler.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/573837895
 	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTMP -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/vptests/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/573837895/variantappprotocolhandler.o ../../../../sources/applications/vptests/src/variantappprotocolhandler.cpp
+	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_VAR -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/vptests/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/573837895/variantappprotocolhandler.o ../../../../sources/applications/vptests/src/variantappprotocolhandler.cpp
 
 # Subprojects
 .build-subprojects:

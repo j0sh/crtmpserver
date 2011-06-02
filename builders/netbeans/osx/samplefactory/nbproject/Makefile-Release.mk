@@ -34,13 +34,10 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
-	${OBJECTDIR}/_ext/1702679040/controller.o \
-	${OBJECTDIR}/_ext/1702679040/rtmpappprotocolhandler.o \
 	${OBJECTDIR}/_ext/1702679040/samplefactory.o \
 	${OBJECTDIR}/_ext/1702679040/samplefactoryapplication.o \
-	${OBJECTDIR}/_ext/1702679040/protocolfactory.o \
-	${OBJECTDIR}/_ext/1702679040/dbaccessprotocolhandler.o \
-	${OBJECTDIR}/_ext/1702679040/dbaccessprotocol.o
+	${OBJECTDIR}/_ext/686350581/echoprotocol.o \
+	${OBJECTDIR}/_ext/1702679040/protocolfactory.o
 
 
 # C Compiler Flags
@@ -71,16 +68,6 @@ LDLIBSOPTIONS=-L../common/dist/Release/GNU-MacOSX -lcommon -L../thelib/../Releas
 	${MKDIR} -p ../${CND_CONF}/${CND_PLATFORM}/applications/samplefactory
 	${LINK.cc} -dynamiclib -install_name libsamplefactory.dylib -o ../${CND_CONF}/${CND_PLATFORM}/applications/samplefactory/libsamplefactory.dylib -fPIC ${OBJECTFILES} ${LDLIBSOPTIONS} 
 
-${OBJECTDIR}/_ext/1702679040/controller.o: ../../../../sources/applications/samplefactory/src/controller.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/1702679040
-	${RM} $@.d
-	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/samplefactory/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1702679040/controller.o ../../../../sources/applications/samplefactory/src/controller.cpp
-
-${OBJECTDIR}/_ext/1702679040/rtmpappprotocolhandler.o: ../../../../sources/applications/samplefactory/src/rtmpappprotocolhandler.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/1702679040
-	${RM} $@.d
-	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/samplefactory/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1702679040/rtmpappprotocolhandler.o ../../../../sources/applications/samplefactory/src/rtmpappprotocolhandler.cpp
-
 ${OBJECTDIR}/_ext/1702679040/samplefactory.o: ../../../../sources/applications/samplefactory/src/samplefactory.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1702679040
 	${RM} $@.d
@@ -91,20 +78,15 @@ ${OBJECTDIR}/_ext/1702679040/samplefactoryapplication.o: ../../../../sources/app
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/samplefactory/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1702679040/samplefactoryapplication.o ../../../../sources/applications/samplefactory/src/samplefactoryapplication.cpp
 
+${OBJECTDIR}/_ext/686350581/echoprotocol.o: ../../../../../vbrick/sources/applications/samplefactory/src/echoprotocol.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/686350581
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/samplefactory/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/686350581/echoprotocol.o ../../../../../vbrick/sources/applications/samplefactory/src/echoprotocol.cpp
+
 ${OBJECTDIR}/_ext/1702679040/protocolfactory.o: ../../../../sources/applications/samplefactory/src/protocolfactory.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1702679040
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/samplefactory/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1702679040/protocolfactory.o ../../../../sources/applications/samplefactory/src/protocolfactory.cpp
-
-${OBJECTDIR}/_ext/1702679040/dbaccessprotocolhandler.o: ../../../../sources/applications/samplefactory/src/dbaccessprotocolhandler.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/1702679040
-	${RM} $@.d
-	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/samplefactory/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1702679040/dbaccessprotocolhandler.o ../../../../sources/applications/samplefactory/src/dbaccessprotocolhandler.cpp
-
-${OBJECTDIR}/_ext/1702679040/dbaccessprotocol.o: ../../../../sources/applications/samplefactory/src/dbaccessprotocol.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/1702679040
-	${RM} $@.d
-	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/samplefactory/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1702679040/dbaccessprotocol.o ../../../../sources/applications/samplefactory/src/dbaccessprotocol.cpp
 
 # Subprojects
 .build-subprojects:

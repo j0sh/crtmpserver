@@ -19,36 +19,24 @@
 
 
 #include "samplefactoryapplication.h"
-#include "rtmpappprotocolhandler.h"
 #include "protocols/baseprotocol.h"
 #include "protocolfactory.h"
 #include "protocols/protocolfactorymanager.h"
-#include "dbaccessprotocolhandler.h"
+#include "localdefines.h"
+#include "echoappprotocolhandler.h"
 using namespace app_samplefactory;
 
 SampleFactoryApplication::SampleFactoryApplication(Variant &configuration)
 : BaseClientApplication(configuration) {
-#ifdef HAS_PROTOCOL_RTMP
-	_pRTMPHandler = NULL;
-#endif /* HAS_PROTOCOL_RTMP */
 	_pFactory = NULL;
-	_pDBAccessHandler = NULL;
+	_pEchoHandler = NULL;
 }
 
 SampleFactoryApplication::~SampleFactoryApplication() {
-#ifdef HAS_PROTOCOL_RTMP
-	UnRegisterAppProtocolHandler(PT_INBOUND_RTMP);
-	UnRegisterAppProtocolHandler(PT_OUTBOUND_RTMP);
-	if (_pRTMPHandler != NULL) {
-		delete _pRTMPHandler;
-		_pRTMPHandler = NULL;
-	}
-#endif /* HAS_PROTOCOL_RTMP */
-
-	UnRegisterAppProtocolHandler(PT_DBACCESS);
-	if (_pDBAccessHandler != NULL) {
-		delete _pDBAccessHandler;
-		_pDBAccessHandler = NULL;
+	UnRegisterAppProtocolHandler(PT_ECHO_PROTOCOL);
+	if (_pEchoHandler != NULL) {
+		delete _pEchoHandler;
+		_pEchoHandler = NULL;
 	}
 
 	if (_pFactory != NULL) {
@@ -64,20 +52,13 @@ bool SampleFactoryApplication::Initialize() {
 	//initialize the protocol handler(s)
 
 	//1. Initialize the protocol handler(s)
-#ifdef HAS_PROTOCOL_RTMP
-	_pRTMPHandler = new RTMPAppProtocolHandler(_configuration);
-	RegisterAppProtocolHandler(PT_INBOUND_RTMP, _pRTMPHandler);
-	RegisterAppProtocolHandler(PT_OUTBOUND_RTMP, _pRTMPHandler);
-#endif /* HAS_PROTOCOL_RTMP */
+	_pEchoHandler = new EchoAppProtocolHandler(_configuration);
+	RegisterAppProtocolHandler(PT_ECHO_PROTOCOL, _pEchoHandler);
 
 	//2. Initialize our protocol factory
 	_pFactory = new ProtocolFactory();
 	ProtocolFactoryManager::RegisterProtocolFactory(_pFactory);
 
-	_pDBAccessHandler = new DBAccessProtocolHandler(_configuration);
-	RegisterAppProtocolHandler(PT_DBACCESS, _pDBAccessHandler);
-
 	return true;
 }
-
 

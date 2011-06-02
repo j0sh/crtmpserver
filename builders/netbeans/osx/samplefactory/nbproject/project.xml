@@ -14,8 +14,8 @@
                 <make-dep-project>../common</make-dep-project>
             </make-dep-projects>
             <sourceRootList>
-                <sourceRootElem>../../../sources/applications/samplefactory/include</sourceRootElem>
-                <sourceRootElem>../../../sources/applications/samplefactory/src</sourceRootElem>
+                <sourceRootElem>../../../../sources/applications/samplefactory/include</sourceRootElem>
+                <sourceRootElem>../../../../sources/applications/samplefactory/src</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>

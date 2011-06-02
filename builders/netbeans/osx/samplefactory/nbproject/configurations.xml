@@ -4,22 +4,17 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
-      <itemPath>../../../../sources/applications/samplefactory/include/controller.h</itemPath>
-      <itemPath>../../../../sources/applications/samplefactory/include/dbaccessprotocol.h</itemPath>
-      <itemPath>../../../../sources/applications/samplefactory/include/dbaccessprotocolhandler.h</itemPath>
+      <itemPath>../../../../../vbrick/sources/applications/samplefactory/include/echoprotocol.h</itemPath>
+      <itemPath>../../../../../vbrick/sources/applications/samplefactory/include/localdefines.h</itemPath>
       <itemPath>../../../../sources/applications/samplefactory/include/protocolfactory.h</itemPath>
-      <itemPath>../../../../sources/applications/samplefactory/include/rtmpappprotocolhandler.h</itemPath>
       <itemPath>../../../../sources/applications/samplefactory/include/samplefactory.h</itemPath>
       <itemPath>../../../../sources/applications/samplefactory/include/samplefactoryapplication.h</itemPath>
     </logicalFolder>
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
-      <itemPath>../../../../sources/applications/samplefactory/src/controller.cpp</itemPath>
-      <itemPath>../../../../sources/applications/samplefactory/src/dbaccessprotocol.cpp</itemPath>
-      <itemPath>../../../../sources/applications/samplefactory/src/dbaccessprotocolhandler.cpp</itemPath>
+      <itemPath>../../../../../vbrick/sources/applications/samplefactory/src/echoprotocol.cpp</itemPath>
       <itemPath>../../../../sources/applications/samplefactory/src/protocolfactory.cpp</itemPath>
-      <itemPath>../../../../sources/applications/samplefactory/src/rtmpappprotocolhandler.cpp</itemPath>
       <itemPath>../../../../sources/applications/samplefactory/src/samplefactory.cpp</itemPath>
       <itemPath>../../../../sources/applications/samplefactory/src/samplefactoryapplication.cpp</itemPath>
     </logicalFolder>
@@ -30,8 +25,8 @@
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>
-    <Elem>../../../sources/applications/samplefactory/include</Elem>
-    <Elem>../../../sources/applications/samplefactory/src</Elem>
+    <Elem>../../../../sources/applications/samplefactory/include</Elem>
+    <Elem>../../../../sources/applications/samplefactory/src</Elem>
   </sourceRootList>
   <projectmakefile>Makefile.nb</projectmakefile>
   <confs>

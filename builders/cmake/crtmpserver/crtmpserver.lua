@@ -222,7 +222,12 @@ configuration=
 				{
 					ip="0.0.0.0",
 					port=8989,
-					protocol="inboundHTTPDBAccess"
+					protocol="httpEchoProtocol"
+				},
+				{
+					ip="0.0.0.0",
+					port=8988,
+					protocol="echoProtocol"
 				}
 			}
 			--validateHandshake=true,

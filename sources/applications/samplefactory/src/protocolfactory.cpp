@@ -20,7 +20,9 @@
 
 #include "protocolfactory.h"
 #include "protocols/baseprotocol.h"
-#include "dbaccessprotocol.h"
+#include "localdefines.h"
+#include "echoprotocol.h"
+#include "httpdownloadprotocol.h"
 using namespace app_samplefactory;
 
 ProtocolFactory::ProtocolFactory() {
@@ -32,27 +34,32 @@ ProtocolFactory::~ProtocolFactory() {
 
 vector<uint64_t> ProtocolFactory::HandledProtocols() {
 	vector<uint64_t> result;
-	ADD_VECTOR_END(result, PT_DBACCESS);
+	ADD_VECTOR_END(result, PT_ECHO_PROTOCOL);
+	ADD_VECTOR_END(result, PT_HTTP_DOWNLOAD_PROTOCOL);
 	return result;
 }
 
 vector<string> ProtocolFactory::HandledProtocolChains() {
 	vector<string> result;
-	ADD_VECTOR_END(result, "outboundHTTPDBAccess");
-	ADD_VECTOR_END(result, "inboundHTTPDBAccess");
+	ADD_VECTOR_END(result, "echoProtocol");
+	ADD_VECTOR_END(result, "httpEchoProtocol");
+	ADD_VECTOR_END(result, "httpDownload");
 	return result;
 }
 
 vector<uint64_t> ProtocolFactory::ResolveProtocolChain(string name) {
 	vector<uint64_t> result;
-	if (name == "outboundHTTPDBAccess") {
+	if (name == "echoProtocol") {
 		ADD_VECTOR_END(result, PT_TCP);
-		ADD_VECTOR_END(result, PT_OUTBOUND_HTTP);
-		ADD_VECTOR_END(result, PT_DBACCESS);
-	} else if (name == "inboundHTTPDBAccess") {
+		ADD_VECTOR_END(result, PT_ECHO_PROTOCOL);
+	} else if (name == "httpEchoProtocol") {
 		ADD_VECTOR_END(result, PT_TCP);
 		ADD_VECTOR_END(result, PT_INBOUND_HTTP);
-		ADD_VECTOR_END(result, PT_DBACCESS);
+		ADD_VECTOR_END(result, PT_ECHO_PROTOCOL);
+	} else if (name == "httpDownload") {
+		ADD_VECTOR_END(result, PT_TCP);
+		ADD_VECTOR_END(result, PT_OUTBOUND_HTTP);
+		ADD_VECTOR_END(result, PT_HTTP_DOWNLOAD_PROTOCOL);
 	} else {
 		ASSERT("This protocol stack should not land here");
 	}
@@ -62,8 +69,11 @@ vector<uint64_t> ProtocolFactory::ResolveProtocolChain(string name) {
 BaseProtocol *ProtocolFactory::SpawnProtocol(uint64_t type, Variant &parameters) {
 	BaseProtocol *pResult = NULL;
 	switch (type) {
-		case PT_DBACCESS:
-			pResult = new DBAccessProtocol();
+		case PT_ECHO_PROTOCOL:
+			pResult = new EchoProtocol();
+			break;
+		case PT_HTTP_DOWNLOAD_PROTOCOL:
+			pResult = new HTTPDownloadProtocol();
 			break;
 		default:
 			FATAL("Spawning protocol %s not yet implemented",

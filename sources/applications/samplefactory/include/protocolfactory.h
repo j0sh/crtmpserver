@@ -24,7 +24,6 @@
 #include "protocols/baseprotocolfactory.h"
 #include "protocols/protocoltypes.h"
 
-#define PT_DBACCESS MAKE_TAG4('O','D','B','A')
 namespace app_samplefactory {
 
 	class DLLEXP ProtocolFactory
