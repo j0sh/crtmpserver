@@ -31,7 +31,7 @@ TARGET_LINK_LIBRARIES(${PROJECT_NAME}
 	${LUA_LIBRARY_PATH}
 	common
 	thelib
-	vm
+#	vm
 	${APPS_LIBS}
 )
 
