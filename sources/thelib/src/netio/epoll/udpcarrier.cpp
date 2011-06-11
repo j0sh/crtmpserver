@@ -33,8 +33,8 @@ UDPCarrier::UDPCarrier(int32_t fd)
 	memset(&_nearAddress, 0, sizeof (sockaddr_in));
 	_nearIp = "";
 	_nearPort = 0;
-	_rx=0;
-	_tx=0;
+	_rx = 0;
+	_tx = 0;
 }
 
 UDPCarrier::~UDPCarrier() {
@@ -146,6 +146,11 @@ UDPCarrier* UDPCarrier::Create(string bindIp, uint16_t bindPort) {
 			close(sock);
 			return NULL;
 		}
+		uint32_t testVal = EHTONL(bindAddress.sin_addr.s_addr);
+		if ((testVal > 0xef000000) && (testVal < 0xefffffff)) {
+			INFO("Subscribe to multicast %s:%hu", STR(bindIp), bindPort);
+			bindAddress.sin_addr.s_addr = inet_addr(bindIp.c_str());
+		}
 		if (bind(sock, (sockaddr *) & bindAddress, sizeof (sockaddr)) != 0) {
 			int error = errno;
 			FATAL("Unable to bind on address: udp://%s:%hu; Error was: %s (%d)",
@@ -153,7 +158,18 @@ UDPCarrier* UDPCarrier::Create(string bindIp, uint16_t bindPort) {
 			close(sock);
 			return NULL;
 		}
+		if ((testVal > 0xef000000) && (testVal < 0xefffffff)) {
+			struct ip_mreq group;
+			group.imr_multiaddr.s_addr = inet_addr(bindIp.c_str());
+			group.imr_interface.s_addr = INADDR_ANY;
+			if (setsockopt(sock, IPPROTO_IP, IP_ADD_MEMBERSHIP, (char *) &group, sizeof (group)) < 0) {
+				FATAL("Adding multicast group error");
+				close(sock);
+				return NULL;
+			}
+		}
 	}
+
 
 	//4. Create the carrier
 	UDPCarrier *pResult = new UDPCarrier(sock);
