@@ -446,15 +446,6 @@
     <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmfp\outboundrtmfpprotocol.cpp">
       <Filter>Source Files\protocols\rtmfp</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\protocols\cli\basecliappprotocolhandler.cpp">
-      <Filter>Source Files\protocols\cli</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\protocols\cli\inboundbasecliprotocol.cpp">
-      <Filter>Source Files\protocols\cli</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\protocols\cli\inboundjsoncliprotocol.cpp">
-      <Filter>Source Files\protocols\cli</Filter>
-    </ClCompile>
     <ClCompile Include="..\dummy.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -619,6 +610,18 @@
     </ClCompile>
     <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\streaming\rtmpstream.cpp">
       <Filter>Source Files\protocols\rtmp\streaming</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\cli\basecliappprotocolhandler.cpp">
+      <Filter>Source Files\protocols\cli</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\cli\http4cliprotocol.cpp">
+      <Filter>Source Files\protocols\cli</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\cli\inboundbasecliprotocol.cpp">
+      <Filter>Source Files\protocols\cli</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\cli\inboundjsoncliprotocol.cpp">
+      <Filter>Source Files\protocols\cli</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -931,15 +934,6 @@
     <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\inboundrtmpsdiscriminatorprotocol.h">
       <Filter>Header Files\protocols\rtmp</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\protocols\cli\basecliappprotocolhandler.h">
-      <Filter>Header Files\protocols\cli</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\protocols\cli\inboundbasecliprotocol.h">
-      <Filter>Header Files\protocols\cli</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\protocols\cli\inboundjsoncliprotocol.h">
-      <Filter>Header Files\protocols\cli</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmfp\basertmfpappprotocolhandler.h">
       <Filter>Header Files\protocols\rtmfp</Filter>
     </ClInclude>
@@ -1113,6 +1107,18 @@
     </ClInclude>
     <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\versionedboxatom.h">
       <Filter>Header Files\mediaformats\mp4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\cli\basecliappprotocolhandler.h">
+      <Filter>Header Files\protocols\cli</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\cli\http4cliprotocol.h">
+      <Filter>Header Files\protocols\cli</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\cli\inboundbasecliprotocol.h">
+      <Filter>Header Files\protocols\cli</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\cli\inboundjsoncliprotocol.h">
+      <Filter>Header Files\protocols\cli</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

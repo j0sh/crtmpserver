@@ -210,28 +210,27 @@ mkdir "$(OutDir)\mediaFolder"
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\sources\applications\samplefactory\src\controller.cpp" />
-    <ClCompile Include="..\..\..\sources\applications\samplefactory\src\dbaccessprotocol.cpp" />
-    <ClCompile Include="..\..\..\sources\applications\samplefactory\src\dbaccessprotocolhandler.cpp" />
+    <ClInclude Include="..\..\..\sources\applications\samplefactory\include\echoappprotocolhandler.h" />
+    <ClInclude Include="..\..\..\sources\applications\samplefactory\include\echoprotocol.h" />
+    <ClInclude Include="..\..\..\sources\applications\samplefactory\include\httpdownloadprotocol.h" />
+    <ClInclude Include="..\..\..\sources\applications\samplefactory\include\localdefines.h" />
+    <ClInclude Include="..\..\..\sources\applications\samplefactory\include\protocolfactory.h" />
+    <ClInclude Include="..\..\..\sources\applications\samplefactory\include\samplefactory.h" />
+    <ClInclude Include="..\..\..\sources\applications\samplefactory\include\samplefactoryapplication.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\sources\applications\samplefactory\src\echoappprotocolhandler.cpp" />
+    <ClCompile Include="..\..\..\sources\applications\samplefactory\src\echoprotocol.cpp" />
+    <ClCompile Include="..\..\..\sources\applications\samplefactory\src\httpdownloadprotocol.cpp" />
     <ClCompile Include="..\..\..\sources\applications\samplefactory\src\protocolfactory.cpp" />
-    <ClCompile Include="..\..\..\sources\applications\samplefactory\src\rtmpappprotocolhandler.cpp" />
     <ClCompile Include="..\..\..\sources\applications\samplefactory\src\samplefactory.cpp" />
     <ClCompile Include="..\..\..\sources\applications\samplefactory\src\samplefactoryapplication.cpp" />
     <ClCompile Include="..\dummy.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug static|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release static|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\..\sources\applications\samplefactory\include\controller.h" />
-    <ClInclude Include="..\..\..\sources\applications\samplefactory\include\dbaccessprotocol.h" />
-    <ClInclude Include="..\..\..\sources\applications\samplefactory\include\dbaccessprotocolhandler.h" />
-    <ClInclude Include="..\..\..\sources\applications\samplefactory\include\protocolfactory.h" />
-    <ClInclude Include="..\..\..\sources\applications\samplefactory\include\rtmpappprotocolhandler.h" />
-    <ClInclude Include="..\..\..\sources\applications\samplefactory\include\samplefactory.h" />
-    <ClInclude Include="..\..\..\sources\applications\samplefactory\include\samplefactoryapplication.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

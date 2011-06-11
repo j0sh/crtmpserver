@@ -239,6 +239,7 @@
     <ClCompile Include="..\..\..\sources\thelib\src\protocols\baseprotocol.cpp" />
     <ClCompile Include="..\..\..\sources\thelib\src\protocols\baseprotocolfactory.cpp" />
     <ClCompile Include="..\..\..\sources\thelib\src\protocols\cli\basecliappprotocolhandler.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\cli\http4cliprotocol.cpp" />
     <ClCompile Include="..\..\..\sources\thelib\src\protocols\cli\inboundbasecliprotocol.cpp" />
     <ClCompile Include="..\..\..\sources\thelib\src\protocols\cli\inboundjsoncliprotocol.cpp" />
     <ClCompile Include="..\..\..\sources\thelib\src\protocols\defaultprotocolfactory.cpp" />
@@ -400,6 +401,7 @@
     <ClInclude Include="..\..\..\sources\thelib\include\protocols\baseprotocol.h" />
     <ClInclude Include="..\..\..\sources\thelib\include\protocols\baseprotocolfactory.h" />
     <ClInclude Include="..\..\..\sources\thelib\include\protocols\cli\basecliappprotocolhandler.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\cli\http4cliprotocol.h" />
     <ClInclude Include="..\..\..\sources\thelib\include\protocols\cli\inboundbasecliprotocol.h" />
     <ClInclude Include="..\..\..\sources\thelib\include\protocols\cli\inboundjsoncliprotocol.h" />
     <ClInclude Include="..\..\..\sources\thelib\include\protocols\defaultprotocolfactory.h" />

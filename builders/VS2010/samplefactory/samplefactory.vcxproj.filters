@@ -11,19 +11,39 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\sources\applications\samplefactory\src\controller.cpp">
+    <ClInclude Include="..\..\..\sources\applications\samplefactory\include\echoappprotocolhandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\applications\samplefactory\include\echoprotocol.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\applications\samplefactory\include\httpdownloadprotocol.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\applications\samplefactory\include\localdefines.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\applications\samplefactory\include\protocolfactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\applications\samplefactory\include\samplefactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\applications\samplefactory\include\samplefactoryapplication.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\sources\applications\samplefactory\src\echoappprotocolhandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\sources\applications\samplefactory\src\dbaccessprotocol.cpp">
+    <ClCompile Include="..\..\..\sources\applications\samplefactory\src\echoprotocol.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\sources\applications\samplefactory\src\dbaccessprotocolhandler.cpp">
+    <ClCompile Include="..\..\..\sources\applications\samplefactory\src\httpdownloadprotocol.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\sources\applications\samplefactory\src\protocolfactory.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\applications\samplefactory\src\rtmpappprotocolhandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\sources\applications\samplefactory\src\samplefactory.cpp">
@@ -35,28 +55,5 @@
     <ClCompile Include="..\dummy.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\..\sources\applications\samplefactory\include\controller.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\applications\samplefactory\include\dbaccessprotocol.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\applications\samplefactory\include\dbaccessprotocolhandler.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\applications\samplefactory\include\protocolfactory.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\applications\samplefactory\include\rtmpappprotocolhandler.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\applications\samplefactory\include\samplefactory.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\applications\samplefactory\include\samplefactoryapplication.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>
