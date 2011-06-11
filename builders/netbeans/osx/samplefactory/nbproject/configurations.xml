@@ -4,8 +4,10 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
-      <itemPath>../../../../../vbrick/sources/applications/samplefactory/include/echoprotocol.h</itemPath>
-      <itemPath>../../../../../vbrick/sources/applications/samplefactory/include/localdefines.h</itemPath>
+      <itemPath>../../../../sources/applications/samplefactory/include/echoappprotocolhandler.h</itemPath>
+      <itemPath>../../../../sources/applications/samplefactory/include/echoprotocol.h</itemPath>
+      <itemPath>../../../../sources/applications/samplefactory/include/httpdownloadprotocol.h</itemPath>
+      <itemPath>../../../../sources/applications/samplefactory/include/localdefines.h</itemPath>
       <itemPath>../../../../sources/applications/samplefactory/include/protocolfactory.h</itemPath>
       <itemPath>../../../../sources/applications/samplefactory/include/samplefactory.h</itemPath>
       <itemPath>../../../../sources/applications/samplefactory/include/samplefactoryapplication.h</itemPath>
@@ -13,7 +15,9 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
-      <itemPath>../../../../../vbrick/sources/applications/samplefactory/src/echoprotocol.cpp</itemPath>
+      <itemPath>../../../../sources/applications/samplefactory/src/echoappprotocolhandler.cpp</itemPath>
+      <itemPath>../../../../sources/applications/samplefactory/src/echoprotocol.cpp</itemPath>
+      <itemPath>../../../../sources/applications/samplefactory/src/httpdownloadprotocol.cpp</itemPath>
       <itemPath>../../../../sources/applications/samplefactory/src/protocolfactory.cpp</itemPath>
       <itemPath>../../../../sources/applications/samplefactory/src/samplefactory.cpp</itemPath>
       <itemPath>../../../../sources/applications/samplefactory/src/samplefactoryapplication.cpp</itemPath>

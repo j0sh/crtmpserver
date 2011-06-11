@@ -36,8 +36,10 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 OBJECTFILES= \
 	${OBJECTDIR}/_ext/1702679040/samplefactory.o \
 	${OBJECTDIR}/_ext/1702679040/samplefactoryapplication.o \
-	${OBJECTDIR}/_ext/686350581/echoprotocol.o \
-	${OBJECTDIR}/_ext/1702679040/protocolfactory.o
+	${OBJECTDIR}/_ext/1702679040/echoappprotocolhandler.o \
+	${OBJECTDIR}/_ext/1702679040/protocolfactory.o \
+	${OBJECTDIR}/_ext/1702679040/echoprotocol.o \
+	${OBJECTDIR}/_ext/1702679040/httpdownloadprotocol.o
 
 
 # C Compiler Flags
@@ -78,15 +80,25 @@ ${OBJECTDIR}/_ext/1702679040/samplefactoryapplication.o: ../../../../sources/app
 	${RM} $@.d
 	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTMP -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/samplefactory/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1702679040/samplefactoryapplication.o ../../../../sources/applications/samplefactory/src/samplefactoryapplication.cpp
 
-${OBJECTDIR}/_ext/686350581/echoprotocol.o: ../../../../../vbrick/sources/applications/samplefactory/src/echoprotocol.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/686350581
+${OBJECTDIR}/_ext/1702679040/echoappprotocolhandler.o: ../../../../sources/applications/samplefactory/src/echoappprotocolhandler.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1702679040
 	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTMP -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/samplefactory/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/686350581/echoprotocol.o ../../../../../vbrick/sources/applications/samplefactory/src/echoprotocol.cpp
+	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTMP -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/samplefactory/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1702679040/echoappprotocolhandler.o ../../../../sources/applications/samplefactory/src/echoappprotocolhandler.cpp
 
 ${OBJECTDIR}/_ext/1702679040/protocolfactory.o: ../../../../sources/applications/samplefactory/src/protocolfactory.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1702679040
 	${RM} $@.d
 	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTMP -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/samplefactory/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1702679040/protocolfactory.o ../../../../sources/applications/samplefactory/src/protocolfactory.cpp
+
+${OBJECTDIR}/_ext/1702679040/echoprotocol.o: ../../../../sources/applications/samplefactory/src/echoprotocol.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1702679040
+	${RM} $@.d
+	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTMP -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/samplefactory/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1702679040/echoprotocol.o ../../../../sources/applications/samplefactory/src/echoprotocol.cpp
+
+${OBJECTDIR}/_ext/1702679040/httpdownloadprotocol.o: ../../../../sources/applications/samplefactory/src/httpdownloadprotocol.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1702679040
+	${RM} $@.d
+	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTMP -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/samplefactory/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1702679040/httpdownloadprotocol.o ../../../../sources/applications/samplefactory/src/httpdownloadprotocol.cpp
 
 # Subprojects
 .build-subprojects:
