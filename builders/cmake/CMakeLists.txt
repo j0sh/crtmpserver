@@ -105,10 +105,10 @@ ENDIF($ENV{COMPILE_STATIC} MATCHES "1")
 
 ADD_DEFINITIONS(-DHAS_LUA)
 
-INCLUDE(cmake_find_modules/Find_v8.cmake)
-IF(V8_FOUND)
-    ADD_DEFINITIONS(-DHAS_V8)
-ENDIF(V8_FOUND)
+#INCLUDE(cmake_find_modules/Find_v8.cmake)
+#IF(V8_FOUND)
+#    ADD_DEFINITIONS(-DHAS_V8)
+#ENDIF(V8_FOUND)
 
 #memory pool
 #ADD_DEFINITIONS(-DUSE_MEM_POOL)
@@ -185,10 +185,10 @@ ENDIF(EXISTS ${CRTMPSERVER_SOURCES_ROOT}/common/include/defines.h)
 #ADD_DEFINITIONS(-DHAS_SAFE_LOGGER)
 ADD_SUBDIRECTORY(common common)
 ADD_SUBDIRECTORY(thelib thelib)
-ADD_SUBDIRECTORY(vm vm)
+#ADD_SUBDIRECTORY(vm vm)
 ADD_SUBDIRECTORY(applications applications)
 ADD_SUBDIRECTORY(crtmpserver crtmpserver)
-ADD_SUBDIRECTORY(vmtests vmtests)
+#ADD_SUBDIRECTORY(vmtests vmtests)
 ADD_SUBDIRECTORY(tests)
 #ADD_SUBDIRECTORY(androidapplestreaming androidapplestreaming)
 
