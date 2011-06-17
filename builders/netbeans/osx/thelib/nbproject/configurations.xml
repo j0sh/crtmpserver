@@ -144,7 +144,9 @@
         </logicalFolder>
         <logicalFolder name="mms" displayName="mms" projectFiles="true">
           <itemPath>../../../../sources/thelib/include/protocols/mms/basemmsappprotocolhandler.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/protocols/mms/destination.h</itemPath>
           <itemPath>../../../../sources/thelib/include/protocols/mms/mmsprotocol.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/protocols/mms/source.h</itemPath>
         </logicalFolder>
         <logicalFolder name="rtmfp" displayName="rtmfp" projectFiles="true">
           <itemPath>../../../../sources/thelib/include/protocols/rtmfp/basertmfpappprotocolhandler.h</itemPath>
@@ -403,7 +405,9 @@
         </logicalFolder>
         <logicalFolder name="mms" displayName="mms" projectFiles="true">
           <itemPath>../../../../sources/thelib/src/protocols/mms/basemmsappprotocolhandler.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/protocols/mms/destination.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/protocols/mms/mmsprotocol.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/protocols/mms/source.cpp</itemPath>
         </logicalFolder>
         <logicalFolder name="rtmfp" displayName="rtmfp" projectFiles="true">
           <itemPath>../../../../sources/thelib/src/protocols/rtmfp/basertmfpappprotocolhandler.cpp</itemPath>
@@ -548,6 +552,7 @@
             <pElem>/opt/local/include</pElem>
             <pElem>../../../../sources/common/include</pElem>
             <pElem>../../../../sources/thelib/include</pElem>
+            <pElem>../../../../../ffmpeg_bin/include</pElem>
           </incDir>
           <preprocessorList>
             <Elem>OSX</Elem>

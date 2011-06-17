@@ -19,6 +19,11 @@
 
 #ifdef HAS_PROTOCOL_MMS
 #include "protocols/mms/basemmsappprotocolhandler.h"
+#include "protocols/protocolfactorymanager.h"
+#include "netio/netio.h"
+#include "application/baseclientapplication.h"
+#include "application/clientapplicationmanager.h"
+#include "protocols/mms/mmsprotocol.h"
 
 BaseMMSAppProtocolHandler::BaseMMSAppProtocolHandler(Variant &configuration)
 : BaseAppProtocolHandler(configuration) {
@@ -29,43 +34,65 @@ BaseMMSAppProtocolHandler::~BaseMMSAppProtocolHandler() {
 }
 
 void BaseMMSAppProtocolHandler::RegisterProtocol(BaseProtocol *pProtocol) {
-	NYI;
+	if (!((MMSProtocol *) pProtocol)->Start()) {
+		FATAL("Unable to start MMS protocol");
+		pProtocol->EnqueueForDelete();
+	}
 }
 
 void BaseMMSAppProtocolHandler::UnRegisterProtocol(BaseProtocol *pProtocol) {
-	NYI;
+
 }
 
 bool BaseMMSAppProtocolHandler::PullExternalStream(URI uri, Variant streamConfig) {
-//	vector<uint64_t> chain = ProtocolFactoryManager::ResolveProtocolChain(
-//			CONF_PROTOCOL_OUTBOUND_MMS);
-//	if (chain.size() == 0) {
-//		FATAL("Unable to resolve protocol chain");
-//		return false;
-//	}
-//
-//	//2. Save the app id inside the custom parameters and mark this connection
-//	//as client connection
-//	Variant customParameters = streamConfig;
-//	customParameters["customParameters"]["externalStreamConfig"] = streamConfig;
-//	customParameters["isClient"] = (bool)true;
-//	customParameters["appId"] = GetApplication()->GetId();
-//	customParameters["uri"] = uri.ToVariant();
-//
-//	//3. Connect
-//	if (!TCPConnector<BaseRTSPAppProtocolHandler>::Connect(
-//			uri.ip,
-//			uri.port,
-//			chain, customParameters)) {
-//		FATAL("Unable to connect to %s:%hu",
-//				STR(customParameters["uri"]["ip"]),
-//				(uint16_t) customParameters["uri"]["port"]);
-//		return false;
-//	}
-//
-//	//4. Done
-//	return true;
-	return false;
+	//1. Get the chain
+	vector<uint64_t> chain = ProtocolFactoryManager::ResolveProtocolChain(
+			CONF_PROTOCOL_OUTBOUND_MMS);
+	if (chain.size() == 0) {
+		FATAL("Unable to resolve protocol chain");
+		return false;
+	}
+
+	//2. Save the external stream parameters
+	Variant customParameters;
+	customParameters["customParameters"]["externalStreamConfig"] = streamConfig;
+	customParameters["appId"] = GetApplication()->GetId();
+
+	//3. Connect
+	if (!TCPConnector<BaseMMSAppProtocolHandler>::Connect(uri.ip, uri.port,
+			chain, customParameters)) {
+		FATAL("Unable to connect to %s:%hu",
+				STR(customParameters["uri"]["ip"]),
+				(uint16_t) customParameters["uri"]["port"]);
+		return false;
+	}
+
+	//4. Done
+	return true;
+}
+
+bool BaseMMSAppProtocolHandler::SignalProtocolCreated(BaseProtocol *pProtocol,
+		Variant &parameters) {
+	//1. Sanitize
+	if (parameters["appId"] != V_UINT32) {
+		FATAL("Invalid custom parameters:\n%s", STR(parameters.ToString()));
+		return false;
+	}
+
+	//2. Get the application
+	BaseClientApplication *pApplication = ClientApplicationManager::FindAppById(
+			parameters["appId"]);
+
+	if (pProtocol == NULL) {
+		FATAL("Connection failed:\n%s", STR(parameters.ToString()));
+		return pApplication->OutboundConnectionFailed(parameters);
+	}
+
+	//3. Set it up inside the protocol
+	pProtocol->GetNearEndpoint()->SetApplication(pApplication);
+
+	//4. Done
+	return true;
 }
 
 #endif /* HAS_PROTOCOL_MMS */

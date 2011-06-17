@@ -28,6 +28,7 @@
 #include "rtspappprotocolhandler.h"
 #include "netio/netio.h"
 #include "application/clientapplicationmanager.h"
+#include "mmsappprotocolhandler.h"
 using namespace app_flvplayback;
 
 FLVPlaybackApplication::FLVPlaybackApplication(Variant &configuration)
@@ -48,6 +49,9 @@ FLVPlaybackApplication::FLVPlaybackApplication(Variant &configuration)
 	_pRTPHandler = NULL;
 	_pRTSPHandler = NULL;
 #endif /* HAS_PROTOCOL_RTP */
+#ifdef HAS_PROTOCOL_MMS
+	_pMMSHandler = NULL;
+#endif /* HAS_PROTOCOL_MMS */	
 }
 
 FLVPlaybackApplication::~FLVPlaybackApplication() {
@@ -95,6 +99,13 @@ FLVPlaybackApplication::~FLVPlaybackApplication() {
 		_pRTSPHandler = NULL;
 	}
 #endif /* HAS_PROTOCOL_RTP */
+#ifdef HAS_PROTOCOL_MMS
+	UnRegisterAppProtocolHandler(PT_OUTBOUND_MMS);
+	if (_pMMSHandler != NULL) {
+		delete _pMMSHandler;
+		_pMMSHandler = NULL;
+	}
+#endif /* HAS_PROTOCOL_MMS */	
 }
 
 bool FLVPlaybackApplication::Initialize() {
@@ -126,6 +137,10 @@ bool FLVPlaybackApplication::Initialize() {
 	_pRTSPHandler = new RTSPAppProtocolHandler(_configuration);
 	RegisterAppProtocolHandler(PT_RTSP, _pRTSPHandler);
 #endif /* HAS_PROTOCOL_RTP */
+#ifdef HAS_PROTOCOL_MMS
+	_pMMSHandler = new MMSAppProtocolHandler(_configuration);
+	RegisterAppProtocolHandler(PT_OUTBOUND_MMS, _pMMSHandler);
+#endif /* HAS_PROTOCOL_MMS */	
 
 	return PullExternalStreams();
 }

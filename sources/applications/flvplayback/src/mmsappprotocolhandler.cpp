@@ -18,25 +18,15 @@
  */
 
 #ifdef HAS_PROTOCOL_MMS
-#ifndef _BASEMMSAPPPROTOCOLHANDLER_H
-#define	_BASEMMSAPPPROTOCOLHANDLER_H
+#include "mmsappprotocolhandler.h"
+using namespace app_flvplayback;
 
-#include "application/baseappprotocolhandler.h"
+MMSAppProtocolHandler::MMSAppProtocolHandler(Variant &configuration)
+: BaseMMSAppProtocolHandler(configuration) {
 
-class BaseMMSAppProtocolHandler
-: public BaseAppProtocolHandler {
-public:
-	BaseMMSAppProtocolHandler(Variant &configuration);
-	virtual ~BaseMMSAppProtocolHandler();
+}
 
-	virtual void RegisterProtocol(BaseProtocol *pProtocol);
-	virtual void UnRegisterProtocol(BaseProtocol *pProtocol);
-	
-	virtual bool PullExternalStream(URI uri, Variant streamConfig);
-	static bool SignalProtocolCreated(BaseProtocol *pProtocol,
-			Variant &parameters);
-};
+MMSAppProtocolHandler::~MMSAppProtocolHandler() {
+}
 
-
-#endif	/* _BASEMMSAPPPROTOCOLHANDLER_H */
 #endif /* HAS_PROTOCOL_MMS */

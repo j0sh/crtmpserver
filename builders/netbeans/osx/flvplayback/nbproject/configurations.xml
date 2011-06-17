@@ -7,6 +7,7 @@
       <itemPath>../../../../sources/applications/flvplayback/include/flvplayback.h</itemPath>
       <itemPath>../../../../sources/applications/flvplayback/include/flvplaybackapplication.h</itemPath>
       <itemPath>../../../../sources/applications/flvplayback/include/liveflvappprotocolhandler.h</itemPath>
+      <itemPath>../../../../sources/applications/flvplayback/include/mmsappprotocolhandler.h</itemPath>
       <itemPath>../../../../sources/applications/flvplayback/include/rtmfpappprotocolhandler.h</itemPath>
       <itemPath>../../../../sources/applications/flvplayback/include/rtmpappprotocolhandler.h</itemPath>
       <itemPath>../../../../sources/applications/flvplayback/include/rtpappprotocolhandler.h</itemPath>
@@ -19,6 +20,7 @@
       <itemPath>../../../../sources/applications/flvplayback/src/flvplayback.cpp</itemPath>
       <itemPath>../../../../sources/applications/flvplayback/src/flvplaybackapplication.cpp</itemPath>
       <itemPath>../../../../sources/applications/flvplayback/src/liveflvappprotocolhandler.cpp</itemPath>
+      <itemPath>../../../../sources/applications/flvplayback/src/mmsappprotocolhandler.cpp</itemPath>
       <itemPath>../../../../sources/applications/flvplayback/src/rtmfpappprotocolhandler.cpp</itemPath>
       <itemPath>../../../../sources/applications/flvplayback/src/rtmpappprotocolhandler.cpp</itemPath>
       <itemPath>../../../../sources/applications/flvplayback/src/rtpappprotocolhandler.cpp</itemPath>
@@ -32,8 +34,8 @@
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>
-    <Elem>../../../sources/applications/flvplayback/include</Elem>
-    <Elem>../../../sources/applications/flvplayback/src</Elem>
+    <Elem>../../../../sources/applications/flvplayback/include</Elem>
+    <Elem>../../../../sources/applications/flvplayback/src</Elem>
   </sourceRootList>
   <projectmakefile>Makefile.nb</projectmakefile>
   <confs>

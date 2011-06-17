@@ -14,8 +14,8 @@
                 <make-dep-project>../common</make-dep-project>
             </make-dep-projects>
             <sourceRootList>
-                <sourceRootElem>../../../sources/applications/flvplayback/include</sourceRootElem>
-                <sourceRootElem>../../../sources/applications/flvplayback/src</sourceRootElem>
+                <sourceRootElem>../../../../sources/applications/flvplayback/include</sourceRootElem>
+                <sourceRootElem>../../../../sources/applications/flvplayback/src</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>

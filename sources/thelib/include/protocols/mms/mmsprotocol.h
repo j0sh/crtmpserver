@@ -22,18 +22,51 @@
 #define	_MMSPROTOCOL_H
 
 #include "protocols/baseprotocol.h"
+#include <iconv.h>
+
+class Source;
+class Destination;
 
 class MMSProtocol
 : public BaseProtocol {
+private:
+	//	IOBuffer command_buffer;
+	//	char guid[37];
+	//	string str;
+	IOBuffer _outputBuffer;
+	IOBuffer _msgBuffer;
+	IOBuffer _asfHeader;
+	File _file;
+	iconv_t _ic;
+	uint16_t _seq;
+	uint32_t _openFileId;
+	Source *_pSource;
+	Destination *_pDestination;
 public:
 	MMSProtocol();
 	virtual ~MMSProtocol();
-	
+
 	virtual bool Initialize(Variant &parameters);
+	virtual IOBuffer * GetOutputBuffer();
 	virtual bool AllowFarProtocol(uint64_t type);
 	virtual bool AllowNearProtocol(uint64_t type);
 	virtual bool SignalInputData(int32_t recvAmount);
 	virtual bool SignalInputData(IOBuffer &buffer);
+
+	bool Start();
+private:
+	bool ProcessMessage(IOBuffer &buffer);
+	bool ProcessData(IOBuffer &buffer);
+	bool SendLinkViewerToMacConnect();
+	bool SendLinkViewerToMacConnectFunnel();
+	bool SendLinkViewerToMacOpenFile();
+	bool SendLinkViewerToMacReadBlock();
+	bool SendLinkViewerToMacStreamSwitch();
+	bool SendLinkViewerToMacStartPlaying();
+	bool SendLinkViewerToMacPong();
+	bool SendMessage(uint32_t MID);
+	bool EncodeUTF16(IOBuffer &dest, string &src);
+	bool ParseASFHeader();
 };
 
 #endif	/* _MMSPROTOCOL_H */

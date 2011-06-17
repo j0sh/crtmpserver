@@ -42,6 +42,7 @@
 #include "protocols/rtmfp/inboundrtmfpprotocol.h"
 #include "protocols/rtmfp/outboundrtmfpprotocol.h"
 #include "protocols/cli/http4cliprotocol.h"
+#include "protocols/mms/mmsprotocol.h"
 
 DefaultProtocolFactory::DefaultProtocolFactory()
 : BaseProtocolFactory() {
@@ -103,6 +104,9 @@ vector<uint64_t> DefaultProtocolFactory::HandledProtocols() {
 	ADD_VECTOR_END(result, PT_INBOUND_JSONCLI);
 	ADD_VECTOR_END(result, PT_HTTP_4_CLI);
 #endif /* HAS_PROTOCOL_CLI */
+#ifdef HAS_PROTOCOL_MMS
+	ADD_VECTOR_END(result, PT_OUTBOUND_MMS);
+#endif /* HAS_PROTOCOL_MMS */
 
 	return result;
 }
@@ -161,6 +165,9 @@ vector<string> DefaultProtocolFactory::HandledProtocolChains() {
 	ADD_VECTOR_END(result, CONF_PROTOCOL_INBOUND_HTTP_CLI_JSON);
 #endif /* HAS_PROTOCOL_HTTP */
 #endif /* HAS_PROTOCOL_CLI */
+#ifdef HAS_PROTOCOL_MMS
+	ADD_VECTOR_END(result, CONF_PROTOCOL_OUTBOUND_MMS);
+#endif /* HAS_PROTOCOL_MMS */
 	return result;
 }
 
@@ -296,6 +303,12 @@ vector<uint64_t> DefaultProtocolFactory::ResolveProtocolChain(string name) {
 	}
 #endif /* HAS_PROTOCOL_HTTP */
 #endif /* HAS_PROTOCOL_CLI */
+#ifdef HAS_PROTOCOL_MMS
+	else if (name == CONF_PROTOCOL_OUTBOUND_MMS) {
+		ADD_VECTOR_END(result, PT_TCP);
+		ADD_VECTOR_END(result, PT_OUTBOUND_MMS);
+	}
+#endif /* HAS_PROTOCOL_MMS */
 	else {
 		FATAL("Invalid protocol chain: %s.", STR(name));
 	}
@@ -391,9 +404,14 @@ BaseProtocol *DefaultProtocolFactory::SpawnProtocol(uint64_t type, Variant &para
 			pResult = new InboundJSONCLIProtocol();
 			break;
 		case PT_HTTP_4_CLI:
-			pResult=new HTTP4CLIProtocol();
+			pResult = new HTTP4CLIProtocol();
 			break;
 #endif /* HAS_PROTOCOL_CLI */
+#ifdef HAS_PROTOCOL_MMS
+		case PT_OUTBOUND_MMS:
+			pResult = new MMSProtocol();
+			break;
+#endif /* HAS_PROTOCOL_MMS */
 		default:
 			FATAL("Spawning protocol %s not yet implemented",
 					STR(tagToString(type)));

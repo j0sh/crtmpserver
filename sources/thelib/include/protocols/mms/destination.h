@@ -18,25 +18,39 @@
  */
 
 #ifdef HAS_PROTOCOL_MMS
-#ifndef _BASEMMSAPPPROTOCOLHANDLER_H
-#define	_BASEMMSAPPPROTOCOLHANDLER_H
+#ifndef _DESTINATION_H
+#define	_DESTINATION_H
+extern "C" {
+#include "libavcodec/avcodec.h"
+#include "libavformat/avformat.h"
+#include "libavutil/avutil.h"
+}
+#include "common.h"
 
-#include "application/baseappprotocolhandler.h"
-
-class BaseMMSAppProtocolHandler
-: public BaseAppProtocolHandler {
+class Destination {
+private:
+	AVCodecContext *_pContext;
+	uint8_t *_pOutbuf;
+	int _outbufSize;
+	string _file;
+	FILE *pFile;
+	int16_t *_pInPCM;
+	uint32_t _inPCMSize;
+	string _codecName;
+	int _sampleRate;
+	IOBuffer _data;
+	IOBuffer _encoded;
 public:
-	BaseMMSAppProtocolHandler(Variant &configuration);
-	virtual ~BaseMMSAppProtocolHandler();
 
-	virtual void RegisterProtocol(BaseProtocol *pProtocol);
-	virtual void UnRegisterProtocol(BaseProtocol *pProtocol);
-	
-	virtual bool PullExternalStream(URI uri, Variant streamConfig);
-	static bool SignalProtocolCreated(BaseProtocol *pProtocol,
-			Variant &parameters);
+	Destination(string file, string codecName, int sampleRate);
+	virtual ~Destination();
+
+	bool Init();
+	bool EncodePCM(int16_t *pPCM, uint32_t size);
+private:
+	bool EnqueueForTransfer(uint8_t *pData, uint32_t length);
+	static int _writePacket(void* cookie, uint8_t* buffer, int bufferSize);
 };
 
-
-#endif	/* _BASEMMSAPPPROTOCOLHANDLER_H */
+#endif	/* _DESTINATION_H */
 #endif /* HAS_PROTOCOL_MMS */

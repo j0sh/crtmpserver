@@ -36,6 +36,7 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 OBJECTFILES= \
 	${OBJECTDIR}/_ext/482292139/rtmfpappprotocolhandler.o \
 	${OBJECTDIR}/_ext/482292139/flvplaybackapplication.o \
+	${OBJECTDIR}/_ext/482292139/mmsappprotocolhandler.o \
 	${OBJECTDIR}/_ext/482292139/flvplayback.o \
 	${OBJECTDIR}/_ext/482292139/liveflvappprotocolhandler.o \
 	${OBJECTDIR}/_ext/482292139/rtmpappprotocolhandler.o \
@@ -81,6 +82,11 @@ ${OBJECTDIR}/_ext/482292139/flvplaybackapplication.o: ../../../../sources/applic
 	${MKDIR} -p ${OBJECTDIR}/_ext/482292139
 	${RM} $@.d
 	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_TS -DHAS_LUA -DHAS_PROTOCOL_RTMFP -DHAS_PROTOCOL_LIVEFLV -DHAS_PROTOCOL_MMS -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/flvplayback/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/482292139/flvplaybackapplication.o ../../../../sources/applications/flvplayback/src/flvplaybackapplication.cpp
+
+${OBJECTDIR}/_ext/482292139/mmsappprotocolhandler.o: ../../../../sources/applications/flvplayback/src/mmsappprotocolhandler.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/482292139
+	${RM} $@.d
+	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_TS -DHAS_LUA -DHAS_PROTOCOL_RTMFP -DHAS_PROTOCOL_LIVEFLV -DHAS_PROTOCOL_MMS -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/flvplayback/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/482292139/mmsappprotocolhandler.o ../../../../sources/applications/flvplayback/src/mmsappprotocolhandler.cpp
 
 ${OBJECTDIR}/_ext/482292139/flvplayback.o: ../../../../sources/applications/flvplayback/src/flvplayback.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/482292139

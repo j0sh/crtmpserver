@@ -40,6 +40,9 @@ namespace app_flvplayback {
 	class RTPAppProtocolHandler;
 	class RTSPAppProtocolHandler;
 #endif /* HAS_PROTOCOL_RTP */
+#ifdef HAS_PROTOCOL_MMS
+	class MMSAppProtocolHandler;
+#endif /* HAS_PROTOCOL_MMS */	
 
 	class FLVPlaybackApplication
 	: public BaseClientApplication {
@@ -60,6 +63,9 @@ namespace app_flvplayback {
 		RTPAppProtocolHandler *_pRTPHandler;
 		RTSPAppProtocolHandler *_pRTSPHandler;
 #endif /* HAS_PROTOCOL_RTP */
+#ifdef HAS_PROTOCOL_MMS
+		MMSAppProtocolHandler *_pMMSHandler;
+#endif /* HAS_PROTOCOL_MMS */	
 	public:
 		FLVPlaybackApplication(Variant &configuration);
 		virtual ~FLVPlaybackApplication();
