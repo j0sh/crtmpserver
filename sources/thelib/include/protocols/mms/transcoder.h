@@ -30,33 +30,51 @@ extern "C" {
 
 #define MMS_DATA_SIZE 1024*8
 
-class Source {
+class Transcoder {
 private:
-	uint8_t *_pRawData;
-	int16_t *_pPCMData;
-	uint32_t _pcmSize;
-	AVIOContext *_pIO;
-	AVInputFormat *_pFmt;
-	AVFormatContext *_pFormatCtx;
-	int _audioStream;
-	AVCodecContext *_pCodecCtx;
-	AVCodec *_pCodec;
-	AVPacket _packet;
-	IOBuffer _asfHeaders;
-	IOBuffer _inputBuffer;
-public:
-	Source(IOBuffer &asfHeaders);
-	virtual ~Source();
 
-	bool Init();
-	uint32_t GetPCMSize();
-	int16_t *GetPCMData();
-	int GetRate();
-	bool ReadPCM();
-	bool PushData(uint8_t *pData, uint32_t length);
+	struct Input {
+		uint8_t *_pRawData;
+		int16_t *_pPCMData;
+		uint32_t _pcmSize;
+		AVIOContext *_pIO;
+		AVInputFormat *_pFmt;
+		AVFormatContext *_pFormatCtx;
+		int _audioStream;
+		AVCodecContext *_pCodecCtx;
+		AVCodec *_pCodec;
+		AVPacket _packet;
+		IOBuffer _inputBuffer;
+		Input();
+		virtual ~Input();
+		bool Init();
+		bool ReadPCM();
+		static int _readPacket(void* cookie, uint8_t* buffer, int bufferSize);
+	} _input;
+
+	struct Output {
+		AVCodecContext *_pContext;
+		uint8_t *_pOutbuf;
+		int _outbufSize;
+		int16_t *_pInPCM;
+		uint32_t _inPCMSize;
+		string _codecName;
+		IOBuffer _data;
+		IOBuffer _encoded;
+		Output();
+		virtual ~Output();
+		bool Init(string codecName, int _sampleRate, int channelsCount);
+		bool EncodePCM(int16_t *pPCM, uint32_t size, IOBuffer & output);
+	};
+	Output *_pMP3;
+	Output *_pAAC;
+public:
+	Transcoder(IOBuffer &asfHeaders);
+	virtual ~Transcoder();
+	bool Init(bool hasAAC, bool hasMP3);
+	bool PushData(uint8_t *pData, uint32_t length, IOBuffer &aac, IOBuffer &mp3);
 private:
-	static int _readPacket(void* cookie, uint8_t* buffer, int bufferSize);
-	static int _writePacket(void *opaque, uint8_t *buf, int buf_size);
+	//bool ReadPCM(IOBuffer &aac, IOBuffer &mp3);
 };
 
 #endif	/* _SOURCE_H */

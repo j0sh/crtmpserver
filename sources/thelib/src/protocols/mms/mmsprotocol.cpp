@@ -19,28 +19,26 @@
 
 #ifdef HAS_PROTOCOL_MMS
 #include "protocols/mms/mmsprotocol.h"
-#include "protocols/mms/source.h"
+#include "protocols/mms/transcoder.h"
 #include "protocols/mms/destination.h"
 
 MMSProtocol::MMSProtocol()
 : BaseProtocol(PT_OUTBOUND_MMS) {
-	_file.Initialize("/tmp/test.asf", FILE_OPEN_MODE_TRUNCATE);
 	_seq = 0;
 	_openFileId = 0;
-	_pSource = NULL;
-	_pDestination = NULL;
+	_pTranscoder = NULL;
+	_paddingSize = 0;
+	_asfFile.Initialize("/tmp/test.asf", FILE_OPEN_MODE_TRUNCATE);
+	_aacFile.Initialize("/tmp/test.aac", FILE_OPEN_MODE_TRUNCATE);
+	_mp3File.Initialize("/tmp/test.mp3", FILE_OPEN_MODE_TRUNCATE);
 }
 
 MMSProtocol::~MMSProtocol() {
 	if (_ic != (iconv_t) - 1)
 		iconv_close(_ic);
-	if (_pSource != NULL) {
-		delete _pSource;
-		_pSource = NULL;
-	}
-	if (_pDestination != NULL) {
-		delete _pDestination;
-		_pDestination = NULL;
+	if (_pTranscoder != NULL) {
+		delete _pTranscoder;
+		_pTranscoder = NULL;
 	}
 }
 
@@ -158,7 +156,7 @@ bool MMSProtocol::ProcessMessage(IOBuffer &buffer) {
 		case 0x00040011:
 		case 0x00040005:
 		{
-			FINEST("Expecting data now...");
+			//FINEST("Expecting data now...");
 			return true;
 		}
 		case 0x00040021:
@@ -183,7 +181,7 @@ bool MMSProtocol::ProcessData(IOBuffer &buffer) {
 		//header
 		//2. Read the length
 		uint32_t length = *((uint16_t *) (GETIBPOINTER(buffer) + 6));
-		FINEST("header length: %08x", length);
+		//FINEST("header length: %08x", length);
 
 		//3. Do we have enough data?
 		if (GETAVAILABLEBYTESCOUNT(buffer) < length) {
@@ -192,54 +190,62 @@ bool MMSProtocol::ProcessData(IOBuffer &buffer) {
 		}
 
 		//4. Save the data
-		_asfHeader.ReadFromBuffer(GETIBPOINTER(buffer) + 8,
-				GETAVAILABLEBYTESCOUNT(buffer) - 8);
+		_asfData.ReadFromBuffer(GETIBPOINTER(buffer) + 8, length - 8);
 
 		uint8_t chunkType = GETIBPOINTER(buffer)[5];
 		if (chunkType == 0x0c) {
-			FINEST("_asfHeader: %d", GETAVAILABLEBYTESCOUNT(_asfHeader));
-			_pSource = new Source(_asfHeader);
-			if (!_pSource->Init()) {
-				FATAL("Unable to initialize source");
-				return false;
-			}
-
-			_pDestination = new Destination("", "libfaac", _pSource->GetRate());
-			if (!_pDestination->Init()) {
-				FATAL("Unable to initialize source");
-				return false;
-			}
-
 			if (!ParseASFHeader()) {
 				FATAL("Unable to parse ASF header");
 				return false;
 			}
-
 			return SendLinkViewerToMacStreamSwitch();
 		}
 		return true;
 	} else {
 		//2. Read the length
 		uint32_t length = *((uint16_t *) (GETIBPOINTER(buffer) + 6));
-		FINEST("data length: %08x %u", length, length);
 
 		//3. Do we have enough data?
 		if (GETAVAILABLEBYTESCOUNT(buffer) < length) {
 			return true;
 		}
 
-		if (_pSource != NULL) {
-			if (!_pSource->PushData(GETIBPOINTER(buffer) + 8, length - 8)) {
-				FATAL("Unable to publish data");
+		_asfData.ReadFromBuffer(GETIBPOINTER(buffer) + 8, length - 8);
+		_asfData.ReadFromRepeat(0, _paddingSize);
+
+		if (_pTranscoder == NULL) {
+			_pTranscoder = new Transcoder(_asfData);
+			if (!_pTranscoder->Init(true, true)) {
+				FATAL("Unable to initialize transcoder");
 				return false;
 			}
-			FINEST("length-8: %u", length - 8);
-			uint8_t gigi[3] = {0};
-			if (!_pSource->PushData(gigi, 3)) {
-				FATAL("Unable to publish data");
-				return false;
-			}
+			_asfFile.WriteBuffer(GETIBPOINTER(_asfData), GETAVAILABLEBYTESCOUNT(_asfData));
+			_asfData.IgnoreAll();
 		}
+
+		if (_pTranscoder == NULL) {
+			return true;
+		}
+
+		if (GETAVAILABLEBYTESCOUNT(_asfData) == 0) {
+			return true;
+		}
+
+		IOBuffer aac;
+		IOBuffer mp3;
+
+		if (!_pTranscoder->PushData(GETIBPOINTER(_asfData), GETAVAILABLEBYTESCOUNT(_asfData), aac, mp3)) {
+			FATAL("Unable to publish data");
+			return false;
+		}
+		FINEST("aac: %u; mp3: %u",
+				GETAVAILABLEBYTESCOUNT(aac),
+				GETAVAILABLEBYTESCOUNT(mp3));
+		_asfFile.WriteBuffer(GETIBPOINTER(_asfData), GETAVAILABLEBYTESCOUNT(_asfData));
+		_aacFile.WriteBuffer(GETIBPOINTER(aac), GETAVAILABLEBYTESCOUNT(aac));
+		_mp3File.WriteBuffer(GETIBPOINTER(mp3), GETAVAILABLEBYTESCOUNT(mp3));
+
+		_asfData.IgnoreAll();
 
 		return true;
 	}
@@ -516,6 +522,7 @@ bool MMSProtocol::EncodeUTF16(IOBuffer &dest, string & src) {
 }
 
 bool MMSProtocol::ParseASFHeader() {
+	_paddingSize = 3;
 	NYI;
 	return true;
 }

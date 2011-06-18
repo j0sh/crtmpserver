@@ -24,7 +24,7 @@
 #include "protocols/baseprotocol.h"
 #include <iconv.h>
 
-class Source;
+class Transcoder;
 class Destination;
 
 class MMSProtocol
@@ -35,13 +35,15 @@ private:
 	//	string str;
 	IOBuffer _outputBuffer;
 	IOBuffer _msgBuffer;
-	IOBuffer _asfHeader;
-	File _file;
+	IOBuffer _asfData;
 	iconv_t _ic;
 	uint16_t _seq;
 	uint32_t _openFileId;
-	Source *_pSource;
-	Destination *_pDestination;
+	Transcoder *_pTranscoder;
+	uint32_t _paddingSize;
+	File _asfFile;
+	File _aacFile;
+	File _mp3File;
 public:
 	MMSProtocol();
 	virtual ~MMSProtocol();
