@@ -75,6 +75,9 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/501751224/header_be_ba.o \
 	${OBJECTDIR}/_ext/501751224/outboundrtmpprotocol.o \
 	${OBJECTDIR}/_ext/1210522057/atomavc1.o \
+	${OBJECTDIR}/_ext/1124569200/transcoder.o \
+	${OBJECTDIR}/_ext/501751224/basertmpappprotocolhandler.o \
+	${OBJECTDIR}/_ext/517913122/tspacketpat.o \
 	${OBJECTDIR}/_ext/1124578851/basecliappprotocolhandler.o \
 	${OBJECTDIR}/_ext/1636055853/baseinfilestream.o \
 	${OBJECTDIR}/_ext/1210522057/atomtkhd.o \
@@ -82,9 +85,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/501751224/inboundrtmpprotocol.o \
 	${OBJECTDIR}/_ext/2021747320/somanager.o \
 	${OBJECTDIR}/_ext/1124563255/outboundsslprotocol.o \
-	${OBJECTDIR}/_ext/501751224/basertmpappprotocolhandler.o \
 	${OBJECTDIR}/_ext/501751224/inboundhttp4rtmp.o \
-	${OBJECTDIR}/_ext/517913122/tspacketpat.o \
 	${OBJECTDIR}/_ext/1210523177/mp3media.o \
 	${OBJECTDIR}/_ext/31226533/baseoutnetrtmpstream.o \
 	${OBJECTDIR}/_ext/501751224/basertmpprotocol.o \
@@ -151,7 +152,6 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/1773553217/inboundliveflvprotocol.o \
 	${OBJECTDIR}/_ext/1919749812/defaultprotocolfactory.o \
 	${OBJECTDIR}/_ext/772217591/iotimer.o \
-	${OBJECTDIR}/_ext/1124569200/source.o \
 	${OBJECTDIR}/_ext/501751224/rtmpprotocolserializer.o \
 	${OBJECTDIR}/_ext/1636055853/baseinnetstream.o \
 	${OBJECTDIR}/_ext/126235575/tcpcarrier.o \
@@ -205,7 +205,6 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/373925503/clientapplicationmanager.o \
 	${OBJECTDIR}/_ext/1210522057/atommvhd.o \
 	${OBJECTDIR}/_ext/1124569200/basemmsappprotocolhandler.o \
-	${OBJECTDIR}/_ext/1124569200/destination.o \
 	${OBJECTDIR}/_ext/1210522057/versionedatom.o \
 	${OBJECTDIR}/_ext/373925503/baseappprotocolhandler.o
 
@@ -441,6 +440,21 @@ ${OBJECTDIR}/_ext/1210522057/atomavc1.o: ../../../../sources/thelib/src/mediafor
 	${RM} $@.d
 	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_VAR -DHAS_PROTOCOL_LIVEFLV -DHAS_MEDIA_MP4 -DHAS_MEDIA_MP3 -DHAS_MEDIA_FLV -DHAS_MEDIA_MKV -DCreateRTCPPacket=CreateRTCPPacket_none -DFeedDataAudioMPEG4Generic=FeedDataAudioMPEG4Generic_one_by_one -DHAS_MEDIA_MKV -DHAS_PROTOCOL_CLI -DHAS_PROTOCOL_RTMFP -DHAS_MEDIA_NSV -DHAS_PROTOCOL_MMS -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../../ffmpeg_bin/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1210522057/atomavc1.o ../../../../sources/thelib/src/mediaformats/mp4/atomavc1.cpp
 
+${OBJECTDIR}/_ext/1124569200/transcoder.o: ../../../../sources/thelib/src/protocols/mms/transcoder.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1124569200
+	${RM} $@.d
+	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_VAR -DHAS_PROTOCOL_LIVEFLV -DHAS_MEDIA_MP4 -DHAS_MEDIA_MP3 -DHAS_MEDIA_FLV -DHAS_MEDIA_MKV -DCreateRTCPPacket=CreateRTCPPacket_none -DFeedDataAudioMPEG4Generic=FeedDataAudioMPEG4Generic_one_by_one -DHAS_MEDIA_MKV -DHAS_PROTOCOL_CLI -DHAS_PROTOCOL_RTMFP -DHAS_MEDIA_NSV -DHAS_PROTOCOL_MMS -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../../ffmpeg_bin/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1124569200/transcoder.o ../../../../sources/thelib/src/protocols/mms/transcoder.cpp
+
+${OBJECTDIR}/_ext/501751224/basertmpappprotocolhandler.o: ../../../../sources/thelib/src/protocols/rtmp/basertmpappprotocolhandler.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/501751224
+	${RM} $@.d
+	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_VAR -DHAS_PROTOCOL_LIVEFLV -DHAS_MEDIA_MP4 -DHAS_MEDIA_MP3 -DHAS_MEDIA_FLV -DHAS_MEDIA_MKV -DCreateRTCPPacket=CreateRTCPPacket_none -DFeedDataAudioMPEG4Generic=FeedDataAudioMPEG4Generic_one_by_one -DHAS_MEDIA_MKV -DHAS_PROTOCOL_CLI -DHAS_PROTOCOL_RTMFP -DHAS_MEDIA_NSV -DHAS_PROTOCOL_MMS -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../../ffmpeg_bin/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/501751224/basertmpappprotocolhandler.o ../../../../sources/thelib/src/protocols/rtmp/basertmpappprotocolhandler.cpp
+
+${OBJECTDIR}/_ext/517913122/tspacketpat.o: ../../../../sources/thelib/src/protocols/ts/tspacketpat.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/517913122
+	${RM} $@.d
+	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_VAR -DHAS_PROTOCOL_LIVEFLV -DHAS_MEDIA_MP4 -DHAS_MEDIA_MP3 -DHAS_MEDIA_FLV -DHAS_MEDIA_MKV -DCreateRTCPPacket=CreateRTCPPacket_none -DFeedDataAudioMPEG4Generic=FeedDataAudioMPEG4Generic_one_by_one -DHAS_MEDIA_MKV -DHAS_PROTOCOL_CLI -DHAS_PROTOCOL_RTMFP -DHAS_MEDIA_NSV -DHAS_PROTOCOL_MMS -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../../ffmpeg_bin/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/517913122/tspacketpat.o ../../../../sources/thelib/src/protocols/ts/tspacketpat.cpp
+
 ${OBJECTDIR}/_ext/1124578851/basecliappprotocolhandler.o: ../../../../sources/thelib/src/protocols/cli/basecliappprotocolhandler.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1124578851
 	${RM} $@.d
@@ -476,20 +490,10 @@ ${OBJECTDIR}/_ext/1124563255/outboundsslprotocol.o: ../../../../sources/thelib/s
 	${RM} $@.d
 	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_VAR -DHAS_PROTOCOL_LIVEFLV -DHAS_MEDIA_MP4 -DHAS_MEDIA_MP3 -DHAS_MEDIA_FLV -DHAS_MEDIA_MKV -DCreateRTCPPacket=CreateRTCPPacket_none -DFeedDataAudioMPEG4Generic=FeedDataAudioMPEG4Generic_one_by_one -DHAS_MEDIA_MKV -DHAS_PROTOCOL_CLI -DHAS_PROTOCOL_RTMFP -DHAS_MEDIA_NSV -DHAS_PROTOCOL_MMS -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../../ffmpeg_bin/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1124563255/outboundsslprotocol.o ../../../../sources/thelib/src/protocols/ssl/outboundsslprotocol.cpp
 
-${OBJECTDIR}/_ext/501751224/basertmpappprotocolhandler.o: ../../../../sources/thelib/src/protocols/rtmp/basertmpappprotocolhandler.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/501751224
-	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_VAR -DHAS_PROTOCOL_LIVEFLV -DHAS_MEDIA_MP4 -DHAS_MEDIA_MP3 -DHAS_MEDIA_FLV -DHAS_MEDIA_MKV -DCreateRTCPPacket=CreateRTCPPacket_none -DFeedDataAudioMPEG4Generic=FeedDataAudioMPEG4Generic_one_by_one -DHAS_MEDIA_MKV -DHAS_PROTOCOL_CLI -DHAS_PROTOCOL_RTMFP -DHAS_MEDIA_NSV -DHAS_PROTOCOL_MMS -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../../ffmpeg_bin/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/501751224/basertmpappprotocolhandler.o ../../../../sources/thelib/src/protocols/rtmp/basertmpappprotocolhandler.cpp
-
 ${OBJECTDIR}/_ext/501751224/inboundhttp4rtmp.o: ../../../../sources/thelib/src/protocols/rtmp/inboundhttp4rtmp.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/501751224
 	${RM} $@.d
 	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_VAR -DHAS_PROTOCOL_LIVEFLV -DHAS_MEDIA_MP4 -DHAS_MEDIA_MP3 -DHAS_MEDIA_FLV -DHAS_MEDIA_MKV -DCreateRTCPPacket=CreateRTCPPacket_none -DFeedDataAudioMPEG4Generic=FeedDataAudioMPEG4Generic_one_by_one -DHAS_MEDIA_MKV -DHAS_PROTOCOL_CLI -DHAS_PROTOCOL_RTMFP -DHAS_MEDIA_NSV -DHAS_PROTOCOL_MMS -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../../ffmpeg_bin/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/501751224/inboundhttp4rtmp.o ../../../../sources/thelib/src/protocols/rtmp/inboundhttp4rtmp.cpp
-
-${OBJECTDIR}/_ext/517913122/tspacketpat.o: ../../../../sources/thelib/src/protocols/ts/tspacketpat.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/517913122
-	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_VAR -DHAS_PROTOCOL_LIVEFLV -DHAS_MEDIA_MP4 -DHAS_MEDIA_MP3 -DHAS_MEDIA_FLV -DHAS_MEDIA_MKV -DCreateRTCPPacket=CreateRTCPPacket_none -DFeedDataAudioMPEG4Generic=FeedDataAudioMPEG4Generic_one_by_one -DHAS_MEDIA_MKV -DHAS_PROTOCOL_CLI -DHAS_PROTOCOL_RTMFP -DHAS_MEDIA_NSV -DHAS_PROTOCOL_MMS -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../../ffmpeg_bin/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/517913122/tspacketpat.o ../../../../sources/thelib/src/protocols/ts/tspacketpat.cpp
 
 ${OBJECTDIR}/_ext/1210523177/mp3media.o: ../../../../sources/thelib/src/mediaformats/nsv/mp3media.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1210523177
@@ -821,11 +825,6 @@ ${OBJECTDIR}/_ext/772217591/iotimer.o: ../../../../sources/thelib/src/netio/sele
 	${RM} $@.d
 	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_VAR -DHAS_PROTOCOL_LIVEFLV -DHAS_MEDIA_MP4 -DHAS_MEDIA_MP3 -DHAS_MEDIA_FLV -DHAS_MEDIA_MKV -DCreateRTCPPacket=CreateRTCPPacket_none -DFeedDataAudioMPEG4Generic=FeedDataAudioMPEG4Generic_one_by_one -DHAS_MEDIA_MKV -DHAS_PROTOCOL_CLI -DHAS_PROTOCOL_RTMFP -DHAS_MEDIA_NSV -DHAS_PROTOCOL_MMS -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../../ffmpeg_bin/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/772217591/iotimer.o ../../../../sources/thelib/src/netio/select/iotimer.cpp
 
-${OBJECTDIR}/_ext/1124569200/source.o: ../../../../sources/thelib/src/protocols/mms/source.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/1124569200
-	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_VAR -DHAS_PROTOCOL_LIVEFLV -DHAS_MEDIA_MP4 -DHAS_MEDIA_MP3 -DHAS_MEDIA_FLV -DHAS_MEDIA_MKV -DCreateRTCPPacket=CreateRTCPPacket_none -DFeedDataAudioMPEG4Generic=FeedDataAudioMPEG4Generic_one_by_one -DHAS_MEDIA_MKV -DHAS_PROTOCOL_CLI -DHAS_PROTOCOL_RTMFP -DHAS_MEDIA_NSV -DHAS_PROTOCOL_MMS -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../../ffmpeg_bin/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1124569200/source.o ../../../../sources/thelib/src/protocols/mms/source.cpp
-
 ${OBJECTDIR}/_ext/501751224/rtmpprotocolserializer.o: ../../../../sources/thelib/src/protocols/rtmp/rtmpprotocolserializer.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/501751224
 	${RM} $@.d
@@ -1090,11 +1089,6 @@ ${OBJECTDIR}/_ext/1124569200/basemmsappprotocolhandler.o: ../../../../sources/th
 	${MKDIR} -p ${OBJECTDIR}/_ext/1124569200
 	${RM} $@.d
 	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_VAR -DHAS_PROTOCOL_LIVEFLV -DHAS_MEDIA_MP4 -DHAS_MEDIA_MP3 -DHAS_MEDIA_FLV -DHAS_MEDIA_MKV -DCreateRTCPPacket=CreateRTCPPacket_none -DFeedDataAudioMPEG4Generic=FeedDataAudioMPEG4Generic_one_by_one -DHAS_MEDIA_MKV -DHAS_PROTOCOL_CLI -DHAS_PROTOCOL_RTMFP -DHAS_MEDIA_NSV -DHAS_PROTOCOL_MMS -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../../ffmpeg_bin/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1124569200/basemmsappprotocolhandler.o ../../../../sources/thelib/src/protocols/mms/basemmsappprotocolhandler.cpp
-
-${OBJECTDIR}/_ext/1124569200/destination.o: ../../../../sources/thelib/src/protocols/mms/destination.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/1124569200
-	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_VAR -DHAS_PROTOCOL_LIVEFLV -DHAS_MEDIA_MP4 -DHAS_MEDIA_MP3 -DHAS_MEDIA_FLV -DHAS_MEDIA_MKV -DCreateRTCPPacket=CreateRTCPPacket_none -DFeedDataAudioMPEG4Generic=FeedDataAudioMPEG4Generic_one_by_one -DHAS_MEDIA_MKV -DHAS_PROTOCOL_CLI -DHAS_PROTOCOL_RTMFP -DHAS_MEDIA_NSV -DHAS_PROTOCOL_MMS -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../../ffmpeg_bin/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1124569200/destination.o ../../../../sources/thelib/src/protocols/mms/destination.cpp
 
 ${OBJECTDIR}/_ext/1210522057/versionedatom.o: ../../../../sources/thelib/src/mediaformats/mp4/versionedatom.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1210522057
