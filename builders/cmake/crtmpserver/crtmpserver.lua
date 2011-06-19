@@ -129,6 +129,12 @@ configuration=
 				},
 				--[[{
 					ip="0.0.0.0",
+					port=7654,
+					protocol="inboundRawHttpStream",
+					crossDomainFile="/tmp/crossdomain.xml"
+				},
+				{
+					ip="0.0.0.0",
 					port=554,
 					protocol="inboundRtsp"
 				},]]--
@@ -136,8 +142,10 @@ configuration=
 			externalStreams = 
 			{
 				--[[{
-					uri="mms://lr1w.latvijasradio.lv/pplr3s",
-					localStreamName="myMms"
+					uri="mms://channels.webradio.antenne.de/chillout",
+					localStreamName="myMms",
+					enableAAC=false,
+					enableMP3=true
 				},
 				{
 					uri="rtsp://a1956.l1857055475.c18570.g.lq.akamaistream.net/D/1956/18570/v0001/reflector:55475",
