@@ -17,40 +17,25 @@
  *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifdef HAS_PROTOCOL_MMS
-#ifndef _MMSPROTOCOL_H
-#define	_MMSPROTOCOL_H
+#ifdef HAS_PROTOCOL_RAWHTTPSTREAM
+#ifndef _INBOUNDRAWHTTPSTREAMPROTOCOL_H
+#define	_INBOUNDRAWHTTPSTREAMPROTOCOL_H
 
+class OutNetRawStream;
 #include "protocols/baseprotocol.h"
-#include <iconv.h>
-
-class Transcoder;
-class Destination;
-class InNetRawStream;
-
-class MMSProtocol
+class InboundHTTPProtocol;
+class InboundRawHTTPStreamProtocol
 : public BaseProtocol {
 private:
-	string _player;
+	bool _streamNameAcquired;
+	string _streamName;
+	string _crossDomainFile;
+	bool _headersSent;
 	IOBuffer _outputBuffer;
-	IOBuffer _msgBuffer;
-	IOBuffer _asfData;
-	iconv_t _ic;
-	uint16_t _seq;
-	uint32_t _openFileId;
-	Transcoder *_pTranscoder;
-	uint32_t _paddingSize;
-
-	InNetRawStream *_pRawAACStream;
-	bool _enableAAC;
-	string _aacStreamName;
-
-	InNetRawStream *_pRawMP3Stream;
-	bool _enableMP3;
-	string _mp3StreamName;
+	OutNetRawStream *_pOutStream;
 public:
-	MMSProtocol();
-	virtual ~MMSProtocol();
+	InboundRawHTTPStreamProtocol();
+	virtual ~InboundRawHTTPStreamProtocol();
 
 	virtual bool Initialize(Variant &parameters);
 	virtual IOBuffer * GetOutputBuffer();
@@ -58,22 +43,13 @@ public:
 	virtual bool AllowNearProtocol(uint64_t type);
 	virtual bool SignalInputData(int32_t recvAmount);
 	virtual bool SignalInputData(IOBuffer &buffer);
-
-	bool Start();
+	bool PutData(uint8_t *pBuffer, uint32_t length);
 private:
-	bool ProcessMessage(IOBuffer &buffer);
-	bool ProcessData(IOBuffer &buffer);
-	bool SendLinkViewerToMacConnect();
-	bool SendLinkViewerToMacConnectFunnel();
-	bool SendLinkViewerToMacOpenFile();
-	bool SendLinkViewerToMacReadBlock();
-	bool SendLinkViewerToMacStreamSwitch();
-	bool SendLinkViewerToMacStartPlaying();
-	bool SendLinkViewerToMacPong();
-	bool SendMessage(uint32_t MID);
-	bool EncodeUTF16(IOBuffer &dest, string &src);
-	bool ParseASFHeader();
+	bool AcquireStreamName(IOBuffer &buffer);
+	bool Send404NotFound();
+	bool SendCrossDomain();
 };
 
-#endif	/* _MMSPROTOCOL_H */
-#endif /* HAS_PROTOCOL_MMS */
+
+#endif	/* _INBOUNDRAWHTTPSTREAMPROTOCOL_H */
+#endif /* HAS_PROTOCOL_RAWHTTPSTREAM */

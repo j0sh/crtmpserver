@@ -35,6 +35,7 @@
 #define CODEC_AUDIO_UNKNOWN			MAKE_TAG4('A','U','N','K')
 #define CODEC_AUDIO_PASS_THROUGH	MAKE_TAG3('A','P','T')
 #define CODEC_AUDIO_AAC				MAKE_TAG4('A','A','A','C')
+#define CODEC_AUDIO_ADTS			MAKE_TAG5('A','A','D','T','S')
 #define CODEC_AUDIO_MP3				MAKE_TAG4('A','M','P','3')
 
 #endif	/* _CODECTYPES_H */

@@ -20,6 +20,7 @@
 #ifdef HAS_PROTOCOL_MMS
 #include "protocols/mms/transcoder.h"
 #include "protocols/rtmp/header_le_ba.h"
+#include "streaming/baseinstream.h"
 
 Transcoder::Input::Input() {
 	_pRawData = NULL;
@@ -164,7 +165,7 @@ Transcoder::Output::~Output() {
 bool Transcoder::Output::Init(string codecName, int sampleRate, int channelsCount) {
 	AVCodec *_pCodec = avcodec_find_encoder_by_name(STR(codecName));
 	if (!_pCodec) {
-		FATAL("codec not found");
+		FATAL("codec for format %s not found", STR(codecName));
 		return false;
 	}
 
@@ -187,7 +188,7 @@ bool Transcoder::Output::Init(string codecName, int sampleRate, int channelsCoun
 	return true;
 }
 
-bool Transcoder::Output::EncodePCM(int16_t *pPCM, uint32_t size, IOBuffer &output) {
+bool Transcoder::Output::EncodePCM(int16_t *pPCM, uint32_t size, BaseInStream *pStream) {
 	_data.ReadFromBuffer((uint8_t *) pPCM, size * 2);
 	uint32_t chunkSize = (uint32_t) _pContext->frame_size * (uint32_t) _pContext->channels;
 	while (GETAVAILABLEBYTESCOUNT(_data) / 2 >= chunkSize) {
@@ -198,7 +199,16 @@ bool Transcoder::Output::EncodePCM(int16_t *pPCM, uint32_t size, IOBuffer &outpu
 			FATAL("avcodec_encode_audio failed");
 			return false;
 		}
-		output.ReadFromBuffer(_pOutbuf, (uint32_t) out_size);
+		if (!pStream->FeedData(
+				_pOutbuf,
+				(uint32_t) out_size,
+				0,
+				(uint32_t) out_size,
+				0, true
+				)) {
+			FATAL("Unable to feed in stream");
+			return false;
+		}
 	}
 	return _data.MoveData();
 }
@@ -211,14 +221,14 @@ Transcoder::Transcoder(IOBuffer &initBuffer) {
 }
 
 Transcoder::~Transcoder() {
-	if (_pMP3 != NULL) {
-		delete _pMP3;
-		_pMP3 = NULL;
-	}
-
 	if (_pAAC != NULL) {
 		delete _pAAC;
 		_pAAC = NULL;
+	}
+
+	if (_pMP3 != NULL) {
+		delete _pMP3;
+		_pMP3 = NULL;
 	}
 }
 
@@ -252,7 +262,8 @@ bool Transcoder::Init(bool hasAAC, bool hasMP3) {
 	return true;
 }
 
-bool Transcoder::PushData(uint8_t *pData, uint32_t length, IOBuffer &aac, IOBuffer &mp3) {
+bool Transcoder::PushData(uint8_t *pData, uint32_t length,
+		BaseInStream *pAACStream, BaseInStream *pMP3Stream) {
 	_input._inputBuffer.ReadFromBuffer(pData, length);
 	if (!_input.ReadPCM()) {
 		FATAL("ASF decoding failed");
@@ -260,14 +271,14 @@ bool Transcoder::PushData(uint8_t *pData, uint32_t length, IOBuffer &aac, IOBuff
 	}
 
 	if (_pAAC != NULL) {
-		if (!_pAAC->EncodePCM(_input._pPCMData, _input._pcmSize, aac)) {
+		if (!_pAAC->EncodePCM(_input._pPCMData, _input._pcmSize, pAACStream)) {
 			FATAL("AAC encoder failed");
 			return false;
 		}
 	}
 
 	if (_pMP3 != NULL) {
-		if (!_pMP3->EncodePCM(_input._pPCMData, _input._pcmSize, mp3)) {
+		if (!_pMP3->EncodePCM(_input._pPCMData, _input._pcmSize, pMP3Stream)) {
 			FATAL("MP3 encoder failed");
 			return false;
 		}

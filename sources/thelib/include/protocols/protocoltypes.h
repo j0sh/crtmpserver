@@ -79,6 +79,9 @@
 #define PT_INBOUND_JSONCLI		MAKE_TAG8('I','J','S','O','N','C','L','I')
 #define PT_HTTP_4_CLI			MAKE_TAG3('H','4','C')
 
+//Raw HTTP stream
+#define PT_INBOUND_RAW_HTTP_STREAM		MAKE_TAG4('I','R','H','S')
+
 #endif	/* _PROTOCOLTYPES_H */
 
 

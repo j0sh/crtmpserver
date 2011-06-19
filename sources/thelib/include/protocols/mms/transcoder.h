@@ -28,6 +28,8 @@ extern "C" {
 #include "libavutil/avutil.h"
 }
 
+class BaseInStream;
+
 #define MMS_DATA_SIZE 1024*8
 
 class Transcoder {
@@ -64,17 +66,17 @@ private:
 		Output();
 		virtual ~Output();
 		bool Init(string codecName, int _sampleRate, int channelsCount);
-		bool EncodePCM(int16_t *pPCM, uint32_t size, IOBuffer & output);
+		bool EncodePCM(int16_t *pPCM, uint32_t size, BaseInStream * pStream);
 	};
-	Output *_pMP3;
 	Output *_pAAC;
+	Output *_pMP3;
 public:
 	Transcoder(IOBuffer &asfHeaders);
 	virtual ~Transcoder();
 	bool Init(bool hasAAC, bool hasMP3);
-	bool PushData(uint8_t *pData, uint32_t length, IOBuffer &aac, IOBuffer &mp3);
-private:
-	//bool ReadPCM(IOBuffer &aac, IOBuffer &mp3);
+	bool PushData(uint8_t *pData, uint32_t length,
+			BaseInStream *pAACStream,
+			BaseInStream *pMP3Stream);
 };
 
 #endif	/* _SOURCE_H */

@@ -20,7 +20,8 @@
 #ifdef HAS_PROTOCOL_MMS
 #include "protocols/mms/mmsprotocol.h"
 #include "protocols/mms/transcoder.h"
-#include "protocols/mms/destination.h"
+#include "application/baseclientapplication.h"
+#include "streaming/innetrawstream.h"
 
 MMSProtocol::MMSProtocol()
 : BaseProtocol(PT_OUTBOUND_MMS) {
@@ -28,9 +29,12 @@ MMSProtocol::MMSProtocol()
 	_openFileId = 0;
 	_pTranscoder = NULL;
 	_paddingSize = 0;
-	_asfFile.Initialize("/tmp/test.asf", FILE_OPEN_MODE_TRUNCATE);
-	_aacFile.Initialize("/tmp/test.aac", FILE_OPEN_MODE_TRUNCATE);
-	_mp3File.Initialize("/tmp/test.mp3", FILE_OPEN_MODE_TRUNCATE);
+
+	_pRawAACStream = NULL;
+	_enableAAC = true;
+
+	_pRawMP3Stream = NULL;
+	_enableMP3 = true;
 }
 
 MMSProtocol::~MMSProtocol() {
@@ -40,14 +44,75 @@ MMSProtocol::~MMSProtocol() {
 		delete _pTranscoder;
 		_pTranscoder = NULL;
 	}
+	if (_pRawAACStream != NULL) {
+		delete _pRawAACStream;
+		_pRawAACStream = NULL;
+	}
+	if (_pRawMP3Stream != NULL) {
+		delete _pRawMP3Stream;
+		_pRawMP3Stream = NULL;
+	}
 }
 
-bool MMSProtocol::Initialize(Variant &parameters) {
-	GetCustomParameters() = parameters;
+bool MMSProtocol::Initialize(Variant &customparams) {
+	//1. Store custom parameters
+	GetCustomParameters() = customparams;
+
+	//2. Init iconv
 	_ic = iconv_open("UTF-16LE", "UTF-8");
 	if (_ic == ((iconv_t) - 1)) {
 		FATAL("Unable to initialize libiconv");
 		return false;
+	}
+
+	//3. compute client user agent
+	string host = "";
+	if (customparams.HasKeyChain(V_STRING, false, 4, "customParameters",
+			"externalStreamConfig", "uri", "host"))
+		host = (string) customparams["customParameters"]["externalStreamConfig"]["uri"]["host"];
+
+	if (host != "") {
+		_player = format("NSPlayer/7.0.0.1956; {babac001-d7f9-3374-f085658ba1e3ba91}; Host: %s",
+				STR(host));
+	} else {
+		_player = "NSPlayer/7.0.0.1956; {babac001-d7f9-3374-f085658ba1e3ba91}";
+	}
+
+	//4. read AAC/MP3 availability
+	if (customparams.HasKeyChain(V_BOOL, false, 3, "customParameters",
+			"externalStreamConfig", "enableAAC")) {
+		_enableAAC = (bool) customparams["customParameters"]["externalStreamConfig"]["enableAAC"];
+	}
+	if (customparams.HasKeyChain(V_BOOL, false, 3, "customParameters",
+			"externalStreamConfig", "enableMP3")) {
+		_enableMP3 = (bool) customparams["customParameters"]["externalStreamConfig"]["enableMP3"];
+	}
+
+	//5. read the localStreamName
+	string localStreamName = "";
+	if (customparams.HasKeyChain(V_STRING, false, 3, "customParameters",
+			"externalStreamConfig", "localStreamName"))
+		localStreamName = (string) customparams["customParameters"]["externalStreamConfig"]["localStreamName"];
+	if (localStreamName == "") {
+		localStreamName = format("mms_stream_%u", GetId());
+	}
+
+	//6. compute aac and mp3 streamNames
+	if (_enableAAC) {
+		if (customparams.HasKeyChain(V_STRING, false, 3, "customParameters",
+				"externalStreamConfig", "localAACStreamName"))
+			_aacStreamName = (string) customparams["customParameters"]["externalStreamConfig"]["localAACStreamName"];
+		if (_aacStreamName == "") {
+			_aacStreamName = localStreamName + ".aac";
+		}
+	}
+	if (_enableMP3) {
+		if (customparams.HasKeyChain(V_STRING, false, 3, "customParameters",
+				"externalStreamConfig", "localMP3StreamName"))
+			_mp3StreamName = (string) customparams["customParameters"]["externalStreamConfig"]["localMP3StreamName"];
+		if (_mp3StreamName == "") {
+			_mp3StreamName = localStreamName + ".mp3";
+		}
 	}
 
 	return true;
@@ -214,12 +279,22 @@ bool MMSProtocol::ProcessData(IOBuffer &buffer) {
 		_asfData.ReadFromRepeat(0, _paddingSize);
 
 		if (_pTranscoder == NULL) {
+			if (_enableAAC) {
+				_pRawAACStream = new InNetRawStream(this,
+						GetApplication()->GetStreamsManager(),
+						_aacStreamName, CODEC_AUDIO_ADTS);
+			}
+			if (_enableMP3) {
+				_pRawMP3Stream = new InNetRawStream(this,
+						GetApplication()->GetStreamsManager(),
+						_mp3StreamName, CODEC_AUDIO_MP3);
+			}
+
 			_pTranscoder = new Transcoder(_asfData);
-			if (!_pTranscoder->Init(true, true)) {
+			if (!_pTranscoder->Init(_enableAAC, _enableMP3)) {
 				FATAL("Unable to initialize transcoder");
 				return false;
 			}
-			_asfFile.WriteBuffer(GETIBPOINTER(_asfData), GETAVAILABLEBYTESCOUNT(_asfData));
 			_asfData.IgnoreAll();
 		}
 
@@ -231,19 +306,19 @@ bool MMSProtocol::ProcessData(IOBuffer &buffer) {
 			return true;
 		}
 
-		IOBuffer aac;
-		IOBuffer mp3;
-
-		if (!_pTranscoder->PushData(GETIBPOINTER(_asfData), GETAVAILABLEBYTESCOUNT(_asfData), aac, mp3)) {
+		if (!_pTranscoder->PushData(
+				GETIBPOINTER(_asfData),
+				GETAVAILABLEBYTESCOUNT(_asfData),
+				_pRawAACStream, _pRawMP3Stream)) {
 			FATAL("Unable to publish data");
 			return false;
 		}
-		FINEST("aac: %u; mp3: %u",
-				GETAVAILABLEBYTESCOUNT(aac),
-				GETAVAILABLEBYTESCOUNT(mp3));
-		_asfFile.WriteBuffer(GETIBPOINTER(_asfData), GETAVAILABLEBYTESCOUNT(_asfData));
-		_aacFile.WriteBuffer(GETIBPOINTER(aac), GETAVAILABLEBYTESCOUNT(aac));
-		_mp3File.WriteBuffer(GETIBPOINTER(mp3), GETAVAILABLEBYTESCOUNT(mp3));
+		//		FINEST("aac: %u; mp3: %u",
+		//				GETAVAILABLEBYTESCOUNT(aac),
+		//				GETAVAILABLEBYTESCOUNT(mp3));
+		//		_asfFile.WriteBuffer(GETIBPOINTER(_asfData), GETAVAILABLEBYTESCOUNT(_asfData));
+		//		_aacFile.WriteBuffer(GETIBPOINTER(aac), GETAVAILABLEBYTESCOUNT(aac));
+		//		_mp3File.WriteBuffer(GETIBPOINTER(mp3), GETAVAILABLEBYTESCOUNT(mp3));
 
 		_asfData.IgnoreAll();
 
@@ -260,22 +335,7 @@ bool MMSProtocol::SendLinkViewerToMacConnect() {
 	};
 	_msgBuffer.ReadFromBuffer(revs, sizeof (revs));
 
-	string host = "";
-	Variant &cp = GetCustomParameters();
-	if ((cp == V_MAP)
-			&& (cp["customParameters"] == V_MAP)
-			&& (cp["customParameters"]["externalStreamConfig"] == V_MAP)
-			&& (cp["customParameters"]["externalStreamConfig"]["uri"] == V_MAP)
-			&& (cp["customParameters"]["externalStreamConfig"]["uri"]["host"] == V_STRING))
-		host = (string) cp["customParameters"]["externalStreamConfig"]["uri"]["host"];
-	string player;
-	if (host != "")
-		player = format("NSPlayer/7.0.0.1956; {babac001-d7f9-3374-f085658ba1e3ba91}; Host: %s",
-			STR(host));
-	else
-		player = "NSPlayer/7.0.0.1956; {babac001-d7f9-3374-f085658ba1e3ba91}";
-
-	if (!EncodeUTF16(_msgBuffer, player)) {
+	if (!EncodeUTF16(_msgBuffer, _player)) {
 		FATAL("EncodeUTF16 failed");
 		return false;
 	}

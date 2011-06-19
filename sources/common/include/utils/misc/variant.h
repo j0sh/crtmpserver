@@ -162,6 +162,7 @@ public:
 	string GetTypeName();
 	void SetTypeName(string name);
 	bool HasKey(const string &key, bool caseSensitive = true);
+	bool HasKeyChain(VariantType end, bool caseSensitive, uint32_t depth, ...);
 	void RemoveKey(const string &key);
 	void RemoveAt(const uint32_t index);
 	void RemoveAllKeys();

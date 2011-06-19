@@ -582,6 +582,12 @@ bool StreamCapabilities::InitAudioAAC(uint8_t *pBuffer, uint32_t length) {
 	return true;
 }
 
+bool StreamCapabilities::InitAudioADTS() {
+	ClearAudio();
+	audioCodecId = CODEC_AUDIO_ADTS;
+	return true;
+}
+
 bool StreamCapabilities::InitAudioMP3() {
 	ClearAudio();
 	audioCodecId = CODEC_AUDIO_MP3;

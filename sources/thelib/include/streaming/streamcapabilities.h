@@ -74,6 +74,7 @@ public:
 	virtual ~StreamCapabilities();
 
 	bool InitAudioAAC(uint8_t *pBuffer, uint32_t length);
+	bool InitAudioADTS();
 	bool InitAudioMP3();
 	bool InitVideoH264(uint8_t *pSPS, uint32_t spsLength, uint8_t *pPPS,
 			uint32_t ppsLength);

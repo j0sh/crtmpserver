@@ -821,6 +821,31 @@ bool Variant::HasKey(const string &key, bool caseSensitive) {
 	}
 }
 
+bool Variant::HasKeyChain(VariantType end, bool caseSensitive, uint32_t depth, ...) {
+	va_list arguments;
+	va_start(arguments, depth);
+	Variant *pCurrent = this;
+	for (uint8_t i = 0; i < depth; i++) {
+		const char *pPathElement = va_arg(arguments, const char *);
+		if (!pCurrent->HasKey(pPathElement, caseSensitive)) {
+			va_end(arguments);
+			return false;
+		}
+		Variant *pValue = &pCurrent->GetValue(pPathElement, caseSensitive);
+		if (i == depth - 1) {
+			va_end(arguments);
+			return *pValue == end;
+		} else {
+			if ((*pValue != V_MAP) && (*pValue != V_TYPED_MAP)) {
+				va_end(arguments);
+				return false;
+			}
+		}
+		pCurrent = pValue;
+	}
+	return false;
+}
+
 void Variant::RemoveKey(const string &key) {
 	if (_type != V_TYPED_MAP && _type != V_MAP) {
 		ASSERT("RemoveKey failed: %s", STR(ToString()));

@@ -17,20 +17,21 @@
  *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifdef HAS_PROTOCOL_MMS
-#ifndef _MMSAPPPROTOCOLHANDLER_H
-#define	_MMSAPPPROTOCOLHANDLER_H
+#ifdef HAS_PROTOCOL_RAWHTTPSTREAM
+#ifndef _RAWHTTPSTREAMAPPPROTOCOLHANDLER_H
+#define	_RAWHTTPSTREAMAPPPROTOCOLHANDLER_H
 
-#include "protocols/mms/basemmsappprotocolhandler.h"
+#include "protocols/rawhttpstream/baserawhttpstreamappprotocolhandler.h"
 
 namespace app_flvplayback {
 
-	class MMSAppProtocolHandler
-	: public BaseMMSAppProtocolHandler {
+	class RawHTTPStreamAppProtocolHandler
+	: public BaseRawHTTPStreamAppProtocolHandler {
 	public:
-		MMSAppProtocolHandler(Variant &configuration);
-		virtual ~MMSAppProtocolHandler();
+		RawHTTPStreamAppProtocolHandler(Variant &configuration);
+		virtual ~RawHTTPStreamAppProtocolHandler();
 	};
 };
-#endif	/* _MMSAPPPROTOCOLHANDLER_H */
-#endif /* HAS_PROTOCOL_MMS */
+
+#endif	/* _RAWHTTPSTREAMAPPPROTOCOLHANDLER_H */
+#endif /* HAS_PROTOCOL_RAWHTTPSTREAM */

@@ -43,6 +43,7 @@
 #include "protocols/rtmfp/outboundrtmfpprotocol.h"
 #include "protocols/cli/http4cliprotocol.h"
 #include "protocols/mms/mmsprotocol.h"
+#include "protocols/rawhttpstream/inboundrawhttpstreamprotocol.h"
 
 DefaultProtocolFactory::DefaultProtocolFactory()
 : BaseProtocolFactory() {
@@ -86,7 +87,6 @@ vector<uint64_t> DefaultProtocolFactory::HandledProtocols() {
 	ADD_VECTOR_END(result, PT_INBOUND_HTTP);
 	ADD_VECTOR_END(result, PT_OUTBOUND_HTTP);
 #endif /* HAS_PROTOCOL_HTTP */
-
 #ifdef HAS_PROTOCOL_LIVEFLV
 	ADD_VECTOR_END(result, PT_INBOUND_LIVE_FLV);
 	ADD_VECTOR_END(result, PT_OUTBOUND_LIVE_FLV);
@@ -107,7 +107,9 @@ vector<uint64_t> DefaultProtocolFactory::HandledProtocols() {
 #ifdef HAS_PROTOCOL_MMS
 	ADD_VECTOR_END(result, PT_OUTBOUND_MMS);
 #endif /* HAS_PROTOCOL_MMS */
-
+#ifdef HAS_PROTOCOL_RAWHTTPSTREAM
+	ADD_VECTOR_END(result, PT_INBOUND_RAW_HTTP_STREAM);
+#endif /* HAS_PROTOCOL_RAWHTTPSTREAM */
 	return result;
 }
 
@@ -168,6 +170,10 @@ vector<string> DefaultProtocolFactory::HandledProtocolChains() {
 #ifdef HAS_PROTOCOL_MMS
 	ADD_VECTOR_END(result, CONF_PROTOCOL_OUTBOUND_MMS);
 #endif /* HAS_PROTOCOL_MMS */
+#ifdef HAS_PROTOCOL_RAWHTTPSTREAM
+	ADD_VECTOR_END(result, CONF_PROTOCOL_INBOUND_RAW_HTTP_STREAM);
+	ADD_VECTOR_END(result, CONF_PROTOCOL_INBOUND_RAW_HTTPS_STREAM);
+#endif /* HAS_PROTOCOL_RAWHTTPSTREAM */
 	return result;
 }
 
@@ -309,6 +315,16 @@ vector<uint64_t> DefaultProtocolFactory::ResolveProtocolChain(string name) {
 		ADD_VECTOR_END(result, PT_OUTBOUND_MMS);
 	}
 #endif /* HAS_PROTOCOL_MMS */
+#ifdef HAS_PROTOCOL_RAWHTTPSTREAM
+	else if (name == CONF_PROTOCOL_INBOUND_RAW_HTTP_STREAM) {
+		ADD_VECTOR_END(result, PT_TCP);
+		ADD_VECTOR_END(result, PT_INBOUND_RAW_HTTP_STREAM);
+	} else if (name == CONF_PROTOCOL_INBOUND_RAW_HTTPS_STREAM) {
+		ADD_VECTOR_END(result, PT_TCP);
+		ADD_VECTOR_END(result, PT_INBOUND_SSL);
+		ADD_VECTOR_END(result, PT_INBOUND_RAW_HTTP_STREAM);
+	}
+#endif /* HAS_PROTOCOL_RAWHTTPSTREAM */
 	else {
 		FATAL("Invalid protocol chain: %s.", STR(name));
 	}
@@ -412,6 +428,11 @@ BaseProtocol *DefaultProtocolFactory::SpawnProtocol(uint64_t type, Variant &para
 			pResult = new MMSProtocol();
 			break;
 #endif /* HAS_PROTOCOL_MMS */
+#ifdef HAS_PROTOCOL_RAWHTTPSTREAM
+		case PT_INBOUND_RAW_HTTP_STREAM:
+			pResult = new InboundRawHTTPStreamProtocol();
+			break;
+#endif /* HAS_PROTOCOL_RAWHTTPSTREAM */
 		default:
 			FATAL("Spawning protocol %s not yet implemented",
 					STR(tagToString(type)));
