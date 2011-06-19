@@ -63,6 +63,7 @@ bool Transcoder::Input::Init() {
 	av_register_all();
 	avcodec_init();
 	avcodec_register_all();
+	av_log_set_level(AV_LOG_QUIET);
 	_pIO = avio_alloc_context(_pRawData, MMS_DATA_SIZE, 0, this, _readPacket, NULL, NULL);
 	_pFmt = av_find_input_format("asf");
 	if (_pFmt == NULL) {

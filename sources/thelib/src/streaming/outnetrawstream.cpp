@@ -32,13 +32,19 @@ OutNetRawStream::OutNetRawStream(BaseProtocol *pProtocol,
 		ASSERT("OutNetRawStream can be hosted only inside %s protocol",
 				STR(tagToString(PT_INBOUND_RAW_HTTP_STREAM)));
 	}
+	_bytesCount = 0;
+	_packetsCount = 0;
 }
 
 OutNetRawStream::~OutNetRawStream() {
 }
 
 void OutNetRawStream::GetStats(Variant &info) {
-	NYI;
+	BaseOutNetStream::GetStats(info);
+	info["audio"]["bytesCount"] = _bytesCount;
+	info["audio"]["packetsCount"] = _packetsCount;
+	info["audio"]["droppedPacketsCount"] = 0;
+	info["video"] = info["audio"];
 }
 
 void OutNetRawStream::SignalAttachedToInStream() {
@@ -76,6 +82,8 @@ bool OutNetRawStream::SignalStop() {
 bool OutNetRawStream::FeedData(uint8_t *pData, uint32_t dataLength,
 		uint32_t processedLength, uint32_t totalLength,
 		double absoluteTimestamp, bool isAudio) {
+	_bytesCount += dataLength;
+	_packetsCount++;
 	if (_pProtocol != NULL) {
 		return ((InboundRawHTTPStreamProtocol *) _pProtocol)->PutData(pData, dataLength);
 	}

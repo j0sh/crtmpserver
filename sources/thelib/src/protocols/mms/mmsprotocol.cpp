@@ -28,7 +28,7 @@ MMSProtocol::MMSProtocol()
 	_seq = 0;
 	_openFileId = 0;
 	_pTranscoder = NULL;
-	_paddingSize = 0;
+	_packetSize = 0;
 
 	_pRawAACStream = NULL;
 	_enableAAC = true;
@@ -276,7 +276,11 @@ bool MMSProtocol::ProcessData(IOBuffer &buffer) {
 		}
 
 		_asfData.ReadFromBuffer(GETIBPOINTER(buffer) + 8, length - 8);
-		_asfData.ReadFromRepeat(0, _paddingSize);
+		if (length - 8 > _packetSize) {
+			FATAL("Invalid header size");
+			return false;
+		}
+		_asfData.ReadFromRepeat(0, _packetSize - length + 8);
 
 		if (_pTranscoder == NULL) {
 			if (_enableAAC) {
@@ -582,8 +586,37 @@ bool MMSProtocol::EncodeUTF16(IOBuffer &dest, string & src) {
 }
 
 bool MMSProtocol::ParseASFHeader() {
-	_paddingSize = 3;
-	NYI;
-	return true;
+	uint64_t length = GETAVAILABLEBYTESCOUNT(_asfData);
+	uint8_t *pBuffer = GETIBPOINTER(_asfData);
+	uint64_t cursor = 30;
+	uint8_t filePropertiesGuid[] = {
+		0xa1, 0xdc, 0xab, 0x8c, 0x47, 0xa9, 0xcf, 0x11,
+		0x8e, 0xe4, 0x00, 0xc0, 0x0c, 0x20, 0x53, 0x65
+	};
+	uint64_t atomLength = 0;
+	while (true) {
+		if (length - cursor < 24) {
+			FATAL("Not enough data");
+			return false;
+		}
+		atomLength = *((uint64_t *) (pBuffer + cursor + 16));
+		if (memcmp(pBuffer + cursor, filePropertiesGuid, 16) == 0) {
+			if (atomLength < 96) {
+				FATAL("Invalid ASF header");
+				return false;
+			}
+			_packetSize = *((uint32_t *) (pBuffer + cursor + 92));
+			return true;
+		}
+		cursor += atomLength;
+		if (cursor == length)
+			break;
+		if (cursor > length) {
+			FATAL("Invalid ASF header");
+			return false;
+		}
+	}
+
+	return false;
 }
 #endif /* HAS_PROTOCOL_MMS */

@@ -26,6 +26,9 @@ class InboundRawHTTPStreamProtocol;
 
 class OutNetRawStream
 : public BaseOutNetStream {
+private:
+	uint64_t _bytesCount;
+	uint64_t _packetsCount;
 public:
 	OutNetRawStream(BaseProtocol *pProtocol, StreamsManager *pStreamsManager,
 			string name);

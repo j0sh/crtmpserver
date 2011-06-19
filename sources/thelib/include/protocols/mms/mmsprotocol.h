@@ -39,7 +39,7 @@ private:
 	uint16_t _seq;
 	uint32_t _openFileId;
 	Transcoder *_pTranscoder;
-	uint32_t _paddingSize;
+	uint32_t _packetSize;
 
 	InNetRawStream *_pRawAACStream;
 	bool _enableAAC;
