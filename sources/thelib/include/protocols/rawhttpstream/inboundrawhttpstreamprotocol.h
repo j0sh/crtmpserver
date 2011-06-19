@@ -21,8 +21,9 @@
 #ifndef _INBOUNDRAWHTTPSTREAMPROTOCOL_H
 #define	_INBOUNDRAWHTTPSTREAMPROTOCOL_H
 
-class OutNetRawStream;
 #include "protocols/baseprotocol.h"
+
+class OutNetRawStream;
 class InboundHTTPProtocol;
 class InboundRawHTTPStreamProtocol
 : public BaseProtocol {

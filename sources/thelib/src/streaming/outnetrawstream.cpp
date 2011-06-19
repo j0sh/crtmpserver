@@ -78,8 +78,6 @@ bool OutNetRawStream::FeedData(uint8_t *pData, uint32_t dataLength,
 		double absoluteTimestamp, bool isAudio) {
 	if (_pProtocol != NULL) {
 		return ((InboundRawHTTPStreamProtocol *) _pProtocol)->PutData(pData, dataLength);
-	} else {
-		ASSERT("sdfdsfdsfsd");
 	}
 	return false;
 }
