@@ -306,7 +306,7 @@ bool OutboundConnectivity::FeedDataUDP(msghdr &message, double absoluteTimestamp
 		}
 
 		if ((packetsCount % 500) == 0) {
-			FINEST("Send %c RTCP: %u", isAudio ? 'A' : 'V', packetsCount);
+			//FINEST("Send %c RTCP: %u", isAudio ? 'A' : 'V', packetsCount);
 			EHTONLP(((uint8_t *) _rtcpMessage.msg_iov[0].iov_base) + 4, ssrc); //SSRC
 
 
@@ -327,8 +327,8 @@ bool OutboundConnectivity::FeedDataUDP(msghdr &message, double absoluteTimestamp
 
 			//octet count
 			EHTONLP(_pRTCPSOC, bytesCount);
-			FINEST("\n%s", STR(IOBuffer::DumpBuffer(((uint8_t *) _rtcpMessage.msg_iov[0].iov_base),
-					_rtcpMessage.msg_iov[0].iov_len)));
+			//			FINEST("\n%s", STR(IOBuffer::DumpBuffer(((uint8_t *) _rtcpMessage.msg_iov[0].iov_base),
+			//					_rtcpMessage.msg_iov[0].iov_len)));
 
 			sockaddr_in &rtcpAddress = isAudio ? client.audioRtcpAddress : client.videoRtcpAddress;
 			_rtcpMessage.msg_name = &rtcpAddress;

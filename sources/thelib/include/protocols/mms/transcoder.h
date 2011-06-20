@@ -55,7 +55,7 @@ private:
 	} _input;
 
 	struct Output {
-		AVCodecContext *_pContext;
+		AVCodecContext *_pCodecContext;
 		uint8_t *_pOutbuf;
 		int _outbufSize;
 		int16_t *_pInPCM;
@@ -63,10 +63,14 @@ private:
 		string _codecName;
 		IOBuffer _data;
 		IOBuffer _encoded;
+		double _absoluteTimestamp;
+		uint64_t _totalSamplesEncoded;
 		Output();
 		virtual ~Output();
 		bool Init(string codecName, int _sampleRate, int channelsCount);
-		bool EncodePCM(int16_t *pPCM, uint32_t size, BaseInStream * pStream);
+		bool EncodePCM(int16_t *pPCM, uint32_t size,
+				BaseInStream * pStream1,
+				BaseInStream * pStream2);
 	};
 	Output *_pAAC;
 	Output *_pMP3;
@@ -75,8 +79,10 @@ public:
 	virtual ~Transcoder();
 	bool Init(bool hasAAC, bool hasMP3);
 	bool PushData(uint8_t *pData, uint32_t length,
-			BaseInStream *pAACStream,
-			BaseInStream *pMP3Stream);
+			BaseInStream *pAACStream1,
+			BaseInStream *pAACStream2,
+			BaseInStream *pMP3Stream1,
+			BaseInStream *pMP3Stream2);
 };
 
 #endif	/* _SOURCE_H */

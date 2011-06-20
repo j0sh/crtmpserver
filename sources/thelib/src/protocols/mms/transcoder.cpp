@@ -143,17 +143,19 @@ int Transcoder::Input::_readPacket(void* pOpaque, uint8_t* buffer, int bufferSiz
 }
 
 Transcoder::Output::Output() {
-	_pContext = NULL;
+	_pCodecContext = NULL;
 	_pOutbuf = NULL;
 	_outbufSize = 1024 * 16;
 	_pInPCM = NULL;
 	_inPCMSize = 0;
+	_absoluteTimestamp = 0;
+	_totalSamplesEncoded = 0;
 }
 
 Transcoder::Output::~Output() {
-	if (_pContext != NULL) {
-		avcodec_close(_pContext);
-		_pContext = NULL;
+	if (_pCodecContext != NULL) {
+		avcodec_close(_pCodecContext);
+		_pCodecContext = NULL;
 	}
 	if (_pOutbuf != NULL) {
 		delete[] _pOutbuf;
@@ -170,46 +172,65 @@ bool Transcoder::Output::Init(string codecName, int sampleRate, int channelsCoun
 		return false;
 	}
 
-	_pContext = avcodec_alloc_context();
+	_pCodecContext = avcodec_alloc_context();
 
 	//_pContext->bit_rate = 64000;
-	_pContext->sample_rate = sampleRate;
-	_pContext->channels = channelsCount;
-	_pContext->sample_fmt = AV_SAMPLE_FMT_S16;
+	_pCodecContext->sample_rate = sampleRate;
+	_pCodecContext->channels = channelsCount;
+	_pCodecContext->sample_fmt = AV_SAMPLE_FMT_S16;
 
-	if (avcodec_open(_pContext, _pCodec) < 0) {
+	if (avcodec_open(_pCodecContext, _pCodec) < 0) {
 		FATAL("could not open codec");
 		return false;
 	}
 
 	_pOutbuf = new uint8_t[_outbufSize];
-	_pInPCM = new int16_t[_pContext->frame_size * _pContext->channels];
+	_pInPCM = new int16_t[_pCodecContext->frame_size * _pCodecContext->channels];
 	_inPCMSize = 0;
 
 	return true;
 }
 
-bool Transcoder::Output::EncodePCM(int16_t *pPCM, uint32_t size, BaseInStream *pStream) {
+bool Transcoder::Output::EncodePCM(int16_t *pPCM, uint32_t size,
+		BaseInStream *pStream1,
+		BaseInStream *pStream2) {
 	_data.ReadFromBuffer((uint8_t *) pPCM, size * 2);
-	uint32_t chunkSize = (uint32_t) _pContext->frame_size * (uint32_t) _pContext->channels;
+	uint32_t chunkSize = (uint32_t) _pCodecContext->frame_size * (uint32_t) _pCodecContext->channels;
 	while (GETAVAILABLEBYTESCOUNT(_data) / 2 >= chunkSize) {
-		int out_size = avcodec_encode_audio(_pContext, _pOutbuf, _outbufSize,
+		int out_size = avcodec_encode_audio(_pCodecContext, _pOutbuf, _outbufSize,
 				(int16_t *) GETIBPOINTER(_data));
 		_data.Ignore(chunkSize * 2);
 		if (out_size < 0) {
 			FATAL("avcodec_encode_audio failed");
 			return false;
 		}
-		if (!pStream->FeedData(
-				_pOutbuf,
-				(uint32_t) out_size,
-				0,
-				(uint32_t) out_size,
-				0, true
-				)) {
-			FATAL("Unable to feed in stream");
-			return false;
+		if (pStream1 != NULL) {
+			if (!pStream1->FeedData(
+					_pOutbuf,
+					(uint32_t) out_size,
+					0,
+					(uint32_t) out_size,
+					_absoluteTimestamp, true
+					)) {
+				FATAL("Unable to feed in stream");
+				return false;
+			}
 		}
+		if (pStream2 != NULL) {
+			if (!pStream2->FeedData(
+					_pOutbuf,
+					(uint32_t) out_size,
+					0,
+					(uint32_t) out_size,
+					_absoluteTimestamp, true
+					)) {
+				FATAL("Unable to feed in stream");
+				return false;
+			}
+		}
+		_totalSamplesEncoded += _pCodecContext->frame_size;
+		_absoluteTimestamp = ((double) _totalSamplesEncoded
+				/ (double) _pCodecContext->sample_rate)*1000.0;
 	}
 	return _data.MoveData();
 }
@@ -263,8 +284,16 @@ bool Transcoder::Init(bool hasAAC, bool hasMP3) {
 	return true;
 }
 
+time_t _lastT = 0;
+
 bool Transcoder::PushData(uint8_t *pData, uint32_t length,
-		BaseInStream *pAACStream, BaseInStream *pMP3Stream) {
+		BaseInStream *pAACStream1,
+		BaseInStream *pAACStream2,
+		BaseInStream *pMP3Stream1,
+		BaseInStream *pMP3Stream2) {
+	if (_lastT == 0)
+		_lastT = time(NULL);
+	//
 	_input._inputBuffer.ReadFromBuffer(pData, length);
 	if (!_input.ReadPCM()) {
 		FATAL("ASF decoding failed");
@@ -272,17 +301,27 @@ bool Transcoder::PushData(uint8_t *pData, uint32_t length,
 	}
 
 	if (_pAAC != NULL) {
-		if (!_pAAC->EncodePCM(_input._pPCMData, _input._pcmSize, pAACStream)) {
+		if (!_pAAC->EncodePCM(_input._pPCMData, _input._pcmSize, pAACStream1,
+				pAACStream2)) {
 			FATAL("AAC encoder failed");
 			return false;
 		}
+		//		FINEST("AAC: _absoluteTimestamp: %.6f (%ld) (%.2f)",
+		//				_pAAC->_absoluteTimestamp,
+		//				time(NULL) - _lastT,
+		//				(double) (time(NULL) - _lastT)*1000.0 - _pAAC->_absoluteTimestamp);
 	}
 
 	if (_pMP3 != NULL) {
-		if (!_pMP3->EncodePCM(_input._pPCMData, _input._pcmSize, pMP3Stream)) {
+		if (!_pMP3->EncodePCM(_input._pPCMData, _input._pcmSize, pMP3Stream1,
+				pMP3Stream2)) {
 			FATAL("MP3 encoder failed");
 			return false;
 		}
+		//		FINEST("MP3: _absoluteTimestamp: %.6f (%ld) (%.2f)",
+		//				_pMP3->_absoluteTimestamp,
+		//				time(NULL) - _lastT,
+		//				(double) (time(NULL) - _lastT)*1000.0 - _pMP3->_absoluteTimestamp);
 	}
 
 	return true;

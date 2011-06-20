@@ -35,7 +35,8 @@ OutNetRTMP4RTMPStream::~OutNetRTMP4RTMPStream() {
 bool OutNetRTMP4RTMPStream::IsCompatibleWithType(uint64_t type) {
 	return TAG_KIND_OF(type, ST_IN_NET_RTMP)
 			|| TAG_KIND_OF(type, ST_IN_NET_LIVEFLV)
-			|| TAG_KIND_OF(type, ST_IN_FILE_RTMP);
+			|| TAG_KIND_OF(type, ST_IN_FILE_RTMP)
+			|| TAG_KIND_OF(type, ST_IN_NET_MP3);
 }
 #endif /* HAS_PROTOCOL_RTMP */
 

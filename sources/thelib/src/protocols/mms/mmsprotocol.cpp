@@ -22,6 +22,8 @@
 #include "protocols/mms/transcoder.h"
 #include "application/baseclientapplication.h"
 #include "streaming/innetrawstream.h"
+#include "protocols/mms/innetaacstream.h"
+#include "protocols/mms/innetmp3stream.h"
 
 MMSProtocol::MMSProtocol()
 : BaseProtocol(PT_OUTBOUND_MMS) {
@@ -31,9 +33,15 @@ MMSProtocol::MMSProtocol()
 	_packetSize = 0;
 
 	_pRawAACStream = NULL;
+	_enableRawAAC = true;
+
+	_pAACStream = NULL;
 	_enableAAC = true;
 
 	_pRawMP3Stream = NULL;
+	_enableRawMP3 = true;
+
+	_pMP3Stream = NULL;
 	_enableMP3 = true;
 }
 
@@ -48,9 +56,17 @@ MMSProtocol::~MMSProtocol() {
 		delete _pRawAACStream;
 		_pRawAACStream = NULL;
 	}
+	if (_pAACStream != NULL) {
+		delete _pAACStream;
+		_pAACStream = NULL;
+	}
 	if (_pRawMP3Stream != NULL) {
 		delete _pRawMP3Stream;
 		_pRawMP3Stream = NULL;
+	}
+	if (_pMP3Stream != NULL) {
+		delete _pMP3Stream;
+		_pMP3Stream = NULL;
 	}
 }
 
@@ -80,8 +96,16 @@ bool MMSProtocol::Initialize(Variant &customparams) {
 
 	//4. read AAC/MP3 availability
 	if (customparams.HasKeyChain(V_BOOL, false, 3, "customParameters",
+			"externalStreamConfig", "enableRawAAC")) {
+		_enableRawAAC = (bool) customparams["customParameters"]["externalStreamConfig"]["enableRawAAC"];
+	}
+	if (customparams.HasKeyChain(V_BOOL, false, 3, "customParameters",
 			"externalStreamConfig", "enableAAC")) {
 		_enableAAC = (bool) customparams["customParameters"]["externalStreamConfig"]["enableAAC"];
+	}
+	if (customparams.HasKeyChain(V_BOOL, false, 3, "customParameters",
+			"externalStreamConfig", "enableRawMP3")) {
+		_enableRawMP3 = (bool) customparams["customParameters"]["externalStreamConfig"]["enableRawMP3"];
 	}
 	if (customparams.HasKeyChain(V_BOOL, false, 3, "customParameters",
 			"externalStreamConfig", "enableMP3")) {
@@ -98,12 +122,28 @@ bool MMSProtocol::Initialize(Variant &customparams) {
 	}
 
 	//6. compute aac and mp3 streamNames
+	if (_enableRawAAC) {
+		if (customparams.HasKeyChain(V_STRING, false, 3, "customParameters",
+				"externalStreamConfig", "localRawAACStreamName"))
+			_rawAACStreamName = (string) customparams["customParameters"]["externalStreamConfig"]["localRawAACStreamName"];
+		if (_rawAACStreamName == "") {
+			_rawAACStreamName = localStreamName + ".raw.aac";
+		}
+	}
 	if (_enableAAC) {
 		if (customparams.HasKeyChain(V_STRING, false, 3, "customParameters",
 				"externalStreamConfig", "localAACStreamName"))
 			_aacStreamName = (string) customparams["customParameters"]["externalStreamConfig"]["localAACStreamName"];
 		if (_aacStreamName == "") {
 			_aacStreamName = localStreamName + ".aac";
+		}
+	}
+	if (_enableRawMP3) {
+		if (customparams.HasKeyChain(V_STRING, false, 3, "customParameters",
+				"externalStreamConfig", "localRawMP3StreamName"))
+			_rawMP3StreamName = (string) customparams["customParameters"]["externalStreamConfig"]["localRawMP3StreamName"];
+		if (_rawMP3StreamName == "") {
+			_rawMP3StreamName = localStreamName + ".raw.mp3";
 		}
 	}
 	if (_enableMP3) {
@@ -283,19 +323,28 @@ bool MMSProtocol::ProcessData(IOBuffer &buffer) {
 		_asfData.ReadFromRepeat(0, _packetSize - length + 8);
 
 		if (_pTranscoder == NULL) {
-			if (_enableAAC) {
+			if (_enableRawAAC) {
 				_pRawAACStream = new InNetRawStream(this,
 						GetApplication()->GetStreamsManager(),
-						_aacStreamName, CODEC_AUDIO_ADTS);
+						_rawAACStreamName, CODEC_AUDIO_ADTS);
 			}
-			if (_enableMP3) {
+			if (_enableAAC) {
+				_pAACStream = new InNetAACStream(this,
+						GetApplication()->GetStreamsManager(),
+						_aacStreamName);
+			}
+			if (_enableRawMP3) {
 				_pRawMP3Stream = new InNetRawStream(this,
 						GetApplication()->GetStreamsManager(),
-						_mp3StreamName, CODEC_AUDIO_MP3);
+						_rawMP3StreamName, CODEC_AUDIO_MP3);
 			}
-
+			if (_enableMP3) {
+				_pMP3Stream = new InNetMP3Stream(this,
+						GetApplication()->GetStreamsManager(),
+						_mp3StreamName);
+			}
 			_pTranscoder = new Transcoder(_asfData);
-			if (!_pTranscoder->Init(_enableAAC, _enableMP3)) {
+			if (!_pTranscoder->Init(_enableRawAAC || _enableAAC, _enableRawMP3 || _enableMP3)) {
 				FATAL("Unable to initialize transcoder");
 				return false;
 			}
@@ -313,7 +362,7 @@ bool MMSProtocol::ProcessData(IOBuffer &buffer) {
 		if (!_pTranscoder->PushData(
 				GETIBPOINTER(_asfData),
 				GETAVAILABLEBYTESCOUNT(_asfData),
-				_pRawAACStream, _pRawMP3Stream)) {
+				_pRawAACStream, _pAACStream, _pRawMP3Stream, _pMP3Stream)) {
 			FATAL("Unable to publish data");
 			return false;
 		}

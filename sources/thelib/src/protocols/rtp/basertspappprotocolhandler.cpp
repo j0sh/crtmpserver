@@ -1016,7 +1016,7 @@ string BaseRTSPAppProtocolHandler::GetAudioTrack(RTSPProtocol *pFrom,
 		result += "a=recvonly\r\n";
 		result += format("a=rtpmap:96 mpeg4-generic/%u/2\r\n",
 				pCapabilities->aac._sampleRate);
-		FINEST("result: %s", STR(result));
+		//FINEST("result: %s", STR(result));
 		result += "a=control:trackID="
 				+ (string) pFrom->GetCustomParameters()["audioTrackId"] + "\r\n";
 		//rfc3640-fmtp-explained.txt Chapter 4.1

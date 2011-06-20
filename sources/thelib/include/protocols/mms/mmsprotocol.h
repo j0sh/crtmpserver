@@ -27,6 +27,8 @@
 class Transcoder;
 class Destination;
 class InNetRawStream;
+class InNetAACStream;
+class InNetMP3Stream;
 
 class MMSProtocol
 : public BaseProtocol {
@@ -42,10 +44,18 @@ private:
 	uint32_t _packetSize;
 
 	InNetRawStream *_pRawAACStream;
+	bool _enableRawAAC;
+	string _rawAACStreamName;
+
+	InNetAACStream *_pAACStream;
 	bool _enableAAC;
 	string _aacStreamName;
 
 	InNetRawStream *_pRawMP3Stream;
+	bool _enableRawMP3;
+	string _rawMP3StreamName;
+
+	InNetMP3Stream *_pMP3Stream;
 	bool _enableMP3;
 	string _mp3StreamName;
 public:
