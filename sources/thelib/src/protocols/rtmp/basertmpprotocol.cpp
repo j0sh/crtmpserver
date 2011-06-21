@@ -142,8 +142,8 @@ bool BaseRTMPProtocol::SignalInputData(IOBuffer &buffer) {
 	bool result = false;
 	if (_handshakeCompleted) {
 		result = ProcessBytes(buffer);
-		uint32_t decodedBytes = GetDecodedBytesCount();
-		if (result && decodedBytes >= _nextReceivedBytesCountReport) {
+		uint64_t decodedBytes = GetDecodedBytesCount();
+		if (result && (decodedBytes >= _nextReceivedBytesCountReport)) {
 			Variant _bytesReadMessage = GenericMessageFactory::GetAck(decodedBytes);
 			_nextReceivedBytesCountReport += _winAckSize;
 			if (!SendMessage(_bytesReadMessage)) {

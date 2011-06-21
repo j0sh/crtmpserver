@@ -210,7 +210,7 @@ public:
 	/*!
 		@brief Get the total amount of bytes that this protocol transported (raw bytes).
 	*/
-	virtual uint32_t GetDecodedBytesCount();
+	virtual uint64_t GetDecodedBytesCount();
 
 	/*!
 		@brief This function can be called by anyone who wants to signal the transport layer that there is data ready to be sent. pExtraParameters usually is a pointer to an OutboundBuffer, but this depends on the protocol type.

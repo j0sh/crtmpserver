@@ -30,7 +30,7 @@ class TCPProtocol
 private:
 	IOHandler *_pCarrier;
 	IOBuffer _inputBuffer;
-	uint32_t _decodedBytesCount;
+	uint64_t _decodedBytesCount;
 public:
 	TCPProtocol();
 	virtual ~TCPProtocol();
@@ -43,7 +43,7 @@ public:
 	virtual bool SignalInputData(int32_t recvAmount);
 	virtual bool SignalInputData(IOBuffer &buffer);
 	virtual bool EnqueueForOutbound();
-	virtual uint32_t GetDecodedBytesCount();
+	virtual uint64_t GetDecodedBytesCount();
 };
 
 

@@ -309,7 +309,7 @@ IOBuffer * BaseProtocol::GetOutputBuffer() {
 	return NULL;
 }
 
-uint32_t BaseProtocol::GetDecodedBytesCount() {
+uint64_t BaseProtocol::GetDecodedBytesCount() {
 	if (_pFarProtocol != NULL)
 		return _pFarProtocol->GetDecodedBytesCount();
 	return 0;

@@ -35,7 +35,7 @@ protected:
 	bool _lastChunk;
 	uint32_t _contentLength;
 	uint32_t _sessionDecodedBytesCount;
-	uint32_t _decodedBytesCount;
+	uint64_t _decodedBytesCount;
 	bool _disconnectAfterTransfer;
 	bool _autoFlush;
 	IOBuffer _outputBuffer;
@@ -51,7 +51,7 @@ public:
 	virtual IOBuffer * GetInputBuffer();
 	virtual bool AllowFarProtocol(uint64_t type);
 	virtual bool AllowNearProtocol(uint64_t type);
-	virtual uint32_t GetDecodedBytesCount();
+	virtual uint64_t GetDecodedBytesCount();
 	virtual bool Initialize(Variant &parameters);
 	virtual bool EnqueueForOutbound();
 	virtual bool SignalInputData(int32_t recvAmount);

@@ -116,19 +116,15 @@ bool InNetRTPStream::SignalPlay(double &absoluteTimestamp, double &length) {
 }
 
 bool InNetRTPStream::SignalPause() {
-	FATAL("Pause is not supported on inbound RTSP streams");
-	return false;
-	//return true;
+	return true;
 }
 
 bool InNetRTPStream::SignalResume() {
-	FATAL("Resume is not supported on inbound RTSP streams");
-	return false;
+	return true;
 }
 
 bool InNetRTPStream::SignalSeek(double &absoluteTimestamp) {
-	FATAL("Seek is not supported on inbound RTSP streams");
-	return false;
+	return true;
 }
 
 bool InNetRTPStream::SignalStop() {

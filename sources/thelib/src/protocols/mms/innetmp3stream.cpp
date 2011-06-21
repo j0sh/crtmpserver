@@ -72,11 +72,11 @@ bool InNetMP3Stream::SignalPause() {
 }
 
 bool InNetMP3Stream::SignalResume() {
-	NYIR;
+	return true;
 }
 
 bool InNetMP3Stream::SignalSeek(double &absoluteTimestamp) {
-	NYIR;
+	return true;
 }
 
 bool InNetMP3Stream::SignalStop() {

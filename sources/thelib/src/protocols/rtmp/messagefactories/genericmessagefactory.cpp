@@ -31,12 +31,12 @@ Variant GenericMessageFactory::GetChunkSize(uint32_t chunkSize) {
 	return result;
 }
 
-Variant GenericMessageFactory::GetAck(uint32_t amount) {
+Variant GenericMessageFactory::GetAck(uint64_t amount) {
 	Variant result;
 
 	VH(result, HT_FULL, 2, 0, 0, RM_HEADER_MESSAGETYPE_ACK, 0, true);
 
-	result[RM_ACK] = amount;
+	result[RM_ACK] = (uint32_t) amount;
 
 	return result;
 }

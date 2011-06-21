@@ -57,7 +57,7 @@ protected:
 	bool _handshakeCompleted;
 	RTMPState _rtmpState;
 	IOBuffer _outputBuffer;
-	uint32_t _nextReceivedBytesCountReport;
+	uint64_t _nextReceivedBytesCountReport;
 	uint32_t _winAckSize;
 	Channel _channels[MAX_CHANNELS_COUNT];
 	int32_t _selectedChannel;

@@ -72,11 +72,11 @@ bool InNetAACStream::SignalPause() {
 }
 
 bool InNetAACStream::SignalResume() {
-	NYIR;
+	return true;
 }
 
 bool InNetAACStream::SignalSeek(double &absoluteTimestamp) {
-	NYIR;
+	return true;
 }
 
 bool InNetAACStream::SignalStop() {

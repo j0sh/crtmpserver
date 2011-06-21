@@ -85,7 +85,7 @@ bool TCPProtocol::EnqueueForOutbound() {
 	return _pCarrier->SignalOutputData();
 }
 
-uint32_t TCPProtocol::GetDecodedBytesCount() {
+uint64_t TCPProtocol::GetDecodedBytesCount() {
 	return _decodedBytesCount;
 }
 

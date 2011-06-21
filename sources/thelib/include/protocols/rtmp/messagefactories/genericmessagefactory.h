@@ -77,7 +77,7 @@ class DLLEXP GenericMessageFactory {
 public:
 	//channel specific
 	static Variant GetChunkSize(uint32_t chunkSize);
-	static Variant GetAck(uint32_t amount);
+	static Variant GetAck(uint64_t amount);
 	static Variant GetWinAckSize(uint32_t value);
 	static Variant GetPeerBW(uint32_t value, uint8_t type);
 	static Variant GetAbortMessage(uint32_t channelId);

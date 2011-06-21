@@ -89,7 +89,7 @@ bool UDPProtocol::EnqueueForOutbound() {
 	return _pCarrier->SignalOutputData();
 }
 
-uint32_t UDPProtocol::GetDecodedBytesCount() {
+uint64_t UDPProtocol::GetDecodedBytesCount() {
 	return _decodedBytesCount;
 }
 

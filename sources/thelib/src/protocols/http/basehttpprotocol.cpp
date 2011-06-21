@@ -69,7 +69,7 @@ bool BaseHTTPProtocol::AllowNearProtocol(uint64_t type) {
 	return true;
 }
 
-uint32_t BaseHTTPProtocol::GetDecodedBytesCount() {
+uint64_t BaseHTTPProtocol::GetDecodedBytesCount() {
 	return _decodedBytesCount;
 }
 

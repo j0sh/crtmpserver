@@ -30,7 +30,7 @@ class UDPProtocol
 private:
 	IOHandler *_pCarrier;
 	IOBuffer _inputBuffer;
-	uint32_t _decodedBytesCount;
+	uint64_t _decodedBytesCount;
 public:
 	UDPProtocol();
 	virtual ~UDPProtocol();
@@ -44,7 +44,7 @@ public:
 	virtual bool SignalInputData(int32_t recvAmount, sockaddr_in *pPeerAddress);
 	virtual bool SignalInputData(IOBuffer &buffer);
 	virtual bool EnqueueForOutbound();
-	virtual uint32_t GetDecodedBytesCount();
+	virtual uint64_t GetDecodedBytesCount();
 };
 
 
