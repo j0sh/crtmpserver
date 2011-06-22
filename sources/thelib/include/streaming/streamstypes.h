@@ -43,6 +43,7 @@
 #define ST_OUT_FILE				MAKE_TAG2('O','F')
 #define ST_OUT_FILE_RTMP		MAKE_TAG3('O','F','R')
 #define ST_OUT_FILE_RTMP_FLV	MAKE_TAG6('O','F','R','F','L','V')
+#define ST_OUT_FILE_HLS			MAKE_TAG5('O','F','H','L','S')
 
 #endif	/* _STREAMSTYPES_H */
 

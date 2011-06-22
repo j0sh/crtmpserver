@@ -69,6 +69,8 @@ bool Transcoder::Input::Init() {
 	if (_pFmt == NULL) {
 		return false;
 	}
+	_pFormatCtx=avformat_alloc_context();
+	_pFormatCtx->pb=_pIO;
 	if (av_open_input_stream(&_pFormatCtx, _pIO, "", _pFmt, NULL) != 0) {
 		FATAL("Unable to open input stream");
 		return false;
