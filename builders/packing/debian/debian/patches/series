@@ -1,4 +1,4 @@
-10_disable_tests_vmtests.diff
+10_disable_tests.diff
 11_change_log_location.diff
 13_disable_lua_config_install.diff
 15_use_system_lua.diff

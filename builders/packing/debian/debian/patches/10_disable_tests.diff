@@ -1,0 +1,12 @@
+Description: disable tests
+
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -190,6 +190,6 @@
+ ADD_SUBDIRECTORY(applications applications)
+ ADD_SUBDIRECTORY(crtmpserver crtmpserver)
+ #ADD_SUBDIRECTORY(vmtests vmtests)
+-ADD_SUBDIRECTORY(tests)
++#ADD_SUBDIRECTORY(tests)
+ #ADD_SUBDIRECTORY(androidapplestreaming androidapplestreaming)
+ 

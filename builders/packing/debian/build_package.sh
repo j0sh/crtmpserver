@@ -1,10 +1,10 @@
 #!/bin/sh
 
-SVNPATH="https://rtmpd.com/crtmpserver/trunk"
+SVNPATH="https://svn.rtmpd.com/crtmpserver/trunk"
 ORIGPATH="crtmpserver-original"
 DEBPATH="crtmpserver-`date +%Y%m%d`"
 LOGFILE="install.log"
-APPS="admin applestreamingclient appselector flvplayback proxypublish samplefactory stresstest vmapp vptests"
+APPS="admin applestreamingclient appselector flvplayback proxypublish samplefactory stresstest vptests"
 PATCHDIR="patches"
 PATCHLIST="list"
 STARTPWD=`pwd`
@@ -132,8 +132,8 @@ echo "Processing thelib"
 copyProject "thelib"
 
 ############# VM
-echo "Processing vm"
-copyProject "vm"
+#echo "Processing vm"
+#copyProject "vm"
 
 ############# rtmpserver
 echo "Processing crtmpserver"
