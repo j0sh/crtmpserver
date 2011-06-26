@@ -8,6 +8,7 @@
       <itemPath>../../../../sources/applications/flvplayback/include/flvplaybackapplication.h</itemPath>
       <itemPath>../../../../sources/applications/flvplayback/include/liveflvappprotocolhandler.h</itemPath>
       <itemPath>../../../../sources/applications/flvplayback/include/mmsappprotocolhandler.h</itemPath>
+      <itemPath>../../../../sources/applications/flvplayback/include/rawhttpstreamappprotocolhandler.h</itemPath>
       <itemPath>../../../../sources/applications/flvplayback/include/rtmfpappprotocolhandler.h</itemPath>
       <itemPath>../../../../sources/applications/flvplayback/include/rtmpappprotocolhandler.h</itemPath>
       <itemPath>../../../../sources/applications/flvplayback/include/rtpappprotocolhandler.h</itemPath>
@@ -21,6 +22,7 @@
       <itemPath>../../../../sources/applications/flvplayback/src/flvplaybackapplication.cpp</itemPath>
       <itemPath>../../../../sources/applications/flvplayback/src/liveflvappprotocolhandler.cpp</itemPath>
       <itemPath>../../../../sources/applications/flvplayback/src/mmsappprotocolhandler.cpp</itemPath>
+      <itemPath>../../../../sources/applications/flvplayback/src/rawhttpstreamappprotocolhandler.cpp</itemPath>
       <itemPath>../../../../sources/applications/flvplayback/src/rtmfpappprotocolhandler.cpp</itemPath>
       <itemPath>../../../../sources/applications/flvplayback/src/rtmpappprotocolhandler.cpp</itemPath>
       <itemPath>../../../../sources/applications/flvplayback/src/rtpappprotocolhandler.cpp</itemPath>
@@ -62,6 +64,8 @@
             <Elem>HAS_PROTOCOL_RTMFP</Elem>
             <Elem>HAS_PROTOCOL_LIVEFLV</Elem>
             <Elem>HAS_PROTOCOL_MMS</Elem>
+            <Elem>HAS_PROTOCOL_RAWHTTPSTREAM</Elem>
+            <Elem>HAS_PROTOCOL_HTTP</Elem>
           </preprocessorList>
         </ccTool>
         <linkerTool>

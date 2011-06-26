@@ -144,8 +144,16 @@
         </logicalFolder>
         <logicalFolder name="mms" displayName="mms" projectFiles="true">
           <itemPath>../../../../sources/thelib/include/protocols/mms/basemmsappprotocolhandler.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/protocols/mms/innetaacstream.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/protocols/mms/innetmp3stream.h</itemPath>
           <itemPath>../../../../sources/thelib/include/protocols/mms/mmsprotocol.h</itemPath>
           <itemPath>../../../../sources/thelib/include/protocols/mms/transcoder.h</itemPath>
+        </logicalFolder>
+        <logicalFolder name="rawhttpstream"
+                       displayName="rawhttpstream"
+                       projectFiles="true">
+          <itemPath>../../../../sources/thelib/include/protocols/rawhttpstream/baserawhttpstreamappprotocolhandler.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/protocols/rawhttpstream/inboundrawhttpstreamprotocol.h</itemPath>
         </logicalFolder>
         <logicalFolder name="rtmfp" displayName="rtmfp" projectFiles="true">
           <itemPath>../../../../sources/thelib/include/protocols/rtmfp/basertmfpappprotocolhandler.h</itemPath>
@@ -260,7 +268,9 @@
         <itemPath>../../../../sources/thelib/include/streaming/baseoutstream.h</itemPath>
         <itemPath>../../../../sources/thelib/include/streaming/basestream.h</itemPath>
         <itemPath>../../../../sources/thelib/include/streaming/codectypes.h</itemPath>
+        <itemPath>../../../../sources/thelib/include/streaming/innetrawstream.h</itemPath>
         <itemPath>../../../../sources/thelib/include/streaming/nalutypes.h</itemPath>
+        <itemPath>../../../../sources/thelib/include/streaming/outnetrawstream.h</itemPath>
         <itemPath>../../../../sources/thelib/include/streaming/packetqueue.h</itemPath>
         <itemPath>../../../../sources/thelib/include/streaming/streamcapabilities.h</itemPath>
         <itemPath>../../../../sources/thelib/include/streaming/streamsmanager.h</itemPath>
@@ -404,8 +414,16 @@
         </logicalFolder>
         <logicalFolder name="mms" displayName="mms" projectFiles="true">
           <itemPath>../../../../sources/thelib/src/protocols/mms/basemmsappprotocolhandler.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/protocols/mms/innetaacstream.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/protocols/mms/innetmp3stream.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/protocols/mms/mmsprotocol.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/protocols/mms/transcoder.cpp</itemPath>
+        </logicalFolder>
+        <logicalFolder name="rawhttpstream"
+                       displayName="rawhttpstream"
+                       projectFiles="true">
+          <itemPath>../../../../sources/thelib/src/protocols/rawhttpstream/baserawhttpstreamappprotocolhandler.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/protocols/rawhttpstream/inboundrawhttpstreamprotocol.cpp</itemPath>
         </logicalFolder>
         <logicalFolder name="rtmfp" displayName="rtmfp" projectFiles="true">
           <itemPath>../../../../sources/thelib/src/protocols/rtmfp/basertmfpappprotocolhandler.cpp</itemPath>
@@ -511,7 +529,9 @@
         <itemPath>../../../../sources/thelib/src/streaming/baseoutnetstream.cpp</itemPath>
         <itemPath>../../../../sources/thelib/src/streaming/baseoutstream.cpp</itemPath>
         <itemPath>../../../../sources/thelib/src/streaming/basestream.cpp</itemPath>
+        <itemPath>../../../../sources/thelib/src/streaming/innetrawstream.cpp</itemPath>
         <itemPath>../../../../sources/thelib/src/streaming/nalutypes.cpp</itemPath>
+        <itemPath>../../../../sources/thelib/src/streaming/outnetrawstream.cpp</itemPath>
         <itemPath>../../../../sources/thelib/src/streaming/packetqueue.cpp</itemPath>
         <itemPath>../../../../sources/thelib/src/streaming/streamcapabilities.cpp</itemPath>
         <itemPath>../../../../sources/thelib/src/streaming/streamsmanager.cpp</itemPath>
@@ -573,6 +593,7 @@
             <Elem>HAS_PROTOCOL_RTMFP</Elem>
             <Elem>HAS_MEDIA_NSV</Elem>
             <Elem>HAS_PROTOCOL_MMS</Elem>
+            <Elem>HAS_PROTOCOL_RAWHTTPSTREAM</Elem>
           </preprocessorList>
         </ccTool>
         <linkerTool>

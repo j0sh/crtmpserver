@@ -41,6 +41,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/482292139/liveflvappprotocolhandler.o \
 	${OBJECTDIR}/_ext/482292139/rtmpappprotocolhandler.o \
 	${OBJECTDIR}/_ext/482292139/rtpappprotocolhandler.o \
+	${OBJECTDIR}/_ext/482292139/rawhttpstreamappprotocolhandler.o \
 	${OBJECTDIR}/_ext/482292139/tsappprotocolhandler.o \
 	${OBJECTDIR}/_ext/482292139/rtspappprotocolhandler.o
 
@@ -76,47 +77,52 @@ LDLIBSOPTIONS=-L../thelib/../Debug/GNU-MacOSX -lthelib -L../common/dist/Debug/GN
 ${OBJECTDIR}/_ext/482292139/rtmfpappprotocolhandler.o: ../../../../sources/applications/flvplayback/src/rtmfpappprotocolhandler.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/482292139
 	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_TS -DHAS_LUA -DHAS_PROTOCOL_RTMFP -DHAS_PROTOCOL_LIVEFLV -DHAS_PROTOCOL_MMS -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/flvplayback/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/482292139/rtmfpappprotocolhandler.o ../../../../sources/applications/flvplayback/src/rtmfpappprotocolhandler.cpp
+	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_TS -DHAS_LUA -DHAS_PROTOCOL_RTMFP -DHAS_PROTOCOL_LIVEFLV -DHAS_PROTOCOL_MMS -DHAS_PROTOCOL_RAWHTTPSTREAM -DHAS_PROTOCOL_HTTP -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/flvplayback/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/482292139/rtmfpappprotocolhandler.o ../../../../sources/applications/flvplayback/src/rtmfpappprotocolhandler.cpp
 
 ${OBJECTDIR}/_ext/482292139/flvplaybackapplication.o: ../../../../sources/applications/flvplayback/src/flvplaybackapplication.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/482292139
 	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_TS -DHAS_LUA -DHAS_PROTOCOL_RTMFP -DHAS_PROTOCOL_LIVEFLV -DHAS_PROTOCOL_MMS -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/flvplayback/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/482292139/flvplaybackapplication.o ../../../../sources/applications/flvplayback/src/flvplaybackapplication.cpp
+	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_TS -DHAS_LUA -DHAS_PROTOCOL_RTMFP -DHAS_PROTOCOL_LIVEFLV -DHAS_PROTOCOL_MMS -DHAS_PROTOCOL_RAWHTTPSTREAM -DHAS_PROTOCOL_HTTP -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/flvplayback/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/482292139/flvplaybackapplication.o ../../../../sources/applications/flvplayback/src/flvplaybackapplication.cpp
 
 ${OBJECTDIR}/_ext/482292139/mmsappprotocolhandler.o: ../../../../sources/applications/flvplayback/src/mmsappprotocolhandler.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/482292139
 	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_TS -DHAS_LUA -DHAS_PROTOCOL_RTMFP -DHAS_PROTOCOL_LIVEFLV -DHAS_PROTOCOL_MMS -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/flvplayback/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/482292139/mmsappprotocolhandler.o ../../../../sources/applications/flvplayback/src/mmsappprotocolhandler.cpp
+	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_TS -DHAS_LUA -DHAS_PROTOCOL_RTMFP -DHAS_PROTOCOL_LIVEFLV -DHAS_PROTOCOL_MMS -DHAS_PROTOCOL_RAWHTTPSTREAM -DHAS_PROTOCOL_HTTP -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/flvplayback/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/482292139/mmsappprotocolhandler.o ../../../../sources/applications/flvplayback/src/mmsappprotocolhandler.cpp
 
 ${OBJECTDIR}/_ext/482292139/flvplayback.o: ../../../../sources/applications/flvplayback/src/flvplayback.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/482292139
 	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_TS -DHAS_LUA -DHAS_PROTOCOL_RTMFP -DHAS_PROTOCOL_LIVEFLV -DHAS_PROTOCOL_MMS -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/flvplayback/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/482292139/flvplayback.o ../../../../sources/applications/flvplayback/src/flvplayback.cpp
+	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_TS -DHAS_LUA -DHAS_PROTOCOL_RTMFP -DHAS_PROTOCOL_LIVEFLV -DHAS_PROTOCOL_MMS -DHAS_PROTOCOL_RAWHTTPSTREAM -DHAS_PROTOCOL_HTTP -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/flvplayback/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/482292139/flvplayback.o ../../../../sources/applications/flvplayback/src/flvplayback.cpp
 
 ${OBJECTDIR}/_ext/482292139/liveflvappprotocolhandler.o: ../../../../sources/applications/flvplayback/src/liveflvappprotocolhandler.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/482292139
 	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_TS -DHAS_LUA -DHAS_PROTOCOL_RTMFP -DHAS_PROTOCOL_LIVEFLV -DHAS_PROTOCOL_MMS -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/flvplayback/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/482292139/liveflvappprotocolhandler.o ../../../../sources/applications/flvplayback/src/liveflvappprotocolhandler.cpp
+	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_TS -DHAS_LUA -DHAS_PROTOCOL_RTMFP -DHAS_PROTOCOL_LIVEFLV -DHAS_PROTOCOL_MMS -DHAS_PROTOCOL_RAWHTTPSTREAM -DHAS_PROTOCOL_HTTP -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/flvplayback/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/482292139/liveflvappprotocolhandler.o ../../../../sources/applications/flvplayback/src/liveflvappprotocolhandler.cpp
 
 ${OBJECTDIR}/_ext/482292139/rtmpappprotocolhandler.o: ../../../../sources/applications/flvplayback/src/rtmpappprotocolhandler.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/482292139
 	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_TS -DHAS_LUA -DHAS_PROTOCOL_RTMFP -DHAS_PROTOCOL_LIVEFLV -DHAS_PROTOCOL_MMS -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/flvplayback/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/482292139/rtmpappprotocolhandler.o ../../../../sources/applications/flvplayback/src/rtmpappprotocolhandler.cpp
+	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_TS -DHAS_LUA -DHAS_PROTOCOL_RTMFP -DHAS_PROTOCOL_LIVEFLV -DHAS_PROTOCOL_MMS -DHAS_PROTOCOL_RAWHTTPSTREAM -DHAS_PROTOCOL_HTTP -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/flvplayback/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/482292139/rtmpappprotocolhandler.o ../../../../sources/applications/flvplayback/src/rtmpappprotocolhandler.cpp
 
 ${OBJECTDIR}/_ext/482292139/rtpappprotocolhandler.o: ../../../../sources/applications/flvplayback/src/rtpappprotocolhandler.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/482292139
 	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_TS -DHAS_LUA -DHAS_PROTOCOL_RTMFP -DHAS_PROTOCOL_LIVEFLV -DHAS_PROTOCOL_MMS -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/flvplayback/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/482292139/rtpappprotocolhandler.o ../../../../sources/applications/flvplayback/src/rtpappprotocolhandler.cpp
+	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_TS -DHAS_LUA -DHAS_PROTOCOL_RTMFP -DHAS_PROTOCOL_LIVEFLV -DHAS_PROTOCOL_MMS -DHAS_PROTOCOL_RAWHTTPSTREAM -DHAS_PROTOCOL_HTTP -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/flvplayback/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/482292139/rtpappprotocolhandler.o ../../../../sources/applications/flvplayback/src/rtpappprotocolhandler.cpp
+
+${OBJECTDIR}/_ext/482292139/rawhttpstreamappprotocolhandler.o: ../../../../sources/applications/flvplayback/src/rawhttpstreamappprotocolhandler.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/482292139
+	${RM} $@.d
+	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_TS -DHAS_LUA -DHAS_PROTOCOL_RTMFP -DHAS_PROTOCOL_LIVEFLV -DHAS_PROTOCOL_MMS -DHAS_PROTOCOL_RAWHTTPSTREAM -DHAS_PROTOCOL_HTTP -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/flvplayback/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/482292139/rawhttpstreamappprotocolhandler.o ../../../../sources/applications/flvplayback/src/rawhttpstreamappprotocolhandler.cpp
 
 ${OBJECTDIR}/_ext/482292139/tsappprotocolhandler.o: ../../../../sources/applications/flvplayback/src/tsappprotocolhandler.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/482292139
 	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_TS -DHAS_LUA -DHAS_PROTOCOL_RTMFP -DHAS_PROTOCOL_LIVEFLV -DHAS_PROTOCOL_MMS -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/flvplayback/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/482292139/tsappprotocolhandler.o ../../../../sources/applications/flvplayback/src/tsappprotocolhandler.cpp
+	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_TS -DHAS_LUA -DHAS_PROTOCOL_RTMFP -DHAS_PROTOCOL_LIVEFLV -DHAS_PROTOCOL_MMS -DHAS_PROTOCOL_RAWHTTPSTREAM -DHAS_PROTOCOL_HTTP -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/flvplayback/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/482292139/tsappprotocolhandler.o ../../../../sources/applications/flvplayback/src/tsappprotocolhandler.cpp
 
 ${OBJECTDIR}/_ext/482292139/rtspappprotocolhandler.o: ../../../../sources/applications/flvplayback/src/rtspappprotocolhandler.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/482292139
 	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_TS -DHAS_LUA -DHAS_PROTOCOL_RTMFP -DHAS_PROTOCOL_LIVEFLV -DHAS_PROTOCOL_MMS -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/flvplayback/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/482292139/rtspappprotocolhandler.o ../../../../sources/applications/flvplayback/src/rtspappprotocolhandler.cpp
+	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_TS -DHAS_LUA -DHAS_PROTOCOL_RTMFP -DHAS_PROTOCOL_LIVEFLV -DHAS_PROTOCOL_MMS -DHAS_PROTOCOL_RAWHTTPSTREAM -DHAS_PROTOCOL_HTTP -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/flvplayback/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/482292139/rtspappprotocolhandler.o ../../../../sources/applications/flvplayback/src/rtspappprotocolhandler.cpp
 
 # Subprojects
 .build-subprojects:
