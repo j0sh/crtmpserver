@@ -141,12 +141,27 @@ UDPCarrier* UDPCarrier::Create(string bindIp, uint16_t bindPort) {
 			close(sock);
 			return NULL;
 		}
+		uint32_t testVal = EHTONL(bindAddress.sin_addr.s_addr);
+		if ((testVal > 0xef000000) && (testVal < 0xefffffff)) {
+			INFO("Subscribe to multicast %s:%hu", STR(bindIp), bindPort);
+			bindAddress.sin_addr.s_addr = inet_addr(bindIp.c_str());
+		}
 		if (bind(sock, (sockaddr *) & bindAddress, sizeof (sockaddr)) != 0) {
 			int error = errno;
 			FATAL("Unable to bind on address: udp://%s:%hu; Error was: %s (%d)",
 					STR(bindIp), bindPort, strerror(error), error);
 			close(sock);
 			return NULL;
+		}
+		if ((testVal > 0xef000000) && (testVal < 0xefffffff)) {
+			struct ip_mreq group;
+			group.imr_multiaddr.s_addr = inet_addr(bindIp.c_str());
+			group.imr_interface.s_addr = INADDR_ANY;
+			if (setsockopt(sock, IPPROTO_IP, IP_ADD_MEMBERSHIP, (char *) &group, sizeof (group)) < 0) {
+				FATAL("Adding multicast group error");
+				close(sock);
+				return NULL;
+			}
 		}
 	}
 
