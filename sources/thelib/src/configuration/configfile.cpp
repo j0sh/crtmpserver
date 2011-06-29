@@ -693,9 +693,10 @@ bool ConfigFile::ConfigureApplication(Variant &node) {
 			_libDescriptor.GetApplication =
 					(GetApplication_t) GET_PROC_ADDRESS(_libDescriptor.libHandler, STR(functioName));
 			if (_libDescriptor.GetApplication == NULL) {
+				string strError = OPEN_LIBRARY_ERROR;
 				FATAL("Unable to find %s function. Error was: %s",
 						STR(functioName),
-						OPEN_LIBRARY_ERROR);
+						STR(strError));
 				return false;
 			}
 
@@ -704,9 +705,10 @@ bool ConfigFile::ConfigureApplication(Variant &node) {
 			_libDescriptor.ReleaseApplication =
 					(ReleaseApplication_t) GET_PROC_ADDRESS(_libDescriptor.libHandler, STR(functioName));
 			if (_libDescriptor.ReleaseApplication == NULL) {
+				string strError = OPEN_LIBRARY_ERROR;
 				FATAL("Unable to find %s function. Error was: %s",
 						STR(functioName),
-						OPEN_LIBRARY_ERROR);
+						STR(strError));
 				return false;
 			}
 		} else {
