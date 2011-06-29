@@ -308,7 +308,7 @@ bool MP4Document::ParseDocument() {
 	while (!_mediaFile.Failed()) {
 		uint64_t currentPos = _mediaFile.Cursor();
 		if (currentPos == _mediaFile.Size()) {
-			FINEST("\n%s", STR(Hierarchy()));
+			//FINEST("\n%s", STR(Hierarchy()));
 			return true;
 		}
 		BaseAtom *pAtom = ReadAtom(NULL);
