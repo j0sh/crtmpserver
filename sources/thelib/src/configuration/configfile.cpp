@@ -688,26 +688,26 @@ bool ConfigFile::ConfigureApplication(Variant &node) {
 				return false;
 			}
 
-			string functioName = "GetApplication_" + (string) node[CONF_APPLICATION_NAME];
+			string functionName = (string) node[CONF_APPLICATION_INIT_FUNCTION];
 
 			_libDescriptor.GetApplication =
-					(GetApplication_t) GET_PROC_ADDRESS(_libDescriptor.libHandler, STR(functioName));
+					(GetApplication_t) GET_PROC_ADDRESS(_libDescriptor.libHandler, STR(functionName));
 			if (_libDescriptor.GetApplication == NULL) {
 				string strError = OPEN_LIBRARY_ERROR;
 				FATAL("Unable to find %s function. Error was: %s",
-						STR(functioName),
+						STR(functionName),
 						STR(strError));
 				return false;
 			}
 
-			functioName = "ReleaseApplication_" + (string) node[CONF_APPLICATION_NAME];
+			functionName = (string) node[CONF_APPLICATION_DELETE_FUNCTION];
 
 			_libDescriptor.ReleaseApplication =
-					(ReleaseApplication_t) GET_PROC_ADDRESS(_libDescriptor.libHandler, STR(functioName));
+					(ReleaseApplication_t) GET_PROC_ADDRESS(_libDescriptor.libHandler, STR(functionName));
 			if (_libDescriptor.ReleaseApplication == NULL) {
 				string strError = OPEN_LIBRARY_ERROR;
 				FATAL("Unable to find %s function. Error was: %s",
-						STR(functioName),
+						STR(functionName),
 						STR(strError));
 				return false;
 			}
@@ -968,6 +968,19 @@ void ConfigFile::Normalize(Variant &appConfigurationNode) {
 			MAP_VAL(i)[CONF_SSL_KEY] = key;
 			MAP_VAL(i)[CONF_SSL_CERT] = cert;
 		}
+	}
+
+	if (!appConfigurationNode.HasKeyChain(V_STRING, false, 1,
+			CONF_APPLICATION_INIT_FUNCTION)) {
+		appConfigurationNode[CONF_APPLICATION_INIT_FUNCTION] = "GetApplication_"
+				+ (string) appConfigurationNode[CONF_APPLICATION_NAME];
+	}
+
+	if (!appConfigurationNode.HasKeyChain(V_STRING, false, 1,
+			CONF_APPLICATION_DELETE_FUNCTION)) {
+		appConfigurationNode[CONF_APPLICATION_DELETE_FUNCTION] =
+				"ReleaseApplication_"
+				+ (string) appConfigurationNode[CONF_APPLICATION_NAME];
 	}
 }
 
