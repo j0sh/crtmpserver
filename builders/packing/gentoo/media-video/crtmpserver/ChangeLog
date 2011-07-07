@@ -2,7 +2,7 @@
 # Copyright 1999-2011 Gentoo Foundation; Distributed under the GPL v3
 # $Header: /var/cvsroot/gentoo-x86/media-video/crtmpserver/ChangeLog,v 1.0 2011/06/07 09:48:47 jet Exp $
 
-*crtmpserver (25 Jun 2011)
+*crtmpserver (07 Jul 2011)
 
-  07 Jul 2011; Jet <jet@jet.kiev.ua> +crtmpserver.ebuild:
+  07 Jul 2011; Jet <jet@jet.kiev.ua> +crtmpserver-0.9999.ebuild:
     Add initial ebuild.
