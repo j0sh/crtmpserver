@@ -349,29 +349,29 @@ bool ApplyUIDGID() {
 
 void WritePidFile(pid_t pid) {
 	/*!
-	 * Check if PID file exists
-	 * rewrite it if exists
+	 * rewrite PID file if it already exists
 	 */
 	string pidFile = gRs.commandLine["arguments"]["--pid"];
 	struct stat sb;
-	if (stat(pidFile.c_str(), &sb) == 0) {
-		printf("pid file exists\n");
+	if (stat(STR(pidFile), &sb) == 0) {
+		printf("pid file %s already exists\n", STR(pidFile));
 	} else if (errno != ENOENT) {
 		perror("stat");
 		return;
 	}
 
-	FILE * f;
-	f = fopen(pidFile.c_str(), "w");
-	if (f == NULL) {
-		perror("fopen");
-		printf("warn: can not create PID file %s\n", pidFile.c_str());
+	File f;
+	if (!f.Initialize(STR(pidFile), FILE_OPEN_MODE_TRUNCATE)) {
+		printf("Unable to open PID file %s\n", STR(pidFile));
 		return;
 	}
-	fprintf(f, "%d", pid);
-	if (fclose(f) == -1) {
-		perror("fclose");
+
+	string content = format("%"PRIz"d", pid);
+	if (!f.WriteString(content)) {
+		printf("Unable to write PID to file %s\n", STR(pidFile));
+		return;
 	}
+	f.Close();
 }
 
 #ifdef COMPILE_STATIC
