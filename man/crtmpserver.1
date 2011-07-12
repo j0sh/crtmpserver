@@ -56,6 +56,11 @@ Run the process with the specified user id.
 .TP
 .B \-\-gid=<gid>
 Run the process with the specified group id.
+.TP
+.B \-\-pid=<file name>
+This option tells \fBcrtmpserver\fP to use the specified file as its pidfile. If the file exists, it will be over-written.
+.br
+Works only if \fB--daemon\fP option is specified.
 .SH FILES
 .TP
 .B /usr/sbin/crtmpserver
