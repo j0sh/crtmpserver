@@ -354,21 +354,21 @@ void WritePidFile(pid_t pid) {
 	string pidFile = gRs.commandLine["arguments"]["--pid"];
 	struct stat sb;
 	if (stat(STR(pidFile), &sb) == 0) {
-		printf("pid file %s already exists\n", STR(pidFile));
+		WARN("pid file %s already exists\n", STR(pidFile));
 	} else if (errno != ENOENT) {
-		perror("stat");
+		WARN("stat: %s", strerror(errno));
 		return;
 	}
 
 	File f;
 	if (!f.Initialize(STR(pidFile), FILE_OPEN_MODE_TRUNCATE)) {
-		printf("Unable to open PID file %s\n", STR(pidFile));
+		WARN("Unable to open PID file %s", STR(pidFile));
 		return;
 	}
 
 	string content = format("%"PRIz"d", pid);
 	if (!f.WriteString(content)) {
-		printf("Unable to write PID to file %s\n", STR(pidFile));
+		WARN("Unable to write PID to file %s", STR(pidFile));
 		return;
 	}
 	f.Close();
