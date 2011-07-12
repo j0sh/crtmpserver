@@ -350,8 +350,7 @@ bool ApplyUIDGID() {
 void WritePidFile(pid_t pid) {
 	/*!
 	 * Check if PID file exists
-	 * If exists -> skip pid file creation
-	 * if none -> write pid file
+	 * rewrite it if exists
 	 */
 	string pidFile = gRs.commandLine["arguments"]["--pid"];
 	struct stat sb;
