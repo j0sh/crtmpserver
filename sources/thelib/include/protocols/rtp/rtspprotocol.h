@@ -33,6 +33,7 @@ class InboundRTPProtocol;
 class InNetRTPStream;
 class OutboundConnectivity;
 class InboundConnectivity;
+class BaseOutStream;
 
 class DLLEXP RTSPProtocol
 : public BaseProtocol {
@@ -71,6 +72,7 @@ protected:
 	string _basicAuthentication;
 
 	uint32_t _keepAliveTimerId;
+	BaseOutStream *_pOutStream;
 public:
 	RTSPProtocol();
 	virtual ~RTSPProtocol();
@@ -116,7 +118,8 @@ public:
 	string GetTransportHeaderLine(bool isAudio);
 
 	bool SendRaw(uint8_t *pBuffer, uint32_t length);
-
+	
+	void SetOutStream(BaseOutStream *pOutStream);
 private:
 	bool SendMessage(Variant &headers, string &content);
 	bool ParseHeaders(IOBuffer &buffer);

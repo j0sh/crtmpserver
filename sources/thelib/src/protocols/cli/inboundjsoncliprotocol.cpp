@@ -99,6 +99,9 @@ bool InboundJSONCLIProtocol::ParseCommand(string &command) {
 	//2. Replace the '\=' escape sequence
 	replace(command, "\\=", "_#equal#_");
 
+	//2. Replace the '\,' escape sequence
+	replace(command, "\\,", "_#coma#_");
+
 	//3. Append "cmd=" in front of the command
 	command = "cmd=" + command;
 	//INFO("command: `%s`", STR(command));
@@ -120,6 +123,7 @@ bool InboundJSONCLIProtocol::ParseCommand(string &command) {
 		replace(key, "_#space#_", " ");
 		replace(key, "_#slash#_", "\\");
 		replace(key, "_#equal#_", "=");
+		replace(key, "_#coma#_", ",");
 
 		value = MAP_VAL(i);
 		replace(value, "_#space#_", " ");
@@ -129,12 +133,18 @@ bool InboundJSONCLIProtocol::ParseCommand(string &command) {
 		list.clear();
 		split(value, ",", list);
 		if (list.size() != 1) {
-
+			for (uint32_t j = 0; j < list.size(); j++) {
+				trim(list[j]);
+				if (list[j] == "")
+					continue;
+				replace(list[j], "_#coma#_", ",");
+				message["parameters"][key].PushToArray(list[j]);
+			}
 		} else {
+			replace(value, "_#coma#_", ",");
 			message["parameters"][key] = value;
 		}
 	}
-
 	return ProcessMessage(message);
 }
 

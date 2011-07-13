@@ -75,6 +75,7 @@ RTSPProtocol::RTSPProtocol()
 	_pInboundConnectivity = NULL;
 	_basicAuthentication = "";
 	_keepAliveTimerId = 0;
+	_pOutStream = NULL;
 }
 
 RTSPProtocol::~RTSPProtocol() {
@@ -82,6 +83,10 @@ RTSPProtocol::~RTSPProtocol() {
 	CloseInboundConnectivity();
 	if (ProtocolManager::GetProtocol(_keepAliveTimerId) != NULL) {
 		ProtocolManager::GetProtocol(_keepAliveTimerId)->EnqueueForDelete();
+	}
+	if (_pOutStream != NULL) {
+		delete _pOutStream;
+		_pOutStream = NULL;
 	}
 }
 
@@ -386,6 +391,14 @@ string RTSPProtocol::GetTransportHeaderLine(bool isAudio) {
 bool RTSPProtocol::SendRaw(uint8_t *pBuffer, uint32_t length) {
 	_outputBuffer.ReadFromBuffer(pBuffer, length);
 	return EnqueueForOutbound();
+}
+
+void RTSPProtocol::SetOutStream(BaseOutStream *pOutStream) {
+	if (_pOutStream != NULL) {
+		delete _pOutStream;
+		_pOutStream = NULL;
+	}
+	_pOutStream = pOutStream;
 }
 
 bool RTSPProtocol::SendMessage(Variant &headers, string &content) {
