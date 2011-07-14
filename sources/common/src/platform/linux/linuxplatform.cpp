@@ -198,6 +198,18 @@ bool deleteFile(string path) {
 	return true;
 }
 
+bool createFolder(string path, bool recursive) {
+	string command = format("mkdir %s %s",
+			recursive ? "-p" : "",
+			STR(path));
+	if (system(STR(command)) != 0) {
+		FATAL("Unable to create folder %s", STR(path));
+		return false;
+	}
+
+	return true;
+}
+
 string getHostByName(string name) {
 	struct hostent *pHostEnt = gethostbyname(STR(name));
 	if (pHostEnt == NULL)

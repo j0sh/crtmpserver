@@ -160,6 +160,8 @@ bool setFdNoNagle(int32_t fd);
 bool setFdReuseAddress(int32_t fd);
 bool setFdOptions(int32_t fd);
 bool deleteFile(string path);
+#define deleteFolder deleteFile
+bool createFolder(string path, bool recursive);
 string getHostByName(string name);
 bool isNumeric(string value);
 void split(string str, string separator, vector<string> &result);
