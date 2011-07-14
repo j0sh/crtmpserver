@@ -41,6 +41,9 @@ SyslogLogLocation::~SyslogLogLocation() {
 
 void SyslogLogLocation::Log(int32_t level, string fileName, uint32_t lineNumber,
 		string functionName, string message) {
+	if (_level < 0 || level > _level) {
+		return;
+	}
 	int priority = MAP_HAS1(_priorities, level) ? _priorities[level] : LOG_DEBUG;
 	if (_appendSourceFileLine) {
 		syslog(priority, "%s:%"PRIu32":%s %s", STR(fileName), lineNumber, STR(functionName), STR(message));
