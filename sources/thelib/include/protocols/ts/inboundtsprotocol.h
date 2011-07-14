@@ -56,6 +56,7 @@ private:
 	map<uint16_t, PIDDescriptor *> _pidMapping;
 	BaseTSAppProtocolHandler *_pProtocolHandler;
 	bool _stepByStep;
+	map<uint16_t, uint16_t> _unknownPids;
 public:
 	InboundTSProtocol();
 	virtual ~InboundTSProtocol();

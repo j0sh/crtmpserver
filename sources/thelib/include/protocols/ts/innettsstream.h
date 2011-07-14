@@ -43,6 +43,7 @@ private:
 	double _lastGotAudioTimestamp;
 	double _lastSentAudioTimestamp;
 	uint32_t _audioPacketsCount;
+	uint64_t _audioBytesCount;
 
 	//video section
 	_PIDDescriptor *_pVideoPidDescriptor;
@@ -51,6 +52,8 @@ private:
 	double _dtsTimeVideo;
 #endif
 	double _deltaTimeVideo;
+	uint32_t _videoPacketsCount;
+	uint64_t _videoBytesCount;
 	IOBuffer _currentNal;
 
 	double _feedTime;
@@ -86,6 +89,7 @@ public:
 	virtual bool SignalResume();
 	virtual bool SignalSeek(double &absoluteTimestamp);
 	virtual bool SignalStop();
+	virtual void GetStats(Variant &info);
 private:
 	bool HandleAudioData(uint8_t *pRawBuffer, uint32_t rawBufferLength,
 			double timestamp, bool packetStart);

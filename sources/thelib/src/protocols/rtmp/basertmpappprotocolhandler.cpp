@@ -1705,7 +1705,20 @@ bool BaseRTMPAppProtocolHandler::TryLinkToLiveStream(BaseRTMPProtocol *pFrom,
 	}
 
 	//5. Get the first stream in the inboundStreams
-	BaseInNetStream *pBaseInNetStream = (BaseInNetStream *) MAP_VAL(inboundStreams.begin());
+	BaseInNetStream *pBaseInNetStream = NULL;
+
+	FOR_MAP(inboundStreams, uint32_t, BaseStream *, i) {
+		BaseInNetStream *pTemp = (BaseInNetStream *) MAP_VAL(i);
+		if ((!pTemp->IsCompatibleWithType(ST_OUT_NET_RTMP_4_TS))
+				&& (!pTemp->IsCompatibleWithType(ST_OUT_NET_RTMP_4_RTMP)))
+			continue;
+		pBaseInNetStream = pTemp;
+		break;
+	}
+	if (pBaseInNetStream == NULL) {
+		WARN("No live streams found: `%s` or `%s`", STR(streamName), STR(shortName));
+		return true;
+	}
 
 	//6. Create the outbound stream
 	BaseOutNetRTMPStream * pBaseOutNetRTMPStream = pFrom->CreateONS(streamId,
