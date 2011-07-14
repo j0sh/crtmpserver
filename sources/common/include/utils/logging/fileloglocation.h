@@ -30,6 +30,7 @@
 class DLLEXP FileLogLocation
 : public BaseLogLocation {
 private:
+	string _fileName;
 	ofstream _fileStream; //! Output file stream
 	bool _canLog; //! Variable that prevents logging. If file stream fails, this is set to false.
 	uint32_t _counter; //! Counts the number of lines in the log file. To lessen HDD load, flushing of the file stream only happens when this value is divisible by 1000
@@ -40,7 +41,7 @@ public:
 	*/
 	FileLogLocation(string path, bool append);
 	virtual ~FileLogLocation();
-private:
+protected:
 	/*! @brief Logs the messages
 		@param level: Variable that indicates how critical the log is about. It ranges from "INFO" to "FATAL".
 		@param filename: Shows file name of the source code that displayed the log message.
@@ -51,6 +52,8 @@ private:
 	*/
 	virtual void Log(int32_t level, string fileName, uint32_t lineNumber,
 			string functionName, string message);
+private:
+	void RollOver();
 };
 
 

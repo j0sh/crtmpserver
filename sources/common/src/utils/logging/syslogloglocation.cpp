@@ -51,4 +51,5 @@ void SyslogLogLocation::Log(int32_t level, string fileName, uint32_t lineNumber,
 		syslog(priority, "%s", STR(message));
 	}
 }
-#endif HAS_SYSLOG
+#endif /* HAS_SYSLOG */
+

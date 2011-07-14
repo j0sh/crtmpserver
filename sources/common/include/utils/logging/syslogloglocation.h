@@ -38,4 +38,5 @@ public:
 
 
 #endif	/* _SYSLOGLOGLOCATION_H */
-#endif HAS_SYSLOG
+#endif /* HAS_SYSLOG */
+

@@ -22,16 +22,10 @@
 
 FileLogLocation::FileLogLocation(string path, bool append)
 : BaseLogLocation() {
-	ios_base::openmode openMode = ios_base::out | ios_base::binary;
-	if (!append)
-		openMode |= ios_base::trunc;
-	_fileStream.open(STR(path), openMode);
-	if (_fileStream.fail()) {
-		_canLog = false;
-		return;
-	}
+	_fileName = path;
 	_canLog = true;
 	_counter = 0;
+	RollOver();
 }
 
 FileLogLocation::~FileLogLocation() {
@@ -50,5 +44,31 @@ void FileLogLocation::Log(int32_t level, string fileName, uint32_t lineNumber,
 			STR(message));
 	_fileStream.write(STR(logEntry), logEntry.size());
 	_fileStream.flush();
+	_counter++;
+	if (_counter >= 100000)
+		RollOver();
 }
+
+void FileLogLocation::RollOver() {
+	_canLog = false;
+	_fileStream.flush();
+	_fileStream.close();
+
+	moveFile(
+			format("%s.%u", STR(_fileName), getuid()),
+			format("%s.old.%u", STR(_fileName), getuid())
+			);
+	ios_base::openmode openMode = ios_base::out | ios_base::binary | ios_base::trunc;
+	_fileStream.open(
+			STR(format("%s.%u", STR(_fileName), getuid())),
+			openMode
+			);
+	if (_fileStream.fail()) {
+		_canLog = false;
+	} else {
+		_counter = 0;
+		_canLog = true;
+	}
+}
+
 
