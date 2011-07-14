@@ -363,7 +363,7 @@ bool ConfigFile::ValidateLogAppenders(vector<Variant> &logAppenders) {
 }
 
 bool ConfigFile::ValidateLogAppender(Variant &node) {
-	if (!ValidateMap(node, true, 2, 4)) {
+	if (!ValidateMap(node, true, 2, 5)) {
 		FATAL("Invalid log appender. It must be present, must be an array and not empty");
 		return false;
 	}
@@ -372,10 +372,11 @@ bool ConfigFile::ValidateLogAppender(Variant &node) {
 		return false;
 	}
 
-	if (!ValidateString(node, CONF_LOG_APPENDER_TYPE, true, 3,
+	if (!ValidateString(node, CONF_LOG_APPENDER_TYPE, true, 4,
 			CONF_LOG_APPENDER_TYPE_COLORED_CONSOLE,
 			CONF_LOG_APPENDER_TYPE_CONSOLE,
-			CONF_LOG_APPENDER_TYPE_FILE)) {
+			CONF_LOG_APPENDER_TYPE_FILE,
+			CONF_LOG_APPENDER_TYPE_SYSLOG)) {
 		return false;
 	}
 
@@ -596,7 +597,22 @@ bool ConfigFile::ConfigureLogAppender(Variant &node) {
 		}
 	} else if ((string) node[CONF_LOG_APPENDER_TYPE] == CONF_LOG_APPENDER_TYPE_FILE) {
 		pLogLocation = new FileLogLocation(node[CONF_LOG_APPENDER_FILE_NAME], true);
-	} else {
+	}
+#ifdef HAS_SYSLOG
+	else if ((string) node[CONF_LOG_APPENDER_TYPE] == CONF_LOG_APPENDER_TYPE_SYSLOG) {
+		string identifier = "crtmpserver";
+		bool appendSourceFileLine = false;
+		if (node.HasKeyChain(V_STRING, false, 1, "identifier"))
+			identifier = (string) node["identifier"];
+		trim(identifier);
+		if (identifier == "")
+			identifier = "crtmpserver";
+		if (node.HasKeyChain(V_BOOL, false, 1, "appendSourceFileLine"))
+			appendSourceFileLine = node["appendSourceFileLine"];
+		pLogLocation = new SyslogLogLocation(identifier, appendSourceFileLine);
+	}
+#endif /* HAS_SYSLOG */
+	else {
 		NYIR;
 	}
 	if (pLogLocation != NULL) {
