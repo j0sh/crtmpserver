@@ -252,8 +252,8 @@ uint32_t BaseRTMPProtocol::GetOutboundChunkSize() {
 }
 
 bool BaseRTMPProtocol::SetInboundChunkSize(uint32_t chunkSize) {
-	WARN("Chunk size changed for RTMP connection %p: %u->%u", this,
-			_inboundChunkSize, chunkSize);
+	/*WARN("Chunk size changed for RTMP connection %p: %u->%u", this,
+			_inboundChunkSize, chunkSize);*/
 	_inboundChunkSize = chunkSize;
 	for (uint32_t i = 0; i < MAX_STREAMS_COUNT; i++) {
 		if (_streams[i] != NULL) {
