@@ -917,7 +917,7 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPResponse200Play(
 
 		return false;
 	}
-	return pFrom->EnableKeepAlive(10);
+	return pFrom->EnableKeepAlive(10, pFrom->GetCustomParameters()["uri"]["fullUri"]);
 }
 
 bool BaseRTSPAppProtocolHandler::HandleRTSPResponse404Play(RTSPProtocol *pFrom, Variant &requestHeaders,
@@ -931,7 +931,8 @@ bool BaseRTSPAppProtocolHandler::Play(RTSPProtocol *pFrom) {
 	//1. Save the URL in the custom parameters
 	string uri = (string) pFrom->GetCustomParameters()["uri"]["fullUri"];
 	if ((pFrom->GetCustomParameters()["uri"]["userName"] == V_STRING)
-			&& (pFrom->GetCustomParameters()["uri"]["password"] == V_STRING)) {
+			&& (pFrom->GetCustomParameters()["uri"]["password"] == V_STRING)
+			&& (pFrom->GetCustomParameters()["uri"]["userName"] != "")) {
 		pFrom->SetBasicAuthentication(pFrom->GetCustomParameters()["uri"]["userName"],
 				pFrom->GetCustomParameters()["uri"]["password"]);
 	}

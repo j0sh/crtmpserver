@@ -73,6 +73,8 @@ protected:
 
 	uint32_t _keepAliveTimerId;
 	BaseOutStream *_pOutStream;
+	
+	string _keepAliveURI;
 public:
 	RTSPProtocol();
 	virtual ~RTSPProtocol();
@@ -87,7 +89,7 @@ public:
 	virtual void GetStats(Variant &info);
 
 	void SetBasicAuthentication(string userName, string password);
-	bool EnableKeepAlive(uint32_t period);
+	bool EnableKeepAlive(uint32_t period, string keepAliveURI);
 	bool SendKeepAliveOptions();
 	bool HasInboundConnectivity();
 
