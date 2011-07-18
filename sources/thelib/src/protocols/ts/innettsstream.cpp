@@ -30,6 +30,8 @@ InNetTSStream::InNetTSStream(BaseProtocol *pProtocol,
 : BaseInNetStream(pProtocol, pStreamsManager, ST_IN_NET_TS, name) {
 	//audio section
 	_pAudioPidDescriptor = NULL;
+	_lastRawPtsAudio = 0;
+	_audioRollOverCount = 0;
 	_ptsTimeAudio = 0;
 #ifdef COMPUTE_DTS_TIME
 	_dtsTimeAudio = 0;
@@ -42,6 +44,8 @@ InNetTSStream::InNetTSStream(BaseProtocol *pProtocol,
 
 	//video section
 	_pVideoPidDescriptor = NULL;
+	_lastRawPtsVideo = 0;
+	_videoRollOverCount = 0;
 	_ptsTimeVideo = 0;
 #ifdef COMPUTE_DTS_TIME
 	_dtsTimeVideo = 0;
@@ -79,9 +83,19 @@ double InNetTSStream::GetFeedTime() {
 	return _feedTime;
 }
 
+#define __FORCE_ROLL_OVER_FOR_DEBUG 30
+//#define __DUMP_TIMESTAMP_INFO_FOR_DEBUG
+
+#ifdef __FORCE_ROLL_OVER_FOR_DEBUG
+uint64_t __aRoll = 0;
+uint64_t __vRoll = 0;
+#endif /* __FORCE_ROLL_OVER_FOR_DEBUG */
+
 bool InNetTSStream::FeedData(uint8_t *pData, uint32_t length, bool packetStart,
 		bool isAudio) {
 	double &ptsTime = isAudio ? _ptsTimeAudio : _ptsTimeVideo;
+	uint64_t &lastRawPts = isAudio ? _lastRawPtsAudio : _lastRawPtsVideo;
+	uint32_t &rollOverCount = isAudio ? _audioRollOverCount : _videoRollOverCount;
 #ifdef COMPUTE_DTS_TIME
 	double &dtsTime = isAudio ? _dtsTimeAudio : _dtsTimeVideo;
 #endif
@@ -114,16 +128,46 @@ bool InNetTSStream::FeedData(uint8_t *pData, uint32_t length, bool packetStart,
 			}
 
 			if (pPTS != NULL) {
+#ifdef __FORCE_ROLL_OVER_FOR_DEBUG
+				uint64_t &roll = isAudio ? __aRoll : __vRoll;
+#endif /* __FORCE_ROLL_OVER_FOR_DEBUG */
 				uint64_t value = (pPTS[0]&0x0f) >> 1;
 				value = (value << 8) | pPTS[1];
 				value = (value << 7) | (pPTS[2] >> 1);
 				value = (value << 8) | pPTS[3];
 				value = (value << 7) | (pPTS[4] >> 1);
+#ifdef __FORCE_ROLL_OVER_FOR_DEBUG
+				if (roll == 0) {
+					roll = 0x1ffffffffLL;
+					roll -= value;
+					roll -= (__FORCE_ROLL_OVER_FOR_DEBUG * 90000);
+				}
+				value = (value + roll)&0x1ffffffff;
+#endif /* __FORCE_ROLL_OVER_FOR_DEBUG */
+#ifdef __DUMP_TIMESTAMP_INFO_FOR_DEBUG
+				string dbg = format("%c lastRawPts: %09"PRIx64" -> value: %09"PRIx64"; ", isAudio ? 'A' : 'V', lastRawPts, value);
+#endif /* __DUMP_TIMESTAMP_INFO_FOR_DEBUG */
+				if (((lastRawPts >> 32) == 1)
+						&& ((value >> 32) == 0)) {
+#ifdef __DUMP_TIMESTAMP_INFO_FOR_DEBUG
+					dbg += format("%c Roll over!; ", isAudio ? 'A' : 'V');
+#endif /* __DUMP_TIMESTAMP_INFO_FOR_DEBUG */
+					rollOverCount++;
+				}
+				lastRawPts = value;
+				value += (rollOverCount * 0x1ffffffffLL);
+#ifdef __DUMP_TIMESTAMP_INFO_FOR_DEBUG
+				dbg += format("final: %09"PRIx64"; ", value);
+#endif /* __DUMP_TIMESTAMP_INFO_FOR_DEBUG */
 				double tempPtsTime = (double) value / 90.00;
 				if (ptsTime > tempPtsTime) {
 					WARN("Back time");
 					return true;
 				}
+#ifdef __DUMP_TIMESTAMP_INFO_FOR_DEBUG
+				dbg += format("diff: %.2f", tempPtsTime - ptsTime);
+				FINEST("%s", STR(dbg));
+#endif /* __DUMP_TIMESTAMP_INFO_FOR_DEBUG */
 				ptsTime = tempPtsTime;
 			}
 

@@ -34,6 +34,8 @@ class DLLEXP InNetTSStream
 private:
 	//audio section
 	_PIDDescriptor *_pAudioPidDescriptor;
+	uint64_t _lastRawPtsAudio;
+	uint32_t _audioRollOverCount;
 	double _ptsTimeAudio;
 #ifdef COMPUTE_DTS_TIME
 	double _dtsTimeAudio;
@@ -47,6 +49,8 @@ private:
 
 	//video section
 	_PIDDescriptor *_pVideoPidDescriptor;
+	uint64_t _lastRawPtsVideo;
+	uint32_t _videoRollOverCount;
 	double _ptsTimeVideo;
 #ifdef COMPUTE_DTS_TIME
 	double _dtsTimeVideo;

@@ -79,7 +79,7 @@
 				Reset();
 				_stream=new NetStream(nc);
 				_stream.client=this;
-				_stream.bufferTime=1;
+				_stream.bufferTime=0;
 				_stream.play(streamName);
 				_streamName=streamName;
 				

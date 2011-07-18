@@ -77,11 +77,12 @@
 			}
 			
 			private function PlayStream():void{
-				if(dgFlvs.selectedIndex<0){
+				if((dgFlvs.selectedIndex<0)
+					&&(streamName.text=="")){
 					Alert.show("Please select a flv first");
 					return;
 				}
-				InitializeVideo(_availableFlvs[dgFlvs.selectedIndex].flvName);
+				InitializeVideo(streamName.text);
 			}
 			
 			private function InitializeVideo(streamName:String):void
