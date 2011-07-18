@@ -83,7 +83,7 @@ double InNetTSStream::GetFeedTime() {
 	return _feedTime;
 }
 
-#define __FORCE_ROLL_OVER_FOR_DEBUG 30
+//#define __FORCE_ROLL_OVER_FOR_DEBUG 30
 //#define __DUMP_TIMESTAMP_INFO_FOR_DEBUG
 
 #ifdef __FORCE_ROLL_OVER_FOR_DEBUG
