@@ -190,12 +190,12 @@ public:
 		@brief Ignores a specified size of data in the buffer
 		@param size
 	 */
-	virtual bool Ignore(uint32_t size);
+	bool Ignore(uint32_t size);
 
 	/*!
 		@brief Ignores all data in the buffer
 	 */
-	virtual bool IgnoreAll();
+	bool IgnoreAll();
 
 	/*!
 		@brief Moves the data in a buffer to optimize memory space

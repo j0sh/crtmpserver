@@ -41,7 +41,6 @@ IOBuffer::IOBuffer() {
 	_minChunkSize = 4096;
 	_dummy = sizeof (sockaddr_in);
 	SANITY_INPUT_BUFFER;
-	//FINEST("IOBuffer created");
 }
 
 IOBuffer::~IOBuffer() {
@@ -420,7 +419,6 @@ bool IOBuffer::EnsureSize(uint32_t expected) {
 
 	//5. Allocate
 	uint8_t *pTempBuffer = new uint8_t[_published + expected];
-	//FINEST("Alloc: %u", _published + expected);
 
 	//6. Copy existing data if necessary and switch buffers
 	if (_pBuffer != NULL) {

@@ -345,22 +345,23 @@ bool _VIDEO_AVC::Init(uint8_t *pSPS, uint32_t spsLength, uint8_t *pPPS,
 
 	_rate = 90000;
 
-	
-	_spsBa.IgnoreAll();
-	_spsBa.ReadFromBuffer(_pSPS + 1, _spsLength - 1);
+	BitArray spsBa;
+	spsBa.ReadFromBuffer(_pSPS + 1, _spsLength - 1);
 
-	if (!ReadSPS(_spsBa, _SPSInfo)) {
+	if (!ReadSPS(spsBa, _SPSInfo)) {
 		WARN("Unable to parse SPS");
 	} else {
 		_SPSInfo.Compact();
 		_width = ((uint32_t) _SPSInfo["pic_width_in_mbs_minus1"] + 1)*16;
 		_height = ((uint32_t) _SPSInfo["pic_height_in_map_units_minus1"] + 1)*16;
+		//		FINEST("_width: %u (%u); _height: %u (%u)",
+		//				_width, (uint32_t) _SPSInfo["pic_width_in_mbs_minus1"],
+		//				_height, (uint32_t) _SPSInfo["pic_height_in_map_units_minus1"]);
 	}
 
-	
-	_ppsBa.IgnoreAll();
-	_ppsBa.ReadFromBuffer(_pPPS + 1, _ppsLength - 1);
-	if (!ReadPPS(_ppsBa, _PPSInfo)) {
+	BitArray ppsBa;
+	ppsBa.ReadFromBuffer(_pPPS + 1, _ppsLength - 1);
+	if (!ReadPPS(ppsBa, _PPSInfo)) {
 		WARN("Unable to read PPS info");
 	}
 
