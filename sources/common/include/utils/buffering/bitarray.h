@@ -89,7 +89,7 @@ public:
 			uint8_t currentByteIndex = (uint8_t) (currentCursor / 8);
 			uint8_t currentBitIndex = currentCursor % 8;
 			uint8_t currentByte = GETIBPOINTER(*this)[currentByteIndex];
-			
+
 			result = (result << 1) | ((currentByte >> (7 - currentBitIndex))&0x01);
 		}
 
@@ -133,6 +133,20 @@ public:
 		}
 		value = value - 1;
 		return true;
+	}
+
+	virtual bool Ignore(uint32_t size) {
+		assert(false);
+		abort();
+		return false;
+	}
+
+	/*!
+		@brief Ignores all data in the buffer
+	 */
+	virtual bool IgnoreAll() {
+		_cursor = 0;
+		return IOBuffer::IgnoreAll();
 	}
 };
 
