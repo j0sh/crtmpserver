@@ -30,6 +30,7 @@ InNetTSStream::InNetTSStream(BaseProtocol *pProtocol,
 : BaseInNetStream(pProtocol, pStreamsManager, ST_IN_NET_TS, name) {
 	//audio section
 	_pAudioPidDescriptor = NULL;
+	_currentAudioSequenceNumber = -1;
 	_lastRawPtsAudio = 0;
 	_audioRollOverCount = 0;
 	_ptsTimeAudio = 0;
@@ -41,9 +42,12 @@ InNetTSStream::InNetTSStream(BaseProtocol *pProtocol,
 	_lastSentAudioTimestamp = 0;
 	_audioPacketsCount = 0;
 	_audioBytesCount = 0;
+	_audioDroppedPacketsCount = 0;
+	_audioDroppedBytesCount = 0;
 
 	//video section
 	_pVideoPidDescriptor = NULL;
+	_currentVideoSequenceNumber = -1;
 	_lastRawPtsVideo = 0;
 	_videoRollOverCount = 0;
 	_ptsTimeVideo = 0;
@@ -56,6 +60,8 @@ InNetTSStream::InNetTSStream(BaseProtocol *pProtocol,
 	_cursor = 0;
 	_videoPacketsCount = 0;
 	_videoBytesCount = 0;
+	_videoDroppedPacketsCount = 0;
+	_videoDroppedBytesCount = 0;
 
 	_firstNAL = true;
 }
@@ -85,17 +91,53 @@ double InNetTSStream::GetFeedTime() {
 
 //#define __FORCE_ROLL_OVER_FOR_DEBUG 30
 //#define __DUMP_TIMESTAMP_INFO_FOR_DEBUG
+//#define __FORCE_DROPPING_PACKETS 200
 
 #ifdef __FORCE_ROLL_OVER_FOR_DEBUG
 uint64_t __aRoll = 0;
 uint64_t __vRoll = 0;
 #endif /* __FORCE_ROLL_OVER_FOR_DEBUG */
 
+#define DROP_PACKET \
+do { \
+	if(!isAudio) { \
+		/*WARN("Video packet dropped!!!");*/ \
+		_currentNal.IgnoreAll(); \
+		_cursor = 0; \
+		_firstNAL = true; \
+	} \
+	uint64_t &droppedPacketsCount = isAudio ? _audioDroppedPacketsCount : _videoDroppedPacketsCount; \
+	droppedPacketsCount++; \
+} while (0)
+
 bool InNetTSStream::FeedData(uint8_t *pData, uint32_t length, bool packetStart,
-		bool isAudio) {
+		bool isAudio, int8_t sequenceNumber) {
 	double &ptsTime = isAudio ? _ptsTimeAudio : _ptsTimeVideo;
 	uint64_t &lastRawPts = isAudio ? _lastRawPtsAudio : _lastRawPtsVideo;
 	uint32_t &rollOverCount = isAudio ? _audioRollOverCount : _videoRollOverCount;
+	int8_t &currentSequenceNumber = isAudio ? _currentAudioSequenceNumber : _currentVideoSequenceNumber;
+
+#ifdef __FORCE_DROPPING_PACKETS
+	if (!isAudio) {
+		if ((rand() % __FORCE_DROPPING_PACKETS) == 0) {
+			WARN("Dropping a video packet on the floor just for fun");
+			currentSequenceNumber = 0;
+		}
+	}
+#endif /* __FORCE_DROPPING_PACKETS */
+
+	if (currentSequenceNumber == -1) {
+		currentSequenceNumber = sequenceNumber;
+	} else {
+		if (((currentSequenceNumber + 1)&0x0f) != sequenceNumber) {
+			//WARN("Missing %c packet", isAudio ? 'A' : 'V');
+			currentSequenceNumber = sequenceNumber;
+			DROP_PACKET;
+			return true;
+		} else {
+			currentSequenceNumber = sequenceNumber;
+		}
+	}
 #ifdef COMPUTE_DTS_TIME
 	double &dtsTime = isAudio ? _dtsTimeAudio : _dtsTimeVideo;
 #endif
@@ -106,6 +148,7 @@ bool InNetTSStream::FeedData(uint8_t *pData, uint32_t length, bool packetStart,
 			uint32_t pesHeaderLength = pData[8];
 			if (pesHeaderLength + 9 > length) {
 				WARN("Not enough data");
+				DROP_PACKET;
 				return true;
 			}
 
@@ -162,6 +205,7 @@ bool InNetTSStream::FeedData(uint8_t *pData, uint32_t length, bool packetStart,
 				double tempPtsTime = (double) value / 90.00;
 				if (ptsTime > tempPtsTime) {
 					WARN("Back time");
+					DROP_PACKET;
 					return true;
 				}
 #ifdef __DUMP_TIMESTAMP_INFO_FOR_DEBUG
@@ -183,6 +227,7 @@ bool InNetTSStream::FeedData(uint8_t *pData, uint32_t length, bool packetStart,
 #endif
 			if (pPTS == NULL) {
 				WARN("No PTS!");
+				DROP_PACKET;
 				return true;
 			}
 
@@ -197,6 +242,7 @@ bool InNetTSStream::FeedData(uint8_t *pData, uint32_t length, bool packetStart,
 
 		} else {
 			WARN("Not enoght data");
+			DROP_PACKET;
 			return true;
 		}
 	}
@@ -268,13 +314,13 @@ bool InNetTSStream::SignalStop() {
 void InNetTSStream::GetStats(Variant &info) {
 	BaseInNetStream::GetStats(info);
 	info["audio"]["packetsCount"] = _audioPacketsCount;
-	info["audio"]["droppedPacketsCount"] = (uint32_t) 0;
+	info["audio"]["droppedPacketsCount"] = _audioDroppedPacketsCount;
 	info["audio"]["bytesCount"] = _audioBytesCount;
-	info["audio"]["droppedBytesCount"] = (uint32_t) 0;
+	info["audio"]["droppedBytesCount"] = _audioDroppedBytesCount;
 	info["video"]["packetsCount"] = _videoPacketsCount;
-	info["video"]["droppedPacketsCount"] = (uint32_t) 0;
+	info["video"]["droppedPacketsCount"] = _videoDroppedPacketsCount;
 	info["video"]["bytesCount"] = _videoBytesCount;
-	info["video"]["droppedBytesCount"] = (uint32_t) 0;
+	info["video"]["droppedBytesCount"] = _videoDroppedBytesCount;
 }
 
 bool InNetTSStream::HandleAudioData(uint8_t *pRawBuffer, uint32_t rawBufferLength,
@@ -306,6 +352,7 @@ bool InNetTSStream::HandleAudioData(uint8_t *pRawBuffer, uint32_t rawBufferLengt
 
 		if ((ENTOHSP(pBuffer)&0xfff0) != 0xfff0) {
 			_audioBuffer.Ignore(1);
+			_audioDroppedBytesCount++;
 			continue;
 		} else {
 		}
@@ -360,9 +407,12 @@ bool InNetTSStream::HandleVideoData(uint8_t *pBuffer, uint32_t length,
 	//on the first byte from the first packet
 	if (_firstNAL) {
 		_cursor = 0;
+		if (size < 4)
+			return true;
 		while (_cursor < size - 4) {
 			testValue = ENTOHLP(pNalBuffer + _cursor);
 			if ((testValue >> 8) == 1) {
+				_videoDroppedBytesCount += (_cursor + 3);
 				_currentNal.Ignore(_cursor + 3);
 				_firstNAL = false;
 				_cursor = 0;
@@ -371,6 +421,7 @@ bool InNetTSStream::HandleVideoData(uint8_t *pBuffer, uint32_t length,
 				break;
 			}
 			if (testValue == 1) {
+				_videoDroppedBytesCount += (_cursor + 4);
 				_currentNal.Ignore(_cursor + 4);
 				_firstNAL = false;
 				_cursor = 0;

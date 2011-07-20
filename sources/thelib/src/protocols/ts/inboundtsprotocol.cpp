@@ -257,13 +257,15 @@ bool InboundTSProtocol::ProcessPacket(uint32_t packetHeader,
 		{
 			return pPIDDescriptor->payload.pStream->FeedData(pBuffer + cursor,
 					_chunkSize - cursor,
-					TS_TRANSPORT_PACKET_IS_PAYLOAD_START(packetHeader), true);
+					TS_TRANSPORT_PACKET_IS_PAYLOAD_START(packetHeader), true,
+					(int8_t) packetHeader & 0x0f);
 		}
 		case PID_TYPE_VIDEOSTREAM:
 		{
 			return pPIDDescriptor->payload.pStream->FeedData(pBuffer + cursor,
 					_chunkSize - cursor,
-					TS_TRANSPORT_PACKET_IS_PAYLOAD_START(packetHeader), false);
+					TS_TRANSPORT_PACKET_IS_PAYLOAD_START(packetHeader), false,
+					(int8_t) packetHeader & 0x0f);
 		}
 		case PID_TYPE_RESERVED:
 		{
