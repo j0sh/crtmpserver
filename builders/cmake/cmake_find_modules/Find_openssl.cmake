@@ -8,8 +8,12 @@ FIND_PATH(OPENSSL_INCLUDE_PATH
 		/sw/include
 		/usr/local/ssl/include
 		NO_DEFAULT_PATH)
-set(CMAKE_FIND_LIBRARY_SUFFIXES_OLD ${CMAKE_FIND_LIBRARY_SUFFIXES})
-set(CMAKE_FIND_LIBRARY_SUFFIXES .a .so .dylib ${CMAKE_FIND_LIBRARY_SUFFIXES})
+
+IF($ENV{COMPILE_STATIC} MATCHES "1")
+	set(CMAKE_FIND_LIBRARY_SUFFIXES_OLD ${CMAKE_FIND_LIBRARY_SUFFIXES})
+	set(CMAKE_FIND_LIBRARY_SUFFIXES .a .so .dylib ${CMAKE_FIND_LIBRARY_SUFFIXES})
+ENDIF($ENV{COMPILE_STATIC} MATCHES "1")
+
 FIND_LIBRARY(OPENSSL_LIBRARY_PATH
 	NAMES
 		ssl
@@ -38,21 +42,24 @@ FIND_LIBRARY(CRYPTO_LIBRARY_PATH
 		/lib
 		NO_DEFAULT_PATH)
 
-FIND_LIBRARY(Z_LIBRARY_PATH
-    NAMES
-        z
-    PATHS
-        /opt/local/lib
-        /usr/lib64
-        /usr/lib
-        /usr/local/lib64
-        /usr/local/lib
-        /sw/lib
-        /usr/local/ssl/lib
-        /lib
-        NO_DEFAULT_PATH)
-
-set(CMAKE_FIND_LIBRARY_SUFFIXES ${CMAKE_FIND_LIBRARY_SUFFIXES_OLD})
+IF($ENV{COMPILE_STATIC} MATCHES "1")
+	FIND_LIBRARY(Z_LIBRARY_PATH
+		NAMES
+			z
+		PATHS
+			/opt/local/lib
+			/usr/lib64
+			/usr/lib
+			/usr/local/lib64
+			/usr/local/lib
+			/sw/lib
+			/usr/local/ssl/lib
+			/lib
+			NO_DEFAULT_PATH)
+	set(CMAKE_FIND_LIBRARY_SUFFIXES ${CMAKE_FIND_LIBRARY_SUFFIXES_OLD})
+ELSEIF($ENV{COMPILE_STATIC} MATCHES "1")
+	SET(Z_LIBRARY_PATH "")
+ENDIF($ENV{COMPILE_STATIC} MATCHES "1")
 
 #MESSAGE("OPENSSL_INCLUDE_PATH: ${OPENSSL_INCLUDE_PATH}")
 #MESSAGE("OPENSSL_LIBRARY_PATH: ${OPENSSL_LIBRARY_PATH}")
@@ -83,14 +90,15 @@ ELSE(CRYPTO_LIBRARY_PATH)
 	MESSAGE(FATAL_ERROR "Looking for crypto library - not found")
 ENDIF(CRYPTO_LIBRARY_PATH)
 
-
-IF(Z_LIBRARY_PATH)
-    SET(OPENSSL_FOUND 1 CACHE STRING "Set to 1 if openssl is found, 0 otherwise")
-    MESSAGE(STATUS "Looking for z library - found")
-ELSE(Z_LIBRARY_PATH)
-    SET(OPENSSL_FOUND 0 CACHE STRING "Set to 1 if openssl is found, 0 otherwise")
-    MESSAGE(FATAL_ERROR "Looking for z library - not found")
-ENDIF(Z_LIBRARY_PATH)
+IF($ENV{COMPILE_STATIC} MATCHES "1")
+	IF(Z_LIBRARY_PATH)
+		SET(OPENSSL_FOUND 1 CACHE STRING "Set to 1 if openssl is found, 0 otherwise")
+		MESSAGE(STATUS "Looking for z library - found")
+	ELSE(Z_LIBRARY_PATH)
+		SET(OPENSSL_FOUND 0 CACHE STRING "Set to 1 if openssl is found, 0 otherwise")
+		MESSAGE(FATAL_ERROR "Looking for z library - not found")
+	ENDIF(Z_LIBRARY_PATH)
+ENDIF($ENV{COMPILE_STATIC} MATCHES "1")
 
 MARK_AS_ADVANCED(OPENSSL_FOUND)
 
