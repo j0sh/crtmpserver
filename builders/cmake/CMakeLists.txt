@@ -44,11 +44,7 @@ ENDIF(DEFINED CRTMPSERVER_INSTALL_PREFIX)
 SET(OpenSSL_FIND_REQUIRED true)
 SET(CRYPTO_FIND_REQUIRED true)
 INCLUDE(cmake_find_modules/Find_openssl.cmake)
-
-IF(NOT DEFINED NO_USE_DL)
-	INCLUDE(cmake_find_modules/Find_dl.cmake)
-ENDIF(NOT DEFINED NO_USE_DL)
-
+INCLUDE(cmake_find_modules/Find_dl.cmake)
 INCLUDE(cmake_find_modules/pch_support.cmake)
 INCLUDE(CMakeDetermineSystem)
 INCLUDE(TestBigEndian)
