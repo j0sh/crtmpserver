@@ -11,11 +11,11 @@ ADD_DEFINITIONS(-DHandleTSVideoData=HandleVideoData_version3)
 
 #prepare the include directories
 INCLUDE_DIRECTORIES(
-	#/Users/shiretu/work/ffmpeg_bin/include
 	${OPENSSL_INCLUDE_PATH}
 	${LUA_INCLUDE_PATH}
 	${CRTMPSERVER_SOURCES_ROOT}/common/include
 	${CRTMPSERVER_SOURCES_ROOT}/thelib/include
+	#/Users/shiretu/work/ffmpeg_bin/include
 	)
 
 #create the library
@@ -26,7 +26,8 @@ IF(${LIB_TYPE} MATCHES "SHARED")
 		common 
 		${DL_LIBRARY_PATH} 
 		${OPENSSL_LIBRARY_PATH} 
-		${CRYPTO_LIBRARY_PATH} 
+		${CRYPTO_LIBRARY_PATH}
+		${Z_LIBRARY_PATH} 
 		#/opt/local/lib/libiconv.dylib
 		#/Users/shiretu/work/ffmpeg_bin/lib/libavcodec.dylib
 		#/Users/shiretu/work/ffmpeg_bin/lib/libavformat.dylib
