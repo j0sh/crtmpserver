@@ -594,6 +594,7 @@
             <Elem>HAS_MEDIA_NSV</Elem>
             <Elem>HAS_PROTOCOL_MMS</Elem>
             <Elem>HAS_PROTOCOL_RAWHTTPSTREAM</Elem>
+            <Elem>HAS_SYSLOG</Elem>
           </preprocessorList>
         </ccTool>
         <linkerTool>

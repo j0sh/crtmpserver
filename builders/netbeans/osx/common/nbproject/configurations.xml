@@ -50,7 +50,6 @@
           <itemPath>../../../../sources/common/include/utils/buffering/bitarray.h</itemPath>
           <itemPath>../../../../sources/common/include/utils/buffering/buffering.h</itemPath>
           <itemPath>../../../../sources/common/include/utils/buffering/iobuffer.h</itemPath>
-          <itemPath>../../../../sources/common/include/utils/buffering/multiconsumerbuffer.h</itemPath>
         </logicalFolder>
         <logicalFolder name="logging" displayName="logging" projectFiles="true">
           <itemPath>../../../../sources/common/include/utils/logging/baseloglocation.h</itemPath>
@@ -59,6 +58,7 @@
           <itemPath>../../../../sources/common/include/utils/logging/logcatloglocation.h</itemPath>
           <itemPath>../../../../sources/common/include/utils/logging/logger.h</itemPath>
           <itemPath>../../../../sources/common/include/utils/logging/logging.h</itemPath>
+          <itemPath>../../../../sources/common/include/utils/logging/syslogloglocation.h</itemPath>
         </logicalFolder>
         <logicalFolder name="lua" displayName="lua" projectFiles="true">
           <itemPath>../../../../sources/common/include/utils/lua/luautils.h</itemPath>
@@ -121,7 +121,6 @@
       <logicalFolder name="utils" displayName="utils" projectFiles="true">
         <logicalFolder name="buffering" displayName="buffering" projectFiles="true">
           <itemPath>../../../../sources/common/src/utils/buffering/iobuffer.cpp</itemPath>
-          <itemPath>../../../../sources/common/src/utils/buffering/multiconsumerbuffer.cpp</itemPath>
         </logicalFolder>
         <logicalFolder name="logging" displayName="logging" projectFiles="true">
           <itemPath>../../../../sources/common/src/utils/logging/baseloglocation.cpp</itemPath>
@@ -178,6 +177,7 @@
             <Elem>DEBUG_MEM_POOL</Elem>
             <Elem>LITTLE_ENDIAN_SHORT_ALIGNED</Elem>
             <Elem>HAS_LUA</Elem>
+            <Elem>HAS_SYSLOG</Elem>
           </preprocessorList>
         </ccTool>
       </compileType>

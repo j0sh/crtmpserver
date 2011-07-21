@@ -35,7 +35,6 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 # Object Files
 OBJECTFILES= \
 	${OBJECTDIR}/_ext/674965218/mmapfile.o \
-	${OBJECTDIR}/_ext/113024148/multiconsumerbuffer.o \
 	${OBJECTDIR}/_ext/674965218/variant.o \
 	${OBJECTDIR}/_ext/1980509653/timegm.o \
 	${OBJECTDIR}/_ext/1874657879/fileloglocation.o \
@@ -93,11 +92,6 @@ ${OBJECTDIR}/_ext/674965218/mmapfile.o: ../../../../sources/common/src/utils/mis
 	${MKDIR} -p ${OBJECTDIR}/_ext/674965218
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -DOSX -DUSE_MEM_POOL -DDEBUG_MEM_POOL -DLITTLE_ENDIAN_SHORT_ALIGNED -DHAS_LUA -I/opt/local/include -I../../../../sources/common/include -I/opt/local/include/libxml2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/674965218/mmapfile.o ../../../../sources/common/src/utils/misc/mmapfile.cpp
-
-${OBJECTDIR}/_ext/113024148/multiconsumerbuffer.o: ../../../../sources/common/src/utils/buffering/multiconsumerbuffer.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/113024148
-	${RM} $@.d
-	$(COMPILE.cc) -O2 -DOSX -DUSE_MEM_POOL -DDEBUG_MEM_POOL -DLITTLE_ENDIAN_SHORT_ALIGNED -DHAS_LUA -I/opt/local/include -I../../../../sources/common/include -I/opt/local/include/libxml2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/113024148/multiconsumerbuffer.o ../../../../sources/common/src/utils/buffering/multiconsumerbuffer.cpp
 
 ${OBJECTDIR}/_ext/674965218/variant.o: ../../../../sources/common/src/utils/misc/variant.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/674965218

@@ -698,9 +698,10 @@ bool ConfigFile::ConfigureApplication(Variant &node) {
 			_libDescriptor.libHandler = LOAD_LIBRARY(STR(_libDescriptor.libraryPath), LOAD_LIBRARY_FLAGS);
 
 			if (_libDescriptor.libHandler == NULL) {
+				string strError = OPEN_LIBRARY_ERROR;
 				FATAL("Unable to open library %s. Error was: %s",
 						STR(node[CONF_APPLICATION_LIBRARY]),
-						OPEN_LIBRARY_ERROR);
+						STR(strError));
 				return false;
 			}
 
