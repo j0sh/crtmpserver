@@ -27,7 +27,7 @@ IF(${LIB_TYPE} MATCHES "SHARED")
 		${DL_LIBRARY_PATH} 
 		${OPENSSL_LIBRARY_PATH} 
 		${CRYPTO_LIBRARY_PATH}
-		${Z_LIBRARY_PATH} 
+		${Z_LIBRARY_PATH}
 		#/opt/local/lib/libiconv.dylib
 		#/Users/shiretu/work/ffmpeg_bin/lib/libavcodec.dylib
 		#/Users/shiretu/work/ffmpeg_bin/lib/libavformat.dylib
