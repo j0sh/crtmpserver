@@ -56,7 +56,8 @@ BaseRTMPAppProtocolHandler::BaseRTMPAppProtocolHandler(Variant &configuration)
 			_authMethod = "";
 		} else {
 			string usersFile = _configuration[CONF_APPLICATION_AUTH][CONF_APPLICATION_AUTH_USERS_FILE];
-			if (usersFile[0] != '/') {
+			if ((usersFile[0] != '/')
+					&& (usersFile[0] != '.')) {
 				usersFile = (string) _configuration[CONF_APPLICATION_DIRECTORY] + usersFile;
 				_configuration[CONF_APPLICATION_AUTH][CONF_APPLICATION_AUTH_USERS_FILE] = usersFile;
 			}
