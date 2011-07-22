@@ -1,3 +1,4 @@
 #!/bin/sh
 
-./crtmpserver --daemon ./
+./crtmpserver --daemon ./flvplayback.lua
+
