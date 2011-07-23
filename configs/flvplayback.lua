@@ -14,7 +14,7 @@ configuration=
 			name="file appender",
 			type="file",
 			level=6,
-			fileName="/tmp/crtmpserver.log"
+			fileName="crtmpserver.log"
 		}
 	},
 	
