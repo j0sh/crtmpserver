@@ -30,6 +30,7 @@
 #include "application/clientapplicationmanager.h"
 #include "mmsappprotocolhandler.h"
 #include "rawhttpstreamappprotocolhandler.h"
+#include "httpappprotocolhandler.h"
 using namespace app_flvplayback;
 
 FLVPlaybackApplication::FLVPlaybackApplication(Variant &configuration)
@@ -56,6 +57,9 @@ FLVPlaybackApplication::FLVPlaybackApplication(Variant &configuration)
 #ifdef HAS_PROTOCOL_RAWHTTPSTREAM
 	_pRawHTTPStreamHandler = NULL;
 #endif /* HAS_PROTOCOL_RAWHTTPSTREAM */
+#ifdef HAS_PROTOCOL_HTTP
+	_pHTTPHandler = NULL;
+#endif /* HAS_PROTOCOL_HTTP */
 }
 
 FLVPlaybackApplication::~FLVPlaybackApplication() {
@@ -117,6 +121,14 @@ FLVPlaybackApplication::~FLVPlaybackApplication() {
 		_pRawHTTPStreamHandler = NULL;
 	}
 #endif /* HAS_PROTOCOL_RAWHTTPSTREAM */
+#ifdef HAS_PROTOCOL_HTTP
+	UnRegisterAppProtocolHandler(PT_INBOUND_HTTP);
+	UnRegisterAppProtocolHandler(PT_OUTBOUND_HTTP);
+	if (_pHTTPHandler != NULL) {
+		delete _pHTTPHandler;
+		_pHTTPHandler = NULL;
+	}
+#endif /* HAS_PROTOCOL_HTTP */
 }
 
 bool FLVPlaybackApplication::Initialize() {
@@ -156,6 +168,11 @@ bool FLVPlaybackApplication::Initialize() {
 	_pRawHTTPStreamHandler = new RawHTTPStreamAppProtocolHandler(_configuration);
 	RegisterAppProtocolHandler(PT_INBOUND_RAW_HTTP_STREAM, _pRawHTTPStreamHandler);
 #endif /* HAS_PROTOCOL_RAWHTTPSTREAM */
+#ifdef HAS_PROTOCOL_HTTP
+	_pHTTPHandler = new HTTPAppProtocolHandler(_configuration);
+	RegisterAppProtocolHandler(PT_INBOUND_HTTP_FOR_RTMP, _pHTTPHandler);
+	RegisterAppProtocolHandler(PT_OUTBOUND_HTTP_FOR_RTMP, _pHTTPHandler);
+#endif /* HAS_PROTOCOL_HTTP */
 
 	return PullExternalStreams();
 }

@@ -46,6 +46,9 @@ namespace app_flvplayback {
 #ifdef HAS_PROTOCOL_RAWHTTPSTREAM
 	class RawHTTPStreamAppProtocolHandler;
 #endif /* HAS_PROTOCOL_RAWHTTPSTREAM */
+#ifdef HAS_PROTOCOL_HTTP
+	class HTTPAppProtocolHandler;
+#endif /* HAS_PROTOCOL_HTTP */
 
 	class FLVPlaybackApplication
 	: public BaseClientApplication {
@@ -72,6 +75,9 @@ namespace app_flvplayback {
 #ifdef HAS_PROTOCOL_RAWHTTPSTREAM
 		RawHTTPStreamAppProtocolHandler *_pRawHTTPStreamHandler;
 #endif /* HAS_PROTOCOL_RAWHTTPSTREAM */
+#ifdef HAS_PROTOCOL_HTTP
+		HTTPAppProtocolHandler *_pHTTPHandler;
+#endif /* HAS_PROTOCOL_HTTP */
 	public:
 		FLVPlaybackApplication(Variant &configuration);
 		virtual ~FLVPlaybackApplication();
