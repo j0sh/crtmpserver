@@ -23,14 +23,12 @@
 #include "utils/misc/variant.h"
 #include "utils/logging/baseloglocation.h"
 
-class EventLogger {
+class LogEventFactory {
 private:
 	static Variant _result;
 public:
-
-	static Variant& CreateLE(Variant &stats, string operation, uint32_t statusCode, string statusCodeDesc, Variant &fields);
-
-
+	static Variant& CreateLE(string loggerName, Variant &stats,
+			string operation, uint32_t statusCode, Variant &fields);
 };
 
 #endif	/* EVENTLOGGER_H */

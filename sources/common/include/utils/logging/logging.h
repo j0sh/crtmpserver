@@ -27,7 +27,7 @@
 #include "utils/logging/fileloglocation.h"
 #include "utils/logging/logcatloglocation.h"
 #include "utils/logging/syslogloglocation.h"
-#include "utils/logging/eventlogger.h"
+#include "utils/logging/logeventfactory.h"
 #include "utils/logging/logger.h"
 
 

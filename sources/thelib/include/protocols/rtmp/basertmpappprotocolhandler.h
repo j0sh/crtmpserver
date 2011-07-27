@@ -269,12 +269,11 @@ private:
 	 * Send the initial connect invoke
 	 * */
 	bool ConnectForPullPush(BaseRTMPProtocol *pFrom, string uriPath, Variant &config);
-    
-    /*
-     * Log Event
-     **/
-    Variant& CreateLogEventInvoke(BaseRTMPProtocol *pFrom, Variant &request);
-    
+
+	/*
+	 * Log Event
+	 **/
+    //Variant& CreateLogEventInvoke(BaseRTMPProtocol *pFrom, Variant &request);
 };
 
 

@@ -18,20 +18,21 @@
  */
 
 #include "common.h"
-#include "utils/logging/eventlogger.h"
+#include "utils/logging/logeventfactory.h"
 
-Variant EventLogger::_result;
+Variant LogEventFactory::_result;
 
-Variant& EventLogger::CreateLE(Variant &stats, string operation, uint32_t statusCode, string statusCodeDesc, Variant &fields) {
+Variant& LogEventFactory::CreateLE(string loggerName, Variant &stats,
+		string operation, uint32_t statusCode, Variant &fields) {
+	_result["loggerName"] = (loggerName == "") ? "generic" : loggerName;
 	if (stats.HasKeyChain(V_MAP, false, 1, "carrier"))
 		_result["carrier"] = stats["carrier"];
 	else
-		_result["carrier"] = Variant();
-
+		_result["carrier"].IsArray(false);
 	_result["operation"] = operation;
 	_result["statusCode"] = statusCode;
-	_result["statusCodeDesc"] = statusCodeDesc;
 	_result["fields"] = fields;
+	_result["fields"].IsArray(false);
 
 	return _result;
 }

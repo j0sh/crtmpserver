@@ -368,10 +368,6 @@ bool ConfigFile::ValidateLogAppender(Variant &node) {
 		return false;
 	}
 
-	if (!ValidateString(node, CONF_LOG_APPENDER_NAME, true, 1, 64)) {
-		return false;
-	}
-
 	if (!ValidateString(node, CONF_LOG_APPENDER_TYPE, true, 4,
 			CONF_LOG_APPENDER_TYPE_COLORED_CONSOLE,
 			CONF_LOG_APPENDER_TYPE_CONSOLE,

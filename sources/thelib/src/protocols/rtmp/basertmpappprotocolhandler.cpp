@@ -518,7 +518,7 @@ bool BaseRTMPAppProtocolHandler::ProcessSharedObject(BaseRTMPProtocol *pFrom,
 
 bool BaseRTMPAppProtocolHandler::ProcessInvoke(BaseRTMPProtocol *pFrom,
 		Variant &request) {
-	PROD_ACCESS(CreateLogEventInvoke(pFrom, request));
+	//PROD_ACCESS(CreateLogEventInvoke(pFrom, request));
 	string functionName = request[RM_INVOKE][RM_INVOKE_FUNCTION];
 	if (functionName == RM_INVOKE_FUNCTION_CONNECT) {
 		return ProcessInvokeConnect(pFrom, request);
@@ -1926,71 +1926,71 @@ bool BaseRTMPAppProtocolHandler::ConnectForPullPush(BaseRTMPProtocol *pFrom,
 	return true;
 }
 
-Variant& BaseRTMPAppProtocolHandler::CreateLogEventInvoke(BaseRTMPProtocol *pFrom, Variant &request) {
-
-	/*
-	 * le
-	 *      carrier
-	 *      operation
-	 *      status_code_numeric
-	 *      status_code_description
-	 *      fields
-	 *          field1
-	 *          field2
-	 *          ...
-	 */
-
-	//1. compute the operation
-	string operation = M_INVOKE_FUNCTION(request);
-
-	//2. depending on the operation, we have different fields
-	Variant fields;
-	if (operation == RM_INVOKE_FUNCTION_CONNECT) {
-		fields["appName"] = M_INVOKE_PARAM(request, (uint32_t) 1);
-	} else if (operation == RM_INVOKE_FUNCTION_CREATESTREAM) {
-
-	} else if (operation == RM_INVOKE_FUNCTION_PUBLISH) {
-
-	} else if (operation == RM_INVOKE_FUNCTION_PLAY) {
-
-	} else if (operation == RM_INVOKE_FUNCTION_PAUSERAW) {
-
-	} else if (operation == RM_INVOKE_FUNCTION_PAUSE) {
-		bool isResume = false; //compute it
-		if (isResume)
-			fields["subOperation"] = "resume";
-		else
-			fields["subOperation"] = "pause";
-	} else if (operation == RM_INVOKE_FUNCTION_SEEK) {
-
-	} else if (operation == RM_INVOKE_FUNCTION_CLOSESTREAM) {
-
-	} else if (operation == RM_INVOKE_FUNCTION_RELEASESTREAM) {
-
-	} else if (operation == RM_INVOKE_FUNCTION_DELETESTREAM) {
-
-	} else if (operation == RM_INVOKE_FUNCTION_RESULT) {
-
-	} else if (operation == RM_INVOKE_FUNCTION_ERROR) {
-
-	} else if (operation == RM_INVOKE_FUNCTION_ONSTATUS) {
-
-	} else if (operation == RM_INVOKE_FUNCTION_FCPUBLISH) {
-
-	} else if (operation == RM_INVOKE_FUNCTION_GETSTREAMLENGTH) {
-
-	} else if (operation == RM_INVOKE_FUNCTION_ONBWDONE) {
-
-	}
-
-	//3. Get the stats
-	Variant stats;
-	pFrom->GetStats(stats);
-
-	//4. Get the final log message
-	return EventLogger::CreateLE(stats, operation, 200, "OK", fields);
-
-}
+//Variant& BaseRTMPAppProtocolHandler::CreateLogEventInvoke(BaseRTMPProtocol *pFrom, Variant &request) {
+//
+//	/*
+//	 * le
+//	 *      carrier
+//	 *      operation
+//	 *      status_code_numeric
+//	 *      status_code_description
+//	 *      fields
+//	 *          field1
+//	 *          field2
+//	 *          ...
+//	 */
+//
+//	//1. compute the operation
+//	string operation = M_INVOKE_FUNCTION(request);
+//
+//	//2. depending on the operation, we have different fields
+//	Variant fields;
+//	if (operation == RM_INVOKE_FUNCTION_CONNECT) {
+//		fields = M_INVOKE_PARAM(request, (uint32_t) 0);
+//	} else if (operation == RM_INVOKE_FUNCTION_CREATESTREAM) {
+//
+//	} else if (operation == RM_INVOKE_FUNCTION_PUBLISH) {
+//
+//	} else if (operation == RM_INVOKE_FUNCTION_PLAY) {
+//
+//	} else if (operation == RM_INVOKE_FUNCTION_PAUSERAW) {
+//
+//	} else if (operation == RM_INVOKE_FUNCTION_PAUSE) {
+//		bool isResume = false; //compute it
+//		if (isResume)
+//			fields["subOperation"] = "resume";
+//		else
+//			fields["subOperation"] = "pause";
+//	} else if (operation == RM_INVOKE_FUNCTION_SEEK) {
+//
+//	} else if (operation == RM_INVOKE_FUNCTION_CLOSESTREAM) {
+//
+//	} else if (operation == RM_INVOKE_FUNCTION_RELEASESTREAM) {
+//
+//	} else if (operation == RM_INVOKE_FUNCTION_DELETESTREAM) {
+//
+//	} else if (operation == RM_INVOKE_FUNCTION_RESULT) {
+//
+//	} else if (operation == RM_INVOKE_FUNCTION_ERROR) {
+//
+//	} else if (operation == RM_INVOKE_FUNCTION_ONSTATUS) {
+//
+//	} else if (operation == RM_INVOKE_FUNCTION_FCPUBLISH) {
+//
+//	} else if (operation == RM_INVOKE_FUNCTION_GETSTREAMLENGTH) {
+//
+//	} else if (operation == RM_INVOKE_FUNCTION_ONBWDONE) {
+//
+//	}
+//
+//	//3. Get the stats
+//	Variant stats;
+//	pFrom->GetStackStats(stats);
+//
+//	//4. Get the final log message
+//	return LogEventFactory::CreateLE("rtmp", stats, operation, 200, fields);
+//
+//}
 
 #endif /* HAS_PROTOCOL_RTMP */
 
