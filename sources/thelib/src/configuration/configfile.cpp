@@ -363,7 +363,7 @@ bool ConfigFile::ValidateLogAppenders(vector<Variant> &logAppenders) {
 }
 
 bool ConfigFile::ValidateLogAppender(Variant &node) {
-	if (!ValidateMap(node, true, 2, 5)) {
+	if (!ValidateMap(node, true, 2, 999)) {
 		FATAL("Invalid log appender. It must be present, must be an array and not empty");
 		return false;
 	}
@@ -589,19 +589,20 @@ bool ConfigFile::ConfigureLogAppender(Variant &node) {
 	BaseLogLocation *pLogLocation = NULL;
 	if ((string) node[CONF_LOG_APPENDER_TYPE] == CONF_LOG_APPENDER_TYPE_COLORED_CONSOLE) {
 		if (!IsDaemon()) {
-			pLogLocation = new ConsoleLogLocation();
+			pLogLocation = new ConsoleLogLocation(node);
 		}
 	} else if ((string) node[CONF_LOG_APPENDER_TYPE] == CONF_LOG_APPENDER_TYPE_CONSOLE) {
 		if (!IsDaemon()) {
-			pLogLocation = new ConsoleLogLocation(false);
+			pLogLocation = new ConsoleLogLocation(node, false);
 		}
 	} else if ((string) node[CONF_LOG_APPENDER_TYPE] == CONF_LOG_APPENDER_TYPE_FILE) {
-		pLogLocation = new FileLogLocation(node[CONF_LOG_APPENDER_FILE_NAME], true);
+		pLogLocation = new FileLogLocation(node, node[CONF_LOG_APPENDER_FILE_NAME], true);
 	}
 #ifdef HAS_SYSLOG
 	else if ((string) node[CONF_LOG_APPENDER_TYPE] == CONF_LOG_APPENDER_TYPE_SYSLOG) {
 		string identifier = "crtmpserver";
 		bool appendSourceFileLine = false;
+		int32_t specificLevel = 0;
 		if (node.HasKeyChain(V_STRING, false, 1, "identifier"))
 			identifier = (string) node["identifier"];
 		trim(identifier);
@@ -609,7 +610,14 @@ bool ConfigFile::ConfigureLogAppender(Variant &node) {
 			identifier = "crtmpserver";
 		if (node.HasKeyChain(V_BOOL, false, 1, "appendSourceFileLine"))
 			appendSourceFileLine = node["appendSourceFileLine"];
-		pLogLocation = new SyslogLogLocation(identifier, appendSourceFileLine);
+		if (node.HasKeyChain(V_STRING, false, 1, "loggerType")) {
+			string loggerType = lowerCase((string) node["loggerType"]);
+			if (loggerType == "access")
+				specificLevel = _PROD_ACCESS_;
+			else if (loggerType == "error")
+				specificLevel = _PROD_ERROR_;
+		}
+		pLogLocation = new SyslogLogLocation(node, identifier, appendSourceFileLine, specificLevel);
 	}
 #endif /* HAS_SYSLOG */
 	else {

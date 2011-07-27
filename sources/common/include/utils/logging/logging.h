@@ -27,6 +27,7 @@
 #include "utils/logging/fileloglocation.h"
 #include "utils/logging/logcatloglocation.h"
 #include "utils/logging/syslogloglocation.h"
+#include "utils/logging/eventlogger.h"
 #include "utils/logging/logger.h"
 
 
@@ -53,5 +54,9 @@ do { \
 #define NYI WARN("%s not yet implemented",__func__);
 #define NYIR do{NYI;return false;}while(0)
 #define NYIA do{NYI;assert(false);abort();}while(0)
-
+#define _PROD_ACCESS_ (_FATAL_+1)
+#define _PROD_ERROR_ (_PROD_ACCESS_+1)
+#define PROD_GENERIC(level, le) Logger::LogProd(_PROD_ACCESS_, __FILE__, __LINE__, __func__, le)
+#define PROD_ACCESS(le) PROD_GENERIC(_PROD_ACCESS_,le)
+#define PROD_ERROR(le) PROD_GENERIC(_PROD_ERROR_,le)
 #endif /* _LOGGING_H */

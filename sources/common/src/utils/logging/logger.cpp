@@ -115,6 +115,17 @@ void Logger::Log(int32_t level, string fileName, uint32_t lineNumber,
 	}
 }
 
+void Logger::LogProd(int32_t level, string fileName, uint32_t lineNumber, string functionName, Variant &le) {
+	LOCK;
+	if (_pLogger == NULL)
+		return;
+
+	FOR_VECTOR(_pLogger->_logLocations, i) {
+		_pLogger->_logLocations[i]->Log(level, fileName,
+				lineNumber, functionName, le);
+	}
+}
+
 bool Logger::AddLogLocation(BaseLogLocation *pLogLocation) {
 	LOCK;
 	if (_pLogger == NULL)

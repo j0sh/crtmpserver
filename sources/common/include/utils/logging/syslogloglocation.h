@@ -29,11 +29,18 @@ private:
 	bool _appendSourceFileLine;
 	string _identifier;
 	map<uint32_t, int> _priorities;
+	int32_t _specificLevel;
 public:
-	SyslogLogLocation(string identifier = "", bool appendSourceFileLine = true);
+	SyslogLogLocation(Variant &configuration, string identifier = "", bool appendSourceFileLine = true, int32_t specificLevel = 0);
 	virtual ~SyslogLogLocation();
 	virtual void Log(int32_t level, string fileName, uint32_t lineNumber,
 			string functionName, string message);
+
+	virtual void Log(int32_t level, string fileName, uint32_t lineNumber, string functionName, Variant &le);
+
+private:
+	string ComputeMessage(Variant &le);
+
 };
 
 

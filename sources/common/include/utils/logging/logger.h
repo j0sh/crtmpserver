@@ -62,6 +62,7 @@ public:
 	static void Log(int32_t level, string fileName, uint32_t lineNumber,
 			string functionName, string formatString, ...);
 
+    static void LogProd(int32_t level, string fileName, uint32_t lineNumber, string functionName, Variant &le);
 	/*! @brief Allows saving of the logs in a specified location
 		@param plogLocation: Pointer to the BaseLogLocation
 		@sa BaseLogLocation

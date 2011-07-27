@@ -26,7 +26,7 @@
 /*!
 	@class FileLogLocation
 	@brief Class that derives the BaseLogLocation class. This class is used to save the log messages in a file.
-*/
+ */
 class DLLEXP FileLogLocation
 : public BaseLogLocation {
 private:
@@ -37,8 +37,8 @@ public:
 	/*! @brief Constructor: It checks if there is error in the file stream. If there are errors, _canLog will become false and logging will not be done.
 		@param path - The path of the file where the logs will be saved
 		@param append - Boolean that indicates whether to append the logs in the existing file or to create a new one.
-	*/
-	FileLogLocation(string path, bool append);
+	 */
+	FileLogLocation(Variant &configuration, string path, bool append);
 	virtual ~FileLogLocation();
 private:
 	/*! @brief Logs the messages
@@ -48,9 +48,11 @@ private:
 		@param functionName: Shows the name of the function that displayed the log message.
 		@param message: Accepts the log message and displays it in the appropriate format.
 	
-	*/
+	 */
 	virtual void Log(int32_t level, string fileName, uint32_t lineNumber,
 			string functionName, string message);
+
+	virtual void Log(int32_t level, string fileName, uint32_t lineNumber, string functionName, Variant &le);
 };
 
 

@@ -20,10 +20,11 @@
 
 #ifdef HAS_SYSLOG
 #include "utils/logging/syslogloglocation.h"
-#include "defines.h"
+#include "common.h"
 #include <syslog.h>
 
-SyslogLogLocation::SyslogLogLocation(string identifier, bool appendSourceFileLine) {
+SyslogLogLocation::SyslogLogLocation(Variant &configuration, string identifier, bool appendSourceFileLine, int32_t specificLevel)
+: BaseLogLocation(configuration) {
 	_appendSourceFileLine = appendSourceFileLine;
 	_identifier = identifier;
 	openlog(STR(_identifier), LOG_PID, LOG_USER);
@@ -34,6 +35,9 @@ SyslogLogLocation::SyslogLogLocation(string identifier, bool appendSourceFileLin
 	_priorities[_WARNING_] = LOG_WARNING;
 	_priorities[_ERROR_] = LOG_ERR;
 	_priorities[_FATAL_] = LOG_ERR;
+	_priorities[_PROD_ACCESS_] = LOG_INFO;
+	_priorities[_PROD_ERROR_] = LOG_INFO;
+	_specificLevel = specificLevel;
 }
 
 SyslogLogLocation::~SyslogLogLocation() {
@@ -41,15 +45,47 @@ SyslogLogLocation::~SyslogLogLocation() {
 
 void SyslogLogLocation::Log(int32_t level, string fileName, uint32_t lineNumber,
 		string functionName, string message) {
-	if (_level < 0 || level > _level) {
-		return;
+
+	return;
+}
+
+void SyslogLogLocation::Log(int32_t level, string fileName, uint32_t lineNumber, string functionName, Variant &le) {
+	cout << " test message" << endl;
+
+	if (_specificLevel != 0) {
+		if (_specificLevel != level) {
+			return;
+		}
+	} else {
+		if (_level < 0 || level > _level) {
+			return;
+		}
 	}
+
+
+	/*
+	 * -------
+	 *        |
+	 *        |
+	 *        ----------------------------
+	 * 
+	 */
+
+	string finalMessage = ComputeMessage(le);
+
+	cout << finalMessage << endl;
+
 	int priority = MAP_HAS1(_priorities, level) ? _priorities[level] : LOG_DEBUG;
 	if (_appendSourceFileLine) {
-		syslog(priority, "%s:%"PRIu32":%s %s", STR(fileName), lineNumber, STR(functionName), STR(message));
+		syslog(priority, "%s:%"PRIu32":%s %s", STR(fileName), lineNumber, STR(functionName), STR(finalMessage));
 	} else {
-		syslog(priority, "%s", STR(message));
+		syslog(priority, "%s", STR(finalMessage));
 	}
 }
+
+string SyslogLogLocation::ComputeMessage(Variant &le) {
+	return "not yet implemented";
+}
+
 #endif /* HAS_SYSLOG */
 

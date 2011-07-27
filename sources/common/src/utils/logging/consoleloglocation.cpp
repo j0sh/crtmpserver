@@ -22,8 +22,8 @@
 
 vector<COLOR_TYPE> ConsoleLogLocation::_colors;
 
-ConsoleLogLocation::ConsoleLogLocation(bool allowColors)
-: BaseLogLocation() {
+ConsoleLogLocation::ConsoleLogLocation(Variant &configuration, bool allowColors)
+: BaseLogLocation(configuration) {
 	_allowColors = allowColors;
 	if (allowColors) {
 		if (_colors.size() <= 0) {
@@ -71,5 +71,9 @@ void ConsoleLogLocation::Log(int32_t level, string fileName,
 		cout << fileName << ":" << lineNumber << " " << message << endl;
 	}
 #endif /* ANDROID */
+}
+
+void ConsoleLogLocation::Log(int32_t level, string fileName, uint32_t lineNumber, string functionName, Variant &le) {
+	return;
 }
 

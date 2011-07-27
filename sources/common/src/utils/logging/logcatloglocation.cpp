@@ -31,8 +31,8 @@ int LogCatLogLocation::_levelsMap[] = {
 	ANDROID_LOG_VERBOSE
 };
 
-LogCatLogLocation::LogCatLogLocation()
-: BaseLogLocation() {
+LogCatLogLocation::LogCatLogLocation(Variant &configuration)
+: BaseLogLocation(configuration) {
 
 }
 
@@ -48,4 +48,9 @@ void LogCatLogLocation::Log(int32_t level, string fileName, uint32_t lineNumber,
 	__android_log_write(_levelsMap[level], "rtmpd",
 			STR(format("%s:%u %s", STR(fileName), lineNumber, STR(message))));
 }
+
+void LogCatLogLocation::Log(int32_t level, string fileName, uint32_t lineNumber, string functionName, Variant &le) {
+	return;
+}
+
 #endif /* ANDROID */

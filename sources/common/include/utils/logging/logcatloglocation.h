@@ -28,11 +28,13 @@ class LogCatLogLocation
 private:
 	static int _levelsMap[];
 public:
-	LogCatLogLocation();
+	LogCatLogLocation(Variant &configuration);
 	virtual ~LogCatLogLocation();
 
 	virtual void Log(int32_t level, string fileName, uint32_t lineNumber,
 			string functionName, string message);
+	virtual void Log(int32_t level, string fileName, uint32_t lineNumber, string functionName, Variant &le);
+
 };
 
 #endif	/* _LOGCATLOGLOCATION_H */

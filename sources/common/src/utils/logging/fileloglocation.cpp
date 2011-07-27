@@ -20,8 +20,8 @@
 
 #include "utils/logging/fileloglocation.h"
 
-FileLogLocation::FileLogLocation(string path, bool append)
-: BaseLogLocation() {
+FileLogLocation::FileLogLocation(Variant &configuration, string path, bool append)
+: BaseLogLocation(configuration) {
 	ios_base::openmode openMode = ios_base::out | ios_base::binary;
 	if (!append)
 		openMode |= ios_base::trunc;
@@ -46,9 +46,12 @@ void FileLogLocation::Log(int32_t level, string fileName, uint32_t lineNumber,
 		return;
 	}
 	string logEntry = format("%"PRIu64":%d:%s:%u:%s:%s\n",
-			(uint64_t)time(NULL), level, STR(fileName), lineNumber, STR(functionName),
+			(uint64_t) time(NULL), level, STR(fileName), lineNumber, STR(functionName),
 			STR(message));
 	_fileStream.write(STR(logEntry), logEntry.size());
 	_fileStream.flush();
 }
 
+void FileLogLocation::Log(int32_t level, string fileName, uint32_t lineNumber, string functionName, Variant &le) {
+	return;
+}

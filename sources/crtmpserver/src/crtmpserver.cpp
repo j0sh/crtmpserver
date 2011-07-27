@@ -120,7 +120,8 @@ bool Initialize() {
 	Logger::Init();
 
 	if ((bool)gRs.commandLine["arguments"]["--use-implicit-console-appender"]) {
-		ConsoleLogLocation * pLogLocation = new ConsoleLogLocation(false);
+		Variant dummy;
+		ConsoleLogLocation * pLogLocation = new ConsoleLogLocation(dummy, false);
 		pLogLocation->SetLevel(_FINEST_);
 		Logger::AddLogLocation(pLogLocation);
 	}
@@ -295,8 +296,8 @@ void PrintHelp() {
 	cout << "    --gid=<gid>" << endl;
 	cout << "      Run the process with the specified group id\n" << endl;
 	cout << "    --pid=<pid_file>" << endl;
-	cout << "      Create PID file."<< endl;
-	cout << "      Works only if --daemon option is specified\n"<< endl;
+	cout << "      Create PID file." << endl;
+	cout << "      Works only if --daemon option is specified\n" << endl;
 }
 
 void PrintVersion() {
