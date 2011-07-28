@@ -199,6 +199,19 @@ bool deleteFile(string path) {
 	return true;
 }
 
+bool deleteFolder(string path, bool force) {
+	if (!force) {
+		return deleteFile(path);
+	} else {
+		string command = format("rm -rf %s", STR(path));
+		if (system(STR(command)) != 0) {
+			FATAL("Unable to delete folder %s", STR(path));
+			return false;
+		}
+		return true;
+	}
+}
+
 bool createFolder(string path, bool recursive) {
 	string command = format("mkdir %s %s",
 			recursive ? "-p" : "",

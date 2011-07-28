@@ -179,6 +179,7 @@ DLLEXP bool setFdNoNagle(int32_t fd);
 DLLEXP bool setFdReuseAddress(int32_t fd);
 DLLEXP bool setFdOptions(int32_t fd);
 DLLEXP bool deleteFile(string path);
+DLLEXP bool deleteFolder(string path, bool force);
 DLLEXP string getHostByName(string name);
 DLLEXP bool isNumeric(string value);
 DLLEXP void split(string str, string separator, vector<string> &result);

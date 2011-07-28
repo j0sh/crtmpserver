@@ -157,6 +157,7 @@ bool setFdNoNagle(int32_t fd);
 bool setFdReuseAddress(int32_t fd);
 bool setFdOptions(int32_t fd);
 bool deleteFile(string path);
+bool deleteFolder(string path, bool force);
 string getHostByName(string name);
 bool isNumeric(string value);
 void split(string str, string separator, vector<string> &result);

@@ -160,7 +160,7 @@ bool setFdNoNagle(int32_t fd);
 bool setFdReuseAddress(int32_t fd);
 bool setFdOptions(int32_t fd);
 bool deleteFile(string path);
-#define deleteFolder deleteFile
+bool deleteFolder(string path, bool force);
 bool createFolder(string path, bool recursive);
 string getHostByName(string name);
 bool isNumeric(string value);

@@ -58,7 +58,7 @@ int vasprintf(char **strp, const char *fmt, va_list ap, int size) {
 }
 
 bool fileExists(string path) {
-	char *lpStr2=(char *) path.c_str();
+	char *lpStr2 = (char *) path.c_str();
 	if (PathFileExists(lpStr2))
 		return true;
 	else
@@ -227,7 +227,7 @@ double getFileModificationDate(string path) {
 
 void InitNetworking() {
 	WSADATA wsa;
-	memset(&wsa,0,sizeof(wsa));
+	memset(&wsa, 0, sizeof (wsa));
 	WSAStartup(0, &wsa);
 	WSAStartup(wsa.wHighVersion, &wsa);
 }
@@ -277,7 +277,7 @@ bool setFdNoSIGPIPE(int32_t fd) {
 
 bool setFdKeepAlive(int32_t fd) {
 	BOOL value = TRUE;
-	if (setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, (char *)&value, sizeof(BOOL)) == SOCKET_ERROR) {
+	if (setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, (char *) &value, sizeof (BOOL)) == SOCKET_ERROR) {
 		FATAL("Error #%u", WSAGetLastError());
 		return false;
 	}
@@ -286,7 +286,7 @@ bool setFdKeepAlive(int32_t fd) {
 
 bool setFdNoNagle(int32_t fd) {
 	BOOL value = TRUE;
-	if (setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, (char *)&value, sizeof(BOOL)) == SOCKET_ERROR) {
+	if (setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, (char *) &value, sizeof (BOOL)) == SOCKET_ERROR) {
 		FATAL("Error #%u", WSAGetLastError());
 		return false;
 	}
@@ -295,7 +295,7 @@ bool setFdNoNagle(int32_t fd) {
 
 bool setFdReuseAddress(int32_t fd) {
 	BOOL value = TRUE;
-	if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (char *)&value, sizeof(BOOL)) == SOCKET_ERROR) {
+	if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (char *) &value, sizeof (BOOL)) == SOCKET_ERROR) {
 		FATAL("Error #%u", WSAGetLastError());
 		return false;
 	}
@@ -366,8 +366,8 @@ void splitFileName(string fileName, string &name, string & extension, char separ
 }
 
 string normalizePath(string base, string file) {
-	if((base=="")||(base[base.size()-1]!=PATH_SEPARATOR))
-		base+=PATH_SEPARATOR;
+	if ((base == "") || (base[base.size() - 1] != PATH_SEPARATOR))
+		base += PATH_SEPARATOR;
 	char dummy1[MAX_PATH ];
 	char dummy2[MAX_PATH ];
 	if (GetFullPathName(STR(base), MAX_PATH, dummy1, NULL) == 0)
@@ -416,8 +416,8 @@ bool listFolder(string path, vector<string> &result, bool normalizeAllPaths,
 	// Find the first file in the directory.
 
 	hFind = FindFirstFile(szDir, &ffd);
-	if(hFind==INVALID_HANDLE_VALUE){
-		FATAL("Unable to open folder %s",STR(path));
+	if (hFind == INVALID_HANDLE_VALUE) {
+		FATAL("Unable to open folder %s", STR(path));
 		return false;
 	}
 
@@ -446,7 +446,7 @@ bool listFolder(string path, vector<string> &result, bool normalizeAllPaths,
 					return false;
 				}
 			}
-		}  else {
+		} else {
 			ADD_VECTOR_END(result, entry);
 		}
 	} while (FindNextFile(hFind, &ffd) != 0);
@@ -467,6 +467,10 @@ bool deleteFile(string path) {
 		return false;
 	}
 	return true;
+}
+
+bool deleteFolder(string path, bool force) {
+	NYIA;
 }
 
 bool moveFile(string src, string dst) {
