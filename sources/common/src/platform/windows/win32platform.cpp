@@ -471,6 +471,7 @@ bool deleteFile(string path) {
 
 bool deleteFolder(string path, bool force) {
 	NYIA;
+	return false;
 }
 
 bool moveFile(string src, string dst) {

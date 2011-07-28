@@ -55,3 +55,4 @@ void FileLogLocation::Log(int32_t level, string fileName, uint32_t lineNumber,
 void FileLogLocation::Log(int32_t level, string fileName, uint32_t lineNumber, string functionName, Variant &le) {
 	return;
 }
+
