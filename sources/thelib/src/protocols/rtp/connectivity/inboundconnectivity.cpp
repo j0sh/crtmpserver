@@ -96,7 +96,7 @@ void InboundConnectivity::EnqueueForDelete() {
 }
 
 bool InboundConnectivity::Initialize(Variant &videoTrack, Variant &audioTrack,
-		string streamName, bool forceTcp) {
+		string streamName, bool forceTcp, uint32_t bandwidthHint) {
 	_forceTcp = forceTcp;
 
 	//1. get the application
@@ -128,6 +128,18 @@ bool InboundConnectivity::Initialize(Variant &videoTrack, Variant &audioTrack,
 	_pRTPAudio->SetApplication(pApplication);
 	_pRTCPAudio->SetApplication(pApplication);
 
+	//5. Compute the bandwidthHint
+	uint32_t bandwidth = 0;
+	if (videoTrack != V_NULL) {
+		bandwidth += (uint32_t) SDP_TRACK_BANDWIDTH(videoTrack);
+	}
+	if (audioTrack != V_NULL) {
+		bandwidth += (uint32_t) SDP_TRACK_BANDWIDTH(audioTrack);
+	}
+	if (bandwidth == 0) {
+		bandwidth = bandwidthHint;
+	}
+
 	//5. Create the in stream
 	if (streamName == "")
 		streamName = format("rtsp_%u", _pRTSP->GetId());
@@ -135,8 +147,8 @@ bool InboundConnectivity::Initialize(Variant &videoTrack, Variant &audioTrack,
 			streamName,
 			videoTrack != V_NULL ? unb64((string) SDP_VIDEO_CODEC_H264_SPS(videoTrack)) : "",
 			videoTrack != V_NULL ? unb64((string) SDP_VIDEO_CODEC_H264_PPS(videoTrack)) : "",
-			audioTrack != V_NULL ? unhex(SDP_AUDIO_CODEC_SETUP(audioTrack)) : ""
-			);
+			audioTrack != V_NULL ? unhex(SDP_AUDIO_CODEC_SETUP(audioTrack)) : "",
+			bandwidth);
 
 	//6. make the stream known to inbound RTP protocols
 	_pRTPVideo->SetStream(_pInStream, false);

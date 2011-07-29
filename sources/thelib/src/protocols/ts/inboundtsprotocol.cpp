@@ -435,7 +435,7 @@ bool InboundTSProtocol::ProcessPidTypePMT(uint32_t packetHeader,
 	InNetTSStream *pStream = NULL;
 	if ((videoPid != 0) || (audioPid != 0)) {
 		pStream = new InNetTSStream(this, GetApplication()->GetStreamsManager(),
-				streamName);
+				streamName, packetPMT.GetBandwidth());
 	}
 
 	//5. Create the pid descriptors for audioPid and videoPid and store them

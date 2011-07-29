@@ -28,6 +28,20 @@ bool ReadStreamDescriptor(StreamDescriptor &descriptor,
 	descriptor.type = pBuffer[cursor++];
 	descriptor.length = pBuffer[cursor++];
 	CHECK_BOUNDS(descriptor.length);
+
+	//iso13818-1.pdf Table 2-39, page 81/174
+	switch (descriptor.type) {
+		case 14://Maximum_bitrate_descriptor
+		{
+			CHECK_BOUNDS(3);
+			descriptor.payload.maximum_bitrate_descriptor.maximum_bitrate =
+					(((pBuffer[cursor] << 16) | (pBuffer[cursor + 1] << 8) | (pBuffer[cursor + 2]))&0x3fffff)*50;
+			break;
+		}
+		default:
+			break;
+	}
+
 	cursor += descriptor.length;
 	return true;
 }

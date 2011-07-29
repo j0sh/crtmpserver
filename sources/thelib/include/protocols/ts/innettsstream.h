@@ -77,7 +77,7 @@ private:
 	IOBuffer _PPS;
 public:
 	InNetTSStream(BaseProtocol *pProtocol, StreamsManager *pStreamsManager,
-			string name);
+			string name, uint32_t bandwidthHint);
 	virtual ~InNetTSStream();
 	virtual StreamCapabilities * GetCapabilities();
 

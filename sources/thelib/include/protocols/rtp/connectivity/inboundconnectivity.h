@@ -54,7 +54,7 @@ public:
 	void EnqueueForDelete();
 
 	bool Initialize(Variant &videoTrack, Variant &audioTrack,
-			string streamName, bool forceTcp);
+			string streamName, bool forceTcp, uint32_t bandwidthHint);
 
 	string GetTransportHeaderLine(bool isAudio);
 

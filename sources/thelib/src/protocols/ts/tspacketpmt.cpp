@@ -206,5 +206,27 @@ uint32_t TSPacketPMT::PeekCRC(uint8_t *pBuffer, uint32_t cursor, uint32_t maxCur
 	CHECK_BOUNDS(4);
 	return ENTOHLP((pBuffer + cursor)); //----MARKED-LONG---
 }
+
+uint32_t TSPacketPMT::GetBandwidth() {
+	for (uint32_t i = 0; i < _programInfoDescriptors.size(); i++) {
+		if (_programInfoDescriptors[i].type == 14) {
+			return _programInfoDescriptors[i].payload.maximum_bitrate_descriptor.maximum_bitrate;
+		}
+	}
+
+	uint32_t result = 0;
+
+	FOR_MAP(_streams, uint16_t, TSStreamInfo, i) {
+		TSStreamInfo &si = MAP_VAL(i);
+		for (uint32_t j = 0; j < si.esDescriptors.size(); j++) {
+			if (si.esDescriptors[j].type == 14) {
+				result += si.esDescriptors[j].payload.maximum_bitrate_descriptor.maximum_bitrate;
+				break;
+			}
+		}
+	}
+
+	return result;
+}
 #endif	/* HAS_PROTOCOL_TS */
 

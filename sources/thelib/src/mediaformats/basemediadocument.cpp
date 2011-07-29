@@ -93,7 +93,7 @@ bool BaseMediaDocument::Process() {
 				_mediaFile.Size(),
 				hours, minutes, seconds,
 				totalSeconds,
-				(double) _mediaFile.Size() / (double) totalSeconds / 1024.00 * 8.0);
+				(double) _streamCapabilities.bandwidthHint / 1024.00 * 8.0);
 	}
 
 	moveFile(_seekFilePath + ".tmp", _seekFilePath);
@@ -132,7 +132,11 @@ bool BaseMediaDocument::SaveSeekFile() {
 		FATAL("Unable to open seeking file %s", STR(_seekFilePath));
 		return false;
 	}
-	
+
+	//2. Setup the bandwidth hint in bytes/second
+	uint32_t totalSeconds = (uint32_t) (((uint32_t) _frames[_frames.size() - 1].absoluteTime) / 1000);
+	_streamCapabilities.bandwidthHint = (uint32_t) ((double) _mediaFile.Size() / (double) totalSeconds);
+
 	//2. Serialize the stream capabilities
 	IOBuffer raw;
 	if (!_streamCapabilities.Serialize(raw)) {
@@ -230,12 +234,14 @@ bool BaseMediaDocument::SaveMetaFile() {
 	_metadata[META_FILE_SIZE] = (uint64_t) _mediaFile.Size();
 	if (_frames.size() > 0) {
 		_metadata[META_FILE_DURATION] = (uint32_t) _frames[_frames.size() - 1].absoluteTime;
+		_metadata[META_FILE_BANDWIDTH] = _streamCapabilities.bandwidthHint;
 	} else {
 		_metadata[META_FILE_DURATION] = (uint32_t) 0;
 	}
 
 	_metadata[META_RTMP_META] = GetRTMPMeta();
 	_metadata[META_RTMP_META]["duration"] = (double) _metadata[META_FILE_DURATION] / 1000.00;
+	_metadata[META_RTMP_META][META_FILE_BANDWIDTH] = _streamCapabilities.bandwidthHint;
 
 	return _metadata.SerializeToBinFile(_metaFilePath + ".tmp");
 }

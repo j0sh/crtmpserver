@@ -26,7 +26,7 @@
 #define SDP_SESSION		"session"
 #define SDP_MEDIATRACKS	"mediaTracks"
 #define SDP_A			"attributes"
-#define SDP_B			"bandwidths"
+#define SDP_B			"bandwidth"
 #define SDP_C			"connection"
 #define SDP_E			"email"
 #define SDP_I			"sessionInfo"
@@ -43,6 +43,7 @@
 
 #define SDP_TRACK_GLOBAL_INDEX(x)	((x)["globalTrackIndex"])
 #define SDP_TRACK_IS_AUDIO(x)		((x)["isAudio"])
+#define SDP_TRACK_BANDWIDTH(x)		((x)["bandwidth"])
 #define SDP_VIDEO_SERVER_IP(x)		((x)["ip"])
 #define SDP_VIDEO_CONTROL_URI(x)	((x)["controlUri"])
 #define SDP_VIDEO_CODEC(x)			((x)["codec"])
@@ -63,6 +64,7 @@ public:
 	Variant GetVideoTrack(uint32_t index, string uri);
 	Variant GetAudioTrack(uint32_t index, string uri);
 	string GetStreamName();
+	uint32_t GetTotalBandwidth();
 private:
 	static bool ParseSection(Variant &result, vector<string> &lines,
 			uint32_t start, uint32_t length);

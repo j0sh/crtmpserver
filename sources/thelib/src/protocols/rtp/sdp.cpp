@@ -115,6 +115,10 @@ Variant SDP::GetVideoTrack(uint32_t index, string uri) {
 			.GetValue("sprop-parameter-sets", false)["PPS"];
 	SDP_TRACK_GLOBAL_INDEX(result) = SDP_TRACK_GLOBAL_INDEX(track);
 	SDP_TRACK_IS_AUDIO(result) = (bool)false;
+	if (track.HasKeyChain(V_UINT32, false, 1, SDP_B))
+		SDP_TRACK_BANDWIDTH(result) = track[SDP_B];
+	else
+		SDP_TRACK_BANDWIDTH(result) = (uint32_t) 0;
 
 	//3. Done
 	return result;
@@ -147,9 +151,20 @@ Variant SDP::GetAudioTrack(uint32_t index, string uri) {
 			.GetValue("config", false);
 	SDP_TRACK_GLOBAL_INDEX(result) = SDP_TRACK_GLOBAL_INDEX(track);
 	SDP_TRACK_IS_AUDIO(result) = (bool)true;
+	if (track.HasKeyChain(V_UINT32, false, 1, SDP_B))
+		SDP_TRACK_BANDWIDTH(result) = track[SDP_B];
+	else
+		SDP_TRACK_BANDWIDTH(result) = (uint32_t) 0;
 
 	//3. Done
 	return result;
+}
+
+uint32_t SDP::GetTotalBandwidth() {
+	if (HasKeyChain(V_UINT32, false, 2, SDP_SESSION, SDP_B))
+		return (uint32_t) ((*this)[SDP_SESSION][SDP_B]);
+	else
+		return 0;
 }
 
 string SDP::GetStreamName() {
@@ -207,11 +222,8 @@ bool SDP::ParseSDPLine(Variant &result, string &line) {
 		}
 		case 'b':
 		{
-			Variant node;
-			if (!ParseSDPLineB(node, line.substr(2)))
-				return false;
-			result[SDP_B].PushToArray(node);
-			return true;
+			FORBID_DUPLICATE(SDP_B);
+			return ParseSDPLineB(result[SDP_B], line.substr(2));
 		}
 		case 'c':
 		{
@@ -374,6 +386,14 @@ bool SDP::ParseSDPLineB(Variant &result, string line) {
 
 	result["modifier"] = parts[0];
 	result["value"] = parts[1];
+
+	if (parts[0] == "AS") {
+		uint32_t val = (uint32_t) atoi(STR(parts[1]));
+		result = (uint32_t) ((val / 8)*1024);
+	} else {
+		WARN("Bandwidth modifier %s not implemented", STR(result["modifier"]));
+		result = (uint32_t) 0;
+	}
 
 	return true;
 }

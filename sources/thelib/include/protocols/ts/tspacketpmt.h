@@ -106,6 +106,7 @@ public:
 
 	bool Read(uint8_t *pBuffer, uint32_t &cursor, uint32_t maxCursor);
 	static uint32_t PeekCRC(uint8_t *pBuffer, uint32_t cursor, uint32_t maxCursor);
+	uint32_t GetBandwidth();
 };
 
 

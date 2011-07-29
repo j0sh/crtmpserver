@@ -27,7 +27,8 @@
 #include "protocols/rtmp/streaming/baseoutnetrtmpstream.h"
 
 InNetRTPStream::InNetRTPStream(BaseProtocol *pProtocol,
-		StreamsManager *pStreamsManager, string name, string SPS, string PPS, string AAC)
+		StreamsManager *pStreamsManager, string name, string SPS, string PPS,
+		string AAC, uint32_t bandwidthHint)
 : BaseInNetStream(pProtocol, pStreamsManager, ST_IN_NET_RTP, name) {
 	_hasAudio = false;
 	if (AAC.length() != 0) {
@@ -46,6 +47,8 @@ InNetRTPStream::InNetRTPStream(BaseProtocol *pProtocol,
 				PPS.length());
 		_hasVideo = true;
 	}
+
+	_capabilities.bandwidthHint = bandwidthHint;
 
 	_audioSequence = 0;
 	_audioPacketsCount = 0;

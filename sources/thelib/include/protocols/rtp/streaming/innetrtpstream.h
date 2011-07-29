@@ -50,7 +50,7 @@ private:
 	double _lastVideoTs;
 public:
 	InNetRTPStream(BaseProtocol *pProtocol, StreamsManager *pStreamsManager,
-			string name, string SPS, string PPS, string AAC);
+			string name, string SPS, string PPS, string AAC, uint32_t bandwidthHint);
 	virtual ~InNetRTPStream();
 
 	virtual StreamCapabilities * GetCapabilities();

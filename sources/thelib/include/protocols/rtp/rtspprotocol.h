@@ -73,7 +73,7 @@ protected:
 
 	uint32_t _keepAliveTimerId;
 	BaseOutStream *_pOutStream;
-	
+
 	string _keepAliveURI;
 public:
 	RTSPProtocol();
@@ -114,13 +114,13 @@ public:
 	void CloseOutboundConnectivity();
 
 	InboundConnectivity *GetInboundConnectivity(Variant &videoTrack,
-			Variant &audioTrack, string sdpStreamName);
+			Variant &audioTrack, string sdpStreamName, uint32_t bandwidthHint);
 	void CloseInboundConnectivity();
 
 	string GetTransportHeaderLine(bool isAudio);
 
 	bool SendRaw(uint8_t *pBuffer, uint32_t length);
-	
+
 	void SetOutStream(BaseOutStream *pOutStream);
 private:
 	bool SendMessage(Variant &headers, string &content);

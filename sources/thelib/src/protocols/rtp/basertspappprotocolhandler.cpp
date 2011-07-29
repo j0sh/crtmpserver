@@ -661,6 +661,8 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPRequestAnnounce(RTSPProtocol *pFrom,
 	//7. Save the streamName
 	pFrom->GetCustomParameters()["sdpStreamName"] = sdp.GetStreamName();
 
+	pFrom->GetCustomParameters()["sdpBandwidthHint"] = (uint32_t) sdp.GetTotalBandwidth();
+
 	//8. Send back the response
 	pFrom->PushResponseFirstLine(RTSP_VERSION_1_0, 200, "OK");
 	return pFrom->SendResponseMessage();
@@ -703,9 +705,13 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPRequestRecord(RTSPProtocol *pFrom,
 		streamName = format("rtsp_stream_%u", pFrom->GetId());
 	}
 
+	uint32_t bandwidthHint = 0;
+	if (pFrom->GetCustomParameters().HasKeyChain(V_UINT32, false, 1, "sdpBandwidthHint"))
+		bandwidthHint = (uint32_t) pFrom->GetCustomParameters()["sdpBandwidthHint"];
+
 	//3. Create the inbound connectivity
-	if (pFrom->GetInboundConnectivity(videoTrack, audioTrack,
-			streamName) == NULL) {
+	if (pFrom->GetInboundConnectivity(videoTrack, audioTrack, streamName,
+			bandwidthHint) == NULL) {
 		FATAL("Unable to get the inbound connectivity");
 		return false;
 	}
@@ -861,8 +867,8 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPResponse200Describe(
 	}
 
 	//6. Create the inbound connectivity
-	if (pFrom->GetInboundConnectivity(videoTrack, audioTrack,
-			sdp.GetStreamName()) == NULL) {
+	if (pFrom->GetInboundConnectivity(videoTrack, audioTrack, sdp.GetStreamName(),
+			sdp.GetTotalBandwidth()) == NULL) {
 		FATAL("Unable to get the inbound connectivity");
 
 		return false;

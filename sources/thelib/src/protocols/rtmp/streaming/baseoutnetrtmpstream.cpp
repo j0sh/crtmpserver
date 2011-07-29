@@ -408,6 +408,7 @@ void BaseOutNetRTMPStream::SignalAttachedToInStream() {
 					Variant meta;
 					meta["width"] = pCapabilities->avc._width;
 					meta["height"] = pCapabilities->avc._height;
+					meta["bandwidth"] = (uint32_t) pCapabilities->bandwidthHint;
 					message = StreamMessageFactory::GetNotifyOnMetaData(_pChannelAudio->id,
 							_rtmpStreamId, 0, false, meta);
 					TRACK_MESSAGE("Message:\n%s", STR(message.ToString()));

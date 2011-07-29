@@ -361,7 +361,7 @@ void RTSPProtocol::CloseOutboundConnectivity() {
 }
 
 InboundConnectivity *RTSPProtocol::GetInboundConnectivity(Variant &videoTrack,
-		Variant &audioTrack, string sdpStreamName) {
+		Variant &audioTrack, string sdpStreamName, uint32_t bandwidthHint) {
 	CloseInboundConnectivity();
 	string streamName;
 	if (GetCustomParameters().HasKey("localStreamName")) {
@@ -370,8 +370,8 @@ InboundConnectivity *RTSPProtocol::GetInboundConnectivity(Variant &videoTrack,
 		streamName = sdpStreamName;
 	}
 	_pInboundConnectivity = new InboundConnectivity(this);
-	if (!_pInboundConnectivity->Initialize(videoTrack, audioTrack,
-			streamName, (bool)GetCustomParameters()["forceTcp"])) {
+	if (!_pInboundConnectivity->Initialize(videoTrack, audioTrack, streamName,
+			(bool)GetCustomParameters()["forceTcp"], bandwidthHint)) {
 		FATAL("Unable to initialize inbound connectivity");
 		CloseInboundConnectivity();
 		return false;

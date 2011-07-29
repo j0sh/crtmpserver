@@ -129,6 +129,27 @@ bool InNetRTMPStream::SendStreamMessage(Variant &completeMessage, bool persisten
 	if (persistent)
 		_lastStreamMessage = completeMessage;
 
+	if ((uint32_t) VH_MT(completeMessage) == RM_HEADER_MESSAGETYPE_NOTIFY) {
+		Variant &params = M_NOTIFY_PARAMS(completeMessage);
+		if ((params == V_MAP) && (params.MapSize() >= 2)) {
+			Variant &notify = MAP_VAL(params.begin());
+			if ((notify == V_STRING) && (lowerCase((string) notify) == "onmetadata")) {
+				Variant &metadata = MAP_VAL(++params.begin());
+				uint32_t bandwidth = 0;
+				if (metadata.HasKeyChain(_V_NUMERIC, false, 1, "bandwidth")) {
+					bandwidth = (uint32_t) metadata["bandwidth"];
+				} else {
+					if (metadata.HasKeyChain(_V_NUMERIC, false, 1, "audiodatarate")) {
+						bandwidth = (uint32_t) metadata["audiodatarate"];
+					}
+					if (metadata.HasKeyChain(_V_NUMERIC, false, 1, "videodatarate")) {
+						bandwidth += (uint32_t) metadata["videodatarate"];
+					}
+				}
+				_streamCapabilities.bandwidthHint = bandwidth / 8;
+			}
+		}
+	}
 	//5. Done
 	return true;
 }

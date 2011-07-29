@@ -26,8 +26,9 @@
 #include "streaming/nalutypes.h"
 
 InNetTSStream::InNetTSStream(BaseProtocol *pProtocol,
-		StreamsManager *pStreamsManager, string name)
+		StreamsManager *pStreamsManager, string name, uint32_t bandwidthHint)
 : BaseInNetStream(pProtocol, pStreamsManager, ST_IN_NET_TS, name) {
+	_streamCapabilities.bandwidthHint = bandwidthHint;
 	//audio section
 	_pAudioPidDescriptor = NULL;
 	_currentAudioSequenceNumber = -1;

@@ -566,6 +566,7 @@ _AUDIO_AAC::operator string() {
 StreamCapabilities::StreamCapabilities() {
 	videoCodecId = CODEC_VIDEO_UNKNOWN;
 	audioCodecId = CODEC_AUDIO_UNKNOWN;
+	bandwidthHint = 0;
 }
 
 StreamCapabilities::~StreamCapabilities() {
@@ -638,13 +639,18 @@ void StreamCapabilities::ClearAudio() {
 void StreamCapabilities::Clear() {
 	ClearVideo();
 	ClearAudio();
+	bandwidthHint = 0;
 }
 
+#define __STREAM_CAPABILITIES_VERSION MAKE_TAG4('V','E','R','1')
+
 bool StreamCapabilities::Serialize(IOBuffer &dest) {
-	uint8_t temp[16];
-	EHTONLLP(temp, videoCodecId);
-	EHTONLLP(temp + 8, audioCodecId);
-	dest.ReadFromBuffer(temp, 16);
+	uint8_t temp[28];
+	EHTONLLP(temp, __STREAM_CAPABILITIES_VERSION);
+	EHTONLLP(temp + 8, videoCodecId);
+	EHTONLLP(temp + 16, audioCodecId);
+	EHTONLP(temp + 24, bandwidthHint);
+	dest.ReadFromBuffer(temp, 28);
 	switch (videoCodecId) {
 		case CODEC_VIDEO_AVC:
 		{
@@ -679,14 +685,21 @@ bool StreamCapabilities::Serialize(IOBuffer &dest) {
 bool StreamCapabilities::Deserialize(IOBuffer &src, StreamCapabilities &capabilities) {
 	uint8_t *pBuffer = GETIBPOINTER(src);
 	uint32_t length = GETAVAILABLEBYTESCOUNT(src);
-	if (length < 16) {
+	if (length < 28) {
 		FATAL("Not enough data");
 		return false;
 	}
+	uint64_t ver = ENTOHLLP(pBuffer);
+	if (ver != __STREAM_CAPABILITIES_VERSION) {
+		FATAL("Invalid stream capabilities version. Wanted: %"PRIu64"; Got: %"PRIu64,
+				__STREAM_CAPABILITIES_VERSION, ver);
+		return false;
+	}
 	capabilities.Clear();
-	capabilities.videoCodecId = ENTOHLLP(pBuffer);
-	capabilities.audioCodecId = ENTOHLLP(pBuffer + 8);
-	src.Ignore(16);
+	capabilities.videoCodecId = ENTOHLLP(pBuffer + 8);
+	capabilities.audioCodecId = ENTOHLLP(pBuffer + 16);
+	capabilities.bandwidthHint = ENTOHLP(pBuffer + 24);
+	src.Ignore(28);
 	switch (capabilities.videoCodecId) {
 		case CODEC_VIDEO_AVC:
 		{

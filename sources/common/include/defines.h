@@ -417,6 +417,8 @@
 #define MEDIA_TYPE_TS_LEN 2
 #define META_AUDIO_FRAMES_COUNT "audioFramesCount"
 #define META_AUDIO_FRAMES_COUNT_LEN 16
+#define META_FILE_BANDWIDTH "bandwidth"
+#define META_FILE_BANDWIDTH_LEN 9
 #define META_FILE_DURATION "fileDuration"
 #define META_FILE_DURATION_LEN 12
 #define META_FILE_SIZE "fileSize"

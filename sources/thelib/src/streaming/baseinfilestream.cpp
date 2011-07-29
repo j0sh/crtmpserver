@@ -196,7 +196,9 @@ bool BaseInFileStream::Initialize(int32_t clientSideBufferLength) {
 		return false;
 	}
 	if (!StreamCapabilities::Deserialize(raw, _streamCapabilities)) {
-		FATAL("Unable to deserialize stream Capabilities");
+		FATAL("Unable to deserialize stream Capabilities. Please delete %s and %s files so they can be regenerated",
+				STR(GetName() + "."MEDIA_TYPE_SEEK),
+				STR(GetName() + "."MEDIA_TYPE_META));
 		return false;
 	}
 

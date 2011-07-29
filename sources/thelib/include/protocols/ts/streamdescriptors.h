@@ -68,6 +68,13 @@ typedef struct _StreamDescriptor {
 	uint8_t type;
 	uint8_t length;
 
+	union {
+
+		struct {
+			uint32_t maximum_bitrate;
+		} maximum_bitrate_descriptor;
+	} payload;
+
 	operator string() {
 		return format("type: %hhu; length: %hhu", type, length);
 	};
