@@ -112,6 +112,11 @@ void BaseOutStream::GetStats(Variant &info) {
 	} else {
 		info["inStreamUniqueId"] = Variant();
 	}
+	StreamCapabilities *pCapabilities = GetCapabilities();
+	if (pCapabilities != NULL)
+		info["bandwidth"] = (uint32_t) pCapabilities->bandwidthHint;
+	else
+		info["bandwidth"] = (uint32_t) 0;
 }
 
 bool BaseOutStream::Play(double absoluteTimestamp, double length) {

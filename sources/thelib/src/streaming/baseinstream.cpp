@@ -58,6 +58,11 @@ void BaseInStream::GetStats(Variant &info) {
 		info["outStreamsUniqueIds"].PushToArray(pTemp->info->GetUniqueId());
 		pTemp = pTemp->pPrev;
 	}
+	StreamCapabilities *pCapabilities = GetCapabilities();
+	if (pCapabilities != NULL)
+		info["bandwidth"] = (uint32_t) pCapabilities->bandwidthHint;
+	else
+		info["bandwidth"] = (uint32_t) 0;
 }
 
 bool BaseInStream::Link(BaseOutStream *pOutStream, bool reverseLink) {
