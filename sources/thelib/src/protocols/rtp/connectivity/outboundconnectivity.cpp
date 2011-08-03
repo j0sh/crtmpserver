@@ -237,7 +237,8 @@ bool OutboundConnectivity::InitializePorts(int32_t &dataFd, uint16_t &dataPort,
 		address.sin_port = 0;
 		address.sin_addr.s_addr = INADDR_ANY;
 		if (bind(dataFd, (sockaddr *) & address, sizeof (address)) != 0) {
-			WARN("Unable to bind");
+			int err = errno;
+			WARN("Unable to bind. Error: %s (%d)", strerror(err), err);
 			continue;
 		}
 		socklen_t len = sizeof (sockaddr);
