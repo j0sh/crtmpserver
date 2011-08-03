@@ -252,7 +252,9 @@ bool OutboundConnectivity::InitializePorts(int32_t &dataFd, uint16_t &dataPort,
 			address.sin_port = EHTONS(dataPort + 1);
 		}
 		if (bind(RTCPFd, (sockaddr *) & address, sizeof (address)) != 0) {
-			WARN("Unable to bind");
+			int err = errno;
+			WARN("Unable to bind on port %"PRIu16". Error: %s (%d)",
+					ENTOHS(address.sin_port), strerror(err), err);
 			continue;
 		}
 		RTCPPort = ENTOHS(address.sin_port);
