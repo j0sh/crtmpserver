@@ -132,7 +132,7 @@ bool TCPAcceptor::OnConnectionAvailable(struct epoll_event &event) {
 			STR(_ipAddress),
 			_port);
 
-	if (!setFdOptions(_inboundFd)) {
+	if (!setFdOptions(fd)) {
 		FATAL("Unable to set socket options");
 		return false;
 	}
