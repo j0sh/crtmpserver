@@ -60,7 +60,7 @@ bool TCPAcceptor::StartAccept(BaseClientApplication *pApplication) {
 		return false;
 	}
 
-	if (!setFdOptions(fd)) {
+	if (!setFdOptions(_inboundFd)) {
 		FATAL("Unable to set socket options");
 		return false;
 	}
@@ -127,7 +127,7 @@ bool TCPAcceptor::OnConnectionAvailable(select_event &event) {
 			STR(_ipAddress),
 			_port);
 
-	if (!setFdOptions(_inboundFd)) {
+	if (!setFdOptions(fd)) {
 		FATAL("Unable to set socket options");
 		return false;
 	}
