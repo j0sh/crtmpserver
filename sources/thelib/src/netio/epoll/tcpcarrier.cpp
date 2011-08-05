@@ -53,7 +53,7 @@ TCPCarrier::TCPCarrier(int32_t fd)
 	memset(&_nearAddress, 0, sizeof (sockaddr_in));
 	_nearIp = "";
 	_nearPort = 0;
-	_sendBufferSize = 1024;
+	_sendBufferSize = 1024 * 1024 * 8;
 	_recvBufferSize = 1024 * 256;
 	GetEndpointsInfo();
 	_rx = 0;
