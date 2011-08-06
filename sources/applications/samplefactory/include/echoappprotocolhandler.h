@@ -29,7 +29,7 @@ namespace app_samplefactory {
 	public:
 		EchoAppProtocolHandler(Variant &configuration);
 		virtual ~EchoAppProtocolHandler();
-		
+
 		virtual void RegisterProtocol(BaseProtocol *pProtocol);
 		virtual void UnRegisterProtocol(BaseProtocol *pProtocol);
 	};

@@ -230,6 +230,6 @@ bool ProxyPublishApplication::InitiateForwardingStream(BaseInStream *pStream, Va
 
 	//3. Since we only accept RTMP targets, we will just fetch the RTMP handler
 	//and push the stream
-	return _pRTMPHandler->PushLocalStream(pStream, parameters);
+	return _pRTMPHandler->PushLocalStream(parameters);
 #endif /* HAS_PROTOCOL_RTMP */
 }

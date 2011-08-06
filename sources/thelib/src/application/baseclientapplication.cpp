@@ -244,13 +244,7 @@ bool BaseClientApplication::PushLocalStream(Variant streamConfig) {
 		FATAL("Invalid local stream name");
 		return false;
 	}
-	StreamsManager *pStreamsManager = GetStreamsManager();
-	map<uint32_t, BaseStream *> streams = pStreamsManager->FindByTypeByName(
-			ST_IN_NET, streamName, true, true);
-	if (streams.size() == 0) {
-		FATAL("Stream %s not found", STR(streamName));
-		return false;
-	}
+	streamConfig["localStreamName"] = streamName;
 
 	//2. Split the URI
 	URI uri;
@@ -271,8 +265,7 @@ bool BaseClientApplication::PushLocalStream(Variant streamConfig) {
 	}
 
 	//4. Initiate the stream pulling sequence
-	return pProtocolHandler->PushLocalStream(
-			(BaseInStream *) MAP_VAL(streams.begin()), streamConfig);
+	return pProtocolHandler->PushLocalStream(streamConfig);
 }
 
 void BaseClientApplication::Shutdown(BaseClientApplication *pApplication) {

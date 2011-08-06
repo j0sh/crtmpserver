@@ -21,7 +21,6 @@
 #include "protocols/cli/basecliappprotocolhandler.h"
 #include "protocols/cli/inboundbasecliprotocol.h"
 
-
 BaseCLIAppProtocolHandler::BaseCLIAppProtocolHandler(Variant &configuration)
 : BaseAppProtocolHandler(configuration) {
 

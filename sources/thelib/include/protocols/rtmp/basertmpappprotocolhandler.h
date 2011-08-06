@@ -81,7 +81,7 @@ public:
 	 * This is called by the framework when a stream needs to be pushed forward
 	 * Basically, this will open a RTMP client and start publishing a stream
 	 * */
-	virtual bool PushLocalStream(BaseInStream *pInStream, Variant streamConfig);
+	virtual bool PushLocalStream(Variant streamConfig);
 
 	/*
 	 * This is called bt the framework when an outbound connection was established
@@ -273,7 +273,7 @@ private:
 	/*
 	 * Log Event
 	 **/
-    //Variant& CreateLogEventInvoke(BaseRTMPProtocol *pFrom, Variant &request);
+	//Variant& CreateLogEventInvoke(BaseRTMPProtocol *pFrom, Variant &request);
 };
 
 

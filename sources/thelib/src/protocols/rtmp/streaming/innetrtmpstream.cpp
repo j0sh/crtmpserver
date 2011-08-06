@@ -327,8 +327,10 @@ bool InNetRTMPStream::InitializeAudioCapabilities(uint8_t *pData, uint32_t lengt
 		FATAL("InitAudioAAC failed");
 		return false;
 	}
-	FINEST("Cached the AAC audio codec initialization: %u",
-			GETAVAILABLEBYTESCOUNT(_audioCodecInit));
+
+	//	FINEST("Cached the AAC audio codec initialization: %u",
+	//			GETAVAILABLEBYTESCOUNT(_audioCodecInit));
+
 	return true;
 }
 
@@ -348,8 +350,8 @@ bool InNetRTMPStream::InitializeVideoCapabilities(uint8_t *pData, uint32_t lengt
 		return false;
 	}
 
-	FINEST("Cached the h264 video codec initialization: %u",
-			GETAVAILABLEBYTESCOUNT(_videoCodecInit));
+	//	FINEST("Cached the h264 video codec initialization: %u",
+	//			GETAVAILABLEBYTESCOUNT(_videoCodecInit));
 
 	return true;
 }

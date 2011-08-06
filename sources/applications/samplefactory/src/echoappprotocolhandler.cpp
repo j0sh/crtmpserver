@@ -21,7 +21,7 @@
 using namespace app_samplefactory;
 
 EchoAppProtocolHandler::EchoAppProtocolHandler(Variant &configuration)
-:BaseAppProtocolHandler(configuration){
+: BaseAppProtocolHandler(configuration) {
 
 }
 

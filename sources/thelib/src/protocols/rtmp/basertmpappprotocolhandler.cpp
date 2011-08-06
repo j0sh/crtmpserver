@@ -147,8 +147,39 @@ bool BaseRTMPAppProtocolHandler::PullExternalStream(URI uri, Variant streamConfi
 	return OutboundRTMPProtocol::Connect(uri.ip, uri.port, parameters);
 }
 
-bool BaseRTMPAppProtocolHandler::PushLocalStream(BaseInStream *pInStream, Variant streamConfig) {
-	//1. Prepare the custom parameters
+bool BaseRTMPAppProtocolHandler::PushLocalStream(Variant streamConfig) {
+	//1. get the stream name
+	string streamName = (string) streamConfig["localStreamName"];
+
+	//2. Get the streams manager
+	StreamsManager *pStreamsManager = GetApplication()->GetStreamsManager();
+
+	//3. Search for all streams named streamName having the type of IN_NET
+	map<uint32_t, BaseStream *> streams = pStreamsManager->FindByTypeByName(
+			ST_IN_NET, streamName, true, true);
+	if (streams.size() == 0) {
+		FATAL("Stream %s not found", STR(streamName));
+		return false;
+	}
+
+	//4. See if inside the returned collection of streams
+	//we have something compatible with RTMP
+	BaseInStream *pInStream = NULL;
+
+	FOR_MAP(streams, uint32_t, BaseStream *, i) {
+		if ((MAP_VAL(i)->IsCompatibleWithType(ST_OUT_NET_RTMP_4_RTMP))
+				|| (MAP_VAL(i)->IsCompatibleWithType(ST_OUT_NET_RTMP_4_TS))) {
+			pInStream = (BaseInStream *) MAP_VAL(i);
+			break;
+		}
+	}
+	if (pInStream == NULL) {
+		WARN("Stream %s not found or is incompatible with RTMP output",
+				STR(streamName));
+		return false;
+	}
+
+	//5. Prepare the custom parameters
 	Variant parameters;
 	parameters["customParameters"]["localStreamConfig"] = streamConfig;
 	parameters["customParameters"]["localStreamConfig"]["localUniqueStreamId"] = pInStream->GetUniqueId();
@@ -165,7 +196,7 @@ bool BaseRTMPAppProtocolHandler::PushLocalStream(BaseInStream *pInStream, Varian
 		return false;
 	}
 
-	//2. start the connecting sequence
+	//6. start the connecting sequence
 	return OutboundRTMPProtocol::Connect(
 			streamConfig["targetUri"]["ip"],
 			(uint16_t) streamConfig["targetUri"]["port"],

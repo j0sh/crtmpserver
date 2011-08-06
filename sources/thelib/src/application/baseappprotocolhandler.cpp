@@ -51,7 +51,7 @@ bool BaseAppProtocolHandler::PullExternalStream(URI uri, Variant streamConfig) {
 	return false;
 }
 
-bool BaseAppProtocolHandler::PushLocalStream(BaseInStream *pInStream, Variant streamConfig) {
+bool BaseAppProtocolHandler::PushLocalStream(Variant streamConfig) {
 	WARN("Pushing out streams for this protocol handler in application %s not yet implemented.",
 			STR(GetApplication()->GetName()));
 	return false;
