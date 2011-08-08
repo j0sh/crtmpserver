@@ -127,7 +127,11 @@ bool MMSProtocol::Initialize(Variant &customparams) {
 				"externalStreamConfig", "localRawAACStreamName"))
 			_rawAACStreamName = (string) customparams["customParameters"]["externalStreamConfig"]["localRawAACStreamName"];
 		if (_rawAACStreamName == "") {
-			_rawAACStreamName = localStreamName + ".raw.aac";
+			_rawAACStreamName = localStreamName + "_raw_aac";
+		}
+		if (!GetApplication()->StreamNameAvailable(_rawAACStreamName)) {
+			FATAL("Stream name %s already taken", STR(_rawAACStreamName));
+			return false;
 		}
 	}
 	if (_enableAAC) {
@@ -135,7 +139,11 @@ bool MMSProtocol::Initialize(Variant &customparams) {
 				"externalStreamConfig", "localAACStreamName"))
 			_aacStreamName = (string) customparams["customParameters"]["externalStreamConfig"]["localAACStreamName"];
 		if (_aacStreamName == "") {
-			_aacStreamName = localStreamName + ".aac";
+			_aacStreamName = localStreamName + "_aac";
+		}
+		if (!GetApplication()->StreamNameAvailable(_aacStreamName)) {
+			FATAL("Stream name %s already taken", STR(_aacStreamName));
+			return false;
 		}
 	}
 	if (_enableRawMP3) {
@@ -143,7 +151,11 @@ bool MMSProtocol::Initialize(Variant &customparams) {
 				"externalStreamConfig", "localRawMP3StreamName"))
 			_rawMP3StreamName = (string) customparams["customParameters"]["externalStreamConfig"]["localRawMP3StreamName"];
 		if (_rawMP3StreamName == "") {
-			_rawMP3StreamName = localStreamName + ".raw.mp3";
+			_rawMP3StreamName = localStreamName + "_raw_mp3";
+		}
+		if (!GetApplication()->StreamNameAvailable(_rawMP3StreamName)) {
+			FATAL("Stream name %s already taken", STR(_rawMP3StreamName));
+			return false;
 		}
 	}
 	if (_enableMP3) {
@@ -151,7 +163,11 @@ bool MMSProtocol::Initialize(Variant &customparams) {
 				"externalStreamConfig", "localMP3StreamName"))
 			_mp3StreamName = (string) customparams["customParameters"]["externalStreamConfig"]["localMP3StreamName"];
 		if (_mp3StreamName == "") {
-			_mp3StreamName = localStreamName + ".mp3";
+			_mp3StreamName = localStreamName + "_mp3";
+		}
+		if (!GetApplication()->StreamNameAvailable(_mp3StreamName)) {
+			FATAL("Stream name %s already taken", STR(_mp3StreamName));
+			return false;
 		}
 	}
 

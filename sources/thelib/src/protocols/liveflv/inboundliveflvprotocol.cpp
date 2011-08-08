@@ -227,7 +227,11 @@ bool InboundLiveFLVProtocol::InitializeStream(string streamName) {
 			streamName = format("flv_%u", GetId());
 		}
 	}
-	FINEST("Stream name: %s", STR(streamName));
+
+	if (!GetApplication()->StreamNameAvailable(streamName, this)) {
+		FATAL("Stream %s already taken", STR(streamName));
+		return false;
+	}
 
 	_pStream = new InNetLiveFLVStream(this,
 			GetApplication()->GetStreamsManager(), streamName);
@@ -236,8 +240,6 @@ bool InboundLiveFLVProtocol::InitializeStream(string streamName) {
 	map<uint32_t, BaseOutStream *> subscribedOutStreams =
 			GetApplication()->GetStreamsManager()->GetWaitingSubscribers(
 			streamName, _pStream->GetType());
-	FINEST("subscribedOutStreams count: %"PRIz"u", subscribedOutStreams.size());
-
 
 	//7. Bind the waiting subscribers
 

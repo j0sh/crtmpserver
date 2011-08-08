@@ -40,6 +40,7 @@ private:
 	vector<string> _aliases;
 	map<uint64_t, BaseAppProtocolHandler *> _protocolsHandlers;
 	StreamsManager _streamsManager;
+	bool _allowDuplicateInboundNetworkStreams;
 protected:
 	Variant _configuration;
 	bool _isDefault;
@@ -87,6 +88,18 @@ public:
 		@param protocolType - Type of protocol
 	 */
 	void UnRegisterAppProtocolHandler(uint64_t protocolType);
+
+	/*!
+		@brief Get the ability to handle duplicate inbound network streams
+	 */
+	bool GetAllowDuplicateInboundNetworkStreams();
+
+	/*!
+		@brief Checks and see if the duplicate inbound network streams are available. Always returns true if allowDuplicateNetworkStreams is set to true inside the config file
+		@param streamName - The stream name we want to see is free or not
+		@param pProtocol - The protocol associated with this request (can be NULL)
+	 */
+	virtual bool StreamNameAvailable(string streamName, BaseProtocol *pProtocol);
 
 	template<class T>
 	T *GetProtocolHandler(BaseProtocol *pProtocol) {

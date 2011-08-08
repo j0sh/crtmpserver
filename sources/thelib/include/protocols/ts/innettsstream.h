@@ -46,6 +46,7 @@ private:
 	double _lastGotAudioTimestamp;
 	double _lastSentAudioTimestamp;
 	uint64_t _audioPacketsCount;
+	uint64_t _statsAudioPacketsCount;
 	uint64_t _audioBytesCount;
 	uint64_t _audioDroppedPacketsCount;
 	uint64_t _audioDroppedBytesCount;

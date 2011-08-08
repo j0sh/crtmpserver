@@ -136,7 +136,7 @@ bool InboundTSProtocol::SignalInputData(IOBuffer &buffer) {
 		uint32_t packetHeader = ENTOHLP(GETIBPOINTER(buffer));
 
 		if (!ProcessPacket(packetHeader, buffer, _chunkSize)) {
-			FATAL("Unable to process packet:\n%s", STR(buffer));
+			FATAL("Unable to process packet");
 			return false;
 		}
 
@@ -434,6 +434,10 @@ bool InboundTSProtocol::ProcessPidTypePMT(uint32_t packetHeader,
 	//4. Create the stream if we have at least videoPid or audioPid
 	InNetTSStream *pStream = NULL;
 	if ((videoPid != 0) || (audioPid != 0)) {
+		if (!GetApplication()->StreamNameAvailable(streamName, this)) {
+			FATAL("Stream name %s already taken", STR(streamName));
+			return false;
+		}
 		pStream = new InNetTSStream(this, GetApplication()->GetStreamsManager(),
 				streamName, packetPMT.GetBandwidth());
 	}

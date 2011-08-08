@@ -97,8 +97,8 @@ SOManager *BaseRTMPAppProtocolHandler::GetSOManager() {
 }
 
 void BaseRTMPAppProtocolHandler::RegisterProtocol(BaseProtocol *pProtocol) {
-	FINEST("Register protocol %s to application %s",
-			STR(*pProtocol), STR(GetApplication()->GetName()));
+	//	FINEST("Register protocol %s to application %s",
+	//			STR(*pProtocol), STR(GetApplication()->GetName()));
 	if (MAP_HAS1(_connections, pProtocol->GetId()))
 		return;
 	_connections[pProtocol->GetId()] = (BaseRTMPProtocol *) pProtocol;
@@ -658,33 +658,44 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokePublish(BaseRTMPProtocol *pFrom,
 
 	bool recording = (M_INVOKE_PARAM(request, 2) == RM_INVOKE_PARAMS_PUBLISH_TYPERECORD);
 	bool appending = (M_INVOKE_PARAM(request, 2) == RM_INVOKE_PARAMS_PUBLISH_TYPEAPPEND);
-	FINEST("Try to publish stream %s.%s",
-			STR(streamName), (recording || appending) ? " Also record/append it" : "");
+	//	FINEST("Try to publish stream %s.%s",
+	//			STR(streamName), (recording || appending) ? " Also record/append it" : "");
 
 	//3. Test to see if this stream name is already published somewhere
-	map<uint32_t, BaseStream *> existingStreams =
-			GetApplication()->GetStreamsManager()->FindByTypeByName(
-			ST_IN_NET_RTMP, streamName, false, false);
-	if (existingStreams.size() > 0) {
-		if (!(bool)pFrom->GetCustomParameters()["authState"]["canOverrideStreamName"]) {
-			WARN("Unable to override stream because this connection doesn't have the rights");
+	if (GetApplication()->GetAllowDuplicateInboundNetworkStreams()) {
+		map<uint32_t, BaseStream *> existingStreams =
+				GetApplication()->GetStreamsManager()->FindByTypeByName(
+				ST_IN_NET_RTMP, streamName, false, false);
+		if (existingStreams.size() > 0) {
+			if (!(bool)pFrom->GetCustomParameters()["authState"]["canOverrideStreamName"]) {
+				WARN("Unable to override stream %s because this connection doesn't have the rights",
+						STR(streamName));
+				Variant response = StreamMessageFactory::GetInvokeOnStatusStreamPublishBadName(
+						request, streamName);
+				return pFrom->SendMessage(response);
+			} else {
+
+				FOR_MAP(existingStreams, uint32_t, BaseStream *, i) {
+					InNetRTMPStream *pTempStream = (InNetRTMPStream *) MAP_VAL(i);
+					if (pTempStream->GetProtocol() != NULL) {
+						WARN("Overriding stream R%u:U%u with name %s from connection %u",
+								pTempStream->GetRTMPStreamId(),
+								pTempStream->GetUniqueId(),
+								STR(pTempStream->GetName()),
+								pTempStream->GetProtocol()->GetId());
+						((BaseRTMPProtocol *) pTempStream->GetProtocol())->CloseStream(
+								pTempStream->GetRTMPStreamId(), true);
+					}
+				}
+			}
+		}
+	} else {
+		if (!GetApplication()->StreamNameAvailable(streamName, pFrom)) {
+			WARN("Stream name %s already occupied and application doesn't allow duplicated inbound network streams",
+					STR(streamName));
 			Variant response = StreamMessageFactory::GetInvokeOnStatusStreamPublishBadName(
 					request, streamName);
 			return pFrom->SendMessage(response);
-		} else {
-
-			FOR_MAP(existingStreams, uint32_t, BaseStream *, i) {
-				InNetRTMPStream *pTempStream = (InNetRTMPStream *) MAP_VAL(i);
-				if (pTempStream->GetProtocol() != NULL) {
-					WARN("Overriding stream R%u:U%u with name %s from connection %u",
-							pTempStream->GetRTMPStreamId(),
-							pTempStream->GetUniqueId(),
-							STR(pTempStream->GetName()),
-							pTempStream->GetProtocol()->GetId());
-					((BaseRTMPProtocol *) pTempStream->GetProtocol())->CloseStream(
-							pTempStream->GetRTMPStreamId(), true);
-				}
-			}
 		}
 	}
 
@@ -700,7 +711,7 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokePublish(BaseRTMPProtocol *pFrom,
 	map<uint32_t, BaseOutStream *> subscribedOutStreams =
 			GetApplication()->GetStreamsManager()->GetWaitingSubscribers(
 			streamName, pInNetRTMPStream->GetType());
-	FINEST("subscribedOutStreams count: %"PRIz"u", subscribedOutStreams.size());
+	//FINEST("subscribedOutStreams count: %"PRIz"u", subscribedOutStreams.size());
 
 
 	//7. Bind the waiting subscribers
@@ -1010,6 +1021,12 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokeOnStatus(BaseRTMPProtocol *pFrom,
 		if (M_INVOKE_PARAM(request, 1)["code"] != "NetStream.Play.Start") {
 			WARN("onStatus message ignored:\n%s", STR(request.ToString()));
 			return true;
+		}
+		if (!GetApplication()->StreamNameAvailable(parameters["localStreamName"],
+				pProtocol)) {
+			WARN("Stream name %s already occupied and application doesn't allow duplicated inbound network streams",
+					STR(parameters["localStreamName"]));
+			return false;
 		}
 		InNetRTMPStream *pStream = pProtocol->CreateINS(VH_CI(request),
 				VH_SI(request), parameters["localStreamName"]);
@@ -1708,6 +1725,14 @@ bool BaseRTMPAppProtocolHandler::SendRTMPMessage(BaseRTMPProtocol *pTo,
 			return false;
 		}
 	}
+}
+
+string NormalizeStreamName(string streamName) {
+	replace(streamName, "-", "_");
+	replace(streamName, "?", "-");
+	replace(streamName, "&", "-");
+	replace(streamName, "=", "-");
+	return streamName;
 }
 
 bool BaseRTMPAppProtocolHandler::TryLinkToLiveStream(BaseRTMPProtocol *pFrom,

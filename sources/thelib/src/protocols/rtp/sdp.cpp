@@ -389,7 +389,7 @@ bool SDP::ParseSDPLineB(Variant &result, string line) {
 
 	if (parts[0] == "AS") {
 		uint32_t val = (uint32_t) atoi(STR(parts[1]));
-		result = (uint32_t) ((val / 8)*1024);
+		result = (uint32_t) val;
 	} else {
 		WARN("Bandwidth modifier %s not implemented", STR(result["modifier"]));
 		result = (uint32_t) 0;

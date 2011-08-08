@@ -223,6 +223,13 @@ public:
 			bool trackResponse = false);
 private:
 	/*
+	 * Will transform stream names of type streamName?param1=value1&param2=value2&...
+	 * into streamName-param1_value1-param2_value2...
+	 * All the '-' characters inside values will be replaced with '_'
+	 */
+	string NormalizeStreamName(string streamName);
+
+	/*
 	 * Tries to create an outbound stream and link it to the live inbound stream
 	 * streamName - the name of the live inbound stream
 	 * linked - will be set to true if the linking succeeded. Otherwise it will

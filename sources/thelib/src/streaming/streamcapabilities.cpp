@@ -642,7 +642,7 @@ void StreamCapabilities::Clear() {
 	bandwidthHint = 0;
 }
 
-#define __STREAM_CAPABILITIES_VERSION MAKE_TAG4('V','E','R','1')
+#define __STREAM_CAPABILITIES_VERSION MAKE_TAG4('V','E','R','2')
 
 bool StreamCapabilities::Serialize(IOBuffer &dest) {
 	uint8_t temp[28];

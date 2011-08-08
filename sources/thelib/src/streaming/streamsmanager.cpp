@@ -75,6 +75,12 @@ void StreamsManager::UnRegisterStreams(uint32_t protocolId) {
 	}
 }
 
+bool StreamsManager::StreamNameAvailable(string streamName) {
+	if (_pApplication->GetAllowDuplicateInboundNetworkStreams())
+		return true;
+	return FindByTypeByName(ST_IN_NET, streamName, true, false).size() == 0;
+}
+
 map<uint32_t, BaseStream *> StreamsManager::GetAllStreams() {
 	return _streamsByUniqueId;
 }

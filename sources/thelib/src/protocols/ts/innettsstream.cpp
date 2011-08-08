@@ -42,6 +42,7 @@ InNetTSStream::InNetTSStream(BaseProtocol *pProtocol,
 	_lastGotAudioTimestamp = 0;
 	_lastSentAudioTimestamp = 0;
 	_audioPacketsCount = 0;
+	_statsAudioPacketsCount = 0;
 	_audioBytesCount = 0;
 	_audioDroppedPacketsCount = 0;
 	_audioDroppedBytesCount = 0;
@@ -314,7 +315,7 @@ bool InNetTSStream::SignalStop() {
 
 void InNetTSStream::GetStats(Variant &info) {
 	BaseInNetStream::GetStats(info);
-	info["audio"]["packetsCount"] = _audioPacketsCount;
+	info["audio"]["packetsCount"] = _statsAudioPacketsCount;
 	info["audio"]["droppedPacketsCount"] = _audioDroppedPacketsCount;
 	info["audio"]["bytesCount"] = _audioBytesCount;
 	info["audio"]["droppedBytesCount"] = _audioDroppedBytesCount;
@@ -327,6 +328,7 @@ void InNetTSStream::GetStats(Variant &info) {
 bool InNetTSStream::HandleAudioData(uint8_t *pRawBuffer, uint32_t rawBufferLength,
 		double timestamp, bool packetStart) {
 	_audioBytesCount += rawBufferLength;
+	_statsAudioPacketsCount++;
 	//the payload here respects this format:
 	//6.2  Audio Data Transport Stream, ADTS
 	//iso13818-7 page 26/206

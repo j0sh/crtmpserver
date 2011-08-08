@@ -93,7 +93,7 @@ bool BaseMediaDocument::Process() {
 				_mediaFile.Size(),
 				hours, minutes, seconds,
 				totalSeconds,
-				(double) _streamCapabilities.bandwidthHint / 1024.00 * 8.0);
+				(double) _streamCapabilities.bandwidthHint);
 	}
 
 	moveFile(_seekFilePath + ".tmp", _seekFilePath);
@@ -135,7 +135,8 @@ bool BaseMediaDocument::SaveSeekFile() {
 
 	//2. Setup the bandwidth hint in bytes/second
 	uint32_t totalSeconds = (uint32_t) (((uint32_t) _frames[_frames.size() - 1].absoluteTime) / 1000);
-	_streamCapabilities.bandwidthHint = (uint32_t) ((double) _mediaFile.Size() / (double) totalSeconds);
+	_streamCapabilities.bandwidthHint =
+			(uint32_t) ((double) _mediaFile.Size() / (double) totalSeconds) / 1024.0 * 8.0;
 
 	//2. Serialize the stream capabilities
 	IOBuffer raw;

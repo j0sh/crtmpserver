@@ -34,14 +34,20 @@ BaseClientApplication::BaseClientApplication(Variant &configuration)
 	_id = ++_idGenerator;
 	_configuration = configuration;
 	_name = (string) configuration[CONF_APPLICATION_NAME];
-	if ((VariantType) configuration[CONF_APPLICATION_ALIASES] != V_NULL) {
+	if (configuration.HasKeyChain(V_MAP, false, 1, CONF_APPLICATION_ALIASES)) {
 
 		FOR_MAP((configuration[CONF_APPLICATION_ALIASES]), string, Variant, i) {
 			ADD_VECTOR_END(_aliases, MAP_VAL(i));
 		}
 	}
-	_isDefault = (VariantType) configuration[CONF_APPLICATION_DEFAULT] != V_NULL ?
-			(bool)configuration[CONF_APPLICATION_DEFAULT] : false;
+	_isDefault = false;
+	if (configuration.HasKeyChain(V_BOOL, false, 1, CONF_APPLICATION_DEFAULT))
+		_isDefault = (bool)configuration[CONF_APPLICATION_DEFAULT];
+	_allowDuplicateInboundNetworkStreams = false;
+	if (configuration.HasKeyChain(V_BOOL, false, 1,
+			CONF_APPLICATION_ALLOW_DUPLICATE_INBOUND_NETWORK_STREAMS))
+		_allowDuplicateInboundNetworkStreams =
+			(bool)configuration[CONF_APPLICATION_ALLOW_DUPLICATE_INBOUND_NETWORK_STREAMS];
 }
 
 BaseClientApplication::~BaseClientApplication() {
@@ -88,6 +94,17 @@ void BaseClientApplication::UnRegisterAppProtocolHandler(uint64_t protocolType) 
 	if (MAP_HAS1(_protocolsHandlers, protocolType))
 		_protocolsHandlers[protocolType]->SetApplication(NULL);
 	_protocolsHandlers.erase(protocolType);
+}
+
+bool BaseClientApplication::GetAllowDuplicateInboundNetworkStreams() {
+	return _allowDuplicateInboundNetworkStreams;
+}
+
+bool BaseClientApplication::StreamNameAvailable(string streamName,
+		BaseProtocol *pProtocol) {
+	if (_allowDuplicateInboundNetworkStreams)
+		return true;
+	return _streamsManager.StreamNameAvailable(streamName);
 }
 
 BaseAppProtocolHandler *BaseClientApplication::GetProtocolHandler(BaseProtocol *pProtocol) {
@@ -154,19 +171,25 @@ void BaseClientApplication::UnRegisterProtocol(BaseProtocol *pProtocol) {
 }
 
 void BaseClientApplication::SignalStreamRegistered(BaseStream *pStream) {
-	INFO("Stream %u of type %s with name `%s` registered to application `%s`",
-			pStream->GetUniqueId(),
+	INFO("Stream %s(%"PRIu32") with name `%s` registered to application `%s` from protocol %s(%"PRIu32")",
 			STR(tagToString(pStream->GetType())),
+			pStream->GetUniqueId(),
 			STR(pStream->GetName()),
-			STR(_name));
+			STR(_name),
+			(pStream->GetProtocol() != NULL) ? STR(tagToString(pStream->GetProtocol()->GetType())) : "",
+			(pStream->GetProtocol() != NULL) ? pStream->GetProtocol()->GetId() : (uint32_t) 0
+			);
 }
 
 void BaseClientApplication::SignalStreamUnRegistered(BaseStream *pStream) {
-	INFO("Stream %u of type %s with name `%s` unregistered from application `%s`",
-			pStream->GetUniqueId(),
+	INFO("Stream %s(%"PRIu32") with name `%s` unregistered from application `%s` from protocol %s(%"PRIu32")",
 			STR(tagToString(pStream->GetType())),
+			pStream->GetUniqueId(),
 			STR(pStream->GetName()),
-			STR(_name));
+			STR(_name),
+			(pStream->GetProtocol() != NULL) ? STR(tagToString(pStream->GetProtocol()->GetType())) : "",
+			(pStream->GetProtocol() != NULL) ? pStream->GetProtocol()->GetId() : (uint32_t) 0
+			);
 }
 
 bool BaseClientApplication::PullExternalStreams() {
@@ -180,15 +203,34 @@ bool BaseClientApplication::PullExternalStreams() {
 		return false;
 	}
 
-	//2. Loop over the stream definitions and spawn the streams
+	//2. Loop over the stream definitions and validate duplicated stream names
+	Variant streamConfigs;
+	streamConfigs.IsArray(false);
 
 	FOR_MAP(_configuration["externalStreams"], string, Variant, i) {
-		Variant &streamConfig = MAP_VAL(i);
-		if (streamConfig != V_MAP) {
-			WARN("External stream configuration is invalid:\n%s",
-					STR(streamConfig.ToString()));
+		Variant &temp = MAP_VAL(i);
+		if ((!temp.HasKeyChain(V_STRING, false, 1, "localStreamName"))
+				|| ((string) temp.GetValue("localStreamName", false) == "")) {
+			WARN("External stream configuration is doesn't have localStreamName property invalid:\n%s",
+					STR(temp.ToString()));
 			continue;
 		}
+		string localStreamName = (string) temp.GetValue("localStreamName", false);
+		if (!GetAllowDuplicateInboundNetworkStreams()) {
+			if (streamConfigs.HasKey(localStreamName)) {
+				WARN("External stream configuration produces duplicated stream names\n%s",
+						STR(temp.ToString()));
+				continue;
+			}
+		}
+		streamConfigs[localStreamName] = temp;
+	}
+
+
+	//2. Loop over the stream definitions and spawn the streams
+
+	FOR_MAP(streamConfigs, string, Variant, i) {
+		Variant &streamConfig = MAP_VAL(i);
 		if (!PullExternalStream(streamConfig)) {
 			WARN("External stream configuration is invalid:\n%s",
 					STR(streamConfig.ToString()));

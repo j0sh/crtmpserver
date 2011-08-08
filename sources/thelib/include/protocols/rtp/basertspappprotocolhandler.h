@@ -92,6 +92,9 @@ protected:
 	virtual bool HandleRTSPResponse404Play(RTSPProtocol *pFrom, Variant &requestHeaders,
 			string &requestContent, Variant &responseHeaders,
 			string &responseContent);
+	virtual bool HandleRTSPResponse404Describe(RTSPProtocol *pFrom, Variant &requestHeaders,
+			string &requestContent, Variant &responseHeaders,
+			string &responseContent);
 
 	//operations
 	virtual bool Play(RTSPProtocol *pFrom);

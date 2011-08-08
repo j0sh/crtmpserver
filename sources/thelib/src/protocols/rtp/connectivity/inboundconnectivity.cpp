@@ -143,6 +143,10 @@ bool InboundConnectivity::Initialize(Variant &videoTrack, Variant &audioTrack,
 	//5. Create the in stream
 	if (streamName == "")
 		streamName = format("rtsp_%u", _pRTSP->GetId());
+	if (!pApplication->StreamNameAvailable(streamName, _pRTSP)) {
+		FATAL("Stream name %s already taken", STR(streamName));
+		return false;
+	}
 	_pInStream = new InNetRTPStream(_pRTSP, pApplication->GetStreamsManager(),
 			streamName,
 			videoTrack != V_NULL ? unb64((string) SDP_VIDEO_CODEC_H264_SPS(videoTrack)) : "",
@@ -164,7 +168,7 @@ bool InboundConnectivity::Initialize(Variant &videoTrack, Variant &audioTrack,
 	map<uint32_t, BaseOutStream *> subscribedOutStreams =
 			pApplication->GetStreamsManager()->GetWaitingSubscribers(
 			streamName, _pInStream->GetType());
-	FINEST("subscribedOutStreams count: %"PRIz"u", subscribedOutStreams.size());
+	//FINEST("subscribedOutStreams count: %"PRIz"u", subscribedOutStreams.size());
 
 
 	//9. Bind the waiting subscribers

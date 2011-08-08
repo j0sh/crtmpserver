@@ -35,7 +35,7 @@ bool ReadStreamDescriptor(StreamDescriptor &descriptor,
 		{
 			CHECK_BOUNDS(3);
 			descriptor.payload.maximum_bitrate_descriptor.maximum_bitrate =
-					(((pBuffer[cursor] << 16) | (pBuffer[cursor + 1] << 8) | (pBuffer[cursor + 2]))&0x3fffff)*50;
+					(((pBuffer[cursor] << 16) | (pBuffer[cursor + 1] << 8) | (pBuffer[cursor + 2]))&0x3fffff) * 50 * 8 / 1024;
 			break;
 		}
 		default:

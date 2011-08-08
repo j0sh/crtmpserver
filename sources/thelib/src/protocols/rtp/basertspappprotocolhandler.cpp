@@ -781,6 +781,9 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPResponse404(RTSPProtocol *pFrom, Vari
 	if (method == RTSP_METHOD_PLAY) {
 		return HandleRTSPResponse404Play(pFrom, requestHeaders, requestContent,
 				responseHeaders, responseContent);
+	} else if (method == RTSP_METHOD_DESCRIBE) {
+		return HandleRTSPResponse404Describe(pFrom, requestHeaders, requestContent,
+				responseHeaders, responseContent);
 	} else {
 		FATAL("Response for method %s not implemented yet", STR(method));
 		return false;
@@ -929,7 +932,14 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPResponse200Play(
 bool BaseRTSPAppProtocolHandler::HandleRTSPResponse404Play(RTSPProtocol *pFrom, Variant &requestHeaders,
 		string &requestContent, Variant &responseHeaders,
 		string &responseContent) {
+	FATAL("PLAY: Resource not found: %s", STR(requestHeaders[RTSP_FIRST_LINE][RTSP_URL]));
+	return false;
+}
 
+bool BaseRTSPAppProtocolHandler::HandleRTSPResponse404Describe(RTSPProtocol *pFrom, Variant &requestHeaders,
+		string &requestContent, Variant &responseHeaders,
+		string &responseContent) {
+	FATAL("DESCRIBE: Resource not found: %s", STR(requestHeaders[RTSP_FIRST_LINE][RTSP_URL]));
 	return false;
 }
 
