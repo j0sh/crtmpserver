@@ -994,7 +994,7 @@ OutboundConnectivity *BaseRTSPAppProtocolHandler::GetOutboundConnectivity(
 BaseInNetStream *BaseRTSPAppProtocolHandler::GetInboundStream(string streamName) {
 	//1. get all the inbound network streams which begins with streamName
 	map<uint32_t, BaseStream *> streams = GetApplication()->GetStreamsManager()
-			->FindByTypeByName(ST_IN_NET, streamName, true, true);
+			->FindByTypeByName(ST_IN_NET, streamName, true, false);
 	if (streams.size() == 0)
 		return NULL;
 
