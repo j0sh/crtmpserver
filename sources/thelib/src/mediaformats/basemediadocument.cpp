@@ -136,7 +136,7 @@ bool BaseMediaDocument::SaveSeekFile() {
 	//2. Setup the bandwidth hint in bytes/second
 	uint32_t totalSeconds = (uint32_t) (((uint32_t) _frames[_frames.size() - 1].absoluteTime) / 1000);
 	_streamCapabilities.bandwidthHint =
-			(uint32_t) ((double) _mediaFile.Size() / (double) totalSeconds) / 1024.0 * 8.0;
+			(uint32_t) ((double) _mediaFile.Size() / (double) totalSeconds / 1024.0 * 8.0);
 
 	//2. Serialize the stream capabilities
 	IOBuffer raw;
