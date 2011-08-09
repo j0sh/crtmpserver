@@ -1459,7 +1459,6 @@ INCLUDE_FILE_PATTERNS  =
 PREDEFINED             = LITTLE_ENDIAN_BYTE_ALIGNED \
                          HAS_PROTOCOL_HTTP \
                          HAS_PROTOCOL_RTMP \
-                         HAS_PROTOCOL_RTMFP \
                          HAS_PROTOCOL_LIVEFLV \
                          HAS_PROTOCOL_RTP \
                          HAS_PROTOCOL_TS \
