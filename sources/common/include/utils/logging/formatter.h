@@ -20,7 +20,7 @@
 #ifndef _FORMATTER_H
 #define	_FORMATTER_H
 
-#include "platform/platform.h"
+#include "common.h"
 
 class Formatter {
 private:

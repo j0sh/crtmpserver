@@ -21,7 +21,7 @@
 #ifndef _LOGGER_H
 #define _LOGGER_H
 
-#include "platform/platform.h"
+#include "common.h"
 #ifdef HAS_SAFE_LOGGER
 #include <pthread.h>
 #endif /* HAS_SAFE_LOGGER */

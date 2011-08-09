@@ -37,10 +37,6 @@
 #define PT_OUTBOUND_RTMP		MAKE_TAG2('O','R')
 #define PT_MONITOR_RTMP			MAKE_TAG2('M','R')
 
-//RTMFP protocols
-#define PT_INBOUND_RTMFP		MAKE_TAG3('I','R','F')
-#define PT_OUTBOUND_RTMFP		MAKE_TAG3('O','R','F')
-
 //encryption protocols
 #define PT_RTMPE				MAKE_TAG2('R','E')
 #define PT_INBOUND_SSL			MAKE_TAG4('I','S','S','L')
