@@ -403,6 +403,7 @@ bool listFolder(string path, vector<string> &result, bool normalizeAllPaths,
 			if (recursive) {
 				if (!listFolder(entry, result, normalizeAllPaths, includeFolders, recursive)) {
 					FATAL("Unable to list folder");
+					closedir(pDir);
 					return false;
 				}
 			}
@@ -411,6 +412,7 @@ bool listFolder(string path, vector<string> &result, bool normalizeAllPaths,
 		}
 	}
 
+	closedir(pDir);
 	return true;
 }
 
