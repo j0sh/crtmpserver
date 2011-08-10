@@ -345,39 +345,43 @@ void BaseRTMPAppProtocolHandler::GenerateMetaFiles() {
 		return;
 	}
 
-	string file, name, extension;
+	string file;
+	string name;
+	string extension;
+	string lowercaseExtension;
 
 	FOR_VECTOR_ITERATOR(string, files, i) {
 		file = VECTOR_VAL(i);
 
 		splitFileName(file, name, extension);
-		extension = lowerCase(extension);
+		lowercaseExtension = lowerCase(extension);
 
-		if (extension != MEDIA_TYPE_FLV
-				&& extension != MEDIA_TYPE_MP3
-				&& extension != MEDIA_TYPE_MP4
-				&& extension != MEDIA_TYPE_M4A
-				&& extension != MEDIA_TYPE_M4V
-				&& extension != MEDIA_TYPE_MOV
-				&& extension != MEDIA_TYPE_F4V
-				&& extension != MEDIA_TYPE_NSV)
+		if (lowercaseExtension != MEDIA_TYPE_FLV
+				&& lowercaseExtension != MEDIA_TYPE_MP3
+				&& lowercaseExtension != MEDIA_TYPE_MP4
+				&& lowercaseExtension != MEDIA_TYPE_M4A
+				&& lowercaseExtension != MEDIA_TYPE_M4V
+				&& lowercaseExtension != MEDIA_TYPE_MOV
+				&& lowercaseExtension != MEDIA_TYPE_F4V)
+			//&& extension != MEDIA_TYPE_NSV)
 			continue;
 		string flashName = "";
-		if (extension == MEDIA_TYPE_FLV) {
+		if (lowercaseExtension == MEDIA_TYPE_FLV) {
 			flashName = name;
-		} else if (extension == MEDIA_TYPE_MP3) {
-			flashName = extension + ":" + name;
-		} else if (extension == MEDIA_TYPE_NSV) {
-			flashName = extension + ":" + name;
-		} else {
-			if (extension == MEDIA_TYPE_MP4
-					|| extension == MEDIA_TYPE_M4A
-					|| extension == MEDIA_TYPE_M4V
-					|| extension == MEDIA_TYPE_MOV
-					|| extension == MEDIA_TYPE_F4V) {
+		} else if (lowercaseExtension == MEDIA_TYPE_MP3) {
+			flashName = lowercaseExtension + ":" + name;
+		}//		else if (extension == MEDIA_TYPE_NSV) {
+			//			flashName = extension + ":" + name;
+			//		} 
+		else {
+			if (lowercaseExtension == MEDIA_TYPE_MP4
+					|| lowercaseExtension == MEDIA_TYPE_M4A
+					|| lowercaseExtension == MEDIA_TYPE_M4V
+					|| lowercaseExtension == MEDIA_TYPE_MOV
+					|| lowercaseExtension == MEDIA_TYPE_F4V) {
 				flashName = MEDIA_TYPE_MP4":" + name + "." + extension;
 			} else {
-				flashName = extension + ":" + name + "." + extension;
+				flashName = lowercaseExtension + ":" + name + "." + extension;
 			}
 		}
 
@@ -1656,18 +1660,38 @@ Variant BaseRTMPAppProtocolHandler::GetMetaData(string streamName,
 	//cache it after that
 	string metaPath = (string) result[META_SERVER_FULL_PATH] + "."MEDIA_TYPE_META;
 	string seekPath = (string) result[META_SERVER_FULL_PATH] + "."MEDIA_TYPE_SEEK;
+	bool regenerateFiles = true;
 	if (fileExists(metaPath) && fileExists(seekPath)) {
-		if (getFileModificationDate(metaPath) >= getFileModificationDate(result[META_SERVER_FULL_PATH])) {
-			if (!Variant::DeserializeFromXmlFile(metaPath, result)) {
-				WARN("Unable to deserialize the meta file %s. Rebuilding it", STR(metaPath));
-			} else {
-				result[META_REQUESTED_STREAM_NAME] = streamName;
-				return result;
-			}
-		} else {
-			WARN("Media file modified: %s. The *.seek and *.meta file will be recreated",
-					STR(result[META_SERVER_FULL_PATH]));
+		StreamCapabilities capabilities;
+		string originalServerFullPath = result[META_SERVER_FULL_PATH];
+		regenerateFiles =
+				(getFileModificationDate(metaPath) < getFileModificationDate(result[META_SERVER_FULL_PATH]))
+				|| (getFileModificationDate(seekPath) < getFileModificationDate(result[META_SERVER_FULL_PATH]))
+				|| (!Variant::DeserializeFromXmlFile(metaPath, result))
+				|| (!StreamCapabilities::Deserialize(seekPath, capabilities));
+		regenerateFiles |=
+				(!result.HasKeyChain(V_STRING, false, 1, META_SERVER_FULL_PATH))
+				|| ((string) result[META_SERVER_FULL_PATH] != originalServerFullPath)
+				|| (!result.HasKeyChain(V_BOOL, false, 1, CONF_APPLICATION_KEYFRAMESEEK))
+				|| ((bool) result[CONF_APPLICATION_KEYFRAMESEEK] != _keyframeSeek)
+				|| (!result.HasKeyChain(V_INT32, false, 1, CONF_APPLICATION_CLIENTSIDEBUFFER))
+				|| ((int32_t) result[CONF_APPLICATION_CLIENTSIDEBUFFER] != _clientSideBuffer)
+				|| (!result.HasKeyChain(V_UINT32, false, 1, CONF_APPLICATION_SEEKGRANULARITY))
+				|| ((uint32_t) result[CONF_APPLICATION_SEEKGRANULARITY] != _seekGranularity);
+		if (regenerateFiles) {
+			result[META_SERVER_FULL_PATH] = originalServerFullPath;
+			result[CONF_APPLICATION_KEYFRAMESEEK] = (bool)_keyframeSeek;
+			result[CONF_APPLICATION_CLIENTSIDEBUFFER] = (int32_t) _clientSideBuffer;
+			result[CONF_APPLICATION_SEEKGRANULARITY] = _seekGranularity;
 		}
+	}
+
+	if (!regenerateFiles) {
+		result[META_REQUESTED_STREAM_NAME] = streamName;
+		return result;
+	} else {
+		FINEST("Generate seek/meta for file %s", STR(result[META_SERVER_FULL_PATH]));
+
 	}
 
 	//8. We either have a bad meta file or we don't have it at all. Build it

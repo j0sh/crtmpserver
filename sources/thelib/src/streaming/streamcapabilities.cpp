@@ -682,6 +682,40 @@ bool StreamCapabilities::Serialize(IOBuffer &dest) {
 	return true;
 }
 
+bool StreamCapabilities::Deserialize(string seekFilePath, StreamCapabilities &capabilities) {
+	File file;
+	if (!file.Initialize(seekFilePath, FILE_OPEN_MODE_READ)) {
+		FATAL("Unable to open seek file %s", STR(seekFilePath));
+		return false;
+	}
+
+	uint32_t length = 0;
+	if (!file.ReadUI32(&length, false)) {
+		FATAL("Unable to read stream capabilities length from file %s", STR(seekFilePath));
+		return false;
+	}
+	if (length > 1024 * 1024) {
+		FATAL("Invalid stream capabilities length in file %s: %"PRIu32, STR(seekFilePath), length);
+		return false;
+	}
+
+	IOBuffer buffer;
+	buffer.ReadFromRepeat(0, length);
+	if (!file.ReadBuffer(GETIBPOINTER(buffer), length)) {
+		FATAL("Unable to read stream capabilities payload from file %s", STR(seekFilePath));
+		return false;
+	}
+
+	file.Close();
+
+	if (!Deserialize(buffer, capabilities)) {
+		FATAL("Unable to deserialize stream capabilities from file %s", STR(seekFilePath));
+		return false;
+	}
+
+	return true;
+}
+
 bool StreamCapabilities::Deserialize(IOBuffer &src, StreamCapabilities &capabilities) {
 	uint8_t *pBuffer = GETIBPOINTER(src);
 	uint32_t length = GETAVAILABLEBYTESCOUNT(src);

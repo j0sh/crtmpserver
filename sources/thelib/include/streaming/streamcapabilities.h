@@ -85,6 +85,7 @@ public:
 	void Clear();
 
 	bool Serialize(IOBuffer &dest);
+	static bool Deserialize(string seekFilePath, StreamCapabilities &capabilities);
 	static bool Deserialize(IOBuffer &src, StreamCapabilities &capabilities);
 };
 
