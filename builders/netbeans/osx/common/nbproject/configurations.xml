@@ -80,6 +80,9 @@
           <itemPath>../../../../sources/common/include/utils/misc/variant.h</itemPath>
           <itemPath>../../../../sources/common/include/utils/misc/variantmap.h</itemPath>
         </logicalFolder>
+        <logicalFolder name="f1" displayName="tinyxml" projectFiles="true">
+          <itemPath>../../../../3rdparty/tinyxml/tinyxml.h</itemPath>
+        </logicalFolder>
         <itemPath>../../../../sources/common/include/utils/utils.h</itemPath>
       </logicalFolder>
       <itemPath>../../../../sources/common/include/common.h</itemPath>
@@ -147,6 +150,11 @@
           <itemPath>../../../../sources/common/src/utils/misc/timersmanager.cpp</itemPath>
           <itemPath>../../../../sources/common/src/utils/misc/uri.cpp</itemPath>
           <itemPath>../../../../sources/common/src/utils/misc/variant.cpp</itemPath>
+        </logicalFolder>
+        <logicalFolder name="f1" displayName="tinyxml" projectFiles="true">
+          <itemPath>../../../../3rdparty/tinyxml/tinyxml.cpp</itemPath>
+          <itemPath>../../../../3rdparty/tinyxml/tinyxmlerror.cpp</itemPath>
+          <itemPath>../../../../3rdparty/tinyxml/tinyxmlparser.cpp</itemPath>
         </logicalFolder>
       </logicalFolder>
     </logicalFolder>
