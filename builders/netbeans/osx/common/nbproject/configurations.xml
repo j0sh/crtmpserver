@@ -55,7 +55,9 @@
           <itemPath>../../../../sources/common/include/utils/logging/baseloglocation.h</itemPath>
           <itemPath>../../../../sources/common/include/utils/logging/consoleloglocation.h</itemPath>
           <itemPath>../../../../sources/common/include/utils/logging/fileloglocation.h</itemPath>
+          <itemPath>../../../../sources/common/include/utils/logging/formatter.h</itemPath>
           <itemPath>../../../../sources/common/include/utils/logging/logcatloglocation.h</itemPath>
+          <itemPath>../../../../sources/common/include/utils/logging/logeventfactory.h</itemPath>
           <itemPath>../../../../sources/common/include/utils/logging/logger.h</itemPath>
           <itemPath>../../../../sources/common/include/utils/logging/logging.h</itemPath>
           <itemPath>../../../../sources/common/include/utils/logging/syslogloglocation.h</itemPath>
@@ -126,8 +128,11 @@
           <itemPath>../../../../sources/common/src/utils/logging/baseloglocation.cpp</itemPath>
           <itemPath>../../../../sources/common/src/utils/logging/consoleloglocation.cpp</itemPath>
           <itemPath>../../../../sources/common/src/utils/logging/fileloglocation.cpp</itemPath>
+          <itemPath>../../../../sources/common/src/utils/logging/formatter.cpp</itemPath>
           <itemPath>../../../../sources/common/src/utils/logging/logcatloglocation.cpp</itemPath>
+          <itemPath>../../../../sources/common/src/utils/logging/logeventfactory.cpp</itemPath>
           <itemPath>../../../../sources/common/src/utils/logging/logger.cpp</itemPath>
+          <itemPath>../../../../sources/common/src/utils/logging/syslogloglocation.cpp</itemPath>
         </logicalFolder>
         <logicalFolder name="lua" displayName="lua" projectFiles="true">
           <itemPath>../../../../sources/common/src/utils/lua/luautils.cpp</itemPath>
@@ -169,7 +174,7 @@
           <incDir>
             <pElem>/opt/local/include</pElem>
             <pElem>../../../../sources/common/include</pElem>
-            <pElem>/opt/local/include/libxml2</pElem>
+            <pElem>../../../../3rdparty/tinyxml</pElem>
           </incDir>
           <preprocessorList>
             <Elem>OSX</Elem>

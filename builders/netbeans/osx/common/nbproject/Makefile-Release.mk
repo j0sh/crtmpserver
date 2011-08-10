@@ -35,18 +35,21 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 # Object Files
 OBJECTFILES= \
 	${OBJECTDIR}/_ext/674965218/mmapfile.o \
-	${OBJECTDIR}/_ext/674965218/variant.o \
 	${OBJECTDIR}/_ext/1980509653/timegm.o \
-	${OBJECTDIR}/_ext/1874657879/fileloglocation.o \
+	${OBJECTDIR}/_ext/1874657879/syslogloglocation.o \
+	${OBJECTDIR}/_ext/674965218/variant.o \
 	${OBJECTDIR}/_ext/1874657879/baseloglocation.o \
+	${OBJECTDIR}/_ext/1874657879/fileloglocation.o \
 	${OBJECTDIR}/_ext/113024148/iobuffer.o \
 	${OBJECTDIR}/_ext/230374975/strptime.o \
 	${OBJECTDIR}/_ext/230374975/timegm.o \
 	${OBJECTDIR}/_ext/1722917885/freebsdplatform.o \
+	${OBJECTDIR}/_ext/1874657879/formatter.o \
 	${OBJECTDIR}/_ext/674965218/crypto.o \
 	${OBJECTDIR}/_ext/1145168487/timegm.o \
 	${OBJECTDIR}/_ext/1874657879/logcatloglocation.o \
 	${OBJECTDIR}/_ext/1545610023/dfreebsdplatform.o \
+	${OBJECTDIR}/_ext/1874657879/logeventfactory.o \
 	${OBJECTDIR}/_ext/230374975/win32platform.o \
 	${OBJECTDIR}/_ext/1912657765/openbsdplatform.o \
 	${OBJECTDIR}/_ext/674965218/file.o \
@@ -93,25 +96,30 @@ ${OBJECTDIR}/_ext/674965218/mmapfile.o: ../../../../sources/common/src/utils/mis
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -DOSX -DUSE_MEM_POOL -DDEBUG_MEM_POOL -DLITTLE_ENDIAN_SHORT_ALIGNED -DHAS_LUA -I/opt/local/include -I../../../../sources/common/include -I/opt/local/include/libxml2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/674965218/mmapfile.o ../../../../sources/common/src/utils/misc/mmapfile.cpp
 
-${OBJECTDIR}/_ext/674965218/variant.o: ../../../../sources/common/src/utils/misc/variant.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/674965218
-	${RM} $@.d
-	$(COMPILE.cc) -O2 -DOSX -DUSE_MEM_POOL -DDEBUG_MEM_POOL -DLITTLE_ENDIAN_SHORT_ALIGNED -DHAS_LUA -I/opt/local/include -I../../../../sources/common/include -I/opt/local/include/libxml2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/674965218/variant.o ../../../../sources/common/src/utils/misc/variant.cpp
-
 ${OBJECTDIR}/_ext/1980509653/timegm.o: ../../../../sources/common/src/platform/android/timegm.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1980509653
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -DOSX -DUSE_MEM_POOL -DDEBUG_MEM_POOL -DLITTLE_ENDIAN_SHORT_ALIGNED -DHAS_LUA -I/opt/local/include -I../../../../sources/common/include -I/opt/local/include/libxml2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1980509653/timegm.o ../../../../sources/common/src/platform/android/timegm.cpp
 
-${OBJECTDIR}/_ext/1874657879/fileloglocation.o: ../../../../sources/common/src/utils/logging/fileloglocation.cpp 
+${OBJECTDIR}/_ext/1874657879/syslogloglocation.o: ../../../../sources/common/src/utils/logging/syslogloglocation.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1874657879
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -DOSX -DUSE_MEM_POOL -DDEBUG_MEM_POOL -DLITTLE_ENDIAN_SHORT_ALIGNED -DHAS_LUA -I/opt/local/include -I../../../../sources/common/include -I/opt/local/include/libxml2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1874657879/fileloglocation.o ../../../../sources/common/src/utils/logging/fileloglocation.cpp
+	$(COMPILE.cc) -O2 -DOSX -DUSE_MEM_POOL -DDEBUG_MEM_POOL -DLITTLE_ENDIAN_SHORT_ALIGNED -DHAS_LUA -I/opt/local/include -I../../../../sources/common/include -I/opt/local/include/libxml2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1874657879/syslogloglocation.o ../../../../sources/common/src/utils/logging/syslogloglocation.cpp
+
+${OBJECTDIR}/_ext/674965218/variant.o: ../../../../sources/common/src/utils/misc/variant.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/674965218
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -DOSX -DUSE_MEM_POOL -DDEBUG_MEM_POOL -DLITTLE_ENDIAN_SHORT_ALIGNED -DHAS_LUA -I/opt/local/include -I../../../../sources/common/include -I/opt/local/include/libxml2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/674965218/variant.o ../../../../sources/common/src/utils/misc/variant.cpp
 
 ${OBJECTDIR}/_ext/1874657879/baseloglocation.o: ../../../../sources/common/src/utils/logging/baseloglocation.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1874657879
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -DOSX -DUSE_MEM_POOL -DDEBUG_MEM_POOL -DLITTLE_ENDIAN_SHORT_ALIGNED -DHAS_LUA -I/opt/local/include -I../../../../sources/common/include -I/opt/local/include/libxml2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1874657879/baseloglocation.o ../../../../sources/common/src/utils/logging/baseloglocation.cpp
+
+${OBJECTDIR}/_ext/1874657879/fileloglocation.o: ../../../../sources/common/src/utils/logging/fileloglocation.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1874657879
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -DOSX -DUSE_MEM_POOL -DDEBUG_MEM_POOL -DLITTLE_ENDIAN_SHORT_ALIGNED -DHAS_LUA -I/opt/local/include -I../../../../sources/common/include -I/opt/local/include/libxml2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1874657879/fileloglocation.o ../../../../sources/common/src/utils/logging/fileloglocation.cpp
 
 ${OBJECTDIR}/_ext/113024148/iobuffer.o: ../../../../sources/common/src/utils/buffering/iobuffer.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/113024148
@@ -133,6 +141,11 @@ ${OBJECTDIR}/_ext/1722917885/freebsdplatform.o: ../../../../sources/common/src/p
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -DOSX -DUSE_MEM_POOL -DDEBUG_MEM_POOL -DLITTLE_ENDIAN_SHORT_ALIGNED -DHAS_LUA -I/opt/local/include -I../../../../sources/common/include -I/opt/local/include/libxml2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1722917885/freebsdplatform.o ../../../../sources/common/src/platform/freebsd/freebsdplatform.cpp
 
+${OBJECTDIR}/_ext/1874657879/formatter.o: ../../../../sources/common/src/utils/logging/formatter.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1874657879
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -DOSX -DUSE_MEM_POOL -DDEBUG_MEM_POOL -DLITTLE_ENDIAN_SHORT_ALIGNED -DHAS_LUA -I/opt/local/include -I../../../../sources/common/include -I/opt/local/include/libxml2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1874657879/formatter.o ../../../../sources/common/src/utils/logging/formatter.cpp
+
 ${OBJECTDIR}/_ext/674965218/crypto.o: ../../../../sources/common/src/utils/misc/crypto.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/674965218
 	${RM} $@.d
@@ -152,6 +165,11 @@ ${OBJECTDIR}/_ext/1545610023/dfreebsdplatform.o: ../../../../sources/common/src/
 	${MKDIR} -p ${OBJECTDIR}/_ext/1545610023
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -DOSX -DUSE_MEM_POOL -DDEBUG_MEM_POOL -DLITTLE_ENDIAN_SHORT_ALIGNED -DHAS_LUA -I/opt/local/include -I../../../../sources/common/include -I/opt/local/include/libxml2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1545610023/dfreebsdplatform.o ../../../../sources/common/src/platform/dfreebsd/dfreebsdplatform.cpp
+
+${OBJECTDIR}/_ext/1874657879/logeventfactory.o: ../../../../sources/common/src/utils/logging/logeventfactory.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1874657879
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -DOSX -DUSE_MEM_POOL -DDEBUG_MEM_POOL -DLITTLE_ENDIAN_SHORT_ALIGNED -DHAS_LUA -I/opt/local/include -I../../../../sources/common/include -I/opt/local/include/libxml2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1874657879/logeventfactory.o ../../../../sources/common/src/utils/logging/logeventfactory.cpp
 
 ${OBJECTDIR}/_ext/230374975/win32platform.o: ../../../../sources/common/src/platform/windows/win32platform.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/230374975
