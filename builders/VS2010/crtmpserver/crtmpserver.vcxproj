@@ -107,7 +107,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>..\..\..\sources\common\include;..\..\..\sources\thelib\include;..\..\..\3rdparty\lua-dev;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>COMPILE_STATIC;HAS_APP_ADMIN;HAS_APP_APPLESTREAMINGCLIENT;HAS_APP_APPSELECTOR;HAS_APP_FLVPLAYBACK;HAS_APP_PROXYPUBLISH;HAS_APP_SAMPLEFACTORY;HAS_APP_STRESSTEST;HAS_APP_VPTESTS;HAS_APP_VMAPP;LITTLE_ENDIAN_BYTE_ALIGNED;NET_SELECT;HAS_LUA;HAS_PROTOCOL_HTTP;HAS_PROTOCOL_RTMP;HAS_PROTOCOL_RTP;HAS_PROTOCOL_LIVEFLV;HAS_PROTOCOL_TS;HAS_PROTOCOL_VAR;HAS_MEDIA_MP3;HAS_MEDIA_MP4;HAS_MEDIA_FLV;VM_LUA;WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>COMPILE_STATIC;HAS_APP_ADMIN;HAS_APP_APPLESTREAMINGCLIENT;HAS_APP_APPSELECTOR;HAS_APP_FLVPLAYBACK;HAS_APP_PROXYPUBLISH;HAS_APP_SAMPLEFACTORY;HAS_APP_STRESSTEST;HAS_APP_VPTESTS;LITTLE_ENDIAN_BYTE_ALIGNED;NET_SELECT;HAS_LUA;HAS_PROTOCOL_HTTP;HAS_PROTOCOL_RTMP;HAS_PROTOCOL_RTP;HAS_PROTOCOL_LIVEFLV;HAS_PROTOCOL_TS;HAS_PROTOCOL_VAR;HAS_MEDIA_MP3;HAS_MEDIA_MP4;HAS_MEDIA_FLV;VM_LUA;WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -168,7 +168,7 @@
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <AdditionalIncludeDirectories>..\..\..\sources\common\include;..\..\..\sources\thelib\include;..\..\..\3rdparty\lua-dev;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>COMPILE_STATIC;HAS_APP_ADMIN;HAS_APP_APPLESTREAMINGCLIENT;HAS_APP_APPSELECTOR;HAS_APP_FLVPLAYBACK;HAS_APP_PROXYPUBLISH;HAS_APP_SAMPLEFACTORY;HAS_APP_STRESSTEST;HAS_APP_VPTESTS;HAS_APP_VMAPP;LITTLE_ENDIAN_BYTE_ALIGNED;NET_SELECT;HAS_LUA;HAS_PROTOCOL_HTTP;HAS_PROTOCOL_RTMP;HAS_PROTOCOL_RTP;HAS_PROTOCOL_LIVEFLV;HAS_PROTOCOL_TS;HAS_PROTOCOL_VAR;HAS_MEDIA_MP3;HAS_MEDIA_MP4;HAS_MEDIA_FLV;VM_LUA;WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>COMPILE_STATIC;HAS_APP_ADMIN;HAS_APP_APPLESTREAMINGCLIENT;HAS_APP_APPSELECTOR;HAS_APP_FLVPLAYBACK;HAS_APP_PROXYPUBLISH;HAS_APP_SAMPLEFACTORY;HAS_APP_STRESSTEST;HAS_APP_VPTESTS;LITTLE_ENDIAN_BYTE_ALIGNED;NET_SELECT;HAS_LUA;HAS_PROTOCOL_HTTP;HAS_PROTOCOL_RTMP;HAS_PROTOCOL_RTP;HAS_PROTOCOL_LIVEFLV;HAS_PROTOCOL_TS;HAS_PROTOCOL_VAR;HAS_MEDIA_MP3;HAS_MEDIA_MP4;HAS_MEDIA_FLV;VM_LUA;WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <PrecompiledHeader>Use</PrecompiledHeader>
@@ -232,9 +232,6 @@
       <Project>{0527601c-06c4-4af6-bc87-48fc042c1437}</Project>
       <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
       <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
-    </ProjectReference>
-    <ProjectReference Include="..\vmapp\vmapp.vcxproj">
-      <Project>{8da73ed7-7a23-49a4-ba7d-aa3ac5fffd47}</Project>
     </ProjectReference>
     <ProjectReference Include="..\vm\vm.vcxproj">
       <Project>{d64a1d0f-e8e6-445b-b8a2-5a2a9154d5d0}</Project>

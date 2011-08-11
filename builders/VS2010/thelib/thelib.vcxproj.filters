@@ -156,12 +156,6 @@
     <Filter Include="Header Files\protocols\cli">
       <UniqueIdentifier>{4b3d819b-707a-4f33-a198-32a6e71c0826}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\protocols\rtmfp">
-      <UniqueIdentifier>{68d0d9d3-5d5b-41dc-8da4-804ff874244a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\protocols\rtmfp">
-      <UniqueIdentifier>{0bb7a454-e0fe-46b9-8bc6-2c2e9fae41b4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\protocols\cli">
       <UniqueIdentifier>{69fde863-1f0e-4981-83ab-a44e4e86a07b}</UniqueIdentifier>
     </Filter>
@@ -433,18 +427,6 @@
     </ClCompile>
     <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\inboundrtmpsdiscriminatorprotocol.cpp">
       <Filter>Source Files\protocols\rtmp</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmfp\basertmfpappprotocolhandler.cpp">
-      <Filter>Source Files\protocols\rtmfp</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmfp\basertmfpprotocol.cpp">
-      <Filter>Source Files\protocols\rtmfp</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmfp\inboundrtmfpprotocol.cpp">
-      <Filter>Source Files\protocols\rtmfp</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmfp\outboundrtmfpprotocol.cpp">
-      <Filter>Source Files\protocols\rtmfp</Filter>
     </ClCompile>
     <ClCompile Include="..\dummy.cpp">
       <Filter>Source Files</Filter>
@@ -933,18 +915,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\inboundrtmpsdiscriminatorprotocol.h">
       <Filter>Header Files\protocols\rtmp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmfp\basertmfpappprotocolhandler.h">
-      <Filter>Header Files\protocols\rtmfp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmfp\basertmfpprotocol.h">
-      <Filter>Header Files\protocols\rtmfp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmfp\inboundrtmfpprotocol.h">
-      <Filter>Header Files\protocols\rtmfp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmfp\outboundrtmfpprotocol.h">
-      <Filter>Header Files\protocols\rtmfp</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\streaming\baseoutnetrtmpstream.h">
       <Filter>Header Files\protocols\rtmp\streaming</Filter>

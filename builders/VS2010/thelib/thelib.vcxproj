@@ -245,10 +245,6 @@
     <ClCompile Include="..\..\..\sources\thelib\src\protocols\defaultprotocolfactory.cpp" />
     <ClCompile Include="..\..\..\sources\thelib\src\protocols\protocolfactorymanager.cpp" />
     <ClCompile Include="..\..\..\sources\thelib\src\protocols\protocolmanager.cpp" />
-    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmfp\basertmfpappprotocolhandler.cpp" />
-    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmfp\basertmfpprotocol.cpp" />
-    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmfp\inboundrtmfpprotocol.cpp" />
-    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmfp\outboundrtmfpprotocol.cpp" />
     <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\inboundrtmpsdiscriminatorprotocol.cpp" />
     <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\streaming\baseoutnetrtmpstream.cpp" />
     <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\streaming\infilertmpstream.cpp" />
@@ -408,10 +404,6 @@
     <ClInclude Include="..\..\..\sources\thelib\include\protocols\protocolfactorymanager.h" />
     <ClInclude Include="..\..\..\sources\thelib\include\protocols\protocolmanager.h" />
     <ClInclude Include="..\..\..\sources\thelib\include\protocols\protocoltypes.h" />
-    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmfp\basertmfpappprotocolhandler.h" />
-    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmfp\basertmfpprotocol.h" />
-    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmfp\inboundrtmfpprotocol.h" />
-    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmfp\outboundrtmfpprotocol.h" />
     <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\inboundrtmpsdiscriminatorprotocol.h" />
     <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\streaming\baseoutnetrtmpstream.h" />
     <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\streaming\infilertmpstream.h" />

@@ -23,20 +23,68 @@
 
 //define missing PRI_64 specifiers
 #ifndef PRId64
-#define PRId64 "lld"
+#define PRId64 "I64d"
 #endif /* PRId64 */
 
 #ifndef PRIu64
-#define PRIu64 "llu"
+#define PRIu64 "I64u"
 #endif /* PRIu64 */
 
 #ifndef PRIx64
-#define PRIx64 "llx"
+#define PRIx64 "I64x"
 #endif /* PRIx64 */
 
 #ifndef PRIX64
-#define PRIX64 "llX"
+#define PRIX64 "I64X"
 #endif /* PRIX64 */
+
+#ifndef PRId32
+#define PRId32 "I32d"
+#endif /* PRId32 */
+
+#ifndef PRIu32
+#define PRIu32 "I32u"
+#endif /* PRIu32 */
+
+#ifndef PRIx32
+#define PRIx32 "I32x"
+#endif /* PRIx32 */
+
+#ifndef PRIX32
+#define PRIX32 "I32X"
+#endif /* PRIX32 */
+
+#ifndef PRId16
+#define PRId16 "hd"
+#endif /* PRId16 */
+
+#ifndef PRIu16
+#define PRIu16 "hu"
+#endif /* PRIu16 */
+
+#ifndef PRIx16
+#define PRIx16 "hx"
+#endif /* PRIx16 */
+
+#ifndef PRIX16
+#define PRIX16 "hX"
+#endif /* PRIX16 */
+
+#ifndef PRId8
+#define PRId8 "d"
+#endif /* PRId8 */
+
+#ifndef PRIu8
+#define PRIu8 "u"
+#endif /* PRIu8 */
+
+#ifndef PRIx8
+#define PRIx8 "x"
+#endif /* PRIx8 */
+
+#ifndef PRIX8
+#define PRIX8 "X"
+#endif /* PRIX8 */
 
 #ifndef PRIz
 #define PRIz "I"
