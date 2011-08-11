@@ -142,10 +142,12 @@ bool parseURI(string stringUri, URI &uri) {
 
 	if ((components.size() - 1) >= 3) {
 		uri.document = components[components.size() - 1];
+		uri.documentWithParameters = uri.document;
 		vector<string> documentComponents;
 		split(uri.document, "?", documentComponents);
 		if (documentComponents.size() == 2) {
 			uri.document = documentComponents[0];
+			uri.fullParameters = documentComponents[1];
 			map<string, string> params;
 			params = mapping(documentComponents[1], "&", "=", true);
 
@@ -155,6 +157,9 @@ bool parseURI(string stringUri, URI &uri) {
 						STR(MAP_KEY(i)),
 						STR(MAP_VAL(i)));
 			}
+		} else {
+			uri.document = documentComponents[0];
+			uri.fullParameters = "";
 		}
 	}
 	LOG_URI_SPLIT("uri.document: %s", STR(uri.document));
@@ -163,7 +168,9 @@ bool parseURI(string stringUri, URI &uri) {
 }
 
 void URI::Reset() {
-	fullUri = scheme = host = userName = password = fullDocumentPath = documentPath = document = "";
+	fullUri = scheme = host = userName = password
+			= fullDocumentPath = documentPath = document = fullParameters
+			= documentWithParameters = "";
 	port = 0;
 	parameters.clear();
 }
@@ -180,9 +187,13 @@ Variant URI::ToVariant() {
 	result["fullDocumentPath"] = fullDocumentPath;
 	result["documentPath"] = documentPath;
 	result["document"] = document;
+	result["documentWithParameters"] = documentWithParameters;
+	if (fullParameters != "") {
+		result["fullParameters"] = fullParameters;
 
-	FOR_MAP(parameters, string, string, i) {
-		result["parameters"][MAP_KEY(i)] = MAP_VAL(i);
+		FOR_MAP(parameters, string, string, i) {
+			result["parameters"][MAP_KEY(i)] = MAP_VAL(i);
+		}
 	}
 
 	return result;
@@ -194,30 +205,18 @@ bool URI::FromVariant(Variant & variant, URI &uri) {
 	if (variant != V_MAP)
 		return false;
 
-	if ((!(variant.HasKey("fullUri")))
-			|| (!(variant.HasKey("scheme")))
-			|| (!(variant.HasKey("host")))
-			|| (!(variant.HasKey("ip")))
-			|| (!(variant.HasKey("port")))
-			|| (!(variant.HasKey("userName")))
-			|| (!(variant.HasKey("password")))
-			|| (!(variant.HasKey("fullDocumentPath")))
-			|| (!(variant.HasKey("documentPath")))
-			|| (!(variant.HasKey("document")))
+	if ((!(variant.HasKeyChain(V_STRING, true, 1, "fullUri")))
+			|| (!(variant.HasKeyChain(V_STRING, true, 1, "scheme")))
+			|| (!(variant.HasKeyChain(V_STRING, true, 1, "host")))
+			|| (!(variant.HasKeyChain(V_STRING, true, 1, "ip")))
+			|| (!(variant.HasKeyChain(V_UINT16, true, 1, "port")))
+			|| (!(variant.HasKeyChain(V_STRING, true, 1, "userName")))
+			|| (!(variant.HasKeyChain(V_STRING, true, 1, "password")))
+			|| (!(variant.HasKeyChain(V_STRING, true, 1, "fullDocumentPath")))
+			|| (!(variant.HasKeyChain(V_STRING, true, 1, "documentPath")))
+			|| (!(variant.HasKeyChain(V_STRING, true, 1, "document")))
+			|| (!(variant.HasKeyChain(V_STRING, true, 1, "documentWithParameters")))
 			) {
-		return false;
-	}
-
-	if ((variant["fullUri"] != V_STRING)
-			|| (variant["scheme"] != V_STRING)
-			|| (variant["host"] != V_STRING)
-			|| (variant["ip"] != V_STRING)
-			|| (variant["port"] != _V_NUMERIC)
-			|| (variant["userName"] != V_STRING)
-			|| (variant["password"] != V_STRING)
-			|| (variant["fullDocumentPath"] != V_STRING)
-			|| (variant["documentPath"] != V_STRING)
-			|| (variant["document"] != V_STRING)) {
 		return false;
 	}
 
@@ -231,6 +230,26 @@ bool URI::FromVariant(Variant & variant, URI &uri) {
 	uri.fullDocumentPath = (string) variant["fullDocumentPath"];
 	uri.documentPath = (string) variant["documentPath"];
 	uri.document = (string) variant["document"];
+	uri.documentWithParameters = (string) variant["documentWithParameters"];
+
+	if (variant.HasKeyChain(V_STRING, true, 1, "fullParameters")) {
+		if (!(variant.HasKeyChain(V_MAP, true, 1, "parameters"))) {
+			uri.Reset();
+			return false;
+		}
+		uri.fullParameters = (string) variant["fullParameters"];
+
+		FOR_MAP(variant["parameters"], string, Variant, i) {
+			if (((VariantType) MAP_VAL(i)) != V_STRING) {
+				uri.Reset();
+				return false;
+			}
+			uri.parameters[MAP_KEY(i)] = (string) MAP_VAL(i);
+		}
+	} else {
+		uri.fullParameters = "";
+		uri.parameters.clear();
+	}
 
 	return true;
 }

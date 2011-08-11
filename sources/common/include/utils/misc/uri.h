@@ -34,6 +34,8 @@ typedef struct _URI {
 	string fullDocumentPath;
 	string documentPath;
 	string document;
+	string fullParameters;
+	string documentWithParameters;
 	map<string, string> parameters;
 
 	DLLEXP void Reset();
