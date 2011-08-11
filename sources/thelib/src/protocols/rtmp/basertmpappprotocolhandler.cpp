@@ -117,11 +117,11 @@ void BaseRTMPAppProtocolHandler::UnRegisterProtocol(BaseProtocol *pProtocol) {
 
 bool BaseRTMPAppProtocolHandler::PullExternalStream(URI uri, Variant streamConfig) {
 	//1. normalize the stream name
-	string streamName = "";
+	string localStreamName = "";
 	if (streamConfig["localStreamName"] == V_STRING)
-		streamName = (string) streamConfig["localStreamName"];
-	trim(streamName);
-	if (streamName == "") {
+		localStreamName = (string) streamConfig["localStreamName"];
+	trim(localStreamName);
+	if (localStreamName == "") {
 		streamConfig["localStreamName"] = "stream_" + generateRandomString(8);
 		WARN("No localstream name for external URI: %s. Defaulted to %s",
 				STR(uri.fullUri),
@@ -1244,12 +1244,9 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokeConnectResult(BaseRTMPProtocol *pF
 
 	if (NeedsToPullExternalStream(pFrom)) {
 		Variant &parameters = pFrom->GetCustomParameters()["customParameters"]["externalStreamConfig"];
-		Variant params;
-		params.PushToArray(Variant());
-		params.PushToArray(parameters["uri"]["document"]);
 
 		Variant FCSubscribeRequest = StreamMessageFactory::GetInvokeFCSubscribe(
-				parameters["uri"]["document"]);
+				parameters["uri"]["documentWithParameters"]);
 		if (!SendRTMPMessage(pFrom, FCSubscribeRequest, true)) {
 			FATAL("Unable to send request:\n%s", STR(FCSubscribeRequest.ToString()));
 			return false;
@@ -1322,7 +1319,7 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokeCreateStreamResult(BaseRTMPProtoco
 	Variant publishPlayRequest;
 	if (NeedsToPullExternalStream(pFrom)) {
 		publishPlayRequest = StreamMessageFactory::GetInvokePlay(3, rtmpStreamId,
-				parameters["uri"]["document"], -2, -1);
+				parameters["uri"]["documentWithParameters"], -2, -1);
 	} else {
 		string targetStreamType = "";
 		if (parameters["targetStreamType"] == V_STRING) {
@@ -1919,7 +1916,7 @@ bool BaseRTMPAppProtocolHandler::ConnectForPullPush(BaseRTMPProtocol *pFrom,
 		string uriPath, Variant &streamConfig) {
 	URI uri;
 	if (!URI::FromVariant(streamConfig[uriPath], uri)) {
-		FATAL("Unable to parse uri:\n%s", STR(streamConfig["targetUri"]));
+		FATAL("Unable to parse uri:\n%s", STR(streamConfig["targetUri"].ToString()));
 		return false;
 	}
 
@@ -2006,71 +2003,4 @@ bool BaseRTMPAppProtocolHandler::ConnectForPullPush(BaseRTMPProtocol *pFrom,
 	return true;
 }
 
-//Variant& BaseRTMPAppProtocolHandler::CreateLogEventInvoke(BaseRTMPProtocol *pFrom, Variant &request) {
-//
-//	/*
-//	 * le
-//	 *      carrier
-//	 *      operation
-//	 *      status_code_numeric
-//	 *      status_code_description
-//	 *      fields
-//	 *          field1
-//	 *          field2
-//	 *          ...
-//	 */
-//
-//	//1. compute the operation
-//	string operation = M_INVOKE_FUNCTION(request);
-//
-//	//2. depending on the operation, we have different fields
-//	Variant fields;
-//	if (operation == RM_INVOKE_FUNCTION_CONNECT) {
-//		fields = M_INVOKE_PARAM(request, (uint32_t) 0);
-//	} else if (operation == RM_INVOKE_FUNCTION_CREATESTREAM) {
-//
-//	} else if (operation == RM_INVOKE_FUNCTION_PUBLISH) {
-//
-//	} else if (operation == RM_INVOKE_FUNCTION_PLAY) {
-//
-//	} else if (operation == RM_INVOKE_FUNCTION_PAUSERAW) {
-//
-//	} else if (operation == RM_INVOKE_FUNCTION_PAUSE) {
-//		bool isResume = false; //compute it
-//		if (isResume)
-//			fields["subOperation"] = "resume";
-//		else
-//			fields["subOperation"] = "pause";
-//	} else if (operation == RM_INVOKE_FUNCTION_SEEK) {
-//
-//	} else if (operation == RM_INVOKE_FUNCTION_CLOSESTREAM) {
-//
-//	} else if (operation == RM_INVOKE_FUNCTION_RELEASESTREAM) {
-//
-//	} else if (operation == RM_INVOKE_FUNCTION_DELETESTREAM) {
-//
-//	} else if (operation == RM_INVOKE_FUNCTION_RESULT) {
-//
-//	} else if (operation == RM_INVOKE_FUNCTION_ERROR) {
-//
-//	} else if (operation == RM_INVOKE_FUNCTION_ONSTATUS) {
-//
-//	} else if (operation == RM_INVOKE_FUNCTION_FCPUBLISH) {
-//
-//	} else if (operation == RM_INVOKE_FUNCTION_GETSTREAMLENGTH) {
-//
-//	} else if (operation == RM_INVOKE_FUNCTION_ONBWDONE) {
-//
-//	}
-//
-//	//3. Get the stats
-//	Variant stats;
-//	pFrom->GetStackStats(stats);
-//
-//	//4. Get the final log message
-//	return LogEventFactory::CreateLE("rtmp", stats, operation, 200, fields);
-//
-//}
-
 #endif /* HAS_PROTOCOL_RTMP */
-
