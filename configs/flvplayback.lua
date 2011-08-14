@@ -87,15 +87,18 @@ configuration=
 			mediaFolder="./media",
 			authentication=
 			{
-				type="adobe",
-				encoderAgents=
-				{
-					"FMLE/3.0 (compatible; FMSc/1.0)",
-					--"my 3rd party encoder",
-					--"some other encoder",
+				rtmp={
+					type="adobe",
+					encoderAgents=
+					{
+						"FMLE/3.0 (compatible; FMSc/1.0)",
+					},
+					usersFile="./users.lua"
 				},
-				usersFile="./users.lua",
-			}
+				rtsp={
+					usersFile="./users.lua"
+				}
+			},
 		},
 	}
 }
