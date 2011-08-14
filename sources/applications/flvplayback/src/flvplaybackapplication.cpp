@@ -121,6 +121,10 @@ FLVPlaybackApplication::~FLVPlaybackApplication() {
 }
 
 bool FLVPlaybackApplication::Initialize() {
+	if (!BaseClientApplication::Initialize()) {
+		FATAL("Unable to initialize application");
+		return false;
+	}
 #ifdef HAS_PROTOCOL_RTMP
 	_pRTMPHandler = new RTMPAppProtocolHandler(_configuration);
 	RegisterAppProtocolHandler(PT_INBOUND_RTMP, _pRTMPHandler);

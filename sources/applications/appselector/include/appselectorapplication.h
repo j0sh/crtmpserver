@@ -43,6 +43,8 @@ namespace app_appselector {
 	public:
 		AppSelectorApplication(Variant &configuration);
 		virtual ~AppSelectorApplication();
+
+		virtual bool Initialize();
 	};
 }
 

@@ -53,6 +53,10 @@ VPTestsApplication::~VPTestsApplication() {
 }
 
 bool VPTestsApplication::Initialize() {
+	if (!BaseClientApplication::Initialize()) {
+		FATAL("Unable to initialize application");
+		return false;
+	}
 	//TODO: Add your app init code here
 	//Things like parsing custom sections inside _configuration for example,
 	//initialize the protocol handler(s)

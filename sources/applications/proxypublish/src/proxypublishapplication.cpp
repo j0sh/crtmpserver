@@ -78,6 +78,10 @@ ProxyPublishApplication::~ProxyPublishApplication() {
 }
 
 bool ProxyPublishApplication::Initialize() {
+	if (!BaseClientApplication::Initialize()) {
+		FATAL("Unable to initialize application");
+		return false;
+	}
 	//1. read the target servers section, validate it and store it for later usage
 	if (_configuration["abortOnConnectError"] != V_BOOL) {
 		FATAL("Invalid abortOnConnectError");

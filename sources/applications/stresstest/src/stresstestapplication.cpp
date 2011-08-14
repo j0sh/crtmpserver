@@ -44,6 +44,10 @@ StressTestApplication::~StressTestApplication() {
 }
 
 bool StressTestApplication::Initialize() {
+	if (!BaseClientApplication::Initialize()) {
+		FATAL("Unable to initialize application");
+		return false;
+	}
 	//1. Validate the configuration
 	if (!NormalizeConfiguration()) {
 		FATAL("Unable to normalize configuration");
