@@ -36,7 +36,7 @@ bool parseURI(string stringUri, URI &uri) {
 	if (stringUri.size() > 1024)
 		return false;
 
-	uri.fullUri = stringUri;
+	uri.fullUri = uri.fullUriWithAuth = stringUri;
 	LOG_URI_SPLIT("uri.fullUri: %s", STR(uri.fullUri));
 
 
@@ -86,6 +86,7 @@ bool parseURI(string stringUri, URI &uri) {
 		LOG_URI_SPLIT("uri.userName: %s", STR(uri.userName));
 		uri.password = userNamePasswordComponents[1];
 		LOG_URI_SPLIT("uri.password: %s", STR(uri.password));
+		replace(uri.fullUri, uri.userName + ":" + uri.password + "@", "");
 	}
 
 	split(components[2], ":", hostComponents);
@@ -168,7 +169,7 @@ bool parseURI(string stringUri, URI &uri) {
 }
 
 void URI::Reset() {
-	fullUri = scheme = host = userName = password
+	fullUri = fullUriWithAuth = scheme = host = userName = password
 			= fullDocumentPath = documentPath = document = fullParameters
 			= documentWithParameters = "";
 	port = 0;
@@ -178,6 +179,7 @@ void URI::Reset() {
 Variant URI::ToVariant() {
 	Variant result;
 	result["fullUri"] = fullUri;
+	result["fullUriWithAuth"] = fullUriWithAuth;
 	result["scheme"] = scheme;
 	result["host"] = host;
 	result["ip"] = ip;
@@ -206,6 +208,7 @@ bool URI::FromVariant(Variant & variant, URI &uri) {
 		return false;
 
 	if ((!(variant.HasKeyChain(V_STRING, true, 1, "fullUri")))
+			|| (!(variant.HasKeyChain(V_STRING, true, 1, "fullUriWithAuth")))
 			|| (!(variant.HasKeyChain(V_STRING, true, 1, "scheme")))
 			|| (!(variant.HasKeyChain(V_STRING, true, 1, "host")))
 			|| (!(variant.HasKeyChain(V_STRING, true, 1, "ip")))
@@ -221,6 +224,7 @@ bool URI::FromVariant(Variant & variant, URI &uri) {
 	}
 
 	uri.fullUri = (string) variant["fullUri"];
+	uri.fullUriWithAuth = (string) variant["fullUriWithAuth"];
 	uri.scheme = (string) variant["scheme"];
 	uri.host = (string) variant["host"];
 	uri.ip = (string) variant["ip"];
@@ -255,7 +259,7 @@ bool URI::FromVariant(Variant & variant, URI &uri) {
 }
 
 string URI::ToString() {
-	return fullUri;
+	return fullUriWithAuth;
 }
 
 bool URI::FromString(string stringUri, bool resolveHost, URI &uri) {

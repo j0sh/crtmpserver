@@ -25,6 +25,7 @@
 
 typedef struct _URI {
 	string fullUri;
+	string fullUriWithAuth;
 	string scheme;
 	string host;
 	string ip;
