@@ -39,6 +39,8 @@ protected:
 public:
 	BaseAppProtocolHandler(Variant &configuration);
 	virtual ~BaseAppProtocolHandler();
+	
+	virtual bool ParseAuthenticationNode(Variant &node, Variant &result);
 
 	/*!
 		@brief Sets the application.

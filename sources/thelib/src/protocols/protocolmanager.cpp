@@ -40,7 +40,9 @@ void ProtocolManager::UnRegisterProtocol(BaseProtocol *pProtocol) {
 }
 
 void ProtocolManager::EnqueueForDelete(BaseProtocol *pProtocol) {
-	FINEST("Enqueue for delete for protool %s", STR(*pProtocol));
+	if (pProtocol->GetNearProtocol() == NULL) {
+		FINEST("Enqueue for delete for protocol %s", STR(*pProtocol));
+	}
 	pProtocol->SetApplication(NULL);
 	if (MAP_HAS1(_activeProtocols, pProtocol->GetId()))
 		_activeProtocols.erase(pProtocol->GetId());

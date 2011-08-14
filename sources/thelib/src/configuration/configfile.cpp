@@ -528,23 +528,6 @@ bool ConfigFile::ValidateApplication(Variant &node) {
 		return false;
 	}
 
-	if (node.HasKey(CONF_APPLICATION_AUTH)) {
-		if (!ValidateMap(node, CONF_APPLICATION_AUTH, true, 1, 999)) {
-			return false;
-		}
-
-		Variant auth = node[CONF_APPLICATION_AUTH];
-
-		if (!ValidateString(auth, CONF_APPLICATION_AUTH_TYPE, true, 1,
-				CONF_APPLICATION_AUTH_TYPE_ADOBE)) {
-			return false;
-		}
-
-		if (!ValidateMap(auth, CONF_APPLICATION_AUTH_ENCODER_AGENTS, false, 1, 999)) {
-			return false;
-		}
-	}
-
 	return true;
 }
 
@@ -815,6 +798,11 @@ bool ConfigFile::ConfigureApplication(Variant &node) {
 			return false;
 		}
 
+		if (!pApplication->ParseAuthentication()) {
+			FATAL("Unable to parse authetication for application\n%s", STR(node.ToString()));
+			return false;
+		}
+
 		if (node.HasKey(CONF_ACCEPTORS)) {
 			if (!ConfigureAcceptors(node[CONF_ACCEPTORS], pApplication)) {
 				FATAL("Unable to configure acceptors on application %s",
@@ -924,32 +912,6 @@ void ConfigFile::Normalize(Variant &appConfigurationNode) {
 		if (mediaFolder[mediaFolder.length() - 1] != PATH_SEPARATOR)
 			mediaFolder += PATH_SEPARATOR;
 		appConfigurationNode[CONF_APPLICATION_MEDIAFOLDER] = mediaFolder;
-	}
-
-
-	//3. Normalize the users db file
-	if (appConfigurationNode.HasKey(CONF_APPLICATION_AUTH)) {
-		if (!appConfigurationNode[CONF_APPLICATION_AUTH].HasKey(
-				CONF_APPLICATION_AUTH_USERS_FILE)) {
-			appConfigurationNode[CONF_APPLICATION_AUTH][CONF_APPLICATION_AUTH_USERS_FILE] =
-					format("%s%s",
-					STR(appConfigurationNode[CONF_APPLICATION_DIRECTORY]),
-					"users.lua");
-		}
-
-		//4. Normalize the encoders list
-		if (appConfigurationNode[CONF_APPLICATION_AUTH].HasKey(
-				CONF_APPLICATION_AUTH_ENCODER_AGENTS)) {
-			Variant temp;
-
-			FOR_MAP(appConfigurationNode[CONF_APPLICATION_AUTH][CONF_APPLICATION_AUTH_ENCODER_AGENTS],
-					string, Variant, i) {
-				temp[MAP_VAL(i)] = (bool)true;
-			}
-			appConfigurationNode[CONF_APPLICATION_AUTH][CONF_APPLICATION_AUTH_ENCODER_AGENTS] = temp;
-
-		}
-
 	}
 
 	//4. Normalize the crt/key location inside acceptors

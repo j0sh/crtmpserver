@@ -44,6 +44,7 @@ private:
 protected:
 	Variant _configuration;
 	bool _isDefault;
+	Variant _authSettings;
 public:
 	BaseClientApplication(Variant &configuration);
 	virtual ~BaseClientApplication();
@@ -147,6 +148,7 @@ public:
 	virtual bool PullExternalStreams();
 	virtual bool PullExternalStream(Variant streamConfig);
 	virtual bool PushLocalStream(Variant streamConfig);
+	bool ParseAuthentication();
 
 	/*!
 		@brief Deletes all active protocols and IOHandlers bound to the application.

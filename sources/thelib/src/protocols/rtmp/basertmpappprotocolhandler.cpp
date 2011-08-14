@@ -41,43 +41,79 @@ BaseRTMPAppProtocolHandler::BaseRTMPAppProtocolHandler(Variant &configuration)
 	_mediaFolder = (string) configuration[CONF_APPLICATION_MEDIAFOLDER];
 	_renameBadFiles = (bool)configuration[CONF_APPLICATION_RENAMEBADFILES];
 	_externSeekGenerator = (bool)configuration[CONF_APPLICATION_EXTERNSEEKGENERATOR];
-	if (_configuration.HasKey(CONF_APPLICATION_AUTH)) {
-		if ((!_configuration[CONF_APPLICATION_AUTH].HasKey(CONF_APPLICATION_AUTH_TYPE))
-				|| (_configuration[CONF_APPLICATION_AUTH][CONF_APPLICATION_AUTH_TYPE] != V_STRING)
-				|| (_configuration[CONF_APPLICATION_AUTH][CONF_APPLICATION_AUTH_TYPE] != CONF_APPLICATION_AUTH_TYPE_ADOBE)
-				|| (!_configuration[CONF_APPLICATION_AUTH].HasKey(CONF_APPLICATION_AUTH_ENCODER_AGENTS))
-				|| (_configuration[CONF_APPLICATION_AUTH][CONF_APPLICATION_AUTH_ENCODER_AGENTS] != V_MAP)
-				|| (_configuration[CONF_APPLICATION_AUTH][CONF_APPLICATION_AUTH_ENCODER_AGENTS].MapSize() == 0)
-				|| (!_configuration[CONF_APPLICATION_AUTH].HasKey(CONF_APPLICATION_AUTH_USERS_FILE))
-				|| (_configuration[CONF_APPLICATION_AUTH][CONF_APPLICATION_AUTH_USERS_FILE] != V_STRING)
-				|| (_configuration[CONF_APPLICATION_AUTH][CONF_APPLICATION_AUTH_USERS_FILE] == "")
-				) {
-			WARN("Invalid authentication configuration");
-			_authMethod = "";
-		} else {
-			string usersFile = _configuration[CONF_APPLICATION_AUTH][CONF_APPLICATION_AUTH_USERS_FILE];
-			if ((usersFile[0] != '/')
-					&& (usersFile[0] != '.')) {
-				usersFile = (string) _configuration[CONF_APPLICATION_DIRECTORY] + usersFile;
-				_configuration[CONF_APPLICATION_AUTH][CONF_APPLICATION_AUTH_USERS_FILE] = usersFile;
-			}
-			if (!fileExists(_configuration[CONF_APPLICATION_AUTH][CONF_APPLICATION_AUTH_USERS_FILE])) {
-				WARN("Invalid authentication configuration. Missing users file: %s",
-						STR(_configuration[CONF_APPLICATION_AUTH][CONF_APPLICATION_AUTH_USERS_FILE]));
-				_authMethod = "";
-			} else {
-				_adobeAuthSalt = generateRandomString(32);
-				_adobeAuthSettings = _configuration[CONF_APPLICATION_AUTH];
-				_authMethod = (string) _configuration[CONF_APPLICATION_AUTH][CONF_APPLICATION_AUTH_TYPE];
-			}
-		}
-	} else {
-		_authMethod = "";
-	}
+	_lastUsersFileUpdate = 0;
 
 	if ((bool)configuration[CONF_APPLICATION_GENERATE_META_FILES]) {
 		GenerateMetaFiles();
 	}
+}
+
+bool BaseRTMPAppProtocolHandler::ParseAuthenticationNode(Variant &node,
+		Variant &result) {
+#ifndef HAS_LUA
+	ASSERT("Lua is not supported by the current build of the server. Adobe authentication needs lua support");
+	return false;
+#endif
+	//1. Validation
+	if ((!node.HasKeyChain(V_STRING, true, 1, CONF_APPLICATION_AUTH_TYPE))
+			|| ((string) node[CONF_APPLICATION_AUTH_TYPE] != CONF_APPLICATION_AUTH_TYPE_ADOBE)) {
+		FATAL("Invalid authentication type");
+		return false;
+	}
+
+	if ((!node.HasKeyChain(V_MAP, true, 1, CONF_APPLICATION_AUTH_ENCODER_AGENTS))
+			|| (node[CONF_APPLICATION_AUTH_ENCODER_AGENTS].MapSize() == 0)) {
+		FATAL("Invalid encoder agents array");
+		return false;
+	}
+
+	if ((!node.HasKeyChain(V_STRING, true, 1, CONF_APPLICATION_AUTH_USERS_FILE))
+			|| (node[CONF_APPLICATION_AUTH_USERS_FILE] == "")) {
+		FATAL("Invalid users file path");
+		return false;
+	}
+
+	//2. Users file validation
+	string usersFile = node[CONF_APPLICATION_AUTH_USERS_FILE];
+	if ((usersFile[0] != '/') && (usersFile[0] != '.')) {
+		usersFile = (string) _configuration[CONF_APPLICATION_DIRECTORY] + usersFile;
+	}
+	if (!fileExists(usersFile)) {
+		FATAL("Invalid authentication configuration. Missing users file: %s", STR(usersFile));
+		return false;
+	}
+
+	//3. Build the result
+	result[CONF_APPLICATION_AUTH_TYPE] = CONF_APPLICATION_AUTH_TYPE_ADOBE;
+	result[CONF_APPLICATION_AUTH_USERS_FILE] = usersFile;
+
+	FOR_MAP(node[CONF_APPLICATION_AUTH_ENCODER_AGENTS], string, Variant, i) {
+		if ((MAP_VAL(i) != V_STRING) || (MAP_VAL(i) == "")) {
+			FATAL("Invalid encoder agent encountered");
+			return false;
+		}
+		result[CONF_APPLICATION_AUTH_ENCODER_AGENTS][(string) MAP_VAL(i)] = MAP_VAL(i);
+	}
+	result["adobeAuthSalt"] = _adobeAuthSalt = generateRandomString(32);
+	_adobeAuthSettings = result;
+	_authMethod = CONF_APPLICATION_AUTH_TYPE_ADOBE;
+
+	double modificationDate = getFileModificationDate(usersFile);
+	if (modificationDate == 0) {
+		FATAL("Unable to get last modification date for file %s", STR(usersFile));
+		return false;
+	}
+
+	if (modificationDate != _lastUsersFileUpdate) {
+		_users.Reset();
+		if (!ReadLuaFile(usersFile, "users", _users)) {
+			FATAL("Unable to read users file: `%s`", STR(usersFile));
+			return false;
+		}
+		_lastUsersFileUpdate = modificationDate;
+	}
+
+	return true;
 }
 
 BaseRTMPAppProtocolHandler::~BaseRTMPAppProtocolHandler() {
@@ -363,17 +399,13 @@ void BaseRTMPAppProtocolHandler::GenerateMetaFiles() {
 				&& lowercaseExtension != MEDIA_TYPE_M4V
 				&& lowercaseExtension != MEDIA_TYPE_MOV
 				&& lowercaseExtension != MEDIA_TYPE_F4V)
-			//&& extension != MEDIA_TYPE_NSV)
 			continue;
 		string flashName = "";
 		if (lowercaseExtension == MEDIA_TYPE_FLV) {
 			flashName = name;
 		} else if (lowercaseExtension == MEDIA_TYPE_MP3) {
 			flashName = lowercaseExtension + ":" + name;
-		}//		else if (extension == MEDIA_TYPE_NSV) {
-			//			flashName = extension + ":" + name;
-			//		} 
-		else {
+		} else {
 			if (lowercaseExtension == MEDIA_TYPE_MP4
 					|| lowercaseExtension == MEDIA_TYPE_M4A
 					|| lowercaseExtension == MEDIA_TYPE_M4V
@@ -1401,9 +1433,6 @@ bool BaseRTMPAppProtocolHandler::AuthenticateInboundAdobe(BaseRTMPProtocol *pFro
 	}
 	string flashVer = (string) connectParams[RM_INVOKE_PARAMS_CONNECT_FLASHVER];
 
-	//5. Do we have a list of encoder agents?
-	_adobeAuthSettings = _configuration[CONF_APPLICATION_AUTH];
-
 	//6. test the flash ver against the allowed encoder agents
 	if (!_adobeAuthSettings[CONF_APPLICATION_AUTH_ENCODER_AGENTS].HasKey(flashVer)) {
 		WARN("This agent is not on the list of allowed encoders: `%s`", STR(flashVer));
@@ -1550,40 +1579,38 @@ bool BaseRTMPAppProtocolHandler::AuthenticateInboundAdobe(BaseRTMPProtocol *pFro
 }
 
 string BaseRTMPAppProtocolHandler::GetAuthPassword(string user) {
-	string usersFile = _configuration[CONF_APPLICATION_AUTH][CONF_APPLICATION_AUTH_USERS_FILE];
+#ifndef HAS_LUA
+	ASSERT("Lua is not supported by the current build of the server. Adobe authentication needs lua support");
+	return "";
+#endif
+	string usersFile = _adobeAuthSettings[CONF_APPLICATION_AUTH_USERS_FILE];
 	string fileName;
 	string extension;
 	splitFileName(usersFile, fileName, extension);
-	Variant users;
 
-	if (lowerCase(extension) == "xml") {
-		if (!Variant::DeserializeFromXmlFile(usersFile, users)) {
-			FATAL("Unable to read users file: `%s`", STR(usersFile));
-			return "";
-		}
-	} else if (lowerCase(extension) == "lua") {
-#ifdef HAS_LUA
-		if (!ReadLuaFile(usersFile, "users", users)) {
-			FATAL("Unable to read users file: `%s`", STR(usersFile));
-			return "";
-		}
-#else
-		ASSERT("Lua is not supported by the current build of the server");
-		return "";
-#endif /* HAS_LUA */
-	} else {
-		FATAL("Invalid file format: %s", STR(usersFile));
+	double modificationDate = getFileModificationDate(usersFile);
+	if (modificationDate == 0) {
+		FATAL("Unable to get last modification date for file %s", STR(usersFile));
 		return "";
 	}
 
-	if ((VariantType) users != V_MAP) {
+	if (modificationDate != _lastUsersFileUpdate) {
+		_users.Reset();
+		if (!ReadLuaFile(usersFile, "users", _users)) {
+			FATAL("Unable to read users file: `%s`", STR(usersFile));
+			return "";
+		}
+		_lastUsersFileUpdate = modificationDate;
+	}
+
+	if ((VariantType) _users != V_MAP) {
 		FATAL("Invalid users file: `%s`", STR(usersFile));
 		return "";
 	}
 
-	if (users.HasKey(user)) {
-		if ((VariantType) users[user] == V_STRING) {
-			return users[user];
+	if (_users.HasKey(user)) {
+		if ((VariantType) _users[user] == V_STRING) {
+			return _users[user];
 		} else {
 			FATAL("Invalid users file: `%s`", STR(usersFile));
 			return "";

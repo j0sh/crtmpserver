@@ -29,13 +29,35 @@
 #include "netio/netio.h"
 #include "protocols/rtp/connectivity/outboundconnectivity.h"
 #include "application/clientapplicationmanager.h"
+#include "protocols/http/httpauthhelper.h"
 
 BaseRTSPAppProtocolHandler::BaseRTSPAppProtocolHandler(Variant &configuration)
 : BaseAppProtocolHandler(configuration) {
-
+	_lastUsersFileUpdate = 0;
 }
 
 BaseRTSPAppProtocolHandler::~BaseRTSPAppProtocolHandler() {
+}
+
+bool BaseRTSPAppProtocolHandler::ParseAuthenticationNode(Variant &node,
+		Variant &result) {
+	//1. Users file validation
+	string usersFile = node[CONF_APPLICATION_AUTH_USERS_FILE];
+	if ((usersFile[0] != '/') && (usersFile[0] != '.')) {
+		usersFile = (string) _configuration[CONF_APPLICATION_DIRECTORY] + usersFile;
+	}
+	if (!fileExists(usersFile)) {
+		FATAL("Invalid authentication configuration. Missing users file: %s", STR(usersFile));
+		return false;
+	}
+	_usersFile = usersFile;
+
+	if (!ParseUsersFile()) {
+		FATAL("Unable to parse users file %s", STR(usersFile));
+		return false;
+	}
+
+	return true;
 }
 
 void BaseRTSPAppProtocolHandler::RegisterProtocol(BaseProtocol *pProtocol) {
@@ -141,11 +163,15 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPRequest(RTSPProtocol *pFrom,
 	string requestSessionId = "";
 	string connectionSessionId = "";
 	vector<string> parts;
+
+	//1. we need a CSeq
 	if (!requestHeaders[RTSP_HEADERS].HasKey(RTSP_HEADERS_CSEQ, false)) {
 		FATAL("Request doesn't have %s:\n%s", RTSP_HEADERS_CSEQ,
 				STR(requestHeaders.ToString()));
 		return false;
 	}
+
+	//2. Do we have a requested session id? If yes, remove everything after it
 	if (requestHeaders[RTSP_HEADERS].HasKey(RTSP_HEADERS_SESSION, false)) {
 		requestSessionId = (string) requestHeaders[RTSP_HEADERS].GetValue(
 				RTSP_HEADERS_SESSION, false);
@@ -153,6 +179,8 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPRequest(RTSPProtocol *pFrom,
 		if (parts.size() >= 1)
 			requestSessionId = parts[0];
 	}
+
+	//3. Is the current connection already session-ed? If yes, extract the session
 	if (pFrom->GetCustomParameters().HasKey(RTSP_HEADERS_SESSION)) {
 		connectionSessionId = (string) pFrom->GetCustomParameters()[RTSP_HEADERS_SESSION];
 		parts.clear();
@@ -162,6 +190,8 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPRequest(RTSPProtocol *pFrom,
 			pFrom->GetCustomParameters()[RTSP_HEADERS_SESSION] = connectionSessionId;
 		}
 	}
+
+	//4. Validate the session id from the request against the session id from the connection
 	if (requestSessionId != connectionSessionId) {
 		FATAL("Invalid session ID. Wanted: `%s`; Got: `%s`",
 				STR(connectionSessionId),
@@ -169,9 +199,68 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPRequest(RTSPProtocol *pFrom,
 		return false;
 	}
 
+	//4. Prepare a fresh new response. Add the sequence number and the session ID
 	pFrom->ClearResponseMessage();
 	pFrom->PushResponseHeader(RTSP_HEADERS_CSEQ,
 			requestHeaders[RTSP_HEADERS].GetValue(RTSP_HEADERS_CSEQ, false));
+	if (pFrom->GetCustomParameters().HasKey(RTSP_HEADERS_SESSION)) {
+		pFrom->PushResponseHeader(RTSP_HEADERS_SESSION,
+				pFrom->GetCustomParameters()[RTSP_HEADERS_SESSION]);
+	}
+
+	//5. Do we have authentication? We will authenticate everything except "OPTIONS"
+	if ((_usersFile != "") && (method != RTSP_METHOD_OPTIONS)) {
+		//6. Re-parse authentication file if necessary
+		if (!ParseUsersFile()) {
+			FATAL("Unable to parse authentication file");
+			return false;
+		}
+
+		//7. Get the real name to use it further in authentication process
+		string realmName = GetAuthenticationRealm(
+				requestHeaders[RTSP_FIRST_LINE][RTSP_URL]);
+
+		//8. Do we have that realm?
+		if (!_realms.HasKey(realmName)) {
+			FATAL("Realm `%s` not found", STR(realmName));
+			return false;
+		}
+		Variant &realm = _realms[realmName];
+
+		//9. Is the user even trying to authenticate?
+		if (!requestHeaders[RTSP_HEADERS].HasKey(
+				RTSP_HEADERS_AUTHORIZATION, false)) {
+			return SendAuthenticationChallenge(pFrom, realm);
+		} else {
+			//14. The client sent us some response. Validate it now
+			//Did we ever sent him an authorization challange?
+			if (!pFrom->GetCustomParameters().HasKey("wwwAuthenticate")) {
+				FATAL("Client tried to authenticate and the server didn't required that");
+				return false;
+			}
+
+			//15. Get the server challenge
+			string wwwAuthenticate = pFrom->GetCustomParameters()["wwwAuthenticate"];
+
+			//16. Get the client response
+			string authorization = (string) requestHeaders[RTSP_HEADERS].GetValue(
+					RTSP_HEADERS_AUTHORIZATION, false);
+
+			//17. Try to authenticate
+			if (!HTTPAuthHelper::ValidateAuthRequest(wwwAuthenticate,
+					authorization,
+					method,
+					(string) requestHeaders[RTSP_FIRST_LINE][RTSP_URL],
+					realm)) {
+				WARN("Authorization failed: challenge: %s; response: %s",
+						STR(wwwAuthenticate), STR(authorization));
+				return SendAuthenticationChallenge(pFrom, realm);
+			}
+
+			//18. Success. User authenticated
+			INFO("User authenticated: %s", STR(authorization));
+		}
+	}
 
 	if (method == RTSP_METHOD_OPTIONS) {
 		if (!HandleRTSPRequestOptions(pFrom, requestHeaders, requestContent)) {
@@ -204,11 +293,6 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPRequest(RTSPProtocol *pFrom,
 	} else {
 		FATAL("Method not implemented yet:\n%s", STR(requestHeaders.ToString()));
 		return false;
-	}
-
-	if (pFrom->GetCustomParameters().HasKey(RTSP_HEADERS_SESSION)) {
-		pFrom->PushResponseHeader(RTSP_HEADERS_SESSION,
-				pFrom->GetCustomParameters()[RTSP_HEADERS_SESSION]);
 	}
 
 	return true;
@@ -256,16 +340,17 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPRequestDescribe(RTSPProtocol *pFrom,
 		FATAL("Invalid URI: %s", STR(requestHeaders[RTSP_FIRST_LINE][RTSP_URL]));
 		return false;
 	}
-	if (uri.document == "") {
+	if (uri.documentWithParameters == "") {
 		FATAL("Inavlid stream name");
 		return false;
 	}
+	string streamName = uri.documentWithParameters;
 
 	//2. Get the inbound stream capabilities
-	BaseInNetStream *pInStream = GetInboundStream(uri.document);
-	StreamCapabilities *pCapabilities = GetInboundStreamCapabilities(uri.document);
+	BaseInNetStream *pInStream = GetInboundStream(streamName);
+	StreamCapabilities *pCapabilities = GetInboundStreamCapabilities(streamName);
 	if (pCapabilities == NULL) {
-		FATAL("Inbound stream %s not found", STR(uri.document));
+		FATAL("Inbound stream %s not found", STR(streamName));
 		return false;
 	}
 
@@ -273,7 +358,7 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPRequestDescribe(RTSPProtocol *pFrom,
 	string outboundContent = "";
 	outboundContent += "v=0\r\n";
 	outboundContent += "o=- 0 0 IN IP4 0.0.0.0\r\n";
-	outboundContent += "s=" + uri.document + "\r\n";
+	outboundContent += "s=" + streamName + "\r\n";
 	outboundContent += "u=http://www.rtmpd.com/\r\n";
 	outboundContent += "e=crtmpserver@gmail.com\r\n";
 	outboundContent += "c=IN IP4 0.0.0.0\r\n";
@@ -730,6 +815,11 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPResponse(RTSPProtocol *pFrom,
 			return HandleRTSPResponse200(pFrom, requestHeaders, requestContent,
 					responseHeaders, responseContent);
 		}
+		case 401:
+		{
+			return HandleRTSPResponse401(pFrom, requestHeaders, requestContent,
+					responseHeaders, responseContent);
+		}
 		case 404:
 		{
 			return HandleRTSPResponse404(pFrom, requestHeaders, requestContent,
@@ -769,6 +859,35 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPResponse200(RTSPProtocol *pFrom,
 		FATAL("Response for method %s not implemented yet", STR(method));
 		return false;
 	}
+}
+
+bool BaseRTSPAppProtocolHandler::HandleRTSPResponse401(RTSPProtocol *pFrom, Variant &requestHeaders,
+		string &requestContent, Variant &responseHeaders,
+		string &responseContent) {
+	if ((!pFrom->GetCustomParameters().HasKeyChain(V_MAP, false, 1, "uri"))
+			|| (!pFrom->GetCustomParameters().HasKeyChain(V_STRING, false, 2, "uri", "userName"))
+			|| (!pFrom->GetCustomParameters().HasKeyChain(V_STRING, false, 2, "uri", "password"))
+			|| ((string) pFrom->GetCustomParameters()["uri"]["userName"] == "")) {
+		FATAL("No username/password provided");
+		return false;
+	}
+	if ((!responseHeaders.HasKeyChain(V_STRING, false, 2, RTSP_HEADERS, HTTP_HEADERS_WWWAUTHENTICATE))
+			|| ((string) responseHeaders[RTSP_HEADERS][HTTP_HEADERS_WWWAUTHENTICATE] == "")) {
+		FATAL("Invalid 401 response: %s", STR(responseHeaders.ToString()));
+		return false;
+	}
+	string username = pFrom->GetCustomParameters()["uri"]["userName"];
+	string password = pFrom->GetCustomParameters()["uri"]["password"];
+	if (!pFrom->SetAuthentication(
+			(string) responseHeaders[RTSP_HEADERS][HTTP_HEADERS_WWWAUTHENTICATE],
+			username,
+			password)) {
+		FATAL("Unable to authenticate: request headers:\n%s\nresponseHeaders:\n%s",
+				STR(requestHeaders.ToString()),
+				STR(responseHeaders.ToString()));
+		return false;
+	}
+	return true;
 }
 
 bool BaseRTSPAppProtocolHandler::HandleRTSPResponse404(RTSPProtocol *pFrom, Variant &requestHeaders,
@@ -823,7 +942,6 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPResponse200Options(
 
 	//5. Prepare the DESCRIBE method
 	string url = requestHeaders[RTSP_FIRST_LINE][RTSP_URL];
-	pFrom->ClearRequestMessage();
 	pFrom->PushRequestFirstLine(RTSP_METHOD_DESCRIBE, url, RTSP_VERSION_1_0);
 	pFrom->PushRequestHeader(RTSP_HEADERS_ACCEPT, RTSP_HEADERS_ACCEPT_APPLICATIONSDP);
 
@@ -903,7 +1021,6 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPResponse200Setup(
 	string uri = (string) pFrom->GetCustomParameters()["uri"]["fullUri"];
 
 	//3. prepare the play command
-	pFrom->ClearRequestMessage();
 	pFrom->PushRequestFirstLine(RTSP_METHOD_PLAY, uri, RTSP_VERSION_1_0);
 	pFrom->PushRequestHeader(RTSP_HEADERS_SESSION,
 			responseHeaders[RTSP_HEADERS].GetValue(RTSP_HEADERS_SESSION, false));
@@ -946,15 +1063,8 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPResponse404Describe(RTSPProtocol *pFr
 bool BaseRTSPAppProtocolHandler::Play(RTSPProtocol *pFrom) {
 	//1. Save the URL in the custom parameters
 	string uri = (string) pFrom->GetCustomParameters()["uri"]["fullUri"];
-	if ((pFrom->GetCustomParameters()["uri"]["userName"] == V_STRING)
-			&& (pFrom->GetCustomParameters()["uri"]["password"] == V_STRING)
-			&& (pFrom->GetCustomParameters()["uri"]["userName"] != "")) {
-		pFrom->SetBasicAuthentication(pFrom->GetCustomParameters()["uri"]["userName"],
-				pFrom->GetCustomParameters()["uri"]["password"]);
-	}
 
 	//2. prepare the options command
-	pFrom->ClearRequestMessage();
 	pFrom->PushRequestFirstLine(RTSP_METHOD_OPTIONS, uri, RTSP_VERSION_1_0);
 
 	//3. Send it
@@ -965,6 +1075,10 @@ bool BaseRTSPAppProtocolHandler::Play(RTSPProtocol *pFrom) {
 
 	//4. Done
 	return true;
+}
+
+string BaseRTSPAppProtocolHandler::GetAuthenticationRealm(string uri) {
+	return "";
 }
 
 OutboundConnectivity *BaseRTSPAppProtocolHandler::GetOutboundConnectivity(
@@ -1082,7 +1196,6 @@ bool BaseRTSPAppProtocolHandler::SendSetupTrackMessages(RTSPProtocol *pFrom, str
 	Variant track = MAP_VAL(pFrom->GetCustomParameters()["pendingTracks"].begin());
 	if (track != V_NULL) {
 		//6. Prepare the video SETUP request
-		pFrom->ClearRequestMessage();
 		pFrom->PushRequestFirstLine(RTSP_METHOD_SETUP,
 				SDP_VIDEO_CONTROL_URI(track), RTSP_VERSION_1_0);
 		pFrom->PushRequestHeader(RTSP_HEADERS_TRANSPORT,
@@ -1096,6 +1209,98 @@ bool BaseRTSPAppProtocolHandler::SendSetupTrackMessages(RTSPProtocol *pFrom, str
 	}
 
 	return true;
+}
+
+bool BaseRTSPAppProtocolHandler::ParseUsersFile() {
+	//1. get the modification date
+	double modificationDate = getFileModificationDate(_usersFile);
+	if (modificationDate == 0) {
+		FATAL("Unable to get last modification date for file %s", STR(_usersFile));
+		_realms.Reset();
+		return false;
+	}
+
+	//2. Do we need to re-parse everything?
+	if (modificationDate == _lastUsersFileUpdate)
+		return true;
+
+	//3. Reset realms
+	_realms.Reset();
+
+	Variant users;
+	//4. Read users
+	if (!ReadLuaFile(_usersFile, "users", users)) {
+		FATAL("Unable to read users file: `%s`", STR(_usersFile));
+		_realms.Reset();
+		return false;
+	}
+
+	FOR_MAP(users, string, Variant, i) {
+		if ((VariantType) MAP_VAL(i) != V_STRING) {
+			FATAL("Invalid user detected");
+			_realms.Reset();
+			return false;
+		}
+	}
+
+	//5. read the realms
+	Variant realms;
+	if (!ReadLuaFile(_usersFile, "realms", realms)) {
+		FATAL("Unable to read users file: `%s`", STR(_usersFile));
+		_realms.Reset();
+		return false;
+	}
+
+	if (realms != V_MAP) {
+		FATAL("Invalid users file. Realms section is bogus: `%s`", STR(_usersFile));
+		_realms.Reset();
+		return false;
+	}
+
+	FOR_MAP(realms, string, Variant, i) {
+		Variant &realm = MAP_VAL(i);
+		if ((!realm.HasKeyChain(V_STRING, true, 1, "name"))
+				|| ((string) realm["name"] == "")
+				|| (!realm.HasKeyChain(V_STRING, true, 1, "method"))
+				|| (((string) realm["method"] != "Basic") && ((string) realm["method"] != "Digest"))
+				|| (!realm.HasKeyChain(V_MAP, true, 1, "users"))
+				|| (realm["users"].MapSize() == 0)) {
+			FATAL("Invalid users file. Realms section is bogus: `%s`", STR(_usersFile));
+			_realms.Reset();
+			return false;
+		}
+		_realms[realm["name"]]["name"] = realm["name"];
+		_realms[realm["name"]]["method"] = realm["method"];
+
+		FOR_MAP(realm["users"], string, Variant, i) {
+			if (!users.HasKey(MAP_VAL(i))) {
+				FATAL("Invalid users file. Realms section is bogus: `%s`", STR(_usersFile));
+				_realms.Reset();
+				return false;
+			}
+			_realms[realm["name"]]["users"][MAP_VAL(i)] = users[MAP_VAL(i)];
+		}
+	}
+
+	_lastUsersFileUpdate = modificationDate;
+	return true;
+}
+
+bool BaseRTSPAppProtocolHandler::SendAuthenticationChallenge(RTSPProtocol *pFrom,
+		Variant &realm) {
+	//10. Ok, the user doesn't know that this needs authentication. We
+	//will respond back with a nice 401. Generate the line first
+	string wwwAuthenticate = HTTPAuthHelper::GetWWWAuthenticateHeader(
+			realm["method"],
+			realm["name"]);
+
+	//12. Save the nonce for later validation when new requests are coming in again
+	pFrom->GetCustomParameters()["wwwAuthenticate"] = wwwAuthenticate;
+
+	//13. send the response
+	pFrom->PushResponseFirstLine(RTSP_VERSION_1_0, 401, "Unauthorized");
+	pFrom->PushResponseHeader(HTTP_HEADERS_WWWAUTHENTICATE, wwwAuthenticate);
+	return pFrom->SendResponseMessage();
 }
 
 #endif /* HAS_PROTOCOL_RTP */

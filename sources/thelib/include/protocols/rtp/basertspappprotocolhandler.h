@@ -31,9 +31,15 @@ class OutboundConnectivity;
 
 class DLLEXP BaseRTSPAppProtocolHandler
 : public BaseAppProtocolHandler {
+protected:
+	Variant _realms;
+	string _usersFile;
+	double _lastUsersFileUpdate;
 public:
 	BaseRTSPAppProtocolHandler(Variant &configuration);
 	virtual ~BaseRTSPAppProtocolHandler();
+
+	virtual bool ParseAuthenticationNode(Variant &node, Variant &result);
 
 	virtual void RegisterProtocol(BaseProtocol *pProtocol);
 	virtual void UnRegisterProtocol(BaseProtocol *pProtocol);
@@ -74,6 +80,9 @@ protected:
 	virtual bool HandleRTSPResponse200(RTSPProtocol *pFrom, Variant &requestHeaders,
 			string &requestContent, Variant &responseHeaders,
 			string &responseContent);
+	virtual bool HandleRTSPResponse401(RTSPProtocol *pFrom, Variant &requestHeaders,
+			string &requestContent, Variant &responseHeaders,
+			string &responseContent);
 	virtual bool HandleRTSPResponse404(RTSPProtocol *pFrom, Variant &requestHeaders,
 			string &requestContent, Variant &responseHeaders,
 			string &responseContent);
@@ -98,6 +107,8 @@ protected:
 
 	//operations
 	virtual bool Play(RTSPProtocol *pFrom);
+protected:
+	virtual string GetAuthenticationRealm(string uri);
 private:
 	OutboundConnectivity *GetOutboundConnectivity(RTSPProtocol *pFrom);
 	BaseInNetStream *GetInboundStream(string streamName);
@@ -107,6 +118,8 @@ private:
 	string GetVideoTrack(RTSPProtocol *pFrom,
 			StreamCapabilities *pCapabilities);
 	bool SendSetupTrackMessages(RTSPProtocol *pFrom, string sessionId);
+	bool ParseUsersFile();
+	bool SendAuthenticationChallenge(RTSPProtocol *pFrom, Variant &realm);
 };
 
 

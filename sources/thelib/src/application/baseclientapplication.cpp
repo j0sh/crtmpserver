@@ -310,6 +310,43 @@ bool BaseClientApplication::PushLocalStream(Variant streamConfig) {
 	return pProtocolHandler->PushLocalStream(streamConfig);
 }
 
+bool BaseClientApplication::ParseAuthentication() {
+	//1. Get the authentication configuration node
+	if (!_configuration.HasKeyChain(V_MAP, false, 1, CONF_APPLICATION_AUTH)) {
+		if (_configuration.HasKey(CONF_APPLICATION_AUTH, false)) {
+			WARN("Authentication node is present for application %s but is empty or invalid", STR(_name));
+		}
+		return true;
+	}
+	Variant &auth = _configuration[CONF_APPLICATION_AUTH];
+
+	//2. Cycle over all access schemas
+
+	FOR_MAP(auth, string, Variant, i) {
+		//3. get the schema
+		string scheme = MAP_KEY(i);
+
+		//4. Get the handler
+		BaseAppProtocolHandler *pHandler = GetProtocolHandler(scheme);
+		if (pHandler == NULL) {
+			FATAL("Authentication parsing for app name %s failed. No handler registered for schema %s",
+					STR(_name),
+					STR(scheme));
+			return false;
+		}
+
+		//5. Call the handler
+		if (!pHandler->ParseAuthenticationNode(MAP_VAL(i), _authSettings[scheme])) {
+			FATAL("Authentication parsing for app name %s failed. scheme was %s",
+					STR(_name),
+					STR(scheme));
+			return false;
+		}
+	}
+
+	return true;
+}
+
 void BaseClientApplication::Shutdown(BaseClientApplication *pApplication) {
 	//1. Get the list of all active protocols
 	map<uint32_t, BaseProtocol *> protocols = ProtocolManager::GetActiveProtocols();

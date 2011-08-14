@@ -33,6 +33,7 @@
 #include "protocols/rtp/connectivity/outboundconnectivity.h"
 #include "protocols/rtp/connectivity/inboundconnectivity.h"
 #include "protocols/protocolmanager.h"
+#include "protocols/http/httpauthhelper.h"
 
 #define RTSP_STATE_HEADERS 0
 #define RTSP_STATE_PAYLOAD 1
@@ -73,7 +74,6 @@ RTSPProtocol::RTSPProtocol()
 	_requestSequence = 0;
 	_pOutboundConnectivity = NULL;
 	_pInboundConnectivity = NULL;
-	_basicAuthentication = "";
 	_keepAliveTimerId = 0;
 	_pOutStream = NULL;
 }
@@ -143,8 +143,19 @@ void RTSPProtocol::GetStats(Variant &info) {
 	}
 }
 
-void RTSPProtocol::SetBasicAuthentication(string userName, string password) {
-	_basicAuthentication = format("Basic %s", STR(b64(format("%s:%s", STR(userName), STR(password)))));
+bool RTSPProtocol::SetAuthentication(string wwwAuthenticateHeader, string userName,
+		string password) {
+	//1. Setup the authentication
+	if (_authentication != V_NULL) {
+		FATAL("Authentication was setup but it failed");
+		return false;
+	}
+	_authentication["userName"] = userName;
+	_authentication["password"] = password;
+	_authentication["lastWwwAuthenticateHeader"] = wwwAuthenticateHeader;
+
+	//2. re-do the request
+	return SendRequestMessage();
 }
 
 bool RTSPProtocol::EnableKeepAlive(uint32_t period, string keepAliveURI) {
@@ -160,7 +171,7 @@ bool RTSPProtocol::EnableKeepAlive(uint32_t period, string keepAliveURI) {
 bool RTSPProtocol::SendKeepAliveOptions() {
 	PushRequestFirstLine(RTSP_METHOD_OPTIONS, _keepAliveURI, RTSP_VERSION_1_0);
 	if (GetCustomParameters().HasKey(RTSP_HEADERS_SESSION)) {
-		PushResponseHeader(RTSP_HEADERS_SESSION,
+		PushRequestHeader(RTSP_HEADERS_SESSION,
 				GetCustomParameters()[RTSP_HEADERS_SESSION]);
 	}
 	return SendRequestMessage();
@@ -220,13 +231,10 @@ bool RTSPProtocol::SignalInputData(IOBuffer &buffer) {
 	return true;
 }
 
-void RTSPProtocol::ClearRequestMessage() {
-	_requestHeaders.Reset();
-	_requestContent = "";
-}
-
 void RTSPProtocol::PushRequestFirstLine(string method, string url,
 		string version) {
+	_requestHeaders.Reset();
+	_requestContent = "";
 	_requestHeaders[RTSP_FIRST_LINE][RTSP_METHOD] = method;
 	_requestHeaders[RTSP_FIRST_LINE][RTSP_URL] = url;
 	_requestHeaders[RTSP_FIRST_LINE][RTSP_VERSION] = version;
@@ -254,8 +262,20 @@ bool RTSPProtocol::SendRequestMessage() {
 	_requestHeaders[RTSP_HEADERS][RTSP_HEADERS_CSEQ] = format("%u", ++_requestSequence);
 
 	//3. Put authentication if necessary
-	if (_basicAuthentication != "") {
-		_requestHeaders[RTSP_HEADERS][RTSP_HEADERS_AUTHORIZATION] = _basicAuthentication;
+	if (_authentication == V_MAP) {
+		if (!HTTPAuthHelper::GetAuthorizationHeader(
+				(string) _authentication["lastWwwAuthenticateHeader"],
+				(string) _authentication["userName"],
+				(string) _authentication["password"],
+				(string) _requestHeaders[RTSP_FIRST_LINE][RTSP_URL],
+				(string) _requestHeaders[RTSP_FIRST_LINE][RTSP_METHOD],
+				_authentication["temp"])) {
+			FATAL("Unable to create authentication header");
+			return false;
+		}
+
+		_requestHeaders[RTSP_HEADERS][HTTP_HEADERS_AUTORIZATION] =
+				_authentication["temp"]["authorizationHeader"]["raw"];
 	}
 
 	//3. send the mesage
@@ -323,7 +343,6 @@ OutboundConnectivity * RTSPProtocol::GetOutboundConnectivity(
 		}
 
 		if (pOutStream == NULL) {
-			FINEST("Create stream");
 			pOutStream = new OutNetRTPUDPH264Stream(this,
 					GetApplication()->GetStreamsManager(), pInNetStream->GetName());
 			if (!pInNetStream->Link(pOutStream)) {
@@ -424,6 +443,9 @@ bool RTSPProtocol::SendMessage(Variant &headers, string &content) {
 
 	//4. Write the content
 	_outputBuffer.ReadFromString(content);
+
+	//	string a = string((char *) GETIBPOINTER(_outputBuffer), GETAVAILABLEBYTESCOUNT(_outputBuffer));
+	//	FINEST("\n`%s`", STR(a));
 
 	//5. Enqueue for outbound
 	return EnqueueForOutbound();

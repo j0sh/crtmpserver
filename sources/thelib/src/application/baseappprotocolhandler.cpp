@@ -29,6 +29,10 @@ BaseAppProtocolHandler::BaseAppProtocolHandler(Variant &configuration) {
 BaseAppProtocolHandler::~BaseAppProtocolHandler() {
 }
 
+bool BaseAppProtocolHandler::ParseAuthenticationNode(Variant &node, Variant &result) {
+	return false;
+}
+
 void BaseAppProtocolHandler::SetApplication(BaseClientApplication *pApplication) {
 	_pApplication = pApplication;
 }

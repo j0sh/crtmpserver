@@ -69,7 +69,8 @@ protected:
 
 	OutboundConnectivity *_pOutboundConnectivity;
 	InboundConnectivity *_pInboundConnectivity;
-	string _basicAuthentication;
+
+	Variant _authentication;
 
 	uint32_t _keepAliveTimerId;
 	BaseOutStream *_pOutStream;
@@ -88,14 +89,15 @@ public:
 	virtual bool SignalInputData(IOBuffer &buffer);
 	virtual void GetStats(Variant &info);
 
-	void SetBasicAuthentication(string userName, string password);
+	bool SetAuthentication(string wwwAuthenticateHeader, string userName,
+			string password);
 	bool EnableKeepAlive(uint32_t period, string keepAliveURI);
 	bool SendKeepAliveOptions();
 	bool HasInboundConnectivity();
 
 	SDP &GetInboundSDP();
 
-	void ClearRequestMessage();
+	//void ClearRequestMessage();
 	void PushRequestFirstLine(string method, string url, string version);
 	void PushRequestHeader(string name, string value);
 	void PushRequestContent(string outboundContent, bool append);

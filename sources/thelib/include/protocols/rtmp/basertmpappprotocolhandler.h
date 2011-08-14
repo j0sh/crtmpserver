@@ -43,15 +43,19 @@ protected:
 	map<uint32_t, BaseRTMPProtocol *> _connections;
 	map<uint32_t, uint32_t> _nextInvokeId;
 	map<uint32_t, map<uint32_t, Variant > > _resultMessageTracking;
-	string _authMethod;
-	string _adobeAuthSalt;
 	bool _keyframeSeek;
 	int32_t _clientSideBuffer;
 	uint32_t _seekGranularity;
 	Variant _adobeAuthSettings;
+	string _authMethod;
+	string _adobeAuthSalt;
+	double _lastUsersFileUpdate;
+	Variant _users;
 public:
 	BaseRTMPAppProtocolHandler(Variant &configuration);
 	virtual ~BaseRTMPAppProtocolHandler();
+
+	virtual bool ParseAuthenticationNode(Variant &node, Variant &result);
 
 	/*
 	 * This will return true if the application has the validateHandshake flag
