@@ -12,7 +12,7 @@ realms=
 {
 	{
 		name="My realm...",
-		method="Basic",
+		method="Digest",
 		users={
 			"user1",
 			"user3"

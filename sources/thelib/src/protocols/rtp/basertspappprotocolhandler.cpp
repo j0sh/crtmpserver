@@ -1078,6 +1078,10 @@ bool BaseRTSPAppProtocolHandler::Play(RTSPProtocol *pFrom) {
 }
 
 string BaseRTSPAppProtocolHandler::GetAuthenticationRealm(string uri) {
+	//TODO: based on the uri, here we must select one realm
+	//for testing, all of them can go into the first realm available
+	if (_realms.MapSize() != 0)
+		return MAP_KEY(_realms.begin());
 	return "";
 }
 
