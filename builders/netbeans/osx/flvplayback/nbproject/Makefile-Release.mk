@@ -42,6 +42,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/482292139/rtmpappprotocolhandler.o \
 	${OBJECTDIR}/_ext/482292139/rtpappprotocolhandler.o \
 	${OBJECTDIR}/_ext/482292139/rawhttpstreamappprotocolhandler.o \
+	${OBJECTDIR}/_ext/482292139/httpappprotocolhandler.o \
 	${OBJECTDIR}/_ext/482292139/tsappprotocolhandler.o \
 	${OBJECTDIR}/_ext/482292139/rtspappprotocolhandler.o
 
@@ -113,6 +114,11 @@ ${OBJECTDIR}/_ext/482292139/rawhttpstreamappprotocolhandler.o: ../../../../sourc
 	${MKDIR} -p ${OBJECTDIR}/_ext/482292139
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_TS -DHAS_LUA -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/flvplayback/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/482292139/rawhttpstreamappprotocolhandler.o ../../../../sources/applications/flvplayback/src/rawhttpstreamappprotocolhandler.cpp
+
+${OBJECTDIR}/_ext/482292139/httpappprotocolhandler.o: ../../../../sources/applications/flvplayback/src/httpappprotocolhandler.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/482292139
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_TS -DHAS_LUA -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/flvplayback/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/482292139/httpappprotocolhandler.o ../../../../sources/applications/flvplayback/src/httpappprotocolhandler.cpp
 
 ${OBJECTDIR}/_ext/482292139/tsappprotocolhandler.o: ../../../../sources/applications/flvplayback/src/tsappprotocolhandler.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/482292139

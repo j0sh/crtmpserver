@@ -134,6 +134,7 @@
         <logicalFolder name="http" displayName="http" projectFiles="true">
           <itemPath>../../../../sources/thelib/include/protocols/http/basehttpprotocol.h</itemPath>
           <itemPath>../../../../sources/thelib/include/protocols/http/basehttpprotocolhandler.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/protocols/http/httpauthhelper.h</itemPath>
           <itemPath>../../../../sources/thelib/include/protocols/http/inboundhttpprotocol.h</itemPath>
           <itemPath>../../../../sources/thelib/include/protocols/http/outboundhttpprotocol.h</itemPath>
         </logicalFolder>
@@ -404,6 +405,7 @@
         <logicalFolder name="http" displayName="http" projectFiles="true">
           <itemPath>../../../../sources/thelib/src/protocols/http/basehttpappprotocolhandler.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/protocols/http/basehttpprotocol.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/protocols/http/httpauthhelper.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/protocols/http/inboundhttpprotocol.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/protocols/http/outboundhttpprotocol.cpp</itemPath>
         </logicalFolder>
