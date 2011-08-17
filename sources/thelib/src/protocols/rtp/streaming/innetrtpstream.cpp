@@ -76,7 +76,8 @@ StreamCapabilities * InNetRTPStream::GetCapabilities() {
 
 bool InNetRTPStream::IsCompatibleWithType(uint64_t type) {
 	return (type == ST_OUT_NET_RTMP_4_TS)
-			|| (type == ST_OUT_FILE_HLS);
+			|| (type == ST_OUT_FILE_HLS)
+			|| (type == ST_OUT_NET_RTP);
 }
 
 void InNetRTPStream::ReadyForSend() {

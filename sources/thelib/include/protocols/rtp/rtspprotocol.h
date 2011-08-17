@@ -76,6 +76,8 @@ protected:
 	BaseOutStream *_pOutStream;
 
 	string _keepAliveURI;
+
+	string _sessionId;
 public:
 	RTSPProtocol();
 	virtual ~RTSPProtocol();
@@ -89,11 +91,15 @@ public:
 	virtual bool SignalInputData(IOBuffer &buffer);
 	virtual void GetStats(Variant &info);
 
+	string GetSessionId();
+	string GenerateSessionId();
+	bool SetSessionId(string sessionId);
+
 	bool SetAuthentication(string wwwAuthenticateHeader, string userName,
 			string password);
 	bool EnableKeepAlive(uint32_t period, string keepAliveURI);
 	bool SendKeepAliveOptions();
-	bool HasInboundConnectivity();
+	bool HasConnectivity();
 
 	SDP &GetInboundSDP();
 
@@ -115,11 +121,13 @@ public:
 	OutboundConnectivity * GetOutboundConnectivity(BaseInNetStream *pInNetStream);
 	void CloseOutboundConnectivity();
 
-	InboundConnectivity *GetInboundConnectivity(Variant &videoTrack,
-			Variant &audioTrack, string sdpStreamName, uint32_t bandwidthHint);
-	void CloseInboundConnectivity();
+	InboundConnectivity *GetInboundConnectivity(string sdpStreamName,
+			uint32_t bandwidthHint);
+	InboundConnectivity *GetInboundConnectivity();
+	//	InboundConnectivity *GetInboundConnectivity1(Variant &videoTrack,
+	//			Variant &audioTrack, string sdpStreamName, uint32_t bandwidthHint);
 
-	string GetTransportHeaderLine(bool isAudio);
+	void CloseInboundConnectivity();
 
 	bool SendRaw(uint8_t *pBuffer, uint32_t length);
 

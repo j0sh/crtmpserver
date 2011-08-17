@@ -90,7 +90,8 @@ bool BaseOutNetRTPUDPStream::SignalStop() {
 bool BaseOutNetRTPUDPStream::IsCompatibleWithType(uint64_t type) {
 	return type == ST_IN_NET_RTMP
 			|| type == ST_IN_NET_TS
-			|| type == ST_IN_NET_AAC;
+			|| type == ST_IN_NET_AAC
+			|| type == ST_IN_NET_RTP;
 }
 
 void BaseOutNetRTPUDPStream::SignalDetachedFromInStream() {

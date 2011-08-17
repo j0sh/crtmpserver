@@ -96,8 +96,8 @@ public:
 	virtual ~OutboundConnectivity();
 	bool Initialize();
 	void SetOutStream(BaseOutNetRTPUDPStream *pOutStream);
-	string GetVideoServerPorts();
-	string GetAudioServerPorts();
+	string GetVideoPorts();
+	string GetAudioPorts();
 	uint32_t GetAudioSSRC();
 	uint32_t GetVideoSSRC();
 	uint16_t GetLastVideoSequence();

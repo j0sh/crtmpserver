@@ -45,6 +45,7 @@ public:
 	virtual void UnRegisterProtocol(BaseProtocol *pProtocol);
 
 	virtual bool PullExternalStream(URI uri, Variant streamConfig);
+	virtual bool PushLocalStream(Variant streamConfig);
 	static bool SignalProtocolCreated(BaseProtocol *pProtocol,
 			Variant &parameters);
 
@@ -98,6 +99,12 @@ protected:
 	virtual bool HandleRTSPResponse200Play(RTSPProtocol *pFrom, Variant &requestHeaders,
 			string &requestContent, Variant &responseHeaders,
 			string &responseContent);
+	virtual bool HandleRTSPResponse200Announce(RTSPProtocol *pFrom, Variant &requestHeaders,
+			string &requestContent, Variant &responseHeaders,
+			string &responseContent);
+	virtual bool HandleRTSPResponse200Record(RTSPProtocol *pFrom, Variant &requestHeaders,
+			string &requestContent, Variant &responseHeaders,
+			string &responseContent);
 	virtual bool HandleRTSPResponse404Play(RTSPProtocol *pFrom, Variant &requestHeaders,
 			string &requestContent, Variant &responseHeaders,
 			string &responseContent);
@@ -106,7 +113,7 @@ protected:
 			string &responseContent);
 
 	//operations
-	virtual bool Play(RTSPProtocol *pFrom);
+	virtual bool TriggerPlayOrAnnounce(RTSPProtocol *pFrom);
 protected:
 	virtual string GetAuthenticationRealm(string uri);
 private:
@@ -117,9 +124,12 @@ private:
 			StreamCapabilities *pCapabilities);
 	string GetVideoTrack(RTSPProtocol *pFrom,
 			StreamCapabilities *pCapabilities);
-	bool SendSetupTrackMessages(RTSPProtocol *pFrom, string sessionId);
+	bool SendSetupTrackMessages(RTSPProtocol *pFrom);
 	bool ParseUsersFile();
 	bool SendAuthenticationChallenge(RTSPProtocol *pFrom, Variant &realm);
+	string ComputeSDP(RTSPProtocol *pFrom, string localStreamName,
+			string targetStreamName, string host);
+	bool ParseTransportLine(string raw, Variant &result);
 };
 
 

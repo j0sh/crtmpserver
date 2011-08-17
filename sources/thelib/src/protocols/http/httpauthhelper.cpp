@@ -146,7 +146,7 @@ bool HTTPAuthHelper::ValidateAuthRequest(string rawChallange, string rawResponse
 			FATAL("Invalid URI");
 			return false;
 		}
-		WARN("URI checking NYI");
+//		WARN("URI checking NYI");
 //		string part = requestUri.substr(requestUri.length() - uri.length());
 //		if (part != uri) {
 //			FATAL("Invalid URI. Wanted: `%s`; got: `%s`",

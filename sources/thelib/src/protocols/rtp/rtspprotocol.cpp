@@ -143,6 +143,29 @@ void RTSPProtocol::GetStats(Variant &info) {
 	}
 }
 
+string RTSPProtocol::GetSessionId() {
+	return _sessionId;
+}
+
+string RTSPProtocol::GenerateSessionId() {
+	if (_sessionId != "")
+		return _sessionId;
+	_sessionId = generateRandomString(8);
+	return _sessionId;
+}
+
+bool RTSPProtocol::SetSessionId(string sessionId) {
+	vector<string> parts;
+	split(sessionId, ";", parts);
+	if (parts.size() >= 1)
+		sessionId = parts[0];
+
+	if (_sessionId != "")
+		return _sessionId == sessionId;
+	_sessionId = sessionId;
+	return true;
+}
+
 bool RTSPProtocol::SetAuthentication(string wwwAuthenticateHeader, string userName,
 		string password) {
 	//1. Setup the authentication
@@ -177,8 +200,8 @@ bool RTSPProtocol::SendKeepAliveOptions() {
 	return SendRequestMessage();
 }
 
-bool RTSPProtocol::HasInboundConnectivity() {
-	return (_pInboundConnectivity != NULL);
+bool RTSPProtocol::HasConnectivity() {
+	return ((_pInboundConnectivity != NULL) || (_pOutboundConnectivity != NULL));
 }
 
 SDP &RTSPProtocol::GetInboundSDP() {
@@ -345,22 +368,19 @@ OutboundConnectivity * RTSPProtocol::GetOutboundConnectivity(
 		if (pOutStream == NULL) {
 			pOutStream = new OutNetRTPUDPH264Stream(this,
 					GetApplication()->GetStreamsManager(), pInNetStream->GetName());
-			if (!pInNetStream->Link(pOutStream)) {
-				FATAL("Unable to link streams");
-				delete pOutStream;
-				return false;
-			}
 
 			_pOutboundConnectivity = new OutboundConnectivity();
 			if (!_pOutboundConnectivity->Initialize()) {
 				FATAL("Unable to initialize outbound connectivity");
-				delete pOutStream;
-				delete _pOutboundConnectivity;
-				_pOutboundConnectivity = NULL;
 				return false;
 			}
 			pOutStream->SetConnectivity(_pOutboundConnectivity);
 			_pOutboundConnectivity->SetOutStream(pOutStream);
+
+			if (!pInNetStream->Link(pOutStream)) {
+				FATAL("Unable to link streams");
+				return false;
+			}
 		} else {
 			_pOutboundConnectivity = pOutStream->GetConnectivity();
 		}
@@ -379,8 +399,8 @@ void RTSPProtocol::CloseOutboundConnectivity() {
 	}
 }
 
-InboundConnectivity *RTSPProtocol::GetInboundConnectivity(Variant &videoTrack,
-		Variant &audioTrack, string sdpStreamName, uint32_t bandwidthHint) {
+InboundConnectivity *RTSPProtocol::GetInboundConnectivity(string sdpStreamName,
+		uint32_t bandwidthHint) {
 	CloseInboundConnectivity();
 	string streamName;
 	if (GetCustomParameters().HasKey("localStreamName")) {
@@ -388,13 +408,12 @@ InboundConnectivity *RTSPProtocol::GetInboundConnectivity(Variant &videoTrack,
 	} else {
 		streamName = sdpStreamName;
 	}
-	_pInboundConnectivity = new InboundConnectivity(this);
-	if (!_pInboundConnectivity->Initialize(videoTrack, audioTrack, streamName,
-			(bool)GetCustomParameters()["forceTcp"], bandwidthHint)) {
-		FATAL("Unable to initialize inbound connectivity");
-		CloseInboundConnectivity();
-		return false;
-	}
+	_pInboundConnectivity = new InboundConnectivity(this, streamName,
+			bandwidthHint);
+	return _pInboundConnectivity;
+}
+
+InboundConnectivity *RTSPProtocol::GetInboundConnectivity() {
 	return _pInboundConnectivity;
 }
 
@@ -403,12 +422,6 @@ void RTSPProtocol::CloseInboundConnectivity() {
 		delete _pInboundConnectivity;
 		_pInboundConnectivity = NULL;
 	}
-}
-
-string RTSPProtocol::GetTransportHeaderLine(bool isAudio) {
-	if (_pInboundConnectivity == NULL)
-		return "";
-	return _pInboundConnectivity->GetTransportHeaderLine(isAudio);
 }
 
 bool RTSPProtocol::SendRaw(uint8_t *pBuffer, uint32_t length) {
@@ -432,6 +445,11 @@ bool RTSPProtocol::SendMessage(Variant &headers, string &content) {
 	//2. Add the content length if required
 	if (content.size() > 0) {
 		headers[RTSP_HEADERS][RTSP_HEADERS_CONTENT_LENGTH] = format("%"PRIz"u", content.size());
+	}
+
+	//3. Add the session id if necessary
+	if (_sessionId != "") {
+		headers[RTSP_HEADERS][RTSP_HEADERS_SESSION] = _sessionId;
 	}
 
 	//3. Write the headers

@@ -88,12 +88,12 @@ void OutboundConnectivity::SetOutStream(BaseOutNetRTPUDPStream *pOutStream) {
 	_pOutStream = pOutStream;
 }
 
-string OutboundConnectivity::GetVideoServerPorts() {
-	return format("%hu-%hu", _videoDataPort, _videoRTCPPort);
+string OutboundConnectivity::GetVideoPorts() {
+	return format("%"PRIu16"-%"PRIu16, _videoDataPort, _videoRTCPPort);
 }
 
-string OutboundConnectivity::GetAudioServerPorts() {
-	return format("%hu-%hu", _audioDataPort, _audioRTCPPort);
+string OutboundConnectivity::GetAudioPorts() {
+	return format("%"PRIu16"-%"PRIu16, _audioDataPort, _audioRTCPPort);
 }
 
 uint32_t OutboundConnectivity::GetAudioSSRC() {
