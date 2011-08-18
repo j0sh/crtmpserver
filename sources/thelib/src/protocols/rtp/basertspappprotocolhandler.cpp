@@ -698,12 +698,12 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPRequestAnnounce(RTSPProtocol *pFrom,
 		Variant &requestHeaders, string &requestContent) {
 	//1. Make sure we ONLY handle application/sdp
 	if (!requestHeaders[RTSP_HEADERS].HasKey(RTSP_HEADERS_CONTENT_TYPE, false)) {
-		FATAL("Invalid DESCRIBE response:\n%s", STR(requestHeaders.ToString()));
+		FATAL("Invalid ANNOUNCE request:\n%s", STR(requestHeaders.ToString()));
 		return false;
 	}
 	if ((string) requestHeaders[RTSP_HEADERS].GetValue(RTSP_HEADERS_CONTENT_TYPE, false)
 			!= RTSP_HEADERS_ACCEPT_APPLICATIONSDP) {
-		FATAL("Invalid DESCRIBE response:\n%s", STR(requestHeaders.ToString()));
+		FATAL("Invalid ANNOUNCE request:\n%s", STR(requestHeaders.ToString()));
 		return false;
 	}
 
@@ -997,6 +997,10 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPResponse200Describe(
 			requestHeaders[RTSP_FIRST_LINE][RTSP_URL]);
 	Variant audioTrack = sdp.GetAudioTrack(0,
 			requestHeaders[RTSP_FIRST_LINE][RTSP_URL]);
+	if ((videoTrack == V_NULL) && (audioTrack == V_NULL)) {
+		FATAL("No compatible tracks found");
+		return false;
+	}
 
 	bool forceTcp = false;
 	if (pFrom->GetCustomParameters().HasKeyChain(V_BOOL, true, 1, "forceTcp"))

@@ -211,23 +211,26 @@ bool InboundConnectivity::Initialize() {
 			bandwidth);
 
 	//6. make the stream known to inbound RTP protocols
-	_pRTPVideo->SetStream(_pInStream, false);
-	_pRTPAudio->SetStream(_pInStream, true);
+	//and plug in the connectivity
+	if (_pRTPVideo != NULL) {
+		_pRTPVideo->SetStream(_pInStream, false);
+		_pRTPVideo->SetInbboundConnectivity(this);
+		_pRTCPVideo->SetInbboundConnectivity(this, false);
+	}
+	if (_pRTPAudio != NULL) {
+		_pRTPAudio->SetStream(_pInStream, true);
+		_pRTPAudio->SetInbboundConnectivity(this);
+		_pRTCPAudio->SetInbboundConnectivity(this, true);
+	}
 
-	//7. Make the this Connectivity known to all protocols
-	_pRTPVideo->SetInbboundConnectivity(this);
-	_pRTCPVideo->SetInbboundConnectivity(this, false);
-	_pRTPAudio->SetInbboundConnectivity(this);
-	_pRTCPAudio->SetInbboundConnectivity(this, true);
-
-	//8. Pickup all outbound waiting streams
+	//7. Pickup all outbound waiting streams
 	map<uint32_t, BaseOutStream *> subscribedOutStreams =
 			pApplication->GetStreamsManager()->GetWaitingSubscribers(
 			_streamName, _pInStream->GetType());
 	//FINEST("subscribedOutStreams count: %"PRIz"u", subscribedOutStreams.size());
 
 
-	//9. Bind the waiting subscribers
+	//8. Bind the waiting subscribers
 
 	FOR_MAP(subscribedOutStreams, uint32_t, BaseOutStream *, i) {
 		BaseOutStream *pBaseOutStream = MAP_VAL(i);
