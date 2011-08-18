@@ -32,9 +32,9 @@ private:
 
 	bool _hasAudio;
 	uint16_t _audioSequence;
-	uint32_t _audioPacketsCount;
-	uint32_t _audioDroppedPacketsCount;
-	uint32_t _audioBytesCount;
+	uint64_t _audioPacketsCount;
+	uint64_t _audioDroppedPacketsCount;
+	uint64_t _audioBytesCount;
 	double _audioNTP;
 	double _audioRTP;
 	double _lastAudioTs;
@@ -42,9 +42,9 @@ private:
 	bool _hasVideo;
 	IOBuffer _currentNalu;
 	uint16_t _videoSequence;
-	uint32_t _videoPacketsCount;
-	uint32_t _videoDroppedPacketsCount;
-	uint32_t _videoBytesCount;
+	uint64_t _videoPacketsCount;
+	uint64_t _videoDroppedPacketsCount;
+	uint64_t _videoBytesCount;
 	double _videoNTP;
 	double _videoRTP;
 	double _lastVideoTs;

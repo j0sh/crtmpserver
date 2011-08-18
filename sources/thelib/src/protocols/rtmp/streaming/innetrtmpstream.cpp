@@ -73,13 +73,13 @@ bool InNetRTMPStream::IsCompatibleWithType(uint64_t type) {
 void InNetRTMPStream::GetStats(Variant &info) {
 	BaseInNetStream::GetStats(info);
 	info["audio"]["packetsCount"] = _audioPacketsCount;
-	info["audio"]["droppedPacketsCount"] = (uint32_t) 0;
+	info["audio"]["droppedPacketsCount"] = (uint64_t) 0;
 	info["audio"]["bytesCount"] = _audioBytesCount;
-	info["audio"]["droppedBytesCount"] = (uint32_t) 0;
+	info["audio"]["droppedBytesCount"] = (uint64_t) 0;
 	info["video"]["packetsCount"] = _videoPacketsCount;
-	info["video"]["droppedPacketsCount"] = (uint32_t) 0;
+	info["video"]["droppedPacketsCount"] = (uint64_t) 0;
 	info["video"]["bytesCount"] = _videoBytesCount;
-	info["video"]["droppedBytesCount"] = (uint32_t) 0;
+	info["video"]["droppedBytesCount"] = (uint64_t) 0;
 }
 
 uint32_t InNetRTMPStream::GetRTMPStreamId() {

@@ -53,7 +53,14 @@ OutNetRTPUDPH264Stream::OutNetRTPUDPH264Stream(BaseProtocol *pProtocol,
 	EHTONLP(((uint8_t *) _audioData.msg_iov[0].iov_base) + 8, _audioSsrc);
 	_audioData.msg_iov[1].iov_len = 0;
 	_audioData.msg_iov[1].iov_base = new uint8_t[16];
+
+
 	_audioPacketsCount = 0;
+	_audioDroppedPacketsCount = 0;
+	_audioBytesCount = 0;
+	_videoPacketsCount = 0;
+	_videoDroppedPacketsCount = 0;
+	_videoBytesCount = 0;
 }
 
 OutNetRTPUDPH264Stream::~OutNetRTPUDPH264Stream() {
@@ -71,9 +78,21 @@ OutNetRTPUDPH264Stream::~OutNetRTPUDPH264Stream() {
 	memset(&_audioData, 0, sizeof (_audioData));
 }
 
+void OutNetRTPUDPH264Stream::GetStats(Variant &info) {
+	BaseOutNetStream::GetStats(info);
+	info["audio"]["bytesCount"] = _audioBytesCount;
+	info["audio"]["packetsCount"] = _audioPacketsCount;
+	info["audio"]["droppedPacketsCount"] = _audioDroppedPacketsCount;
+	info["video"]["bytesCount"] = _videoBytesCount;
+	info["video"]["packetsCount"] = _videoPacketsCount;
+	info["video"]["droppedPacketsCount"] = _videoDroppedPacketsCount;
+}
+
 bool OutNetRTPUDPH264Stream::FeedDataVideo(uint8_t *pData, uint32_t dataLength,
 		uint32_t processedLength, uint32_t totalLength,
 		double absoluteTimestamp, bool isAudio) {
+	_videoBytesCount += dataLength;
+	_videoPacketsCount++;
 	//1. Test and see if this is an inbound RTMP stream. If so,
 	//we have to strip out the RTMP 9 bytes header
 	if (_pInStream->GetType() == ST_IN_NET_RTMP) {
@@ -103,9 +122,9 @@ bool OutNetRTPUDPH264Stream::FeedDataVideo(uint8_t *pData, uint32_t dataLength,
 
 			//9. Read the composition timestamp and add it to the
 			//absolute timestamp
-			uint32_t compositionTimeStamp=(ENTOHLP(pData+1))&0x00ffffff;
-			absoluteTimestamp+=compositionTimeStamp;
-			
+			uint32_t compositionTimeStamp = (ENTOHLP(pData + 1))&0x00ffffff;
+			absoluteTimestamp += compositionTimeStamp;
+
 			//10. Ignore RTMP header and composition offset
 			pData += 5;
 			dataLength -= 5;
@@ -134,7 +153,7 @@ bool OutNetRTPUDPH264Stream::FeedDataVideo(uint8_t *pData, uint32_t dataLength,
 
 				//15. Feed the NAL unit using RTP FUA
 				if (!FeedDataVideoFUA(pData, nalSize, 0, nalSize,
-						absoluteTimestamp )) { //+ (double) tsIncrement / 90000.00)) {
+						absoluteTimestamp)) { //+ (double) tsIncrement / 90000.00)) {
 					FATAL("Unable to feed data");
 					return false;
 				}
@@ -155,6 +174,8 @@ bool OutNetRTPUDPH264Stream::FeedDataVideo(uint8_t *pData, uint32_t dataLength,
 bool OutNetRTPUDPH264Stream::FeedDataAudio(uint8_t *pData, uint32_t dataLength,
 		uint32_t processedLength, uint32_t totalLength,
 		double absoluteTimestamp, bool isAudio) {
+	_audioBytesCount += dataLength;
+	_audioPacketsCount++;
 	return FeedDataAudioMPEG4Generic(pData, dataLength, processedLength, totalLength,
 			absoluteTimestamp);
 }
