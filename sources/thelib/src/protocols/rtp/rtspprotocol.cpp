@@ -354,35 +354,20 @@ bool RTSPProtocol::SendResponseMessage() {
 OutboundConnectivity * RTSPProtocol::GetOutboundConnectivity(
 		BaseInNetStream *pInNetStream) {
 	if (_pOutboundConnectivity == NULL) {
-		vector<BaseOutStream *> outStreams = pInNetStream->GetOutStreams();
+		BaseOutNetRTPUDPStream *pOutStream = new OutNetRTPUDPH264Stream(this,
+				GetApplication()->GetStreamsManager(), pInNetStream->GetName());
 
-		BaseOutNetRTPUDPStream *pOutStream = NULL;
-
-		FOR_VECTOR(outStreams, i) {
-			if (outStreams[i]->GetType() == ST_OUT_NET_RTP) {
-				pOutStream = (BaseOutNetRTPUDPStream *) outStreams[i];
-				break;
-			}
+		_pOutboundConnectivity = new OutboundConnectivity();
+		if (!_pOutboundConnectivity->Initialize()) {
+			FATAL("Unable to initialize outbound connectivity");
+			return false;
 		}
+		pOutStream->SetConnectivity(_pOutboundConnectivity);
+		_pOutboundConnectivity->SetOutStream(pOutStream);
 
-		if (pOutStream == NULL) {
-			pOutStream = new OutNetRTPUDPH264Stream(this,
-					GetApplication()->GetStreamsManager(), pInNetStream->GetName());
-
-			_pOutboundConnectivity = new OutboundConnectivity();
-			if (!_pOutboundConnectivity->Initialize()) {
-				FATAL("Unable to initialize outbound connectivity");
-				return false;
-			}
-			pOutStream->SetConnectivity(_pOutboundConnectivity);
-			_pOutboundConnectivity->SetOutStream(pOutStream);
-
-			if (!pInNetStream->Link(pOutStream)) {
-				FATAL("Unable to link streams");
-				return false;
-			}
-		} else {
-			_pOutboundConnectivity = pOutStream->GetConnectivity();
+		if (!pInNetStream->Link(pOutStream)) {
+			FATAL("Unable to link streams");
+			return false;
 		}
 	}
 

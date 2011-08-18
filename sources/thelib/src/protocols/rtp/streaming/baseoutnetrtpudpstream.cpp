@@ -27,7 +27,7 @@
 
 BaseOutNetRTPUDPStream::BaseOutNetRTPUDPStream(BaseProtocol *pProtocol,
 		StreamsManager *pStreamsManager, string name)
-: BaseOutNetStream(NULL /*FIXME pProtocol*/, pStreamsManager, ST_OUT_NET_RTP, name) {
+: BaseOutNetStream(pProtocol, pStreamsManager, ST_OUT_NET_RTP, name) {
 	_audioSsrc = 0x80000000 | (rand()&0x00ffffff);
 	_videoSsrc = _audioSsrc + 1;
 	_pConnectivity = NULL;
