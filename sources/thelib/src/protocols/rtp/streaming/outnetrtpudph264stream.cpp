@@ -370,8 +370,9 @@ bool OutNetRTPUDPH264Stream::FeedDataAudioMPEG4Generic_one_by_one(uint8_t *pData
 		}
 	}
 
-	//3. Take care of the RTMP headers if necessary
-	if (_pInStream->GetType() == ST_IN_NET_RTMP) {
+	uint64_t inStreamType = _pInStream->GetType();
+
+	if ((inStreamType == ST_IN_NET_RTMP) || (inStreamType == ST_IN_NET_RTP)) {
 		//2. Do we have enough data to read the RTMP header?
 		if (dataLength <= 2) {
 			WARN("Bogus AAC packet");
@@ -379,10 +380,13 @@ bool OutNetRTPUDPH264Stream::FeedDataAudioMPEG4Generic_one_by_one(uint8_t *pData
 			return true;
 		}
 
-		//3. Is this a RTMP codec setup? If so, ignore it
-		if (pData[1] != 1) {
-			_audioBuffer.IgnoreAll();
-			return true;
+		//3. Take care of the RTMP headers if necessary
+		if (inStreamType == ST_IN_NET_RTMP) {
+			//3. Is this a RTMP codec setup? If so, ignore it
+			if (pData[1] != 1) {
+				_audioBuffer.IgnoreAll();
+				return true;
+			}
 		}
 
 		//4. Skip the RTMP header

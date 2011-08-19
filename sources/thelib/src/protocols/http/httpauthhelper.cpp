@@ -142,17 +142,20 @@ bool HTTPAuthHelper::ValidateAuthRequest(string rawChallange, string rawResponse
 			FATAL("Invalid URI");
 			return false;
 		}
+		//#define HTTP_HELPER_CHECK_URI_AUTH
+#ifdef HTTP_HELPER_CHECK_URI_AUTH
 		if (uri.length() > requestUri.length()) {
 			FATAL("Invalid URI");
 			return false;
 		}
-//		WARN("URI checking NYI");
-//		string part = requestUri.substr(requestUri.length() - uri.length());
-//		if (part != uri) {
-//			FATAL("Invalid URI. Wanted: `%s`; got: `%s`",
-//					STR(part), STR(uri));
-//			return false;
-//		}
+		WARN("URI checking NYI");
+		string part = requestUri.substr(requestUri.length() - uri.length());
+		if (part != uri) {
+			FATAL("Invalid URI. Wanted: `%s`; got: `%s`",
+					STR(part), STR(uri));
+			return false;
+		}
+#endif /* HTTP_HELPER_CHECK_URI_AUTH */
 		string got = response["parameters"]["response"];
 		string wanted = ComputeResponseMD5(username, password, realmName, method,
 				uri, nonce);
