@@ -287,7 +287,6 @@ bool setFdKeepAlive(int32_t fd) {
 bool setFdNoNagle(int32_t fd) {
 	BOOL value = TRUE;
 	if (setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, (char *) &value, sizeof (BOOL)) == SOCKET_ERROR) {
-		FATAL("Error #%u", WSAGetLastError());
 		return false;
 	}
 	return true;
@@ -299,6 +298,16 @@ bool setFdReuseAddress(int32_t fd) {
 		FATAL("Error #%u", WSAGetLastError());
 		return false;
 	}
+	return true;
+}
+
+bool setFdMulticastTTL(int32_t fd, uint8_t multicastTtl) {
+	NYI;
+	return true;
+}
+
+bool setFdTOS(int32_t fd, uint8_t tos) {
+	NYI;
 	return true;
 }
 
@@ -319,8 +328,7 @@ bool setFdOptions(int32_t fd) {
 	}
 
 	if (!setFdNoNagle(fd)) {
-		FATAL("Unable to disable Nagle algorithm");
-		return false;
+		WARN("Unable to disable Nagle algorithm");
 	}
 
 	if (!setFdReuseAddress(fd)) {

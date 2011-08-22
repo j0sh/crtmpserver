@@ -144,7 +144,6 @@ bool setFdKeepAlive(int32_t fd) {
 bool setFdNoNagle(int32_t fd) {
 	int32_t one = 1;
 	if (setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, (char *) & one, sizeof (one)) != 0) {
-		FATAL("Unable to disable Nagle");
 		return false;
 	}
 	return true;
@@ -159,6 +158,20 @@ bool setFdReuseAddress(int32_t fd) {
 	if (setsockopt(fd, SOL_SOCKET, SO_REUSEPORT, (char *) & one, sizeof (one)) != 0) {
 		FATAL("Unable to reuse port");
 		return false;
+	}
+	return true;
+}
+
+bool setFdMulticastTTL(int32_t fd, uint8_t multicastTtl) {
+	if (setsockopt(fd, IPPROTO_IP, IP_MULTICAST_TTL, &multicastTtl, sizeof (multicastTtl)) != 0) {
+		WARN("Unable to set IP_MULTICAST_TTL");
+	}
+	return true;
+}
+
+bool setFdTOS(int32_t fd, uint8_t tos) {
+	if (setsockopt(fd, IPPROTO_IP, IP_TOS, &tos, sizeof (tos)) != 0) {
+		WARN("Unable to set IP_TOS: %"PRIu8, tos);
 	}
 	return true;
 }
@@ -180,8 +193,7 @@ bool setFdOptions(int32_t fd) {
 	}
 
 	if (!setFdNoNagle(fd)) {
-		FATAL("Unable to disable Nagle algorithm");
-		return false;
+		WARN("Unable to disable Nagle algorithm");
 	}
 
 	if (!setFdReuseAddress(fd)) {
