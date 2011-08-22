@@ -31,8 +31,8 @@ UDPCarrier::UDPCarrier(int32_t fd)
 	memset(&_nearAddress, 0, sizeof (sockaddr_in));
 	_nearIp = "";
 	_nearPort = 0;
-	_rx=0;
-	_tx=0;
+	_rx = 0;
+	_tx = 0;
 }
 
 UDPCarrier::~UDPCarrier() {
@@ -113,7 +113,8 @@ uint16_t UDPCarrier::GetNearEndpointPort() {
 	return _nearPort;
 }
 
-UDPCarrier* UDPCarrier::Create(string bindIp, uint16_t bindPort) {
+UDPCarrier* UDPCarrier::Create(string bindIp, uint16_t bindPort,
+		uint16_t multicastTtl, uint16_t tos) {
 
 	//1. Create the socket
 	int sock = socket(AF_INET, SOCK_DGRAM, 0);
@@ -123,11 +124,26 @@ UDPCarrier* UDPCarrier::Create(string bindIp, uint16_t bindPort) {
 		return NULL;
 	}
 
-	//2. No SIGPIPE
-	if (!setFdNoSIGPIPE(sock)) {
-		FATAL("Unable to set SO_NOSIGPIPE");
+	//2. fd options
+	if (!setFdOptions(sock)) {
+		FATAL("Unable to set fd options");
 		CLOSE_SOCKET(sock);
 		return NULL;
+	}
+	if (multicastTtl <= 255) {
+		if (!setFdMulticastTTL(sock, (uint8_t) multicastTtl)) {
+			FATAL("Unable to set ttl");
+			CLOSE_SOCKET(sock);
+			return NULL;
+		}
+	}
+
+	if (tos <= 255) {
+		if (!setFdTOS(sock, (uint8_t) tos)) {
+			FATAL("Unable to set tos");
+			CLOSE_SOCKET(sock);
+			return NULL;
+		}
 	}
 
 	//3. bind if necessary
@@ -158,13 +174,14 @@ UDPCarrier* UDPCarrier::Create(string bindIp, uint16_t bindPort) {
 	return pResult;
 }
 
-UDPCarrier* UDPCarrier::Create(string bindIp, uint16_t bindPort, BaseProtocol *pProtocol) {
+UDPCarrier* UDPCarrier::Create(string bindIp, uint16_t bindPort,
+		BaseProtocol *pProtocol, uint16_t multicastTtl, uint16_t tos) {
 	if (pProtocol == NULL) {
 		FATAL("Protocol can't be null");
 		return NULL;
 	}
 
-	UDPCarrier *pResult = Create(bindIp, bindPort);
+	UDPCarrier *pResult = Create(bindIp, bindPort, multicastTtl, tos);
 	if (pResult == NULL) {
 		FATAL("Unable to create UDP carrier");
 		return NULL;

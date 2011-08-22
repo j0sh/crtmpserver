@@ -47,8 +47,11 @@ public:
 	string GetNearEndpointAddress();
 	uint16_t GetNearEndpointPort();
 
-	static UDPCarrier* Create(string bindIp, uint16_t bindPort);
-	static UDPCarrier* Create(string bindIp, uint16_t bindPort, BaseProtocol *pProtocol);
+	static UDPCarrier* Create(string bindIp, uint16_t bindPort,
+			uint16_t multicastTtl = 256, uint16_t tos = 256);
+	static UDPCarrier* Create(string bindIp, uint16_t bindPort,
+			BaseProtocol *pProtocol, uint16_t multicastTtl = 256,
+			uint16_t tos = 256);
 private:
 	bool Setup(Variant &settings);
 	bool GetEndpointsInfo();
