@@ -159,7 +159,6 @@ bool RTSPProtocol::SetSessionId(string sessionId) {
 	split(sessionId, ";", parts);
 	if (parts.size() >= 1)
 		sessionId = parts[0];
-
 	if (_sessionId != "")
 		return _sessionId == sessionId;
 	_sessionId = sessionId;

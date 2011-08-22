@@ -37,7 +37,10 @@ private:
 	uint64_t _audioBytesCount;
 	double _audioNTP;
 	double _audioRTP;
-	double _lastAudioTs;
+	double _audioLastTs;
+	uint32_t _audioLastRTP;
+	bool _audioHasNTP;
+	uint32_t _audioRTPRollCount;
 
 	bool _hasVideo;
 	IOBuffer _currentNalu;
@@ -47,7 +50,10 @@ private:
 	uint64_t _videoBytesCount;
 	double _videoNTP;
 	double _videoRTP;
-	double _lastVideoTs;
+	double _videoLastTs;
+	uint32_t _videoLastRTP;
+	bool _videoHasNTP;
+	uint32_t _videoRTPRollCount;
 public:
 	InNetRTPStream(BaseProtocol *pProtocol, StreamsManager *pStreamsManager,
 			string name, string SPS, string PPS, string AAC, uint32_t bandwidthHint);
@@ -72,10 +78,13 @@ public:
 			RTPHeader &rtpHeader);
 	virtual void GetStats(Variant &info);
 
-	void ReportSR(uint64_t ntpMicroseconds, uint32_t rtpTimestamp, bool isAudio);
+	void ReportSR(uint64_t ntpMicroseconds, uint32_t rtpTimestamp, bool isAudio,
+			bool artificial);
 private:
 	void FeedVideoCodecSetup(BaseOutStream *pOutStream);
 	void FeedAudioCodecSetup(BaseOutStream *pOutStream);
+	uint64_t ComputeRTP(RTPHeader &rtpHeader, uint32_t &lastRtp, 
+			uint32_t &rtpRollCount, bool hasNtp);
 };
 
 #endif	/* _INNETRTPSTREAM_H */

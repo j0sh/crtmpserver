@@ -56,7 +56,10 @@ InNetRTPStream::InNetRTPStream(BaseProtocol *pProtocol,
 	_audioBytesCount = 0;
 	_audioNTP = 0;
 	_audioRTP = 0;
-	_lastAudioTs = 0;
+	_audioLastTs = 0;
+	_audioHasNTP = false;
+	_audioRTPRollCount = 0;
+	_audioLastRTP = 0;
 
 	_videoSequence = 0;
 	_videoPacketsCount = 0;
@@ -64,7 +67,10 @@ InNetRTPStream::InNetRTPStream(BaseProtocol *pProtocol,
 	_videoBytesCount = 0;
 	_videoNTP = 0;
 	_videoRTP = 0;
-	_lastVideoTs = 0;
+	_videoLastTs = 0;
+	_videoHasNTP = true;
+	_videoRTPRollCount = 0;
+	_videoLastRTP = 0;
 }
 
 InNetRTPStream::~InNetRTPStream() {
@@ -86,8 +92,8 @@ void InNetRTPStream::ReadyForSend() {
 
 void InNetRTPStream::SignalOutStreamAttached(BaseOutStream *pOutStream) {
 	if (_hasVideo && _hasAudio) {
-		if ((_lastVideoTs != 0) && (_lastAudioTs != 0)) {
-			if (_lastVideoTs < _lastAudioTs) {
+		if ((_videoLastTs != 0) && (_audioLastTs != 0)) {
+			if (_videoLastTs < _audioLastTs) {
 				FeedVideoCodecSetup(pOutStream);
 				FeedAudioCodecSetup(pOutStream);
 			} else {
@@ -96,10 +102,10 @@ void InNetRTPStream::SignalOutStreamAttached(BaseOutStream *pOutStream) {
 			}
 		}
 	} else {
-		if (_lastVideoTs != 0) {
+		if (_videoLastTs != 0) {
 			FeedVideoCodecSetup(pOutStream);
 		}
-		if (_lastAudioTs != 0) {
+		if (_audioLastTs != 0) {
 			FeedAudioCodecSetup(pOutStream);
 		}
 	}
@@ -140,15 +146,19 @@ bool InNetRTPStream::FeedData(uint8_t *pData, uint32_t dataLength,
 		uint32_t processedLength, uint32_t totalLength,
 		double absoluteTimestamp, bool isAudio) {
 	if (_hasAudio && _hasVideo) {
+		double &rtp = isAudio ? _audioRTP : _videoRTP;
+		double &ntp = isAudio ? _audioNTP : _videoNTP;
 		if ((_audioNTP == 0) || (_videoNTP == 0)) {
+			if (ntp == 0) {
+				uint32_t lastRtp = isAudio ? _audioLastRTP : _videoLastRTP;
+				ReportSR(0, lastRtp, isAudio, true);
+			}
 			return true;
 		}
-		double &ntp = isAudio ? _audioNTP : _videoNTP;
-		double &rtp = isAudio ? _audioRTP : _videoRTP;
 		absoluteTimestamp = ntp + absoluteTimestamp - rtp;
 	}
 
-	double &lastTs = isAudio ? _lastAudioTs : _lastVideoTs;
+	double &lastTs = isAudio ? _audioLastTs : _videoLastTs;
 
 	if ((-1.0 < (lastTs * 100.00 - absoluteTimestamp * 100.00))
 			&& ((lastTs * 100.00 - absoluteTimestamp * 100.00) < 1.00)) {
@@ -176,7 +186,7 @@ bool InNetRTPStream::FeedData(uint8_t *pData, uint32_t dataLength,
 	}
 	lastTs = absoluteTimestamp;
 	if (_hasAudio && _hasVideo) {
-		if ((_lastAudioTs == 0) || (_lastVideoTs == 0)) {
+		if ((_audioLastTs == 0) || (_videoLastTs == 0)) {
 			return true;
 		}
 	}
@@ -223,7 +233,8 @@ bool InNetRTPStream::FeedVideoData(uint8_t *pData, uint32_t dataLength,
 	}
 
 	//2. get the nalu
-	double ts = (double) rtpHeader._timestamp / (double) _capabilities.avc._rate * 1000.0;
+	uint64_t rtpTs = ComputeRTP(rtpHeader, _videoLastRTP, _videoRTPRollCount, _videoHasNTP);
+	double ts = (double) rtpTs / (double) _capabilities.avc._rate * 1000.0;
 	uint8_t naluType = NALU_TYPE(pData[0]);
 	if (naluType <= 23) {
 		//3. Standard NALU
@@ -325,13 +336,14 @@ bool InNetRTPStream::FeedAudioData(uint8_t *pData, uint32_t dataLength,
 	uint32_t cursor = 2 + 2 * chunksCount;
 	uint16_t chunkSize = 0;
 	double ts = 0;
+	uint64_t rtpTs = ComputeRTP(rtpHeader, _audioLastRTP, _audioRTPRollCount, _audioHasNTP);
 	for (uint32_t i = 0; i < chunksCount; i++) {
 		if (i != (uint32_t) (chunksCount - 1)) {
 			chunkSize = (ENTOHSP(pData + 2 + 2 * i)) >> 3;
 		} else {
 			chunkSize = (uint16_t) (dataLength - cursor);
 		}
-		ts = (double) (rtpHeader._timestamp + i * 1024) / (double) _capabilities.aac._sampleRate * 1000.00;
+		ts = (double) (rtpTs + i * 1024) / (double) _capabilities.aac._sampleRate * 1000.00;
 		if ((cursor + chunkSize) > dataLength) {
 			FATAL("Unable to feed data: cursor: %u; chunkSize: %hu; dataLength: %u; chunksCount: %hu",
 					cursor, chunkSize, dataLength, chunksCount);
@@ -365,14 +377,31 @@ void InNetRTPStream::GetStats(Variant &info) {
 }
 
 void InNetRTPStream::ReportSR(uint64_t ntpMicroseconds, uint32_t rtpTimestamp,
-		bool isAudio) {
+		bool isAudio, bool artificial) {
 	if (isAudio) {
-		_audioNTP = (double) ntpMicroseconds / 1000.0;
 		_audioRTP = (double) rtpTimestamp / (double) _capabilities.aac._sampleRate * 1000.0;
+		if (!artificial) {
+			_audioNTP = (double) ntpMicroseconds / 1000.0;
+		} else {
+			_audioNTP = _audioRTP;
+		}
+		_audioHasNTP = !artificial;
 	} else {
-		_videoNTP = (double) ntpMicroseconds / 1000.0;
 		_videoRTP = (double) rtpTimestamp / (double) _capabilities.avc._rate * 1000.0;
+		if (!artificial) {
+			_videoNTP = (double) ntpMicroseconds / 1000.0;
+		} else {
+			_videoNTP = _videoRTP;
+		}
+		_videoHasNTP = !artificial;
 	}
+	//	FINEST("ReportSR %c ntpMicroseconds: %"PRIu64"; rtpTimestamp: %"PRIu32"; isAudio: %d; artificial: %d; ntp: %.2f",
+	//			isAudio ? 'A' : 'V',
+	//			ntpMicroseconds,
+	//			rtpTimestamp,
+	//			isAudio,
+	//			artificial,
+	//			isAudio ? _audioNTP : _videoNTP);
 }
 
 void InNetRTPStream::FeedVideoCodecSetup(BaseOutStream* pOutStream) {
@@ -381,7 +410,7 @@ void InNetRTPStream::FeedVideoCodecSetup(BaseOutStream* pOutStream) {
 			_capabilities.avc._spsLength,
 			0,
 			_capabilities.avc._spsLength,
-			_lastVideoTs,
+			_videoLastTs,
 			false)) {
 		FATAL("Unable to feed stream");
 		if (pOutStream->GetProtocol() != NULL) {
@@ -393,7 +422,7 @@ void InNetRTPStream::FeedVideoCodecSetup(BaseOutStream* pOutStream) {
 			_capabilities.avc._ppsLength,
 			0,
 			_capabilities.avc._ppsLength,
-			_lastVideoTs,
+			_videoLastTs,
 			false)) {
 		FATAL("Unable to feed stream");
 		if (pOutStream->GetProtocol() != NULL) {
@@ -410,7 +439,7 @@ void InNetRTPStream::FeedAudioCodecSetup(BaseOutStream* pOutStream) {
 			_capabilities.aac._aacLength,
 			0,
 			_capabilities.aac._aacLength,
-			_lastAudioTs,
+			_audioLastTs,
 			true)) {
 		FATAL("Unable to feed stream");
 		if (pOutStream->GetProtocol() != NULL) {
@@ -418,6 +447,20 @@ void InNetRTPStream::FeedAudioCodecSetup(BaseOutStream* pOutStream) {
 		}
 	}
 	delete[] pTemp;
+}
+
+uint64_t InNetRTPStream::ComputeRTP(RTPHeader &rtpHeader, uint32_t &lastRtp,
+		uint32_t &rtpRollCount, bool hasNtp) {
+	if (hasNtp)
+		return rtpHeader._timestamp;
+	if (lastRtp > rtpHeader._timestamp) {
+		if (((lastRtp >> 31) == 0x01) && ((rtpHeader._timestamp >> 31) == 0x00)) {
+			FINEST("RollOver");
+			rtpRollCount++;
+		}
+	}
+	lastRtp = rtpHeader._timestamp;
+	return (((uint64_t) rtpRollCount) << 32) | rtpHeader._timestamp;
 }
 
 #endif /* HAS_PROTOCOL_RTP */

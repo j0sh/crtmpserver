@@ -69,7 +69,8 @@ public:
 	string GetAudioClientPorts();
 	string GetVideoClientPorts();
 	bool SendRR(bool isAudio);
-	void ReportSR(uint64_t ntpMicroseconds, uint32_t rtpTimestamp, bool isAudio);
+	void ReportSR(uint64_t ntpMicroseconds, uint32_t rtpTimestamp, bool isAudio,
+			bool artificial);
 private:
 	void Cleanup();
 	bool CreateCarriers(InboundRTPProtocol *pRTP, RTCPProtocol *pRTCP);

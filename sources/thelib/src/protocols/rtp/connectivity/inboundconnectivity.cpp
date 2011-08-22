@@ -370,9 +370,10 @@ bool InboundConnectivity::SendRR(bool isAudio) {
 	return true;
 }
 
-void InboundConnectivity::ReportSR(uint64_t ntpMicroseconds, uint32_t rtpTimestamp, bool isAudio) {
+void InboundConnectivity::ReportSR(uint64_t ntpMicroseconds,
+		uint32_t rtpTimestamp, bool isAudio, bool artificial) {
 	if (_pInStream != NULL) {
-		_pInStream->ReportSR(ntpMicroseconds, rtpTimestamp, isAudio);
+		_pInStream->ReportSR(ntpMicroseconds, rtpTimestamp, isAudio, artificial);
 	}
 }
 
