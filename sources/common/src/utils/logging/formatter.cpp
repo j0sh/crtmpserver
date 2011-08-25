@@ -40,6 +40,7 @@ Formatter* Formatter::GetInstance(string formatString) {
 }
 
 bool Formatter::Init(string formatString) {
+	return true; //there is a mem leak somewhere here
 	string replacement = format("##__%s__##", STR(generateRandomString(5)));
 	_formatString = formatString;
 

@@ -483,10 +483,19 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPRequestSetupOutbound(RTSPProtocol *pF
 
 	//5. Find out if this is audio or video
 	bool isAudioTrack = false;
-
-	if (((string) requestHeaders[RTSP_FIRST_LINE][RTSP_URL]).find((string) pFrom->GetCustomParameters()["audioTrackId"]) != string::npos) {
+	string rawUrl=requestHeaders[RTSP_FIRST_LINE][RTSP_URL];
+	string audioTrackId="trackID="+(string)pFrom->GetCustomParameters()["audioTrackId"];
+	string videoTrackId="trackID="+(string)pFrom->GetCustomParameters()["videoTrackId"];
+	/*FINEST("rawUrl: %s; audioTrackId: %s; videoTrackId: %s; fa: %d; fv: %d",
+		STR(rawUrl),
+		STR(audioTrackId),
+		STR(videoTrackId),
+		rawUrl.find(audioTrackId) != string::npos,
+		rawUrl.find(videoTrackId) != string::npos
+	);*/
+	if (rawUrl.find(audioTrackId) != string::npos) {
 		isAudioTrack = true;
-	} else if (((string) requestHeaders[RTSP_FIRST_LINE][RTSP_URL]).find((string) pFrom->GetCustomParameters()["videoTrackId"]) != string::npos) {
+	} else if (rawUrl.find(videoTrackId) != string::npos) {
 		isAudioTrack = false;
 	} else {
 		FATAL("Invalid track. Wanted: %s or %s; Got: %s",
