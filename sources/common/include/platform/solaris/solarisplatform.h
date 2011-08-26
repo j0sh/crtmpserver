@@ -105,7 +105,7 @@ using namespace std;
 #define MSG_NOSIGNAL 0
 #define SRAND() srand(time(NULL));
 #define Timestamp struct tm
-#define Timestamp_init {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+#define Timestamp_init {0, 0, 0, 0, 0, 0, 0, 0, 0}
 
 #define CLOCKS_PER_SECOND 1000000L
 #define GETCLOCKS(result) \
@@ -161,6 +161,7 @@ bool setFdTOS(int32_t fd, uint8_t tos);
 bool setFdOptions(int32_t fd);
 bool deleteFile(string path);
 bool deleteFolder(string path, bool force);
+bool createFolder(string path, bool recursive);
 string getHostByName(string name);
 bool isNumeric(string value);
 void split(string str, string separator, vector<string> &result);
@@ -180,6 +181,8 @@ bool moveFile(string src, string dst);
 void installQuitSignal(SignalFnc pQuitSignalFnc);
 void installConfRereadSignal(SignalFnc pConfRereadSignalFnc);
 time_t timegm(struct tm *tm);
+int vasprintf(char **ret, const char *format, va_list args);
+int asprintf(char **strp, const char *fmt, ...);
 
 #endif /* _SOLARISPLATFORM_H */
 #endif /* SOLARIS */

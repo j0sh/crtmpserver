@@ -36,6 +36,39 @@ SolarisPlatform::SolarisPlatform() {
 
 SolarisPlatform::~SolarisPlatform() {
 }
+int vasprintf(char **ret, const char *format, va_list args)
+{
+        va_list copy;
+        va_copy(copy, args);
+
+        /* Make sure it is determinate, despite manuals indicating otherwise */
+        *ret = 0;
+
+        int count = vsnprintf(NULL, 0, format, args);
+        if (count >= 0) {
+                char* buffer = (char *)malloc(count + 1);
+                if (buffer != NULL) {
+                        count = vsnprintf(buffer, count + 1, format, copy);
+                        if (count < 0)
+                                free(buffer);
+                        else
+                                *ret = buffer;
+                }
+        }
+        va_end(args);  // Each va_start() or va_copy() needs a va_end()
+
+        return count;
+}
+
+int asprintf(char **strp, const char *fmt, ...)
+{
+        int32_t size;
+        va_list args;
+        va_start(args, fmt);
+        size = vasprintf(strp, fmt, args);
+        va_end(args);
+        return size;
+}
 
 string format(string fmt, ...) {
 	string result = "";
@@ -201,24 +234,36 @@ bool setFdOptions(int32_t fd) {
 }
 
 bool deleteFile(string path) {
-	if (remove(STR(path)) != 0) {
-		FATAL("Unable to delete file `%s`", STR(path));
-		return false;
-	}
-	return true;
+        if (remove(STR(path)) != 0) {
+                FATAL("Unable to delete file `%s`", STR(path));
+                return false;
+        }
+        return true;
 }
 
 bool deleteFolder(string path, bool force) {
-	if (!force) {
-		return deleteFile(path);
-	} else {
-		string command = format("rm -rf %s", STR(path));
-		if (system(STR(command)) != 0) {
-			FATAL("Unable to delete folder %s", STR(path));
-			return false;
-		}
-		return true;
-	}
+        if (!force) {
+                return deleteFile(path);
+        } else {
+                string command = format("rm -rf %s", STR(path));
+                if (system(STR(command)) != 0) {
+                        FATAL("Unable to delete folder %s", STR(path));
+                        return false;
+                }
+                return true;
+        }
+}
+
+bool createFolder(string path, bool recursive) {
+        string command = format("mkdir %s %s",
+                        recursive ? "-p" : "",
+                        STR(path));
+        if (system(STR(command)) != 0) {
+                FATAL("Unable to create folder %s", STR(path));
+                return false;
+        }
+
+        return true;
 }
 
 string getHostByName(string name) {
@@ -381,7 +426,7 @@ string normalizePath(string base, string file) {
 
 bool listFolder(string path, vector<string> &result, bool normalizeAllPaths,
 		bool includeFolders, bool recursive) {
-	if (path == "")
+	/*if (path == "")
 		path = ".";
 	if (path[path.size() - 1] != PATH_SEPARATOR)
 		path += PATH_SEPARATOR;
@@ -426,7 +471,8 @@ bool listFolder(string path, vector<string> &result, bool normalizeAllPaths,
 	}
 
 	closedir(pDir);
-	return true;
+	return true;*/
+	NYIR;
 }
 
 bool moveFile(string src, string dst) {
