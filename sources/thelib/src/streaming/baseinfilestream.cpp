@@ -84,6 +84,8 @@ BaseInFileStream::BaseInFileStream(BaseProtocol *pProtocol,
 	_timeToIndexOffset = 0;
 
 	_streamCapabilities.Clear();
+
+	_playLimit = -1;
 }
 
 BaseInFileStream::~BaseInFileStream() {
@@ -258,6 +260,8 @@ bool BaseInFileStream::Initialize(int32_t clientSideBufferLength) {
 bool BaseInFileStream::SignalPlay(double &absoluteTimestamp, double &length) {
 	//0. fix absoluteTimestamp and length
 	absoluteTimestamp = absoluteTimestamp < 0 ? 0 : absoluteTimestamp;
+	_playLimit = length;
+	//FINEST("absoluteTimestamp: %.2f; _playLimit: %.2f", absoluteTimestamp, _playLimit);
 	//TODO: implement the limit playback
 
 	//1. Seek to the correct point
@@ -423,6 +427,16 @@ bool BaseInFileStream::Feed() {
 		_pOutStreams->info->SignalStreamCompleted();
 		_paused = true;
 		return true;
+	}
+
+	//FINEST("_totalSentTime: %.2f; _playLimit: %.2f", (double) _totalSentTime, _playLimit);
+	if (_playLimit >= 0) {
+		if (_playLimit < (double) _totalSentTime) {
+			FINEST("Done streaming file");
+			_pOutStreams->info->SignalStreamCompleted();
+			_paused = true;
+			return true;
+		}
 	}
 
 	//4. Read the current frame from the seeking file

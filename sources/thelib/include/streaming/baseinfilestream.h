@@ -85,6 +85,9 @@ private:
 	
 	//stream capabilities
 	StreamCapabilities _streamCapabilities;
+	
+	//when to stop playback
+	double _playLimit;
 public:
 	BaseInFileStream(BaseProtocol *pProtocol, StreamsManager *pStreamsManager,
 			uint64_t type, string name);
