@@ -108,6 +108,8 @@ bool InNetRTMPStream::SendStreamMessage(Variant &completeMessage, bool persisten
 	LinkedListNode<BaseOutStream *> *pTemp = _pOutStreams;
 	while ((pTemp != NULL) && (!IsEnqueueForDelete())) {
 		if (pTemp->info->IsEnqueueForDelete()) {
+			FINEST("IsEnqueueForDelete is true. Move ahead....");
+			pTemp = pTemp->pPrev;
 			continue;
 		}
 		if (TAG_KIND_OF(pTemp->info->GetType(), ST_OUT_NET_RTMP)) {

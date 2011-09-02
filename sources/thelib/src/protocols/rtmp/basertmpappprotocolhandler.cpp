@@ -679,10 +679,20 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokeCreateStream(BaseRTMPProtocol *pFr
 bool BaseRTMPAppProtocolHandler::ProcessInvokePublish(BaseRTMPProtocol *pFrom,
 		Variant &request) {
 	//1. gather the required data from the request
-	if (M_INVOKE_PARAM(request, 1) != V_STRING) {
+	if ((M_INVOKE_PARAM(request, 1) != V_STRING)&&(M_INVOKE_PARAM(request, 1) != V_BOOL)) {
 		FATAL("Invalid request:\n%s", STR(request.ToString()));
 		return false;
 	}
+	
+	if(M_INVOKE_PARAM(request, 1) == V_BOOL){
+		if((bool)M_INVOKE_PARAM(request, 1)!=false) {
+			FATAL("Invalid request:\n%s", STR(request.ToString()));
+			return false;
+		}
+		FINEST("Closing stream via publish(false)");
+		return pFrom->CloseStream(VH_SI(request), true);
+	}
+
 	string streamName = M_INVOKE_PARAM(request, 1);
 
 	//2. Check to see if we are allowed to create inbound streams
