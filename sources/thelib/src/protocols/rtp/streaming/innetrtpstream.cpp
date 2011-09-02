@@ -451,8 +451,8 @@ void InNetRTPStream::FeedAudioCodecSetup(BaseOutStream* pOutStream) {
 
 uint64_t InNetRTPStream::ComputeRTP(RTPHeader &rtpHeader, uint32_t &lastRtp,
 		uint32_t &rtpRollCount, bool hasNtp) {
-	if (hasNtp)
-		return rtpHeader._timestamp;
+	//if (hasNtp)
+	//	return rtpHeader._timestamp;
 	if (lastRtp > rtpHeader._timestamp) {
 		if (((lastRtp >> 31) == 0x01) && ((rtpHeader._timestamp >> 31) == 0x00)) {
 			FINEST("RollOver");
