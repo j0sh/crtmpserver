@@ -1,11 +1,13 @@
-Description: disable default install for lua config
+Description: disable installation for lua config and man page
 
 --- a/crtmpserver/CMakeLists.txt
 +++ b/crtmpserver/CMakeLists.txt
-@@ -37,5 +37,5 @@
+@@ -38,6 +38,6 @@
  
  ADD_PRECOMPILED_HEADER(${PROJECT_NAME} "${CRTMPSERVER_SOURCES_ROOT}/common/include/common.h")
  INSTALL(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION sbin)
--INSTALL(FILES crtmpserver.lua DESTINATION etc)
-+#INSTALL(FILES crtmpserver.lua DESTINATION etc)
+-INSTALL(FILES crtmpserver.lua DESTINATION etc RENAME crtmpserver.lua.sample)
+-INSTALL(FILES ../../../man/crtmpserver.1 DESTINATION man/man1)
++#INSTALL(FILES crtmpserver.lua DESTINATION etc RENAME crtmpserver.lua.sample)
++#INSTALL(FILES ../../../man/crtmpserver.1 DESTINATION man/man1)
  

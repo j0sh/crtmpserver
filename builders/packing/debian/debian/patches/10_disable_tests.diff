@@ -1,8 +1,17 @@
-Description: disable tests
+Description: disable tests and -Werror flag
 
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -190,6 +190,6 @@
+@@ -123,7 +123,7 @@
+ #ADD_DEFINITIONS(-DUSE_MEM_POOL)
+ #ADD_DEFINITIONS(-DDEBUG_MEM_POOL)
+ 
+-SET(GENERIC_FLAGS "-Wall -Werror")
++SET(GENERIC_FLAGS "-Wall")
+ 
+ #add 64 bit support for 32 but platforms
+ ADD_DEFINITIONS(-D__USE_FILE_OFFSET64)
+@@ -193,6 +193,6 @@
  ADD_SUBDIRECTORY(applications applications)
  ADD_SUBDIRECTORY(crtmpserver crtmpserver)
  #ADD_SUBDIRECTORY(vmtests vmtests)

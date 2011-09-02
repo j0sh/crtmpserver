@@ -1,0 +1,84 @@
+.TH CRTMPSERVER 1 "February 11, 2011" Linux
+.SH NAME
+crtmpserver \- is a high performance streaming platform written on C++
+.SH SYNOPSIS
+.B crtmpserver
+.RI [ options ]
+.RI <configuration>
+.br
+.SH DESCRIPTION
+.PP
+\fBcrtmpserver\fP it is a high performance streaming server able to stream (live or recorded) in the following technologies:
+.RS
+- To and from Flash (RTMP, RTMPE, RTMPS, RTMPT, RTMPTE)
+.br
+- To and from embedded devices: iPhone, Android
+.br
+- From surveillance cameras
+.br
+- IP-TV using MPEG-TS and RTSP/RTCP/RTP protocols
+.RE
+.PP
+Also, \fBcrtmpserver\fP can be used as a high performance rendes-vous server.
+.br
+For example, it enables you to do:
+.RS
+.br
+- Audio/Video conferencing
+.br
+- Online gaming
+.br
+- Online collaboration
+.br
+- Simple/complex chat applications
+.RE
+.SH OPTIONS
+.TP
+.B \-\-help
+Show summary of options.
+.TP
+.B \-\-version
+Show version of program.
+.TP
+.B \-\-use-implicit-console-appender
+Adds a console log appender.
+.br
+Particulary useful when the server starts and stops immediatly.
+.br
+Allows you to see if something is wrong with the config file.
+.TP
+.B \-\-daemon
+Overrides the daemon setting inside the config file
+and forces the server to start in daemon mode.
+.TP
+.B \-\-uid=<uid>
+Run the process with the specified user id.
+.TP
+.B \-\-gid=<gid>
+Run the process with the specified group id.
+.TP
+.B \-\-pid=<file name>
+This option tells \fBcrtmpserver\fP to use the specified file as its pidfile. If the file exists, it will be over-written.
+.br
+Works only if \fB--daemon\fP option is specified.
+.SH FILES
+.TP
+.B /usr/sbin/crtmpserver
+Main daemon execution file
+.TP
+.B /etc/crtmpserver/crtmpserver.lua
+Main daemon configuration file
+.TP
+.B /var/log/crtmpserver/crtmpserver.log
+Default log file. May be changed in configuration.
+.SH SEE ALSO
+The crtmpserver homepage: \fBhttp://www.rtmpd.com/\fP
+.br
+Full documentation on \fBcrtmpserver\fP, including guides and FAQs, is available at \fBhttp://wiki.rtmpd.com/\fP
+.PP
+Report bugs at \fBhttp://trac.rtmpd.com/report\fP
+.SH AUTHOR
+crtmpserver was written by Gavriloaie Eugen-Andrei <crtmpserver@gmail.com>.
+.PP
+This manual page was written by Andriy Beregovenko <jet@jet.kiev.ua>,
+for the Debian project (and may be used by others).

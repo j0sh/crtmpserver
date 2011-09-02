@@ -10,12 +10,14 @@ Description: use system lua(lua 5.1)
  		/usr/include
  		/usr/local/include
  		/usr/local/include/lua51
-@@ -12,7 +13,7 @@
+@@ -12,8 +13,9 @@
  
  FIND_LIBRARY(LUA_LIBRARY_PATH_
  	NAMES
 -		lua
 +		lua5.1
  	PATHS
++		/usr/lib/x86_64-linux-gnu
  		/usr/lib64
  		/usr/lib
+ 		/usr/local/lib64
