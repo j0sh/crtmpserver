@@ -31,6 +31,7 @@
 #include "protocols/rtmp/streaming/infilertmpstream.h"
 #include "protocols/rtmp/streaming/rtmpstream.h"
 #include "streaming/streamstypes.h"
+#include "protocols/rtmp/monitorrtmpprotocol.h"
 
 #define MAX_RTMP_OUTPUT_BUFFER 1024*256
 
@@ -84,6 +85,10 @@ BaseRTMPProtocol::BaseRTMPProtocol(uint64_t protocolType)
 	_pSignaledRTMPOutNetStream = NULL;
 	_rxInvokes = 0;
 	_txInvokes = 0;
+
+#ifdef ENFORCE_RTMP_OUTPUT_CHECKS
+	_pMonitor = new MonitorRTMPProtocol(MAX_STREAMS_COUNT, MAX_CHANNELS_COUNT);
+#endif /* ENFORCE_RTMP_OUTPUT_CHECKS */
 }
 
 BaseRTMPProtocol::~BaseRTMPProtocol() {
@@ -102,6 +107,10 @@ BaseRTMPProtocol::~BaseRTMPProtocol() {
 		InFileRTMPStream *pStream = MAP_VAL(_inFileStreams.begin());
 		delete pStream;
 		_inFileStreams.erase(pStream);
+	}
+	if (_pMonitor != NULL) {
+		delete _pMonitor;
+		_pMonitor = NULL;
 	}
 }
 
@@ -211,12 +220,27 @@ void BaseRTMPProtocol::GetStats(Variant &info) {
 }
 
 bool BaseRTMPProtocol::SendMessage(Variant & message) {
+#ifdef ENFORCE_RTMP_OUTPUT_CHECKS
+	_intermediateBuffer.IgnoreAll();
+	if (!_rtmpProtocolSerializer.Serialize(_channels[(uint32_t) VH_CI(message)],
+			message, _intermediateBuffer, _outboundChunkSize)) {
+		FATAL("Unable to serialize RTMP message");
+		return false;
+	}
+	if (!_pMonitor->Feed(_intermediateBuffer)) {
+		ASSERT("Server sent invalid data");
+	}
+	_outputBuffer.ReadFromBuffer(
+			GETIBPOINTER(_intermediateBuffer),
+			GETAVAILABLEBYTESCOUNT(_intermediateBuffer));
+#else  /* ENFORCE_RTMP_OUTPUT_CHECKS */
 	//2. Send the message
 	if (!_rtmpProtocolSerializer.Serialize(_channels[(uint32_t) VH_CI(message)],
 			message, _outputBuffer, _outboundChunkSize)) {
 		FATAL("Unable to serialize RTMP message");
 		return false;
 	}
+#endif  /* ENFORCE_RTMP_OUTPUT_CHECKS */
 
 	_txInvokes++;
 
@@ -226,18 +250,44 @@ bool BaseRTMPProtocol::SendMessage(Variant & message) {
 
 bool BaseRTMPProtocol::SendRawData(Header &header, Channel &channel, uint8_t *pData,
 		uint32_t length) {
+#ifdef ENFORCE_RTMP_OUTPUT_CHECKS
+	_intermediateBuffer.IgnoreAll();
+	if (!header.Write(channel, _intermediateBuffer)) {
+		FATAL("Unable to serialize message header");
+		return false;
+	}
+
+	_intermediateBuffer.ReadFromBuffer(pData, length);
+	if (!_pMonitor->Feed(_intermediateBuffer)) {
+		ASSERT("Server sent invalid data");
+	}
+	_outputBuffer.ReadFromBuffer(
+			GETIBPOINTER(_intermediateBuffer),
+			GETAVAILABLEBYTESCOUNT(_intermediateBuffer));
+#else /* ENFORCE_RTMP_OUTPUT_CHECKS */
 	if (!header.Write(channel, _outputBuffer)) {
 		FATAL("Unable to serialize message header");
 		return false;
 	}
 
 	_outputBuffer.ReadFromBuffer(pData, length);
-
+#endif /* ENFORCE_RTMP_OUTPUT_CHECKS */
 	return EnqueueForOutbound();
 }
 
 bool BaseRTMPProtocol::SendRawData(uint8_t *pData, uint32_t length) {
+#ifdef ENFORCE_RTMP_OUTPUT_CHECKS
+	_intermediateBuffer.IgnoreAll();
+	_intermediateBuffer.ReadFromBuffer(pData, length);
+	if (!_pMonitor->Feed(_intermediateBuffer)) {
+		ASSERT("Server sent invalid data");
+	}
+	_outputBuffer.ReadFromBuffer(
+			GETIBPOINTER(_intermediateBuffer),
+			GETAVAILABLEBYTESCOUNT(_intermediateBuffer));
+#else /* ENFORCE_RTMP_OUTPUT_CHECKS */
 	_outputBuffer.ReadFromBuffer(pData, length);
+#endif /* ENFORCE_RTMP_OUTPUT_CHECKS */
 	return EnqueueForOutbound();
 }
 
@@ -756,7 +806,6 @@ bool BaseRTMPProtocol::ProcessBytes(IOBuffer &buffer) {
 										GETAVAILABLEBYTESCOUNT(channel.inputData));
 								return false;
 							}
-						} else {
 						}
 						break;
 					} else {

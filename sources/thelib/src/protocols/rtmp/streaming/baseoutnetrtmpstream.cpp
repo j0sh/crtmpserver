@@ -403,20 +403,26 @@ void BaseOutNetRTMPStream::SignalAttachedToInStream() {
 		StreamCapabilities *pCapabilities = GetCapabilities();
 		if (pCapabilities != NULL) {
 			if (pCapabilities->videoCodecId == CODEC_VIDEO_AVC) {
-				if ((pCapabilities->avc._width != 0)
+				Variant meta;
+				if ((pCapabilities->avc._widthOverride != 0)
+						&& (pCapabilities->avc._heightOverride != 0)) {
+					meta["width"] = pCapabilities->avc._widthOverride;
+					meta["height"] = pCapabilities->avc._heightOverride;
+				} else if ((pCapabilities->avc._width != 0)
 						&& (pCapabilities->avc._height != 0)) {
-					Variant meta;
 					meta["width"] = pCapabilities->avc._width;
 					meta["height"] = pCapabilities->avc._height;
+				}
+				if (pCapabilities->bandwidthHint != 0) {
 					meta["bandwidth"] = (uint32_t) pCapabilities->bandwidthHint;
-					message = StreamMessageFactory::GetNotifyOnMetaData(_pChannelAudio->id,
-							_rtmpStreamId, 0, false, meta);
-					TRACK_MESSAGE("Message:\n%s", STR(message.ToString()));
-					if (!_pRTMPProtocol->SendMessage(message)) {
-						FATAL("Unable to send message");
-						_pRTMPProtocol->EnqueueForDelete();
-						return;
-					}
+				}
+				message = StreamMessageFactory::GetNotifyOnMetaData(_pChannelAudio->id,
+						_rtmpStreamId, 0, false, meta);
+				TRACK_MESSAGE("Message:\n%s", STR(message.ToString()));
+				if (!_pRTMPProtocol->SendMessage(message)) {
+					FATAL("Unable to send message");
+					_pRTMPProtocol->EnqueueForDelete();
+					return;
 				}
 			}
 		}

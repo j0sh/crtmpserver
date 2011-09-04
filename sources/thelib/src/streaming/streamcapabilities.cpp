@@ -383,13 +383,17 @@ void _VIDEO_AVC::Clear() {
 }
 
 bool _VIDEO_AVC::Serialize(IOBuffer &dest) {
-	uint8_t temp[sizeof (_spsLength) + sizeof (_ppsLength)];
+	uint8_t temp[sizeof (_spsLength) + sizeof (_ppsLength) + sizeof (uint32_t)];
 	EHTONSP(temp, _spsLength);
 	dest.ReadFromBuffer(temp, sizeof (_spsLength));
 	dest.ReadFromBuffer(_pSPS, _spsLength);
 	EHTONSP(temp, _ppsLength);
 	dest.ReadFromBuffer(temp, sizeof (_ppsLength));
 	dest.ReadFromBuffer(_pPPS, _ppsLength);
+	EHTONLP(temp, _widthOverride);
+	dest.ReadFromBuffer(temp, sizeof (uint32_t));
+	EHTONLP(temp, _heightOverride);
+	dest.ReadFromBuffer(temp, sizeof (uint32_t));
 	return true;
 }
 
@@ -402,27 +406,42 @@ bool _VIDEO_AVC::Deserialize(IOBuffer &src, _VIDEO_AVC &dest) {
 		return false;
 	}
 	dest._spsLength = ENTOHSP(pBuffer);
-	if (length<sizeof (dest._spsLength) + dest._spsLength + sizeof (dest._ppsLength)) {
+	if (length < (
+			sizeof (dest._spsLength)
+			+ dest._spsLength
+			+ sizeof (dest._ppsLength)
+			+ 2 * sizeof (uint32_t))) {
 		FATAL("Not enough data");
 		return false;
 	}
 	dest._ppsLength = ENTOHSP(pBuffer + sizeof (dest._spsLength) + dest._spsLength);
+	if (length < (
+			sizeof (dest._spsLength)
+			+ dest._spsLength
+			+ sizeof (dest._ppsLength)
+			+ dest._ppsLength
+			+ 2 * sizeof (uint32_t))) {
+		FATAL("Not enough data");
+		return false;
+	}
 	if (!dest.Init(
 			pBuffer + sizeof (dest._spsLength), dest._spsLength,
 			pBuffer + sizeof (dest._spsLength) + dest._spsLength + sizeof (dest._ppsLength), dest._ppsLength)) {
 		FATAL("Unable to init AVC");
 		return false;
 	}
+	dest._widthOverride = ENTOHLP(pBuffer + sizeof (dest._spsLength) + dest._spsLength + sizeof (dest._ppsLength) + dest._ppsLength);
+	dest._heightOverride = ENTOHLP(pBuffer + sizeof (dest._spsLength) + dest._spsLength + sizeof (dest._ppsLength) + dest._ppsLength + sizeof (uint32_t));
 
-	return src.Ignore(sizeof (dest._spsLength) + dest._spsLength + sizeof (dest._ppsLength) + dest._ppsLength);
+	return src.Ignore(sizeof (dest._spsLength) + dest._spsLength + sizeof (dest._ppsLength) + dest._ppsLength + sizeof (uint32_t) + sizeof (uint32_t));
 }
 
 _VIDEO_AVC::operator string() {
 	string result;
-	result += format("_spsLength: %hu\n", _spsLength);
-	result += format("_ppsLength: %hu\n", _ppsLength);
-	result += format("_rate: %u\n", _rate);
-	result += format("WxH: %ux%u", _width, _height);
+	result += format("_spsLength: %"PRIu16"\n", _spsLength);
+	result += format("_ppsLength: %"PRIu16"\n", _ppsLength);
+	result += format("_rate: %"PRIu32"\n", _rate);
+	result += format("WxH: %"PRIu32"x%"PRIu32, _width, _height);
 	return result;
 }
 
@@ -642,7 +661,7 @@ void StreamCapabilities::Clear() {
 	bandwidthHint = 0;
 }
 
-#define __STREAM_CAPABILITIES_VERSION MAKE_TAG4('V','E','R','2')
+#define __STREAM_CAPABILITIES_VERSION MAKE_TAG4('V','E','R','3')
 
 bool StreamCapabilities::Serialize(IOBuffer &dest) {
 	uint8_t temp[28];

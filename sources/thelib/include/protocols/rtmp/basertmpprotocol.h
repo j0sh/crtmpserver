@@ -34,6 +34,8 @@
 #define MIN_AV_CHANNLES 20
 #define MAX_AV_CHANNLES 60
 
+//#define ENFORCE_RTMP_OUTPUT_CHECKS
+
 typedef enum _RTMPState {
 	RTMP_STATE_NOT_INITIALIZED,
 	RTMP_STATE_CLIENT_REQUEST_RECEIVED,
@@ -48,6 +50,9 @@ class BaseOutNetRTMPStream;
 class InFileRTMPStream;
 class InNetRTMPStream;
 class BaseRTMPAppProtocolHandler;
+#ifdef ENFORCE_RTMP_OUTPUT_CHECKS
+class MonitorRTMPProtocol;
+#endif  /* ENFORCE_RTMP_OUTPUT_CHECKS */
 
 class DLLEXP BaseRTMPProtocol
 : public BaseProtocol {
@@ -57,6 +62,10 @@ protected:
 	bool _handshakeCompleted;
 	RTMPState _rtmpState;
 	IOBuffer _outputBuffer;
+#ifdef ENFORCE_RTMP_OUTPUT_CHECKS
+	IOBuffer _intermediateBuffer;
+	MonitorRTMPProtocol *_pMonitor;
+#endif /* ENFORCE_RTMP_OUTPUT_CHECKS */
 	uint64_t _nextReceivedBytesCountReport;
 	uint32_t _winAckSize;
 	Channel _channels[MAX_CHANNELS_COUNT];

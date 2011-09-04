@@ -33,6 +33,8 @@ struct _VIDEO_AVC {
 	Variant _PPSInfo;
 	uint32_t _width;
 	uint32_t _height;
+	uint32_t _widthOverride;
+	uint32_t _heightOverride;
 
 	DLLEXP _VIDEO_AVC();
 	DLLEXP virtual ~_VIDEO_AVC();

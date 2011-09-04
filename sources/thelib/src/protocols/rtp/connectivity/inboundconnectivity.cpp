@@ -210,6 +210,20 @@ bool InboundConnectivity::Initialize() {
 			_audioTrack != V_NULL ? unhex(SDP_AUDIO_CODEC_SETUP(_audioTrack)) : "",
 			bandwidth);
 
+	//6. override the width/height with the values in session (if any) 
+	Variant &session = _pRTSP->GetCustomParameters();
+	if ((session.HasKeyChain(V_UINT32, true, 3, "customParameters", "externalStreamConfig", "width"))
+			&& (session.HasKeyChain(V_UINT32, true, 3, "customParameters", "externalStreamConfig", "height"))) {
+		StreamCapabilities *pCap = _pInStream->GetCapabilities();
+		if (pCap->videoCodecId == CODEC_VIDEO_AVC) {
+			pCap->avc._widthOverride = (uint32_t) session["customParameters"]["externalStreamConfig"]["width"];
+			pCap->avc._heightOverride = (uint32_t) session["customParameters"]["externalStreamConfig"]["height"];
+		}
+	}
+
+	//	pCap->avc._widthOverride=session["width"];
+	//	pCap->avc._widthOverride=session[""];
+
 	//6. make the stream known to inbound RTP protocols
 	//and plug in the connectivity
 	if (_pRTPVideo != NULL) {
