@@ -201,8 +201,8 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/1210522057/atomstsd.o \
 	${OBJECTDIR}/_ext/517913122/streamdescriptors.o \
 	${OBJECTDIR}/_ext/1210522057/atomstts.o \
-	${OBJECTDIR}/_ext/1210522057/atomdinf.o \
 	${OBJECTDIR}/_ext/1210522057/atomminf.o \
+	${OBJECTDIR}/_ext/1210522057/atomdinf.o \
 	${OBJECTDIR}/_ext/501751224/channel.o \
 	${OBJECTDIR}/_ext/554535297/tcpacceptor.o \
 	${OBJECTDIR}/_ext/1124563255/inboundsslprotocol.o \
@@ -1078,15 +1078,15 @@ ${OBJECTDIR}/_ext/1210522057/atomstts.o: ../../../../sources/thelib/src/mediafor
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_VAR -DHAS_PROTOCOL_LIVEFLV -DHAS_MEDIA_MP4 -DHAS_MEDIA_MP3 -DHAS_MEDIA_FLV -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1210522057/atomstts.o ../../../../sources/thelib/src/mediaformats/mp4/atomstts.cpp
 
-${OBJECTDIR}/_ext/1210522057/atomdinf.o: ../../../../sources/thelib/src/mediaformats/mp4/atomdinf.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/1210522057
-	${RM} $@.d
-	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_VAR -DHAS_PROTOCOL_LIVEFLV -DHAS_MEDIA_MP4 -DHAS_MEDIA_MP3 -DHAS_MEDIA_FLV -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1210522057/atomdinf.o ../../../../sources/thelib/src/mediaformats/mp4/atomdinf.cpp
-
 ${OBJECTDIR}/_ext/1210522057/atomminf.o: ../../../../sources/thelib/src/mediaformats/mp4/atomminf.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1210522057
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_VAR -DHAS_PROTOCOL_LIVEFLV -DHAS_MEDIA_MP4 -DHAS_MEDIA_MP3 -DHAS_MEDIA_FLV -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1210522057/atomminf.o ../../../../sources/thelib/src/mediaformats/mp4/atomminf.cpp
+
+${OBJECTDIR}/_ext/1210522057/atomdinf.o: ../../../../sources/thelib/src/mediaformats/mp4/atomdinf.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1210522057
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_VAR -DHAS_PROTOCOL_LIVEFLV -DHAS_MEDIA_MP4 -DHAS_MEDIA_MP3 -DHAS_MEDIA_FLV -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1210522057/atomdinf.o ../../../../sources/thelib/src/mediaformats/mp4/atomdinf.cpp
 
 ${OBJECTDIR}/_ext/501751224/channel.o: ../../../../sources/thelib/src/protocols/rtmp/channel.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/501751224
