@@ -162,6 +162,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/1919749812/protocolfactorymanager.o \
 	${OBJECTDIR}/_ext/1210522057/atommetafield.o \
 	${OBJECTDIR}/_ext/126235575/iotimer.o \
+	${OBJECTDIR}/_ext/501751224/monitorrtmpprotocol.o \
 	${OBJECTDIR}/_ext/554535297/iotimer.o \
 	${OBJECTDIR}/_ext/1636055853/streamcapabilities.o \
 	${OBJECTDIR}/_ext/1210522057/atommvex.o \
@@ -881,6 +882,11 @@ ${OBJECTDIR}/_ext/126235575/iotimer.o: ../../../../sources/thelib/src/netio/epol
 	${MKDIR} -p ${OBJECTDIR}/_ext/126235575
 	${RM} $@.d
 	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_VAR -DHAS_PROTOCOL_LIVEFLV -DHAS_MEDIA_MP4 -DHAS_MEDIA_MP3 -DHAS_MEDIA_FLV -DHAS_MEDIA_MKV -DCreateRTCPPacket=CreateRTCPPacket_none -DFeedDataAudioMPEG4Generic=FeedDataAudioMPEG4Generic_one_by_one -DHAS_MEDIA_MKV -DHAS_PROTOCOL_CLI -DHAS_PROTOCOL_RTMFP -DHAS_MEDIA_NSV -DHAS_PROTOCOL_MMS -DHAS_PROTOCOL_RAWHTTPSTREAM -DHAS_SYSLOG -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../../ffmpeg_bin/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/126235575/iotimer.o ../../../../sources/thelib/src/netio/epoll/iotimer.cpp
+
+${OBJECTDIR}/_ext/501751224/monitorrtmpprotocol.o: ../../../../sources/thelib/src/protocols/rtmp/monitorrtmpprotocol.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/501751224
+	${RM} $@.d
+	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DLITTLE_ENDIAN_BYTE_ALIGNED -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_VAR -DHAS_PROTOCOL_LIVEFLV -DHAS_MEDIA_MP4 -DHAS_MEDIA_MP3 -DHAS_MEDIA_FLV -DHAS_MEDIA_MKV -DCreateRTCPPacket=CreateRTCPPacket_none -DFeedDataAudioMPEG4Generic=FeedDataAudioMPEG4Generic_one_by_one -DHAS_MEDIA_MKV -DHAS_PROTOCOL_CLI -DHAS_PROTOCOL_RTMFP -DHAS_MEDIA_NSV -DHAS_PROTOCOL_MMS -DHAS_PROTOCOL_RAWHTTPSTREAM -DHAS_SYSLOG -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../../ffmpeg_bin/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/501751224/monitorrtmpprotocol.o ../../../../sources/thelib/src/protocols/rtmp/monitorrtmpprotocol.cpp
 
 ${OBJECTDIR}/_ext/554535297/iotimer.o: ../../../../sources/thelib/src/netio/kqueue/iotimer.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/554535297
