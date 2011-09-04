@@ -8,4 +8,23 @@
         <activeConfIndexElem>0</activeConfIndexElem>
     </data>
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/1"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/1">
+        <file>file:/Users/shiretu/work/crtmpserver-trunk/sources/thelib/include/application/baseclientapplication.h</file>
+        <file>file:/Users/shiretu/work/crtmpserver-trunk/sources/thelib/src/protocols/rtp/basertspappprotocolhandler.cpp</file>
+        <file>file:/Users/shiretu/work/crtmpserver-trunk/sources/thelib/include/netio/kqueue/tcpconnector.h</file>
+        <file>file:/Users/shiretu/work/crtmpserver-trunk/sources/thelib/include/protocols/rtp/basertspappprotocolhandler.h</file>
+        <file>file:/Users/shiretu/work/crtmpserver-trunk/sources/thelib/src/streaming/baseinstream.cpp</file>
+        <file>file:/Users/shiretu/work/crtmpserver-trunk/sources/thelib/include/streaming/baseinstream.h</file>
+        <file>file:/Users/shiretu/work/crtmpserver-trunk/sources/thelib/src/streaming/basestream.cpp</file>
+        <file>file:/Users/shiretu/work/crtmpserver-trunk/sources/thelib/include/streaming/basestream.h</file>
+        <file>file:/Users/shiretu/work/crtmpserver-trunk/sources/thelib/include/streaming/streamcapabilities.h</file>
+        <file>file:/Users/shiretu/work/crtmpserver-trunk/sources/thelib/src/protocols/rtp/rtspprotocol.cpp</file>
+        <file>file:/Users/shiretu/work/crtmpserver-trunk/sources/thelib/include/protocols/rtp/rtspprotocol.h</file>
+        <file>file:/Users/shiretu/work/crtmpserver-trunk/sources/thelib/src/protocols/rtp/connectivity/inboundconnectivity.cpp</file>
+        <file>file:/Users/shiretu/work/crtmpserver-trunk/sources/thelib/include/protocols/rtp/connectivity/inboundconnectivity.h</file>
+        <file>file:/Users/shiretu/work/crtmpserver-trunk/sources/thelib/src/protocols/tcpprotocol.cpp</file>
+        <file>file:/Users/shiretu/work/crtmpserver-trunk/sources/thelib/src/protocols/baseprotocol.cpp</file>
+        <file>file:/Users/shiretu/work/crtmpserver-trunk/sources/thelib/include/protocols/rtmp/streaming/baseoutnetrtmpstream.h</file>
+        <file>file:/Users/shiretu/work/crtmpserver-trunk/sources/thelib/src/protocols/rtmp/streaming/baseoutnetrtmpstream.cpp</file>
+    </open-files>
 </project-private>
