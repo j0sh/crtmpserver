@@ -108,10 +108,12 @@ BaseRTMPProtocol::~BaseRTMPProtocol() {
 		delete pStream;
 		_inFileStreams.erase(pStream);
 	}
+#ifdef ENFORCE_RTMP_OUTPUT_CHECKS
 	if (_pMonitor != NULL) {
 		delete _pMonitor;
 		_pMonitor = NULL;
 	}
+#endif /* ENFORCE_RTMP_OUTPUT_CHECKS */
 }
 
 bool BaseRTMPProtocol::Initialize(Variant &parameters) {
