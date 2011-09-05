@@ -41,7 +41,7 @@
 
 //if needed, we can simulate dropping frames
 //the number represents the percent of frames that we will drop (0-100)
-#define SIMULATE_DROPPING_FRAMES 40
+//#define SIMULATE_DROPPING_FRAMES 40
 
 BaseOutNetRTMPStream::BaseOutNetRTMPStream(BaseProtocol *pProtocol,
 		StreamsManager *pStreamsManager, uint64_t type, string name, uint32_t rtmpStreamId,
