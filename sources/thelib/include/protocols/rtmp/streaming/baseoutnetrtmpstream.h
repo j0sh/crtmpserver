@@ -54,7 +54,8 @@ private:
 	Channel *_pChannelCommands;
 	uint32_t _feederChunkSize;
 	bool _canDropFrames;
-	bool _currentFrameDropped;
+	bool _audioCurrentFrameDropped;
+	bool _videoCurrentFrameDropped;
 	uint32_t _maxBufferSize;
 	uint64_t _attachedStreamType;
 	Variant _completeMetadata;

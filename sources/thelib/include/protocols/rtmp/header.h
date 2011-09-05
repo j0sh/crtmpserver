@@ -22,6 +22,8 @@
 #ifndef _HEADER_H
 #define	_HEADER_H
 
+//#define ENFORCE_RTMP_OUTPUT_CHECKS
+
 //LITTLE ENDIAN SYSTEMS
 #ifdef LITTLE_ENDIAN_BYTE_ALIGNED
 #include "protocols/rtmp/header_le_ba.h"

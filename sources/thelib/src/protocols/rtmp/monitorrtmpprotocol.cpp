@@ -109,15 +109,17 @@ bool MonitorRTMPProtocol::ProcessBytes(IOBuffer &buffer) {
 					}
 					case 1:
 					{
-						if (availableBytesCount < 3) {
-							FINEST("Not enough data");
-							return true;
-						}
-						_selectedChannel = 64 + GETIBPOINTER(buffer)[1] + GETIBPOINTER(buffer)[2];
-						_channels[_selectedChannel].lastInHeaderType = GETIBPOINTER(buffer)[0] >> 6;
-						buffer.Ignore(3);
-						availableBytesCount -= 3;
-						break;
+						//						if (availableBytesCount < 3) {
+						//							FINEST("Not enough data");
+						//							return true;
+						//						}
+						//						_selectedChannel = GETIBPOINTER(buffer)[2]*256 + GETIBPOINTER(buffer)[1] + 64;
+						//						_channels[_selectedChannel].lastInHeaderType = GETIBPOINTER(buffer)[0] >> 6;
+						//						buffer.Ignore(3);
+						//						availableBytesCount -= 3;
+						//						break;
+						FATAL("The server doesn't support channel ids bigger than 319");
+						return false;
 					};
 					default:
 					{
@@ -133,6 +135,7 @@ bool MonitorRTMPProtocol::ProcessBytes(IOBuffer &buffer) {
 
 		Channel &channel = _channels[_selectedChannel];
 		Header &header = channel.lastInHeader;
+		FINEST("header: %s", STR(header));
 
 		if (channel.state == CS_HEADER) {
 			if (!header.Read(_selectedChannel, channel.lastInHeaderType,
@@ -140,59 +143,67 @@ bool MonitorRTMPProtocol::ProcessBytes(IOBuffer &buffer) {
 				FATAL("Unable to read header");
 				return false;
 			} else {
-				if (header.readCompleted) {
-					if (H_SI(header) >= _maxStreamCount) {
-						FINEST("%s", STR(header));
-						ASSERT("invalid stream index");
-					}
-
-					if (H_CI(header) >= _maxChannelsCount) {
-						FINEST("%s", STR(header));
-						ASSERT("invalid channel index");
-					}
-
-					switch ((uint8_t) H_MT(header)) {
-						case RM_HEADER_MESSAGETYPE_ABORTMESSAGE:
-						case RM_HEADER_MESSAGETYPE_ACK:
-						case RM_HEADER_MESSAGETYPE_AGGREGATE:
-						case RM_HEADER_MESSAGETYPE_AUDIODATA:
-						case RM_HEADER_MESSAGETYPE_CHUNKSIZE:
-						case RM_HEADER_MESSAGETYPE_FLEX:
-						case RM_HEADER_MESSAGETYPE_FLEXSHAREDOBJECT:
-						case RM_HEADER_MESSAGETYPE_FLEXSTREAMSEND:
-						case RM_HEADER_MESSAGETYPE_INVOKE:
-						case RM_HEADER_MESSAGETYPE_NOTIFY:
-						case RM_HEADER_MESSAGETYPE_PEERBW:
-						case RM_HEADER_MESSAGETYPE_SHAREDOBJECT:
-						case RM_HEADER_MESSAGETYPE_USRCTRL:
-						case RM_HEADER_MESSAGETYPE_VIDEODATA:
-						case RM_HEADER_MESSAGETYPE_WINACKSIZE:
-						{
-							break;
-						}
-						default:
-						{
-							FINEST("%s", STR(header));
-							ASSERT("invalid message type");
-						}
-					}
-					channel.state = CS_PAYLOAD;
-					switch (channel.lastInHeaderType) {
-						case HT_FULL:
-							channel.lastInAbsTs = H_TS(header);
-							break;
-						case HT_SAME_STREAM:
-						case HT_SAME_LENGTH_AND_STREAM:
-							channel.lastInAbsTs += H_TS(header);
-							break;
-						case HT_CONTINUATION:
-							if (channel.lastInProcBytes == 0) {
-								channel.lastInAbsTs += H_TS(header);
-							}
-							break;
-					}
-				} else {
+				if (!header.readCompleted)
 					return true;
+
+				if (H_SI(header) >= _maxStreamCount) {
+					FATAL("%s", STR(header));
+					FATAL("buffer:\n%s", STR(buffer));
+					ASSERT("invalid stream index");
+				}
+
+				if (H_CI(header) >= _maxChannelsCount) {
+					FATAL("%s", STR(header));
+					FATAL("buffer:\n%s", STR(buffer));
+					ASSERT("invalid channel index");
+				}
+
+				switch ((uint8_t) H_MT(header)) {
+					case RM_HEADER_MESSAGETYPE_ABORTMESSAGE:
+					case RM_HEADER_MESSAGETYPE_ACK:
+					case RM_HEADER_MESSAGETYPE_AGGREGATE:
+					case RM_HEADER_MESSAGETYPE_AUDIODATA:
+					case RM_HEADER_MESSAGETYPE_CHUNKSIZE:
+					case RM_HEADER_MESSAGETYPE_FLEX:
+					case RM_HEADER_MESSAGETYPE_FLEXSHAREDOBJECT:
+					case RM_HEADER_MESSAGETYPE_FLEXSTREAMSEND:
+					case RM_HEADER_MESSAGETYPE_INVOKE:
+					case RM_HEADER_MESSAGETYPE_NOTIFY:
+					case RM_HEADER_MESSAGETYPE_PEERBW:
+					case RM_HEADER_MESSAGETYPE_SHAREDOBJECT:
+					case RM_HEADER_MESSAGETYPE_USRCTRL:
+					case RM_HEADER_MESSAGETYPE_VIDEODATA:
+					case RM_HEADER_MESSAGETYPE_WINACKSIZE:
+					{
+						break;
+					}
+					default:
+					{
+						FATAL("%s", STR(header));
+						FATAL("buffer:\n%s", STR(buffer));
+						ASSERT("invalid message type");
+					}
+				}
+				channel.state = CS_PAYLOAD;
+				switch (channel.lastInHeaderType) {
+					case HT_FULL:
+					{
+						channel.lastInAbsTs = H_TS(header);
+						break;
+					}
+					case HT_SAME_STREAM:
+					case HT_SAME_LENGTH_AND_STREAM:
+					{
+						channel.lastInAbsTs += H_TS(header);
+						break;
+					}
+					case HT_CONTINUATION:
+					{
+						if (channel.lastInProcBytes == 0) {
+							channel.lastInAbsTs += H_TS(header);
+						}
+						break;
+					}
 				}
 			}
 		}
@@ -201,122 +212,76 @@ bool MonitorRTMPProtocol::ProcessBytes(IOBuffer &buffer) {
 			uint32_t tempSize = H_ML(header) - channel.lastInProcBytes;
 			tempSize = (tempSize >= _inboundChunkSize) ? _inboundChunkSize : tempSize;
 			uint32_t availableBytes = GETAVAILABLEBYTESCOUNT(buffer);
+			if (tempSize > availableBytes)
+				return true;
+			channel.state = CS_HEADER;
+			_selectedChannel = -1;
 			switch (H_MT(header)) {
 				case RM_HEADER_MESSAGETYPE_VIDEODATA:
 				{
-					if (tempSize <= availableBytes) {
-						channel.state = CS_HEADER;
-						_selectedChannel = -1;
-
-						//TODO: THIS is anti-performance fix. It works
-						//but it needs to be replaced with other means of detecting
-						//the type of stream. Calling a function for each packet
-						//is not a nice thing to do
-						if (H_SI(header) >= _maxStreamCount) {
-							FATAL("Incorrect stream index");
-							return false;
-						}
-						//						if ((_streams[H_SI(header)] != NULL)
-						//								&& (_streams[H_SI(header)]->GetType() == ST_IN_NET_RTMP)) {
-						//							if (!((InNetRTMPStream *) _streams[H_SI(header)])->FeedData(
-						//									GETIBPOINTER(buffer), //pData,
-						//									tempSize, //dataLength,
-						//									channel.lastInProcBytes, //processedLength,
-						//									H_ML(header), //totalLength,
-						//									channel.lastInAbsTs, //absoluteTimestamp,
-						//									false //isAudio
-						//									)) {
-						//								FATAL("Unable to feed video");
-						//								return false;
-						//							}
-						//						}
-
-						channel.lastInProcBytes += tempSize;
-						if (H_ML(header) == channel.lastInProcBytes) {
-							channel.lastInProcBytes = 0;
-						}
-						if (!buffer.Ignore(tempSize)) {
-							FATAL("V: Unable to ignore %u bytes", tempSize);
-							return false;
-						}
-						break;
-					} else {
-						return true;
+					if (H_SI(header) >= _maxStreamCount) {
+						FATAL("Incorrect stream index");
+						return false;
 					}
+
+					//FINEST("Video data");
+
+					channel.lastInProcBytes += tempSize;
+					if (H_ML(header) == channel.lastInProcBytes) {
+						channel.lastInProcBytes = 0;
+					}
+					if (!buffer.Ignore(tempSize)) {
+						FATAL("V: Unable to ignore %u bytes", tempSize);
+						return false;
+					}
+					break;
 				}
 				case RM_HEADER_MESSAGETYPE_AUDIODATA:
 				{
-					if (tempSize <= availableBytes) {
-						channel.state = CS_HEADER;
-						_selectedChannel = -1;
-
-						//TODO: see the todo in the video case
-						if (H_SI(header) >= _maxStreamCount) {
-							FATAL("Incorrect stream index");
-							return false;
-						}
-						//						if ((_streams[H_SI(header)] != NULL)
-						//								&& (_streams[H_SI(header)]->GetType() == ST_IN_NET_RTMP)) {
-						//							if (!((InNetRTMPStream *) _streams[H_SI(header)])->FeedData(
-						//									GETIBPOINTER(buffer), //pData,
-						//									tempSize, //dataLength,
-						//									channel.lastInProcBytes, //processedLength,
-						//									H_ML(header), //totalLength,
-						//									channel.lastInAbsTs, //absoluteTimestamp,
-						//									true //isAudio
-						//									)) {
-						//								FATAL("Unable to feed audio");
-						//								return false;
-						//							}
-						//						}
-
-
-						channel.lastInProcBytes += tempSize;
-						if (H_ML(header) == channel.lastInProcBytes) {
-							channel.lastInProcBytes = 0;
-						}
-						if (!buffer.Ignore(tempSize)) {
-							FATAL("A: Unable to ignore %u bytes", tempSize);
-							return false;
-						}
-						break;
-					} else {
-						return true;
+					if (H_SI(header) >= _maxStreamCount) {
+						FATAL("Incorrect stream index");
+						return false;
 					}
+
+					//FINEST("Audio data");
+
+					channel.lastInProcBytes += tempSize;
+					if (H_ML(header) == channel.lastInProcBytes) {
+						channel.lastInProcBytes = 0;
+					}
+					if (!buffer.Ignore(tempSize)) {
+						FATAL("A: Unable to ignore %u bytes", tempSize);
+						return false;
+					}
+					break;
 				}
 				default:
 				{
-					if (tempSize <= availableBytes) {
-						channel.state = CS_HEADER;
-						_selectedChannel = -1;
-						channel.inputData.ReadFromInputBuffer(buffer, tempSize);
-						channel.lastInProcBytes += tempSize;
-						if (!buffer.Ignore(tempSize)) {
-							FATAL("Unable to ignore %u bytes", tempSize);
+					channel.inputData.ReadFromInputBuffer(buffer, tempSize);
+					channel.lastInProcBytes += tempSize;
+					if (!buffer.Ignore(tempSize)) {
+						FATAL("Unable to ignore %u bytes", tempSize);
+						return false;
+					}
+					if (H_ML(header) == channel.lastInProcBytes) {
+						channel.lastInProcBytes = 0;
+						Variant msg;
+						if (!_rtmpProtocolSerializer.Deserialize(header, channel.inputData, msg)) {
+							FATAL("Unable to deserialize message");
 							return false;
 						}
-						if (H_ML(header) == channel.lastInProcBytes) {
-							channel.lastInProcBytes = 0;
-							Variant msg;
-							if (!_rtmpProtocolSerializer.Deserialize(header, channel.inputData, msg)) {
-								FATAL("Unable to deserialize message");
-								return false;
-							}
 
-							if ((uint8_t) VH_MT(msg) == RM_HEADER_MESSAGETYPE_CHUNKSIZE) {
-								_inboundChunkSize = (uint32_t) msg[RM_CHUNKSIZE];
-							}
-
-							if (GETAVAILABLEBYTESCOUNT(channel.inputData) != 0) {
-								FATAL("Invalid message!!! We have leftovers: %u bytes",
-										GETAVAILABLEBYTESCOUNT(channel.inputData));
-								return false;
-							}
+						if ((uint8_t) VH_MT(msg) == RM_HEADER_MESSAGETYPE_CHUNKSIZE) {
+							_inboundChunkSize = (uint32_t) msg[RM_CHUNKSIZE];
 						}
-						break;
-					} else {
-						return true;
+
+						if (GETAVAILABLEBYTESCOUNT(channel.inputData) != 0) {
+							FATAL("Invalid message!!! We have leftovers: %u bytes",
+									GETAVAILABLEBYTESCOUNT(channel.inputData));
+							return false;
+						}
 					}
+					break;
 				}
 			}
 		}

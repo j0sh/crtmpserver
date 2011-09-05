@@ -39,6 +39,10 @@
 
 #define ALLOW_EXECUTION(feederProcessed,dataLength,isAudio) if (!AllowExecution(feederProcessed,dataLength,isAudio)) { /*FINEST("We are not allowed to send this data");*/ return true; }
 
+//if needed, we can simulate dropping frames
+//the number represents the percent of frames that we will drop (0-100)
+#define SIMULATE_DROPPING_FRAMES 40
+
 BaseOutNetRTMPStream::BaseOutNetRTMPStream(BaseProtocol *pProtocol,
 		StreamsManager *pStreamsManager, uint64_t type, string name, uint32_t rtmpStreamId,
 		uint32_t chunkSize)
@@ -56,7 +60,8 @@ BaseOutNetRTMPStream::BaseOutNetRTMPStream(BaseProtocol *pProtocol,
 
 	_feederChunkSize = 0xffffffff;
 	_canDropFrames = true;
-	_currentFrameDropped = false;
+	_audioCurrentFrameDropped = false;
+	_videoCurrentFrameDropped = false;
 	_maxBufferSize = 65536 * 2;
 	_attachedStreamType = 0;
 	_clientId = format("%d_%d_%"PRIz"u", _pProtocol->GetId(), _rtmpStreamId, (size_t)this);
@@ -770,54 +775,64 @@ bool BaseOutNetRTMPStream::ChunkAndSend(uint8_t *pData, uint32_t length,
 }
 
 bool BaseOutNetRTMPStream::AllowExecution(uint32_t totalProcessed, uint32_t dataLength, bool isAudio) {
-	if (_canDropFrames) {
-		//we are allowed to drop frames
-
-		uint64_t &bytesCounter = isAudio ? _audioDroppedBytesCount : _videoDroppedBytesCount;
-		uint64_t &packetsCounter = isAudio ? _audioDroppedPacketsCount : _videoDroppedPacketsCount;
-
-		if (_currentFrameDropped) {
-			//current frame was dropped. Test to see if we are in the middle
-			//of it or this is a new one
-			if (totalProcessed != 0) {
-				//we are in the middle of it. Don't allow execution
-				bytesCounter += dataLength;
-				return false;
-			} else {
-				//this is a new frame. We will detect later if it can be sent
-				_currentFrameDropped = false;
-			}
-		}
-
-		if (totalProcessed == 0) {
-			//we have a brand new frame
-
-			if (_pRTMPProtocol->GetOutputBuffer() != NULL) {
-				//we have some data in the output buffer
-
-
-				if (GETAVAILABLEBYTESCOUNT(*_pRTMPProtocol->GetOutputBuffer()) > _maxBufferSize) {
-					//we have too many data left unsent. Drop the frame
-					packetsCounter++;
-					bytesCounter += dataLength;
-					_currentFrameDropped = true;
-					return false;
-				} else {
-					//we can still pump data
-					return true;
-				}
-			} else {
-				//no data in the output buffer. Allow to send it
-				return true;
-			}
-		} else {
-			//we are in the middle of a non-dropped frame. Send it anyway
-			return true;
-		}
-	} else {
+	if (!_canDropFrames) {
 		// we are not allowed to drop frames
 		return true;
 	}
+
+	//we are allowed to drop frames
+	uint64_t &bytesCounter = isAudio ? _audioDroppedBytesCount : _videoDroppedBytesCount;
+	uint64_t &packetsCounter = isAudio ? _audioDroppedPacketsCount : _videoDroppedPacketsCount;
+	bool &currentFrameDropped = isAudio ? _audioCurrentFrameDropped : _videoCurrentFrameDropped;
+
+	if (currentFrameDropped) {
+		//current frame was dropped. Test to see if we are in the middle
+		//of it or this is a new one
+		if (totalProcessed != 0) {
+			//we are in the middle of it. Don't allow execution
+			bytesCounter += dataLength;
+			return false;
+		} else {
+			//this is a new frame. We will detect later if it can be sent
+			currentFrameDropped = false;
+		}
+	}
+
+	if (totalProcessed != 0) {
+		//we are in the middle of a non-dropped frame. Send it anyway
+		return true;
+	}
+
+#ifdef SIMULATE_DROPPING_FRAMES
+	if ((rand() % 100) < SIMULATE_DROPPING_FRAMES) {
+		//we have too many data left unsent. Drop the frame
+		packetsCounter++;
+		bytesCounter += dataLength;
+		currentFrameDropped = true;
+		return false;
+	} else {
+		//we can still pump data
+		return true;
+	}
+#else /* SIMULATE_DROPPING_FRAMES */
+	//do we have any data?
+	if (_pRTMPProtocol->GetOutputBuffer() == NULL) {
+		//no data in the output buffer. Allow to send it
+		return true;
+	}
+
+	//we have some data in the output buffer
+	if (GETAVAILABLEBYTESCOUNT(*_pRTMPProtocol->GetOutputBuffer()) > _maxBufferSize) {
+		//we have too many data left unsent. Drop the frame
+		packetsCounter++;
+		bytesCounter += dataLength;
+		currentFrameDropped = true;
+		return false;
+	} else {
+		//we can still pump data
+		return true;
+	}
+#endif /* SIMULATE_DROPPING_FRAMES */
 }
 
 void BaseOutNetRTMPStream::InternalReset() {
