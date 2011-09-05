@@ -1,0 +1,1091 @@
+Index: ../../sources/thelib/include/protocols/rtmp/basertmpprotocol.h
+===================================================================
+--- ../../sources/thelib/include/protocols/rtmp/basertmpprotocol.h	(revision 603)
++++ ../../sources/thelib/include/protocols/rtmp/basertmpprotocol.h	(working copy)
+@@ -28,13 +28,13 @@
+ #include "streaming/rtmpstream.h"
+ 
+ #define RECEIVED_BYTES_COUNT_REPORT_CHUNK 131072
+-#define MAX_CHANNELS_COUNT (64+256+256)
++#define MAX_CHANNELS_COUNT (64+255)
+ #define MAX_STREAMS_COUNT 256
+ 
+ #define MIN_AV_CHANNLES 20
+ #define MAX_AV_CHANNLES 60
+ 
+-//#define ENFORCE_RTMP_OUTPUT_CHECKS
++#define ENFORCE_RTMP_OUTPUT_CHECKS
+ 
+ typedef enum _RTMPState {
+ 	RTMP_STATE_NOT_INITIALIZED,
+@@ -80,7 +80,10 @@
+ 	map<InFileRTMPStream *, InFileRTMPStream *> _inFileStreams;
+ 	uint64_t _rxInvokes;
+ 	uint64_t _txInvokes;
++	
+ public:
++	uint32_t ___lastInProcBytes;
++public:
+ 	BaseRTMPProtocol(uint64_t protocolType);
+ 	virtual ~BaseRTMPProtocol();
+ 
+@@ -98,7 +101,7 @@
+ 
+ 	bool SendMessage(Variant &message);
+ 	bool SendRawData(Header &header, Channel &channel, uint8_t *pData, uint32_t length);
+-	bool SendRawData(uint8_t *pData, uint32_t length);
++	bool SendRawData(uint8_t *pData, uint32_t length, uint32_t uniqueRTMPStreamId);
+ 
+ 	void SetWinAckSize(uint32_t winAckSize);
+ 
+Index: ../../sources/thelib/include/protocols/rtmp/streaming/baseoutnetrtmpstream.h
+===================================================================
+--- ../../sources/thelib/include/protocols/rtmp/streaming/baseoutnetrtmpstream.h	(revision 603)
++++ ../../sources/thelib/include/protocols/rtmp/streaming/baseoutnetrtmpstream.h	(working copy)
+@@ -54,7 +54,8 @@
+ 	Channel *_pChannelCommands;
+ 	uint32_t _feederChunkSize;
+ 	bool _canDropFrames;
+-	bool _currentFrameDropped;
++	bool _audioCurrentFrameDropped;
++	bool _videoCurrentFrameDropped;
+ 	uint32_t _maxBufferSize;
+ 	uint64_t _attachedStreamType;
+ 	Variant _completeMetadata;
+@@ -71,6 +72,9 @@
+ 	uint64_t _videoDroppedPacketsCount;
+ 	uint64_t _videoBytesCount;
+ 	uint64_t _videoDroppedBytesCount;
++
++	uint32_t _path[65536];
++	int _pathIdx;
+ protected:
+ 	BaseOutNetRTMPStream(BaseProtocol *pProtocol, StreamsManager *pStreamsManager,
+ 			uint64_t type, string name, uint32_t rtmpStreamId, uint32_t chunkSize);
+@@ -109,7 +113,7 @@
+ 	virtual void SignalStreamCompleted();
+ private:
+ 	bool ChunkAndSend(uint8_t *pData, uint32_t length, IOBuffer &bucket,
+-			Header &header, Channel &channel);
++			Header &header, Channel &channel, uint32_t ___processed);
+ 	bool AllowExecution(uint32_t totalProcessed, uint32_t dataLength, bool isAudio);
+ 	void InternalReset();
+ 	void FixTimeBase();
+Index: ../../sources/thelib/include/protocols/rtmp/header_le_ba.h
+===================================================================
+--- ../../sources/thelib/include/protocols/rtmp/header_le_ba.h	(revision 603)
++++ ../../sources/thelib/include/protocols/rtmp/header_le_ba.h	(working copy)
+@@ -59,6 +59,7 @@
+ 	bool readCompleted;
+ 	bool isAbsolute;
+ 	bool skip4bytes;
++	uint32_t _uniqueRTMPStreamId;
+ 
+ 	bool Read(uint32_t channelId, uint8_t type, IOBuffer &buffer,
+ 			uint32_t availableBytes);
+@@ -67,9 +68,19 @@
+ 	static bool GetFromVariant(struct _Header &header, Variant & variant);
+ 
+ 	bool Write(struct _Channel &channel, IOBuffer & buffer);
+-	bool Write(IOBuffer & buffer);
++	bool Write_muie(IOBuffer & buffer);
+ 
+ 	operator string();
++
++	_Header() {
++		ci = 0;
++		ht = 0;
++		memset(&hf, 0, sizeof (hf));
++		readCompleted = false;
++		isAbsolute = false;
++		skip4bytes = false;
++		_uniqueRTMPStreamId = 0;
++	}
+ } Header;
+ 
+ #endif	/* _HEADER_LE_BA_H */
+Index: ../../sources/thelib/src/protocols/rtmp/basertmpprotocol.cpp
+===================================================================
+--- ../../sources/thelib/src/protocols/rtmp/basertmpprotocol.cpp	(revision 603)
++++ ../../sources/thelib/src/protocols/rtmp/basertmpprotocol.cpp	(working copy)
+@@ -252,6 +252,7 @@
+ 
+ bool BaseRTMPProtocol::SendRawData(Header &header, Channel &channel, uint8_t *pData,
+ 		uint32_t length) {
++	FINEST("URSI: %"PRIu32"; length: %"PRIu32, header._uniqueRTMPStreamId, length);
+ #ifdef ENFORCE_RTMP_OUTPUT_CHECKS
+ 	_intermediateBuffer.IgnoreAll();
+ 	if (!header.Write(channel, _intermediateBuffer)) {
+@@ -277,7 +278,8 @@
+ 	return EnqueueForOutbound();
+ }
+ 
+-bool BaseRTMPProtocol::SendRawData(uint8_t *pData, uint32_t length) {
++bool BaseRTMPProtocol::SendRawData(uint8_t *pData, uint32_t length, uint32_t uniqueRTMPStreamId) {
++	FINEST("URSI: %"PRIu32"; length: %"PRIu32, uniqueRTMPStreamId, length);
+ #ifdef ENFORCE_RTMP_OUTPUT_CHECKS
+ 	_intermediateBuffer.IgnoreAll();
+ 	_intermediateBuffer.ReadFromBuffer(pData, length);
+@@ -640,15 +642,17 @@
+ 					}
+ 					case 1:
+ 					{
+-						if (availableBytesCount < 3) {
+-							FINEST("Not enough data");
+-							return true;
+-						}
+-						_selectedChannel = 64 + GETIBPOINTER(buffer)[1] + GETIBPOINTER(buffer)[2];
+-						_channels[_selectedChannel].lastInHeaderType = GETIBPOINTER(buffer)[0] >> 6;
+-						buffer.Ignore(3);
+-						availableBytesCount -= 3;
+-						break;
++						//						if (availableBytesCount < 3) {
++						//							FINEST("Not enough data");
++						//							return true;
++						//						}
++						//						_selectedChannel = GETIBPOINTER(buffer)[2]*256 + GETIBPOINTER(buffer)[1] + 64;
++						//						_channels[_selectedChannel].lastInHeaderType = GETIBPOINTER(buffer)[0] >> 6;
++						//						buffer.Ignore(3);
++						//						availableBytesCount -= 3;
++						//						break;
++						FATAL("The server doesn't support channel ids bigger than 319");
++						return false;
+ 					};
+ 					default:
+ 					{
+@@ -671,24 +675,28 @@
+ 				FATAL("Unable to read header");
+ 				return false;
+ 			} else {
+-				if (header.readCompleted) {
+-					channel.state = CS_PAYLOAD;
+-					switch (channel.lastInHeaderType) {
+-						case HT_FULL:
+-							channel.lastInAbsTs = H_TS(header);
+-							break;
+-						case HT_SAME_STREAM:
+-						case HT_SAME_LENGTH_AND_STREAM:
++				if (!header.readCompleted)
++					return true;
++				channel.state = CS_PAYLOAD;
++				switch (channel.lastInHeaderType) {
++					case HT_FULL:
++					{
++						channel.lastInAbsTs = H_TS(header);
++						break;
++					}
++					case HT_SAME_STREAM:
++					case HT_SAME_LENGTH_AND_STREAM:
++					{
++						channel.lastInAbsTs += H_TS(header);
++						break;
++					}
++					case HT_CONTINUATION:
++					{
++						if (channel.lastInProcBytes == 0) {
+ 							channel.lastInAbsTs += H_TS(header);
+-							break;
+-						case HT_CONTINUATION:
+-							if (channel.lastInProcBytes == 0) {
+-								channel.lastInAbsTs += H_TS(header);
+-							}
+-							break;
++						}
++						break;
+ 					}
+-				} else {
+-					return true;
+ 				}
+ 			}
+ 		}
+@@ -697,122 +705,111 @@
+ 			uint32_t tempSize = H_ML(header) - channel.lastInProcBytes;
+ 			tempSize = (tempSize >= _inboundChunkSize) ? _inboundChunkSize : tempSize;
+ 			uint32_t availableBytes = GETAVAILABLEBYTESCOUNT(buffer);
++			if (tempSize > availableBytes)
++				return true;
++			channel.state = CS_HEADER;
++			_selectedChannel = -1;
++			FINEST("%"PRIu32"; input: %s; channel.lastInProcBytes: %"PRIu32"; wanted: %"PRIu32,
++					GetId(),
++					STR(header),
++					channel.lastInProcBytes,
++					tempSize
++					);
+ 			switch (H_MT(header)) {
+ 				case RM_HEADER_MESSAGETYPE_VIDEODATA:
+ 				{
+-					if (tempSize <= availableBytes) {
+-						channel.state = CS_HEADER;
+-						_selectedChannel = -1;
+-
+-						//TODO: THIS is anti-performance fix. It works
+-						//but it needs to be replaced with other means of detecting
+-						//the type of stream. Calling a function for each packet
+-						//is not a nice thing to do
+-						if (H_SI(header) >= MAX_STREAMS_COUNT) {
+-							FATAL("Incorrect stream index");
++					if (H_SI(header) >= MAX_STREAMS_COUNT) {
++						FATAL("The server doesn't support stream ids bigger than %"PRIu32,
++								(uint32_t) MAX_STREAMS_COUNT);
++						return false;
++					}
++					___lastInProcBytes = channel.lastInProcBytes;
++					if ((_streams[H_SI(header)] != NULL)
++							&& (_streams[H_SI(header)]->GetType() == ST_IN_NET_RTMP)) {
++						if (!((InNetRTMPStream *) _streams[H_SI(header)])->FeedData(
++								GETIBPOINTER(buffer), //pData,
++								tempSize, //dataLength,
++								channel.lastInProcBytes, //processedLength,
++								H_ML(header), //totalLength,
++								channel.lastInAbsTs, //absoluteTimestamp,
++								false //isAudio
++								)) {
++							FATAL("Unable to feed video");
+ 							return false;
+ 						}
+-						if ((_streams[H_SI(header)] != NULL)
+-								&& (_streams[H_SI(header)]->GetType() == ST_IN_NET_RTMP)) {
+-							if (!((InNetRTMPStream *) _streams[H_SI(header)])->FeedData(
+-									GETIBPOINTER(buffer), //pData,
+-									tempSize, //dataLength,
+-									channel.lastInProcBytes, //processedLength,
+-									H_ML(header), //totalLength,
+-									channel.lastInAbsTs, //absoluteTimestamp,
+-									false //isAudio
+-									)) {
+-								FATAL("Unable to feed video");
+-								return false;
+-							}
+-						}
++					}
+ 
+-						channel.lastInProcBytes += tempSize;
+-						if (H_ML(header) == channel.lastInProcBytes) {
+-							channel.lastInProcBytes = 0;
+-						}
+-						if (!buffer.Ignore(tempSize)) {
+-							FATAL("V: Unable to ignore %u bytes", tempSize);
+-							return false;
+-						}
+-						break;
+-					} else {
+-						return true;
++					channel.lastInProcBytes += tempSize;
++					if (H_ML(header) == channel.lastInProcBytes) {
++						channel.lastInProcBytes = 0;
+ 					}
++					if (!buffer.Ignore(tempSize)) {
++						FATAL("V: Unable to ignore %u bytes", tempSize);
++						return false;
++					}
++					break;
+ 				}
+ 				case RM_HEADER_MESSAGETYPE_AUDIODATA:
+ 				{
+-					if (tempSize <= availableBytes) {
+-						channel.state = CS_HEADER;
+-						_selectedChannel = -1;
+-
+-						//TODO: see the todo in the video case
+-						if (H_SI(header) >= MAX_STREAMS_COUNT) {
+-							FATAL("Incorrect stream index");
++					if (H_SI(header) >= MAX_STREAMS_COUNT) {
++						FATAL("The server doesn't support stream ids bigger than %"PRIu32,
++								(uint32_t) MAX_STREAMS_COUNT);
++						return false;
++					}
++					___lastInProcBytes = channel.lastInProcBytes;
++					if ((_streams[H_SI(header)] != NULL)
++							&& (_streams[H_SI(header)]->GetType() == ST_IN_NET_RTMP)) {
++						if (!((InNetRTMPStream *) _streams[H_SI(header)])->FeedData(
++								GETIBPOINTER(buffer), //pData,
++								tempSize, //dataLength,
++								channel.lastInProcBytes, //processedLength,
++								H_ML(header), //totalLength,
++								channel.lastInAbsTs, //absoluteTimestamp,
++								true //isAudio
++								)) {
++							FATAL("Unable to feed audio");
+ 							return false;
+ 						}
+-						if ((_streams[H_SI(header)] != NULL)
+-								&& (_streams[H_SI(header)]->GetType() == ST_IN_NET_RTMP)) {
+-							if (!((InNetRTMPStream *) _streams[H_SI(header)])->FeedData(
+-									GETIBPOINTER(buffer), //pData,
+-									tempSize, //dataLength,
+-									channel.lastInProcBytes, //processedLength,
+-									H_ML(header), //totalLength,
+-									channel.lastInAbsTs, //absoluteTimestamp,
+-									true //isAudio
+-									)) {
+-								FATAL("Unable to feed audio");
+-								return false;
+-							}
+-						}
++					}
+ 
+ 
+-						channel.lastInProcBytes += tempSize;
+-						if (H_ML(header) == channel.lastInProcBytes) {
+-							channel.lastInProcBytes = 0;
+-						}
+-						if (!buffer.Ignore(tempSize)) {
+-							FATAL("A: Unable to ignore %u bytes", tempSize);
+-							return false;
+-						}
+-						break;
+-					} else {
+-						return true;
++					channel.lastInProcBytes += tempSize;
++					if (H_ML(header) == channel.lastInProcBytes) {
++						channel.lastInProcBytes = 0;
+ 					}
++					if (!buffer.Ignore(tempSize)) {
++						FATAL("A: Unable to ignore %u bytes", tempSize);
++						return false;
++					}
++					break;
+ 				}
+ 				default:
+ 				{
+-					if (tempSize <= availableBytes) {
+-						channel.state = CS_HEADER;
+-						_selectedChannel = -1;
+-						channel.inputData.ReadFromInputBuffer(buffer, tempSize);
+-						channel.lastInProcBytes += tempSize;
+-						if (!buffer.Ignore(tempSize)) {
+-							FATAL("Unable to ignore %u bytes", tempSize);
++					channel.inputData.ReadFromInputBuffer(buffer, tempSize);
++					channel.lastInProcBytes += tempSize;
++					if (!buffer.Ignore(tempSize)) {
++						FATAL("Unable to ignore %u bytes", tempSize);
++						return false;
++					}
++					if (H_ML(header) == channel.lastInProcBytes) {
++						channel.lastInProcBytes = 0;
++						if (_pProtocolHandler == NULL) {
++							FATAL("RTMP connection no longer associated with an application");
+ 							return false;
+ 						}
+-						if (H_ML(header) == channel.lastInProcBytes) {
+-							channel.lastInProcBytes = 0;
+-							if (_pProtocolHandler == NULL) {
+-								FATAL("RTMP connection no longer associated with an application");
+-								return false;
+-							}
+-							if (!_pProtocolHandler->InboundMessageAvailable(this, header, channel.inputData)) {
+-								FATAL("Unable to send rtmp message to application");
+-								return false;
+-							}
+-							_rxInvokes++;
++						if (!_pProtocolHandler->InboundMessageAvailable(this, header, channel.inputData)) {
++							FATAL("Unable to send rtmp message to application");
++							return false;
++						}
++						_rxInvokes++;
+ 
+-							if (GETAVAILABLEBYTESCOUNT(channel.inputData) != 0) {
+-								FATAL("Invalid message!!! We have leftovers: %u bytes",
+-										GETAVAILABLEBYTESCOUNT(channel.inputData));
+-								return false;
+-							}
++						if (GETAVAILABLEBYTESCOUNT(channel.inputData) != 0) {
++							FATAL("Invalid message!!! We have leftovers: %u bytes",
++									GETAVAILABLEBYTESCOUNT(channel.inputData));
++							return false;
+ 						}
+-						break;
+-					} else {
+-						return true;
+ 					}
++					break;
+ 				}
+ 			}
+ 		}
+Index: ../../sources/thelib/src/protocols/rtmp/streaming/baseoutnetrtmpstream.cpp
+===================================================================
+--- ../../sources/thelib/src/protocols/rtmp/streaming/baseoutnetrtmpstream.cpp	(revision 603)
++++ ../../sources/thelib/src/protocols/rtmp/streaming/baseoutnetrtmpstream.cpp	(working copy)
+@@ -43,6 +43,7 @@
+ 		StreamsManager *pStreamsManager, uint64_t type, string name, uint32_t rtmpStreamId,
+ 		uint32_t chunkSize)
+ : BaseOutNetStream(pProtocol, pStreamsManager, type, name) {
++	_pathIdx = 0;
+ 	if (!TAG_KIND_OF(type, ST_OUT_NET_RTMP)) {
+ 		ASSERT("Incorrect stream type. Wanted a stream type in class %s and got %s",
+ 				STR(tagToString(ST_OUT_NET_RTMP)), STR(tagToString(type)));
+@@ -56,7 +57,8 @@
+ 
+ 	_feederChunkSize = 0xffffffff;
+ 	_canDropFrames = true;
+-	_currentFrameDropped = false;
++	_audioCurrentFrameDropped = false;
++	_videoCurrentFrameDropped = false;
+ 	_maxBufferSize = 65536 * 2;
+ 	_attachedStreamType = 0;
+ 	_clientId = format("%d_%d_%"PRIz"u", _pProtocol->GetId(), _rtmpStreamId, (size_t)this);
+@@ -167,6 +169,10 @@
+ bool BaseOutNetRTMPStream::FeedData(uint8_t *pData, uint32_t dataLength,
+ 		uint32_t processedLength, uint32_t totalLength,
+ 		double absoluteTimestamp, bool isAudio) {
++	string str = format("### ursi: %"PRIu32"; DL: % 6"PRIu32"; processedLength: % 6"PRIu32"; totalLength: % 6"PRIu32"; isAudio: %d",
++			_uniqueId, dataLength, processedLength, totalLength, isAudio);
++	FINEST("%s", STR(str));
++	assert(((BaseRTMPProtocol *) _pInStream->GetProtocol())->___lastInProcBytes == processedLength);
+ 	if (_paused)
+ 		return true;
+ 	if (isAudio) {
+@@ -207,33 +213,54 @@
+ 
+ 		H_ML(_audioHeader) = totalLength;
+ 
++		if (H_IA(_audioHeader))
++			assert(processedLength == 0);
+ 		return ChunkAndSend(pData, dataLength, _audioBucket,
+-				_audioHeader, *_pChannelAudio);
++				_audioHeader, *_pChannelAudio, processedLength);
+ 	} else {
++		_path[(_pathIdx++) % 65536] = 0xffffffff;
++		_path[(_pathIdx++) % 65536] = totalLength;
++		_path[(_pathIdx++) % 65536] = processedLength;
++		_path[(_pathIdx++) % 65536] = __LINE__;
+ 		if (processedLength == 0)
+ 			_videoPacketsCount++;
+ 		_videoBytesCount += dataLength;
++		_path[(_pathIdx++) % 65536] = __LINE__;
+ 		if (_isFirstVideoFrame) {
+-			if (dataLength == 0)
++			_path[(_pathIdx++) % 65536] = __LINE__;
++			if (dataLength == 0) {
++				_path[(_pathIdx++) % 65536] = __LINE__;
++				_path[(_pathIdx++) % 65536] = 0xffffffff;
+ 				return true;
++			}
+ 
+ 			//first frame
++			_path[(_pathIdx++) % 65536] = __LINE__;
+ 			if (processedLength != 0) {
+ 				//middle of packet
+ 				_pRTMPProtocol->EnqueueForOutbound();
++				_path[(_pathIdx++) % 65536] = __LINE__;
++				_path[(_pathIdx++) % 65536] = 0xffffffff;
+ 				return true;
+ 			}
+ 
++			_path[(_pathIdx++) % 65536] = __LINE__;
+ 			if (dataLength == 0) {
+ 				_pRTMPProtocol->EnqueueForOutbound();
++				_path[(_pathIdx++) % 65536] = __LINE__;
++				_path[(_pathIdx++) % 65536] = 0xffffffff;
+ 				return true;
+ 			}
+ 
++			_path[(_pathIdx++) % 65536] = __LINE__;
+ 			if ((pData[0] >> 4) != 1) {
+ 				_pRTMPProtocol->EnqueueForOutbound();
++				_path[(_pathIdx++) % 65536] = __LINE__;
++				_path[(_pathIdx++) % 65536] = 0xffffffff;
+ 				return true;
+ 			}
+ 
++			_path[(_pathIdx++) % 65536] = __LINE__;
+ 			if ((*_pDeltaVideoTime) < 0)
+ 				(*_pDeltaVideoTime) = absoluteTimestamp;
+ 
+@@ -244,22 +271,39 @@
+ 					&& (pData[1] == 0)) { //codec setup
+ 				// h264 codec setup. Keep _isFirstVideoFrame == true
+ 				_isFirstVideoFrame = true;
++				_path[(_pathIdx++) % 65536] = __LINE__;
+ 			} else {
+ 				//not h264 codec setup
+ 				_isFirstVideoFrame = false;
++				_path[(_pathIdx++) % 65536] = __LINE__;
+ 			}
+ 		} else {
+-			ALLOW_EXECUTION(processedLength, dataLength, isAudio);
++			_path[(_pathIdx++) % 65536] = __LINE__;
++			if (!AllowExecution(processedLength, dataLength, isAudio)) {
++				_path[(_pathIdx++) % 65536] = __LINE__;
++				_path[(_pathIdx++) % 65536] = 0xffffffff;
++				return true;
++			}
++			_path[(_pathIdx++) % 65536] = __LINE__;
+ 			H_IA(_videoHeader) = false;
+-			if (processedLength == 0)
++			if (processedLength == 0) {
++				_path[(_pathIdx++) % 65536] = __LINE__;
+ 				H_TS(_videoHeader) = (uint32_t) ((absoluteTimestamp - (*_pDeltaVideoTime) + _seekTime)
+-					- _pChannelVideo->lastOutAbsTs);
++						- _pChannelVideo->lastOutAbsTs);
++			}
+ 		}
+ 
++		_path[(_pathIdx++) % 65536] = __LINE__;
+ 		H_ML(_videoHeader) = totalLength;
+ 
++		if (H_IA(_videoHeader)) {
++			_path[(_pathIdx++) % 65536] = __LINE__;
++			assert(processedLength == 0);
++		}
++		_path[(_pathIdx++) % 65536] = __LINE__;
++		_path[(_pathIdx++) % 65536] = 0xffffffff;
+ 		return ChunkAndSend(pData, dataLength, _videoBucket,
+-				_videoHeader, *_pChannelVideo);
++				_videoHeader, *_pChannelVideo, processedLength);
+ 	}
+ }
+ 
+@@ -670,7 +714,12 @@
+ }
+ 
+ bool BaseOutNetRTMPStream::ChunkAndSend(uint8_t *pData, uint32_t length,
+-		IOBuffer &bucket, Header &header, Channel &channel) {
++		IOBuffer &bucket, Header &header, Channel &channel, uint32_t ___processed) {
++	if (H_IA(header)) {
++		assert(___processed == 0);
++		assert(channel.lastOutProcBytes == 0);
++	}
++
+ 	if (H_ML(header) == 0) {
+ 		TRACK_HEADER(header, channel.lastOutProcBytes);
+ 		return _pRTMPProtocol->SendRawData(header, channel, NULL, 0);
+@@ -718,7 +767,8 @@
+ 
+ 		//bite from the pData
+ 		leftOvers = leftOvers <= length ? leftOvers : length;
+-		if (!_pRTMPProtocol->SendRawData(pData, leftOvers)) {
++		assert(false);
++		if (!_pRTMPProtocol->SendRawData(pData, leftOvers, _uniqueId)) {
+ 			FATAL("Unable to send data");
+ 			return false;
+ 		}
+@@ -770,54 +820,77 @@
+ }
+ 
+ bool BaseOutNetRTMPStream::AllowExecution(uint32_t totalProcessed, uint32_t dataLength, bool isAudio) {
+-	if (_canDropFrames) {
+-		//we are allowed to drop frames
++	if (!isAudio) _path[(_pathIdx++) % 65536] = __LINE__;
++	if (!_canDropFrames) {
++		// we are not allowed to drop frames
++		if (!isAudio) _path[(_pathIdx++) % 65536] = __LINE__;
++		return true;
++	}
+ 
+-		uint64_t &bytesCounter = isAudio ? _audioDroppedBytesCount : _videoDroppedBytesCount;
+-		uint64_t &packetsCounter = isAudio ? _audioDroppedPacketsCount : _videoDroppedPacketsCount;
++	//we are allowed to drop frames
++	uint64_t &bytesCounter = isAudio ? _audioDroppedBytesCount : _videoDroppedBytesCount;
++	uint64_t &packetsCounter = isAudio ? _audioDroppedPacketsCount : _videoDroppedPacketsCount;
++	bool &currentFrameDropped = isAudio ? _audioCurrentFrameDropped : _videoCurrentFrameDropped;
+ 
+-		if (_currentFrameDropped) {
+-			//current frame was dropped. Test to see if we are in the middle
+-			//of it or this is a new one
+-			if (totalProcessed != 0) {
+-				//we are in the middle of it. Don't allow execution
+-				bytesCounter += dataLength;
+-				return false;
+-			} else {
+-				//this is a new frame. We will detect later if it can be sent
+-				_currentFrameDropped = false;
+-			}
++	if (!isAudio) _path[(_pathIdx++) % 65536] = __LINE__;
++	if (currentFrameDropped) {
++		if (!isAudio) _path[(_pathIdx++) % 65536] = __LINE__;
++		FINEST("Frame already dropped on URSI: %"PRIu32, _uniqueId);
++		//current frame was dropped. Test to see if we are in the middle
++		//of it or this is a new one
++		if (totalProcessed != 0) {
++			if (!isAudio) _path[(_pathIdx++) % 65536] = __LINE__;
++			FINEST("(middle) Frame already dropped on URSI: %"PRIu32, _uniqueId);
++			//we are in the middle of it. Don't allow execution
++			bytesCounter += dataLength;
++			return false;
++		} else {
++			if (!isAudio) _path[(_pathIdx++) % 65536] = __LINE__;
++			FINEST("Exiting frame dropped state on URSI: %"PRIu32, _uniqueId);
++			//this is a new frame. We will detect later if it can be sent
++			currentFrameDropped = false;
+ 		}
++	}
+ 
+-		if (totalProcessed == 0) {
+-			//we have a brand new frame
++	if (!isAudio) _path[(_pathIdx++) % 65536] = __LINE__;
++	if (totalProcessed != 0) {
++		//we are in the middle of a non-dropped frame. Send it anyway
++		if (!isAudio) _path[(_pathIdx++) % 65536] = __LINE__;
++		return true;
++	}
+ 
+-			if (_pRTMPProtocol->GetOutputBuffer() != NULL) {
+-				//we have some data in the output buffer
+-
+-
+-				if (GETAVAILABLEBYTESCOUNT(*_pRTMPProtocol->GetOutputBuffer()) > _maxBufferSize) {
+-					//we have too many data left unsent. Drop the frame
+-					packetsCounter++;
+-					bytesCounter += dataLength;
+-					_currentFrameDropped = true;
+-					return false;
+-				} else {
+-					//we can still pump data
+-					return true;
+-				}
+-			} else {
+-				//no data in the output buffer. Allow to send it
+-				return true;
+-			}
+-		} else {
+-			//we are in the middle of a non-dropped frame. Send it anyway
+-			return true;
+-		}
++	if ((rand() % 100) < 40) {
++		if (!isAudio) _path[(_pathIdx++) % 65536] = __LINE__;
++		//we have too many data left unsent. Drop the frame
++		packetsCounter++;
++		bytesCounter += dataLength;
++		currentFrameDropped = true;
++		FINEST("Drop frame on URSI: %"PRIu32, _uniqueId);
++		return false;
+ 	} else {
+-		// we are not allowed to drop frames
++		if (!isAudio) _path[(_pathIdx++) % 65536] = __LINE__;
++		//we can still pump data
+ 		return true;
+ 	}
++
++	//	//we have a brand new frame
++	//	if (_pRTMPProtocol->GetOutputBuffer() == NULL) {
++	//		//no data in the output buffer. Allow to send it
++	//		return true;
++	//	}
++	//
++	//	//we have some data in the output buffer
++	//	if (GETAVAILABLEBYTESCOUNT(*_pRTMPProtocol->GetOutputBuffer()) > _maxBufferSize) {
++	//		//we have too many data left unsent. Drop the frame
++	//		packetsCounter++;
++	//		bytesCounter += dataLength;
++	//		_currentFrameDropped = true;
++	//		return false;
++	//		FINEST("Dropped frame");
++	//	} else {
++	//		//we can still pump data
++	//		return true;
++	//	}
+ }
+ 
+ void BaseOutNetRTMPStream::InternalReset() {
+@@ -835,6 +908,7 @@
+ 	H_CI(_videoHeader) = _pChannelVideo->id;
+ 	H_MT(_videoHeader) = RM_HEADER_MESSAGETYPE_VIDEODATA;
+ 	H_SI(_videoHeader) = _rtmpStreamId;
++	_videoHeader._uniqueRTMPStreamId = _uniqueId;
+ 	_videoHeader.readCompleted = 0;
+ 	_videoBucket.IgnoreAll();
+ 
+@@ -842,6 +916,7 @@
+ 	H_CI(_audioHeader) = _pChannelAudio->id;
+ 	H_MT(_audioHeader) = RM_HEADER_MESSAGETYPE_AUDIODATA;
+ 	H_SI(_audioHeader) = _rtmpStreamId;
++	_audioHeader._uniqueRTMPStreamId = _uniqueId;
+ 	_audioHeader.readCompleted = 0;
+ 	_audioBucket.IgnoreAll();
+ 
+Index: ../../sources/thelib/src/protocols/rtmp/header_le_ba.cpp
+===================================================================
+--- ../../sources/thelib/src/protocols/rtmp/header_le_ba.cpp	(revision 603)
++++ ../../sources/thelib/src/protocols/rtmp/header_le_ba.cpp	(working copy)
+@@ -208,14 +208,56 @@
+ 		channel.lastOutStreamId = H_SI(*this);
+ 	}
+ 
++	////////////VALIDATION////////////////
++	FINEST("%s", STR(*this));
++	switch (ht) {
++		case HT_FULL:
++		{
++			assert(channel.lastOutProcBytes == 0);
++			assert(H_IA(*this));
++			break;
++		}
++		case HT_SAME_STREAM:
++		{
++			assert(channel.lastOutProcBytes == 0);
++			assert(channel.lastOutStreamId == hf.s.si);
++			assert(channel.lastOutStreamId == channel.lastOutHeader.hf.s.si);
++			break;
++		}
++		case HT_SAME_LENGTH_AND_STREAM:
++		{
++			assert(channel.lastOutProcBytes == 0);
++			assert(channel.lastOutStreamId == hf.s.si);
++			assert(channel.lastOutStreamId == channel.lastOutHeader.hf.s.si);
++			assert(channel.lastOutHeader.hf.s.mt == hf.s.mt);
++			assert(channel.lastOutHeader.hf.s.ml == hf.s.ml);
++			assert(channel.lastOutHeader.hf.s.ts != hf.s.ts);
++			break;
++		}
++		case HT_CONTINUATION:
++		{
++			assert(channel.lastOutStreamId == hf.s.si);
++			assert(channel.lastOutStreamId == channel.lastOutHeader.hf.s.si);
++			assert(channel.lastOutHeader.hf.s.mt == hf.s.mt);
++			assert(channel.lastOutHeader.hf.s.ml == hf.s.ml);
++			assert(channel.lastOutHeader.hf.s.ts == hf.s.ts);
++			break;
++		}
++		default:
++		{
++			ASSERT("Invalid header type!!!");
++		}
++	}
++	//////////////////////////////////////
++
+ 	//2. Save the last sent header
+ 	channel.lastOutHeader = *this;
+ 
+ 	//3. do the write
+-	return Write(buffer);
++	return Write_muie(buffer);
+ }
+ 
+-bool Header::Write(IOBuffer &buffer) {
++bool Header::Write_muie(IOBuffer &buffer) {
+ 	if (ci < 64) {
+ 		buffer.ReadFromByte((ht << 6) | ((uint8_t) ci));
+ 	} else if (ci < 319) {
+@@ -305,9 +347,8 @@
+ }
+ 
+ Header::operator string() {
+-	//	return format("(RC: %u; HT: %u; CI: %02u; T: % 9u; L: % 6u; MT: % 2u; SI: % 2u; IA: %u)",
+-	//			readCompleted, ht, ci, hf.s.ts, hf.s.ml, hf.s.mt, hf.s.si, isAbsolute);
+-	return "not yet implemented";
++	return format("(RC: %"PRIu8"; HT: %"PRIu8"; CI: %02"PRIu32"; T: % 9"PRIu32"; L: % 6"PRIu32"; MT: % 2"PRIu8"; SI: % 2"PRIu32"; IA: %"PRIu8"; URSI: %"PRIu32")",
++			readCompleted, ht, ci, hf.s.ts, hf.s.ml, hf.s.mt, hf.s.si, isAbsolute, _uniqueRTMPStreamId);
+ }
+ 
+ #endif /* LITTLE_ENDIAN_BYTE_ALIGNED */
+Index: ../../sources/thelib/src/protocols/rtmp/monitorrtmpprotocol.cpp
+===================================================================
+--- ../../sources/thelib/src/protocols/rtmp/monitorrtmpprotocol.cpp	(revision 603)
++++ ../../sources/thelib/src/protocols/rtmp/monitorrtmpprotocol.cpp	(working copy)
+@@ -109,15 +109,17 @@
+ 					}
+ 					case 1:
+ 					{
+-						if (availableBytesCount < 3) {
+-							FINEST("Not enough data");
+-							return true;
+-						}
+-						_selectedChannel = 64 + GETIBPOINTER(buffer)[1] + GETIBPOINTER(buffer)[2];
+-						_channels[_selectedChannel].lastInHeaderType = GETIBPOINTER(buffer)[0] >> 6;
+-						buffer.Ignore(3);
+-						availableBytesCount -= 3;
+-						break;
++						//						if (availableBytesCount < 3) {
++						//							FINEST("Not enough data");
++						//							return true;
++						//						}
++						//						_selectedChannel = GETIBPOINTER(buffer)[2]*256 + GETIBPOINTER(buffer)[1] + 64;
++						//						_channels[_selectedChannel].lastInHeaderType = GETIBPOINTER(buffer)[0] >> 6;
++						//						buffer.Ignore(3);
++						//						availableBytesCount -= 3;
++						//						break;
++						FATAL("The server doesn't support channel ids bigger than 319");
++						return false;
+ 					};
+ 					default:
+ 					{
+@@ -140,59 +142,67 @@
+ 				FATAL("Unable to read header");
+ 				return false;
+ 			} else {
+-				if (header.readCompleted) {
+-					if (H_SI(header) >= _maxStreamCount) {
+-						FINEST("%s", STR(header));
+-						ASSERT("invalid stream index");
+-					}
++				if (!header.readCompleted)
++					return true;
+ 
+-					if (H_CI(header) >= _maxChannelsCount) {
+-						FINEST("%s", STR(header));
+-						ASSERT("invalid channel index");
+-					}
++				if (H_SI(header) >= _maxStreamCount) {
++					FATAL("%s", STR(header));
++					FATAL("buffer:\n%s", STR(buffer));
++					ASSERT("invalid stream index");
++				}
+ 
+-					switch ((uint8_t) H_MT(header)) {
+-						case RM_HEADER_MESSAGETYPE_ABORTMESSAGE:
+-						case RM_HEADER_MESSAGETYPE_ACK:
+-						case RM_HEADER_MESSAGETYPE_AGGREGATE:
+-						case RM_HEADER_MESSAGETYPE_AUDIODATA:
+-						case RM_HEADER_MESSAGETYPE_CHUNKSIZE:
+-						case RM_HEADER_MESSAGETYPE_FLEX:
+-						case RM_HEADER_MESSAGETYPE_FLEXSHAREDOBJECT:
+-						case RM_HEADER_MESSAGETYPE_FLEXSTREAMSEND:
+-						case RM_HEADER_MESSAGETYPE_INVOKE:
+-						case RM_HEADER_MESSAGETYPE_NOTIFY:
+-						case RM_HEADER_MESSAGETYPE_PEERBW:
+-						case RM_HEADER_MESSAGETYPE_SHAREDOBJECT:
+-						case RM_HEADER_MESSAGETYPE_USRCTRL:
+-						case RM_HEADER_MESSAGETYPE_VIDEODATA:
+-						case RM_HEADER_MESSAGETYPE_WINACKSIZE:
+-						{
+-							break;
+-						}
+-						default:
+-						{
+-							FINEST("%s", STR(header));
+-							ASSERT("invalid message type");
+-						}
++				if (H_CI(header) >= _maxChannelsCount) {
++					FATAL("%s", STR(header));
++					FATAL("buffer:\n%s", STR(buffer));
++					ASSERT("invalid channel index");
++				}
++
++				switch ((uint8_t) H_MT(header)) {
++					case RM_HEADER_MESSAGETYPE_ABORTMESSAGE:
++					case RM_HEADER_MESSAGETYPE_ACK:
++					case RM_HEADER_MESSAGETYPE_AGGREGATE:
++					case RM_HEADER_MESSAGETYPE_AUDIODATA:
++					case RM_HEADER_MESSAGETYPE_CHUNKSIZE:
++					case RM_HEADER_MESSAGETYPE_FLEX:
++					case RM_HEADER_MESSAGETYPE_FLEXSHAREDOBJECT:
++					case RM_HEADER_MESSAGETYPE_FLEXSTREAMSEND:
++					case RM_HEADER_MESSAGETYPE_INVOKE:
++					case RM_HEADER_MESSAGETYPE_NOTIFY:
++					case RM_HEADER_MESSAGETYPE_PEERBW:
++					case RM_HEADER_MESSAGETYPE_SHAREDOBJECT:
++					case RM_HEADER_MESSAGETYPE_USRCTRL:
++					case RM_HEADER_MESSAGETYPE_VIDEODATA:
++					case RM_HEADER_MESSAGETYPE_WINACKSIZE:
++					{
++						break;
+ 					}
+-					channel.state = CS_PAYLOAD;
+-					switch (channel.lastInHeaderType) {
+-						case HT_FULL:
+-							channel.lastInAbsTs = H_TS(header);
+-							break;
+-						case HT_SAME_STREAM:
+-						case HT_SAME_LENGTH_AND_STREAM:
++					default:
++					{
++						FATAL("%s", STR(header));
++						FATAL("buffer:\n%s", STR(buffer));
++						ASSERT("invalid message type");
++					}
++				}
++				channel.state = CS_PAYLOAD;
++				switch (channel.lastInHeaderType) {
++					case HT_FULL:
++					{
++						channel.lastInAbsTs = H_TS(header);
++						break;
++					}
++					case HT_SAME_STREAM:
++					case HT_SAME_LENGTH_AND_STREAM:
++					{
++						channel.lastInAbsTs += H_TS(header);
++						break;
++					}
++					case HT_CONTINUATION:
++					{
++						if (channel.lastInProcBytes == 0) {
+ 							channel.lastInAbsTs += H_TS(header);
+-							break;
+-						case HT_CONTINUATION:
+-							if (channel.lastInProcBytes == 0) {
+-								channel.lastInAbsTs += H_TS(header);
+-							}
+-							break;
++						}
++						break;
+ 					}
+-				} else {
+-					return true;
+ 				}
+ 			}
+ 		}
+@@ -201,122 +211,76 @@
+ 			uint32_t tempSize = H_ML(header) - channel.lastInProcBytes;
+ 			tempSize = (tempSize >= _inboundChunkSize) ? _inboundChunkSize : tempSize;
+ 			uint32_t availableBytes = GETAVAILABLEBYTESCOUNT(buffer);
++			if (tempSize > availableBytes)
++				return true;
++			channel.state = CS_HEADER;
++			_selectedChannel = -1;
+ 			switch (H_MT(header)) {
+ 				case RM_HEADER_MESSAGETYPE_VIDEODATA:
+ 				{
+-					if (tempSize <= availableBytes) {
+-						channel.state = CS_HEADER;
+-						_selectedChannel = -1;
++					if (H_SI(header) >= _maxStreamCount) {
++						FATAL("Incorrect stream index");
++						return false;
++					}
+ 
+-						//TODO: THIS is anti-performance fix. It works
+-						//but it needs to be replaced with other means of detecting
+-						//the type of stream. Calling a function for each packet
+-						//is not a nice thing to do
+-						if (H_SI(header) >= _maxStreamCount) {
+-							FATAL("Incorrect stream index");
+-							return false;
+-						}
+-						//						if ((_streams[H_SI(header)] != NULL)
+-						//								&& (_streams[H_SI(header)]->GetType() == ST_IN_NET_RTMP)) {
+-						//							if (!((InNetRTMPStream *) _streams[H_SI(header)])->FeedData(
+-						//									GETIBPOINTER(buffer), //pData,
+-						//									tempSize, //dataLength,
+-						//									channel.lastInProcBytes, //processedLength,
+-						//									H_ML(header), //totalLength,
+-						//									channel.lastInAbsTs, //absoluteTimestamp,
+-						//									false //isAudio
+-						//									)) {
+-						//								FATAL("Unable to feed video");
+-						//								return false;
+-						//							}
+-						//						}
++					//FINEST("Video data");
+ 
+-						channel.lastInProcBytes += tempSize;
+-						if (H_ML(header) == channel.lastInProcBytes) {
+-							channel.lastInProcBytes = 0;
+-						}
+-						if (!buffer.Ignore(tempSize)) {
+-							FATAL("V: Unable to ignore %u bytes", tempSize);
+-							return false;
+-						}
+-						break;
+-					} else {
+-						return true;
++					channel.lastInProcBytes += tempSize;
++					if (H_ML(header) == channel.lastInProcBytes) {
++						channel.lastInProcBytes = 0;
+ 					}
++					if (!buffer.Ignore(tempSize)) {
++						FATAL("V: Unable to ignore %u bytes", tempSize);
++						return false;
++					}
++					break;
+ 				}
+ 				case RM_HEADER_MESSAGETYPE_AUDIODATA:
+ 				{
+-					if (tempSize <= availableBytes) {
+-						channel.state = CS_HEADER;
+-						_selectedChannel = -1;
++					if (H_SI(header) >= _maxStreamCount) {
++						FATAL("Incorrect stream index");
++						return false;
++					}
+ 
+-						//TODO: see the todo in the video case
+-						if (H_SI(header) >= _maxStreamCount) {
+-							FATAL("Incorrect stream index");
+-							return false;
+-						}
+-						//						if ((_streams[H_SI(header)] != NULL)
+-						//								&& (_streams[H_SI(header)]->GetType() == ST_IN_NET_RTMP)) {
+-						//							if (!((InNetRTMPStream *) _streams[H_SI(header)])->FeedData(
+-						//									GETIBPOINTER(buffer), //pData,
+-						//									tempSize, //dataLength,
+-						//									channel.lastInProcBytes, //processedLength,
+-						//									H_ML(header), //totalLength,
+-						//									channel.lastInAbsTs, //absoluteTimestamp,
+-						//									true //isAudio
+-						//									)) {
+-						//								FATAL("Unable to feed audio");
+-						//								return false;
+-						//							}
+-						//						}
++					//FINEST("Audio data");
+ 
+-
+-						channel.lastInProcBytes += tempSize;
+-						if (H_ML(header) == channel.lastInProcBytes) {
+-							channel.lastInProcBytes = 0;
+-						}
+-						if (!buffer.Ignore(tempSize)) {
+-							FATAL("A: Unable to ignore %u bytes", tempSize);
+-							return false;
+-						}
+-						break;
+-					} else {
+-						return true;
++					channel.lastInProcBytes += tempSize;
++					if (H_ML(header) == channel.lastInProcBytes) {
++						channel.lastInProcBytes = 0;
+ 					}
++					if (!buffer.Ignore(tempSize)) {
++						FATAL("A: Unable to ignore %u bytes", tempSize);
++						return false;
++					}
++					break;
+ 				}
+ 				default:
+ 				{
+-					if (tempSize <= availableBytes) {
+-						channel.state = CS_HEADER;
+-						_selectedChannel = -1;
+-						channel.inputData.ReadFromInputBuffer(buffer, tempSize);
+-						channel.lastInProcBytes += tempSize;
+-						if (!buffer.Ignore(tempSize)) {
+-							FATAL("Unable to ignore %u bytes", tempSize);
++					channel.inputData.ReadFromInputBuffer(buffer, tempSize);
++					channel.lastInProcBytes += tempSize;
++					if (!buffer.Ignore(tempSize)) {
++						FATAL("Unable to ignore %u bytes", tempSize);
++						return false;
++					}
++					if (H_ML(header) == channel.lastInProcBytes) {
++						channel.lastInProcBytes = 0;
++						Variant msg;
++						if (!_rtmpProtocolSerializer.Deserialize(header, channel.inputData, msg)) {
++							FATAL("Unable to deserialize message");
+ 							return false;
+ 						}
+-						if (H_ML(header) == channel.lastInProcBytes) {
+-							channel.lastInProcBytes = 0;
+-							Variant msg;
+-							if (!_rtmpProtocolSerializer.Deserialize(header, channel.inputData, msg)) {
+-								FATAL("Unable to deserialize message");
+-								return false;
+-							}
+ 
+-							if ((uint8_t) VH_MT(msg) == RM_HEADER_MESSAGETYPE_CHUNKSIZE) {
+-								_inboundChunkSize = (uint32_t) msg[RM_CHUNKSIZE];
+-							}
++						if ((uint8_t) VH_MT(msg) == RM_HEADER_MESSAGETYPE_CHUNKSIZE) {
++							_inboundChunkSize = (uint32_t) msg[RM_CHUNKSIZE];
++						}
+ 
+-							if (GETAVAILABLEBYTESCOUNT(channel.inputData) != 0) {
+-								FATAL("Invalid message!!! We have leftovers: %u bytes",
+-										GETAVAILABLEBYTESCOUNT(channel.inputData));
+-								return false;
+-							}
++						if (GETAVAILABLEBYTESCOUNT(channel.inputData) != 0) {
++							FATAL("Invalid message!!! We have leftovers: %u bytes",
++									GETAVAILABLEBYTESCOUNT(channel.inputData));
++							return false;
+ 						}
+-						break;
+-					} else {
+-						return true;
+ 					}
++					break;
+ 				}
+ 			}
+ 		}
