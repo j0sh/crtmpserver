@@ -361,7 +361,7 @@ bool BaseRTMPAppProtocolHandler::InboundMessageAvailable(BaseRTMPProtocol *pFrom
 		}
 		case RM_HEADER_MESSAGETYPE_ABORTMESSAGE:
 		{
-			return true;
+			return ProcessAbortMessage(pFrom, request);
 		}
 		default:
 		{
@@ -419,6 +419,15 @@ void BaseRTMPAppProtocolHandler::GenerateMetaFiles() {
 
 		GetMetaData(flashName, true);
 	}
+}
+
+bool BaseRTMPAppProtocolHandler::ProcessAbortMessage(BaseRTMPProtocol *pFrom,
+		Variant &request) {
+	if (request[RM_ABORTMESSAGE] != _V_NUMERIC) {
+		FATAL("Invalid message: %s", STR(request.ToString()));
+		return false;
+	}
+	return pFrom->ResetChannel((uint32_t) request[RM_ABORTMESSAGE]);
 }
 
 bool BaseRTMPAppProtocolHandler::ProcessWinAckSize(BaseRTMPProtocol *pFrom,
@@ -679,13 +688,13 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokeCreateStream(BaseRTMPProtocol *pFr
 bool BaseRTMPAppProtocolHandler::ProcessInvokePublish(BaseRTMPProtocol *pFrom,
 		Variant &request) {
 	//1. gather the required data from the request
-	if ((M_INVOKE_PARAM(request, 1) != V_STRING)&&(M_INVOKE_PARAM(request, 1) != V_BOOL)) {
+	if ((M_INVOKE_PARAM(request, 1) != V_STRING) && (M_INVOKE_PARAM(request, 1) != V_BOOL)) {
 		FATAL("Invalid request:\n%s", STR(request.ToString()));
 		return false;
 	}
-	
-	if(M_INVOKE_PARAM(request, 1) == V_BOOL){
-		if((bool)M_INVOKE_PARAM(request, 1)!=false) {
+
+	if (M_INVOKE_PARAM(request, 1) == V_BOOL) {
+		if ((bool)M_INVOKE_PARAM(request, 1) != false) {
 			FATAL("Invalid request:\n%s", STR(request.ToString()));
 			return false;
 		}

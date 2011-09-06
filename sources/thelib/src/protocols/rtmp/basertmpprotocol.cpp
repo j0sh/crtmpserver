@@ -67,9 +67,8 @@ BaseRTMPProtocol::BaseRTMPProtocol(uint64_t protocolType)
 	_winAckSize = RECEIVED_BYTES_COUNT_REPORT_CHUNK;
 	_nextReceivedBytesCountReport = _winAckSize;
 	for (uint32_t i = 0; i < MAX_CHANNELS_COUNT; i++) {
-		memset(&_channels[i], 0, sizeof (Channel));
 		_channels[i].id = i;
-		_channels[i].lastOutStreamId = 0xffffffff;
+		_channels[i].Reset();
 	}
 	_selectedChannel = -1;
 	_inboundChunkSize = 128;
@@ -219,6 +218,15 @@ void BaseRTMPProtocol::GetStats(Variant &info) {
 		MAP_VAL(i)->GetStats(si);
 		info["streams"].PushToArray(si);
 	}
+}
+
+bool BaseRTMPProtocol::ResetChannel(uint32_t channelId) {
+	if (channelId >= MAX_CHANNELS_COUNT) {
+		FATAL("Invalid channel id in reset message: %"PRIu32, channelId);
+		return false;
+	}
+	_channels[channelId].Reset();
+	return true;
 }
 
 bool BaseRTMPProtocol::SendMessage(Variant & message) {

@@ -308,20 +308,29 @@ void BaseOutNetRTMPStream::SignalAttachedToInStream() {
 		_completeMetadata = pInFileRTMPStream->GetCompleteMetadata();
 	}
 
+	Variant message;
+
 	//5. Send abort messages on audio/video channels
-	Variant message = GenericMessageFactory::GetAbortMessage(_pChannelAudio->id);
-	TRACK_MESSAGE("Message:\n%s", STR(message.ToString()));
-	if (!_pRTMPProtocol->SendMessage(message)) {
-		FATAL("Unable to send message");
-		_pRTMPProtocol->EnqueueForDelete();
-		return;
+	if (_pChannelAudio->lastOutProcBytes != 0) {
+		message = GenericMessageFactory::GetAbortMessage(_pChannelAudio->id);
+		TRACK_MESSAGE("Message:\n%s", STR(message.ToString()));
+		if (!_pRTMPProtocol->SendMessage(message)) {
+			FATAL("Unable to send message");
+			_pRTMPProtocol->EnqueueForDelete();
+			return;
+		}
+		_pChannelAudio->Reset();
 	}
-	message = GenericMessageFactory::GetAbortMessage(_pChannelVideo->id);
-	TRACK_MESSAGE("Message:\n%s", STR(message.ToString()));
-	if (!_pRTMPProtocol->SendMessage(message)) {
-		FATAL("Unable to send message");
-		_pRTMPProtocol->EnqueueForDelete();
-		return;
+
+	if (_pChannelVideo->lastOutProcBytes != 0) {
+		message = GenericMessageFactory::GetAbortMessage(_pChannelVideo->id);
+		TRACK_MESSAGE("Message:\n%s", STR(message.ToString()));
+		if (!_pRTMPProtocol->SendMessage(message)) {
+			FATAL("Unable to send message");
+			_pRTMPProtocol->EnqueueForDelete();
+			return;
+		}
+		_pChannelVideo->Reset();
 	}
 
 	//6. Stream is recorded

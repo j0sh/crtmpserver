@@ -44,6 +44,22 @@ typedef struct _Channel {
 	double lastOutAbsTs;
 	uint32_t lastOutStreamId;
 
+	void Reset() {
+		state = CS_HEADER;
+		inputData.IgnoreAll();
+
+		memset(&lastInHeader, 0, sizeof (lastInHeader));
+		lastInHeaderType = 0;
+		lastInProcBytes = 0;
+		lastInAbsTs = 0;
+		lastInStreamId = 0xffffffff;
+
+		memset(&lastOutHeader, 0, sizeof (lastOutHeader));
+		lastOutHeaderType = 0;
+		lastOutProcBytes = 0;
+		lastOutAbsTs = 0;
+		lastOutStreamId = 0xffffffff;
+	}
 } Channel;
 
 

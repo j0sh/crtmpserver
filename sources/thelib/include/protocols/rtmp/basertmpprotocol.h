@@ -94,6 +94,8 @@ public:
 
 	virtual void GetStats(Variant &info);
 
+	bool ResetChannel(uint32_t channelId);
+
 	bool SendMessage(Variant &message);
 	bool SendRawData(Header &header, Channel &channel, uint8_t *pData, uint32_t length);
 	bool SendRawData(uint8_t *pData, uint32_t length);

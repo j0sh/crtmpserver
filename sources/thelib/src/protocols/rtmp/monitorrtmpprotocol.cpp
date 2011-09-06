@@ -275,6 +275,16 @@ bool MonitorRTMPProtocol::ProcessBytes(IOBuffer &buffer) {
 							_inboundChunkSize = (uint32_t) msg[RM_CHUNKSIZE];
 						}
 
+						if ((uint8_t) VH_MT(msg) == RM_HEADER_MESSAGETYPE_ABORTMESSAGE) {
+							uint32_t channelId = (uint32_t) msg[RM_ABORTMESSAGE];
+							if (channelId >= _maxChannelsCount) {
+								FATAL("Invalid channel id in reset message: %"PRIu32, channelId);
+								return false;
+							}
+							assert(_channels[channelId].id == channelId);
+							_channels[channelId].Reset();
+						}
+
 						if (GETAVAILABLEBYTESCOUNT(channel.inputData) != 0) {
 							FATAL("Invalid message!!! We have leftovers: %u bytes",
 									GETAVAILABLEBYTESCOUNT(channel.inputData));

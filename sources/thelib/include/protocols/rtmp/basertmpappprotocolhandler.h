@@ -134,6 +134,7 @@ public:
 	 * pFrom - the origin of the request
 	 * request - the complete request
 	 * */
+	virtual bool ProcessAbortMessage(BaseRTMPProtocol *pFrom, Variant &request);
 	virtual bool ProcessWinAckSize(BaseRTMPProtocol *pFrom, Variant &request);
 	virtual bool ProcessPeerBW(BaseRTMPProtocol *pFrom, Variant &request);
 	virtual bool ProcessAck(BaseRTMPProtocol *pFrom, Variant &request);
