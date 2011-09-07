@@ -179,6 +179,7 @@ bool BaseOutNetRTMPStream::FeedData(uint8_t *pData, uint32_t dataLength,
 			_audioPacketsCount++;
 		_audioBytesCount += dataLength;
 		if (_isFirstAudioFrame) {
+			_audioCurrentFrameDropped = false;
 			if (dataLength == 0)
 				return true;
 
@@ -219,6 +220,7 @@ bool BaseOutNetRTMPStream::FeedData(uint8_t *pData, uint32_t dataLength,
 			_videoPacketsCount++;
 		_videoBytesCount += dataLength;
 		if (_isFirstVideoFrame) {
+			_videoCurrentFrameDropped = false;
 			if (dataLength == 0)
 				return true;
 
@@ -855,6 +857,7 @@ void BaseOutNetRTMPStream::InternalReset() {
 	_pDeltaVideoTime = &_deltaVideoTime;
 	_seekTime = 0;
 
+	_videoCurrentFrameDropped = false;
 	_isFirstVideoFrame = true;
 	H_CI(_videoHeader) = _pChannelVideo->id;
 	H_MT(_videoHeader) = RM_HEADER_MESSAGETYPE_VIDEODATA;
@@ -862,6 +865,7 @@ void BaseOutNetRTMPStream::InternalReset() {
 	_videoHeader.readCompleted = 0;
 	_videoBucket.IgnoreAll();
 
+	_audioCurrentFrameDropped = false;
 	_isFirstAudioFrame = true;
 	H_CI(_audioHeader) = _pChannelAudio->id;
 	H_MT(_audioHeader) = RM_HEADER_MESSAGETYPE_AUDIODATA;
