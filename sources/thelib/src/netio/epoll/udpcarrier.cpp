@@ -163,7 +163,7 @@ UDPCarrier* UDPCarrier::Create(string bindIp, uint16_t bindPort,
 			return NULL;
 		}
 		uint32_t testVal = EHTONL(bindAddress.sin_addr.s_addr);
-		if ((testVal > 0xef000000) && (testVal < 0xefffffff)) {
+		if ((testVal > 0xe0000000) && (testVal < 0xefffffff)) {
 			INFO("Subscribe to multicast %s:%hu", STR(bindIp), bindPort);
 			bindAddress.sin_addr.s_addr = inet_addr(bindIp.c_str());
 		}
@@ -174,7 +174,7 @@ UDPCarrier* UDPCarrier::Create(string bindIp, uint16_t bindPort,
 			close(sock);
 			return NULL;
 		}
-		if ((testVal > 0xef000000) && (testVal < 0xefffffff)) {
+		if ((testVal > 0xe0000000) && (testVal < 0xefffffff)) {
 			struct ip_mreq group;
 			group.imr_multiaddr.s_addr = inet_addr(bindIp.c_str());
 			group.imr_interface.s_addr = INADDR_ANY;

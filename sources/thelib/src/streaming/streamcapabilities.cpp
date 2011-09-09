@@ -27,6 +27,8 @@ _VIDEO_AVC::_VIDEO_AVC() {
 	_ppsLength = 0;
 	_width = 0;
 	_height = 0;
+	_widthOverride = 0;
+	_heightOverride = 0;
 }
 
 _VIDEO_AVC::~_VIDEO_AVC() {
