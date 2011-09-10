@@ -309,12 +309,11 @@ bool ConfigFile::NormalizeApplication(Variant &node) {
 	if (node.HasKeyChain(V_STRING, false, 1, CONF_APPLICATION_DIRECTORY))
 		appDir = (string) node.GetValue(CONF_APPLICATION_DIRECTORY, false);
 	if (appDir == "") {
-		appDir = _rootAppFolder + PATH_SEPARATOR + name;
+		appDir = _rootAppFolder + name;
 	}
 	temp = normalizePath(appDir, "");
 	if (temp == "") {
-		FATAL("Path not found: %s", STR(appDir));
-		return false;
+		WARN("Path not found: %s", STR(appDir));
 	} else {
 		appDir = temp;
 	}
