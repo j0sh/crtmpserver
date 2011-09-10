@@ -34,12 +34,14 @@ private:
 	GetApplicationFunction_t _staticGetApplicationFunction;
 	GetFactoryFunction_t _staticGetFactoryFunction;
 	map<string, Module> _modules;
+	bool _isOrigin;
 public:
 	ConfigFile(GetApplicationFunction_t staticGetApplicationFunction,
 			GetFactoryFunction_t staticGetFactoryFunction);
 	virtual ~ConfigFile();
 
 	bool IsDaemon();
+	bool IsOrigin();
 	string GetServicesInfo();
 
 	bool LoadLuaFile(string path, bool forceDaemon);
@@ -49,6 +51,7 @@ public:
 	bool ConfigModules();
 	bool ConfigFactories();
 	bool ConfigAcceptors();
+	bool ConfigInstances();
 	bool ConfigApplications();
 private:
 	bool ConfigLogAppender(Variant &node);

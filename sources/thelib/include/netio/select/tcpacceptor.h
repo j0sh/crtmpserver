@@ -49,6 +49,7 @@ public:
 	virtual bool SignalOutputData();
 	virtual bool OnEvent(select_event &event);
 	virtual bool OnConnectionAvailable(select_event &event);
+	bool Accept();
 	Variant & GetParameters();
 	BaseClientApplication *GetApplication();
 	vector<uint64_t> &GetProtocolChain();

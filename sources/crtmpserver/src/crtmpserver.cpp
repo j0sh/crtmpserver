@@ -222,6 +222,12 @@ bool Initialize() {
 		return false;
 	}
 
+	INFO("Configure instances");
+	if (!gRs.pConfigFile->ConfigInstances()) {
+		FATAL("Unable to configure instances");
+		return false;
+	}
+
 	INFO("Start I/O handlers manager: %s", NETWORK_REACTOR);
 	IOHandlerManager::Start();
 

@@ -24,5 +24,5 @@
 using namespace app_vptests;
 
 extern "C" BaseClientApplication *GetApplication_vptests(Variant configuration) {
-	reyurn new VPTestsApplication(configuration);
+	return new VPTestsApplication(configuration);
 }

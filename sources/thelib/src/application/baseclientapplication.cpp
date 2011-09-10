@@ -98,14 +98,12 @@ bool BaseClientApplication::ActivateAcceptor(IOHandler *pIOHandler) {
 		{
 			TCPAcceptor *pAcceptor = (TCPAcceptor *) pIOHandler;
 			pAcceptor->SetApplication(this);
-			SaveServiceInfo(pAcceptor);
 			return pAcceptor->StartAccept();
 		}
 		case IOHT_UDP_CARRIER:
 		{
 			UDPCarrier *pUDPCarrier = (UDPCarrier *) pIOHandler;
 			pUDPCarrier->GetProtocol()->GetNearEndpoint()->SetApplication(this);
-			SaveServiceInfo(pUDPCarrier);
 			return pUDPCarrier->StartAccept();
 		}
 		default:
@@ -117,7 +115,17 @@ bool BaseClientApplication::ActivateAcceptor(IOHandler *pIOHandler) {
 }
 
 string BaseClientApplication::GetServicesInfo() {
-	return _servicesInfo.str();
+	map<uint32_t, IOHandler *> handlers = IOHandlerManager::GetActiveHandlers();
+	string result = "";
+
+	FOR_MAP(handlers, uint32_t, IOHandler *, i) {
+		result += GetServiceInfo(MAP_VAL(i));
+	}
+	return result;
+}
+
+bool BaseClientApplication::AcceptTCPConnection(TCPAcceptor *pTCPAcceptor) {
+	return pTCPAcceptor->Accept();
 }
 
 void BaseClientApplication::RegisterAppProtocolHandler(uint64_t protocolType,
@@ -367,10 +375,10 @@ bool BaseClientApplication::ParseAuthentication() {
 		//4. Get the handler
 		BaseAppProtocolHandler *pHandler = GetProtocolHandler(scheme);
 		if (pHandler == NULL) {
-			FATAL("Authentication parsing for app name %s failed. No handler registered for schema %s",
+			WARN("Authentication parsing for app name %s failed. No handler registered for schema %s",
 					STR(_name),
 					STR(scheme));
-			return false;
+			return true;
 		}
 
 		//5. Call the handler
@@ -432,33 +440,51 @@ void BaseClientApplication::Shutdown(BaseClientApplication *pApplication) {
 	delete pApplication;
 }
 
-void BaseClientApplication::SaveServiceInfo(IOHandler *pIOHandler) {
+string BaseClientApplication::GetServiceInfo(IOHandler *pIOHandler) {
+	if ((pIOHandler->GetType() != IOHT_ACCEPTOR)
+			&& (pIOHandler->GetType() != IOHT_UDP_CARRIER))
+		return "";
+	if (pIOHandler->GetType() == IOHT_ACCEPTOR) {
+		if ((((TCPAcceptor *) pIOHandler)->GetApplication() == NULL)
+				|| (((TCPAcceptor *) pIOHandler)->GetApplication()->GetId() != GetId())) {
+			return "";
+		}
+	} else {
+		if ((((UDPCarrier *) pIOHandler)->GetProtocol() == NULL)
+				|| (((UDPCarrier *) pIOHandler)->GetProtocol()->GetNearEndpoint()->GetApplication() == NULL)
+				|| (((UDPCarrier *) pIOHandler)->GetProtocol()->GetNearEndpoint()->GetApplication()->GetId() != GetId())) {
+			return "";
+		}
+	}
 	Variant &params = pIOHandler->GetType() == IOHT_ACCEPTOR ?
 			((TCPAcceptor *) pIOHandler)->GetParameters()
 			: ((UDPCarrier *) pIOHandler)->GetParameters();
 	if (params != V_MAP)
-		return;
-	_servicesInfo << "+---+---------------+-----+-------------------------+-------------------------+" << endl;
-	_servicesInfo << "|";
-	_servicesInfo.width(3);
-	_servicesInfo << (pIOHandler->GetType() == IOHT_ACCEPTOR ? "tcp" : "udp");
-	_servicesInfo << "|";
+		return "";
+	stringstream ss;
+	ss << "+---+---------------+-----+-------------------------+-------------------------+" << endl;
+	ss << "|";
+	ss.width(3);
+	ss << (pIOHandler->GetType() == IOHT_ACCEPTOR ? "tcp" : "udp");
+	ss << "|";
 
-	_servicesInfo.width(3 * 4 + 3);
-	_servicesInfo << (string) params[CONF_IP];
-	_servicesInfo << "|";
+	ss.width(3 * 4 + 3);
+	ss << (string) params[CONF_IP];
+	ss << "|";
 
-	_servicesInfo.width(5);
-	_servicesInfo << (uint16_t) params[CONF_PORT];
-	_servicesInfo << "|";
+	ss.width(5);
+	ss << (uint16_t) params[CONF_PORT];
+	ss << "|";
 
-	_servicesInfo.width(25);
-	_servicesInfo << (string) params[CONF_PROTOCOL];
-	_servicesInfo << "|";
+	ss.width(25);
+	ss << (string) params[CONF_PROTOCOL];
+	ss << "|";
 
-	_servicesInfo.width(25);
-	_servicesInfo << GetName();
-	_servicesInfo << "|";
+	ss.width(25);
+	ss << GetName();
+	ss << "|";
 
-	_servicesInfo << endl;
+	ss << endl;
+
+	return ss.str();
 }

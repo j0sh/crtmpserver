@@ -48,6 +48,7 @@ public:
 	virtual bool SignalOutputData();
 	virtual bool OnEvent(struct epoll_event &event);
 	virtual bool OnConnectionAvailable(struct epoll_event &event);
+	bool Accept();
 	Variant & GetParameters();
 	BaseClientApplication *GetApplication();
 	vector<uint64_t> &GetProtocolChain();

@@ -28,6 +28,7 @@ ConfigFile::ConfigFile(GetApplicationFunction_t staticGetApplicationFunction,
 			|| ((_staticGetApplicationFunction != NULL) && (_staticGetFactoryFunction == NULL))) {
 		ASSERT("Invalid config file usage");
 	}
+	_isOrigin = true;
 }
 
 ConfigFile::~ConfigFile() {
@@ -42,6 +43,10 @@ bool ConfigFile::IsDaemon() {
 	if (_configuration.HasKeyChain(V_BOOL, true, 1, CONF_DAEMON))
 		return (bool)_configuration[CONF_DAEMON];
 	return false;
+}
+
+bool ConfigFile::IsOrigin() {
+	return _isOrigin;
 }
 
 string ConfigFile::GetServicesInfo() {
@@ -128,6 +133,50 @@ bool ConfigFile::ConfigAcceptors() {
 			return false;
 		}
 	}
+	return true;
+}
+
+bool ConfigFile::ConfigInstances() {
+	uint8_t instancesCount = 0;
+	if (_configuration.HasKeyChain(_V_NUMERIC, false, 1, "instancesCount")) {
+		instancesCount = (uint8_t) _configuration.GetValue("instancesCount", false);
+	}
+	if (instancesCount > 8) {
+		FATAL("Invalid number of instances count. Max value is 8");
+		return false;
+	}
+
+	if (instancesCount == 0)
+		return true;
+
+#ifdef WIN32
+	WARN("Windows doesn't support multiple instances");
+	return true;
+#endif /* WIN32 */
+
+	if (!IsDaemon()) {
+		WARN("Daemon mode not activated. No additional instances will be spawned");
+		return true;
+	}
+
+	uint32_t instanceCount = 4; //gRs.pConfigFile->GetInstancesCount();
+	for (uint32_t i = 0; i < instanceCount; i++) {
+		pid_t pid = fork();
+		if (pid < 0) {
+			FATAL("Unable to start daemonize. fork() failed");
+			return -1;
+		}
+
+		if (pid > 0) {
+			_isOrigin = false;
+			break;
+		}
+	}
+
+	FOR_MAP(_modules, string, Module, i) {
+		MAP_VAL(i).config["isOrigin"] = (bool)_isOrigin;
+	}
+
 	return true;
 }
 

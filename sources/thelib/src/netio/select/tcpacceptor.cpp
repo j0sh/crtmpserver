@@ -104,6 +104,12 @@ bool TCPAcceptor::OnEvent(select_event &event) {
 }
 
 bool TCPAcceptor::OnConnectionAvailable(select_event &event) {
+	if (_pApplication == NULL)
+		return Accept();
+	return _pApplication->AcceptTCPConnection(this);
+}
+
+bool TCPAcceptor::Accept() {
 	sockaddr address;
 	memset(&address, 0, sizeof (sockaddr));
 	socklen_t len = sizeof (sockaddr);

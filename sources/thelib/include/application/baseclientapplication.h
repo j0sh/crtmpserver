@@ -42,7 +42,6 @@ private:
 	map<uint64_t, BaseAppProtocolHandler *> _protocolsHandlers;
 	StreamsManager _streamsManager;
 	bool _allowDuplicateInboundNetworkStreams;
-	stringstream _servicesInfo;
 protected:
 	Variant _configuration;
 	bool _isDefault;
@@ -82,6 +81,7 @@ public:
 	virtual bool ActivateAcceptors(vector<IOHandler *> &acceptors);
 	virtual bool ActivateAcceptor(IOHandler *pIOHandler);
 	string GetServicesInfo();
+	virtual bool AcceptTCPConnection(TCPAcceptor *pTCPAcceptor);
 
 	/*!
 		@brief Registers this application to the BaseAppProtocolHandler.
@@ -162,7 +162,7 @@ public:
 	 */
 	static void Shutdown(BaseClientApplication *pApplication);
 private:
-	void SaveServiceInfo(IOHandler *pIOHander);
+	string GetServiceInfo(IOHandler *pIOHander);
 };
 
 
