@@ -26,7 +26,6 @@
 
 UDPCarrier::UDPCarrier(int32_t fd)
 : IOHandler(fd, fd, IOHT_UDP_CARRIER) {
-	IOHandlerManager::EnableReadData(this);
 	memset(&_peerAddress, 0, sizeof (sockaddr_in));
 	memset(&_nearAddress, 0, sizeof (sockaddr_in));
 	_nearIp = "";
@@ -87,6 +86,18 @@ void UDPCarrier::GetStats(Variant &info) {
 	info["nearIP"] = _nearIp;
 	info["nearPort"] = _nearPort;
 	info["rx"] = _rx;
+}
+
+Variant &UDPCarrier::GetParameters() {
+	return _parameters;
+}
+
+void UDPCarrier::SetParameters(Variant parameters) {
+	_parameters = parameters;
+}
+
+bool UDPCarrier::StartAccept() {
+	return IOHandlerManager::EnableReadData(this);
 }
 
 string UDPCarrier::GetFarEndpointAddress() {
@@ -158,7 +169,7 @@ UDPCarrier* UDPCarrier::Create(string bindIp, uint16_t bindPort,
 			return NULL;
 		}
 		uint32_t testVal = EHTONL(bindAddress.sin_addr.s_addr);
-		if ((testVal > 0xef000000) && (testVal < 0xefffffff)) {
+		if ((testVal > 0xe0000000) && (testVal < 0xefffffff)) {
 			INFO("Subscribe to multicast %s:%hu", STR(bindIp), bindPort);
 			bindAddress.sin_addr.s_addr = inet_addr(bindIp.c_str());
 		}
@@ -169,7 +180,7 @@ UDPCarrier* UDPCarrier::Create(string bindIp, uint16_t bindPort,
 			close(sock);
 			return NULL;
 		}
-		if ((testVal > 0xef000000) && (testVal < 0xefffffff)) {
+		if ((testVal > 0xe0000000) && (testVal < 0xefffffff)) {
 			struct ip_mreq group;
 			group.imr_multiaddr.s_addr = inet_addr(bindIp.c_str());
 			group.imr_interface.s_addr = INADDR_ANY;

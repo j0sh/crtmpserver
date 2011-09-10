@@ -52,7 +52,6 @@ struct RunningStatus {
 };
 
 void QuitSignalHandler(void);
-void ConfRereadSignalHandler(void);
 bool Initialize();
 void Run();
 void Cleanup();
@@ -66,6 +65,7 @@ RunningStatus gRs;
 
 #ifdef COMPILE_STATIC
 BaseClientApplication *SpawnApplication(Variant configuration);
+BaseProtocolFactory *SpawnFactory(Variant configuration);
 #endif
 
 int main(int argc, char **argv) {
@@ -128,9 +128,9 @@ bool Initialize() {
 
 	INFO("Reading configuration from %s", STR(gRs.commandLine["arguments"]["configFile"]));
 #ifdef COMPILE_STATIC
-	gRs.pConfigFile = new ConfigFile(SpawnApplication);
+	gRs.pConfigFile = new ConfigFile(SpawnApplication, SpawnFactory);
 #else
-	gRs.pConfigFile = new ConfigFile(NULL);
+	gRs.pConfigFile = new ConfigFile(NULL, NULL);
 #endif
 	string configFilePath = gRs.commandLine["arguments"]["configFile"];
 	string fileName;
@@ -188,9 +188,19 @@ bool Initialize() {
 	}
 #endif /* WIN32 */
 
-	INFO("Configure log appenders from configuration file");
-	if (!gRs.pConfigFile->ConfigureLogAppenders()) {
-		WARN("Unable to configure log appenders");
+	INFO("Configure logger");
+	if (!gRs.pConfigFile->ConfigLogAppenders()) {
+		FATAL("Unable to configure log appenders");
+		return false;
+	}
+
+	INFO("Initialize I/O handlers manager: %s", NETWORK_REACTOR);
+	IOHandlerManager::Initialize();
+
+	INFO("Configure modules");
+	if (!gRs.pConfigFile->ConfigModules()) {
+		FATAL("Unable to configure modules");
+		return false;
 	}
 
 	INFO("Plug in the default protocol factory");
@@ -200,28 +210,29 @@ bool Initialize() {
 		return false;
 	}
 
-	INFO("Initialize I/O handlers manager: %s", NETWORK_REACTOR);
-	IOHandlerManager::Initialize();
-
-#ifdef  HAS_PROTOCOL_DNS 
-	INFO("Initialize DNS resolver");
-	if (!gRs.pConfigFile->ConfigureDNSResolver()) {
-		FATAL("Unable to configure DNS resolver");
+	INFO("Configure factories");
+	if (!gRs.pConfigFile->ConfigFactories()) {
+		FATAL("Unable to configure factories");
 		return false;
 	}
-#endif /* HAS_PROTOCOL_DNS */
 
-	INFO("Initialize applications");
-	if (!gRs.pConfigFile->ConfigureApplications()) {
+	INFO("Configure acceptors");
+	if (!gRs.pConfigFile->ConfigAcceptors()) {
+		FATAL("Unable to configure acceptors");
+		return false;
+	}
+
+	INFO("Start I/O handlers manager: %s", NETWORK_REACTOR);
+	IOHandlerManager::Start();
+
+	INFO("Configure applications");
+	if (!gRs.pConfigFile->ConfigApplications()) {
 		FATAL("Unable to configure applications");
 		return false;
 	}
 
 	INFO("Install the quit signal");
 	installQuitSignal(QuitSignalHandler);
-
-	INFO("Install the conf re-read signal");
-	installConfRereadSignal(ConfRereadSignalHandler);
 
 	return true;
 }
@@ -269,11 +280,6 @@ void Cleanup() {
 }
 
 void QuitSignalHandler(void) {
-	IOHandlerManager::SignalShutdown();
-}
-
-void ConfRereadSignalHandler(void) {
-	gRs.run = true;
 	IOHandlerManager::SignalShutdown();
 }
 
@@ -393,6 +399,7 @@ extern "C" BaseClientApplication *GetApplication_proxypublish(Variant configurat
 #endif
 #ifdef HAS_APP_SAMPLEFACTORY
 extern "C" BaseClientApplication *GetApplication_samplefactory(Variant configuration);
+extern "C" BaseProtocolFactory *GetFactory_samplefactory(Variant configuration);
 #endif
 #ifdef HAS_APP_STRESSTEST
 extern "C" BaseClientApplication *GetApplication_stresstest(Variant configuration);
@@ -451,6 +458,20 @@ BaseClientApplication *SpawnApplication(Variant configuration) {
 #ifdef HAS_APP_VMAPP
 	else if (configuration[CONF_APPLICATION_NAME] == "vmapp") {
 		return GetApplication_vmapp(configuration);
+	}
+#endif
+	else {
+		return NULL;
+	}
+}
+
+BaseProtocolFactory *SpawnFactory(Variant configuration) {
+	if (false) {
+
+	}
+#ifdef HAS_APP_SAMPLEFACTORY
+	else if (configuration[CONF_APPLICATION_NAME] == "samplefactory") {
+		return GetFactory_samplefactory(configuration);
 	}
 #endif
 	else {

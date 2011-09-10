@@ -35,14 +35,20 @@ private:
 	uint16_t _nearPort;
 	uint64_t _rx;
 	uint64_t _tx;
-public:
+	Variant _parameters;
+private:
 	UDPCarrier(int32_t fd);
+public:
 	virtual ~UDPCarrier();
 
 	virtual bool OnEvent(struct epoll_event &event);
 	virtual bool SignalOutputData();
 	virtual operator string();
 	virtual void GetStats(Variant &info);
+
+	Variant &GetParameters();
+	void SetParameters(Variant parameters);
+	bool StartAccept();
 
 	string GetFarEndpointAddress();
 	uint16_t GetFarEndpointPort();

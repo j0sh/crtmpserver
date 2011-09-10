@@ -23,7 +23,6 @@
 #include "common.h"
 
 extern "C" DLLEXP BaseClientApplication *GetApplication_vmapp(Variant configuration);
-extern "C" DLLEXP void ReleaseApplication_vmapp(BaseClientApplication *pApplication);
 
 #endif	/* _VMAPP_H */
 

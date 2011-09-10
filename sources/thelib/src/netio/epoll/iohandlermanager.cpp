@@ -42,14 +42,16 @@ map<uint32_t, IOHandler *> & IOHandlerManager::GetDeadHandlers() {
 }
 
 void IOHandlerManager::Initialize() {
-	_eq = epoll_create(EPOLL_QUERY_SIZE);
-	if (_eq < 0) {
-		ASSERT("Unable to initialize epoll");
-	}
+	_eq = 0;
 	_pAvailableTokens = &_tokensVector1;
 	_pRecycledTokens = &_tokensVector2;
 	_pTimersManager = new TimersManager(ProcessTimer);
 	memset(&_dummy, 0, sizeof (_dummy));
+}
+
+void IOHandlerManager::Start() {
+	_eq = epoll_create(EPOLL_QUERY_SIZE);
+	assert(_eq > 0);
 }
 
 void IOHandlerManager::SignalShutdown() {

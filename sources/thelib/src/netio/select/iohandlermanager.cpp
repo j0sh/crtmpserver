@@ -52,6 +52,9 @@ void IOHandlerManager::Initialize() {
 	_isShuttingDown = false;
 }
 
+void IOHandlerManager::Start() {
+}
+
 void IOHandlerManager::SignalShutdown() {
 	_isShuttingDown = true;
 }

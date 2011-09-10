@@ -23,15 +23,6 @@
 using namespace app_appselector;
 
 extern "C" BaseClientApplication *GetApplication_appselector(Variant configuration) {
-	AppSelectorApplication *pApplication = new AppSelectorApplication(
-			configuration);
-	return pApplication;
+	return new AppSelectorApplication(configuration);
 }
-
-extern "C" void ReleaseApplication_appselector(BaseClientApplication *pApplication) {
-	if (pApplication != NULL) {
-		delete pApplication;
-	}
-}
-
 

@@ -28,7 +28,6 @@
 
 UDPCarrier::UDPCarrier(int32_t fd)
 : IOHandler(fd, fd, IOHT_UDP_CARRIER) {
-	IOHandlerManager::EnableReadData(this);
 	memset(&_peerAddress, 0, sizeof (sockaddr_in));
 	memset(&_nearAddress, 0, sizeof (sockaddr_in));
 	_nearIp = "";
@@ -92,6 +91,18 @@ void UDPCarrier::GetStats(Variant &info) {
 	info["nearIP"] = _nearIp;
 	info["nearPort"] = _nearPort;
 	info["rx"] = _rx;
+}
+
+Variant &UDPCarrier::GetParameters() {
+	return _parameters;
+}
+
+void UDPCarrier::SetParameters(Variant parameters) {
+	_parameters = parameters;
+}
+
+bool UDPCarrier::StartAccept() {
+	return IOHandlerManager::EnableReadData(this);
 }
 
 string UDPCarrier::GetFarEndpointAddress() {

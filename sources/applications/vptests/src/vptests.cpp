@@ -24,15 +24,5 @@
 using namespace app_vptests;
 
 extern "C" BaseClientApplication *GetApplication_vptests(Variant configuration) {
-	VPTestsApplication *pApplication = new VPTestsApplication(
-			configuration);
-	return pApplication;
+	reyurn new VPTestsApplication(configuration);
 }
-
-extern "C" void ReleaseApplication_vptests(BaseClientApplication *pApplication) {
-	if (pApplication != NULL) {
-		delete pApplication;
-	}
-}
-
-

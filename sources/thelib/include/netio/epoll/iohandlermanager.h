@@ -44,6 +44,7 @@ public:
 	static map<uint32_t, IOHandler *> & GetActiveHandlers();
 	static map<uint32_t, IOHandler *> & GetDeadHandlers();
 	static void Initialize();
+	static void Start();
 	static void SignalShutdown();
 	static void ShutdownIOHandlers();
 	static void Shutdown();

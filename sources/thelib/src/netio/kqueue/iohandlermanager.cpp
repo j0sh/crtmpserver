@@ -87,13 +87,17 @@ map<uint32_t, IOHandler *> & IOHandlerManager::GetDeadHandlers() {
 }
 
 void IOHandlerManager::Initialize() {
-	_kq = kqueue();
-	assert(_kq > 0);
+	_kq = 0;
 	_pAvailableTokens = &_tokensVector1;
 	_pRecycledTokens = &_tokensVector2;
 #ifndef HAS_KQUEUE_TIMERS
 	_pTimersManager = new TimersManager(ProcessTimer);
 #endif
+}
+
+void IOHandlerManager::Start() {
+	_kq = kqueue();
+	assert(_kq > 0);
 }
 
 void IOHandlerManager::SignalShutdown() {

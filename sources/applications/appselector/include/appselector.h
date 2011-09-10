@@ -22,7 +22,6 @@
 #define	_APPSELECTOR_H
 
 extern "C" DLLEXP BaseClientApplication *GetApplication_appselector(Variant configuration);
-extern "C" DLLEXP void ReleaseApplication_appselector(BaseClientApplication *pApplication);
 
 #endif	/* _APPSELECTOR_H */
 

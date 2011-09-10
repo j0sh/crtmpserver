@@ -24,7 +24,6 @@
 #include "common.h"
 
 extern "C" DLLEXP BaseClientApplication *GetApplication_stresstest(Variant configuration);
-extern "C" DLLEXP void ReleaseApplication_stresstest(BaseClientApplication *pApplication);
 
 #endif	/* _STRESSTEST_H */
 

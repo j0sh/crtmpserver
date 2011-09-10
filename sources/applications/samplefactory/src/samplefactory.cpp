@@ -20,18 +20,15 @@
 #include "application/baseclientapplication.h"
 #include "samplefactory.h"
 #include "samplefactoryapplication.h"
+#include "protocolfactory.h"
 using namespace app_samplefactory;
 
 extern "C" BaseClientApplication *GetApplication_samplefactory(Variant configuration) {
-	SampleFactoryApplication *pApplication = new SampleFactoryApplication(
+	return new SampleFactoryApplication(
 			configuration);
-	return pApplication;
 }
 
-extern "C" void ReleaseApplication_samplefactory(BaseClientApplication *pApplication) {
-	if (pApplication != NULL) {
-		delete pApplication;
-	}
+extern "C" DLLEXP BaseProtocolFactory *GetFactory_samplefactory(Variant configuration) {
+	return new ProtocolFactory();
 }
-
 

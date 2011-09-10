@@ -30,7 +30,6 @@ namespace app_samplefactory {
 	class DLLEXP SampleFactoryApplication
 	: public BaseClientApplication {
 	private:
-		ProtocolFactory *_pFactory;
 		EchoAppProtocolHandler *_pEchoHandler;
 	public:
 		SampleFactoryApplication(Variant &configuration);

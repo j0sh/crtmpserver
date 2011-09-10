@@ -23,14 +23,5 @@
 using namespace app_vmapp;
 
 extern "C" BaseClientApplication *GetApplication_vmapp(Variant configuration) {
-	VMAppApplication *pApplication = new VMAppApplication(
-			configuration);
-	return pApplication;
+	return new VMAppApplication(configuration);
 }
-
-extern "C" void ReleaseApplication_vmapp(BaseClientApplication *pApplication) {
-	if (pApplication != NULL) {
-		delete pApplication;
-	}
-}
-

@@ -82,6 +82,44 @@ bool BaseClientApplication::Initialize() {
 	return true;
 }
 
+bool BaseClientApplication::ActivateAcceptors(vector<IOHandler *> &acceptors) {
+	for (uint32_t i = 0; i < acceptors.size(); i++) {
+		if (!ActivateAcceptor(acceptors[i])) {
+			FATAL("Unable to activate acceptor");
+			return false;
+		}
+	}
+	return true;
+}
+
+bool BaseClientApplication::ActivateAcceptor(IOHandler *pIOHandler) {
+	switch (pIOHandler->GetType()) {
+		case IOHT_ACCEPTOR:
+		{
+			TCPAcceptor *pAcceptor = (TCPAcceptor *) pIOHandler;
+			pAcceptor->SetApplication(this);
+			SaveServiceInfo(pAcceptor);
+			return pAcceptor->StartAccept();
+		}
+		case IOHT_UDP_CARRIER:
+		{
+			UDPCarrier *pUDPCarrier = (UDPCarrier *) pIOHandler;
+			pUDPCarrier->GetProtocol()->GetNearEndpoint()->SetApplication(this);
+			SaveServiceInfo(pUDPCarrier);
+			return pUDPCarrier->StartAccept();
+		}
+		default:
+		{
+			FATAL("Invalid acceptor type");
+			return false;
+		}
+	}
+}
+
+string BaseClientApplication::GetServicesInfo() {
+	return _servicesInfo.str();
+}
+
 void BaseClientApplication::RegisterAppProtocolHandler(uint64_t protocolType,
 		BaseAppProtocolHandler *pAppProtocolHandler) {
 	if (MAP_HAS1(_protocolsHandlers, protocolType))
@@ -392,4 +430,35 @@ void BaseClientApplication::Shutdown(BaseClientApplication *pApplication) {
 
 	//5. Delete it
 	delete pApplication;
+}
+
+void BaseClientApplication::SaveServiceInfo(IOHandler *pIOHandler) {
+	Variant &params = pIOHandler->GetType() == IOHT_ACCEPTOR ?
+			((TCPAcceptor *) pIOHandler)->GetParameters()
+			: ((UDPCarrier *) pIOHandler)->GetParameters();
+	if (params != V_MAP)
+		return;
+	_servicesInfo << "+---+---------------+-----+-------------------------+-------------------------+" << endl;
+	_servicesInfo << "|";
+	_servicesInfo.width(3);
+	_servicesInfo << (pIOHandler->GetType() == IOHT_ACCEPTOR ? "tcp" : "udp");
+	_servicesInfo << "|";
+
+	_servicesInfo.width(3 * 4 + 3);
+	_servicesInfo << (string) params[CONF_IP];
+	_servicesInfo << "|";
+
+	_servicesInfo.width(5);
+	_servicesInfo << (uint16_t) params[CONF_PORT];
+	_servicesInfo << "|";
+
+	_servicesInfo.width(25);
+	_servicesInfo << (string) params[CONF_PROTOCOL];
+	_servicesInfo << "|";
+
+	_servicesInfo.width(25);
+	_servicesInfo << GetName();
+	_servicesInfo << "|";
+
+	_servicesInfo << endl;
 }

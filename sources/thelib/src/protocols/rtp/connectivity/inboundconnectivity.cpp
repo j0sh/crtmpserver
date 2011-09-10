@@ -464,8 +464,7 @@ bool InboundConnectivity::CreateCarriers(InboundRTPProtocol *pRTP, RTCPProtocol 
 		pCarrier2->SetProtocol(pRTCP->GetFarEndpoint());
 		pRTCP->GetFarEndpoint()->SetIOHandler(pCarrier2);
 
-
-		return true;
+		return pCarrier1->StartAccept() | pCarrier2->StartAccept();
 	}
 
 	if (pCarrier1 != NULL) {

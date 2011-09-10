@@ -17,372 +17,80 @@
  *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-#include "common.h"
 #include "configuration/configfile.h"
-#include "application/baseclientapplication.h"
 #include "application/clientapplicationmanager.h"
-#include "protocols/dns/outbounddnsresolverprotocol.h"
-#include "netio/netio.h"
-#include "protocols/protocolfactorymanager.h"
 
-ConfigFile::ConfigFile(GetStaticApplication_t pFunction) {
-	_pFunction = pFunction;
+ConfigFile::ConfigFile(GetApplicationFunction_t staticGetApplicationFunction,
+		GetFactoryFunction_t staticGetFactoryFunction) {
+	_staticGetApplicationFunction = staticGetApplicationFunction;
+	_staticGetFactoryFunction = staticGetFactoryFunction;
+	if (((_staticGetApplicationFunction == NULL) && (_staticGetFactoryFunction != NULL))
+			|| ((_staticGetApplicationFunction != NULL) && (_staticGetFactoryFunction == NULL))) {
+		ASSERT("Invalid config file usage");
+	}
 }
 
 ConfigFile::~ConfigFile() {
 
-	FOR_VECTOR(_libraryHandlers, i) {
-		FREE_LIBRARY(_libraryHandlers[i]);
+	FOR_MAP(_modules, string, Module, i) {
+		MAP_VAL(i).Release();
 	}
-	_libraryHandlers.clear();
-}
-
-#ifdef HAS_LUA
-
-bool ConfigFile::LoadLuaFile(string path, bool forceDaemon) {
-	InitServiceInfo();
-	if (!ReadLuaFile(path, CONF_CONFIGURATION, _configuration)) {
-		_listeningSockets.clear();
-		FATAL("Unable to read configuration file: %s", STR(path));
-		return false;
-	}
-	if (forceDaemon)
-		_configuration[CONF_DAEMON] = (bool)true;
-	return true;
-}
-
-bool ConfigFile::LoadLuaString(string script, bool forceDaemon) {
-	InitServiceInfo();
-	if (!ReadLuaString(script, CONF_CONFIGURATION, _configuration)) {
-		FATAL("Unable to read configuration script: %s", STR(script));
-		return false;
-	}
-	if (forceDaemon)
-		_configuration[CONF_DAEMON] = (bool)true;
-	return true;
-}
-#endif /* HAS_LUA */
-
-bool ConfigFile::LoadXmlFile(string path, bool forceDaemon) {
-	InitServiceInfo();
-	if (!Variant::DeserializeFromXmlFile(path, _configuration)) {
-		_listeningSockets.clear();
-		FATAL("Unable to read configuration file: %s", STR(path));
-		return false;
-	}
-	if (forceDaemon)
-		_configuration[CONF_DAEMON] = (bool)true;
-	return true;
-}
-
-bool ConfigFile::LoadXmlString(string xmlContent, bool forceDaemon) {
-	InitServiceInfo();
-	if (!Variant::DeserializeFromXml(xmlContent, _configuration)) {
-		_listeningSockets.clear();
-		FATAL("Unable to read configuration:\n%s", STR(xmlContent));
-		return false;
-	}
-	if (forceDaemon)
-		_configuration[CONF_DAEMON] = (bool)true;
-	return true;
-}
-
-bool ConfigFile::ConfigureLogAppenders() {
-	vector<Variant> logAppenders;
-	if (!ValidateLogAppenders(logAppenders))
-		return false;
-
-	FOR_VECTOR_ITERATOR(Variant, logAppenders, i) {
-		if (!ConfigureLogAppender(VECTOR_VAL(i))) {
-			FATAL("Unable to configure log appender %s",
-					STR(VECTOR_VAL(i).ToString()));
-			return false;
-		}
-	}
-
-	return true;
-}
-
-#ifdef HAS_PROTOCOL_DNS
-
-bool ConfigFile::ConfigureDNSResolver() {
-	if (!ValidateDNSResolver()) {
-		FATAL("Unable to validate DNS resolver");
-		return false;
-	}
-
-	if (_configuration[CONF_DNSRESOLVER].HasKey(CONF_ACCEPTORS)) {
-		if (!ConfigureAcceptors(_configuration[CONF_DNSRESOLVER][CONF_ACCEPTORS], NULL)) {
-			FATAL("Unable to configure acceptors on DNS resolver");
-			return false;
-		}
-	}
-
-	if (_configuration[CONF_DNSRESOLVER][CONF_IP] != CONF_DNSRESOLVER_SELF) {
-		if (!OutboundDNSResolverProtocol::Connect(
-				STR(_configuration[CONF_DNSRESOLVER][CONF_IP]),
-				_configuration[CONF_DNSRESOLVER][CONF_PORT],
-				_configuration[CONF_DNSRESOLVER])) {
-			FATAL("Unable to initialize remote DNS resolver");
-			return false;
-		}
-	}
-
-	return true;
-}
-#endif /* HAS_PROTOCOL_DNS */
-
-bool ConfigFile::ConfigureApplications() {
-	if (!ValidateApplications()) {
-		FATAL("Unable to validate applications");
-		return false;
-	}
-
-	FOR_MAP(_configuration[CONF_APPLICATIONS], string, Variant, i) {
-		if (!ConfigureApplication(MAP_VAL(i))) {
-			FATAL("Unable to configure application %s", STR(MAP_VAL(i).ToString()));
-			return false;
-		}
-	}
-
-	return true;
+	_modules.clear();
 }
 
 bool ConfigFile::IsDaemon() {
-	if (_configuration.HasKey(CONF_DAEMON)) {
-		if (_configuration[CONF_DAEMON] == V_BOOL)
-			return _configuration[CONF_DAEMON];
-		return false;
-	}
+	if (_configuration.HasKeyChain(V_BOOL, true, 1, CONF_DAEMON))
+		return (bool)_configuration[CONF_DAEMON];
 	return false;
 }
 
 string ConfigFile::GetServicesInfo() {
-	if (_servicesInfo == "") {
-		FinishServiceInfo();
-		_servicesInfo = _listeningSockets.str();
+	map<uint32_t, BaseClientApplication *> applications = ClientApplicationManager::GetAllApplications();
+
+	stringstream ss;
+
+	ss << "+-----------------------------------------------------------------------------+" << endl;
+	ss << "|";
+	ss.width(77);
+	ss << "Services";
+	ss << "|" << endl;
+	ss << "+---+---------------+-----+-------------------------+-------------------------+" << endl;
+	ss << "| c |      ip       | port|   protocol stack name   |     application name    |" << endl;
+
+	FOR_MAP(applications, uint32_t, BaseClientApplication *, i) {
+		ss << MAP_VAL(i)->GetServicesInfo();
 	}
-	return _servicesInfo;
+
+	ss << "+---+---------------+-----+-------------------------+-------------------------+";
+
+	return ss.str();
 }
 
-bool ConfigFile::SaveXML(string path) {
-	return _configuration.SerializeToXmlFile(path);
+bool ConfigFile::LoadLuaFile(string path, bool forceDaemon) {
+	if (!ReadLuaFile(path, CONF_CONFIGURATION, _configuration)) {
+		FATAL("Unable to read configuration file: %s", STR(path));
+		return false;
+	}
+	if (forceDaemon)
+		_configuration[CONF_DAEMON] = (bool)true;
+	return Normalize();
 }
 
-bool ConfigFile::ValidateString(Variant &node, string name, bool notNull,
-		uint32_t minLength, uint32_t maxLength) {
-	if (notNull && (VariantType) node[name] == V_NULL) {
-		FATAL("Invalid %s. It must be present and not null",
-				STR(name));
+bool ConfigFile::LoadXmlFile(string path, bool forceDaemon) {
+	if (!Variant::DeserializeFromXmlFile(path, _configuration)) {
+		FATAL("Unable to read configuration file: %s", STR(path));
 		return false;
 	}
-
-	if ((VariantType) node[name] == V_NULL)
-		return true;
-
-	if ((VariantType) node[name] != V_STRING) {
-		FATAL("Invalid %s. It must be present and must be string", STR(name));
-		return false;
-	}
-
-	string temp = node[name];
-
-	if (temp.length() < minLength || temp.length() > maxLength) {
-		FATAL("Invalid %s. It must be present, must be string and have length between %u and %u",
-				STR(name), minLength, maxLength);
-		return false;
-	}
-
-	return true;
+	if (forceDaemon)
+		_configuration[CONF_DAEMON] = (bool)true;
+	return Normalize();
 }
 
-bool ConfigFile::ValidateString(Variant &node, string name, bool notNull,
-		uint32_t size, ...) {
-	if (notNull && (VariantType) node[name] == V_NULL) {
-		FATAL("Invalid %s. It must be present and not null",
-				STR(name));
-		return false;
-	}
+bool ConfigFile::ConfigLogAppenders() {
 
-	if ((VariantType) node[name] == V_NULL)
-		return true;
-
-	if ((VariantType) node[name] != V_STRING) {
-		FATAL("Invalid %s. It must be present and must be string", STR(name));
-		return false;
-	}
-
-	string temp = node[name];
-
-	map<string, string> allowedValues;
-
-	va_list arguments;
-	va_start(arguments, size);
-	for (uint32_t i = 0; i < size; i++) {
-		char *pTemp = va_arg(arguments, char *);
-		allowedValues[pTemp] = pTemp;
-	}
-	va_end(arguments);
-
-	if (!MAP_HAS1(allowedValues, temp)) {
-		FATAL("Invalid value: %s. Available alternatives are", STR(temp));
-
-		FOR_MAP(allowedValues, string, string, i) {
-			FATAL("%s", STR(MAP_KEY(i)));
-		}
-		return false;
-	}
-
-	return true;
-}
-
-bool ConfigFile::ValidateMap(Variant &node, string name, bool notNull,
-		uint32_t minLength, uint32_t maxLength) {
-	if (!ValidateMap(node[name], notNull, minLength, maxLength)) {
-		FATAL("Invalid %s. Rules: NotNull: %hhu; MinSize: %u; MaxSize: %u",
-				STR(name),
-				notNull, minLength, maxLength);
-		return false;
-	}
-	return true;
-}
-
-bool ConfigFile::ValidateMap(Variant &node, bool notNull,
-		uint32_t minLength, uint32_t maxLength) {
-	if (notNull && (VariantType) node == V_NULL) {
-		FATAL("Array can't be null");
-		return false;
-	}
-
-	if ((VariantType) node == V_NULL)
-		return true;
-
-	if ((VariantType) node != V_MAP) {
-		FATAL("This is not an array: %s", STR(node.ToString()));
-		return false;
-	}
-
-	if (node.MapSize() < minLength || node.MapSize() > maxLength) {
-		FATAL("Invalid array size: %u. Must be between %u and %u",
-				node.MapSize(), minLength, maxLength);
-		return false;
-	}
-
-	return true;
-}
-
-bool ConfigFile::ValidateInteger(Variant &node, string name, bool notNull,
-		uint32_t minVal, uint32_t maxVal) {
-	if (notNull && (VariantType) node[name] == V_NULL) {
-		FATAL("Invalid %s. It must be present and not null",
-				STR(name));
-		return false;
-	}
-
-	if ((VariantType) node[name] == V_NULL)
-		return true;
-
-	if (!(VariantType) node[name].IsNumeric()) {
-		FATAL("Invalid %s. It must be numeric",
-				STR(name));
-		return false;
-	}
-
-	uint32_t temp = (uint32_t) node[name];
-	if ((double) temp != (double) node[name]) {
-		FATAL("Invalid %s. It must be unsigned integer",
-				STR(name));
-		return false;
-	}
-
-	if (temp < minVal || temp > maxVal) {
-		FATAL("Invalid %s. It must be between %u and %u",
-				STR(name), minVal, maxVal);
-		return false;
-	}
-
-	return true;
-}
-
-bool ConfigFile::ValidateDouble(Variant &node, string name, bool notNull,
-		double minVal, double maxVal) {
-	if (notNull && (VariantType) node[name] == V_NULL) {
-		FATAL("Invalid %s. It must be present and not null",
-				STR(name));
-		return false;
-	}
-
-	if ((VariantType) node[name] == V_NULL)
-		return true;
-
-	if (!(VariantType) node[name].IsNumeric()) {
-		FATAL("Invalid %s. It must be numeric",
-				STR(name));
-		return false;
-	}
-
-	if ((double) node[name] < minVal || (double) node[name] > maxVal) {
-		FATAL("Invalid %s. It must be between %.2f and %.2f",
-				STR(name), minVal, maxVal);
-		return false;
-	}
-
-	return true;
-}
-
-bool ConfigFile::ValidateBoolean(Variant &node, string name, bool notNull) {
-	if (notNull && (VariantType) node[name] == V_NULL) {
-		FATAL("Invalid %s. It must be present and not null",
-				STR(name));
-		return false;
-	}
-
-	if ((VariantType) node[name] == V_NULL)
-		return true;
-
-	if ((VariantType) node[name] != V_BOOL) {
-		FATAL("This is not a boolean value: %s. In node:\n%s",
-				STR(name), STR(node.ToString()));
-		return false;
-	}
-
-	return true;
-}
-
-bool ConfigFile::ValidateLogAppenders(vector<Variant> &logAppenders) {
-	if (!ValidateMap(_configuration, CONF_LOG_APPENDERS, true, 1, 999))
-		return false;
-	for (uint32_t i = 1; i <= _configuration[CONF_LOG_APPENDERS].MapSize(); i++) {
-		Variant temp = _configuration[CONF_LOG_APPENDERS][i];
-		if (!ValidateLogAppender(temp))
-			return false;
-		ADD_VECTOR_BEGIN(logAppenders, temp);
-	}
-	return true;
-}
-
-bool ConfigFile::ValidateLogAppender(Variant &node) {
-	if (!ValidateMap(node, true, 2, 999)) {
-		FATAL("Invalid log appender. It must be present, must be an array and not empty");
-		return false;
-	}
-
-	if (!ValidateString(node, CONF_LOG_APPENDER_TYPE, true, 4,
-			CONF_LOG_APPENDER_TYPE_COLORED_CONSOLE,
-			CONF_LOG_APPENDER_TYPE_CONSOLE,
-			CONF_LOG_APPENDER_TYPE_FILE,
-			CONF_LOG_APPENDER_TYPE_SYSLOG)) {
-		return false;
-	}
-
-	if (!ValidateInteger(node, CONF_LOG_APPENDER_LEVEL, true, 0, 6)) {
-		return false;
-	}
-
-	string type = node[CONF_LOG_APPENDER_TYPE];
-	if (type == CONF_LOG_APPENDER_TYPE_FILE) {
-		if (!ValidateString(node, CONF_LOG_APPENDER_FILE_NAME, true, 1, 999)) {
+	FOR_MAP(_logAppenders, string, Variant, i) {
+		if (!ConfigLogAppender(MAP_VAL(i))) {
+			FATAL("Unable to configure log appender:\n%s", STR(MAP_VAL(i).ToString()));
 			return false;
 		}
 	}
@@ -390,181 +98,51 @@ bool ConfigFile::ValidateLogAppender(Variant &node) {
 	return true;
 }
 
-bool ConfigFile::ValidateAcceptors(Variant &acceptors) {
-	if (!ValidateMap(acceptors, true, 1, 999))
-		return false;
+bool ConfigFile::ConfigModules() {
 
-	FOR_MAP(acceptors, string, Variant, i) {
-		if (!ValidateAcceptor(MAP_VAL(i)))
+	FOR_MAP(_applications, string, Variant, i) {
+		if (!ConfigModule(MAP_VAL(i))) {
+			FATAL("Unable to configure module:\n%s", STR(MAP_VAL(i).ToString()));
 			return false;
+		}
 	}
 	return true;
 }
 
-bool ConfigFile::ValidateAcceptor(Variant &node) {
-	if (!ValidateMap(node, true, 1, 999)) {
-		FATAL("Invalid acceptor. It must be present, must be an array and not empty");
-		return false;
-	}
+bool ConfigFile::ConfigFactories() {
 
-	if (!ValidateString(node, CONF_IP, true, 7, 15)) {
-		return false;
-	}
-
-	if (!ValidateInteger(node, CONF_PORT, true, 1, 65535)) {
-		return false;
-	}
-
-	if (!ValidateString(node, CONF_SSL_CERT, false, 1, 1024)) {
-		return false;
-	}
-
-	if (!ValidateString(node, CONF_SSL_KEY, false, 1, 1024)) {
-		return false;
-	}
-
-	if (!ValidateString(node, CONF_PROTOCOL, true, 1, 999)) {
-		return false;
-	}
-
-	return true;
-}
-
-bool ConfigFile::ValidateApplications() {
-	if (!ValidateMap(_configuration, CONF_APPLICATIONS, true, 1, 999))
-		return false;
-	if (!ValidateString(_configuration[CONF_APPLICATIONS],
-			CONF_APPLICATIONS_ROOTDIRECTORY, false, 1, 512)) {
-		return false;
-	}
-	_rootApplicationsDirectory = (string) (_configuration[CONF_APPLICATIONS]
-			[CONF_APPLICATIONS_ROOTDIRECTORY]);
-	if (_rootApplicationsDirectory.length() > 0) {
-		if (_rootApplicationsDirectory[_rootApplicationsDirectory.length() - 1] != PATH_SEPARATOR)
-			_rootApplicationsDirectory += PATH_SEPARATOR;
-	}
-	_configuration[CONF_APPLICATIONS].RemoveKey(CONF_APPLICATIONS_ROOTDIRECTORY);
-
-	FOR_MAP(_configuration[CONF_APPLICATIONS], string, Variant, i) {
-		if (!ValidateApplication(MAP_VAL(i)))
+	FOR_MAP(_modules, string, Module, i) {
+		if (!MAP_VAL(i).ConfigFactory()) {
+			FATAL("Unable to configure factory");
 			return false;
+		}
 	}
 	return true;
 }
 
-bool ConfigFile::ValidateApplication(Variant &node) {
-	if (!ValidateMap(node, true, 1, 999)) {
-		FATAL("Invalid application. It must be present, must be an array and not empty");
-		return false;
-	}
-	if (!ValidateString(node, CONF_APPLICATION_NAME, true, 1, 64)) {
-		return false;
-	}
+bool ConfigFile::ConfigAcceptors() {
 
-	if (node.HasKey(CONF_ACCEPTORS)) {
-		if (!ValidateAcceptors(node[CONF_ACCEPTORS])) {
-			FATAL("Unable to validate acceptors on application %s",
-					STR(node[CONF_APPLICATION_NAME]));
+	FOR_MAP(_modules, string, Module, i) {
+		if (!MAP_VAL(i).BindAcceptors()) {
+			FATAL("Unable to configure acceptors");
 			return false;
 		}
-	}
-
-	if (!ValidateString(node, CONF_PROTOCOL, true, 1,
-			CONF_PROTOCOL_DYNAMICLINKLIBRARY)) {
-		return false;
-	}
-
-	if (!ValidateBoolean(node, CONF_APPLICATION_DEFAULT, false)) {
-		return false;
-	}
-
-	if (!ValidateBoolean(node, CONF_APPLICATION_GENERATE_META_FILES, false)) {
-		return false;
-	}
-
-	if (!ValidateBoolean(node, CONF_APPLICATION_VALIDATEHANDSHAKE, false)) {
-		return false;
-	}
-
-	if (!ValidateBoolean(node, CONF_APPLICATION_KEYFRAMESEEK, false)) {
-		return false;
-	}
-
-	if (!ValidateBoolean(node, CONF_APPLICATION_RENAMEBADFILES, false)) {
-		return false;
-	}
-
-	if (!ValidateBoolean(node, CONF_APPLICATION_EXTERNSEEKGENERATOR, false)) {
-		return false;
-	}
-
-	if (!ValidateInteger(node, CONF_APPLICATION_CLIENTSIDEBUFFER, false, 0, 30)) {
-		return false;
-	}
-
-	if (!ValidateDouble(node, CONF_APPLICATION_SEEKGRANULARITY, false, 0.1, 600)) {
-		return false;
-	}
-
-	if (!ValidateString(node, CONF_APPLICATION_MEDIAFOLDER, false, 1, 999)) {
-		return false;
-	}
-
-	if (!ValidateString(node, CONF_APPLICATION_DESCRIPTION, false, 1, 999)) {
-		return false;
-	}
-
-	if (!ValidateMap(node, CONF_APPLICATION_ALIASES, false, 1, 999)) {
-		return false;
-	}
-
-	if (node[CONF_PROTOCOL] == CONF_PROTOCOL_DYNAMICLINKLIBRARY) {
-		if (!ValidateString(node, CONF_APPLICATION_LIBRARY, false, 1, 9999)) {
-			return false;
-		}
-	} else {
-		FATAL("Validation for %s protocol not yet implemented",
-				STR(node[CONF_PROTOCOL]));
-		return false;
-	}
-
-	return true;
-}
-
-bool ConfigFile::ValidateDNSResolver() {
-	if (!ValidateMap(_configuration, CONF_DNSRESOLVER, true, 1, 999)) {
-		FATAL("%s not specified", CONF_DNSRESOLVER);
-		return false;
-	}
-	if (!ValidateString(_configuration[CONF_DNSRESOLVER], CONF_IP, true, 1, 512)) {
-		return false;
-	}
-	if (_configuration[CONF_DNSRESOLVER].HasKey(CONF_ACCEPTORS)) {
-		if (!ValidateAcceptors(_configuration[CONF_DNSRESOLVER][CONF_ACCEPTORS])) {
-			FATAL("Unable to validate acceptors on dns resolver");
-			return false;
-		}
-	}
-	if (_configuration[CONF_DNSRESOLVER][CONF_IP] != CONF_DNSRESOLVER_SELF) {
-		if (!ValidateInteger(_configuration[CONF_DNSRESOLVER],
-				CONF_PORT, true, 1, 65535)) {
-			FATAL("Unable to validate %s port", CONF_DNSRESOLVER);
-			return false;
-		}
-		struct in_addr temp;
-		if (inet_aton(STR(_configuration[CONF_DNSRESOLVER][CONF_IP]), &temp) != 1) {
-			FATAL("Unable to translate %s into a valid IP address",
-					CONF_DNSRESOLVER"."CONF_IP);
-			return false;
-		}
-		return true;
-	} else {
-		NYIR;
 	}
 	return true;
 }
 
-bool ConfigFile::ConfigureLogAppender(Variant &node) {
+bool ConfigFile::ConfigApplications() {
+
+	FOR_MAP(_modules, string, Module, i) {
+		if (!MAP_VAL(i).ConfigApplication()) {
+			FATAL("Unable to configure acceptors");
+			return false;
+		}
+	}
+	return true;
+}
+
+bool ConfigFile::ConfigLogAppender(Variant &node) {
 	BaseLogLocation *pLogLocation = NULL;
 	if ((string) node[CONF_LOG_APPENDER_TYPE] == CONF_LOG_APPENDER_TYPE_COLORED_CONSOLE) {
 		if (!IsDaemon()) {
@@ -576,30 +154,7 @@ bool ConfigFile::ConfigureLogAppender(Variant &node) {
 		}
 	} else if ((string) node[CONF_LOG_APPENDER_TYPE] == CONF_LOG_APPENDER_TYPE_FILE) {
 		pLogLocation = new FileLogLocation(node, node[CONF_LOG_APPENDER_FILE_NAME], true);
-	}
-#ifdef HAS_SYSLOG
-	else if ((string) node[CONF_LOG_APPENDER_TYPE] == CONF_LOG_APPENDER_TYPE_SYSLOG) {
-		string identifier = "crtmpserver";
-		bool appendSourceFileLine = false;
-		int32_t specificLevel = 0;
-		if (node.HasKeyChain(V_STRING, false, 1, "identifier"))
-			identifier = (string) node["identifier"];
-		trim(identifier);
-		if (identifier == "")
-			identifier = "crtmpserver";
-		if (node.HasKeyChain(V_BOOL, false, 1, "appendSourceFileLine"))
-			appendSourceFileLine = node["appendSourceFileLine"];
-		if (node.HasKeyChain(V_STRING, false, 1, "loggerType")) {
-			string loggerType = lowerCase((string) node["loggerType"]);
-			if (loggerType == "access")
-				specificLevel = _PROD_ACCESS_;
-			else if (loggerType == "error")
-				specificLevel = _PROD_ERROR_;
-		}
-		pLogLocation = new SyslogLogLocation(node, identifier, appendSourceFileLine, specificLevel);
-	}
-#endif /* HAS_SYSLOG */
-	else {
+	} else {
 		NYIR;
 	}
 	if (pLogLocation != NULL) {
@@ -609,361 +164,341 @@ bool ConfigFile::ConfigureLogAppender(Variant &node) {
 	return true;
 }
 
-bool ConfigFile::ConfigureAcceptors(Variant &acceptors, BaseClientApplication *pApplication) {
-	if (!ValidateAcceptors(acceptors)) {
-		FATAL("Unable to validate acceptors");
+bool ConfigFile::Normalize() {
+	if (!NormalizeLogAppenders()) {
+		FATAL("Unable to normalize log appenders");
+		return false;
+	}
+	if (!NormalizeApplications()) {
+		FATAL("Unable to normalize applications");
+		return false;
+	}
+	return true;
+}
+
+bool ConfigFile::ConfigModule(Variant &node) {
+	Module module;
+	module.config = node;
+	if (_staticGetApplicationFunction != NULL) {
+		module.getApplication = _staticGetApplicationFunction;
+		module.getFactory = _staticGetFactoryFunction;
+	}
+
+	if (!module.Load()) {
+		FATAL("Unable to load module");
 		return false;
 	}
 
-	FOR_MAP(acceptors, string, Variant, i) {
-		if (!ConfigureAcceptor(MAP_VAL(i), pApplication)) {
-			FATAL("Unable to configure acceptor %s", STR(MAP_VAL(i).ToString()));
+	_modules[node[CONF_APPLICATION_NAME]] = module;
+
+	return true;
+}
+
+bool ConfigFile::NormalizeLogAppenders() {
+	if (!_configuration.HasKeyChain(V_MAP, false, 1, CONF_LOG_APPENDERS)) {
+		WARN("No log appenders specified");
+		return true;
+	}
+	Variant temp = _configuration.GetValue(CONF_LOG_APPENDERS, false);
+
+	FOR_MAP(temp, string, Variant, i) {
+		if (MAP_VAL(i) != V_MAP) {
+			WARN("Invalid log appender:\n%s", STR(MAP_VAL(i).ToString()));
+			continue;
+		}
+		if (!NormalizeLogAppender(MAP_VAL(i))) {
+			WARN("Invalid log appender:\n%s", STR(MAP_VAL(i).ToString()));
+			continue;
+		}
+		_logAppenders.PushToArray(MAP_VAL(i));
+	}
+	return true;
+}
+
+bool ConfigFile::NormalizeLogAppender(Variant &node) {
+	if (!node.HasKeyChain(V_STRING, false, 1, CONF_LOG_APPENDER_NAME)) {
+		WARN("Invalid log appender name");
+		return false;
+	}
+	string name = node.GetValue(CONF_LOG_APPENDER_NAME, false);
+
+	if (!node.HasKeyChain(V_STRING, false, 1, CONF_LOG_APPENDER_TYPE)) {
+		WARN("Invalid log appender type");
+		return false;
+	}
+	string type = node.GetValue(CONF_LOG_APPENDER_TYPE, false);
+	if ((type != CONF_LOG_APPENDER_TYPE_COLORED_CONSOLE)
+			&& (type != CONF_LOG_APPENDER_TYPE_CONSOLE)
+			&& (type != CONF_LOG_APPENDER_TYPE_FILE)) {
+		WARN("Invalid log appender type");
+		return false;
+	}
+
+	if (!node.HasKeyChain(_V_NUMERIC, false, 1, CONF_LOG_APPENDER_LEVEL)) {
+		WARN("Invalid log appender level");
+		return false;
+	}
+	int8_t level = (int8_t) node.GetValue(CONF_LOG_APPENDER_LEVEL, false);
+	if (level < 0) {
+		WARN("Invalid log appender level");
+		return false;
+	}
+
+	node[CONF_LOG_APPENDER_NAME] = name;
+	node[CONF_LOG_APPENDER_TYPE] = type;
+	node[CONF_LOG_APPENDER_LEVEL] = (uint8_t) level;
+
+	return true;
+}
+
+bool ConfigFile::NormalizeApplications() {
+	if (!_configuration.HasKeyChain(V_MAP, false, 1, CONF_APPLICATIONS)) {
+		WARN("No applications specified");
+		return true;
+	}
+	Variant temp = _configuration.GetValue(CONF_APPLICATIONS, false);
+
+	_rootAppFolder = "";
+	if (temp.HasKeyChain(V_STRING, false, 1, CONF_APPLICATIONS_ROOTDIRECTORY))
+		_rootAppFolder = (string) temp.GetValue(CONF_APPLICATIONS_ROOTDIRECTORY, false);
+	trim(_rootAppFolder);
+	if (_rootAppFolder == "")
+		_rootAppFolder = ".";
+	if (_rootAppFolder[_rootAppFolder.size() - 1] != PATH_SEPARATOR)
+		_rootAppFolder += PATH_SEPARATOR;
+
+	_applications.IsArray(true);
+
+	FOR_MAP(temp, string, Variant, i) {
+		if (MAP_KEY(i) == CONF_APPLICATIONS_ROOTDIRECTORY)
+			continue;
+		if (MAP_VAL(i) != V_MAP) {
+			FATAL("Invalid application:\n%s", STR(MAP_VAL(i).ToString()));
 			return false;
 		}
+		if (!NormalizeApplication(MAP_VAL(i))) {
+			FATAL("Invalid application:\n%s", STR(MAP_VAL(i).ToString()));
+			return false;
+		}
+		_applications.PushToArray(MAP_VAL(i));
+	}
+	return true;
+}
+
+bool ConfigFile::NormalizeApplication(Variant &node) {
+	string temp = "";
+
+	if (!node.HasKeyChain(V_STRING, false, 1, CONF_APPLICATION_NAME)) {
+		FATAL("Invalid application name");
+		return false;
+	}
+	string name = node.GetValue(CONF_APPLICATION_NAME, false);
+	if (name == "") {
+		FATAL("Invalid application name");
+		return false;
+	}
+	if (MAP_HAS1(_uniqueNames, name)) {
+		FATAL("Application name %s already taken", STR(name));
+		return false;
+	}
+	_uniqueNames[name] = name;
+	node[CONF_APPLICATION_NAME] = name;
+
+
+	string appDir = "";
+	if (node.HasKeyChain(V_STRING, false, 1, CONF_APPLICATION_DIRECTORY))
+		appDir = (string) node.GetValue(CONF_APPLICATION_DIRECTORY, false);
+	if (appDir == "") {
+		appDir = _rootAppFolder + PATH_SEPARATOR + name;
+	}
+	temp = normalizePath(appDir, "");
+	if (temp == "") {
+		FATAL("Path not found: %s", STR(appDir));
+		return false;
+	} else {
+		appDir = temp;
+	}
+	if (appDir[appDir.size() - 1] != PATH_SEPARATOR)
+		appDir += PATH_SEPARATOR;
+	node[CONF_APPLICATION_DIRECTORY] = appDir;
+
+	string mediaFolder = "";
+	if (node.HasKeyChain(V_STRING, false, 1, CONF_APPLICATION_MEDIAFOLDER))
+		mediaFolder = (string) node.GetValue(CONF_APPLICATION_MEDIAFOLDER, false);
+	if (mediaFolder == "") {
+		mediaFolder = appDir + "media";
+	}
+	temp = normalizePath(mediaFolder, "");
+	if (temp == "") {
+		WARN("Path not found: %s", STR(mediaFolder));
+	} else {
+		mediaFolder = temp;
+	}
+	if (mediaFolder[mediaFolder.size() - 1] != PATH_SEPARATOR)
+		mediaFolder += PATH_SEPARATOR;
+	node[CONF_APPLICATION_MEDIAFOLDER] = mediaFolder;
+
+
+	string libraryPath = "";
+	if (node.HasKeyChain(V_STRING, false, 1, CONF_APPLICATION_LIBRARY))
+		libraryPath = (string) node.GetValue(CONF_APPLICATION_LIBRARY, false);
+	if (libraryPath == "") {
+		libraryPath = appDir + format(LIBRARY_NAME_PATTERN, STR(name));
+	}
+	temp = normalizePath(libraryPath, "");
+	if (temp == "") {
+#ifdef COMPILE_STATIC
+		libraryPath = temp;
+#else /* COMPILE_STATIC */
+		FATAL("Library %s not found", STR(libraryPath));
+		return false;
+#endif /* COMPILE_STATIC */
+	} else {
+		libraryPath = temp;
+	}
+	node[CONF_APPLICATION_LIBRARY] = libraryPath;
+
+	string initApplicationFunction = "";
+	if (node.HasKeyChain(V_STRING, false, 1, CONF_APPLICATION_INIT_APPLICATION_FUNCTION))
+		initApplicationFunction = (string) node.GetValue(CONF_APPLICATION_INIT_APPLICATION_FUNCTION, false);
+	if (initApplicationFunction == "")
+		initApplicationFunction = "GetApplication_" + name;
+	node[CONF_APPLICATION_INIT_APPLICATION_FUNCTION] = initApplicationFunction;
+
+	string initFactoryFunction = "";
+	if (node.HasKeyChain(V_STRING, false, 1, CONF_APPLICATION_INIT_FACTORY_FUNCTION))
+		initFactoryFunction = (string) node.GetValue(CONF_APPLICATION_INIT_FACTORY_FUNCTION, false);
+	if (initFactoryFunction == "")
+		initFactoryFunction = "GetFactory_" + name;
+	node[CONF_APPLICATION_INIT_FACTORY_FUNCTION] = initFactoryFunction;
+
+	bool validateHandshake = true;
+	if (node.HasKeyChain(V_BOOL, false, 1, CONF_APPLICATION_VALIDATEHANDSHAKE))
+		validateHandshake = (bool) node.GetValue(CONF_APPLICATION_VALIDATEHANDSHAKE, false);
+	node[CONF_APPLICATION_VALIDATEHANDSHAKE] = (bool)validateHandshake;
+
+	bool defaultApp = false;
+	if (node.HasKeyChain(V_BOOL, false, 1, CONF_APPLICATION_DEFAULT))
+		defaultApp = (bool) node.GetValue(CONF_APPLICATION_DEFAULT, false);
+	node[CONF_APPLICATION_DEFAULT] = (bool)defaultApp;
+
+	Variant acceptors;
+	acceptors.IsArray(true);
+	if (node.HasKeyChain(V_MAP, false, 1, CONF_ACCEPTORS)) {
+
+		FOR_MAP(node[CONF_ACCEPTORS], string, Variant, i) {
+			if (MAP_VAL(i) != V_MAP) {
+				FATAL("Invalid acceptor:\n%s", STR(MAP_VAL(i).ToString()));
+				return false;
+			}
+
+			if (!NormalizeApplicationAcceptor(MAP_VAL(i), appDir)) {
+				FATAL("Invalid acceptor:\n%s", STR(MAP_VAL(i).ToString()));
+				return false;
+			}
+			acceptors.PushToArray(MAP_VAL(i));
+		}
+	}
+	node[CONF_ACCEPTORS] = acceptors;
+
+	Variant aliases;
+	aliases.IsArray(true);
+	if (node.HasKeyChain(V_MAP, false, 1, CONF_APPLICATION_ALIASES)) {
+
+		FOR_MAP(node[CONF_APPLICATION_ALIASES], string, Variant, i) {
+			if (MAP_VAL(i) != V_STRING) {
+				FATAL("Invalid alias value:\n%s", STR(MAP_VAL(i).ToString()));
+				return false;
+			}
+			if ((string) MAP_VAL(i) == "") {
+				FATAL("Invalid alias value:\n%s", STR(MAP_VAL(i).ToString()));
+				return false;
+			}
+			if (MAP_HAS1(_uniqueNames, MAP_VAL(i))) {
+				FATAL("Alias name %s already taken", STR(MAP_VAL(i)));
+				return false;
+			}
+			_uniqueNames[(string) MAP_VAL(i)] = (string) MAP_VAL(i);
+			aliases.PushToArray(MAP_VAL(i));
+		}
+	}
+	node[CONF_APPLICATION_ALIASES] = aliases;
+
+	return true;
+}
+
+bool ConfigFile::NormalizeApplicationAcceptor(Variant &node, string baseFolder) {
+	string ip = "";
+	if (node.HasKeyChain(V_STRING, false, 1, CONF_IP))
+		ip = (string) node.GetValue(CONF_IP, false);
+	if (ip == "") {
+		FATAL("Invalid ip: %s", STR(ip));
+		return false;
+	}
+	if (getHostByName(ip) == "") {
+		FATAL("Invalid ip: %s", STR(ip));
+		return false;
+	}
+	node[CONF_IP] = ip;
+
+	int32_t port;
+	if (node.HasKeyChain(_V_NUMERIC, false, 1, CONF_PORT))
+		port = (int32_t) node.GetValue(CONF_PORT, false);
+	if (port <= 0 || port >= 65536) {
+		FATAL("Invalid port: %"PRId32, port);
+		return false;
+	}
+	node[CONF_PORT] = (uint16_t) port;
+
+	string protocol = "";
+	if (node.HasKeyChain(V_STRING, false, 1, CONF_PROTOCOL))
+		protocol = (string) node.GetValue(CONF_PROTOCOL, false);
+	if (protocol == "") {
+		FATAL("Invalid protocol: %s", STR(protocol));
+		return false;
+	}
+	node[CONF_PROTOCOL] = protocol;
+
+	string sslKey = "";
+	if (node.HasKeyChain(V_STRING, false, 1, CONF_SSL_KEY))
+		sslKey = (string) node.GetValue(CONF_SSL_KEY, false);
+	if (sslKey != "") {
+		if ((sslKey[0] != PATH_SEPARATOR) && (sslKey[0] != '.')) {
+			sslKey = baseFolder + sslKey;
+		}
+		string temp = normalizePath(sslKey, "");
+		if (temp == "") {
+			FATAL("SSL key not found: %s", STR(sslKey));
+			return false;
+		}
+		sslKey = temp;
+	}
+	node[CONF_SSL_KEY] = sslKey;
+
+	string sslCert = "";
+	if (node.HasKeyChain(V_STRING, false, 1, CONF_SSL_CERT))
+		sslCert = (string) node.GetValue(CONF_SSL_CERT, false);
+	if (sslCert != "") {
+		if ((sslCert[0] != PATH_SEPARATOR) && (sslCert[0] != '.')) {
+			sslCert = baseFolder + sslCert;
+		}
+		string temp = normalizePath(sslCert, "");
+		if (temp == "") {
+			FATAL("SSL key not found: %s", STR(sslCert));
+			return false;
+		}
+		sslCert = temp;
+	}
+	node[CONF_SSL_CERT] = sslCert;
+
+	if (((sslKey == "") && (sslCert != "")) || ((sslKey != "") && (sslCert == ""))) {
+		FATAL("Invalid ssl key/cert");
+		return false;
 	}
 
 	return true;
 }
 
-bool ConfigFile::ConfigureAcceptor(Variant &node, BaseClientApplication *pApplication) {
-	//1. Get the chain
-	vector<uint64_t> chain;
-	chain = ProtocolFactoryManager::ResolveProtocolChain(node[CONF_PROTOCOL]);
-	if (chain.size() == 0) {
-		WARN("Invalid protocol chain: %s", STR(node[CONF_PROTOCOL]));
-		return true;
-	}
-
-	//2. Is it TCP or UDP based?
-	if (chain[0] == PT_TCP) {
-		//3. This is a tcp acceptor. Instantiate it and start accepting connections
-		TCPAcceptor *pAcceptor = new TCPAcceptor(node[CONF_IP],
-				node[CONF_PORT], node, chain);
-		if (!pAcceptor->StartAccept(pApplication)) {
-			FATAL("Unable to fire up acceptor from this config node: %s",
-					STR(node.ToString()));
-			return false;
-		}
-		SaveServiceInfo("tcp", node[CONF_IP], node[CONF_PORT], node[CONF_PROTOCOL],
-				pApplication != NULL ? STR(pApplication->GetName()) : "#none#");
-
-		return true;
-	} else {
-		//4. Ok, this is an UDP acceptor. Because of that, we can instantiate
-		//the full stack. Get the stack first
-		BaseProtocol *pProtocol = ProtocolFactoryManager::CreateProtocolChain(
-				chain, node);
-		if (pProtocol == NULL) {
-			FATAL("Unable to instantiate protocol stack %s", STR(node[CONF_PROTOCOL]));
-			return false;
-		}
-
-		//5. Create the carrier and bind it
-		if (UDPCarrier::Create(node[CONF_IP], node[CONF_PORT], pProtocol) == NULL) {
-			FATAL("Unable to instantiate UDP carrier on %s:%hu",
-					STR(node[CONF_IP]), (uint16_t) node[CONF_PORT]);
-			pProtocol->EnqueueForDelete();
-			return false;
-		}
-
-		pProtocol->SetApplication(pApplication);
-
-		SaveServiceInfo("udp", node[CONF_IP], node[CONF_PORT], node[CONF_PROTOCOL],
-				pApplication != NULL ? STR(pApplication->GetName()) : "#none#");
-
-		//6. We are done
-		return true;
-	}
+bool ConfigFile::NormalizeApplicationAliases(Variant &aliases) {
+	NYIR;
 }
-
-bool ConfigFile::ConfigureApplication(Variant &node) {
-	if (node[CONF_PROTOCOL] == CONF_PROTOCOL_DYNAMICLINKLIBRARY) {
-		Normalize(node);
-		if (_pFunction == NULL) {
-			_libDescriptor.libraryPath = (string) node[CONF_APPLICATION_LIBRARY];
-
-			_libDescriptor.libHandler = LOAD_LIBRARY(STR(_libDescriptor.libraryPath), LOAD_LIBRARY_FLAGS);
-
-			if (_libDescriptor.libHandler == NULL) {
-				string strError = OPEN_LIBRARY_ERROR;
-				FATAL("Unable to open library %s. Error was: %s",
-						STR(node[CONF_APPLICATION_LIBRARY]),
-						STR(strError));
-				return false;
-			}
-
-			string functionName = (string) node[CONF_APPLICATION_INIT_FUNCTION];
-
-			_libDescriptor.GetApplication =
-					(GetApplication_t) GET_PROC_ADDRESS(_libDescriptor.libHandler, STR(functionName));
-			if (_libDescriptor.GetApplication == NULL) {
-				string strError = OPEN_LIBRARY_ERROR;
-				FATAL("Unable to find %s function. Error was: %s",
-						STR(functionName),
-						STR(strError));
-				return false;
-			}
-
-			functionName = (string) node[CONF_APPLICATION_DELETE_FUNCTION];
-
-			_libDescriptor.ReleaseApplication =
-					(ReleaseApplication_t) GET_PROC_ADDRESS(_libDescriptor.libHandler, STR(functionName));
-			if (_libDescriptor.ReleaseApplication == NULL) {
-				string strError = OPEN_LIBRARY_ERROR;
-				FATAL("Unable to find %s function. Error was: %s",
-						STR(functionName),
-						STR(strError));
-				return false;
-			}
-		} else {
-			_libDescriptor.libHandler = NULL;
-		}
-
-		if (node.HasKey(CONF_APPLICATION_ALIASES) && node[CONF_APPLICATION_ALIASES] != V_NULL) {
-			Variant temp = node[CONF_APPLICATION_ALIASES];
-			node[CONF_APPLICATION_ALIASES].Reset();
-
-			FOR_MAP(temp, string, Variant, i) {
-				node[CONF_APPLICATION_ALIASES].PushToArray(MAP_VAL(i));
-			}
-		}
-
-		if (node.HasKey(CONF_ACCEPTORS) && node[CONF_ACCEPTORS] != V_NULL) {
-			Variant temp = node[CONF_ACCEPTORS];
-			node[CONF_ACCEPTORS].Reset();
-
-			FOR_MAP(temp, string, Variant, i) {
-				node[CONF_ACCEPTORS].PushToArray(MAP_VAL(i));
-			}
-		}
-
-		if (node[CONF_APPLICATION_DEFAULT] == V_NULL) {
-			node[CONF_APPLICATION_DEFAULT] = (bool)false;
-		}
-
-		if (node[CONF_APPLICATION_GENERATE_META_FILES] == V_NULL) {
-			node[CONF_APPLICATION_GENERATE_META_FILES] = (bool)false;
-		}
-
-		if (node[CONF_APPLICATION_VALIDATEHANDSHAKE] == V_NULL) {
-			node[CONF_APPLICATION_VALIDATEHANDSHAKE] = (bool)true;
-		}
-
-		if (node[CONF_APPLICATION_KEYFRAMESEEK] == V_NULL) {
-			node[CONF_APPLICATION_KEYFRAMESEEK] = (bool)true;
-		}
-
-		if (node[CONF_APPLICATION_RENAMEBADFILES] == V_NULL) {
-			node[CONF_APPLICATION_RENAMEBADFILES] = (bool)true;
-		}
-
-		if (node[CONF_APPLICATION_EXTERNSEEKGENERATOR] == V_NULL) {
-			node[CONF_APPLICATION_EXTERNSEEKGENERATOR] = (bool)false;
-		}
-
-		if (node[CONF_APPLICATION_SEEKGRANULARITY] == V_NULL) {
-			node[CONF_APPLICATION_SEEKGRANULARITY] = (double) 1;
-		}
-
-		if (node[CONF_APPLICATION_MEDIAFOLDER] == V_NULL) {
-			node[CONF_APPLICATION_MEDIAFOLDER] = "";
-		}
-
-		if (node[CONF_APPLICATION_CLIENTSIDEBUFFER] == V_NULL) {
-			node[CONF_APPLICATION_CLIENTSIDEBUFFER] = (int32_t) 5;
-		} else if ((int32_t) node[CONF_APPLICATION_CLIENTSIDEBUFFER] < 5) {
-			node[CONF_APPLICATION_CLIENTSIDEBUFFER] = (int32_t) 5;
-		}
-
-		BaseClientApplication *pApplication = NULL;
-		if (_pFunction == NULL) {
-			pApplication = _libDescriptor.GetApplication(node);
-		} else {
-			pApplication = _pFunction(node);
-		}
-		if (pApplication == NULL) {
-			FATAL("Unable to configure application. Function returned NULL");
-			return false;
-		}
-
-		pApplication->GetConfiguration()["id"] = (uint32_t) pApplication->GetId();
-
-		if (!ClientApplicationManager::RegisterApplication(pApplication)) {
-			FATAL("Unable to register application %s", STR(node.ToString()));
-			return false;
-		}
-
-		if (!pApplication->Initialize()) {
-			FATAL("Unable to initialize the application: %s", STR(node.ToString()));
-			return false;
-		}
-
-		if (!pApplication->ParseAuthentication()) {
-			FATAL("Unable to parse authetication for application\n%s", STR(node.ToString()));
-			return false;
-		}
-
-		if (node.HasKey(CONF_ACCEPTORS)) {
-			if (!ConfigureAcceptors(node[CONF_ACCEPTORS], pApplication)) {
-				FATAL("Unable to configure acceptors on application %s",
-						STR(node[CONF_APPLICATION_NAME]));
-				return false;
-			}
-		}
-
-		string message = format("Application \"%s\"",
-				STR(pApplication->GetName()));
-
-		if (pApplication->GetAliases().size() > 0) {
-			message += " (";
-			for (uint32_t i = 0; i < pApplication->GetAliases().size(); i++) {
-				message += pApplication->GetAliases()[i];
-				if (i != pApplication->GetAliases().size() - 1)
-					message += ",";
-				else
-					message += ")";
-			}
-		}
-		message += " is up and running";
-
-		INFO("%s", STR(message));
-
-		if (_libDescriptor.libHandler != NULL) {
-			ADD_VECTOR_END(_libraryHandlers, _libDescriptor.libHandler);
-		}
-
-		return true;
-	} else {
-		FATAL("Configuration for %s protocol not yet implemented",
-				STR(node[CONF_PROTOCOL]));
-		return false;
-	}
-}
-
-void ConfigFile::InitServiceInfo() {
-	_listeningSockets.clear();
-	_servicesInfo = "";
-
-	_listeningSockets << "+-----------------------------------------------------------------------------+" << endl;
-	_listeningSockets << "|";
-	_listeningSockets.width(77);
-	_listeningSockets << "Services";
-	_listeningSockets << "|" << endl;
-	_listeningSockets << "+---+---------------+-----+-------------------------+-------------------------+" << endl;
-	_listeningSockets << "| c |      ip       | port|   protocol stack name   |     application name    |" << endl;
-}
-
-void ConfigFile::SaveServiceInfo(string carrier, string ip, uint16_t port, string protocol, string appName) {
-	_listeningSockets << "+---+---------------+-----+-------------------------+-------------------------+" << endl;
-	_listeningSockets << "|";
-	_listeningSockets.width(3);
-	_listeningSockets << carrier;
-	_listeningSockets << "|";
-
-	_listeningSockets.width(3 * 4 + 3);
-	_listeningSockets << ip;
-	_listeningSockets << "|";
-
-	_listeningSockets.width(5);
-	_listeningSockets << port;
-	_listeningSockets << "|";
-
-	_listeningSockets.width(25);
-	_listeningSockets << protocol;
-	_listeningSockets << "|";
-
-	_listeningSockets.width(25);
-	_listeningSockets << appName;
-	_listeningSockets << "|";
-
-	_listeningSockets << endl;
-}
-
-void ConfigFile::FinishServiceInfo() {
-	_listeningSockets << "+---+---------------+-----+-------------------------+-------------------------+" << endl;
-}
-
-void ConfigFile::Normalize(Variant &appConfigurationNode) {
-
-	appConfigurationNode[CONF_APPLICATION_DIRECTORY] =
-			format("%s%s%c", STR(_rootApplicationsDirectory),
-			STR(appConfigurationNode[CONF_APPLICATION_NAME]), PATH_SEPARATOR);
-
-	string name = appConfigurationNode[CONF_APPLICATION_NAME];
-
-
-	//1. Normalize the library path
-	if ((VariantType) appConfigurationNode[CONF_APPLICATION_LIBRARY] == V_NULL) {
-
-		string libraryName = format(LIBRARY_NAME_PATTERN, STR(name));
-		appConfigurationNode[CONF_APPLICATION_LIBRARY] = format("%s%s",
-				STR(appConfigurationNode[CONF_APPLICATION_DIRECTORY]),
-				STR(libraryName));
-	}
-
-	//2. Normalize the media folder
-	if ((VariantType) appConfigurationNode[CONF_APPLICATION_MEDIAFOLDER] == V_NULL) {
-		appConfigurationNode[CONF_APPLICATION_MEDIAFOLDER] = format("%s%s%c",
-				STR(appConfigurationNode[CONF_APPLICATION_DIRECTORY]),
-				CONF_APPLICATION_MEDIAFOLDER,
-				PATH_SEPARATOR);
-	} else {
-		string mediaFolder = appConfigurationNode[CONF_APPLICATION_MEDIAFOLDER];
-		if (mediaFolder[mediaFolder.length() - 1] != PATH_SEPARATOR)
-			mediaFolder += PATH_SEPARATOR;
-		appConfigurationNode[CONF_APPLICATION_MEDIAFOLDER] = mediaFolder;
-	}
-
-	//4. Normalize the crt/key location inside acceptors
-	if (appConfigurationNode.HasKey(CONF_ACCEPTORS)) {
-
-		FOR_MAP(appConfigurationNode[CONF_ACCEPTORS], string, Variant, i) {
-			if (MAP_VAL(i)[CONF_SSL_KEY] != V_STRING) {
-				MAP_VAL(i).RemoveKey(CONF_SSL_CERT);
-				MAP_VAL(i).RemoveKey(CONF_SSL_KEY);
-				continue;
-			}
-			if (MAP_VAL(i)[CONF_SSL_CERT] != V_STRING) {
-				MAP_VAL(i).RemoveKey(CONF_SSL_CERT);
-				MAP_VAL(i).RemoveKey(CONF_SSL_KEY);
-				continue;
-			}
-
-			string key = MAP_VAL(i)[CONF_SSL_KEY];
-			string cert = MAP_VAL(i)[CONF_SSL_CERT];
-
-			if (key != "") {
-				if (key[0] != PATH_SEPARATOR) {
-					key = format("%s%s",
-							STR(appConfigurationNode[CONF_APPLICATION_DIRECTORY]),
-							STR(key));
-				}
-			}
-
-			if (cert != "") {
-				if (cert[0] != PATH_SEPARATOR) {
-					cert = format("%s%s",
-							STR(appConfigurationNode[CONF_APPLICATION_DIRECTORY]),
-							STR(cert));
-				}
-			}
-
-			MAP_VAL(i)[CONF_SSL_KEY] = key;
-			MAP_VAL(i)[CONF_SSL_CERT] = cert;
-		}
-	}
-
-	if (!appConfigurationNode.HasKeyChain(V_STRING, false, 1,
-			CONF_APPLICATION_INIT_FUNCTION)) {
-		appConfigurationNode[CONF_APPLICATION_INIT_FUNCTION] = "GetApplication_"
-				+ (string) appConfigurationNode[CONF_APPLICATION_NAME];
-	}
-
-	if (!appConfigurationNode.HasKeyChain(V_STRING, false, 1,
-			CONF_APPLICATION_DELETE_FUNCTION)) {
-		appConfigurationNode[CONF_APPLICATION_DELETE_FUNCTION] =
-				"ReleaseApplication_"
-				+ (string) appConfigurationNode[CONF_APPLICATION_NAME];
-	}
-}
-

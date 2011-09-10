@@ -28,7 +28,6 @@ using namespace app_samplefactory;
 
 SampleFactoryApplication::SampleFactoryApplication(Variant &configuration)
 : BaseClientApplication(configuration) {
-	_pFactory = NULL;
 	_pEchoHandler = NULL;
 }
 
@@ -37,12 +36,6 @@ SampleFactoryApplication::~SampleFactoryApplication() {
 	if (_pEchoHandler != NULL) {
 		delete _pEchoHandler;
 		_pEchoHandler = NULL;
-	}
-
-	if (_pFactory != NULL) {
-		ProtocolFactoryManager::UnRegisterProtocolFactory(_pFactory);
-		delete _pFactory;
-		_pFactory = NULL;
 	}
 }
 
@@ -58,10 +51,6 @@ bool SampleFactoryApplication::Initialize() {
 	//1. Initialize the protocol handler(s)
 	_pEchoHandler = new EchoAppProtocolHandler(_configuration);
 	RegisterAppProtocolHandler(PT_ECHO_PROTOCOL, _pEchoHandler);
-
-	//2. Initialize our protocol factory
-	_pFactory = new ProtocolFactory();
-	ProtocolFactoryManager::RegisterProtocolFactory(_pFactory);
 
 	return true;
 }

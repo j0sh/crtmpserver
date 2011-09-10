@@ -24,7 +24,7 @@
 #include "common.h"
 
 extern "C" DLLEXP BaseClientApplication *GetApplication_samplefactory(Variant configuration);
-extern "C" DLLEXP void ReleaseApplication_samplefactory(BaseClientApplication *pApplication);
+extern "C" DLLEXP BaseProtocolFactory * GetFactory_samplefactory(Variant configuration);
 
 #endif	/* _SAMPLEFACTORY_H */
 

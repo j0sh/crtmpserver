@@ -24,29 +24,5 @@
 using namespace app_proxypublish;
 
 extern "C" BaseClientApplication *GetApplication_proxypublish(Variant configuration) {
-	ProxyPublishApplication *pApplication = new ProxyPublishApplication(
-			configuration);
-	return pApplication;
+	return new ProxyPublishApplication(configuration);
 }
-
-extern "C" void ReleaseApplication_proxypublish(BaseClientApplication *pApplication) {
-	if (pApplication != NULL) {
-		delete pApplication;
-	}
-}
-
-
-/*OLD STUFF
- * rtspStreams =
-			{
-				--[[{
-					--url="rtsp://82.177.67.58/channel1",
-					--url="rtsp://217.153.33.206/axis-media/media.amp",
-					url="rtsp://82.177.67.61/axis-media/media.amp",
-					--url="rtsp://media-us-2.soundreach.net/slcn_lifestyle.sdp",
-					--url="rtsp://0.0.0.0:8080/test.sdp",
-					forceTcp=true
-				},]]--
-			},
- */
-

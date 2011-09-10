@@ -50,9 +50,7 @@ TCPAcceptor::~TCPAcceptor() {
 	CLOSE_SOCKET(_inboundFd);
 }
 
-bool TCPAcceptor::StartAccept(BaseClientApplication *pApplication) {
-	_pApplication = pApplication;
-
+bool TCPAcceptor::Bind() {
 	_inboundFd = _outboundFd = (int) socket(PF_INET, SOCK_STREAM, 0);
 	if (_inboundFd < 0) {
 		int err = LASTSOCKETERROR;
@@ -81,7 +79,15 @@ bool TCPAcceptor::StartAccept(BaseClientApplication *pApplication) {
 	}
 
 	_enabled = true;
+	return true;
+}
 
+void TCPAcceptor::SetApplication(BaseClientApplication *pApplication) {
+	assert(_pApplication == NULL);
+	_pApplication = pApplication;
+}
+
+bool TCPAcceptor::StartAccept() {
 	return IOHandlerManager::EnableAcceptConnections(this);
 }
 

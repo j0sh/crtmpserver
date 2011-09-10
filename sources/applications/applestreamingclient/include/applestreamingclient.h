@@ -24,7 +24,6 @@
 #include "common.h"
 
 extern "C" DLLEXP BaseClientApplication *GetApplication_applestreamingclient(Variant configuration);
-extern "C" DLLEXP void ReleaseApplication_applestreamingclient(BaseClientApplication *pApplication);
 
 #endif	/* _APPLESTREAMINGCLIENT_H */
 

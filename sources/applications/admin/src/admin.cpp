@@ -24,15 +24,6 @@
 using namespace app_admin;
 
 extern "C" BaseClientApplication *GetApplication_admin(Variant configuration) {
-	AdminApplication *pApplication = new AdminApplication(
-			configuration);
-	return pApplication;
+	return new AdminApplication(configuration);
 }
-
-extern "C" void ReleaseApplication_admin(BaseClientApplication *pApplication) {
-	if (pApplication != NULL) {
-		delete pApplication;
-	}
-}
-
 
