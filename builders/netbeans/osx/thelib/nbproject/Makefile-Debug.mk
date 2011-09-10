@@ -129,6 +129,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/1210522057/atomstco.o \
 	${OBJECTDIR}/_ext/502048917/outboundhttpprotocol.o \
 	${OBJECTDIR}/_ext/1210522057/atommeta.o \
+	${OBJECTDIR}/_ext/83984615/module.o \
 	${OBJECTDIR}/_ext/1896237080/genericmessagefactory.o \
 	${OBJECTDIR}/_ext/547604307/baserawhttpstreamappprotocolhandler.o \
 	${OBJECTDIR}/_ext/31226533/outnetrtmp4rtmpstream.o \
@@ -717,6 +718,11 @@ ${OBJECTDIR}/_ext/1210522057/atommeta.o: ../../../../sources/thelib/src/mediafor
 	${MKDIR} -p ${OBJECTDIR}/_ext/1210522057
 	${RM} $@.d
 	$(COMPILE.cc) -g -DCreateRTCPPacket=CreateRTCPPacket_none -DFeedDataAudioMPEG4Generic=FeedDataAudioMPEG4Generic_one_by_one -DHAS_MEDIA_FLV -DHAS_MEDIA_MKV -DHAS_MEDIA_MKV -DHAS_MEDIA_MP3 -DHAS_MEDIA_MP4 -DHAS_MEDIA_NSV -DHAS_PROTOCOL_CLI -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_LIVEFLV -DHAS_PROTOCOL_MMS -DHAS_PROTOCOL_RAWHTTPSTREAM -DHAS_PROTOCOL_RTMFP -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_VAR -DHAS_SYSLOG -DLITTLE_ENDIAN_BYTE_ALIGNED -DNET_KQUEUE -DOSX -DHAS_LUA -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../../ffmpeg_bin/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1210522057/atommeta.o ../../../../sources/thelib/src/mediaformats/mp4/atommeta.cpp
+
+${OBJECTDIR}/_ext/83984615/module.o: ../../../../sources/thelib/src/configuration/module.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/83984615
+	${RM} $@.d
+	$(COMPILE.cc) -g -DCreateRTCPPacket=CreateRTCPPacket_none -DFeedDataAudioMPEG4Generic=FeedDataAudioMPEG4Generic_one_by_one -DHAS_MEDIA_FLV -DHAS_MEDIA_MKV -DHAS_MEDIA_MKV -DHAS_MEDIA_MP3 -DHAS_MEDIA_MP4 -DHAS_MEDIA_NSV -DHAS_PROTOCOL_CLI -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_LIVEFLV -DHAS_PROTOCOL_MMS -DHAS_PROTOCOL_RAWHTTPSTREAM -DHAS_PROTOCOL_RTMFP -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_VAR -DHAS_SYSLOG -DLITTLE_ENDIAN_BYTE_ALIGNED -DNET_KQUEUE -DOSX -DHAS_LUA -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../../ffmpeg_bin/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/83984615/module.o ../../../../sources/thelib/src/configuration/module.cpp
 
 ${OBJECTDIR}/_ext/1896237080/genericmessagefactory.o: ../../../../sources/thelib/src/protocols/rtmp/messagefactories/genericmessagefactory.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1896237080

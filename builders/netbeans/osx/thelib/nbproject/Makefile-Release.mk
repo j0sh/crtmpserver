@@ -129,6 +129,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/1210522057/atomstco.o \
 	${OBJECTDIR}/_ext/502048917/outboundhttpprotocol.o \
 	${OBJECTDIR}/_ext/1210522057/atommeta.o \
+	${OBJECTDIR}/_ext/83984615/module.o \
 	${OBJECTDIR}/_ext/1896237080/genericmessagefactory.o \
 	${OBJECTDIR}/_ext/547604307/baserawhttpstreamappprotocolhandler.o \
 	${OBJECTDIR}/_ext/31226533/outnetrtmp4rtmpstream.o \
@@ -717,6 +718,11 @@ ${OBJECTDIR}/_ext/1210522057/atommeta.o: ../../../../sources/thelib/src/mediafor
 	${MKDIR} -p ${OBJECTDIR}/_ext/1210522057
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -DHAS_MEDIA_FLV -DHAS_MEDIA_MP3 -DHAS_MEDIA_MP4 -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_LIVEFLV -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_VAR -DLITTLE_ENDIAN_BYTE_ALIGNED -DNET_KQUEUE -DOSX -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1210522057/atommeta.o ../../../../sources/thelib/src/mediaformats/mp4/atommeta.cpp
+
+${OBJECTDIR}/_ext/83984615/module.o: ../../../../sources/thelib/src/configuration/module.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/83984615
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -DHAS_MEDIA_FLV -DHAS_MEDIA_MP3 -DHAS_MEDIA_MP4 -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_LIVEFLV -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_VAR -DLITTLE_ENDIAN_BYTE_ALIGNED -DNET_KQUEUE -DOSX -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/83984615/module.o ../../../../sources/thelib/src/configuration/module.cpp
 
 ${OBJECTDIR}/_ext/1896237080/genericmessagefactory.o: ../../../../sources/thelib/src/protocols/rtmp/messagefactories/genericmessagefactory.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1896237080

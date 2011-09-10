@@ -13,6 +13,7 @@
                      displayName="configuration"
                      projectFiles="true">
         <itemPath>../../../../sources/thelib/include/configuration/configfile.h</itemPath>
+        <itemPath>../../../../sources/thelib/include/configuration/module.h</itemPath>
       </logicalFolder>
       <logicalFolder name="mediaformats"
                      displayName="mediaformats"
@@ -291,6 +292,7 @@
                      displayName="configuration"
                      projectFiles="true">
         <itemPath>../../../../sources/thelib/src/configuration/configfile.cpp</itemPath>
+        <itemPath>../../../../sources/thelib/src/configuration/module.cpp</itemPath>
       </logicalFolder>
       <logicalFolder name="mediaformats"
                      displayName="mediaformats"
