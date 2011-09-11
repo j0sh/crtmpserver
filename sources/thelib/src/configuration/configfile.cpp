@@ -176,6 +176,12 @@ bool ConfigFile::ConfigInstances() {
 		MAP_VAL(i).config["isOrigin"] = (bool)_isOrigin;
 	}
 
+	//dirty fix: need to wait the origin to boot up, so all edges
+	//are going to wait 5 seconds
+	if (!_isOrigin) {
+		sleep(5);
+	}
+
 	return true;
 }
 
