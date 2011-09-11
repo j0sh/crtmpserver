@@ -157,7 +157,12 @@ bool BaseVariantProtocol::Send(Variant &variant) {
 			_outputBuffer.ReadFromString(rawContent);
 
 			//6. enqueue for outbound
-			return EnqueueForOutbound();
+			if (!EnqueueForOutbound()) {
+				FATAL("Unable to enqueue for outbound");
+				return false;
+			}
+			GracefullyEnqueueForDelete();
+			return true;
 		}
 		case PT_OUTBOUND_HTTP:
 		{

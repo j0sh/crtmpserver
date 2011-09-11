@@ -64,13 +64,7 @@ void IOHandlerManager::FreeToken(IOHandler *pIOHandler) {
 bool IOHandlerManager::RegisterEvent(int32_t fd, int16_t filter, uint16_t flags,
 		uint32_t fflags, uint32_t data, IOHandlerManagerToken *pToken, bool ignoreError) {
 	if (_pendingEventsCount >= _eventsSize) {
-		_eventsSize += INITIAL_EVENTS_SIZE;
-		_pPendingEvents = (struct kevent *) realloc(_pPendingEvents,
-				_eventsSize * sizeof (struct kevent));
-		_pDetectedEvents = (struct kevent *) realloc(_pDetectedEvents,
-				_eventsSize * sizeof (struct kevent));
-		WARN("Event size resized: %d->%d", _eventsSize - INITIAL_EVENTS_SIZE,
-				_eventsSize);
+		ResizeEvents();
 	}
 	EV_SET(&_pPendingEvents[_pendingEventsCount], fd, filter, flags, fflags,
 			data, pToken);
@@ -93,6 +87,7 @@ void IOHandlerManager::Initialize() {
 #ifndef HAS_KQUEUE_TIMERS
 	_pTimersManager = new TimersManager(ProcessTimer);
 #endif
+	ResizeEvents();
 }
 
 void IOHandlerManager::Start() {
@@ -311,7 +306,17 @@ void IOHandlerManager::ProcessTimer(TimerEvent &event) {
 		FATAL("Invalid token");
 	}
 }
-#endif
+#endif /* HAS_KQUEUE_TIMERS */
+
+inline void IOHandlerManager::ResizeEvents() {
+	_eventsSize += INITIAL_EVENTS_SIZE;
+	_pPendingEvents = (struct kevent *) realloc(_pPendingEvents,
+			_eventsSize * sizeof (struct kevent));
+	_pDetectedEvents = (struct kevent *) realloc(_pDetectedEvents,
+			_eventsSize * sizeof (struct kevent));
+	WARN("Event size resized: %d->%d", _eventsSize - INITIAL_EVENTS_SIZE,
+			_eventsSize);
+}
 
 #endif /* NET_KQUEUE */
 

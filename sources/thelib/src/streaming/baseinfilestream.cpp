@@ -507,7 +507,7 @@ MmapFile* BaseInFileStream::GetFile(string filePath, uint32_t windowSize) {
 		windowSize = 131072;
 	MmapFile *pResult = NULL;
 	pResult = new MmapFile();
-	if (!pResult->Initialize(filePath, windowSize, true)) {
+	if (!pResult->Initialize(filePath, windowSize, false)) {
 		delete pResult;
 		return NULL;
 	}

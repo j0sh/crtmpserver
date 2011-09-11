@@ -75,6 +75,15 @@ bool TCPAcceptor::Bind() {
 		return false;
 	}
 
+	if (_port == 0) {
+		socklen_t tempSize = sizeof (sockaddr);
+		if (getsockname(_inboundFd, (sockaddr *) & _address, &tempSize) != 0) {
+			FATAL("Unable to extract the random port");
+			return false;
+		}
+		_parameters[CONF_PORT] = (uint16_t) ENTOHS(_address.sin_port);
+	}
+
 	if (listen(_inboundFd, 100) != 0) {
 		FATAL("Unable to put the socket in listening mode");
 		return false;

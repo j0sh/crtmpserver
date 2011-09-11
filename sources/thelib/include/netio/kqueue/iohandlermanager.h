@@ -75,6 +75,7 @@ private:
 #ifndef HAS_KQUEUE_TIMERS
 	static void ProcessTimer(TimerEvent &event);
 #endif
+	static inline void ResizeEvents();
 };
 
 

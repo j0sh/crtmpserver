@@ -36,13 +36,25 @@ BaseVariantAppProtocolHandler::BaseVariantAppProtocolHandler(Variant &configurat
 			CONF_PROTOCOL_OUTBOUND_HTTP_BIN_VARIANT);
 	_outboundHttpXmlVariant = ProtocolFactoryManager::ResolveProtocolChain(
 			CONF_PROTOCOL_OUTBOUND_HTTP_XML_VARIANT);
+	_outboundBinVariant = ProtocolFactoryManager::ResolveProtocolChain(
+			CONF_PROTOCOL_OUTBOUND_BIN_VARIANT);
+	_outboundXmlVariant = ProtocolFactoryManager::ResolveProtocolChain(
+			CONF_PROTOCOL_OUTBOUND_XML_VARIANT);
 	if (_outboundHttpBinVariant.size() == 0) {
-		ASSERT("Unable to resolve prtocol stack %s",
+		ASSERT("Unable to resolve protocol stack %s",
 				CONF_PROTOCOL_OUTBOUND_HTTP_BIN_VARIANT);
 	}
 	if (_outboundHttpXmlVariant.size() == 0) {
-		ASSERT("Unable to resolve prtocol stack %s",
+		ASSERT("Unable to resolve protocol stack %s",
 				CONF_PROTOCOL_OUTBOUND_HTTP_XML_VARIANT);
+	}
+	if (_outboundBinVariant.size() == 0) {
+		ASSERT("Unable to resolve protocol stack %s",
+				CONF_PROTOCOL_OUTBOUND_BIN_VARIANT);
+	}
+	if (_outboundXmlVariant.size() == 0) {
+		ASSERT("Unable to resolve protocol stack %s",
+				CONF_PROTOCOL_OUTBOUND_XML_VARIANT);
 	}
 #else
 	FATAL("HTTP protocol not supported");
@@ -59,7 +71,23 @@ void BaseVariantAppProtocolHandler::UnRegisterProtocol(BaseProtocol *pProtocol) 
 }
 
 bool BaseVariantAppProtocolHandler::Send(string ip, uint16_t port, Variant &variant, bool xml) {
-	NYIR;
+	//1. Build the parameters
+	Variant parameters;
+	parameters["ip"] = ip;
+	parameters["port"] = (uint16_t) port;
+	parameters["applicationName"] = GetApplication()->GetName();
+	parameters["payload"] = variant;
+
+	//2. Start the HTTP request
+	if (!TCPConnector<BaseVariantAppProtocolHandler>::Connect(parameters["ip"],
+			parameters["port"],
+			xml ? _outboundXmlVariant : _outboundBinVariant,
+			parameters)) {
+		FATAL("Unable to open connection");
+		return false;
+	}
+
+	return true;
 }
 
 bool BaseVariantAppProtocolHandler::Send(string url, Variant &variant, bool xml) {
@@ -84,8 +112,32 @@ bool BaseVariantAppProtocolHandler::Send(string url, Variant &variant, bool xml)
 }
 
 bool BaseVariantAppProtocolHandler::SignalProtocolCreated(BaseProtocol *pProtocol, Variant &parameters) {
+	//1. Get the application
+	BaseClientApplication *pApplication = ClientApplicationManager::FindAppByName(
+			parameters["applicationName"]);
+	if (pApplication == NULL) {
+		FATAL("Unable to find application %s",
+				STR(parameters["applicationName"]));
+		return false;
+	}
+
+	//2. get the protocol handler
+	BaseAppProtocolHandler *pHandler = pApplication->GetProtocolHandler(PT_BIN_VAR);
+	if (pHandler == NULL) {
+		pHandler = pApplication->GetProtocolHandler(PT_XML_VAR);
+		if (pHandler == NULL) {
+			WARN("Unable to get protocol handler for variant protocol");
+		}
+	}
+
+
+	//3. Is the connection up
 	if (pProtocol == NULL) {
-		FATAL("Connection failed:\n%s", STR(parameters.ToString()));
+		if (pHandler != NULL) {
+			((BaseVariantAppProtocolHandler *) pHandler)->ConnectionFailed(parameters);
+		} else {
+			WARN("Connection failed:\n%s", STR(parameters.ToString()));
+		}
 		return false;
 	}
 
@@ -99,20 +151,24 @@ bool BaseVariantAppProtocolHandler::SignalProtocolCreated(BaseProtocol *pProtoco
 		return false;
 	}
 
-	//2. Get the application
-	BaseClientApplication *pApplication = ClientApplicationManager::FindAppByName(
-			parameters["applicationName"]);
-	if (pApplication == NULL) {
-		FATAL("Unable to find application %s",
-				STR(parameters["applicationName"]));
-		return false;
-	}
-
 	//3. Register the protocol to it
 	pProtocol->SetApplication(pApplication);
 
+	if (pProtocol->GetFarProtocol() == NULL) {
+		FATAL("Invalid far protocol");
+		return false;
+	}
+
 	//4. Do the actual request
-	return ((BaseVariantProtocol *) pProtocol)->Send(parameters);
+	if (pProtocol->GetFarProtocol()->GetType() == PT_TCP) {
+		return ((BaseVariantProtocol *) pProtocol)->Send(parameters["payload"]);
+	} else {
+		return ((BaseVariantProtocol *) pProtocol)->Send(parameters);
+	}
+}
+
+void BaseVariantAppProtocolHandler::ConnectionFailed(Variant &parameters) {
+	WARN("Connection failed:\n%s", STR(parameters.ToString()));
 }
 
 bool BaseVariantAppProtocolHandler::ProcessMessage(BaseVariantProtocol *pProtocol,

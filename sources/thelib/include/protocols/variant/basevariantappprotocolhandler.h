@@ -32,6 +32,8 @@ private:
 	Variant _urlCache;
 	vector<uint64_t> _outboundHttpBinVariant;
 	vector<uint64_t> _outboundHttpXmlVariant;
+	vector<uint64_t> _outboundBinVariant;
+	vector<uint64_t> _outboundXmlVariant;
 public:
 	BaseVariantAppProtocolHandler(Variant &configuration);
 	virtual ~BaseVariantAppProtocolHandler();
@@ -49,6 +51,7 @@ public:
 
 	//used internally
 	static bool SignalProtocolCreated(BaseProtocol *pProtocol, Variant &parameters);
+	virtual void ConnectionFailed(Variant &parameters);
 
 	//this is called whenever a message is received
 	virtual bool ProcessMessage(BaseVariantProtocol *pProtocol,

@@ -159,8 +159,7 @@ bool ConfigFile::ConfigInstances() {
 		return true;
 	}
 
-	uint32_t instanceCount = 4; //gRs.pConfigFile->GetInstancesCount();
-	for (uint32_t i = 0; i < instanceCount; i++) {
+	for (uint32_t i = 0; i < instancesCount; i++) {
 		pid_t pid = fork();
 		if (pid < 0) {
 			FATAL("Unable to start daemonize. fork() failed");
@@ -429,6 +428,40 @@ bool ConfigFile::NormalizeApplication(Variant &node) {
 	if (node.HasKeyChain(V_BOOL, false, 1, CONF_APPLICATION_DEFAULT))
 		defaultApp = (bool) node.GetValue(CONF_APPLICATION_DEFAULT, false);
 	node[CONF_APPLICATION_DEFAULT] = (bool)defaultApp;
+
+	bool generateMetaFiles = false;
+	if (node.HasKeyChain(V_BOOL, false, 1, CONF_APPLICATION_GENERATE_META_FILES))
+		generateMetaFiles = (bool) node.GetValue(CONF_APPLICATION_GENERATE_META_FILES, false);
+	node[CONF_APPLICATION_GENERATE_META_FILES] = (bool)generateMetaFiles;
+
+	bool keyFrameSeek = false;
+	if (node.HasKeyChain(V_BOOL, false, 1, CONF_APPLICATION_KEYFRAMESEEK))
+		keyFrameSeek = (bool) node.GetValue(CONF_APPLICATION_KEYFRAMESEEK, false);
+	node[CONF_APPLICATION_KEYFRAMESEEK] = (bool)keyFrameSeek;
+
+	bool renameBadFiles = false;
+	if (node.HasKeyChain(V_BOOL, false, 1, CONF_APPLICATION_RENAMEBADFILES))
+		renameBadFiles = (bool) node.GetValue(CONF_APPLICATION_RENAMEBADFILES, false);
+	node[CONF_APPLICATION_RENAMEBADFILES] = (bool)renameBadFiles;
+
+	bool externSeekGenerator = false;
+	if (node.HasKeyChain(V_BOOL, false, 1, CONF_APPLICATION_EXTERNSEEKGENERATOR))
+		externSeekGenerator = (bool) node.GetValue(CONF_APPLICATION_EXTERNSEEKGENERATOR, false);
+	node[CONF_APPLICATION_EXTERNSEEKGENERATOR] = (bool)externSeekGenerator;
+
+	int32_t seekGranularity = 1;
+	if (node.HasKeyChain(_V_NUMERIC, false, 1, CONF_APPLICATION_SEEKGRANULARITY))
+		seekGranularity = (int32_t) node.GetValue(CONF_APPLICATION_SEEKGRANULARITY, false);
+	if (seekGranularity < 0 || seekGranularity > 300)
+		seekGranularity = 1;
+	node[CONF_APPLICATION_SEEKGRANULARITY] = (uint32_t) seekGranularity;
+
+	int64_t clientSideBuffer = 5;
+	if (node.HasKeyChain(_V_NUMERIC, false, 1, CONF_APPLICATION_CLIENTSIDEBUFFER))
+		clientSideBuffer = (int64_t) node.GetValue(CONF_APPLICATION_CLIENTSIDEBUFFER, false);
+	if (seekGranularity < 0 || seekGranularity > 300)
+		seekGranularity = 5;
+	node[CONF_APPLICATION_CLIENTSIDEBUFFER] = (uint32_t) clientSideBuffer;
 
 	Variant acceptors;
 	acceptors.IsArray(true);
