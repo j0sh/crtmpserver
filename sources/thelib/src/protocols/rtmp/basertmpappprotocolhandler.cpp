@@ -902,6 +902,8 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokePlay(BaseRTMPProtocol *pFrom,
 					VH_SI(request),
 					streamName,
 					ST_IN_NET_RTMP);
+			request["waitForLiveStream"] = (bool)true;
+			request["streamName"]=streamName;
 			return pBaseOutNetRTMPStream != NULL;
 		}
 		case -1: //only live
@@ -922,6 +924,8 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokePlay(BaseRTMPProtocol *pFrom,
 					VH_SI(request),
 					streamName,
 					ST_IN_NET_RTMP);
+			request["waitForLiveStream"] = (bool)true;
+			request["streamName"]=streamName;
 			return pBaseOutNetRTMPStream != NULL;
 		}
 		default: //only recorded
