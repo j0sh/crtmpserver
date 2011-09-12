@@ -115,7 +115,10 @@ protected:
 	//operations
 	virtual bool TriggerPlayOrAnnounce(RTSPProtocol *pFrom);
 protected:
-	virtual string GetAuthenticationRealm(string uri);
+	virtual bool NeedAuthentication(RTSPProtocol *pFrom,
+			Variant &requestHeaders, string &requestContent);
+	virtual string GetAuthenticationRealm(RTSPProtocol *pFrom,
+			Variant &requestHeaders, string &requestContent);
 private:
 	OutboundConnectivity *GetOutboundConnectivity(RTSPProtocol *pFrom);
 	BaseInNetStream *GetInboundStream(string streamName);

@@ -271,7 +271,8 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPRequest(RTSPProtocol *pFrom,
 			requestHeaders[RTSP_HEADERS].GetValue(RTSP_HEADERS_CSEQ, false));
 
 	//5. Do we have authentication? We will authenticate everything except "OPTIONS"
-	if ((_usersFile != "") && (method != RTSP_METHOD_OPTIONS)) {
+	if ((_usersFile != "") && NeedAuthentication(pFrom, requestHeaders,
+			requestContent)) {
 		//6. Re-parse authentication file if necessary
 		if (!ParseUsersFile()) {
 			FATAL("Unable to parse authentication file");
@@ -279,8 +280,8 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPRequest(RTSPProtocol *pFrom,
 		}
 
 		//7. Get the real name to use it further in authentication process
-		string realmName = GetAuthenticationRealm(
-				requestHeaders[RTSP_FIRST_LINE][RTSP_URL]);
+		string realmName = GetAuthenticationRealm(pFrom, requestHeaders,
+				requestContent);
 
 		//8. Do we have that realm?
 		if (!_realms.HasKey(realmName)) {
@@ -1279,9 +1280,16 @@ bool BaseRTSPAppProtocolHandler::TriggerPlayOrAnnounce(RTSPProtocol *pFrom) {
 	return true;
 }
 
-string BaseRTSPAppProtocolHandler::GetAuthenticationRealm(string uri) {
-	//TODO: based on the uri, here we must select one realm
-	//for testing, all of them can go into the first realm available
+bool BaseRTSPAppProtocolHandler::NeedAuthentication(RTSPProtocol *pFrom,
+		Variant &requestHeaders, string &requestContent) {
+	//by default, authenticate everything except OPTIONS
+	string method = requestHeaders[RTSP_FIRST_LINE][RTSP_METHOD];
+	return (method != RTSP_METHOD_OPTIONS);
+}
+
+string BaseRTSPAppProtocolHandler::GetAuthenticationRealm(RTSPProtocol *pFrom,
+		Variant &requestHeaders, string &requestContent) {
+	//by default, just return the first realm
 	if (_realms.MapSize() != 0)
 		return MAP_KEY(_realms.begin());
 	return "";
