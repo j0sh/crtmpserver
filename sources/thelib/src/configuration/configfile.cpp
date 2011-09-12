@@ -137,9 +137,9 @@ bool ConfigFile::ConfigAcceptors() {
 }
 
 bool ConfigFile::ConfigInstances() {
-	uint8_t instancesCount = 0;
+	int8_t instancesCount = 0;
 	if (_configuration.HasKeyChain(_V_NUMERIC, false, 1, "instancesCount")) {
-		instancesCount = (uint8_t) _configuration.GetValue("instancesCount", false);
+		instancesCount = (int8_t) _configuration.GetValue("instancesCount", false);
 	}
 	if (instancesCount > 8) {
 		FATAL("Invalid number of instances count. Max value is 8");
@@ -148,6 +148,15 @@ bool ConfigFile::ConfigInstances() {
 
 	if (instancesCount == 0)
 		return true;
+
+	if(instancesCount<0) {
+		instancesCount=sysconf( _SC_NPROCESSORS_ONLN );
+	}
+
+	if((instancesCount<0)||(instancesCount>16)) {
+		FATAL("unable to correctly compute the number of instances");
+		return false;
+	}
 
 #ifdef WIN32
 	WARN("Windows doesn't support multiple instances");
@@ -159,7 +168,7 @@ bool ConfigFile::ConfigInstances() {
 		return true;
 	}
 
-	for (uint32_t i = 0; i < instancesCount; i++) {
+	for (int32_t i = 0; i < instancesCount; i++) {
 		pid_t pid = fork();
 		if (pid < 0) {
 			FATAL("Unable to start daemonize. fork() failed");
