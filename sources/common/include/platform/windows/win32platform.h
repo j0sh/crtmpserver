@@ -238,6 +238,7 @@ DLLEXP string generateRandomString(uint32_t length);
 DLLEXP void lTrim(string &value);
 DLLEXP void rTrim(string &value);
 DLLEXP void trim(string &value);
+DLLEXP int8_t getCPUCount();
 DLLEXP map<string, string> mapping(string str, string separator1, string separator2, bool trimStrings);
 DLLEXP void splitFileName(string fileName, string &name, string &extension, char separator = '.');
 DLLEXP double getFileModificationDate(string path);

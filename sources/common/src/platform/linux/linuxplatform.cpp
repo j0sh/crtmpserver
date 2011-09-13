@@ -313,6 +313,10 @@ void trim(string &value) {
 	rTrim(value);
 }
 
+int8_t getCPUCount() {
+	return sysconf(_SC_NPROCESSORS_ONLN);
+}
+
 map<string, string> mapping(string str, string separator1, string separator2, bool trimStrings) {
 	map<string, string> result;
 

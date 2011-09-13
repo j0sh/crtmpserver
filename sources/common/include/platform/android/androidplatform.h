@@ -163,6 +163,7 @@ string generateRandomString(uint32_t length);
 void lTrim(string &value);
 void rTrim(string &value);
 void trim(string &value);
+int8_t getCPUCount();
 map<string, string> mapping(string str, string separator1, string separator2, bool trimStrings);
 void splitFileName(string fileName, string &name, string &extension, char separator = '.');
 double getFileModificationDate(string path);

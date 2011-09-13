@@ -127,6 +127,11 @@ void trim(string &value) {
 	rTrim(value);
 }
 
+int8_t getCPUCount() {
+	WARN("Windows doesn't support multiple instances");
+	return 0;
+}
+
 void replace(string &target, string search, string replacement) {
 	if (search == replacement)
 		return;
