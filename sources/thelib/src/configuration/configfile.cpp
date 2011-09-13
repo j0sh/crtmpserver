@@ -137,6 +137,7 @@ bool ConfigFile::ConfigAcceptors() {
 }
 
 bool ConfigFile::ConfigInstances() {
+#ifndef WIN32
 	int8_t instancesCount = 0;
 	if (_configuration.HasKeyChain(_V_NUMERIC, false, 1, "instancesCount")) {
 		instancesCount = (int8_t) _configuration.GetValue("instancesCount", false);
@@ -149,19 +150,14 @@ bool ConfigFile::ConfigInstances() {
 	if (instancesCount == 0)
 		return true;
 
-	if(instancesCount<0) {
-		instancesCount=sysconf( _SC_NPROCESSORS_ONLN );
+	if (instancesCount < 0) {
+		instancesCount = getCPUCount();
 	}
 
-	if((instancesCount<0)||(instancesCount>16)) {
+	if ((instancesCount < 0) || (instancesCount > 16)) {
 		FATAL("unable to correctly compute the number of instances");
 		return false;
 	}
-
-#ifdef WIN32
-	WARN("Windows doesn't support multiple instances");
-	return true;
-#endif /* WIN32 */
 
 	if (!IsDaemon()) {
 		WARN("Daemon mode not activated. No additional instances will be spawned");
@@ -192,6 +188,10 @@ bool ConfigFile::ConfigInstances() {
 	}
 
 	return true;
+#else /* WIN32 */
+	WARN("Windows doesn't support multiple instances");
+	return true;
+#endif /* WIN32 */
 }
 
 bool ConfigFile::ConfigApplications() {
