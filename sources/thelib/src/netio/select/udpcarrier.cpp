@@ -125,7 +125,7 @@ uint16_t UDPCarrier::GetNearEndpointPort() {
 }
 
 UDPCarrier* UDPCarrier::Create(string bindIp, uint16_t bindPort,
-		uint16_t multicastTtl, uint16_t tos) {
+		uint16_t ttl, uint16_t tos) {
 
 	//1. Create the socket
 	int sock = socket(AF_INET, SOCK_DGRAM, 0);
@@ -141,8 +141,8 @@ UDPCarrier* UDPCarrier::Create(string bindIp, uint16_t bindPort,
 		CLOSE_SOCKET(sock);
 		return NULL;
 	}
-	if (multicastTtl <= 255) {
-		if (!setFdMulticastTTL(sock, (uint8_t) multicastTtl)) {
+	if (ttl <= 255) {
+		if (!setFdTTL(sock, (uint8_t) ttl)) {
 			FATAL("Unable to set ttl");
 			CLOSE_SOCKET(sock);
 			return NULL;
@@ -201,13 +201,13 @@ UDPCarrier* UDPCarrier::Create(string bindIp, uint16_t bindPort,
 }
 
 UDPCarrier* UDPCarrier::Create(string bindIp, uint16_t bindPort,
-		BaseProtocol *pProtocol, uint16_t multicastTtl, uint16_t tos) {
+		BaseProtocol *pProtocol, uint16_t ttl, uint16_t tos) {
 	if (pProtocol == NULL) {
 		FATAL("Protocol can't be null");
 		return NULL;
 	}
 
-	UDPCarrier *pResult = Create(bindIp, bindPort, multicastTtl, tos);
+	UDPCarrier *pResult = Create(bindIp, bindPort, ttl, tos);
 	if (pResult == NULL) {
 		FATAL("Unable to create UDP carrier");
 		return NULL;
