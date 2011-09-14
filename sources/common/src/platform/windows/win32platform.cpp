@@ -306,7 +306,7 @@ bool setFdReuseAddress(int32_t fd) {
 	return true;
 }
 
-bool setFdMulticastTTL(int32_t fd, uint8_t multicastTtl) {
+bool setFdTTL(int32_t fd, uint8_t ttl) {
 	NYI;
 	return true;
 }

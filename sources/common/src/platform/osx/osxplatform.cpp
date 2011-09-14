@@ -161,9 +161,9 @@ bool setFdReuseAddress(int32_t fd) {
 	return true;
 }
 
-bool setFdMulticastTTL(int32_t fd, uint8_t multicastTtl) {
-	if (setsockopt(fd, IPPROTO_IP, IP_MULTICAST_TTL, &multicastTtl, sizeof (multicastTtl)) != 0) {
-		WARN("Unable to set IP_MULTICAST_TTL");
+bool setFdTTL(int32_t fd, uint8_t ttl) {
+	if (setsockopt(fd, IPPROTO_IP, IP_TTL, &ttl, sizeof (ttl)) != 0) {
+		WARN("Unable to set IP_TTL");
 	}
 	return true;
 }

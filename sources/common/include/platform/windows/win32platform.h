@@ -225,7 +225,7 @@ DLLEXP bool setFdNoSIGPIPE(int32_t fd);
 DLLEXP bool setFdKeepAlive(int32_t fd);
 DLLEXP bool setFdNoNagle(int32_t fd);
 DLLEXP bool setFdReuseAddress(int32_t fd);
-DLLEXP bool setFdMulticastTTL(int32_t fd, uint8_t multicastTtl);
+DLLEXP bool setFdTTL(int32_t fd, uint8_t ttl);
 DLLEXP bool setFdTOS(int32_t fd, uint8_t tos);
 DLLEXP bool setFdOptions(int32_t fd);
 DLLEXP bool deleteFile(string path);
