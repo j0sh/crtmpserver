@@ -123,13 +123,13 @@ bool BaseRTSPAppProtocolHandler::PullExternalStream(URI uri, Variant streamConfi
 	customParameters["customParameters"]["externalStreamConfig"] = streamConfig;
 	customParameters["isClient"] = (bool)true;
 	customParameters["appId"] = GetApplication()->GetId();
-	customParameters["uri"] = uri.ToVariant();
+	customParameters["uri"] = uri;
 	customParameters["connectionType"] = "pull";
 
 	//3. Connect
 	if (!TCPConnector<BaseRTSPAppProtocolHandler>::Connect(
-			uri.ip,
-			uri.port,
+			uri.ip(),
+			uri.port(),
 			chain, customParameters)) {
 		FATAL("Unable to connect to %s:%hu",
 				STR(customParameters["uri"]["ip"]),
@@ -407,11 +407,11 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPRequestDescribe(RTSPProtocol *pFrom,
 		FATAL("Invalid URI: %s", STR(requestHeaders[RTSP_FIRST_LINE][RTSP_URL]));
 		return false;
 	}
-	if (uri.documentWithParameters == "") {
-		FATAL("Inavlid stream name");
+	string streamName = uri.documentWithFullParameters();
+	if (streamName == "") {
+		FATAL("Invalid stream name");
 		return false;
 	}
-	string streamName = uri.documentWithParameters;
 
 	//2. Get the inbound stream capabilities
 	BaseInNetStream *pInStream = GetInboundStream(streamName);

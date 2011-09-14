@@ -38,6 +38,22 @@
 #define DYNAMIC_FREE(type)
 #endif
 
+#define VARIANT_GET(type,name,defaultValue) \
+type name() { \
+	if((*this)!=V_MAP) \
+		return defaultValue; \
+	if(this->HasKey(#name)) \
+		return (type)((*this)[#name]); \
+	return defaultValue; \
+};
+
+#define VARIANT_SET(type,name) \
+void name(type val) { \
+    (*this)[#name]=(type)val; \
+};
+
+#define VARIANT_GETSET(type, name, defaultValue) VARIANT_GET(type,name,defaultValue);VARIANT_SET(type,name);
+
 typedef enum _VariantType {
 	V_NULL = VAR_ENUM_VALUE_NULL,
 	V_UNDEFINED = VAR_ENUM_VALUE_UNDEFINED,

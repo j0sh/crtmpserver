@@ -49,7 +49,7 @@ BaseAppProtocolHandler * BaseAppProtocolHandler::GetProtocolHandler(uint64_t pro
 
 bool BaseAppProtocolHandler::PullExternalStream(URI uri, Variant streamConfig) {
 	WARN("Pulling in streams for scheme %s in application %s not yet implemented. Stream configuration was:\n%s",
-			STR(uri.scheme),
+			STR(uri.scheme()),
 			STR(GetApplication()->GetName()),
 			STR(streamConfig.ToString()));
 	return false;

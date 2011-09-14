@@ -226,6 +226,8 @@ bool AMF0Serializer::ReadObject(IOBuffer &buffer, Variant &variant,
 		return false;
 	}
 
+	variant.IsArray(false);
+
 	return true;
 }
 

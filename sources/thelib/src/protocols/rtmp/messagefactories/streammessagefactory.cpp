@@ -333,6 +333,7 @@ Variant StreamMessageFactory::GetNotifyOnMetaData(uint32_t channelId,
 		uint32_t streamId, double timeStamp, bool isAbsolute,
 		Variant metadata) {
 	Variant parameters;
+	metadata[HTTP_HEADERS_SERVER] = HTTP_HEADERS_SERVER_US;
 	parameters[(uint32_t) 0] = metadata;
 	return GenericMessageFactory::GetNotify(channelId, streamId, timeStamp,
 			isAbsolute, "onMetaData", parameters);

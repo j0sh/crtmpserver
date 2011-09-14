@@ -300,14 +300,15 @@ bool BaseClientApplication::PullExternalStream(Variant streamConfig) {
 		FATAL("Invalid URI: %s", STR(streamConfig["uri"].ToString()));
 		return false;
 	}
-	streamConfig["uri"] = uri.ToVariant();
+	streamConfig["uri"] = uri;
 
 	//3. Depending on the scheme name, get the curresponding protocol handler
 	///TODO: integrate this into protocol factory manager via protocol factories
-	BaseAppProtocolHandler *pProtocolHandler = GetProtocolHandler(uri.scheme);
+	string scheme = uri.scheme();
+	BaseAppProtocolHandler *pProtocolHandler = GetProtocolHandler(scheme);
 	if (pProtocolHandler == NULL) {
 		WARN("Unable to find protocol handler for scheme %s in application %s",
-				STR(uri.scheme),
+				STR(scheme),
 				STR(GetName()));
 		return false;
 	}
@@ -340,14 +341,15 @@ bool BaseClientApplication::PushLocalStream(Variant streamConfig) {
 		FATAL("Invalid URI: %s", STR(streamConfig["targetUri"].ToString()));
 		return false;
 	}
-	streamConfig["targetUri"] = uri.ToVariant();
+	streamConfig["targetUri"] = uri;
 
 	//3. Depending on the scheme name, get the curresponding protocol handler
 	///TODO: integrate this into protocol factory manager via protocol factories
-	BaseAppProtocolHandler *pProtocolHandler = GetProtocolHandler(uri.scheme);
+	string scheme = uri.scheme();
+	BaseAppProtocolHandler *pProtocolHandler = GetProtocolHandler(scheme);
 	if (pProtocolHandler == NULL) {
 		WARN("Unable to find protocol handler for scheme %s in application %s",
-				STR(uri.scheme),
+				STR(scheme),
 				STR(GetName()));
 		return false;
 	}

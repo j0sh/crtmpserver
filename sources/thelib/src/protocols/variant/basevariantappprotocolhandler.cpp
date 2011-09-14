@@ -194,18 +194,13 @@ Variant BaseVariantAppProtocolHandler::GetScaffold(string uriString) {
 		return Variant();
 	}
 
-	//5. Fix the document
-	if (uri.fullDocumentPath == "") {
-		uri.fullDocumentPath = "/";
-	}
-
 	//6. build the end result
-	result["username"] = uri.userName;
-	result["password"] = uri.password;
-	result["host"] = uri.host;
-	result["ip"] = uri.ip;
-	result["port"] = uri.port;
-	result["document"] = uri.fullDocumentPath;
+	result["username"] = uri.userName();
+	result["password"] = uri.password();
+	result["host"] = uri.host();
+	result["ip"] = uri.ip();
+	result["port"] = uri.port();
+	result["document"] = uri.fullDocumentPath();
 	result["applicationName"] = GetApplication()->GetName();
 
 	//7. Save it in the cache

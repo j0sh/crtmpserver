@@ -160,7 +160,7 @@ bool BaseRTMPAppProtocolHandler::PullExternalStream(URI uri, Variant streamConfi
 	if (localStreamName == "") {
 		streamConfig["localStreamName"] = "stream_" + generateRandomString(8);
 		WARN("No localstream name for external URI: %s. Defaulted to %s",
-				STR(uri.fullUri),
+				STR(uri.fullUri()),
 				STR(streamConfig["localStreamName"]));
 	}
 
@@ -168,19 +168,20 @@ bool BaseRTMPAppProtocolHandler::PullExternalStream(URI uri, Variant streamConfi
 	Variant parameters;
 	parameters["customParameters"]["externalStreamConfig"] = streamConfig;
 	parameters[CONF_APPLICATION_NAME] = GetApplication()->GetName();
-	if (uri.scheme == "rtmp") {
+	string scheme = uri.scheme();
+	if (scheme == "rtmp") {
 		parameters[CONF_PROTOCOL] = CONF_PROTOCOL_OUTBOUND_RTMP;
-	} else if (uri.scheme == "rtmpt") {
+	} else if (scheme == "rtmpt") {
 		parameters[CONF_PROTOCOL] = CONF_PROTOCOL_OUTBOUND_RTMPT;
-	} else if (uri.scheme == "rtmpe") {
+	} else if (scheme == "rtmpe") {
 		parameters[CONF_PROTOCOL] = CONF_PROTOCOL_OUTBOUND_RTMPE;
 	} else {
-		FATAL("scheme %s not supported by RTMP handler", STR(uri.scheme));
+		FATAL("scheme %s not supported by RTMP handler", STR(scheme));
 		return false;
 	}
 
 	//3. start the connecting sequence
-	return OutboundRTMPProtocol::Connect(uri.ip, uri.port, parameters);
+	return OutboundRTMPProtocol::Connect(uri.ip(), uri.port(), parameters);
 }
 
 bool BaseRTMPAppProtocolHandler::PushLocalStream(Variant streamConfig) {
@@ -903,7 +904,7 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokePlay(BaseRTMPProtocol *pFrom,
 					streamName,
 					ST_IN_NET_RTMP);
 			request["waitForLiveStream"] = (bool)true;
-			request["streamName"]=streamName;
+			request["streamName"] = streamName;
 			return pBaseOutNetRTMPStream != NULL;
 		}
 		case -1: //only live
@@ -925,7 +926,7 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokePlay(BaseRTMPProtocol *pFrom,
 					streamName,
 					ST_IN_NET_RTMP);
 			request["waitForLiveStream"] = (bool)true;
-			request["streamName"]=streamName;
+			request["streamName"] = streamName;
 			return pBaseOutNetRTMPStream != NULL;
 		}
 		default: //only recorded
@@ -1301,7 +1302,7 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokeConnectResult(BaseRTMPProtocol *pF
 		Variant &parameters = pFrom->GetCustomParameters()["customParameters"]["externalStreamConfig"];
 
 		Variant FCSubscribeRequest = StreamMessageFactory::GetInvokeFCSubscribe(
-				parameters["uri"]["documentWithParameters"]);
+				parameters["uri"]["documentWithFullParameters"]);
 		if (!SendRTMPMessage(pFrom, FCSubscribeRequest, true)) {
 			FATAL("Unable to send request:\n%s", STR(FCSubscribeRequest.ToString()));
 			return false;
@@ -1374,7 +1375,7 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokeCreateStreamResult(BaseRTMPProtoco
 	Variant publishPlayRequest;
 	if (NeedsToPullExternalStream(pFrom)) {
 		publishPlayRequest = StreamMessageFactory::GetInvokePlay(3, rtmpStreamId,
-				parameters["uri"]["documentWithParameters"], -2, -1);
+				parameters["uri"]["documentWithFullParameters"], -2, -1);
 	} else {
 		string targetStreamType = "";
 		if (parameters["targetStreamType"] == V_STRING) {
@@ -1951,7 +1952,7 @@ bool BaseRTMPAppProtocolHandler::PullExternalStream(BaseRTMPProtocol *pFrom) {
 	Variant &streamConfig = pFrom->GetCustomParameters()["customParameters"]["externalStreamConfig"];
 
 	//2. Issue the connect invoke
-	return ConnectForPullPush(pFrom, "uri", streamConfig);
+	return ConnectForPullPush(pFrom, "uri", streamConfig, true);
 }
 
 bool BaseRTMPAppProtocolHandler::PushLocalStream(BaseRTMPProtocol *pFrom) {
@@ -1959,11 +1960,11 @@ bool BaseRTMPAppProtocolHandler::PushLocalStream(BaseRTMPProtocol *pFrom) {
 	Variant &streamConfig = pFrom->GetCustomParameters()["customParameters"]["localStreamConfig"];
 
 	//2. Issue the connect invoke
-	return ConnectForPullPush(pFrom, "targetUri", streamConfig);
+	return ConnectForPullPush(pFrom, "targetUri", streamConfig, false);
 }
 
 bool BaseRTMPAppProtocolHandler::ConnectForPullPush(BaseRTMPProtocol *pFrom,
-		string uriPath, Variant &streamConfig) {
+		string uriPath, Variant &streamConfig, bool isPull) {
 	URI uri;
 	if (!URI::FromVariant(streamConfig[uriPath], uri)) {
 		FATAL("Unable to parse uri:\n%s", STR(streamConfig["targetUri"].ToString()));
@@ -1971,43 +1972,50 @@ bool BaseRTMPAppProtocolHandler::ConnectForPullPush(BaseRTMPProtocol *pFrom,
 	}
 
 	//2. get the application name
-	string appName = uri.documentPath;
-	if (appName == "/")
-		appName = uri.document;
+	string appName = "";
+	if (isPull) {
+		appName = uri.documentPath();
+	} else {
+		appName = uri.fullDocumentPath();
+	}
 	if (appName != "") {
 		if (appName[0] == '/')
 			appName = appName.substr(1, appName.size() - 1);
+		if (appName != "") {
+			if (appName[appName.size() - 1] == '/')
+				appName = appName.substr(0, appName.size() - 1);
+		}
 	}
 	if (appName == "") {
-		FATAL("Invalid uri: %s", STR(uri.fullUri));
+		FATAL("Invalid uri: %s", STR(uri.fullUri()));
 		return false;
 	}
-	if (uri.userName != "") {
+	if (uri.userName() != "") {
 		if (streamConfig.HasKey("auth")) {
-			string user = uri.userName;
-			string password = uri.password;
+			string user = uri.userName();
+			string password = uri.password();
 			string salt = streamConfig["auth"]["salt"];
 			string opaque = streamConfig["auth"]["opaque"];
 			string challenge = streamConfig["auth"]["challenge"];
 			string response = b64(md5(b64(md5(user + salt + password, false)) + opaque + challenge, false));
 			appName = appName + "?authmod=adobe"
-					+ "&user=" + uri.userName
+					+ "&user=" + uri.userName()
 					+ "&challenge=" + challenge
 					+ "&opaque=" + opaque
 					+ "&salt=" + salt
 					+ "&response=" + response;
 			streamConfig["emulateUserAgent"] = "FMLE/3.0 (compatible; FMSc/1.0)";
 		} else {
-			appName = appName + "?authmod=adobe&user=" + uri.userName;
+			appName = appName + "?authmod=adobe&user=" + uri.userName();
 			streamConfig["emulateUserAgent"] = "FMLE/3.0 (compatible; FMSc/1.0)";
 		}
 	}
 
 	//3. Compute tcUrl: rtmp://host/appName
 	string tcUrl = format("%s://%s%s/%s",
-			STR(uri.scheme),
-			STR(uri.host),
-			STR(uri.port == 1935 ? "" : format(":%hu", uri.port)),
+			STR(uri.scheme()),
+			STR(uri.host()),
+			STR(uri.portSpecified() ? format(":%"PRIu32) : ""),
 			STR(appName));
 
 	//4. Get the user agent

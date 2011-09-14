@@ -106,11 +106,11 @@ bool HTTPDownloadProtocol::DoSimpleGETRequestWithSomePayload(string stringUri, s
 
 	//3. Prepare the custom parameters (the payload)
 	Variant parameters;
-	parameters["uri"] = uri.ToVariant();
+	parameters["uri"] = uri;
 	parameters["payload"] = payload;
 
 	//4. Start the HTTP request
-	if (!TCPConnector<HTTPDownloadProtocol>::Connect(uri.ip, uri.port, chain,
+	if (!TCPConnector<HTTPDownloadProtocol>::Connect(uri.ip(), uri.port(), chain,
 			parameters)) {
 		FATAL("Unable to open connection");
 		return false;

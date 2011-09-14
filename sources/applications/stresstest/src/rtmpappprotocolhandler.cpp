@@ -66,7 +66,7 @@ void RTMPAppProtocolHandler::SpawnConnections() {
 	}
 
 	Variant streamConfig;
-	streamConfig["uri"] = uri.ToVariant();
+	streamConfig["uri"] = uri;
 	streamConfig["localStreamName"] = generateRandomString(8);
 
 	if (!PullExternalStream(uri, streamConfig)) {

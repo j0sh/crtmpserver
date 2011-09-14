@@ -280,7 +280,8 @@ private:
 	/*
 	 * Send the initial connect invoke
 	 * */
-	bool ConnectForPullPush(BaseRTMPProtocol *pFrom, string uriPath, Variant &config);
+	bool ConnectForPullPush(BaseRTMPProtocol *pFrom, string uriPath,
+			Variant &config, bool isPull);
 
 	/*
 	 * Log Event

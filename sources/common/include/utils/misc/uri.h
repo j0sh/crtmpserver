@@ -23,30 +23,32 @@
 #include "platform/platform.h"
 #include "utils/misc/variant.h"
 
-typedef struct _URI {
-	string fullUri;
-	string fullUriWithAuth;
-	string scheme;
-	string host;
-	string ip;
-	uint16_t port;
-	string userName;
-	string password;
-	string fullDocumentPath;
-	string documentPath;
-	string document;
-	string fullParameters;
-	string documentWithParameters;
-	map<string, string> parameters;
+class DLLEXP URI
+: public Variant {
+private:
+	static Variant _dummy;
+public:
+	VARIANT_GETSET(string, originalUri, "");
+	VARIANT_GETSET(string, fullUri, "");
+	VARIANT_GETSET(string, fullUriWithAuth, "");
+	VARIANT_GETSET(string, scheme, "");
+	VARIANT_GETSET(string, userName, "");
+	VARIANT_GETSET(string, password, "");
+	VARIANT_GETSET(string, host, "");
+	VARIANT_GETSET(string, ip, "");
+	VARIANT_GETSET(uint16_t, port, 0);
+	VARIANT_GETSET(bool, portSpecified, false);
+	VARIANT_GETSET(string, fullDocumentPathWithParameters, "");
+	VARIANT_GETSET(string, fullDocumentPath, "");
+	VARIANT_GETSET(string, fullParameters, "");
+	VARIANT_GETSET(string, documentPath, "");
+	VARIANT_GETSET(string, document, "");
+	VARIANT_GETSET(string, documentWithFullParameters, "");
+	VARIANT_GETSET(Variant, parameters, _dummy);
 
-	DLLEXP void Reset();
-
-	DLLEXP Variant ToVariant();
-	DLLEXP static bool FromVariant(Variant & variant, _URI & uri);
-
-	DLLEXP string ToString();
-	DLLEXP static bool FromString(string stringUri, bool resolveHost, _URI & uri);
-} URI;
+	DLLEXP static bool FromVariant(Variant & variant, URI &uri);
+	DLLEXP static bool FromString(string stringUri, bool resolveHost, URI &uri);
+};
 
 #endif	/* _URI_H */
 

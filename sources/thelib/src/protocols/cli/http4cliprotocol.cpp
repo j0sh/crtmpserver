@@ -91,17 +91,17 @@ bool HTTP4CLIProtocol::SignalInputData(IOBuffer &buffer) {
 	//with the data we just found out inside the headers
 	URI uri;
 	string dummy = "http://localhost" + (string) headers[HTTP_FIRST_LINE][HTTP_URL];
-	FINEST("dummy: %s",STR(dummy));
+	//FINEST("dummy: %s", STR(dummy));
 	if (!URI::FromString(dummy, false, uri)) {
 		FATAL("Invalid request");
 		return false;
 	}
-	string fullCommand=uri.document;
-	fullCommand+=" ";
-	if(uri.parameters.size()!=0){
-		fullCommand+=unb64(MAP_VAL(uri.parameters.begin()));
+	string fullCommand = uri.document();
+	fullCommand += " ";
+	if (uri.parameters().MapSize() != 0) {
+		fullCommand += unb64(MAP_VAL(uri.parameters().begin()));
 	}
-	fullCommand+="\n";
+	fullCommand += "\n";
 	_localInputBuffer.ReadFromString(fullCommand);
 
 	//4. Call the next protocol with the new buffer

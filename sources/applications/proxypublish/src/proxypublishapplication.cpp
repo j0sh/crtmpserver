@@ -128,13 +128,13 @@ bool ProxyPublishApplication::Initialize() {
 			FATAL("Invalid uri: %s", STR(target["targetUri"]));
 			return false;
 		}
-		if (uri.scheme.find("rtmp") != 0) {
+		if (uri.scheme().find("rtmp") != 0) {
 			FATAL("Supported target scheme is rtmp for now....");
 			return false;
 		}
 
 
-		target["targetUri"] = uri.ToVariant();
+		target["targetUri"] = uri;
 	}
 	_targetServers = _configuration["targetServers"];
 	_abortOnConnectError = (bool)_configuration["abortOnConnectError"];

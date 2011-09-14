@@ -420,6 +420,7 @@ void BaseOutNetRTMPStream::SignalAttachedToInStream() {
 		if (pCapabilities != NULL) {
 			if (pCapabilities->videoCodecId == CODEC_VIDEO_AVC) {
 				Variant meta;
+				meta.IsArray(false);
 				if ((pCapabilities->avc._widthOverride != 0)
 						&& (pCapabilities->avc._heightOverride != 0)) {
 					meta["width"] = pCapabilities->avc._widthOverride;
