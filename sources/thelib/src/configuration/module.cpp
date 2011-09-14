@@ -198,3 +198,4 @@ bool Module::ConfigApplication() {
 
 	return true;
 }
+
