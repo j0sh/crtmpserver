@@ -137,16 +137,18 @@ bool InNetRTMPStream::SendStreamMessage(Variant &completeMessage, bool persisten
 			Variant &notify = MAP_VAL(params.begin());
 			if ((notify == V_STRING) && (lowerCase((string) notify) == "onmetadata")) {
 				Variant &metadata = MAP_VAL(++params.begin());
-				if (metadata.HasKeyChain(_V_NUMERIC, false, 1, "bandwidth")) {
-					_streamCapabilities.bandwidthHint = (uint32_t) metadata["bandwidth"];
-				} else {
-					if (metadata.HasKeyChain(_V_NUMERIC, false, 1, "audiodatarate")) {
-						_streamCapabilities.bandwidthHint =
-								(uint32_t) metadata["audiodatarate"];
-					}
-					if (metadata.HasKeyChain(_V_NUMERIC, false, 1, "videodatarate")) {
-						_streamCapabilities.bandwidthHint +=
-								(uint32_t) metadata["videodatarate"];
+				if (metadata == V_MAP) {
+					if (metadata.HasKeyChain(_V_NUMERIC, false, 1, "bandwidth")) {
+						_streamCapabilities.bandwidthHint = (uint32_t) metadata["bandwidth"];
+					} else {
+						if (metadata.HasKeyChain(_V_NUMERIC, false, 1, "audiodatarate")) {
+							_streamCapabilities.bandwidthHint =
+									(uint32_t) metadata["audiodatarate"];
+						}
+						if (metadata.HasKeyChain(_V_NUMERIC, false, 1, "videodatarate")) {
+							_streamCapabilities.bandwidthHint +=
+									(uint32_t) metadata["videodatarate"];
+						}
 					}
 				}
 			}
