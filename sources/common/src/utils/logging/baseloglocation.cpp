@@ -24,6 +24,8 @@ BaseLogLocation::BaseLogLocation(Variant &configuration) {
 	_level = -1;
 	_name = "";
 	_configuration = configuration;
+	_specificLevel = 0;
+	_singleLine = false;
 }
 
 BaseLogLocation::~BaseLogLocation() {
@@ -45,4 +47,35 @@ void BaseLogLocation::SetName(string name) {
 	_name = name;
 }
 
+bool BaseLogLocation::EvalLogLevel(int32_t level, string &fileName, uint32_t lineNumber,
+		string &functionName, string &message) {
+	return EvalLogLevel(level);
+}
 
+bool BaseLogLocation::EvalLogLevel(int32_t level, string fileName, uint32_t lineNumber,
+		string functionName, Variant &le) {
+	return EvalLogLevel(level);
+}
+
+bool BaseLogLocation::Init() {
+	if (_configuration.HasKeyChain(_V_NUMERIC, false, 1,
+			CONF_LOG_APPENDER_SPECIFIC_LEVEL))
+		_specificLevel = (int32_t) _configuration.GetValue(
+			CONF_LOG_APPENDER_SPECIFIC_LEVEL, false);
+	if (_configuration.HasKeyChain(V_BOOL, false, 1, CONF_LOG_APPENDER_SINGLE_LINE))
+		_singleLine = (bool)_configuration.GetValue(
+			CONF_LOG_APPENDER_SINGLE_LINE, false);
+	return true;
+}
+
+bool BaseLogLocation::EvalLogLevel(int32_t level) {
+	if (_specificLevel != 0) {
+		if (_specificLevel != level)
+			return false;
+		return true;
+	} else {
+		if (_level < 0 || level > _level)
+			return false;
+		return true;
+	}
+}

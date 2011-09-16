@@ -57,7 +57,6 @@ SyslogLogLocation::~SyslogLogLocation() {
 
 void SyslogLogLocation::Log(int32_t level, string fileName, uint32_t lineNumber,
 		string functionName, string message) {
-
 	return;
 }
 
@@ -131,6 +130,10 @@ string SyslogLogLocation::ComputeMessage(Variant &le) {
 		return "";
 
 	return pFormatter->Format(le);
+}
+
+void SyslogLogLocation::SignalFork() {
+
 }
 
 #endif /* HAS_SYSLOG */

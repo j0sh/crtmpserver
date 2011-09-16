@@ -49,8 +49,13 @@ void LogCatLogLocation::Log(int32_t level, string fileName, uint32_t lineNumber,
 			STR(format("%s:%u %s", STR(fileName), lineNumber, STR(message))));
 }
 
-void LogCatLogLocation::Log(int32_t level, string fileName, uint32_t lineNumber, string functionName, Variant &le) {
+void LogCatLogLocation::Log(int32_t level, string fileName, uint32_t lineNumber,
+		string functionName, Variant &le) {
 	return;
+}
+
+void LogCatLogLocation::SignalFork() {
+
 }
 
 #endif /* ANDROID */

@@ -23,34 +23,20 @@
 
 #include "utils/logging/baseloglocation.h"
 
-/*!
-	@class ConsoleLogLocation
-	@brief Class that derives the BaseLogLocation class. This class is used to display the log messages in the console
- */
 class DLLEXP ConsoleLogLocation
 : public BaseLogLocation {
 private:
 	bool _allowColors;
-	static vector<COLOR_TYPE> _colors;
+	vector<COLOR_TYPE> _colors;
 public:
-	/*! @brief Constructor.
-		@param allowColors - when set to true, the constructor assigns color on messages based on the level of warning
-	 */
-	ConsoleLogLocation(Variant &configuration, bool allowColors = true);
+	ConsoleLogLocation(Variant &configuration);
 	virtual ~ConsoleLogLocation();
-
-	/*! @brief Logs the messages
-		@param level: Variable that indicates how critical the log is about. It ranges from "INFO" to "FATAL".
-		@param filename: Shows file name of the source code that displayed the log message.
-		@param lineNumber: Shows line number in the source code that displayed the log message.
-		@param functionName: Shows the name of the function that displayed the log message.
-		@param message: Accepts the log message and displays it in the appropriate format.
-	
-	 */
+	virtual bool Init();
 	virtual void Log(int32_t level, string fileName, uint32_t lineNumber,
 			string functionName, string message);
-
-	virtual void Log(int32_t level, string fileName, uint32_t lineNumber, string functionName, Variant &le);
+	virtual void Log(int32_t level, string fileName, uint32_t lineNumber,
+			string functionName, Variant &le);
+	virtual void SignalFork();
 };
 
 #endif /*CONSOLELOGLOCATION_H_*/

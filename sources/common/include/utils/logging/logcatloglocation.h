@@ -33,7 +33,9 @@ public:
 
 	virtual void Log(int32_t level, string fileName, uint32_t lineNumber,
 			string functionName, string message);
-	virtual void Log(int32_t level, string fileName, uint32_t lineNumber, string functionName, Variant &le);
+	virtual void Log(int32_t level, string fileName, uint32_t lineNumber,
+			string functionName, Variant &le);
+	virtual void SignalFork();
 
 };
 

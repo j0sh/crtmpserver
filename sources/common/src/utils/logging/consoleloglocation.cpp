@@ -20,32 +20,37 @@
 
 #include "utils/logging/consoleloglocation.h"
 
-vector<COLOR_TYPE> ConsoleLogLocation::_colors;
-
-ConsoleLogLocation::ConsoleLogLocation(Variant &configuration, bool allowColors)
+ConsoleLogLocation::ConsoleLogLocation(Variant &configuration)
 : BaseLogLocation(configuration) {
-	_allowColors = allowColors;
-	if (allowColors) {
-		if (_colors.size() <= 0) {
-			ADD_VECTOR_END(_colors, FATAL_COLOR);
-			ADD_VECTOR_END(_colors, ERROR_COLOR);
-			ADD_VECTOR_END(_colors, WARNING_COLOR);
-			ADD_VECTOR_END(_colors, INFO_COLOR);
-			ADD_VECTOR_END(_colors, DEBUG_COLOR);
-			ADD_VECTOR_END(_colors, FINE_COLOR);
-			ADD_VECTOR_END(_colors, FINEST_COLOR);
-		}
-	}
+	_allowColors = false;
+	ADD_VECTOR_END(_colors, FATAL_COLOR);
+	ADD_VECTOR_END(_colors, ERROR_COLOR);
+	ADD_VECTOR_END(_colors, WARNING_COLOR);
+	ADD_VECTOR_END(_colors, INFO_COLOR);
+	ADD_VECTOR_END(_colors, DEBUG_COLOR);
+	ADD_VECTOR_END(_colors, FINE_COLOR);
+	ADD_VECTOR_END(_colors, FINEST_COLOR);
 }
 
 ConsoleLogLocation::~ConsoleLogLocation() {
 	SET_CONSOLE_TEXT_COLOR(NORMAL_COLOR);
 }
 
+bool ConsoleLogLocation::Init() {
+	if (!BaseLogLocation::Init()) {
+		return false;
+	}
+	if (_configuration.HasKeyChain(V_BOOL, false, 1, CONF_LOG_APPENDER_COLORED))
+		_allowColors = (bool)_configuration.GetValue(
+			CONF_LOG_APPENDER_COLORED, false);
+	return true;
+}
+
 void ConsoleLogLocation::Log(int32_t level, string fileName,
 		uint32_t lineNumber, string functionName, string message) {
-	if (_level < 0 || level > _level) {
-		return;
+	if (_singleLine) {
+		replace(message, "\r", "\\r");
+		replace(message, "\n", "\\n");
 	}
 #ifdef ANDROID
 	if (_allowColors) {
@@ -73,7 +78,11 @@ void ConsoleLogLocation::Log(int32_t level, string fileName,
 #endif /* ANDROID */
 }
 
-void ConsoleLogLocation::Log(int32_t level, string fileName, uint32_t lineNumber, string functionName, Variant &le) {
+void ConsoleLogLocation::Log(int32_t level, string fileName, uint32_t lineNumber,
+		string functionName, Variant &le) {
 	return;
 }
 
+void ConsoleLogLocation::SignalFork() {
+
+}

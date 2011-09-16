@@ -110,7 +110,9 @@ void Logger::Log(int32_t level, string fileName, uint32_t lineNumber,
 	va_end(arguments);
 
 	FOR_VECTOR(_pLogger->_logLocations, i) {
-		_pLogger->_logLocations[i]->Log(level, fileName,
+		if (_pLogger->_logLocations[i]->EvalLogLevel(level, fileName, lineNumber,
+				functionName, formatString))
+			_pLogger->_logLocations[i]->Log(level, fileName,
 				lineNumber, functionName, message);
 	}
 }
@@ -121,7 +123,9 @@ void Logger::LogProd(int32_t level, string fileName, uint32_t lineNumber, string
 		return;
 
 	FOR_VECTOR(_pLogger->_logLocations, i) {
-		_pLogger->_logLocations[i]->Log(level, fileName,
+		if (_pLogger->_logLocations[i]->EvalLogLevel(level, fileName, lineNumber,
+				functionName, le))
+			_pLogger->_logLocations[i]->Log(level, fileName,
 				lineNumber, functionName, le);
 	}
 }
@@ -130,6 +134,18 @@ bool Logger::AddLogLocation(BaseLogLocation *pLogLocation) {
 	LOCK;
 	if (_pLogger == NULL)
 		return false;
+	if (!pLogLocation->Init())
+		return false;
 	ADD_VECTOR_END(_pLogger->_logLocations, pLogLocation);
 	return true;
+}
+
+void Logger::SignalFork() {
+	LOCK;
+	if (_pLogger == NULL)
+		return;
+
+	FOR_VECTOR(_pLogger->_logLocations, i) {
+		_pLogger->_logLocations[i]->SignalFork();
+	}
 }

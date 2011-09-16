@@ -23,39 +23,37 @@
 
 #include "utils/logging/baseloglocation.h"
 
-/*!
-	@class FileLogLocation
-	@brief Class that derives the BaseLogLocation class. This class is used to save the log messages in a file.
- */
 class DLLEXP FileLogLocation
 : public BaseLogLocation {
 private:
-	ofstream _fileStream; //! Output file stream
-	bool _canLog; //! Variable that prevents logging. If file stream fails, this is set to false.
-	uint32_t _counter; //! Counts the number of lines in the log file. To lessen HDD load, flushing of the file stream only happens when this value is divisible by 1000
+	ofstream _fileStream;
+	bool _canLog;
+	uint32_t _counter;
+	string _newLineCharacters;
+	string _fileName;
+	uint32_t _fileHistorySize;
+	uint32_t _fileLength;
+	uint32_t _currentLength;
+	vector<string> _history;
+	bool _fileIsClosed;
 public:
-	/*! @brief Constructor: It checks if there is error in the file stream. If there are errors, _canLog will become false and logging will not be done.
-		@param path - The path of the file where the logs will be saved
-		@param append - Boolean that indicates whether to append the logs in the existing file or to create a new one.
-	 */
-	FileLogLocation(Variant &configuration, string path, bool append);
+	FileLogLocation(Variant &configuration);
 	virtual ~FileLogLocation();
-private:
-	/*! @brief Logs the messages
-		@param level: Variable that indicates how critical the log is about. It ranges from "INFO" to "FATAL".
-		@param filename: Shows file name of the source code that displayed the log message.
-		@param lineNumber: Shows line number in the source code that displayed the log message.
-		@param functionName: Shows the name of the function that displayed the log message.
-		@param message: Accepts the log message and displays it in the appropriate format.
-	
-	 */
+
+	virtual bool Init();
+	virtual bool EvalLogLevel(int32_t level, string &fileName, uint32_t lineNumber,
+			string &functionName, string &message);
+	virtual bool EvalLogLevel(int32_t level, string fileName, uint32_t lineNumber,
+			string functionName, Variant &le);
 	virtual void Log(int32_t level, string fileName, uint32_t lineNumber,
 			string functionName, string message);
-
-	virtual void Log(int32_t level, string fileName, uint32_t lineNumber, string functionName, Variant &le);
+	virtual void Log(int32_t level, string fileName, uint32_t lineNumber,
+			string functionName, Variant &le);
+	virtual void SignalFork();
+private:
+	bool OpenFile();
 };
 
 
 #endif	/* _FILELOGLOCATION_H */
-
 

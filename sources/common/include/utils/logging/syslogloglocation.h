@@ -31,10 +31,8 @@ private:
 	bool _appendSourceFileLine;
 	string _identifier;
 	map<uint32_t, int> _priorities;
-	int32_t _specificLevel;
 	bool _enforceLoggerName;
 
-	
 	map<string, Formatter *> _formatters;
 	Formatter *_pDefualtFormatter;
 public:
@@ -43,10 +41,9 @@ public:
 	virtual ~SyslogLogLocation();
 	virtual void Log(int32_t level, string fileName, uint32_t lineNumber,
 			string functionName, string message);
-
 	virtual void Log(int32_t level, string fileName, uint32_t lineNumber,
 			string functionName, Variant &le);
-
+	virtual void SignalFork();
 private:
 	void InitFormatters();
 	string ComputeMessage(Variant &le);
