@@ -10,6 +10,7 @@ configuration=
 
 	-- this is the place where all the logging facilities are setted up
 	-- you can add/remove any number of locations
+
 	logAppenders=
 	{
 		{
@@ -30,7 +31,11 @@ configuration=
 			type="file",
 			level=6,
 			-- the file where the log messages are going to land
-			fileName="/tmp/crtmpserver.log"
+			fileName="/tmp/crtmpserver",
+			--newLineCharacters="\r\n",
+			fileHistorySize=10,
+			fileLength=1024*256,
+			singleLine=true
 		}
 	},
 	
