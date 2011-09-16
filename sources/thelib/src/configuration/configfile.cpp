@@ -167,12 +167,13 @@ bool ConfigFile::ConfigInstances() {
 	for (int32_t i = 0; i < instancesCount; i++) {
 		pid_t pid = fork();
 		if (pid < 0) {
-			FATAL("Unable to start daemonize. fork() failed");
-			return -1;
+			FATAL("Unable to start child instance. fork() failed");
+			return false;
 		}
 
-		if (pid > 0) {
+		if (pid == 0) {
 			_isOrigin = false;
+			Logger::SignalFork();
 			break;
 		}
 	}
@@ -208,15 +209,16 @@ bool ConfigFile::ConfigApplications() {
 bool ConfigFile::ConfigLogAppender(Variant &node) {
 	BaseLogLocation *pLogLocation = NULL;
 	if ((string) node[CONF_LOG_APPENDER_TYPE] == CONF_LOG_APPENDER_TYPE_COLORED_CONSOLE) {
+		node[CONF_LOG_APPENDER_COLORED] = (bool)true;
 		if (!IsDaemon()) {
 			pLogLocation = new ConsoleLogLocation(node);
 		}
 	} else if ((string) node[CONF_LOG_APPENDER_TYPE] == CONF_LOG_APPENDER_TYPE_CONSOLE) {
 		if (!IsDaemon()) {
-			pLogLocation = new ConsoleLogLocation(node, false);
+			pLogLocation = new ConsoleLogLocation(node);
 		}
 	} else if ((string) node[CONF_LOG_APPENDER_TYPE] == CONF_LOG_APPENDER_TYPE_FILE) {
-		pLogLocation = new FileLogLocation(node, node[CONF_LOG_APPENDER_FILE_NAME], true);
+		pLogLocation = new FileLogLocation(node);
 	} else {
 		NYIR;
 	}
