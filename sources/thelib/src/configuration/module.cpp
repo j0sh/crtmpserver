@@ -187,12 +187,12 @@ bool Module::ConfigApplication() {
 	}
 
 	if (!pApplication->ParseAuthentication()) {
-		FATAL("Unable to parse authetication for application\n%s", STR(pApplication->GetName()));
+		FATAL("Unable to parse authetication for application %s", STR(pApplication->GetName()));
 		return false;
 	}
 
 	if (!pApplication->ActivateAcceptors(acceptors)) {
-		FATAL("Unable to activate acceptors for application\n%s", STR(pApplication->GetName()));
+		FATAL("Unable to activate acceptors for application %s", STR(pApplication->GetName()));
 		return false;
 	}
 
