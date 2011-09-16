@@ -1,8 +1,14 @@
+1. do the export
+export cross=/opt/FriendlyARM/toolschain/4.4.3/bin/arm-linux-
 
-export cross=/home/shiretu/work/hisi/hisi-linux/x86-arm/gcc-3.4.3-uClibc-0.9.28/usr/bin/arm-hismall-linux-
+2. call configure
+./Configure no-threads --prefix=/opt/FriendlyARM/openssl --openssldir=/opt/FriendlyARM/openssl no-asm linux-armv4
 
-./Configure no-threads shared --prefix=/home/shiretu/work/hisi/openssl-dist --openssldir=/home/shiretu/work/hisi/openssl-dist no-asm linux-armv4
+#SHARED_LDFLAGS = -Wl,-rpath,"\$$$$ORIGIN"
 
-SHARED_LDFLAGS = -Wl,-rpath,"\$$$$ORIGIN"
+3. compile
 make CC="${cross}gcc" AR="${cross}ar r" RANLIB="${cross}ranlib"
+
+4. install
+make install
 
