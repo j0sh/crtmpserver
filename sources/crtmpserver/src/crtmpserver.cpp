@@ -121,7 +121,11 @@ bool Initialize() {
 
 	if ((bool)gRs.commandLine["arguments"]["--use-implicit-console-appender"]) {
 		Variant dummy;
-		ConsoleLogLocation * pLogLocation = new ConsoleLogLocation(dummy, false);
+		dummy[CONF_LOG_APPENDER_NAME] = "implicit console appender";
+		dummy[CONF_LOG_APPENDER_TYPE] = CONF_LOG_APPENDER_TYPE_CONSOLE;
+		dummy[CONF_LOG_APPENDER_COLORED] = (bool)true;
+		dummy[CONF_LOG_APPENDER_LEVEL] = (uint32_t) 6;
+		ConsoleLogLocation * pLogLocation = new ConsoleLogLocation(dummy);
 		pLogLocation->SetLevel(_FINEST_);
 		Logger::AddLogLocation(pLogLocation);
 	}
@@ -184,6 +188,8 @@ bool Initialize() {
 			}
 
 			gRs.daemon = true;
+			
+			Logger::SignalFork();
 		}
 	}
 #endif /* WIN32 */
