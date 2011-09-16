@@ -411,12 +411,13 @@ bool ConfigFile::NormalizeApplication(Variant &node) {
 	}
 	temp = normalizePath(libraryPath, "");
 	if (temp == "") {
-#ifdef COMPILE_STATIC
-		libraryPath = temp;
-#else /* COMPILE_STATIC */
-		FATAL("Library %s not found", STR(libraryPath));
-		return false;
-#endif /* COMPILE_STATIC */
+		if ((_staticGetApplicationFunction == NULL)
+				|| (_staticGetFactoryFunction == NULL)) {
+			FATAL("Library %s not found", STR(libraryPath));
+			return false;
+		} else {
+			libraryPath = temp;
+		}
 	} else {
 		libraryPath = temp;
 	}
