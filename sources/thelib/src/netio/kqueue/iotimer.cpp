@@ -70,7 +70,7 @@ IOTimer::operator string() {
 	return format("T(%d)", _inboundFd);
 }
 
-void IOTimer::GetStats(Variant &info) {
+void IOTimer::GetStats(Variant &info, uint32_t namespaceId) {
 
 }
 

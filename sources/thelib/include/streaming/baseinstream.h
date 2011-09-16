@@ -27,7 +27,7 @@ class BaseOutStream;
 
 /*!
 	@class BaseInStream
-*/
+ */
 class DLLEXP BaseInStream
 : public BaseStream {
 private:
@@ -45,60 +45,60 @@ public:
 	/*!
 		@brief Returns information about the stream
 		@param info
-	*/
-	virtual void GetStats(Variant &info);
+	 */
+	virtual void GetStats(Variant &info, uint32_t namespaceId = 0);
 
 	/*!
 		@brief Links an out-stream to this stream
 		@param pOutStream - the out-stream to be linked to this in stream.
 		@param reverseLink - if true, pOutStream::Link will be called internally this is used to break the infinite calls.
-	*/
+	 */
 	virtual bool Link(BaseOutStream *pOutStream, bool reverseLink = true);
 
 	/*!
 		@brief Unlinks an out-stream tot his stream
 		@param pOutStream - the out-stream to be unlinked from this in stream.
 		@param reverseUnLink - if true, pOutStream::UnLink will be called internally this is used to break the infinite calls
-	*/
+	 */
 	virtual bool UnLink(BaseOutStream *pOutStream, bool reverseUnLink = true);
 
 	/*!
 		@brief This will start the feeding process
 		@param absoluteTimestamp - the timestamp where we want to seek before start the feeding process
-	*/
+	 */
 	virtual bool Play(double absoluteTimestamp, double length);
 
 	/*!
 		@brief This will pause the feeding process
-	*/
+	 */
 	virtual bool Pause();
 
 	/*!
 		@brief This will resume the feeding process
-	*/
+	 */
 	virtual bool Resume();
 
 	/*!
 		@brief This will seek to the specified point in time.
 		@param absoluteTimestamp
-	*/
+	 */
 	virtual bool Seek(double absoluteTimestamp);
 
 	/*!
 		@brief This will stop the feeding process
-	*/
+	 */
 	virtual bool Stop();
 
 	/*!
 		@brief Called after the link is complete
 		@param pOutStream - the newly added stream
-	*/
+	 */
 	virtual void SignalOutStreamAttached(BaseOutStream *pOutStream) = 0;
 
 	/*!
 		@brief Called after the link is broken
 		@param pOutStream - the removed stream
-	*/
+	 */
 	virtual void SignalOutStreamDetached(BaseOutStream *pOutStream) = 0;
 };
 

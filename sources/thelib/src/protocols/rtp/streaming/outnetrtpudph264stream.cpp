@@ -78,8 +78,8 @@ OutNetRTPUDPH264Stream::~OutNetRTPUDPH264Stream() {
 	memset(&_audioData, 0, sizeof (_audioData));
 }
 
-void OutNetRTPUDPH264Stream::GetStats(Variant &info) {
-	BaseOutNetStream::GetStats(info);
+void OutNetRTPUDPH264Stream::GetStats(Variant &info, uint32_t namespaceId) {
+	BaseOutNetStream::GetStats(info, namespaceId);
 	info["audio"]["bytesCount"] = _audioBytesCount;
 	info["audio"]["packetsCount"] = _audioPacketsCount;
 	info["audio"]["droppedPacketsCount"] = _audioDroppedPacketsCount;

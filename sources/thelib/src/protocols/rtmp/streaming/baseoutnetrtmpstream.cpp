@@ -156,8 +156,8 @@ void BaseOutNetRTMPStream::SetSendOnStatusPlayMessages(bool value) {
 	_sendOnStatusPlayMessages = value;
 }
 
-void BaseOutNetRTMPStream::GetStats(Variant &info) {
-	BaseOutNetStream::GetStats(info);
+void BaseOutNetRTMPStream::GetStats(Variant &info, uint32_t namespaceId) {
+	BaseOutNetStream::GetStats(info, namespaceId);
 	info["canDropFrames"] = (bool)_canDropFrames;
 	info["audio"]["packetsCount"] = _audioPacketsCount;
 	info["audio"]["droppedPacketsCount"] = _audioDroppedPacketsCount;

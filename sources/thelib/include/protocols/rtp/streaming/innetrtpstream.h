@@ -76,7 +76,7 @@ public:
 			RTPHeader &rtpHeader);
 	virtual bool FeedAudioData(uint8_t *pData, uint32_t dataLength,
 			RTPHeader &rtpHeader);
-	virtual void GetStats(Variant &info);
+	virtual void GetStats(Variant &info, uint32_t namespaceId = 0);
 
 	void ReportSR(uint64_t ntpMicroseconds, uint32_t rtpTimestamp, bool isAudio,
 			bool artificial);

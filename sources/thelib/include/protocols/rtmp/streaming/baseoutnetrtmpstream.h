@@ -91,7 +91,7 @@ public:
 	bool CanDropFrames();
 	void CanDropFrames(bool canDropFrames);
 	void SetSendOnStatusPlayMessages(bool value);
-	virtual void GetStats(Variant &info);
+	virtual void GetStats(Variant &info, uint32_t namespaceId = 0);
 
 	virtual bool FeedData(uint8_t *pData, uint32_t dataLength,
 			uint32_t processedLength, uint32_t totalLength,

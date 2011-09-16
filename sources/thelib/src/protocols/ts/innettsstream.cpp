@@ -313,8 +313,8 @@ bool InNetTSStream::SignalStop() {
 	return true;
 }
 
-void InNetTSStream::GetStats(Variant &info) {
-	BaseInNetStream::GetStats(info);
+void InNetTSStream::GetStats(Variant &info, uint32_t namespaceId) {
+	BaseInNetStream::GetStats(info, namespaceId);
 	info["audio"]["packetsCount"] = _statsAudioPacketsCount;
 	info["audio"]["droppedPacketsCount"] = _audioDroppedPacketsCount;
 	info["audio"]["bytesCount"] = _audioBytesCount;

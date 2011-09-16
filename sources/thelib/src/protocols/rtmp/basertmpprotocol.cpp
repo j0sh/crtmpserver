@@ -201,21 +201,21 @@ void BaseRTMPProtocol::SetApplication(BaseClientApplication *pApplication) {
 	}
 }
 
-void BaseRTMPProtocol::GetStats(Variant &info) {
-	BaseProtocol::GetStats(info);
+void BaseRTMPProtocol::GetStats(Variant &info, uint32_t namespaceId) {
+	BaseProtocol::GetStats(info, namespaceId);
 	info["rxInvokes"] = _rxInvokes;
 	info["txInvokes"] = _txInvokes;
 	for (uint32_t i = 0; i < MAX_STREAMS_COUNT; i++) {
 		if (_streams[i] != NULL) {
 			Variant si;
-			_streams[i]->GetStats(si);
+			_streams[i]->GetStats(si, namespaceId);
 			info["streams"].PushToArray(si);
 		}
 	}
 
 	FOR_MAP(_inFileStreams, InFileRTMPStream *, InFileRTMPStream *, i) {
 		Variant si;
-		MAP_VAL(i)->GetStats(si);
+		MAP_VAL(i)->GetStats(si, namespaceId);
 		info["streams"].PushToArray(si);
 	}
 }

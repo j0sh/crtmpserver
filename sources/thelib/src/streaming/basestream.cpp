@@ -66,8 +66,8 @@ void BaseStream::SetName(string name) {
 	_name = name;
 }
 
-void BaseStream::GetStats(Variant &info) {
-	info["uniqueId"] = _uniqueId;
+void BaseStream::GetStats(Variant &info, uint32_t namespaceId) {
+	info["uniqueId"] = (((uint64_t) namespaceId) << 32) | _uniqueId;
 	info["type"] = tagToString(_type);
 	info["name"] = _name;
 	info["creationTimestamp"] = _creationTimestamp;

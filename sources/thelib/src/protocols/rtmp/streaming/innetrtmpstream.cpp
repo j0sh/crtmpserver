@@ -70,8 +70,8 @@ bool InNetRTMPStream::IsCompatibleWithType(uint64_t type) {
 			|| TAG_KIND_OF(type, ST_OUT_FILE_HLS);
 }
 
-void InNetRTMPStream::GetStats(Variant &info) {
-	BaseInNetStream::GetStats(info);
+void InNetRTMPStream::GetStats(Variant &info, uint32_t namespaceId) {
+	BaseInNetStream::GetStats(info, namespaceId);
 	info["audio"]["packetsCount"] = _audioPacketsCount;
 	info["audio"]["droppedPacketsCount"] = (uint64_t) 0;
 	info["audio"]["bytesCount"] = _audioBytesCount;

@@ -76,7 +76,7 @@ UDPCarrier::operator string() {
 	return format("UDP(%d)", _inboundFd);
 }
 
-void UDPCarrier::GetStats(Variant &info) {
+void UDPCarrier::GetStats(Variant &info, uint32_t namespaceId) {
 	if (!GetEndpointsInfo()) {
 		FATAL("Unable to get endpoints info");
 		info = "unable to get endpoints info";

@@ -37,7 +37,7 @@ public:
 
 	virtual bool IsCompatibleWithType(uint64_t type);
 	virtual StreamCapabilities * GetCapabilities();
-	virtual void GetStats(Variant &info);
+	virtual void GetStats(Variant &info, uint32_t namespaceId = 0);
 	virtual void ReadyForSend();
 	virtual void SignalOutStreamAttached(BaseOutStream *pOutStream);
 	virtual void SignalOutStreamDetached(BaseOutStream *pOutStream);

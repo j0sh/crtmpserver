@@ -222,17 +222,17 @@ void BaseProtocol::SetOutboundConnectParameters(Variant &customParameters) {
 	_customParameters = customParameters;
 }
 
-void BaseProtocol::GetStackStats(Variant &info) {
+void BaseProtocol::GetStackStats(Variant &info, uint32_t namespaceId) {
 	IOHandler *pIOHandler = GetIOHandler();
 	if (pIOHandler != NULL) {
-		pIOHandler->GetStats(info["carrier"]);
+		pIOHandler->GetStats(info["carrier"], namespaceId);
 	} else {
 		info["carrier"] = Variant();
 	}
 	BaseProtocol *pTemp = GetFarEndpoint();
 	while (pTemp != NULL) {
 		Variant item;
-		pTemp->GetStats(item);
+		pTemp->GetStats(item, namespaceId);
 		info["stack"].PushToArray(item);
 		pTemp = pTemp->GetNearProtocol();
 	}
@@ -394,8 +394,8 @@ bool BaseProtocol::SignalInputData(int32_t recvAmount, sockaddr_in *pPeerAddress
 	return SignalInputData(recvAmount);
 }
 
-void BaseProtocol::GetStats(Variant &info) {
-	info["id"] = GetId();
+void BaseProtocol::GetStats(Variant &info, uint32_t namespaceId) {
+	info["id"] = (((uint64_t) namespaceId) << 32) | GetId();
 	info["type"] = tagToString(_type);
 	info["creationTimestamp"] = _creationTimestamp;
 	double queryTimestamp = 0;
@@ -405,9 +405,9 @@ void BaseProtocol::GetStats(Variant &info) {
 	info["queryTimestamp"] = queryTimestamp;
 	info["isEnqueueForDelete"] = (bool)IsEnqueueForDelete();
 	if (_pApplication != NULL)
-		info["applicationId"] = _pApplication->GetId();
+		info["applicationId"] = (((uint64_t) namespaceId) << 32) | _pApplication->GetId();
 	else
-		info["applicationId"] = (uint32_t) 0;
+		info["applicationId"] = (((uint64_t) namespaceId) << 32);
 }
 
 string BaseProtocol::ToString(uint32_t currentId) {

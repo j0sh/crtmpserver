@@ -50,8 +50,8 @@ vector<BaseOutStream *> BaseInStream::GetOutStreams() {
 	return result;
 }
 
-void BaseInStream::GetStats(Variant &info) {
-	BaseStream::GetStats(info);
+void BaseInStream::GetStats(Variant &info, uint32_t namespaceId) {
+	BaseStream::GetStats(info, namespaceId);
 	LinkedListNode<BaseOutStream *> *pTemp = _pOutStreams;
 	info["outStreamsUniqueIds"] = Variant();
 	while (pTemp != NULL) {

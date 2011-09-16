@@ -34,7 +34,7 @@ public:
 			string name);
 	virtual ~OutNetRawStream();
 
-	virtual void GetStats(Variant &info);
+	virtual void GetStats(Variant &info, uint32_t namespaceId = 0);
 	virtual void SignalAttachedToInStream();
 	virtual void SignalDetachedFromInStream();
 	virtual void SignalStreamCompleted();

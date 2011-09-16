@@ -125,7 +125,7 @@ TCPCarrier::operator string() {
 	return format("TCP(%d)", _inboundFd);
 }
 
-void TCPCarrier::GetStats(Variant &info) {
+void TCPCarrier::GetStats(Variant &info, uint32_t namespaceId) {
 	if (!GetEndpointsInfo()) {
 		FATAL("Unable to get endpoints info");
 		info = "unable to get endpoints info";

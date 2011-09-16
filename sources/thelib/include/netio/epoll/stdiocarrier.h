@@ -37,7 +37,7 @@ public:
 	virtual bool OnEvent(struct epoll_event &event);
 	virtual bool SignalOutputData();
 	virtual operator string();
-	virtual void GetStats(Variant &info);
+	virtual void GetStats(Variant &info, uint32_t namespaceId = 0);
 };
 
 #endif	/* _STDIOCARRIER_H */

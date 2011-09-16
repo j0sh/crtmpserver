@@ -127,8 +127,8 @@ bool RTSPProtocol::SignalInputData(int32_t recvAmount) {
 	NYIR;
 }
 
-void RTSPProtocol::GetStats(Variant &info) {
-	BaseProtocol::GetStats(info);
+void RTSPProtocol::GetStats(Variant &info, uint32_t namespaceId) {
+	BaseProtocol::GetStats(info, namespaceId);
 	info["streams"].IsArray(true);
 	Variant si;
 	if (GetApplication() != NULL) {
@@ -137,7 +137,7 @@ void RTSPProtocol::GetStats(Variant &info) {
 
 		FOR_MAP(streams, uint32_t, BaseStream *, i) {
 			si.Reset();
-			MAP_VAL(i)->GetStats(si);
+			MAP_VAL(i)->GetStats(si, namespaceId);
 			info["streams"].PushToArray(si);
 		}
 	}

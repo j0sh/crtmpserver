@@ -127,7 +127,7 @@ StdioCarrier::operator string() {
 	return format("IO(%d,%d)", _inboundFd, _outboundFd);
 }
 
-void StdioCarrier::GetStats(Variant &info) {
+void StdioCarrier::GetStats(Variant &info, uint32_t namespaceId) {
 
 }
 

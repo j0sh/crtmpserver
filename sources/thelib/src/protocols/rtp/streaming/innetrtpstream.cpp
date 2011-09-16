@@ -366,8 +366,8 @@ bool InNetRTPStream::FeedAudioData(uint8_t *pData, uint32_t dataLength,
 	return true;
 }
 
-void InNetRTPStream::GetStats(Variant &info) {
-	BaseInNetStream::GetStats(info);
+void InNetRTPStream::GetStats(Variant &info, uint32_t namespaceId) {
+	BaseInNetStream::GetStats(info, namespaceId);
 	info["audio"]["bytesCount"] = _audioBytesCount;
 	info["audio"]["packetsCount"] = _audioPacketsCount;
 	info["audio"]["droppedPacketsCount"] = _audioDroppedPacketsCount;

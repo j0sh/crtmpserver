@@ -101,7 +101,7 @@ public:
 	virtual bool SignalResume();
 	virtual bool SignalSeek(double &absoluteTimestamp);
 	virtual bool SignalStop();
-	virtual void GetStats(Variant &info);
+	virtual void GetStats(Variant &info, uint32_t namespaceId = 0);
 private:
 	bool HandleAudioData(uint8_t *pRawBuffer, uint32_t rawBufferLength,
 			double timestamp, bool packetStart);

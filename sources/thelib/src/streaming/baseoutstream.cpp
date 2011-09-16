@@ -105,10 +105,10 @@ BaseInStream *BaseOutStream::GetInStream() {
 	return _pInStream;
 }
 
-void BaseOutStream::GetStats(Variant &info) {
-	BaseStream::GetStats(info);
+void BaseOutStream::GetStats(Variant &info, uint32_t namespaceId) {
+	BaseStream::GetStats(info, namespaceId);
 	if (_pInStream != NULL) {
-		info["inStreamUniqueId"] = _pInStream->GetUniqueId();
+		info["inStreamUniqueId"] = (((uint64_t) namespaceId) << 32) | _pInStream->GetUniqueId();
 	} else {
 		info["inStreamUniqueId"] = Variant();
 	}

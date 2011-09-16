@@ -101,7 +101,7 @@ InboundNamedPipeCarrier::operator string() {
 	return format("INP(%d)", _inboundFd);
 }
 
-void InboundNamedPipeCarrier::GetStats(Variant &info) {
+void InboundNamedPipeCarrier::GetStats(Variant &info, uint32_t namespaceId) {
 
 }
 

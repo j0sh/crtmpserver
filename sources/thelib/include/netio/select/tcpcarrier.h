@@ -46,7 +46,7 @@ public:
 	virtual bool OnEvent(select_event &event);
 	virtual bool SignalOutputData();
 	virtual operator string();
-	virtual void GetStats(Variant &info);
+	virtual void GetStats(Variant &info, uint32_t namespaceId = 0);
 
 	sockaddr_in &GetFarEndpointAddress();
 	string GetFarEndpointAddressIp();

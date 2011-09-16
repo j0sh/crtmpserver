@@ -92,7 +92,7 @@ public:
 	virtual void ReadyForSend();
 	virtual void SetApplication(BaseClientApplication *pApplication);
 
-	virtual void GetStats(Variant &info);
+	virtual void GetStats(Variant &info, uint32_t namespaceId = 0);
 
 	bool ResetChannel(uint32_t channelId);
 

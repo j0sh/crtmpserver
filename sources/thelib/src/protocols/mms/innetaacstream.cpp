@@ -44,8 +44,8 @@ StreamCapabilities * InNetAACStream::GetCapabilities() {
 	return &_capabilities;
 }
 
-void InNetAACStream::GetStats(Variant &info) {
-	BaseInNetStream::GetStats(info);
+void InNetAACStream::GetStats(Variant &info, uint32_t namespaceId) {
+	BaseInNetStream::GetStats(info, namespaceId);
 	info["audio"]["bytesCount"] = _bytesCount;
 	info["audio"]["packetsCount"] = _packetsCount;
 	info["audio"]["droppedPacketsCount"] = 0;

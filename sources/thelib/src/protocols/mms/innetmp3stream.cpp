@@ -44,8 +44,8 @@ StreamCapabilities * InNetMP3Stream::GetCapabilities() {
 	return &_capabilities;
 }
 
-void InNetMP3Stream::GetStats(Variant &info) {
-	BaseInNetStream::GetStats(info);
+void InNetMP3Stream::GetStats(Variant &info, uint32_t namespaceId) {
+	BaseInNetStream::GetStats(info, namespaceId);
 	info["audio"]["bytesCount"] = _bytesCount;
 	info["audio"]["packetsCount"] = _packetsCount;
 	info["audio"]["droppedPacketsCount"] = 0;

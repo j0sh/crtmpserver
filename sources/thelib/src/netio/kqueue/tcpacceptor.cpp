@@ -197,15 +197,18 @@ TCPAcceptor::operator string() {
 	return format("A(%d)", _inboundFd);
 }
 
-void TCPAcceptor::GetStats(Variant &info) {
+void TCPAcceptor::GetStats(Variant &info, uint32_t namespaceId) {
 	info = _parameters;
-	info["id"] = GetId();
+	info["id"] = (((uint64_t) namespaceId) << 32) | GetId();
 	info["enabled"] = (bool)_enabled;
 	info["acceptedConnectionsCount"] = _acceptedCount;
 	info["droppedConnectionsCount"] = _droppedCount;
 	if (_pApplication != NULL) {
-		info["appId"] = _pApplication->GetId();
+		info["appId"] = (((uint64_t) namespaceId) << 32) | _pApplication->GetId();
 		info["appName"] = _pApplication->GetName();
+	} else {
+		info["appId"] = (((uint64_t) namespaceId) << 32);
+		info["appName"] = "";
 	}
 }
 

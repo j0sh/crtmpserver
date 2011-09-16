@@ -39,8 +39,8 @@ OutNetRawStream::OutNetRawStream(BaseProtocol *pProtocol,
 OutNetRawStream::~OutNetRawStream() {
 }
 
-void OutNetRawStream::GetStats(Variant &info) {
-	BaseOutNetStream::GetStats(info);
+void OutNetRawStream::GetStats(Variant &info, uint32_t namespaceId) {
+	BaseOutNetStream::GetStats(info, namespaceId);
 	info["audio"]["bytesCount"] = _bytesCount;
 	info["audio"]["packetsCount"] = _packetsCount;
 	info["audio"]["droppedPacketsCount"] = 0;
