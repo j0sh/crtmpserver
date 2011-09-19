@@ -89,10 +89,11 @@ bool parseURI(string stringUri, URI &uri) {
 	}
 	if (MAP_HAS1(_schemeToPort, scheme)) {
 		port = _schemeToPort[scheme];
-	} else {
-		FATAL("Scheme `%s` not supported", STR(scheme));
-		return false;
 	}
+	//	else {
+	//		FATAL("Scheme `%s` not supported", STR(scheme));
+	//		return false;
+	//	}
 	LOG_URI("scheme: %s; default port: %"PRIu16, STR(scheme), port);
 
 	//3. get the authentication portion. the search starts from
@@ -226,6 +227,10 @@ bool parseURI(string stringUri, URI &uri) {
 	}
 #endif /* DEBUG_URI */
 
+	if (port == 0) {
+		FATAL("Invalid URI. No port specified and the scheme `%s` is unknown", STR(scheme));
+		return false;
+	}
 	uri.originalUri(stringUri);
 	uri.fullUri(fullUri);
 	uri.fullUriWithAuth(fullUriWithAuth);
