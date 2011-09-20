@@ -53,10 +53,12 @@ StreamCapabilities * InNetRawStream::GetCapabilities() {
 
 void InNetRawStream::GetStats(Variant &info, uint32_t namespaceId) {
 	BaseInNetStream::GetStats(info, namespaceId);
-	info["audio"]["bytesCount"] = _bytesCount;
-	info["audio"]["packetsCount"] = _packetsCount;
+	info["video"]["bytesCount"] = _bytesCount;
+	info["video"]["packetsCount"] = _packetsCount;
+	info["video"]["droppedPacketsCount"] = 0;
+	info["audio"]["bytesCount"] = 0;
+	info["audio"]["packetsCount"] = 0;
 	info["audio"]["droppedPacketsCount"] = 0;
-	info["video"] = info["audio"];
 }
 
 void InNetRawStream::ReadyForSend() {

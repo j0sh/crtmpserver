@@ -155,6 +155,7 @@ bool setFdKeepAlive(int32_t fd);
 bool setFdNoNagle(int32_t fd);
 bool setFdReuseAddress(int32_t fd);
 bool setFdTTL(int32_t fd, uint8_t ttl);
+bool setFdMulticastTTL(int32_t fd, uint8_t ttl);
 bool setFdTOS(int32_t fd, uint8_t tos);
 bool setFdOptions(int32_t fd);
 bool deleteFile(string path);

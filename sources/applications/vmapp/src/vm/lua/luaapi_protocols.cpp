@@ -30,7 +30,7 @@ namespace app_vmapp {
 		LUA_READ_PARAM(params, uint32_t, _V_NUMERIC, protocolId, 0, 0, true);
 		LUA_GET_PROTOCOL(pProtocol, protocolId, L);
 		Variant stackInfo;
-		pProtocol->GetStackStats(stackInfo);
+		pProtocol->GetStackStats(stackInfo, 0);
 		if (!PushVariant(L, stackInfo)) {
 			FATAL("Unable to push variant");
 			return 0;

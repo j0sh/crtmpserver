@@ -167,6 +167,13 @@ bool setFdTTL(int32_t fd, uint8_t ttl) {
 	return true;
 }
 
+bool setFdMulticastTTL(int32_t fd, uint8_t ttl) {
+	if (setsockopt(fd, IPPROTO_IP, IP_MULTICAST_TTL, &ttl, sizeof (ttl)) != 0) {
+		WARN("Unable to set IP_MULTICAST_TTL");
+	}
+	return true;
+}
+
 bool setFdTOS(int32_t fd, uint8_t tos) {
 	if (setsockopt(fd, IPPROTO_IP, IP_TOS, &tos, sizeof (tos)) != 0) {
 		WARN("Unable to set IP_TOS: %"PRIu8, tos);
