@@ -311,8 +311,13 @@ bool setFdTTL(int32_t fd, uint8_t ttl) {
 	return true;
 }
 
+bool setFdMulticastTTL(int32_t fd, uint8_t ttl) {
+	NYI
+	return true;
+}
+
 bool setFdTOS(int32_t fd, uint8_t tos) {
-	NYI;
+	NYI
 	return true;
 }
 
