@@ -188,7 +188,7 @@ bool PushVariant(lua_State *pLuaState,
 			lua_settable(pLuaState, -3);
 
 			lua_pushstring(pLuaState, VAR_MONTH);
-			lua_pushnumber(pLuaState, tempTm.tm_mon);
+			lua_pushnumber(pLuaState, tempTm.tm_mon+1);
 			lua_settable(pLuaState, -3);
 
 			lua_pushstring(pLuaState, VAR_DAY);
