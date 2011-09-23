@@ -214,8 +214,8 @@ bool InboundConnectivity::Initialize() {
 
 	//6. override the width/height with the values in session (if any) 
 	Variant &session = _pRTSP->GetCustomParameters();
-	if ((session.HasKeyChain(V_UINT32, true, 3, "customParameters", "externalStreamConfig", "width"))
-			&& (session.HasKeyChain(V_UINT32, true, 3, "customParameters", "externalStreamConfig", "height"))) {
+	if ((session.HasKeyChain(_V_NUMERIC, true, 3, "customParameters", "externalStreamConfig", "width"))
+			&& (session.HasKeyChain(_V_NUMERIC, true, 3, "customParameters", "externalStreamConfig", "height"))) {
 		StreamCapabilities *pCap = _pInStream->GetCapabilities();
 		if (pCap->videoCodecId == CODEC_VIDEO_AVC) {
 			pCap->avc._widthOverride = (uint32_t) session["customParameters"]["externalStreamConfig"]["width"];
