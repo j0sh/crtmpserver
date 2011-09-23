@@ -28,7 +28,7 @@
 
 InNetRTPStream::InNetRTPStream(BaseProtocol *pProtocol,
 		StreamsManager *pStreamsManager, string name, string SPS, string PPS,
-		string AAC, uint32_t bandwidthHint)
+		string AAC, uint32_t bandwidthHint, bool hasRTCP)
 : BaseInNetStream(pProtocol, pStreamsManager, ST_IN_NET_RTP, name) {
 	_hasAudio = false;
 	if (AAC.length() != 0) {
@@ -60,6 +60,7 @@ InNetRTPStream::InNetRTPStream(BaseProtocol *pProtocol,
 	_audioHasNTP = false;
 	_audioRTPRollCount = 0;
 	_audioLastRTP = 0;
+	_audioFirstTimestamp = -1;
 
 	_videoSequence = 0;
 	_videoPacketsCount = 0;
@@ -71,6 +72,9 @@ InNetRTPStream::InNetRTPStream(BaseProtocol *pProtocol,
 	_videoHasNTP = true;
 	_videoRTPRollCount = 0;
 	_videoLastRTP = 0;
+	_videoFirstTimestamp = -1;
+
+	_hasRTCP = hasRTCP;
 }
 
 InNetRTPStream::~InNetRTPStream() {
@@ -145,17 +149,28 @@ bool InNetRTPStream::SignalStop() {
 bool InNetRTPStream::FeedData(uint8_t *pData, uint32_t dataLength,
 		uint32_t processedLength, uint32_t totalLength,
 		double absoluteTimestamp, bool isAudio) {
-	if (_hasAudio && _hasVideo) {
-		double &rtp = isAudio ? _audioRTP : _videoRTP;
-		double &ntp = isAudio ? _audioNTP : _videoNTP;
-		if ((_audioNTP == 0) || (_videoNTP == 0)) {
-			if (ntp == 0) {
-				uint32_t lastRtp = isAudio ? _audioLastRTP : _videoLastRTP;
-				ReportSR(0, lastRtp, isAudio, true);
+	bool zeroBased = false;
+	if (_hasRTCP) {
+		if (_hasAudio && _hasVideo) {
+			if ((_audioNTP == 0) || (_videoNTP == 0)) {
+				return true;
 			}
-			return true;
+			double &rtp = isAudio ? _audioRTP : _videoRTP;
+			double &ntp = isAudio ? _audioNTP : _videoNTP;
+			absoluteTimestamp = ntp + absoluteTimestamp - rtp;
+		} else {
+			zeroBased = true;
 		}
-		absoluteTimestamp = ntp + absoluteTimestamp - rtp;
+	} else {
+		//zero-based tracking
+		zeroBased = true;
+	}
+
+	if (zeroBased) {
+		double &firstTimestamp = isAudio ? _audioFirstTimestamp : _videoFirstTimestamp;
+		if (firstTimestamp < 0)
+			firstTimestamp = absoluteTimestamp;
+		absoluteTimestamp -= firstTimestamp;
 	}
 
 	double &lastTs = isAudio ? _audioLastTs : _videoLastTs;

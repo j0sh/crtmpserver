@@ -41,6 +41,7 @@ private:
 	uint32_t _audioLastRTP;
 	bool _audioHasNTP;
 	uint32_t _audioRTPRollCount;
+	double _audioFirstTimestamp;
 
 	bool _hasVideo;
 	IOBuffer _currentNalu;
@@ -54,9 +55,13 @@ private:
 	uint32_t _videoLastRTP;
 	bool _videoHasNTP;
 	uint32_t _videoRTPRollCount;
+	double _videoFirstTimestamp;
+
+	bool _hasRTCP;
 public:
 	InNetRTPStream(BaseProtocol *pProtocol, StreamsManager *pStreamsManager,
-			string name, string SPS, string PPS, string AAC, uint32_t bandwidthHint);
+			string name, string SPS, string PPS, string AAC,
+			uint32_t bandwidthHint, bool hasRTCP);
 	virtual ~InNetRTPStream();
 
 	virtual StreamCapabilities * GetCapabilities();
@@ -83,7 +88,7 @@ public:
 private:
 	void FeedVideoCodecSetup(BaseOutStream *pOutStream);
 	void FeedAudioCodecSetup(BaseOutStream *pOutStream);
-	uint64_t ComputeRTP(RTPHeader &rtpHeader, uint32_t &lastRtp, 
+	uint64_t ComputeRTP(RTPHeader &rtpHeader, uint32_t &lastRtp,
 			uint32_t &rtpRollCount, bool hasNtp);
 };
 

@@ -122,7 +122,7 @@ public:
 	void CloseOutboundConnectivity();
 
 	InboundConnectivity *GetInboundConnectivity(string sdpStreamName,
-			uint32_t bandwidthHint);
+			uint32_t bandwidthHint, bool hasRTCP);
 	InboundConnectivity *GetInboundConnectivity();
 	//	InboundConnectivity *GetInboundConnectivity1(Variant &videoTrack,
 	//			Variant &audioTrack, string sdpStreamName, uint32_t bandwidthHint);

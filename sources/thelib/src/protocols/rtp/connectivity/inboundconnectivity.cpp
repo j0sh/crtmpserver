@@ -32,7 +32,7 @@
 #include "protocols/http/basehttpprotocol.h"
 
 InboundConnectivity::InboundConnectivity(RTSPProtocol *pRTSP, string streamName,
-		uint32_t bandwidthHint)
+		uint32_t bandwidthHint, bool hasRTCP)
 : BaseConnectivity() {
 	_pRTSP = pRTSP;
 	_pRTPVideo = NULL;
@@ -88,6 +88,7 @@ InboundConnectivity::InboundConnectivity(RTSPProtocol *pRTSP, string streamName,
 
 	_streamName = streamName;
 	_bandwidthHint = bandwidthHint;
+	_hasRTCP = hasRTCP;
 }
 
 InboundConnectivity::~InboundConnectivity() {
@@ -208,7 +209,8 @@ bool InboundConnectivity::Initialize() {
 			_videoTrack != V_NULL ? unb64((string) SDP_VIDEO_CODEC_H264_SPS(_videoTrack)) : "",
 			_videoTrack != V_NULL ? unb64((string) SDP_VIDEO_CODEC_H264_PPS(_videoTrack)) : "",
 			_audioTrack != V_NULL ? unhex(SDP_AUDIO_CODEC_SETUP(_audioTrack)) : "",
-			bandwidth);
+			bandwidth,
+			_hasRTCP);
 
 	//6. override the width/height with the values in session (if any) 
 	Variant &session = _pRTSP->GetCustomParameters();

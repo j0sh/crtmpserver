@@ -53,9 +53,11 @@ private:
 	bool _forceTcp;
 	string _streamName;
 	uint32_t _bandwidthHint;
+
+	bool _hasRTCP;
 public:
 	InboundConnectivity(RTSPProtocol *pRTSP, string streamName,
-			uint32_t bandwidthHint);
+			uint32_t bandwidthHint, bool hasRTCP);
 	virtual ~InboundConnectivity();
 	void EnqueueForDelete();
 

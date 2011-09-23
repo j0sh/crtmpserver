@@ -756,7 +756,8 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPRequestAnnounce(RTSPProtocol *pFrom,
 	//9. Get the inbound connectivity
 	InboundConnectivity *pInboundConnectivity = pFrom->GetInboundConnectivity(
 			streamName,
-			sdp.GetTotalBandwidth());
+			sdp.GetTotalBandwidth(),
+			true);
 	if (pInboundConnectivity == NULL) {
 		FATAL("Unable to create inbound connectivity");
 		return false;
@@ -1016,6 +1017,10 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPResponse200Describe(
 	if (pFrom->GetCustomParameters().HasKeyChain(V_BOOL, true, 1, "forceTcp"))
 		forceTcp = (bool)pFrom->GetCustomParameters()["forceTcp"];
 
+	bool hasRTCP = true;
+	if (pFrom->GetCustomParameters().HasKeyChain(V_BOOL, true, 1, "hasRTCP"))
+		hasRTCP = (bool)pFrom->GetCustomParameters()["hasRTCP"];
+
 	//5. Store the tracks inside the session for later use
 	if (audioTrack != V_NULL) {
 		audioTrack["isTcp"] = (bool)forceTcp;
@@ -1039,7 +1044,8 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPResponse200Describe(
 	//8. Get the inbound connectivity
 	InboundConnectivity *pInboundConnectivity = pFrom->GetInboundConnectivity(
 			streamName,
-			sdp.GetTotalBandwidth());
+			sdp.GetTotalBandwidth(),
+			hasRTCP);
 	if (pInboundConnectivity == NULL) {
 		FATAL("Unable to create inbound connectivity");
 		return false;
