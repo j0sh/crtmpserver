@@ -159,6 +159,8 @@ bool InNetRTPStream::FeedData(uint8_t *pData, uint32_t dataLength,
 		{
 			DEBUG_RTCP_PRESENCE("RTCP_PRESENCE_UNKNOWN: %"PRIz"u", (time(NULL) - _rtcpDetectionStart));
 			if (_rtcpDetectionInterval == 0) {
+				WARN("RTCP disabled on stream %s(%"PRIu32") with name %s. A/V drifting may occur over long periods of time",
+						STR(tagToString(GetType())), GetUniqueId(), STR(GetName()));
 				_rtcpPresence = RTCP_PRESENCE_ABSENT;
 				return true;
 			}
@@ -189,6 +191,8 @@ bool InNetRTPStream::FeedData(uint8_t *pData, uint32_t dataLength,
 				videoRTCPPresent = true;
 			}
 			if (audioRTCPPresent && videoRTCPPresent) {
+				DEBUG_RTCP_PRESENCE("RTCP available on stream %s(%"PRIu32") with name %s.",
+						STR(tagToString(GetType())), GetUniqueId(), STR(GetName()));
 				_rtcpPresence = RTCP_PRESENCE_AVAILABLE;
 			}
 			return true;
