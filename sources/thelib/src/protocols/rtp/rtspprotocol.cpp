@@ -384,7 +384,7 @@ void RTSPProtocol::CloseOutboundConnectivity() {
 }
 
 InboundConnectivity *RTSPProtocol::GetInboundConnectivity(string sdpStreamName,
-		uint32_t bandwidthHint, bool hasRTCP) {
+		uint32_t bandwidthHint, uint8_t rtcpDetectionInterval) {
 	CloseInboundConnectivity();
 	string streamName;
 	if (GetCustomParameters().HasKey("localStreamName")) {
@@ -393,7 +393,7 @@ InboundConnectivity *RTSPProtocol::GetInboundConnectivity(string sdpStreamName,
 		streamName = sdpStreamName;
 	}
 	_pInboundConnectivity = new InboundConnectivity(this, streamName,
-			bandwidthHint, hasRTCP);
+			bandwidthHint, rtcpDetectionInterval);
 	return _pInboundConnectivity;
 }
 

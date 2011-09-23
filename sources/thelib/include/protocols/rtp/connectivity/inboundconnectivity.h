@@ -54,10 +54,10 @@ private:
 	string _streamName;
 	uint32_t _bandwidthHint;
 
-	bool _hasRTCP;
+	uint8_t _rtcpDetectionInterval;
 public:
 	InboundConnectivity(RTSPProtocol *pRTSP, string streamName,
-			uint32_t bandwidthHint, bool hasRTCP);
+			uint32_t bandwidthHint, uint8_t rtcpDetectionInterval);
 	virtual ~InboundConnectivity();
 	void EnqueueForDelete();
 
@@ -71,8 +71,7 @@ public:
 	string GetAudioClientPorts();
 	string GetVideoClientPorts();
 	bool SendRR(bool isAudio);
-	void ReportSR(uint64_t ntpMicroseconds, uint32_t rtpTimestamp, bool isAudio,
-			bool artificial);
+	void ReportSR(uint64_t ntpMicroseconds, uint32_t rtpTimestamp, bool isAudio);
 private:
 	void Cleanup();
 	bool CreateCarriers(InboundRTPProtocol *pRTP, RTCPProtocol *pRTCP);

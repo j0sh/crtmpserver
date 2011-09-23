@@ -481,6 +481,13 @@ bool ConfigFile::NormalizeApplication(Variant &node) {
 		seekGranularity = 5;
 	node[CONF_APPLICATION_CLIENTSIDEBUFFER] = (uint32_t) clientSideBuffer;
 
+	uint8_t rtcpDetectionInterval = 10;
+	if (node.HasKeyChain(_V_NUMERIC, false, 1, CONF_APPLICATION_RTCPDETECTIONINTERVAL))
+		rtcpDetectionInterval = (uint8_t) node.GetValue(CONF_APPLICATION_RTCPDETECTIONINTERVAL, false);
+	if (rtcpDetectionInterval >= 60)
+		rtcpDetectionInterval = 60;
+	node[CONF_APPLICATION_RTCPDETECTIONINTERVAL] = (uint8_t) rtcpDetectionInterval;
+
 	Variant acceptors;
 	acceptors.IsArray(true);
 	if (node.HasKeyChain(V_MAP, false, 1, CONF_ACCEPTORS)) {

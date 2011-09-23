@@ -32,7 +32,7 @@
 #include "protocols/http/basehttpprotocol.h"
 
 InboundConnectivity::InboundConnectivity(RTSPProtocol *pRTSP, string streamName,
-		uint32_t bandwidthHint, bool hasRTCP)
+		uint32_t bandwidthHint, uint8_t rtcpDetectionInterval)
 : BaseConnectivity() {
 	_pRTSP = pRTSP;
 	_pRTPVideo = NULL;
@@ -88,7 +88,7 @@ InboundConnectivity::InboundConnectivity(RTSPProtocol *pRTSP, string streamName,
 
 	_streamName = streamName;
 	_bandwidthHint = bandwidthHint;
-	_hasRTCP = hasRTCP;
+	_rtcpDetectionInterval = rtcpDetectionInterval;
 }
 
 InboundConnectivity::~InboundConnectivity() {
@@ -210,7 +210,7 @@ bool InboundConnectivity::Initialize() {
 			_videoTrack != V_NULL ? unb64((string) SDP_VIDEO_CODEC_H264_PPS(_videoTrack)) : "",
 			_audioTrack != V_NULL ? unhex(SDP_AUDIO_CODEC_SETUP(_audioTrack)) : "",
 			bandwidth,
-			_hasRTCP);
+			_rtcpDetectionInterval);
 
 	//6. override the width/height with the values in session (if any) 
 	Variant &session = _pRTSP->GetCustomParameters();
@@ -387,9 +387,9 @@ bool InboundConnectivity::SendRR(bool isAudio) {
 }
 
 void InboundConnectivity::ReportSR(uint64_t ntpMicroseconds,
-		uint32_t rtpTimestamp, bool isAudio, bool artificial) {
+		uint32_t rtpTimestamp, bool isAudio) {
 	if (_pInStream != NULL) {
-		_pInStream->ReportSR(ntpMicroseconds, rtpTimestamp, isAudio, artificial);
+		_pInStream->ReportSR(ntpMicroseconds, rtpTimestamp, isAudio);
 	}
 }
 

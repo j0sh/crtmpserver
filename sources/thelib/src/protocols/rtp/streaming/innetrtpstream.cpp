@@ -28,7 +28,7 @@
 
 InNetRTPStream::InNetRTPStream(BaseProtocol *pProtocol,
 		StreamsManager *pStreamsManager, string name, string SPS, string PPS,
-		string AAC, uint32_t bandwidthHint, bool hasRTCP)
+		string AAC, uint32_t bandwidthHint, uint8_t rtcpDetectionInterval)
 : BaseInNetStream(pProtocol, pStreamsManager, ST_IN_NET_RTP, name) {
 	_hasAudio = false;
 	if (AAC.length() != 0) {
@@ -57,7 +57,6 @@ InNetRTPStream::InNetRTPStream(BaseProtocol *pProtocol,
 	_audioNTP = 0;
 	_audioRTP = 0;
 	_audioLastTs = 0;
-	_audioHasNTP = false;
 	_audioRTPRollCount = 0;
 	_audioLastRTP = 0;
 	_audioFirstTimestamp = -1;
@@ -69,12 +68,13 @@ InNetRTPStream::InNetRTPStream(BaseProtocol *pProtocol,
 	_videoNTP = 0;
 	_videoRTP = 0;
 	_videoLastTs = 0;
-	_videoHasNTP = true;
 	_videoRTPRollCount = 0;
 	_videoLastRTP = 0;
 	_videoFirstTimestamp = -1;
 
-	_hasRTCP = hasRTCP;
+	_rtcpPresence = RTCP_PRESENCE_UNKNOWN;
+	_rtcpDetectionInterval = rtcpDetectionInterval;
+	_rtcpDetectionStart = 0;
 }
 
 InNetRTPStream::~InNetRTPStream() {
@@ -146,31 +146,76 @@ bool InNetRTPStream::SignalStop() {
 	return true;
 }
 
+//#define DEBUG_RTCP_PRESENCE(...) FINEST(__VA_ARGS__)
+#define DEBUG_RTCP_PRESENCE(...)
+
 bool InNetRTPStream::FeedData(uint8_t *pData, uint32_t dataLength,
 		uint32_t processedLength, uint32_t totalLength,
 		double absoluteTimestamp, bool isAudio) {
-	bool zeroBased = false;
-	if (_hasRTCP) {
-		if (_hasAudio && _hasVideo) {
-			if ((_audioNTP == 0) || (_videoNTP == 0)) {
+
+
+	switch (_rtcpPresence) {
+		case RTCP_PRESENCE_UNKNOWN:
+		{
+			DEBUG_RTCP_PRESENCE("RTCP_PRESENCE_UNKNOWN: %"PRIz"u", (time(NULL) - _rtcpDetectionStart));
+			if (_rtcpDetectionInterval == 0) {
+				_rtcpPresence = RTCP_PRESENCE_ABSENT;
 				return true;
 			}
+			if (_rtcpDetectionStart == 0) {
+				_rtcpDetectionStart = time(NULL);
+				return true;
+			}
+			if ((time(NULL) - _rtcpDetectionStart) > _rtcpDetectionInterval) {
+				WARN("Stream %s(%"PRIu32") with name %s doesn't have RTCP. A/V drifting may occur over long periods of time",
+						STR(tagToString(GetType())), GetUniqueId(), STR(GetName()));
+				_rtcpPresence = RTCP_PRESENCE_ABSENT;
+				return true;
+			}
+			bool audioRTCPPresent = false;
+			bool videoRTCPPresent = false;
+			if (_hasAudio) {
+				if (_audioNTP != 0)
+					DEBUG_RTCP_PRESENCE("Audio RTCP detected");
+				audioRTCPPresent = (_audioNTP != 0);
+			} else {
+				audioRTCPPresent = true;
+			}
+			if (_hasVideo) {
+				if (_videoNTP != 0)
+					DEBUG_RTCP_PRESENCE("Video RTCP detected");
+				videoRTCPPresent = (_videoNTP != 0);
+			} else {
+				videoRTCPPresent = true;
+			}
+			if (audioRTCPPresent && videoRTCPPresent) {
+				_rtcpPresence = RTCP_PRESENCE_AVAILABLE;
+			}
+			return true;
+			break;
+		}
+		case RTCP_PRESENCE_AVAILABLE:
+		{
+			DEBUG_RTCP_PRESENCE("RTCP_PRESENCE_AVAILABLE");
 			double &rtp = isAudio ? _audioRTP : _videoRTP;
 			double &ntp = isAudio ? _audioNTP : _videoNTP;
 			absoluteTimestamp = ntp + absoluteTimestamp - rtp;
-		} else {
-			zeroBased = true;
+			break;
 		}
-	} else {
-		//zero-based tracking
-		zeroBased = true;
-	}
-
-	if (zeroBased) {
-		double &firstTimestamp = isAudio ? _audioFirstTimestamp : _videoFirstTimestamp;
-		if (firstTimestamp < 0)
-			firstTimestamp = absoluteTimestamp;
-		absoluteTimestamp -= firstTimestamp;
+		case RTCP_PRESENCE_ABSENT:
+		{
+			DEBUG_RTCP_PRESENCE("RTCP_PRESENCE_ABSENT");
+			double &firstTimestamp = isAudio ? _audioFirstTimestamp : _videoFirstTimestamp;
+			if (firstTimestamp < 0)
+				firstTimestamp = absoluteTimestamp;
+			absoluteTimestamp -= firstTimestamp;
+			break;
+		}
+		default:
+		{
+			ASSERT("Invalid _rtcpPresence: %"PRIu8, _rtcpPresence);
+			return false;
+		}
 	}
 
 	double &lastTs = isAudio ? _audioLastTs : _videoLastTs;
@@ -248,7 +293,7 @@ bool InNetRTPStream::FeedVideoData(uint8_t *pData, uint32_t dataLength,
 	}
 
 	//2. get the nalu
-	uint64_t rtpTs = ComputeRTP(rtpHeader, _videoLastRTP, _videoRTPRollCount, _videoHasNTP);
+	uint64_t rtpTs = ComputeRTP(rtpHeader, _videoLastRTP, _videoRTPRollCount);
 	double ts = (double) rtpTs / (double) _capabilities.avc._rate * 1000.0;
 	uint8_t naluType = NALU_TYPE(pData[0]);
 	if (naluType <= 23) {
@@ -351,7 +396,7 @@ bool InNetRTPStream::FeedAudioData(uint8_t *pData, uint32_t dataLength,
 	uint32_t cursor = 2 + 2 * chunksCount;
 	uint16_t chunkSize = 0;
 	double ts = 0;
-	uint64_t rtpTs = ComputeRTP(rtpHeader, _audioLastRTP, _audioRTPRollCount, _audioHasNTP);
+	uint64_t rtpTs = ComputeRTP(rtpHeader, _audioLastRTP, _audioRTPRollCount);
 	for (uint32_t i = 0; i < chunksCount; i++) {
 		if (i != (uint32_t) (chunksCount - 1)) {
 			chunkSize = (ENTOHSP(pData + 2 + 2 * i)) >> 3;
@@ -392,31 +437,14 @@ void InNetRTPStream::GetStats(Variant &info, uint32_t namespaceId) {
 }
 
 void InNetRTPStream::ReportSR(uint64_t ntpMicroseconds, uint32_t rtpTimestamp,
-		bool isAudio, bool artificial) {
+		bool isAudio) {
 	if (isAudio) {
 		_audioRTP = (double) rtpTimestamp / (double) _capabilities.aac._sampleRate * 1000.0;
-		if (!artificial) {
-			_audioNTP = (double) ntpMicroseconds / 1000.0;
-		} else {
-			_audioNTP = _audioRTP;
-		}
-		_audioHasNTP = !artificial;
+		_audioNTP = (double) ntpMicroseconds / 1000.0;
 	} else {
 		_videoRTP = (double) rtpTimestamp / (double) _capabilities.avc._rate * 1000.0;
-		if (!artificial) {
-			_videoNTP = (double) ntpMicroseconds / 1000.0;
-		} else {
-			_videoNTP = _videoRTP;
-		}
-		_videoHasNTP = !artificial;
+		_videoNTP = (double) ntpMicroseconds / 1000.0;
 	}
-	//	FINEST("ReportSR %c ntpMicroseconds: %"PRIu64"; rtpTimestamp: %"PRIu32"; isAudio: %d; artificial: %d; ntp: %.2f",
-	//			isAudio ? 'A' : 'V',
-	//			ntpMicroseconds,
-	//			rtpTimestamp,
-	//			isAudio,
-	//			artificial,
-	//			isAudio ? _audioNTP : _videoNTP);
 }
 
 void InNetRTPStream::FeedVideoCodecSetup(BaseOutStream* pOutStream) {
@@ -465,9 +493,7 @@ void InNetRTPStream::FeedAudioCodecSetup(BaseOutStream* pOutStream) {
 }
 
 uint64_t InNetRTPStream::ComputeRTP(RTPHeader &rtpHeader, uint32_t &lastRtp,
-		uint32_t &rtpRollCount, bool hasNtp) {
-	//if (hasNtp)
-	//	return rtpHeader._timestamp;
+		uint32_t &rtpRollCount) {
 	if (lastRtp > rtpHeader._timestamp) {
 		if (((lastRtp >> 31) == 0x01) && ((rtpHeader._timestamp >> 31) == 0x00)) {
 			FINEST("RollOver");
