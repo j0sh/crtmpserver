@@ -359,11 +359,6 @@ bool BaseRTMPProtocol::CloseStream(uint32_t streamId, bool createNeutralStream) 
 		return false;
 	}
 
-	if (_streams[streamId]->GetType() == ST_NEUTRAL_RTMP) {
-		return true;
-	}
-
-
 	if (TAG_KIND_OF(_streams[streamId]->GetType(), ST_OUT_NET_RTMP)) {
 		//2. Remove it from signaled streams
 		LinkedListNode<BaseOutNetRTMPStream *> *pTemp = _pSignaledRTMPOutNetStream;
