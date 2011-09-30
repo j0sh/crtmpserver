@@ -119,6 +119,7 @@ bool DHWrapper::CreateSharedKey(uint8_t *pPeerPublicKey, int32_t length) {
 		return false;
 	}
 	_pSharedKey = new uint8_t[_sharedKeyLength];
+	memset(_pSharedKey, 0, _sharedKeyLength);
 
 	_peerPublickey = BN_bin2bn(pPeerPublicKey, length, 0);
 	if (_peerPublickey == NULL) {
@@ -126,7 +127,7 @@ bool DHWrapper::CreateSharedKey(uint8_t *pPeerPublicKey, int32_t length) {
 		return false;
 	}
 
-	if (DH_compute_key(_pSharedKey, _peerPublickey, _pDH) != _sharedKeyLength) {
+	if (DH_compute_key(_pSharedKey, _peerPublickey, _pDH) == -1) {
 		FATAL("Unable to compute the shared key");
 		return false;
 	}
