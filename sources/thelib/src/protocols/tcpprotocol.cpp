@@ -79,7 +79,7 @@ bool TCPProtocol::SignalInputData(IOBuffer & /* ignored */) {
 
 bool TCPProtocol::EnqueueForOutbound() {
 	if (_pCarrier == NULL) {
-		ASSERT("TCPProtocol has no carrier");
+		FATAL("TCPProtocol has no carrier");
 		return false;
 	}
 	return _pCarrier->SignalOutputData();
