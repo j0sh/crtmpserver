@@ -26,10 +26,10 @@
 class AtomMDHD
 : public VersionedAtom {
 private:
-	uint32_t _creationTime;
-	uint32_t _modificationTime;
+	uint64_t _creationTime;
+	uint64_t _modificationTime;
 	uint32_t _timeScale;
-	uint32_t _duration;
+	uint64_t _duration;
 	uint16_t _language;
 	uint16_t _quality;
 public:
@@ -37,9 +37,11 @@ public:
 	virtual ~AtomMDHD();
 
 	uint32_t GetTimeScale();
-	uint32_t GetDuration();
 protected:
 	virtual bool ReadData();
+private:
+	bool ReadDataVersion0();
+	bool ReadDataVersion1();
 };
 
 #endif	/* _ATOMMDHD_H */

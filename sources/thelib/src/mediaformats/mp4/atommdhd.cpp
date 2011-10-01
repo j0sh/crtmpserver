@@ -37,18 +37,59 @@ uint32_t AtomMDHD::GetTimeScale() {
 	return _timeScale;
 }
 
-uint32_t AtomMDHD::GetDuration() {
-	return _duration;
+bool AtomMDHD::ReadData() {
+	if (_version == 1) {
+		return ReadDataVersion1();
+	} else {
+		return ReadDataVersion0();
+	}
 }
 
-bool AtomMDHD::ReadData() {
+bool AtomMDHD::ReadDataVersion0() {
+	uint32_t temp = 0;
+	if (!ReadUInt32(temp)) {
+		FATAL("Unable to read creation time");
+		return false;
+	}
+	_creationTime = temp;
 
-	if (!ReadUInt32(_creationTime)) {
+	if (!ReadUInt32(temp)) {
+		FATAL("Unable to read modification time");
+		return false;
+	}
+	_modificationTime = temp;
+
+	if (!ReadUInt32(_timeScale)) {
+		FATAL("Unable to read time scale");
+		return false;
+	}
+
+	if (!ReadUInt32(temp)) {
+		FATAL("Unable to read duration");
+		return false;
+	}
+	_duration = temp;
+
+	if (!ReadUInt16(_language)) {
+		FATAL("Unable to read language");
+		return false;
+	}
+
+	if (!ReadUInt16(_quality)) {
+		FATAL("Unable to read quality");
+		return false;
+	}
+
+	return true;
+}
+
+bool AtomMDHD::ReadDataVersion1() {
+	if (!ReadUInt64(_creationTime)) {
 		FATAL("Unable to read creation time");
 		return false;
 	}
 
-	if (!ReadUInt32(_modificationTime)) {
+	if (!ReadUInt64(_modificationTime)) {
 		FATAL("Unable to read modification time");
 		return false;
 	}
@@ -58,7 +99,7 @@ bool AtomMDHD::ReadData() {
 		return false;
 	}
 
-	if (!ReadUInt32(_duration)) {
+	if (!ReadUInt64(_duration)) {
 		FATAL("Unable to read duration");
 		return false;
 	}
@@ -75,6 +116,5 @@ bool AtomMDHD::ReadData() {
 
 	return true;
 }
-
 
 #endif /* HAS_MEDIA_MP4 */
