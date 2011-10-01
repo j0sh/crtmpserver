@@ -161,18 +161,18 @@ configuration=
 					localStreamName="stream0-udp"
 				},
 				{
-                    uri="rtsp://stream01.qt.slamtv.true.nl/slamtv.sdp",
-                    localStreamName="stream0-tcp",
+					uri="rtsp://stream01.qt.slamtv.true.nl/slamtv.sdp",
+					localStreamName="stream0-tcp",
 					forceTcp=true
-                },
+				},
 				{
 					uri="rtmp://10.0.1.15/vod/mp4:test_mp4",
 					localStreamName="stream1"
 				},
 				{
-                    uri="rtmp://10.0.1.15/vod/test_flv",
-                    localStreamName="stream2"
-                },
+					uri="rtmp://10.0.1.15/vod/test_flv",
+					localStreamName="stream2"
+				},
 				{
 					uri="rtsp://media-us-2.soundreach.net/slcn_lifestyle.sdp",
 					localStreamName="stream3",
@@ -193,12 +193,12 @@ configuration=
 					emulateUserAgent="MAC 10,1,82,76",
 				}
 				{
- 					uri="rtmp://edge01.fms.dutchview.nl/botr/bunny",
+					uri="rtmp://edge01.fms.dutchview.nl/botr/bunny",
 					localStreamName="stream6",
 					swfUrl="http://www.example.com/example.swf";
 					pageUrl="http://www.example.com/";
 					emulateUserAgent="MAC 10,1,82,76",
- 				}]]--
+				}]]--
 			},
 			validateHandshake=true,
 			keyframeSeek=true,
@@ -213,6 +213,7 @@ configuration=
 					encoderAgents=
 					{
 						"FMLE/3.0 (compatible; FMSc/1.0)",
+						"My user agent",
 					},
 					usersFile="users.lua"
 				},
@@ -310,23 +311,21 @@ configuration=
 					emulateUserAgent="FMLE/3.0 (compatible; FMSc/1.0 http://www.rtmpd.com)"
 				}]]--,
 				{
-					targetUri="rtmp://localhost/vod",
+					targetUri="rtmp://gigi:spaima@localhost/vod",
 					targetStreamType="live", -- (live, record or append)
 					emulateUserAgent="My user agent",
-					localStreamName="stream1"
+					localStreamName="stream1",
+					keepAlive=true
 				},
 			},
 			--[[externalStreams = 
 			{
 				{
-					uri="rtsp://82.177.67.61/axis-media/media.amp",
-					localStreamName="stream4",
-					forceTcp=false
-                },
-				{
-					uri="rtmp://edge01.fms.dutchview.nl/botr/bunny",
-					localStreamName="stream1"
-                },
+					uri="rtsp://fms20.mediadirect.ro/live2/realitatea/realitatea",
+					localStreamName="stream1",
+					forceTcp=true,
+					keepAlive=true
+				},
 			},]]--
 			--validateHandshake=true,
 			--default=true,
