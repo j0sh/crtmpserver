@@ -30,6 +30,9 @@
 #include "protocols/protocolfactorymanager.h"
 #include "application/clientapplicationmanager.h"
 #include "netio/netio.h"
+#include "jobstimerappprotocolhandler.h"
+#include "jobstimerprotocol.h"
+#include "protocols/protocolmanager.h"
 using namespace app_proxypublish;
 
 ProxyPublishApplication::ProxyPublishApplication(Variant &configuration)
@@ -44,6 +47,8 @@ ProxyPublishApplication::ProxyPublishApplication(Variant &configuration)
 	_pRTPHandler = NULL;
 	_pRTSPHandler = NULL;
 #endif /* HAS_PROTOCOL_RTP */
+	_pJobsHandler = NULL;
+	_jobsTimerProtocolId = 0;
 }
 
 ProxyPublishApplication::~ProxyPublishApplication() {
@@ -75,6 +80,17 @@ ProxyPublishApplication::~ProxyPublishApplication() {
 		_pRTSPHandler = NULL;
 	}
 #endif /* HAS_PROTOCOL_RTP */
+
+	BaseProtocol *pProtocol = ProtocolManager::GetProtocol(_jobsTimerProtocolId);
+	if (pProtocol != NULL) {
+		pProtocol->EnqueueForDelete();
+	}
+
+	UnRegisterAppProtocolHandler(PT_TIMER);
+	if (_pJobsHandler != NULL) {
+		delete _pJobsHandler;
+		_pJobsHandler = NULL;
+	}
 }
 
 bool ProxyPublishApplication::Initialize() {
@@ -132,9 +148,6 @@ bool ProxyPublishApplication::Initialize() {
 			FATAL("Supported target scheme is rtmp for now....");
 			return false;
 		}
-
-
-		target["targetUri"] = uri;
 	}
 	_targetServers = _configuration["targetServers"];
 	_abortOnConnectError = (bool)_configuration["abortOnConnectError"];
@@ -160,7 +173,43 @@ bool ProxyPublishApplication::Initialize() {
 	RegisterAppProtocolHandler(PT_RTSP, _pRTSPHandler);
 #endif /* HAS_PROTOCOL_RTP */
 
+	_pJobsHandler = new JobsTimerAppProtocolHandler(_configuration);
+	RegisterAppProtocolHandler(PT_TIMER, _pJobsHandler);
+
+	//2. Initialize the jobs timer
+	BaseTimerProtocol *pProtocol = new JobsTimerProtocol();
+	_jobsTimerProtocolId = pProtocol->GetId();
+	pProtocol->SetApplication(this);
+	pProtocol->EnqueueForTimeEvent(1);
+
 	return PullExternalStreams();
+}
+
+void ProxyPublishApplication::UnRegisterProtocol(BaseProtocol *pProtocol) {
+	//1. Get the parameters assigned to this connection
+	Variant &parameters = pProtocol->GetCustomParameters();
+
+	//FINEST("parameters:\n%s", STR(parameters.ToString()));
+	//2. depending on the pull/push config, we retry only if keepAlive is true and the
+	//source stream is still there
+	if ((parameters.HasKeyChain(V_BOOL, true, 3, "customParameters", "localStreamConfig", "keepAlive"))
+			&& ((bool)parameters["customParameters"]["localStreamConfig"]["keepAlive"])
+			&& (parameters.HasKeyChain(_V_NUMERIC, true, 3, "customParameters", "localStreamConfig", "localUniqueStreamId"))) {
+		//3. This is a push.  First, fix the uri
+		string uri = parameters["customParameters"]["localStreamConfig"]["targetUri"]["fullUriWithAuth"];
+		parameters["customParameters"]["localStreamConfig"]["targetUri"] = uri;
+		EnqueuePush(parameters["customParameters"]["localStreamConfig"]);
+	} else if ((parameters.HasKeyChain(V_BOOL, true, 3, "customParameters", "externalStreamConfig", "keepAlive"))
+			&& ((bool)parameters["customParameters"]["externalStreamConfig"]["keepAlive"])) {
+		//4. This is a pull with keep alive. Just o it again. First, fix the uri
+		//which is currently "resolved"
+		string uri = parameters["customParameters"]["externalStreamConfig"]["uri"]["fullUriWithAuth"];
+		parameters["customParameters"]["externalStreamConfig"]["uri"] = uri;
+		EnqueuePull(parameters["customParameters"]["externalStreamConfig"]);
+	}
+
+	//5. Finally, call the base class
+	BaseClientApplication::UnRegisterProtocol(pProtocol);
 }
 
 void ProxyPublishApplication::SignalStreamRegistered(BaseStream *pStream) {
@@ -179,6 +228,32 @@ void ProxyPublishApplication::SignalStreamRegistered(BaseStream *pStream) {
 		FATAL("Unable to initiate the forwarding process");
 		pStream->EnqueueForDelete();
 	}
+}
+
+void ProxyPublishApplication::EnqueuePush(Variant &parameters) {
+	//1. get the timer protocol
+	JobsTimerProtocol *pProtocol = (JobsTimerProtocol *) ProtocolManager::GetProtocol(
+			_jobsTimerProtocolId);
+	if (pProtocol == NULL) {
+		FATAL("Jobs protocol died. Aborting ...");
+		return;
+	}
+
+	//2. Enqueue the operation
+	pProtocol->EnqueuePush(parameters);
+}
+
+void ProxyPublishApplication::EnqueuePull(Variant &parameters) {
+	//1. get the timer protocol
+	JobsTimerProtocol *pProtocol = (JobsTimerProtocol *) ProtocolManager::GetProtocol(
+			_jobsTimerProtocolId);
+	if (pProtocol == NULL) {
+		FATAL("Jobs protocol died. Aborting ...");
+		return;
+	}
+
+	//2. Enqueue the operation
+	pProtocol->EnqueuePull(parameters);
 }
 
 bool ProxyPublishApplication::InitiateForwardingStream(BaseInStream *pStream) {
@@ -229,11 +304,11 @@ bool ProxyPublishApplication::InitiateForwardingStream(BaseInStream *pStream, Va
 			STR(tagToString(pStream->GetType())),
 			STR(pStream->GetName()),
 			STR(GetName()),
-			STR((string) target["targetUri"]["fullUri"]),
+			STR((string) target["targetUri"]),
 			STR(parameters["targetStreamName"]));
 
-	//3. Since we only accept RTMP targets, we will just fetch the RTMP handler
-	//and push the stream
-	return _pRTMPHandler->PushLocalStream(parameters);
+	//4. Enqueue the push
+	EnqueuePush(parameters);
+	return true;
 #endif /* HAS_PROTOCOL_RTMP */
 }

@@ -36,6 +36,7 @@ namespace app_proxypublish {
 	class RTPAppProtocolHandler;
 	class RTSPAppProtocolHandler;
 #endif /* HAS_PROTOCOL_RTP */
+	class JobsTimerAppProtocolHandler;
 
 	class ProxyPublishApplication
 	: public BaseClientApplication {
@@ -50,18 +51,24 @@ namespace app_proxypublish {
 		RTPAppProtocolHandler *_pRTPHandler;
 		RTSPAppProtocolHandler *_pRTSPHandler;
 #endif /* HAS_PROTOCOL_RTP */
+		JobsTimerAppProtocolHandler *_pJobsHandler;
 		map<uint32_t, uint32_t> _protocolsToStream;
 		map<uint32_t, map<uint32_t, uint32_t> >_streamToProtocols;
 		Variant _targetServers;
 		bool _abortOnConnectError;
+		uint32_t _jobsTimerProtocolId;
 	public:
 		ProxyPublishApplication(Variant &configuration);
 		virtual ~ProxyPublishApplication();
 
 		virtual bool Initialize();
 
+		virtual void UnRegisterProtocol(BaseProtocol *pProtocol);
+
 		virtual void SignalStreamRegistered(BaseStream *pStream);
 	private:
+		void EnqueuePush(Variant &parameters);
+		void EnqueuePull(Variant &parameters);
 		bool InitiateForwardingStream(BaseInStream *pStream);
 		bool InitiateForwardingStream(BaseInStream *pStream, Variant &target);
 	};

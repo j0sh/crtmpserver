@@ -822,6 +822,9 @@ bool Variant::HasKey(const string &key, bool caseSensitive) {
 }
 
 bool Variant::HasKeyChain(VariantType end, bool caseSensitive, uint32_t depth, ...) {
+	if (_type != V_TYPED_MAP && _type != V_MAP) {
+		return false;
+	}
 	va_list arguments;
 	va_start(arguments, depth);
 	Variant *pCurrent = this;
@@ -1049,7 +1052,7 @@ bool Variant::ConvertToTimestamp() {
 
 	if (detectedType == V_DATE || detectedType == V_TIMESTAMP) {
 		temp.tm_year = (int) ((int32_t) (*this)["year"] - 1900);
-		temp.tm_mon = (int) ((int32_t) (*this)["month"])-1;
+		temp.tm_mon = (int) ((int32_t) (*this)["month"]) - 1;
 		temp.tm_mday = (int) ((int32_t) (*this)["day"]);
 	} else {
 		temp.tm_year = 70;
