@@ -185,12 +185,12 @@
             <pElem>../../../../3rdparty/tinyxml</pElem>
           </incDir>
           <preprocessorList>
-            <Elem>OSX</Elem>
-            <Elem>USE_MEM_POOL</Elem>
             <Elem>DEBUG_MEM_POOL</Elem>
-            <Elem>LITTLE_ENDIAN_SHORT_ALIGNED</Elem>
             <Elem>HAS_LUA</Elem>
             <Elem>HAS_SYSLOG</Elem>
+            <Elem>LITTLE_ENDIAN_SHORT_ALIGNED</Elem>
+            <Elem>OSX</Elem>
+            <Elem>USE_MEM_POOL</Elem>
           </preprocessorList>
         </ccTool>
       </compileType>
@@ -212,11 +212,11 @@
             <pElem>/opt/local/include/libxml2</pElem>
           </incDir>
           <preprocessorList>
+            <Elem>DEBUG_MEM_POOL</Elem>
+            <Elem>HAS_LUA</Elem>
+            <Elem>LITTLE_ENDIAN_SHORT_ALIGNED</Elem>
             <Elem>OSX</Elem>
             <Elem>USE_MEM_POOL</Elem>
-            <Elem>DEBUG_MEM_POOL</Elem>
-            <Elem>LITTLE_ENDIAN_SHORT_ALIGNED</Elem>
-            <Elem>HAS_LUA</Elem>
           </preprocessorList>
         </ccTool>
         <fortranCompilerTool>

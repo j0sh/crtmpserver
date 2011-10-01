@@ -34,12 +34,14 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
+	${OBJECTDIR}/_ext/1106680373/jobstimerappprotocolhandler.o \
 	${OBJECTDIR}/_ext/1106680373/rtpappprotocolhandler.o \
 	${OBJECTDIR}/_ext/1106680373/proxypublishapplication.o \
 	${OBJECTDIR}/_ext/1106680373/liveflvappprotocolhandler.o \
 	${OBJECTDIR}/_ext/1106680373/rtspappprotocolhandler.o \
 	${OBJECTDIR}/_ext/1106680373/proxypublish.o \
-	${OBJECTDIR}/_ext/1106680373/rtmpappprotocolhandler.o
+	${OBJECTDIR}/_ext/1106680373/rtmpappprotocolhandler.o \
+	${OBJECTDIR}/_ext/1106680373/jobstimerprotocol.o
 
 
 # C Compiler Flags
@@ -70,6 +72,11 @@ LDLIBSOPTIONS=-L../common/dist/Release/GNU-MacOSX -lcommon -L../thelib/../Releas
 	${MKDIR} -p ../${CND_CONF}/${CND_PLATFORM}/applications/proxypublish
 	${LINK.cc} -dynamiclib -install_name libproxypublish.dylib -o ../${CND_CONF}/${CND_PLATFORM}/applications/proxypublish/libproxypublish.dylib -fPIC ${OBJECTFILES} ${LDLIBSOPTIONS} 
 
+${OBJECTDIR}/_ext/1106680373/jobstimerappprotocolhandler.o: ../../../../sources/applications/proxypublish/src/jobstimerappprotocolhandler.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1106680373
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_RTP -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/proxypublish/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1106680373/jobstimerappprotocolhandler.o ../../../../sources/applications/proxypublish/src/jobstimerappprotocolhandler.cpp
+
 ${OBJECTDIR}/_ext/1106680373/rtpappprotocolhandler.o: ../../../../sources/applications/proxypublish/src/rtpappprotocolhandler.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1106680373
 	${RM} $@.d
@@ -99,6 +106,11 @@ ${OBJECTDIR}/_ext/1106680373/rtmpappprotocolhandler.o: ../../../../sources/appli
 	${MKDIR} -p ${OBJECTDIR}/_ext/1106680373
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_RTP -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/proxypublish/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1106680373/rtmpappprotocolhandler.o ../../../../sources/applications/proxypublish/src/rtmpappprotocolhandler.cpp
+
+${OBJECTDIR}/_ext/1106680373/jobstimerprotocol.o: ../../../../sources/applications/proxypublish/src/jobstimerprotocol.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1106680373
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_RTP -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/proxypublish/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1106680373/jobstimerprotocol.o ../../../../sources/applications/proxypublish/src/jobstimerprotocol.cpp
 
 # Subprojects
 .build-subprojects:

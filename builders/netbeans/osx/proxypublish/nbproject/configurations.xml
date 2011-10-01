@@ -4,6 +4,8 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
+      <itemPath>../../../../sources/applications/proxypublish/include/jobstimerappprotocolhandler.h</itemPath>
+      <itemPath>../../../../sources/applications/proxypublish/include/jobstimerprotocol.h</itemPath>
       <itemPath>../../../../sources/applications/proxypublish/include/liveflvappprotocolhandler.h</itemPath>
       <itemPath>../../../../sources/applications/proxypublish/include/proxypublish.h</itemPath>
       <itemPath>../../../../sources/applications/proxypublish/include/proxypublishapplication.h</itemPath>
@@ -14,6 +16,8 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
+      <itemPath>../../../../sources/applications/proxypublish/src/jobstimerappprotocolhandler.cpp</itemPath>
+      <itemPath>../../../../sources/applications/proxypublish/src/jobstimerprotocol.cpp</itemPath>
       <itemPath>../../../../sources/applications/proxypublish/src/liveflvappprotocolhandler.cpp</itemPath>
       <itemPath>../../../../sources/applications/proxypublish/src/proxypublish.cpp</itemPath>
       <itemPath>../../../../sources/applications/proxypublish/src/proxypublishapplication.cpp</itemPath>
@@ -28,8 +32,8 @@
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>
-    <Elem>../../../sources/applications/proxypublish/include</Elem>
-    <Elem>../../../sources/applications/proxypublish/src</Elem>
+    <Elem>../../../../sources/applications/proxypublish/include</Elem>
+    <Elem>../../../../sources/applications/proxypublish/src</Elem>
   </sourceRootList>
   <projectmakefile>Makefile.nb</projectmakefile>
   <confs>
@@ -47,11 +51,11 @@
             <pElem>../../../../sources/applications/proxypublish/include</pElem>
           </incDir>
           <preprocessorList>
-            <Elem>OSX</Elem>
-            <Elem>NET_KQUEUE</Elem>
+            <Elem>HAS_PROTOCOL_LIVEFLV</Elem>
             <Elem>HAS_PROTOCOL_RTMP</Elem>
             <Elem>HAS_PROTOCOL_RTP</Elem>
-            <Elem>HAS_PROTOCOL_LIVEFLV</Elem>
+            <Elem>NET_KQUEUE</Elem>
+            <Elem>OSX</Elem>
           </preprocessorList>
         </ccTool>
         <linkerTool>
@@ -103,10 +107,10 @@
             <pElem>../../../../sources/applications/proxypublish/include</pElem>
           </incDir>
           <preprocessorList>
-            <Elem>OSX</Elem>
-            <Elem>NET_KQUEUE</Elem>
             <Elem>HAS_PROTOCOL_RTMP</Elem>
             <Elem>HAS_PROTOCOL_RTP</Elem>
+            <Elem>NET_KQUEUE</Elem>
+            <Elem>OSX</Elem>
           </preprocessorList>
         </ccTool>
         <fortranCompilerTool>

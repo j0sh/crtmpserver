@@ -24,7 +24,6 @@
       <itemPath>../../../../sources/applications/flvplayback/src/liveflvappprotocolhandler.cpp</itemPath>
       <itemPath>../../../../sources/applications/flvplayback/src/mmsappprotocolhandler.cpp</itemPath>
       <itemPath>../../../../sources/applications/flvplayback/src/rawhttpstreamappprotocolhandler.cpp</itemPath>
-      <itemPath>../../../../sources/applications/flvplayback/src/rtmfpappprotocolhandler.cpp</itemPath>
       <itemPath>../../../../sources/applications/flvplayback/src/rtmpappprotocolhandler.cpp</itemPath>
       <itemPath>../../../../sources/applications/flvplayback/src/rtpappprotocolhandler.cpp</itemPath>
       <itemPath>../../../../sources/applications/flvplayback/src/rtspappprotocolhandler.cpp</itemPath>
@@ -56,17 +55,17 @@
             <pElem>../../../../sources/applications/flvplayback/include</pElem>
           </incDir>
           <preprocessorList>
-            <Elem>OSX</Elem>
-            <Elem>NET_KQUEUE</Elem>
-            <Elem>HAS_PROTOCOL_RTP</Elem>
-            <Elem>HAS_PROTOCOL_RTMP</Elem>
-            <Elem>HAS_PROTOCOL_TS</Elem>
             <Elem>HAS_LUA</Elem>
-            <Elem>HAS_PROTOCOL_RTMFP</Elem>
+            <Elem>HAS_PROTOCOL_HTTP</Elem>
             <Elem>HAS_PROTOCOL_LIVEFLV</Elem>
             <Elem>HAS_PROTOCOL_MMS</Elem>
             <Elem>HAS_PROTOCOL_RAWHTTPSTREAM</Elem>
-            <Elem>HAS_PROTOCOL_HTTP</Elem>
+            <Elem>HAS_PROTOCOL_RTMFP</Elem>
+            <Elem>HAS_PROTOCOL_RTMP</Elem>
+            <Elem>HAS_PROTOCOL_RTP</Elem>
+            <Elem>HAS_PROTOCOL_TS</Elem>
+            <Elem>NET_KQUEUE</Elem>
+            <Elem>OSX</Elem>
           </preprocessorList>
         </ccTool>
         <linkerTool>
@@ -118,12 +117,12 @@
             <pElem>../../../../sources/applications/flvplayback/include</pElem>
           </incDir>
           <preprocessorList>
-            <Elem>OSX</Elem>
-            <Elem>NET_KQUEUE</Elem>
-            <Elem>HAS_PROTOCOL_RTP</Elem>
-            <Elem>HAS_PROTOCOL_RTMP</Elem>
-            <Elem>HAS_PROTOCOL_TS</Elem>
             <Elem>HAS_LUA</Elem>
+            <Elem>HAS_PROTOCOL_RTMP</Elem>
+            <Elem>HAS_PROTOCOL_RTP</Elem>
+            <Elem>HAS_PROTOCOL_TS</Elem>
+            <Elem>NET_KQUEUE</Elem>
+            <Elem>OSX</Elem>
           </preprocessorList>
         </ccTool>
         <fortranCompilerTool>

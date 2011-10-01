@@ -14,8 +14,8 @@
                 <make-dep-project>../common</make-dep-project>
             </make-dep-projects>
             <sourceRootList>
-                <sourceRootElem>../../../sources/applications/proxypublish/include</sourceRootElem>
-                <sourceRootElem>../../../sources/applications/proxypublish/src</sourceRootElem>
+                <sourceRootElem>../../../../sources/applications/proxypublish/include</sourceRootElem>
+                <sourceRootElem>../../../../sources/applications/proxypublish/src</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>
