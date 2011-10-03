@@ -32,6 +32,8 @@
 #include "streaming/baseinstream.h"
 #include "streaming/baseinnetstream.h"
 
+#define ONBWCHECK_SIZE 32767
+
 BaseRTMPAppProtocolHandler::BaseRTMPAppProtocolHandler(Variant &configuration)
 : BaseAppProtocolHandler(configuration) {
 	_validateHandshake = (bool)configuration[CONF_APPLICATION_VALIDATEHANDSHAKE];
@@ -49,7 +51,7 @@ BaseRTMPAppProtocolHandler::BaseRTMPAppProtocolHandler(Variant &configuration)
 	if (_enableCheckBandwidth) {
 		Variant parameters;
 		parameters.PushToArray(Variant());
-		parameters.PushToArray(generateRandomString(32767));
+		parameters.PushToArray(generateRandomString(ONBWCHECK_SIZE));
 		_onBWCheckMessage = GenericMessageFactory::GetInvoke(3, 0, 0, false, 0,
 				RM_INVOKE_FUNCTION_ONBWCHECK, parameters);
 		_onBWCheckStrippedMessage[RM_INVOKE][RM_INVOKE_FUNCTION] = RM_INVOKE_FUNCTION_ONBWCHECK;
@@ -1452,7 +1454,7 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokeOnBWCheckResult(BaseRTMPProtocol *
 	GETCLOCKS(now);
 	double startTime = (double) pFrom->GetCustomParameters()["lastOnnBWCheckMessage"];
 	double totalTime = (now - startTime) / (double) CLOCKS_PER_SECOND;
-	double speed = (double) 32767 / totalTime / 1024.0 * 8.0;
+	double speed = (double) ONBWCHECK_SIZE / totalTime / 1024.0 * 8.0;
 	Variant message = GenericMessageFactory::GetInvokeOnBWDone(speed);
 	return SendRTMPMessage(pFrom, message);
 }
