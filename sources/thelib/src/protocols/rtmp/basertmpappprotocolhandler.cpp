@@ -677,19 +677,21 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokeConnect(BaseRTMPProtocol *pFrom,
 		return false;
 	}
 
-	//3. Send the connect result and the onBWDone message
+	//3. Send the connect result
 	response = ConnectionMessageFactory::GetInvokeConnectResult(request);
 	if (!SendRTMPMessage(pFrom, response)) {
 		FATAL("Unable to send message to client");
 		return false;
 	}
-	response = GenericMessageFactory::GetInvokeOnBWDone();
+
+	//4. Send onBWDone
+	response = GenericMessageFactory::GetInvokeOnBWDone(1024 * 8);
 	if (!SendRTMPMessage(pFrom, response)) {
 		FATAL("Unable to send message to client");
 		return false;
 	}
 
-	//4. Done
+	//5. Done
 	return true;
 }
 
@@ -1451,11 +1453,7 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokeOnBWCheckResult(BaseRTMPProtocol *
 	double startTime = (double) pFrom->GetCustomParameters()["lastOnnBWCheckMessage"];
 	double totalTime = (now - startTime) / (double) CLOCKS_PER_SECOND;
 	double speed = (double) 32767 / totalTime / 1024.0 * 8.0;
-	Variant parameters;
-	parameters.PushToArray(Variant());
-	parameters.PushToArray(speed);
-	Variant message = GenericMessageFactory::GetInvoke(3, 0, 0, false, 0,
-			RM_INVOKE_FUNCTION_ONBWDONE, parameters);
+	Variant message = GenericMessageFactory::GetInvokeOnBWDone(speed);
 	return SendRTMPMessage(pFrom, message);
 }
 

@@ -90,7 +90,7 @@ public:
 			uint32_t streamId, double timeStamp, bool isAbsolute,
 			string handlerName, Variant params);
 
-	static Variant GetInvokeOnBWDone();
+	static Variant GetInvokeOnBWDone(double kbpsSpeed);
 
 	static Variant GetInvokeOnStatus(uint32_t channelId, uint32_t streamId,
 			double timeStamp, bool isAbsolute, double requestId, Variant &message);

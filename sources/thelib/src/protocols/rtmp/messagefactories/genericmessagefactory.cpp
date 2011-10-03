@@ -110,9 +110,10 @@ Variant GenericMessageFactory::GetNotify(uint32_t channelId,
 	return result;
 }
 
-Variant GenericMessageFactory::GetInvokeOnBWDone() {
+Variant GenericMessageFactory::GetInvokeOnBWDone(double kbpsSpeed) {
 	Variant parameters;
-	parameters[(uint32_t) 0] = Variant();
+	parameters.PushToArray(Variant());
+	parameters.PushToArray(kbpsSpeed);
 	return GetInvoke(
 			3,
 			0,
