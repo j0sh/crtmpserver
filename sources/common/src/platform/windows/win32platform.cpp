@@ -384,8 +384,8 @@ void splitFileName(string fileName, string &name, string & extension, char separ
 }
 
 string normalizePath(string base, string file) {
-	if ((base == "") || (base[base.size() - 1] != PATH_SEPARATOR))
-		base += PATH_SEPARATOR;
+//	if ((base == "") || (base[base.size() - 1] != PATH_SEPARATOR))
+//		base += PATH_SEPARATOR;
 	char dummy1[MAX_PATH ];
 	char dummy2[MAX_PATH ];
 	if (GetFullPathName(STR(base), MAX_PATH, dummy1, NULL) == 0)
