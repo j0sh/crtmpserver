@@ -24,7 +24,7 @@
 #include "common.h"
 #include "configuration/module.h"
 
-class ConfigFile {
+class DLLEXP ConfigFile {
 private:
 	Variant _configuration;
 	Variant _logAppenders;

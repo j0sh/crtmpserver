@@ -22,7 +22,7 @@
 #include "utils/logging/logging.h"
 
 static map<string, uint16_t> _schemeToPort;
-Variant URI::_dummy;
+//Variant URI::_dummy;
 
 #ifdef DEBUG_URI
 #define LOG_URI(...) FINEST(__VA_ARGS__)

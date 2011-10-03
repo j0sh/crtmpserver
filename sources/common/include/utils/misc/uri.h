@@ -26,7 +26,7 @@
 class DLLEXP URI
 : public Variant {
 private:
-	static Variant _dummy;
+	//static Variant _dummy;
 public:
 	VARIANT_GETSET(string, originalUri, "");
 	VARIANT_GETSET(string, fullUri, "");
@@ -44,10 +44,10 @@ public:
 	VARIANT_GETSET(string, documentPath, "");
 	VARIANT_GETSET(string, document, "");
 	VARIANT_GETSET(string, documentWithFullParameters, "");
-	VARIANT_GETSET(Variant, parameters, _dummy);
+	VARIANT_GETSET(Variant, parameters, Variant());
 
-	DLLEXP static bool FromVariant(Variant & variant, URI &uri);
-	DLLEXP static bool FromString(string stringUri, bool resolveHost, URI &uri);
+	static bool FromVariant(Variant & variant, URI &uri);
+	static bool FromString(string stringUri, bool resolveHost, URI &uri);
 };
 
 #endif	/* _URI_H */
