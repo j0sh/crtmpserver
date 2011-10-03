@@ -41,8 +41,20 @@ BaseRTMPAppProtocolHandler::BaseRTMPAppProtocolHandler(Variant &configuration)
 	_mediaFolder = (string) configuration[CONF_APPLICATION_MEDIAFOLDER];
 	_renameBadFiles = (bool)configuration[CONF_APPLICATION_RENAMEBADFILES];
 	_externSeekGenerator = (bool)configuration[CONF_APPLICATION_EXTERNSEEKGENERATOR];
+	_enableCheckBandwidth = false;
+	if (_configuration.HasKeyChain(V_BOOL, false, 1, "enableCheckBandwidth")) {
+		_enableCheckBandwidth = (bool)_configuration.GetValue(
+				"enableCheckBandwidth", false);
+	}
+	if (_enableCheckBandwidth) {
+		Variant parameters;
+		parameters.PushToArray(Variant());
+		parameters.PushToArray(generateRandomString(32767));
+		_onBWCheckMessage = GenericMessageFactory::GetInvoke(3, 0, 0, false, 0,
+				RM_INVOKE_FUNCTION_ONBWCHECK, parameters);
+		_onBWCheckStrippedMessage[RM_INVOKE][RM_INVOKE_FUNCTION] = RM_INVOKE_FUNCTION_ONBWCHECK;
+	}
 	_lastUsersFileUpdate = 0;
-
 	if ((bool)configuration[CONF_APPLICATION_GENERATE_META_FILES]) {
 		GenerateMetaFiles();
 	}
@@ -597,6 +609,14 @@ bool BaseRTMPAppProtocolHandler::ProcessInvoke(BaseRTMPProtocol *pFrom,
 		Variant &request) {
 	//PROD_ACCESS(CreateLogEventInvoke(pFrom, request));
 	string functionName = request[RM_INVOKE][RM_INVOKE_FUNCTION];
+	uint32_t invokeId = M_INVOKE_ID(request);
+	if (invokeId != 0) {
+		if (_nextInvokeId[pFrom->GetId()] < invokeId) {
+			FATAL("Incorrect invoke Id");
+			return false;
+		}
+		_nextInvokeId[pFrom->GetId()] = invokeId + 1;
+	}
 	if (functionName == RM_INVOKE_FUNCTION_CONNECT) {
 		return ProcessInvokeConnect(pFrom, request);
 	} else if (functionName == RM_INVOKE_FUNCTION_CREATESTREAM) {
@@ -629,6 +649,8 @@ bool BaseRTMPAppProtocolHandler::ProcessInvoke(BaseRTMPProtocol *pFrom,
 		return ProcessInvokeGetStreamLength(pFrom, request);
 	} else if (functionName == RM_INVOKE_FUNCTION_ONBWDONE) {
 		return ProcessInvokeOnBWDone(pFrom, request);
+	} else if (functionName == RM_INVOKE_FUNCTION_CHECKBANDWIDTH) {
+		return ProcessInvokeCheckBandwidth(pFrom, request);
 	} else {
 		return ProcessInvokeGeneric(pFrom, request);
 	}
@@ -1180,7 +1202,6 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokeGetStreamLength(BaseRTMPProtocol *
 	Variant response = GenericMessageFactory::GetInvokeResult(request, params);
 	if (!SendRTMPMessage(pFrom, response)) {
 		FATAL("Unable to send message to client");
-
 		return false;
 	}
 	return true;
@@ -1188,7 +1209,23 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokeGetStreamLength(BaseRTMPProtocol *
 
 bool BaseRTMPAppProtocolHandler::ProcessInvokeOnBWDone(BaseRTMPProtocol *pFrom,
 		Variant &request) {
-	WARN("ProcessInvokeOnBWDone");
+	//WARN("ProcessInvokeOnBWDone");
+	return true;
+}
+
+bool BaseRTMPAppProtocolHandler::ProcessInvokeCheckBandwidth(BaseRTMPProtocol *pFrom,
+		Variant &request) {
+	if (!_enableCheckBandwidth) {
+		WARN("checkBandwidth is disabled.");
+		return true;
+	}
+	if (!SendRTMPMessage(pFrom, _onBWCheckMessage, true)) {
+		FATAL("Unable to send message to flash player");
+		return false;
+	}
+	double temp;
+	GETCLOCKS(temp);
+	pFrom->GetCustomParameters()["lastOnnBWCheckMessage"] = temp;
 	return true;
 }
 
@@ -1212,13 +1249,15 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokeResult(BaseRTMPProtocol *pFrom,
 
 bool BaseRTMPAppProtocolHandler::ProcessInvokeResult(BaseRTMPProtocol *pFrom,
 		Variant &request, Variant & response) {
-	string functionName = request[RM_INVOKE][RM_INVOKE_FUNCTION];
+	string functionName = M_INVOKE_FUNCTION(request);
 	if (functionName == RM_INVOKE_FUNCTION_CONNECT) {
 		return ProcessInvokeConnectResult(pFrom, request, response);
 	} else if (functionName == RM_INVOKE_FUNCTION_CREATESTREAM) {
 		return ProcessInvokeCreateStreamResult(pFrom, request, response);
 	} else if (functionName == RM_INVOKE_FUNCTION_FCSUBSCRIBE) {
 		return ProcessInvokeFCSubscribeResult(pFrom, request, response);
+	} else if (functionName == RM_INVOKE_FUNCTION_ONBWCHECK) {
+		return ProcessInvokeOnBWCheckResult(pFrom, request, response);
 	} else {
 		return ProcessInvokeGenericResult(pFrom, request, response);
 	}
@@ -1403,6 +1442,21 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokeCreateStreamResult(BaseRTMPProtoco
 bool BaseRTMPAppProtocolHandler::ProcessInvokeFCSubscribeResult(BaseRTMPProtocol *pFrom,
 		Variant &request, Variant &response) {
 	return true;
+}
+
+bool BaseRTMPAppProtocolHandler::ProcessInvokeOnBWCheckResult(BaseRTMPProtocol *pFrom,
+		Variant &request, Variant &response) {
+	double now;
+	GETCLOCKS(now);
+	double startTime = (double) pFrom->GetCustomParameters()["lastOnnBWCheckMessage"];
+	double totalTime = (now - startTime) / (double) CLOCKS_PER_SECOND;
+	double speed = (double) 32767 / totalTime / 1024.0 * 8.0;
+	Variant parameters;
+	parameters.PushToArray(Variant());
+	parameters.PushToArray(speed);
+	Variant message = GenericMessageFactory::GetInvoke(3, 0, 0, false, 0,
+			RM_INVOKE_FUNCTION_ONBWDONE, parameters);
+	return SendRTMPMessage(pFrom, message);
 }
 
 bool BaseRTMPAppProtocolHandler::ProcessInvokeGenericResult(BaseRTMPProtocol *pFrom,
@@ -1774,7 +1828,11 @@ bool BaseRTMPAppProtocolHandler::SendRTMPMessage(BaseRTMPProtocol *pTo,
 					invokeId = _nextInvokeId[pTo->GetId()];
 					_nextInvokeId[pTo->GetId()] = invokeId + 1;
 					M_INVOKE_ID(message) = invokeId;
-					_resultMessageTracking[pTo->GetId()][invokeId] = message;
+					//do not store stupid useless amount of data needed by onbwcheck
+					if (M_INVOKE_FUNCTION(message) == RM_INVOKE_FUNCTION_ONBWCHECK)
+						_resultMessageTracking[pTo->GetId()][invokeId] = _onBWCheckStrippedMessage;
+					else
+						_resultMessageTracking[pTo->GetId()][invokeId] = message;
 				} else {
 					M_INVOKE_ID(message) = (uint32_t) 0;
 				}

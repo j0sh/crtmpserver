@@ -40,6 +40,9 @@ protected:
 	bool _renameBadFiles;
 	string _mediaFolder;
 	bool _externSeekGenerator;
+	bool _enableCheckBandwidth;
+	Variant _onBWCheckMessage;
+	Variant _onBWCheckStrippedMessage;
 	map<uint32_t, BaseRTMPProtocol *> _connections;
 	map<uint32_t, uint32_t> _nextInvokeId;
 	map<uint32_t, map<uint32_t, Variant > > _resultMessageTracking;
@@ -171,6 +174,8 @@ public:
 			Variant &request);
 	virtual bool ProcessInvokeOnBWDone(BaseRTMPProtocol *pFrom,
 			Variant &request);
+	virtual bool ProcessInvokeCheckBandwidth(BaseRTMPProtocol *pFrom,
+			Variant &request);
 	virtual bool ProcessInvokeGeneric(BaseRTMPProtocol *pFrom,
 			Variant &request);
 	virtual bool ProcessInvokeResult(BaseRTMPProtocol *pFrom,
@@ -191,6 +196,8 @@ public:
 	virtual bool ProcessInvokeCreateStreamResult(BaseRTMPProtocol *pFrom,
 			Variant &request, Variant &response);
 	virtual bool ProcessInvokeFCSubscribeResult(BaseRTMPProtocol *pFrom,
+			Variant &request, Variant &response);
+	virtual bool ProcessInvokeOnBWCheckResult(BaseRTMPProtocol *pFrom,
 			Variant &request, Variant &response);
 	virtual bool ProcessInvokeGenericResult(BaseRTMPProtocol *pFrom,
 			Variant &request, Variant &response);
