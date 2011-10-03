@@ -605,6 +605,15 @@
     <ClCompile Include="..\..\..\sources\thelib\src\protocols\cli\inboundjsoncliprotocol.cpp">
       <Filter>Source Files\protocols\cli</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\configuration\module.cpp">
+      <Filter>Source Files\configuration</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\http\httpauthhelper.cpp">
+      <Filter>Source Files\protocols\http</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\monitorrtmpprotocol.cpp">
+      <Filter>Source Files\protocols\rtmp</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\sources\thelib\include\application\baseappprotocolhandler.h">
@@ -1089,6 +1098,15 @@
     </ClInclude>
     <ClInclude Include="..\..\..\sources\thelib\include\protocols\cli\inboundjsoncliprotocol.h">
       <Filter>Header Files\protocols\cli</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\configuration\module.h">
+      <Filter>Header Files\configuration</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\http\httpauthhelper.h">
+      <Filter>Header Files\protocols\http</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\monitorrtmpprotocol.h">
+      <Filter>Header Files\protocols\rtmp</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

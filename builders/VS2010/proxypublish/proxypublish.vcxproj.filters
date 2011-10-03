@@ -33,6 +33,12 @@
     <ClInclude Include="..\..\..\sources\applications\proxypublish\include\rtspappprotocolhandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\sources\applications\proxypublish\include\jobstimerappprotocolhandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\applications\proxypublish\include\jobstimerprotocol.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\sources\applications\proxypublish\src\liveflvappprotocolhandler.cpp">
@@ -54,6 +60,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\dummy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\applications\proxypublish\src\jobstimerappprotocolhandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\applications\proxypublish\src\jobstimerprotocol.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

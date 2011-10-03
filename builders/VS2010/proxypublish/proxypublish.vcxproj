@@ -84,7 +84,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>LITTLE_ENDIAN_BYTE_ALIGNED;NET_SELECT;HAS_LUA;HAS_PROTOCOL_HTTP;HAS_PROTOCOL_RTMP;HAS_PROTOCOL_RTP;HAS_PROTOCOL_LIVEFLV;HAS_PROTOCOL_TS;HAS_PROTOCOL_VAR;HAS_MEDIA_MP3;HAS_MEDIA_MP4;HAS_MEDIA_FLV;VM_LUA;WIN32;_DEBUG;_WINDOWS;_USRDLL;PROXYPUBLISH_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\..\sources\applications\proxypublish\include;..\..\..\sources\common\include;..\..\..\sources\thelib\include;..\..\..\3rdparty\lua-dev;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\OpenSSL-Win32\include;..\..\..\sources\applications\proxypublish\include;..\..\..\sources\common\include;..\..\..\sources\thelib\include;..\..\..\3rdparty\lua-dev;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4251;4996</DisableSpecificWarnings>
       <PrecompiledHeaderFile>common.h</PrecompiledHeaderFile>
       <ForcedIncludeFiles>common.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
@@ -183,6 +183,8 @@ mkdir "$(OutDir)\mediaFolder"
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\sources\applications\proxypublish\include\jobstimerappprotocolhandler.h" />
+    <ClInclude Include="..\..\..\sources\applications\proxypublish\include\jobstimerprotocol.h" />
     <ClInclude Include="..\..\..\sources\applications\proxypublish\include\liveflvappprotocolhandler.h" />
     <ClInclude Include="..\..\..\sources\applications\proxypublish\include\proxypublish.h" />
     <ClInclude Include="..\..\..\sources\applications\proxypublish\include\proxypublishapplication.h" />
@@ -191,6 +193,8 @@ mkdir "$(OutDir)\mediaFolder"
     <ClInclude Include="..\..\..\sources\applications\proxypublish\include\rtspappprotocolhandler.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\sources\applications\proxypublish\src\jobstimerappprotocolhandler.cpp" />
+    <ClCompile Include="..\..\..\sources\applications\proxypublish\src\jobstimerprotocol.cpp" />
     <ClCompile Include="..\..\..\sources\applications\proxypublish\src\liveflvappprotocolhandler.cpp" />
     <ClCompile Include="..\..\..\sources\applications\proxypublish\src\proxypublish.cpp" />
     <ClCompile Include="..\..\..\sources\applications\proxypublish\src\proxypublishapplication.cpp" />

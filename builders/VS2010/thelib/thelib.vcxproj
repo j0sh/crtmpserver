@@ -76,7 +76,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\..\sources\common\include;..\..\..\sources\thelib\include;..\..\..\3rdparty\lua-dev;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\OpenSSL-Win32\include;..\..\..\sources\common\include;..\..\..\sources\thelib\include;..\..\..\3rdparty\lua-dev;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>LITTLE_ENDIAN_BYTE_ALIGNED;NET_SELECT;HAS_LUA;HAS_PROTOCOL_HTTP;HAS_PROTOCOL_RTMP;HAS_PROTOCOL_RTP;HAS_PROTOCOL_LIVEFLV;HAS_PROTOCOL_TS;HAS_PROTOCOL_VAR;HAS_PROTOCOL_CLI;HAS_MEDIA_MP3;HAS_MEDIA_MP4;HAS_MEDIA_FLV;VM_LUA;HandleTSVideoData=HandleVideoData_version3;CreateRTCPPacket=CreateRTCPPacket_mystyle_only_once;FeedDataAudioMPEG4Generic=FeedDataAudioMPEG4Generic_one_by_one;WIN32;_DEBUG;_WINDOWS;_USRDLL;THELIB_EXPORTS;_CRT_SECURE_NO_WARNINGS;CreateRTCPPacket=CreateRTCPPacket_mystyle;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -89,8 +89,8 @@
       <ForcedIncludeFiles>common.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>ws2_32.lib;Mswsock.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>ws2_32.lib;Mswsock.lib;libeay32.lib;ssleay32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\OpenSSL-Win32\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
@@ -181,6 +181,7 @@
     <ClCompile Include="..\..\..\sources\thelib\src\application\baseclientapplication.cpp" />
     <ClCompile Include="..\..\..\sources\thelib\src\application\clientapplicationmanager.cpp" />
     <ClCompile Include="..\..\..\sources\thelib\src\configuration\configfile.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\configuration\module.cpp" />
     <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomavc1.cpp" />
     <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomavcc.cpp" />
     <ClCompile Include="..\..\..\sources\thelib\src\mediaformats\mp4\atomco64.cpp" />
@@ -243,9 +244,11 @@
     <ClCompile Include="..\..\..\sources\thelib\src\protocols\cli\inboundbasecliprotocol.cpp" />
     <ClCompile Include="..\..\..\sources\thelib\src\protocols\cli\inboundjsoncliprotocol.cpp" />
     <ClCompile Include="..\..\..\sources\thelib\src\protocols\defaultprotocolfactory.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\http\httpauthhelper.cpp" />
     <ClCompile Include="..\..\..\sources\thelib\src\protocols\protocolfactorymanager.cpp" />
     <ClCompile Include="..\..\..\sources\thelib\src\protocols\protocolmanager.cpp" />
     <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\inboundrtmpsdiscriminatorprotocol.cpp" />
+    <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\monitorrtmpprotocol.cpp" />
     <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\streaming\baseoutnetrtmpstream.cpp" />
     <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\streaming\infilertmpstream.cpp" />
     <ClCompile Include="..\..\..\sources\thelib\src\protocols\rtmp\streaming\innetrtmpstream.cpp" />
@@ -336,6 +339,7 @@
     <ClInclude Include="..\..\..\sources\thelib\include\application\baseclientapplication.h" />
     <ClInclude Include="..\..\..\sources\thelib\include\application\clientapplicationmanager.h" />
     <ClInclude Include="..\..\..\sources\thelib\include\configuration\configfile.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\configuration\module.h" />
     <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mediafile.h" />
     <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomavc1.h" />
     <ClInclude Include="..\..\..\sources\thelib\include\mediaformats\mp4\atomavcc.h" />
@@ -401,10 +405,12 @@
     <ClInclude Include="..\..\..\sources\thelib\include\protocols\cli\inboundbasecliprotocol.h" />
     <ClInclude Include="..\..\..\sources\thelib\include\protocols\cli\inboundjsoncliprotocol.h" />
     <ClInclude Include="..\..\..\sources\thelib\include\protocols\defaultprotocolfactory.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\http\httpauthhelper.h" />
     <ClInclude Include="..\..\..\sources\thelib\include\protocols\protocolfactorymanager.h" />
     <ClInclude Include="..\..\..\sources\thelib\include\protocols\protocolmanager.h" />
     <ClInclude Include="..\..\..\sources\thelib\include\protocols\protocoltypes.h" />
     <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\inboundrtmpsdiscriminatorprotocol.h" />
+    <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\monitorrtmpprotocol.h" />
     <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\streaming\baseoutnetrtmpstream.h" />
     <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\streaming\infilertmpstream.h" />
     <ClInclude Include="..\..\..\sources\thelib\include\protocols\rtmp\streaming\innetrtmpstream.h" />
