@@ -35,7 +35,7 @@ _VIDEO_AVC::~_VIDEO_AVC() {
 	Clear();
 }
 
-//#define DUMP_VAL(name,type,length) if(length!=0) FINEST("% 8s %50 s: % 4.0f; l: % 2u; ba: % 4u",#type,name,(double)v[name],length,ba.AvailableBits()); else WARN("% 8s %50 s: % 4.0f; l: % 2u; ba: % 4u",#type,name,(double)v[name],length,ba.AvailableBits());
+//#define DUMP_VAL(name,type,length) if(length!=0) FINEST("%8s %50s: %4.0f; l: %2u; ba: %4u",#type,name,(double)v[name],length,ba.AvailableBits()); else WARN("%8s %50s: %4.0f; l: %2u; ba: %4u",#type,name,(double)v[name],length,ba.AvailableBits());
 #define DUMP_VAL(name,type,length)
 
 #define CHECK_BA_LIMITS(name,length) \
@@ -348,7 +348,18 @@ bool _VIDEO_AVC::Init(uint8_t *pSPS, uint32_t spsLength, uint8_t *pPPS,
 	_rate = 90000;
 
 	BitArray spsBa;
-	spsBa.ReadFromBuffer(_pSPS + 1, _spsLength - 1);
+	//remove emulation_prevention_three_byte
+	for (uint16_t i = 1; i < _spsLength; i++) {
+		if (((i + 2)<(_spsLength - 1))
+				&& (_pSPS[i + 0] == 0)
+				&& (_pSPS[i + 1] == 0)
+				&& (_pSPS[i + 2] == 3)) {
+			spsBa.ReadFromRepeat(0, 2);
+			i += 2;
+		} else {
+			spsBa.ReadFromRepeat(_pSPS[i], 1);
+		}
+	}
 
 	if (!ReadSPS(spsBa, _SPSInfo)) {
 		WARN("Unable to parse SPS");
@@ -362,7 +373,19 @@ bool _VIDEO_AVC::Init(uint8_t *pSPS, uint32_t spsLength, uint8_t *pPPS,
 	}
 
 	BitArray ppsBa;
-	ppsBa.ReadFromBuffer(_pPPS + 1, _ppsLength - 1);
+	//remove emulation_prevention_three_byte
+	for (uint16_t i = 1; i < _ppsLength; i++) {
+		if (((i + 2)<(_ppsLength - 1))
+				&& (_pPPS[i + 0] == 0)
+				&& (_pPPS[i + 1] == 0)
+				&& (_pPPS[i + 2] == 3)) {
+			ppsBa.ReadFromRepeat(0, 2);
+			i += 2;
+		} else {
+			ppsBa.ReadFromRepeat(_pPPS[i], 1);
+		}
+	}
+	
 	if (!ReadPPS(ppsBa, _PPSInfo)) {
 		WARN("Unable to read PPS info");
 	}
