@@ -61,7 +61,7 @@ TCPCarrier::TCPCarrier(int32_t fd)
 }
 
 TCPCarrier::~TCPCarrier() {
-	close(_inboundFd);
+	CLOSE_SOCKET(_inboundFd);
 }
 
 bool TCPCarrier::OnEvent(struct epoll_event &event) {

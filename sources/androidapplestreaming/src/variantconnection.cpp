@@ -92,7 +92,7 @@ bool VariantConnection::SendMessage(Variant &message, Variant &response) {
 
 void VariantConnection::Close() {
 	if (_fd > 0) {
-		close(_fd);
+		CLOSE_SOCKET(_fd);
 		_fd = 0;
 	}
 }

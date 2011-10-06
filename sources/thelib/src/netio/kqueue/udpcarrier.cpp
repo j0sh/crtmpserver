@@ -35,7 +35,7 @@ UDPCarrier::UDPCarrier(int32_t fd)
 }
 
 UDPCarrier::~UDPCarrier() {
-	close(_inboundFd);
+	CLOSE_SOCKET(_inboundFd);
 }
 
 bool UDPCarrier::OnEvent(struct kevent &event) {
@@ -158,7 +158,7 @@ UDPCarrier* UDPCarrier::Create(string bindIp, uint16_t bindPort,
 		bindAddress.sin_port = EHTONS(bindPort); //----MARKED-SHORT----
 		if (bindAddress.sin_addr.s_addr == INADDR_NONE) {
 			FATAL("Unable to bind on address %s:%hu", STR(bindIp), bindPort);
-			close(sock);
+			CLOSE_SOCKET(sock);
 			return NULL;
 		}
 		uint32_t testVal = EHTONL(bindAddress.sin_addr.s_addr);
@@ -184,7 +184,7 @@ UDPCarrier* UDPCarrier::Create(string bindIp, uint16_t bindPort,
 			int error = errno;
 			FATAL("Unable to bind on address: udp://%s:%"PRIu16"; Error was: %s (%"PRId32")",
 					STR(bindIp), bindPort, strerror(error), error);
-			close(sock);
+			CLOSE_SOCKET(sock);
 			return NULL;
 		}
 		if ((testVal > 0xe0000000) && (testVal < 0xefffffff)) {
@@ -193,7 +193,7 @@ UDPCarrier* UDPCarrier::Create(string bindIp, uint16_t bindPort,
 			group.imr_interface.s_addr = INADDR_ANY;
 			if (setsockopt(sock, IPPROTO_IP, IP_ADD_MEMBERSHIP, (char *) &group, sizeof (group)) < 0) {
 				FATAL("Adding multicast group error");
-				close(sock);
+				CLOSE_SOCKET(sock);
 				return NULL;
 			}
 		}

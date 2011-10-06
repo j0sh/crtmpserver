@@ -69,7 +69,9 @@ OutboundConnectivity::~OutboundConnectivity() {
 		delete _pOutStream;
 	}
 	CLOSE_SOCKET(_videoDataFd);
+	CLOSE_SOCKET(_videoRTCPPort);
 	CLOSE_SOCKET(_audioDataFd);
+	CLOSE_SOCKET(_audioRTCPPort);
 }
 
 bool OutboundConnectivity::Initialize() {

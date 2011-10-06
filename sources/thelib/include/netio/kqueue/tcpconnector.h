@@ -56,7 +56,7 @@ public:
 			T::SignalProtocolCreated(NULL, _customParameters);
 		}
 		if (_closeSocket) {
-			close(_inboundFd);
+			CLOSE_SOCKET(_inboundFd);
 		}
 	}
 
@@ -113,6 +113,7 @@ public:
 		}
 
 		if (!setFdOptions(fd)) {
+			CLOSE_SOCKET(fd);
 			T::SignalProtocolCreated(NULL, customParameters);
 			FATAL("Unable to set socket options");
 			return false;

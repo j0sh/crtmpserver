@@ -106,6 +106,7 @@ public:
 		}
 
 		if (!setFdOptions(fd)) {
+			CLOSE_SOCKET(fd);
 			T::SignalProtocolCreated(NULL, customParameters);
 			FATAL("Unable to set socket options");
 			return false;

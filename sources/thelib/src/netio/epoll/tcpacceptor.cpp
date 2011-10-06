@@ -50,7 +50,7 @@ TCPAcceptor::TCPAcceptor(string ipAddress, uint16_t port, Variant parameters,
 }
 
 TCPAcceptor::~TCPAcceptor() {
-	close(_inboundFd);
+	CLOSE_SOCKET(_inboundFd);
 }
 
 bool TCPAcceptor::Bind() {
@@ -155,6 +155,7 @@ bool TCPAcceptor::Accept() {
 
 	if (!setFdOptions(fd)) {
 		FATAL("Unable to set socket options");
+		CLOSE_SOCKET(fd);
 		return false;
 	}
 
@@ -162,7 +163,7 @@ bool TCPAcceptor::Accept() {
 	BaseProtocol *pProtocol = ProtocolFactoryManager::CreateProtocolChain(_protocolChain, _parameters);
 	if (pProtocol == NULL) {
 		FATAL("Unable to create protocol chain");
-		close(fd);
+		CLOSE_SOCKET(fd);
 		return false;
 	}
 

@@ -150,6 +150,7 @@ bool TCPAcceptor::Accept() {
 
 	if (!setFdOptions(fd)) {
 		FATAL("Unable to set socket options");
+		CLOSE_SOCKET(fd);
 		return false;
 	}
 
