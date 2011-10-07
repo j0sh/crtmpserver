@@ -54,6 +54,15 @@ OutNetRTMP4TSStream::~OutNetRTMP4TSStream() {
 	delete[] _pSPSPPS;
 }
 
+void OutNetRTMP4TSStream::SignalAttachedToInStream() {
+	if (_pInStream == NULL)
+		return;
+	if (_inboundStreamIsRTP && GetCapabilities() != NULL) {
+		_videoCodecSent = (GetCapabilities()->videoCodecId != CODEC_VIDEO_AVC);
+	}
+	BaseOutNetRTMPStream::SignalAttachedToInStream();
+}
+
 bool OutNetRTMP4TSStream::IsCompatibleWithType(uint64_t type) {
 	_inboundStreamIsRTP = TAG_KIND_OF(type, ST_IN_NET_RTP);
 	_videoCodecSent = (type == ST_IN_NET_AAC);

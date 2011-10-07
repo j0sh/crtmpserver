@@ -39,6 +39,8 @@ public:
 	OutNetRTMP4TSStream(BaseProtocol *pProtocol, StreamsManager *pStreamsManager,
 			string name, uint32_t rtmpStreamId, uint32_t chunkSize);
 	virtual ~OutNetRTMP4TSStream();
+	
+	virtual void SignalAttachedToInStream();
 
 	virtual bool IsCompatibleWithType(uint64_t type);
 
