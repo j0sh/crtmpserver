@@ -164,7 +164,6 @@ bool ConfigFile::ConfigInstances() {
 		return true;
 	}
 
-#ifdef EVOCLUSTER
 	for (int32_t i = 0; i < instancesCount; i++) {
 		pid_t pid = fork();
 		if (pid < 0) {
@@ -178,7 +177,6 @@ bool ConfigFile::ConfigInstances() {
 			break;
 		}
 	}
-#endif
 
 	FOR_MAP(_modules, string, Module, i) {
 		MAP_VAL(i).config["isOrigin"] = (bool)_isOrigin;
