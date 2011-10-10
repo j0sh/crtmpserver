@@ -6,15 +6,18 @@ configuration=
 	logAppenders=
 	{
 		{
-            name="console appender",
-            type="coloredConsole",
-            level=6
-        },
+			name="console appender",
+			type="coloredConsole",
+			level=6
+		},
 		{
 			name="file appender",
 			type="file",
 			level=6,
-			fileName="crtmpserver.log"
+			fileName="/tmp/crtmpserver"
+			fileHistorySize=10,
+			fileLength=1024*1024,
+			singleLine=true	
 		}
 	},
 	
