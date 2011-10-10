@@ -331,7 +331,7 @@ bool OutNetRTPUDPH264Stream::FeedDataAudioMPEG4Generic_one_by_one(uint8_t *pData
 		} else {
 			//4. This is not the first chunk. Test to see if this is
 			//the last chunk or not
-			if (totalLength < processedLength + dataLength) {
+			if (dataLength + processedLength < totalLength) {
 				//5. This is not the last chunk of the packet.
 				//Test and see if we have any previous data inside the buffer
 				//if we don't, that means we didn't catch the beginning
