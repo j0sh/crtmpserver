@@ -1,0 +1,52 @@
+Index: cmake_find_modules/Find_lua.cmake
+===================================================================
+--- a/cmake_find_modules/Find_lua.cmake
++++ b/cmake_find_modules/Find_lua.cmake
+@@ -3,6 +3,7 @@
+ 	NAMES
+ 		lualib.h
+ 	PATHS
++		/usr/include/lua5.1
+ 		/usr/include
+ 		/usr/local/include
+ 		/usr/local/include/lua51
+@@ -12,7 +13,7 @@
+ 
+ FIND_LIBRARY(LUA_LIBRARY_PATH_
+ 	NAMES
+-		lua
++		lua5.1
+ 	PATHS
+ 		/usr/lib64
+ 		/usr/lib
+@@ -22,7 +23,7 @@
+ 		/usr/local/lib/lua51
+ 		/sw/lib
+ 		/opt/local/lib
+-		NO_DEFAULT_PATH)
++		)
+ 
+ IF(LUA_INCLUDE_PATH_)
+ 	SET(LUA_FOUND 1)
+Index: cmake_find_modules/Find_openssl.cmake
+===================================================================
+--- a/cmake_find_modules/Find_openssl.cmake
++++ b/cmake_find_modules/Find_openssl.cmake
+@@ -26,7 +26,7 @@
+ 		/sw/lib
+ 		/usr/local/ssl/lib
+ 		/lib
+-		NO_DEFAULT_PATH)
++		)
+ 
+ FIND_LIBRARY(CRYPTO_LIBRARY_PATH
+ 	NAMES
+@@ -40,7 +40,7 @@
+ 		/sw/lib
+ 		/usr/local/ssl/lib
+ 		/lib
+-		NO_DEFAULT_PATH)
++		)
+ 
+ IF($ENV{COMPILE_STATIC} MATCHES "1")
+ 	FIND_LIBRARY(Z_LIBRARY_PATH
