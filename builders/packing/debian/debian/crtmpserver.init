@@ -29,8 +29,9 @@ ENABLED=no
 . /lib/init/vars.sh
 . /lib/lsb/init-functions
 
-UID=$(getent passwd ${DAEMON_USER} | cut -d":" -f3)
-UID_ARG=" --uid=$UID "
+DAEMON_UID=$(getent passwd ${DAEMON_USER} | cut -d":" -f3)
+[ -z ${DAEMON_UID} ] && (echo "User ${DAEMON_USER} not exists"; return 1)
+DAEMON_UID_ARG=" --uid=${DAEMON_UID} "
 
 do_start()
 {
@@ -41,7 +42,7 @@ do_start()
 	start-stop-daemon --start --quiet --pidfile $PIDFILE --exec $DAEMON --test > /dev/null \
 		|| return 1
 	start-stop-daemon --start --quiet --pidfile $PIDFILE --exec $DAEMON -- \
-		$DAEMON_ARGS $UID_ARG $DAEMON_CONF \
+		$DAEMON_ARGS $DAEMON_UID_ARG $DAEMON_CONF \
 		|| return 2
 }
 
