@@ -64,6 +64,7 @@ bool AtomILST::AtomCreated(BaseAtom *pAtom) {
 		case A_TVEN:
 		case A_TVSN:
 		case A_TVES:
+		case A__DES:
 			ADD_VECTOR_END(_metaFields, (AtomMetaField *) pAtom);
 			return true;
 		default:

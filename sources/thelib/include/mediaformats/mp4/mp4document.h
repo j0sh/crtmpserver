@@ -91,6 +91,7 @@
 #define A_NAME (0x6e616d65)
 #define A__COM (0xa9636f6d)
 #define A__GEN (0xa967656e)
+#define A__DES (0xa9444553)
 #define A_DESC (0x64657363)
 #define A_TVSH (0x74767368)
 #define A_TVEN (0x7476656e)
