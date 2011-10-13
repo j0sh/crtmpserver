@@ -33,6 +33,8 @@ BaseOutNetRTPUDPStream::BaseOutNetRTPUDPStream(BaseProtocol *pProtocol,
 	_pConnectivity = NULL;
 	_videoCounter = rand();
 	_audioCounter = rand();
+	_hasAudio = false;
+	_hasVideo = false;
 }
 
 BaseOutNetRTPUDPStream::~BaseOutNetRTPUDPStream() {

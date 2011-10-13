@@ -87,7 +87,7 @@ using namespace std;
 #define GET_PROC_ADDRESS(libHandler, procName) dlsym((libHandler), (procName))
 #define LIBRARY_NAME_PATTERN "lib%s.so"
 #define PATH_SEPARATOR '/'
-#define CLOSE_SOCKET(fd) close(fd)
+#define CLOSE_SOCKET(fd) if((fd)>=0) close((fd))
 #define InitNetworking()
 #define HAS_KQUEUE_TIMERS
 #define KQUEUE_TIMER_MULTIPLIER 1000

@@ -84,7 +84,7 @@ using namespace std;
 #define GET_PROC_ADDRESS(libHandler, procName) dlsym((libHandler), (procName))
 #define LIBRARY_NAME_PATTERN "lib%s.so"
 #define PATH_SEPARATOR '/'
-#define CLOSE_SOCKET(fd) close(fd)
+#define CLOSE_SOCKET(fd) if((fd)>=0) close((fd))
 #define InitNetworking()
 #define MAP_NOCACHE 0
 #define MAP_NOEXTEND 0

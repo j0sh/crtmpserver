@@ -88,7 +88,7 @@ using namespace std;
 #define GET_PROC_ADDRESS(libHandler, procName) dlsym((libHandler), (procName))
 #define LIBRARY_NAME_PATTERN "lib%s.dylib"
 #define PATH_SEPARATOR '/'
-#define CLOSE_SOCKET(fd) close(fd)
+#define CLOSE_SOCKET(fd) if((fd)>=0) close((fd))
 #define InitNetworking()
 #ifdef MAC_OS_X_VERSION_10_6
 #define HAS_KQUEUE_TIMERS
