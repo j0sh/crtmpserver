@@ -101,7 +101,7 @@ bool BaseVariantProtocol::SignalInputData(IOBuffer &buffer) {
 	} else if (_pFarProtocol->GetType() == PT_TCP) {
 		while (GETAVAILABLEBYTESCOUNT(buffer) > 4) {
 			uint32_t size = ENTOHLP(GETIBPOINTER(buffer));
-			if (size > 1024 * 128) {
+			if (size > 4 * 1024 * 1024) {
 				FATAL("Size too big: %u", size);
 				return false;
 			}
