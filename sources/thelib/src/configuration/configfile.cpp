@@ -224,7 +224,11 @@ bool ConfigFile::ConfigLogAppender(Variant &node) {
 	}
 	if (pLogLocation != NULL) {
 		pLogLocation->SetLevel((int32_t) node[CONF_LOG_APPENDER_LEVEL]);
-		Logger::AddLogLocation(pLogLocation);
+		if (!Logger::AddLogLocation(pLogLocation)) {
+			FATAL("Unable to add log location to logger:\n%s", STR(node.ToString()));
+			delete pLogLocation;
+			return false;
+		}
 	}
 	return true;
 }
