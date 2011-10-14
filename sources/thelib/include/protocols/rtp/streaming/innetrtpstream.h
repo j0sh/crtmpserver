@@ -45,6 +45,8 @@ private:
 	uint32_t _audioLastRTP;
 	uint32_t _audioRTPRollCount;
 	double _audioFirstTimestamp;
+	uint32_t _lastAudioRTCPRTP;
+	uint32_t _audioRTCPRTPRollCount;
 
 	bool _hasVideo;
 	IOBuffer _currentNalu;
@@ -58,6 +60,8 @@ private:
 	uint32_t _videoLastRTP;
 	uint32_t _videoRTPRollCount;
 	double _videoFirstTimestamp;
+	uint32_t _lastVideoRTCPRTP;
+	uint32_t _videoRTCPRTPRollCount;
 
 	uint8_t _rtcpPresence;
 	uint8_t _rtcpDetectionInterval;
@@ -91,7 +95,7 @@ public:
 private:
 	void FeedVideoCodecSetup(BaseOutStream *pOutStream);
 	void FeedAudioCodecSetup(BaseOutStream *pOutStream);
-	uint64_t ComputeRTP(RTPHeader &rtpHeader, uint32_t &lastRtp,
+	uint64_t ComputeRTP(uint32_t &currentRtp, uint32_t &lastRtp,
 			uint32_t &rtpRollCount);
 };
 
