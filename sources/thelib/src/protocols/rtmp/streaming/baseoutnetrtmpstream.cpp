@@ -192,6 +192,11 @@ bool BaseOutNetRTMPStream::FeedData(uint8_t *pData, uint32_t dataLength,
 
 			if ((*_pDeltaAudioTime) < 0)
 				(*_pDeltaAudioTime) = absoluteTimestamp;
+			if ((*_pDeltaAudioTime) > absoluteTimestamp) {
+				//FINEST("A: WAIT: D: %.2f", (*_pDeltaAudioTime) - absoluteTimestamp);
+				_pRTMPProtocol->EnqueueForOutbound();
+				return true;
+			}
 
 			H_IA(_audioHeader) = true;
 			H_TS(_audioHeader) = (uint32_t) (absoluteTimestamp - (*_pDeltaAudioTime) + _seekTime);
@@ -243,6 +248,11 @@ bool BaseOutNetRTMPStream::FeedData(uint8_t *pData, uint32_t dataLength,
 
 			if ((*_pDeltaVideoTime) < 0)
 				(*_pDeltaVideoTime) = absoluteTimestamp;
+			if ((*_pDeltaVideoTime) > absoluteTimestamp) {
+				//FINEST("V: WAIT: D: %.2f", (*_pDeltaVideoTime) - absoluteTimestamp);
+				_pRTMPProtocol->EnqueueForOutbound();
+				return true;
+			}
 
 			H_IA(_videoHeader) = true;
 			H_TS(_videoHeader) = (uint32_t) (absoluteTimestamp - (*_pDeltaVideoTime) + _seekTime);
