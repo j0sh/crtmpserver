@@ -81,7 +81,6 @@ then
 			exit 1
 		fi
 	fi
-	SVER="0.`svnversion -n ${ORIGPATH}/sources | tr -d 'M|S|P'`"
 else
 	echo "Fetch current sources from svn"
 	svn co --username "anonymous" --password "" $SVNPATH $ORIGPATH 
@@ -91,10 +90,10 @@ else
 		echo "fail to fetch sources"
 		exit $result
 	fi
-	SVER="0.`svnversion -n ${ORIGPATH}/sources | tr -d 'M|S|P'`"
-#	find $ORIGPATH -name '.svn' -type d -exec rm -rf {} \;  2>/dev/null
 fi
 
+SVER="0.`svnversion -n ${ORIGPATH}/sources | tr -d 'M|S|P'`"
+[ "${SVER}" = "0.exported" ] && SVER="unknown"
 DEBPATH="`pwd`/crtmpserver-${SVER}"
 
 echo "Build debian structures"
