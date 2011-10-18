@@ -178,5 +178,21 @@ Variant GenericMessageFactory::GetInvokeError(Variant &request, Variant &paramet
 			RM_INVOKE_FUNCTION_ERROR,
 			parameters);
 }
+
+Variant GenericMessageFactory::GetInvokeCallFailedError(Variant &request) {
+
+	Variant secondParams;
+	secondParams[RM_INVOKE_PARAMS_RESULT_LEVEL] = RM_INVOKE_PARAMS_RESULT_LEVEL_ERROR;
+	secondParams[RM_INVOKE_PARAMS_RESULT_CODE] = "NetConnection.Call.Failed";
+	secondParams[RM_INVOKE_PARAMS_RESULT_DESCRIPTION] =
+			format("call to function %s failed", STR(M_INVOKE_FUNCTION(request)));
+
+	return GenericMessageFactory::GetInvokeError(
+			VH_CI(request),
+			VH_SI(request),
+			M_INVOKE_ID(request),
+			Variant(),
+			secondParams);
+}
 #endif /* HAS_PROTOCOL_RTMP */
 

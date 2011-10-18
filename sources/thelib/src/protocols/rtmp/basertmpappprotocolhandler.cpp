@@ -1235,8 +1235,8 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokeGeneric(BaseRTMPProtocol *pFrom,
 		Variant & request) {
 	WARN("Default implementation of ProcessInvokeGeneric: Request: %s",
 			STR(M_INVOKE_FUNCTION(request)));
-
-	return true;
+	Variant response = GenericMessageFactory::GetInvokeCallFailedError(request);
+	return SendRTMPMessage(pFrom, response);
 }
 
 bool BaseRTMPAppProtocolHandler::ProcessInvokeResult(BaseRTMPProtocol *pFrom,

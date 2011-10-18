@@ -102,6 +102,7 @@ public:
 	static Variant GetInvokeError(uint32_t channelId, uint32_t streamId,
 			double requestId, Variant firstParam, Variant &secondParam);
 	static Variant GetInvokeError(Variant &request, Variant &parameters);
+	static Variant GetInvokeCallFailedError(Variant &request);
 };
 
 
