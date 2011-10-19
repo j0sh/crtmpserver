@@ -551,7 +551,7 @@ bool ConfigFile::NormalizeApplicationAcceptor(Variant &node, string baseFolder) 
 	}
 	node[CONF_IP] = ip;
 
-	int32_t port;
+	int32_t port = 0;
 	if (node.HasKeyChain(_V_NUMERIC, false, 1, CONF_PORT))
 		port = (int32_t) node.GetValue(CONF_PORT, false);
 	if (port <= 0 || port >= 65536) {

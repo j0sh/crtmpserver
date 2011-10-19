@@ -45,8 +45,8 @@ bool parseURI(string stringUri, URI &uri) {
 	string hostPort;
 	string host;
 	string portString;
-	uint16_t port;
-	bool portSpecified;
+	uint16_t port = 0;
+	bool portSpecified = false;
 	string fullDocumentPathWithParameters;
 	string fullDocumentPath;
 	string fullParameters;
