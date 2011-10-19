@@ -2042,7 +2042,7 @@ bool BaseRTMPAppProtocolHandler::ConnectForPullPush(BaseRTMPProtocol *pFrom,
 	if (isPull) {
 		appName = uri.documentPath();
 	} else {
-		appName = uri.fullDocumentPath();
+		appName = uri.fullDocumentPathWithParameters();
 	}
 	if (appName != "") {
 		if (appName[0] == '/')
@@ -2077,12 +2077,12 @@ bool BaseRTMPAppProtocolHandler::ConnectForPullPush(BaseRTMPProtocol *pFrom,
 		}
 	}
 
-	//3. Compute tcUrl: rtmp://host/appName
-	string tcUrl = format("%s://%s%s/%s",
-			STR(uri.scheme()),
-			STR(uri.host()),
-			STR(uri.portSpecified() ? format(":%"PRIu32) : ""),
-			STR(appName));
+//	//3. Compute tcUrl: rtmp://host/appName
+//	string tcUrl = format("%s://%s%s/%s",
+//			STR(uri.scheme()),
+//			STR(uri.host()),
+//			STR(uri.portSpecified() ? format(":%"PRIu32) : ""),
+//			STR(appName));
 
 	//4. Get the user agent
 	string userAgent = "";
@@ -2094,6 +2094,10 @@ bool BaseRTMPAppProtocolHandler::ConnectForPullPush(BaseRTMPProtocol *pFrom,
 	}
 
 	//5. Get swfUrl and pageUrl
+	string tcUrl = "";
+	if (streamConfig["tcUrl"] == V_STRING) {
+		tcUrl = (string) streamConfig["tcUrl"];
+	}
 	string swfUrl = "";
 	if (streamConfig["swfUrl"] == V_STRING) {
 		swfUrl = (string) streamConfig["swfUrl"];
