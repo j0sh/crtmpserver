@@ -29,7 +29,7 @@ InboundJSONCLIProtocol::InboundJSONCLIProtocol()
 InboundJSONCLIProtocol::~InboundJSONCLIProtocol() {
 }
 
-#define MAX_COMMAND_LENGTH 1024
+#define MAX_COMMAND_LENGTH 8192
 
 bool InboundJSONCLIProtocol::Initialize(Variant &parameters) {
 	InboundBaseCLIProtocol::Initialize(parameters);
