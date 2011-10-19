@@ -50,6 +50,7 @@ public:
 			uint32_t streamId, uint32_t requestId, double createdStreamId);
 	static Variant GetInvokeReleaseStreamResult(uint32_t channelId,
 			uint32_t streamId, uint32_t requestId, double releasedStreamId);
+	static Variant GetInvokeReleaseStreamErrorNotFound(Variant &request);
 	static Variant GetInvokeOnFCPublish(uint32_t channelId,
 			uint32_t streamId, double timeStamp, bool isAbsolute,
 			double requestId, string code, string description);

@@ -124,6 +124,20 @@ Variant StreamMessageFactory::GetInvokeReleaseStreamResult(uint32_t channelId,
 			Variant(), result);
 }
 
+Variant StreamMessageFactory::GetInvokeReleaseStreamErrorNotFound(Variant &request) {
+	Variant secondParams;
+	secondParams[RM_INVOKE_PARAMS_RESULT_LEVEL] = RM_INVOKE_PARAMS_RESULT_LEVEL_ERROR;
+	secondParams[RM_INVOKE_PARAMS_RESULT_CODE] = "NetConnection.Call.Failed";
+	secondParams[RM_INVOKE_PARAMS_RESULT_DESCRIPTION] = "Specified stream not found in call to releaseStream";
+
+	return GenericMessageFactory::GetInvokeError(
+			VH_CI(request),
+			VH_SI(request),
+			M_INVOKE_ID(request),
+			Variant(),
+			secondParams);
+}
+
 Variant StreamMessageFactory::GetInvokeOnFCPublish(uint32_t channelId,
 		uint32_t streamId, double timeStamp, bool isAbsolute,
 		double requestId, string code, string description) {

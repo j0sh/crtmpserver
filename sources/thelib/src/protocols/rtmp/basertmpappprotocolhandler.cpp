@@ -1033,26 +1033,36 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokeReleaseStream(BaseRTMPProtocol *pF
 	//1. Attempt to find the stream
 	map<uint32_t, BaseStream *> streams = GetApplication()->GetStreamsManager()->
 			FindByProtocolIdByName(pFrom->GetId(), M_INVOKE_PARAM(request, 1), false);
+	uint32_t streamId = 0;
 	if (streams.size() > 0) {
 		//2. Is this the correct kind?
 		if (TAG_KIND_OF(MAP_VAL(streams.begin())->GetType(), ST_IN_NET_RTMP)) {
 			//3. get the rtmp stream id
 			InNetRTMPStream *pInNetRTMPStream = (InNetRTMPStream *) MAP_VAL(streams.begin());
-			uint32_t streamId = pInNetRTMPStream->GetRTMPStreamId();
+			streamId = pInNetRTMPStream->GetRTMPStreamId();
 
 			//4. close the stream
 			if (!pFrom->CloseStream(streamId, true)) {
 				FATAL("Unable to close stream");
 				return true;
 			}
+		}
+	}
 
-			//5. Send the response
-			Variant response = StreamMessageFactory::GetInvokeReleaseStreamResult(3,
-					streamId, M_INVOKE_ID(request), streamId);
-			if (!pFrom->SendMessage(response)) {
-				FATAL("Unable to send message to client");
-				return false;
-			}
+	if (streamId > 0) {
+		//5. Send the response
+		Variant response = StreamMessageFactory::GetInvokeReleaseStreamResult(3,
+				streamId, M_INVOKE_ID(request), streamId);
+		if (!pFrom->SendMessage(response)) {
+			FATAL("Unable to send message to client");
+			return false;
+		}
+	} else {
+		Variant response =
+				StreamMessageFactory::GetInvokeReleaseStreamErrorNotFound(request);
+		if (!pFrom->SendMessage(response)) {
+			FATAL("Unable to send message to client");
+			return false;
 		}
 	}
 
