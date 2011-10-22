@@ -110,6 +110,10 @@ bool InboundTSProtocol::SignalInputData(int32_t recvAmount) {
 	return false;
 }
 
+bool InboundTSProtocol::SignalInputData(IOBuffer &buffer, sockaddr_in *pPeerAddress) {
+	return SignalInputData(buffer);
+}
+
 bool InboundTSProtocol::SignalInputData(IOBuffer &buffer) {
 	if (_chunkSize == 0) {
 		if (!DetermineChunkSize(buffer)) {
