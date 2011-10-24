@@ -552,7 +552,7 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPRequestSetupInbound(RTSPProtocol *pFr
 
 	//2. Check and see if it has RTP/AVP/TCP,RTP/AVP/UDP or RTP/AVP
 	if ((!transport.HasKey("rtp/avp/tcp"))
-			&& (!transport.HasKey("rtp/avp/usp"))
+			&& (!transport.HasKey("rtp/avp/udp"))
 			&& (!transport.HasKey("rtp/avp"))) {
 		FATAL("Invalid transport line: %s", STR(transportLine));
 		return false;
