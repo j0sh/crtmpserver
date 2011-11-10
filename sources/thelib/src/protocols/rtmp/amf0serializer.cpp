@@ -65,11 +65,10 @@ AMF0Serializer::~AMF0Serializer() {
 
 bool AMF0Serializer::ReadShortString(IOBuffer &buffer, Variant &variant,
 		bool readType) {
-
 	if (readType) {
 		AMF_CHECK_BOUNDARIES(buffer, 1);
 		if (GETIBPOINTER(buffer)[0] != AMF0_SHORT_STRING) {
-			FATAL("AMF type not valid: want: %hhu; got: %hhu",
+			FATAL("AMF type not valid: want: %"PRIu8"; got: %"PRIu8,
 					AMF0_SHORT_STRING, GETIBPOINTER(buffer)[0]);
 			return false;
 		}
@@ -89,7 +88,7 @@ bool AMF0Serializer::ReadShortString(IOBuffer &buffer, Variant &variant,
 	AMF_CHECK_BOUNDARIES(buffer, length);
 	variant = string((char *) (GETIBPOINTER(buffer)), length);
 	if (!buffer.Ignore(length)) {
-		FATAL("Unable to ignore %hu bytes", length);
+		FATAL("Unable to ignore %"PRIu16" bytes", length);
 		return false;
 	}
 	return true;
@@ -111,7 +110,7 @@ bool AMF0Serializer::ReadLongString(IOBuffer &buffer, Variant &variant, bool rea
 	if (readType) {
 		AMF_CHECK_BOUNDARIES(buffer, 1);
 		if (GETIBPOINTER(buffer)[0] != AMF0_LONG_STRING) {
-			FATAL("AMF type not valid: want: %hhu; got: %hhu",
+			FATAL("AMF type not valid: want: %"PRIu8"; got: %"PRIu8,
 					AMF0_LONG_STRING, GETIBPOINTER(buffer)[0]);
 			return false;
 		}
@@ -132,7 +131,7 @@ bool AMF0Serializer::ReadLongString(IOBuffer &buffer, Variant &variant, bool rea
 	AMF_CHECK_BOUNDARIES(buffer, length);
 	variant = string((char *) (GETIBPOINTER(buffer)), length);
 	if (!buffer.Ignore(length)) {
-		FATAL("Unable to ignore %u bytes", length);
+		FATAL("Unable to ignore %"PRIu32" bytes", length);
 		return false;
 	}
 	return true;
@@ -155,7 +154,7 @@ bool AMF0Serializer::ReadDouble(IOBuffer &buffer, Variant &variant,
 	if (readType) {
 		AMF_CHECK_BOUNDARIES(buffer, 1);
 		if (GETIBPOINTER(buffer)[0] != AMF0_NUMBER) {
-			FATAL("AMF type not valid: want: %hhu; got: %hhu",
+			FATAL("AMF type not valid: want: %"PRIu8"; got: %"PRIu8,
 					AMF0_NUMBER, GETIBPOINTER(buffer)[0]);
 			return false;
 		}
@@ -194,7 +193,7 @@ bool AMF0Serializer::ReadObject(IOBuffer &buffer, Variant &variant,
 	if (readType) {
 		AMF_CHECK_BOUNDARIES(buffer, 1);
 		if (GETIBPOINTER(buffer)[0] != AMF0_OBJECT) {
-			FATAL("AMF type not valid: want: %hhu; got: %hhu",
+			FATAL("AMF type not valid: want: %"PRIu8"; got: %"PRIu8,
 					AMF0_OBJECT, GETIBPOINTER(buffer)[0]);
 			return false;
 		}
@@ -293,7 +292,7 @@ bool AMF0Serializer::ReadMixedArray(IOBuffer &buffer, Variant &variant,
 	if (readType) {
 		AMF_CHECK_BOUNDARIES(buffer, 1);
 		if (GETIBPOINTER(buffer)[0] != AMF0_MIXED_ARRAY) {
-			FATAL("AMF type not valid: want: %hhu; got: %hhu",
+			FATAL("AMF type not valid: want: %"PRIu8"; got: %"PRIu8,
 					AMF0_MIXED_ARRAY, GETIBPOINTER(buffer)[0]);
 			return false;
 		}
@@ -403,11 +402,10 @@ bool AMF0Serializer::WriteMixedArray(IOBuffer &buffer, Variant &variant,
 }
 
 bool AMF0Serializer::ReadArray(IOBuffer &buffer, Variant &variant, bool readType) {
-
 	if (readType) {
 		AMF_CHECK_BOUNDARIES(buffer, 1);
 		if (GETIBPOINTER(buffer)[0] != AMF0_ARRAY) {
-			FATAL("AMF type not valid: want: %hhu; got: %hhu",
+			FATAL("AMF type not valid: want: %"PRIu8"; got: %"PRIu8,
 					AMF0_ARRAY, GETIBPOINTER(buffer)[0]);
 			return false;
 		}
@@ -449,7 +447,7 @@ bool AMF0Serializer::ReadAMF3Object(IOBuffer &buffer, Variant &variant,
 	if (readType) {
 		AMF_CHECK_BOUNDARIES(buffer, 1);
 		if (GETIBPOINTER(buffer)[0] != AMF0_AMF3_OBJECT) {
-			FATAL("AMF type not valid: want: %hhu; got: %hhu",
+			FATAL("AMF type not valid: want: %"PRIu8"; got: %"PRIu8,
 					AMF0_AMF3_OBJECT, GETIBPOINTER(buffer)[0]);
 			return false;
 		}
@@ -485,7 +483,7 @@ bool AMF0Serializer::ReadBoolean(IOBuffer &buffer, Variant &variant,
 	if (readType) {
 		AMF_CHECK_BOUNDARIES(buffer, 1);
 		if (GETIBPOINTER(buffer)[0] != AMF0_BOOLEAN) {
-			FATAL("AMF type not valid: want: %hhu; got: %hhu",
+			FATAL("AMF type not valid: want: %"PRIu8"; got: %"PRIu8,
 					AMF0_BOOLEAN, GETIBPOINTER(buffer)[0]);
 			return false;
 		}
@@ -523,7 +521,7 @@ bool AMF0Serializer::ReadTimestamp(IOBuffer &buffer, Variant &variant, bool read
 	if (readType) {
 		AMF_CHECK_BOUNDARIES(buffer, 1);
 		if (GETIBPOINTER(buffer)[0] != AMF0_TIMESTAMP) {
-			FATAL("AMF type not valid: want: %hhu; got: %hhu",
+			FATAL("AMF type not valid: want: %"PRIu8"; got: %"PRIu8,
 					AMF0_TIMESTAMP, GETIBPOINTER(buffer)[0]);
 			return false;
 		}
@@ -537,6 +535,7 @@ bool AMF0Serializer::ReadTimestamp(IOBuffer &buffer, Variant &variant, bool read
 	Variant doubleVariant;
 	if (!ReadDouble(buffer, doubleVariant, false)) {
 		FATAL("Unable to read the value");
+		return false;
 	}
 
 	time_t timeVal = (time_t) (((double) doubleVariant) / 1000);
@@ -568,7 +567,7 @@ bool AMF0Serializer::WriteTimestamp(IOBuffer &buffer, Timestamp value, bool writ
 bool AMF0Serializer::ReadNull(IOBuffer &buffer, Variant &variant) {
 	AMF_CHECK_BOUNDARIES(buffer, 1);
 	if (GETIBPOINTER(buffer)[0] != AMF0_NULL) {
-		FATAL("AMF type not valid: want: %hhu; got: %hhu",
+		FATAL("AMF type not valid: want: %"PRIu8"; got: %"PRIu8,
 				AMF0_NULL, GETIBPOINTER(buffer)[0]);
 		return false;
 	}
@@ -591,7 +590,7 @@ bool AMF0Serializer::WriteNull(IOBuffer &buffer) {
 bool AMF0Serializer::ReadUndefined(IOBuffer &buffer, Variant &variant) {
 	AMF_CHECK_BOUNDARIES(buffer, 1);
 	if (GETIBPOINTER(buffer)[0] != AMF0_UNDEFINED) {
-		FATAL("AMF type not valid: want: %hhu; got: %hhu",
+		FATAL("AMF type not valid: want: %"PRIu8"; got: %"PRIu8,
 				AMF0_UNDEFINED, GETIBPOINTER(buffer)[0]);
 		return false;
 	}
@@ -727,7 +726,7 @@ bool AMF0Serializer::Read(IOBuffer &buffer, Variant &variant) {
 		}
 		default:
 		{
-			FATAL("Unable to de-serialize type %hhu; Buffer: %s",
+			FATAL("Unable to de-serialize type %"PRIu8"; Buffer: %s",
 					GETIBPOINTER(buffer)[0], STR(buffer));
 			return false;
 		}

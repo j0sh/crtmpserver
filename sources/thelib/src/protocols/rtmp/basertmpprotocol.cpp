@@ -667,6 +667,11 @@ bool BaseRTMPProtocol::ProcessBytes(IOBuffer &buffer) {
 			}
 		}
 
+		if (_selectedChannel >= MAX_CHANNELS_COUNT) {
+			FATAL("Bogus connection. Drop it like is hot");
+			return false;
+		}
+
 		Channel &channel = _channels[_selectedChannel];
 		Header &header = channel.lastInHeader;
 

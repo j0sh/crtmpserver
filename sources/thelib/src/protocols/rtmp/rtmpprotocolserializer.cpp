@@ -20,14 +20,12 @@
 #ifdef HAS_PROTOCOL_RTMP
 #include "protocols/rtmp/rtmpprotocolserializer.h"
 #include "protocols/rtmp/messagefactories/messagefactories.h"
+#include "protocols/rtmp/amftypes.h"
 
 RTMPProtocolSerializer::RTMPProtocolSerializer() {
-
-
 }
 
 RTMPProtocolSerializer::~RTMPProtocolSerializer() {
-
 }
 
 string RTMPProtocolSerializer::GetUserCtrlTypeString(uint16_t type) {
@@ -452,7 +450,7 @@ bool RTMPProtocolSerializer::SerializeSharedObject(IOBuffer &buffer,
 
 				uint32_t length = buffer.GetCurrentWritePosition()
 						- rawLengthPosition - 4;
-				EHTONLP(buffer.GetPointer() + rawLengthPosition,length);
+				EHTONLP(buffer.GetPointer() + rawLengthPosition, length);
 				break;
 			}
 			case SOT_SC_CLEAR_DATA:
@@ -510,13 +508,8 @@ bool RTMPProtocolSerializer::DeserializeNotify(IOBuffer &buffer, Variant &messag
 }
 
 bool RTMPProtocolSerializer::DeserializeFlexStreamSend(IOBuffer &buffer, Variant &message) {
-	if (GETAVAILABLEBYTESCOUNT(buffer) < 1) {
-		FATAL("Incorrect buffer:\n%s", STR(buffer));
-		return false;
-	}
-
+	AMF_CHECK_BOUNDARIES(buffer, 1);
 	message[RM_FLEXSTREAMSEND_UNKNOWNBYTE] = (uint8_t) GETIBPOINTER(buffer)[0];
-
 	if (!buffer.Ignore(1)) {
 		FATAL("Unable to ignore 1 byte");
 		return false;
@@ -562,11 +555,13 @@ bool RTMPProtocolSerializer::DeserializeInvoke(IOBuffer &buffer, Variant &messag
 
 bool RTMPProtocolSerializer::DeserializeAck(IOBuffer &buffer,
 		Variant &message) {
+	AMF_CHECK_BOUNDARIES(buffer, 4);
 	message = (uint32_t) ENTOHLP(GETIBPOINTER(buffer)); //----MARKED-LONG---
 	return buffer.Ignore(4);
 }
 
 bool RTMPProtocolSerializer::DeserializeUsrCtrl(IOBuffer &buffer, Variant &message) {
+	AMF_CHECK_BOUNDARIES(buffer, 2);
 	message[RM_USRCTRL_TYPE] = ENTOHSP(GETIBPOINTER(buffer)); //----MARKED-SHORT----
 	message[RM_USRCTRL_TYPE_STRING] = GetUserCtrlTypeString(message[RM_USRCTRL_TYPE]);
 	if (!buffer.Ignore(2)) {
@@ -580,6 +575,7 @@ bool RTMPProtocolSerializer::DeserializeUsrCtrl(IOBuffer &buffer, Variant &messa
 		case RM_USRCTRL_TYPE_STREAM_DRY:
 		case RM_USRCTRL_TYPE_STREAM_IS_RECORDED:
 		{
+			AMF_CHECK_BOUNDARIES(buffer, 4);
 			message[RM_USRCTRL_STREAMID] = ENTOHLP(GETIBPOINTER(buffer)); //----MARKED-LONG---
 			if (!buffer.Ignore(4)) {
 				FATAL("Unable to ignore 4 bytes");
@@ -589,6 +585,7 @@ bool RTMPProtocolSerializer::DeserializeUsrCtrl(IOBuffer &buffer, Variant &messa
 		}
 		case RM_USRCTRL_TYPE_STREAM_SET_BUFFER_LENGTH:
 		{
+			AMF_CHECK_BOUNDARIES(buffer, 8);
 			message[RM_USRCTRL_STREAMID] = ENTOHLP(GETIBPOINTER(buffer)); //----MARKED-LONG---
 			if (!buffer.Ignore(4)) {
 				FATAL("Unable to ignore 4 bytes");
@@ -603,6 +600,7 @@ bool RTMPProtocolSerializer::DeserializeUsrCtrl(IOBuffer &buffer, Variant &messa
 		}
 		case RM_USRCTRL_TYPE_PING_REQUEST:
 		{
+			AMF_CHECK_BOUNDARIES(buffer, 4);
 			message[RM_USRCTRL_PING] = ENTOHLP(GETIBPOINTER(buffer)); //----MARKED-LONG---
 			if (!buffer.Ignore(4)) {
 				FATAL("Unable to ignore 4 bytes");
@@ -612,6 +610,7 @@ bool RTMPProtocolSerializer::DeserializeUsrCtrl(IOBuffer &buffer, Variant &messa
 		}
 		case RM_USRCTRL_TYPE_PING_RESPONSE:
 		{
+			AMF_CHECK_BOUNDARIES(buffer, 4);
 			message[RM_USRCTRL_PONG] = ENTOHLP(GETIBPOINTER(buffer)); //----MARKED-LONG---
 			if (!buffer.Ignore(4)) {
 				FATAL("Unable to ignore 4 bytes");
@@ -622,6 +621,7 @@ bool RTMPProtocolSerializer::DeserializeUsrCtrl(IOBuffer &buffer, Variant &messa
 		case RM_USRCTRL_TYPE_UNKNOWN1:
 		case RM_USRCTRL_TYPE_UNKNOWN2:
 		{
+			AMF_CHECK_BOUNDARIES(buffer, 4);
 			message[RM_USRCTRL_UNKNOWN_U32] = ENTOHLP(GETIBPOINTER(buffer)); //----MARKED-LONG---
 			if (!buffer.Ignore(4)) {
 				FATAL("Unable to ignore 4 bytes");
@@ -640,16 +640,19 @@ bool RTMPProtocolSerializer::DeserializeUsrCtrl(IOBuffer &buffer, Variant &messa
 
 bool RTMPProtocolSerializer::DeserializeChunkSize(IOBuffer &buffer,
 		Variant &message) {
+	AMF_CHECK_BOUNDARIES(buffer, 4);
 	message = (uint32_t) ENTOHLP(GETIBPOINTER(buffer)); //----MARKED-LONG---
 	return buffer.Ignore(4);
 }
 
 bool RTMPProtocolSerializer::DeserializeWinAckSize(IOBuffer &buffer, Variant &message) {
+	AMF_CHECK_BOUNDARIES(buffer, 4);
 	message = (uint32_t) ENTOHLP(GETIBPOINTER(buffer)); //----MARKED-LONG---
 	return buffer.Ignore(4);
 }
 
 bool RTMPProtocolSerializer::DeserializePeerBW(IOBuffer &buffer, Variant &message) {
+	AMF_CHECK_BOUNDARIES(buffer, 4);
 	message[RM_PEERBW_VALUE] = (uint32_t) ENTOHLP(GETIBPOINTER(buffer)); //----MARKED-LONG---
 	if (!buffer.Ignore(4)) {
 		FATAL("Unable to ignore 4 bytes");
@@ -660,6 +663,7 @@ bool RTMPProtocolSerializer::DeserializePeerBW(IOBuffer &buffer, Variant &messag
 }
 
 bool RTMPProtocolSerializer::DeserializeAbortMessage(IOBuffer &buffer, Variant &message) {
+	AMF_CHECK_BOUNDARIES(buffer, 4);
 	message = (uint32_t) ENTOHLP(GETIBPOINTER(buffer)); //----MARKED-LONG---
 	if (!buffer.Ignore(4)) {
 		FATAL("Unable to ignore 4 bytes");
@@ -670,8 +674,9 @@ bool RTMPProtocolSerializer::DeserializeAbortMessage(IOBuffer &buffer, Variant &
 
 bool RTMPProtocolSerializer::DeserializeFlexSharedObject(IOBuffer &buffer,
 		Variant &message) {
+	AMF_CHECK_BOUNDARIES(buffer, 1);
 	if (GETIBPOINTER(buffer)[0] != 0) {
-		FATAL("Encoding %hhu not supported yet", GETIBPOINTER(buffer)[0]);
+		FATAL("Encoding %"PRIu8" not supported yet", GETIBPOINTER(buffer)[0]);
 		return false;
 	}
 
@@ -705,6 +710,7 @@ bool RTMPProtocolSerializer::DeserializeSharedObject(IOBuffer &buffer, Variant &
 	message[RM_SHAREDOBJECT_PERSISTENCE] = (uint32_t) persistence == 2;
 
 	//4. Skip 4 unknown bytes
+	AMF_CHECK_BOUNDARIES(buffer, 4);
 	if (!buffer.Ignore(4)) {
 		FATAL("Unable to ignore 4 bytes");
 		return false;
@@ -730,10 +736,7 @@ bool RTMPProtocolSerializer::DeserializeSharedObject(IOBuffer &buffer, Variant &
 			return false;
 		}
 		uint32_t rawLength = primitive[RM_SHAREDOBJECTPRIMITIVE_RAWLENGTH];
-		if (GETAVAILABLEBYTESCOUNT(buffer) < rawLength) {
-			FATAL("Not enough data to parse a SO primitive");
-			return false;
-		}
+		AMF_CHECK_BOUNDARIES(buffer, rawLength);
 
 		//8. Read the rest of the primitive based on it's type
 		switch ((uint8_t) primitive[RM_SHAREDOBJECTPRIMITIVE_TYPE]) {
