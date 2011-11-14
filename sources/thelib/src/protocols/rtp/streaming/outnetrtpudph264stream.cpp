@@ -28,8 +28,14 @@
 #define MAX_RTP_PACKET_SIZE 1350
 
 OutNetRTPUDPH264Stream::OutNetRTPUDPH264Stream(BaseProtocol *pProtocol,
-		StreamsManager *pStreamsManager, string name)
+		StreamsManager *pStreamsManager, string name, bool forceTcp)
 : BaseOutNetRTPUDPStream(pProtocol, pStreamsManager, name) {
+	_forceTcp = forceTcp;
+	if (_forceTcp)
+		_maxRTPPacketSize = 1500;
+	else
+		_maxRTPPacketSize = MAX_RTP_PACKET_SIZE;
+
 	memset(&_videoData, 0, sizeof (_videoData));
 	_videoData.msg_iov = new iovec[2];
 	_videoData.msg_iovlen = 2;
@@ -95,7 +101,9 @@ bool OutNetRTPUDPH264Stream::FeedDataVideo(uint8_t *pData, uint32_t dataLength,
 	_videoPacketsCount++;
 	//1. Test and see if this is an inbound RTMP stream. If so,
 	//we have to strip out the RTMP 9 bytes header
-	if (_pInStream->GetType() == ST_IN_NET_RTMP) {
+	uint64_t inStreamType = _pInStream->GetType();
+	if ((inStreamType == ST_IN_NET_RTMP)
+			|| (inStreamType == ST_IN_NET_LIVEFLV)) {
 		//2. Test and see if we have a brand new packet
 		if (processedLength == 0) {
 			//3. This must be a payload packet, not codec setup
@@ -213,7 +221,7 @@ bool OutNetRTPUDPH264Stream::FeedDataVideoFUA(uint8_t *pData, uint32_t dataLengt
 	uint32_t chunkSize = 0;
 	while (sentAmount != dataLength) {
 		chunkSize = dataLength - sentAmount;
-		chunkSize = chunkSize < MAX_RTP_PACKET_SIZE ? chunkSize : MAX_RTP_PACKET_SIZE;
+		chunkSize = chunkSize < _maxRTPPacketSize ? chunkSize : _maxRTPPacketSize;
 
 		//1. Flags
 		if (processedLength + sentAmount + chunkSize == totalLength) {
@@ -277,7 +285,7 @@ bool OutNetRTPUDPH264Stream::FeedDataAudioMPEG4Generic_aggregate(uint8_t *pData,
 	}
 
 	//2. Test if we need to send what we have so far
-	if (((14 + _audioData.msg_iov[1].iov_len + GETAVAILABLEBYTESCOUNT(_audioBuffer) + 2 + dataLength - 7) > MAX_RTP_PACKET_SIZE)
+	if (((14 + _audioData.msg_iov[1].iov_len + GETAVAILABLEBYTESCOUNT(_audioBuffer) + 2 + dataLength - 7) > _maxRTPPacketSize)
 			|| (_audioData.msg_iov[1].iov_len == 16)) {
 		//3. counter
 		EHTONSP(((uint8_t *) _audioData.msg_iov[0].iov_base) + 2, _audioCounter);
@@ -372,7 +380,9 @@ bool OutNetRTPUDPH264Stream::FeedDataAudioMPEG4Generic_one_by_one(uint8_t *pData
 
 	uint64_t inStreamType = _pInStream->GetType();
 
-	if ((inStreamType == ST_IN_NET_RTMP) || (inStreamType == ST_IN_NET_RTP)) {
+	if ((inStreamType == ST_IN_NET_RTMP)
+			|| (inStreamType == ST_IN_NET_RTP)
+			|| (inStreamType == ST_IN_NET_LIVEFLV)) {
 		//2. Do we have enough data to read the RTMP header?
 		if (dataLength <= 2) {
 			WARN("Bogus AAC packet");
@@ -381,7 +391,8 @@ bool OutNetRTPUDPH264Stream::FeedDataAudioMPEG4Generic_one_by_one(uint8_t *pData
 		}
 
 		//3. Take care of the RTMP headers if necessary
-		if (inStreamType == ST_IN_NET_RTMP) {
+		if ((inStreamType == ST_IN_NET_RTMP)
+				|| (inStreamType == ST_IN_NET_LIVEFLV)) {
 			//3. Is this a RTMP codec setup? If so, ignore it
 			if (pData[1] != 1) {
 				_audioBuffer.IgnoreAll();

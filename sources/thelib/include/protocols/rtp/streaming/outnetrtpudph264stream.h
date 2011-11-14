@@ -26,6 +26,7 @@
 class DLLEXP OutNetRTPUDPH264Stream
 : public BaseOutNetRTPUDPStream {
 private:
+	bool _forceTcp;
 	IOBuffer _videoBuffer;
 	msghdr _videoData;
 	uint8_t *_pSPS;
@@ -42,9 +43,10 @@ private:
 	uint64_t _videoPacketsCount;
 	uint64_t _videoDroppedPacketsCount;
 	uint64_t _videoBytesCount;
+	uint32_t _maxRTPPacketSize;
 public:
 	OutNetRTPUDPH264Stream(BaseProtocol *pProtocol,
-			StreamsManager *pStreamsManager, string name);
+			StreamsManager *pStreamsManager, string name, bool forceTcp);
 	virtual ~OutNetRTPUDPH264Stream();
 
 	virtual void GetStats(Variant &info, uint32_t namespaceId = 0);

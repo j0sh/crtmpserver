@@ -22,9 +22,13 @@
 #include "protocols/rtp/streaming/baseoutnetrtpudpstream.h"
 #include "protocols/protocolmanager.h"
 #include "protocols/baseprotocol.h"
+#include "protocols/rtp/rtspprotocol.h"
 
-OutboundConnectivity::OutboundConnectivity()
+OutboundConnectivity::OutboundConnectivity(bool forceTcp, RTSPProtocol *pRTSPProtocol)
 : BaseConnectivity() {
+	_forceTcp = forceTcp;
+	_pRTSPProtocol = pRTSPProtocol;
+
 	_pOutStream = NULL;
 
 	memset(&_dataMessage, 0, sizeof (_dataMessage));
@@ -75,13 +79,20 @@ OutboundConnectivity::~OutboundConnectivity() {
 }
 
 bool OutboundConnectivity::Initialize() {
-	if (!InitializePorts(_videoDataFd, _videoDataPort, _videoRTCPFd, _videoRTCPPort)) {
-		FATAL("Unable to initialize video ports");
-		return false;
-	}
-	if (!InitializePorts(_audioDataFd, _audioDataPort, _audioRTCPFd, _audioRTCPPort)) {
-		FATAL("Unable to initialize audio ports");
-		return false;
+	if (_forceTcp) {
+		_rtpClient.audioDataChannel = 0;
+		_rtpClient.audioRtcpChannel = 1;
+		_rtpClient.videoDataChannel = 2;
+		_rtpClient.videoRtcpChannel = 3;
+	} else {
+		if (!InitializePorts(_videoDataFd, _videoDataPort, _videoRTCPFd, _videoRTCPPort)) {
+			FATAL("Unable to initialize video ports");
+			return false;
+		}
+		if (!InitializePorts(_audioDataFd, _audioDataPort, _audioRTCPFd, _audioRTCPPort)) {
+			FATAL("Unable to initialize audio ports");
+			return false;
+		}
 	}
 	return true;
 }
@@ -96,6 +107,16 @@ string OutboundConnectivity::GetVideoPorts() {
 
 string OutboundConnectivity::GetAudioPorts() {
 	return format("%"PRIu16"-%"PRIu16, _audioDataPort, _audioRTCPPort);
+}
+
+string OutboundConnectivity::GetVideoChannels() {
+	return format("%"PRIu8"-%"PRIu8, _rtpClient.videoDataChannel,
+			_rtpClient.videoRtcpChannel);
+}
+
+string OutboundConnectivity::GetAudioChannels() {
+	return format("%"PRIu8"-%"PRIu8, _rtpClient.audioDataChannel,
+			_rtpClient.audioRtcpChannel);
 }
 
 uint32_t OutboundConnectivity::GetAudioSSRC() {
@@ -128,99 +149,85 @@ void OutboundConnectivity::HasVideo(bool value) {
 	_pOutStream->HasAudioVideo(_hasAudio, _hasVideo);
 }
 
-bool OutboundConnectivity::RegisterUDPVideoClient1(uint32_t rtspProtocolId,
+bool OutboundConnectivity::RegisterUDPVideoClient(uint32_t rtspProtocolId,
 		sockaddr_in &data, sockaddr_in &rtcp) {
-	if (!MAP_HAS1(_clients, rtspProtocolId))
-		_clients[rtspProtocolId] = RTPClient();
-
-	RTPClient &client = _clients[rtspProtocolId];
-	if (client.hasVideo) {
+	if (_rtpClient.hasVideo) {
 		FATAL("Client already registered for video feed");
 		return false;
 	}
-	client.hasVideo = true;
-	client.isUdp = true;
-	client.videoDataAddress = data;
-	client.videoRtcpAddress = rtcp;
+	_rtpClient.hasVideo = true;
+	_rtpClient.isUdp = true;
+	_rtpClient.videoDataAddress = data;
+	_rtpClient.videoRtcpAddress = rtcp;
+	_rtpClient.protocolId = rtspProtocolId;
 	return true;
 }
 
-bool OutboundConnectivity::RegisterUDPAudioClient1(uint32_t rtspProtocolId,
+bool OutboundConnectivity::RegisterUDPAudioClient(uint32_t rtspProtocolId,
 		sockaddr_in &data, sockaddr_in &rtcp) {
-	if (!MAP_HAS1(_clients, rtspProtocolId))
-		_clients[rtspProtocolId] = RTPClient();
-
-	RTPClient &client = _clients[rtspProtocolId];
-	if (client.hasAudio) {
+	if (_rtpClient.hasAudio) {
 		FATAL("Client already registered for audio feed");
 		return false;
 	}
-	client.hasAudio = true;
-	client.isUdp = true;
-	client.audioDataAddress = data;
-	client.audioRtcpAddress = rtcp;
+	_rtpClient.hasAudio = true;
+	_rtpClient.isUdp = true;
+	_rtpClient.audioDataAddress = data;
+	_rtpClient.audioRtcpAddress = rtcp;
+	_rtpClient.protocolId = rtspProtocolId;
 	return true;
 }
 
-void OutboundConnectivity::UnRegisterClient(uint32_t protocolId) {
-	if (MAP_HAS1(_clients, protocolId))
-		_clients.erase(protocolId);
+bool OutboundConnectivity::RegisterTCPVideoClient(uint32_t rtspProtocolId,
+		uint8_t data, uint8_t rtcp) {
+	if (_rtpClient.hasVideo) {
+		FATAL("Client already registered for video feed");
+		return false;
+	}
+	_rtpClient.hasVideo = true;
+	_rtpClient.isUdp = false;
+	_rtpClient.videoDataChannel = data;
+	_rtpClient.videoRtcpChannel = rtcp;
+	_rtpClient.protocolId = rtspProtocolId;
+	return true;
 }
 
-bool OutboundConnectivity::HasClients() {
-	return _clients.size() != 0;
+bool OutboundConnectivity::RegisterTCPAudioClient(uint32_t rtspProtocolId,
+		uint8_t data, uint8_t rtcp) {
+	if (_rtpClient.hasAudio) {
+		FATAL("Client already registered for audio feed");
+		return false;
+	}
+	_rtpClient.hasAudio = true;
+	_rtpClient.isUdp = false;
+	_rtpClient.audioDataChannel = data;
+	_rtpClient.audioRtcpChannel = rtcp;
+	_rtpClient.protocolId = rtspProtocolId;
+	return true;
 }
 
 void OutboundConnectivity::SignalDetachedFromInStream() {
-
-	FOR_MAP(_clients, uint32_t, RTPClient, i) {
-		BaseProtocol *pProtocol = ProtocolManager::GetProtocol(MAP_KEY(i));
-		if (pProtocol != NULL)
-			pProtocol->EnqueueForDelete();
+	BaseProtocol *pProtocol = ProtocolManager::GetProtocol(_rtpClient.protocolId);
+	if (pProtocol != NULL) {
+		pProtocol->EnqueueForDelete();
 	}
-}
-
-bool OutboundConnectivity::FeedVideoData(uint8_t *pBuffer, uint32_t length,
-		double absoluteTimestamp) {
-	_dataMessage.msg_iov[0].iov_base = pBuffer;
-	_dataMessage.msg_iov[0].iov_len = length;
-	return FeedVideoData(_dataMessage, absoluteTimestamp);
-}
-
-bool OutboundConnectivity::FeedAudioData(uint8_t *pBuffer, uint32_t length,
-		double absoluteTimestamp) {
-	_dataMessage.msg_iov[0].iov_base = pBuffer;
-	_dataMessage.msg_iov[0].iov_len = length;
-	return FeedAudioData(_dataMessage, absoluteTimestamp);
+	_pRTSPProtocol = NULL;
 }
 
 bool OutboundConnectivity::FeedVideoData(msghdr &message,
 		double absoluteTimestamp) {
-	//	_videoRtpTs = ENTOHLP(((uint8_t *) message.msg_iov[0].iov_base) + 4);
-	if (!FeedDataUDP(message, absoluteTimestamp, false)) {
+	if (!FeedData(message, absoluteTimestamp, false)) {
 		FATAL("Unable to feed video UDP clients");
 		return false;
 	}
-	if (!FeedDataTCP(message, absoluteTimestamp, false)) {
-		FATAL("Unable to feed video TCP clients");
-		return false;
-	}
-
 	return true;
 }
 
 bool OutboundConnectivity::FeedAudioData(msghdr &message,
 		double absoluteTimestamp) {
-	//	_audioRtpTs = ENTOHLP(((uint8_t *) message.msg_iov[0].iov_base) + 4);
-	if (!FeedDataUDP(message, absoluteTimestamp, true)) {
+	if (!FeedData(message, absoluteTimestamp, true)) {
 		FATAL("Unable to feed audio UDP clients");
 		return false;
 	}
-	if (!FeedDataTCP(message, absoluteTimestamp, true)) {
-		FATAL("Unable to feed audio TCP clients");
-		return false;
-	}
-
 	return true;
 }
 
@@ -280,83 +287,99 @@ bool OutboundConnectivity::InitializePorts(int32_t &dataFd, uint16_t &dataPort,
 	return false;
 }
 
-bool OutboundConnectivity::FeedDataUDP(msghdr &message, double absoluteTimestamp,
+bool OutboundConnectivity::FeedData(msghdr &message, double absoluteTimestamp,
 		bool isAudio) {
 	if (absoluteTimestamp == 0)
 		return true;
 
-	int32_t dataFd = isAudio ? _audioDataFd : _videoDataFd;
-	int32_t rtcpFd = isAudio ? _audioRTCPFd : _videoRTCPFd;
 	double rate = isAudio ? _pOutStream->GetCapabilities()->aac._sampleRate : 90000.0;
 	uint32_t ssrc = isAudio ? _pOutStream->AudioSSRC() : _pOutStream->VideoSSRC();
-	uint32_t messageLength = 0;
+	uint16_t messageLength = 0;
 	for (uint32_t i = 0; i < (uint32_t) message.msg_iovlen; i++) {
 		messageLength += message.msg_iov[i].iov_len;
 	}
 
-	FOR_MAP(_clients, uint32_t, RTPClient, i) {
-		RTPClient &client = MAP_VAL(i);
-		bool &hasTrack = isAudio ? client.hasAudio : client.hasVideo;
-		sockaddr_in &dataAddress = isAudio ? client.audioDataAddress : client.videoDataAddress;
-		uint32_t &packetsCount = isAudio ? client.audioPacketsCount : client.videoPacketsCount;
-		uint32_t &bytesCount = isAudio ? client.audioBytesCount : client.videoBytesCount;
-		uint32_t &startRTP = isAudio ? client.audioStartRTP : client.videoStartRTP;
-		double &startTS = isAudio ? client.audioStartTS : client.videoStartTS;
-		if (!hasTrack)
-			continue;
+	bool &hasTrack = isAudio ? _rtpClient.hasAudio : _rtpClient.hasVideo;
+	uint32_t &packetsCount = isAudio ? _rtpClient.audioPacketsCount : _rtpClient.videoPacketsCount;
+	uint32_t &bytesCount = isAudio ? _rtpClient.audioBytesCount : _rtpClient.videoBytesCount;
+	uint32_t &startRTP = isAudio ? _rtpClient.audioStartRTP : _rtpClient.videoStartRTP;
+	double &startTS = isAudio ? _rtpClient.audioStartTS : _rtpClient.videoStartTS;
+	if (!hasTrack) {
+		return true;
+	}
 
-		if (startRTP == 0xffffffff) {
-			startRTP = ENTOHLP(((uint8_t *) message.msg_iov[0].iov_base) + 4);
-			startTS = absoluteTimestamp;
-		}
+	if (startRTP == 0xffffffff) {
+		startRTP = ENTOHLP(((uint8_t *) message.msg_iov[0].iov_base) + 4);
+		startTS = absoluteTimestamp;
+	}
 
-		if ((packetsCount % 500) == 0) {
-			//FINEST("Send %c RTCP: %u", isAudio ? 'A' : 'V', packetsCount);
-			EHTONLP(((uint8_t *) _rtcpMessage.msg_iov[0].iov_base) + 4, ssrc); //SSRC
+	if ((packetsCount % 500) == 0) {
+		//FINEST("Send %c RTCP: %u", isAudio ? 'A' : 'V', packetsCount);
+		EHTONLP(((uint8_t *) _rtcpMessage.msg_iov[0].iov_base) + 4, ssrc); //SSRC
 
 
-			//NTP
-			uint32_t integerValue = (uint32_t) (absoluteTimestamp / 1000.0);
-			double fractionValue = (absoluteTimestamp / 1000.0 - ((uint32_t) (absoluteTimestamp / 1000.0)))*4294967296.0;
-			uint64_t ntpVal = (_startupTime + integerValue + 2208988800ULL) << 32;
-			ntpVal |= (uint32_t) fractionValue;
-			EHTONLLP(_pRTCPNTP, ntpVal);
+		//NTP
+		uint32_t integerValue = (uint32_t) (absoluteTimestamp / 1000.0);
+		double fractionValue = (absoluteTimestamp / 1000.0 - ((uint32_t) (absoluteTimestamp / 1000.0)))*4294967296.0;
+		uint64_t ntpVal = (_startupTime + integerValue + 2208988800ULL) << 32;
+		ntpVal |= (uint32_t) fractionValue;
+		EHTONLLP(_pRTCPNTP, ntpVal);
 
-			//RTP
-			uint64_t rtp = (uint64_t) (((double) (integerValue) + fractionValue / 4294967296.0) * rate);
-			rtp &= 0xffffffff;
-			EHTONLP(_pRTCPRTP, (uint32_t) rtp);
+		//RTP
+		uint64_t rtp = (uint64_t) (((double) (integerValue) + fractionValue / 4294967296.0) * rate);
+		rtp &= 0xffffffff;
+		EHTONLP(_pRTCPRTP, (uint32_t) rtp);
 
-			//packet count
-			EHTONLP(_pRTCPSPC, packetsCount);
+		//packet count
+		EHTONLP(_pRTCPSPC, packetsCount);
 
-			//octet count
-			EHTONLP(_pRTCPSOC, bytesCount);
-			//			FINEST("\n%s", STR(IOBuffer::DumpBuffer(((uint8_t *) _rtcpMessage.msg_iov[0].iov_base),
-			//					_rtcpMessage.msg_iov[0].iov_len)));
+		//octet count
+		EHTONLP(_pRTCPSOC, bytesCount);
+		//			FINEST("\n%s", STR(IOBuffer::DumpBuffer(((uint8_t *) _rtcpMessage.msg_iov[0].iov_base),
+		//					_rtcpMessage.msg_iov[0].iov_len)));
 
-			sockaddr_in &rtcpAddress = isAudio ? client.audioRtcpAddress : client.videoRtcpAddress;
+		if (_rtpClient.isUdp) {
+			int32_t rtcpFd = isAudio ? _audioRTCPFd : _videoRTCPFd;
+			sockaddr_in &rtcpAddress = isAudio ? _rtpClient.audioRtcpAddress : _rtpClient.videoRtcpAddress;
 			_rtcpMessage.msg_name = &rtcpAddress;
 			if (sendmsg(rtcpFd, &_rtcpMessage, 0) <= 0) {
 				FATAL("Unable to send message");
 				return false;
 			}
+		} else {
+			if (_pRTSPProtocol != NULL) {
+				if (!_pRTSPProtocol->SendRaw(&_rtcpMessage,
+						_rtcpMessage.msg_iov[0].iov_len, &_rtpClient, isAudio, false)) {
+					FATAL("Unable to send raw rtcp audio data");
+					return false;
+				}
+			}
 		}
+	}
 
+
+	if (_rtpClient.isUdp) {
+		int32_t dataFd = isAudio ? _audioDataFd : _videoDataFd;
+		sockaddr_in &dataAddress = isAudio ? _rtpClient.audioDataAddress : _rtpClient.videoDataAddress;
 		message.msg_name = &dataAddress;
-		if (sendmsg(dataFd, &message, 0) <= 0) {
-			FATAL("Unable to send message");
+		if (sendmsg(dataFd, &message, 0) < 0) {
+			int err = errno;
+			FATAL("Unable to send message: %d; %s", err, strerror(errno));
 			return false;
 		}
-
-		packetsCount++;
-		bytesCount += messageLength;
+	} else {
+		if (_pRTSPProtocol != NULL) {
+			if (!_pRTSPProtocol->SendRaw(&message, messageLength, &_rtpClient,
+					isAudio, true)) {
+				FATAL("Unable to send raw rtcp audio data");
+				return false;
+			}
+		}
 	}
-	return true;
-}
 
-bool OutboundConnectivity::FeedDataTCP(msghdr &message, double absoluteTimestamp,
-		bool isAudio) {
+	packetsCount++;
+	bytesCount += messageLength;
+
 	return true;
 }
 

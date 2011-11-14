@@ -24,8 +24,9 @@
 #include "protocols/rtp/connectivity/baseconnectivity.h"
 
 class BaseOutNetRTPUDPStream;
+class RTSPProtocol;
 
-typedef struct _RTPClient {
+struct RTPClient {
 	uint32_t protocolId;
 	bool isUdp;
 
@@ -36,6 +37,8 @@ typedef struct _RTPClient {
 	uint32_t audioBytesCount;
 	uint32_t audioStartRTP;
 	double audioStartTS;
+	uint8_t audioDataChannel;
+	uint8_t audioRtcpChannel;
 
 	bool hasVideo;
 	sockaddr_in videoDataAddress;
@@ -44,8 +47,10 @@ typedef struct _RTPClient {
 	uint32_t videoBytesCount;
 	uint32_t videoStartRTP;
 	double videoStartTS;
+	uint8_t videoDataChannel;
+	uint8_t videoRtcpChannel;
 
-	_RTPClient() {
+	RTPClient() {
 		protocolId = 0;
 		isUdp = false;
 
@@ -56,6 +61,8 @@ typedef struct _RTPClient {
 		audioBytesCount = 0;
 		audioStartRTP = 0xffffffff;
 		audioStartTS = -1;
+		audioDataChannel = 0xff;
+		audioRtcpChannel = 0xff;
 
 		hasVideo = false;
 		memset(&videoDataAddress, 0, sizeof (videoDataAddress));
@@ -64,12 +71,16 @@ typedef struct _RTPClient {
 		videoBytesCount = 0;
 		videoStartRTP = 0xffffffff;
 		videoStartTS = -1;
+		videoDataChannel = 0xff;
+		videoRtcpChannel = 0xff;
 	}
-} RTPClient;
+};
 
 class DLLEXP OutboundConnectivity
 : public BaseConnectivity {
 private:
+	bool _forceTcp;
+	RTSPProtocol *_pRTSPProtocol;
 	BaseOutNetRTPUDPStream *_pOutStream;
 	msghdr _dataMessage;
 	msghdr _rtcpMessage;
@@ -78,7 +89,7 @@ private:
 	uint8_t *_pRTCPSPC;
 	uint8_t *_pRTCPSOC;
 	uint64_t _startupTime;
-	map<uint32_t, RTPClient> _clients;
+	RTPClient _rtpClient;
 	bool _hasAudio;
 	bool _hasVideo;
 
@@ -92,34 +103,33 @@ private:
 	int32_t _audioRTCPFd;
 	uint16_t _audioRTCPPort;
 public:
-	OutboundConnectivity();
+	OutboundConnectivity(bool forceTcp, RTSPProtocol *pRTSPProtocol);
 	virtual ~OutboundConnectivity();
 	bool Initialize();
 	void SetOutStream(BaseOutNetRTPUDPStream *pOutStream);
 	string GetVideoPorts();
 	string GetAudioPorts();
+	string GetVideoChannels();
+	string GetAudioChannels();
 	uint32_t GetAudioSSRC();
 	uint32_t GetVideoSSRC();
 	uint16_t GetLastVideoSequence();
 	uint16_t GetLastAudioSequence();
 	void HasAudio(bool value);
 	void HasVideo(bool value);
-	bool RegisterUDPVideoClient1(uint32_t rtspProtocolId, sockaddr_in &data,
+	bool RegisterUDPVideoClient(uint32_t rtspProtocolId, sockaddr_in &data,
 			sockaddr_in &rtcp);
-	bool RegisterUDPAudioClient1(uint32_t rtspProtocolId, sockaddr_in &data,
+	bool RegisterUDPAudioClient(uint32_t rtspProtocolId, sockaddr_in &data,
 			sockaddr_in &rtcp);
-	void UnRegisterClient(uint32_t protocolId);
-	bool HasClients();
+	bool RegisterTCPVideoClient(uint32_t rtspProtocolId, uint8_t data, uint8_t rtcp);
+	bool RegisterTCPAudioClient(uint32_t rtspProtocolId, uint8_t data, uint8_t rtcp);
 	void SignalDetachedFromInStream();
-	bool FeedVideoData(uint8_t *pBuffer, uint32_t length, double absoluteTimestamp);
-	bool FeedAudioData(uint8_t *pBuffer, uint32_t length, double absoluteTimestamp);
 	bool FeedVideoData(msghdr &message, double absoluteTimestamp);
 	bool FeedAudioData(msghdr &message, double absoluteTimestamp);
 private:
 	bool InitializePorts(int32_t &dataFd, uint16_t &dataPort,
 			int32_t &RTCPFd, uint16_t &RTCPPort);
-	bool FeedDataUDP(msghdr &message, double absoluteTimestamp, bool isAudio);
-	bool FeedDataTCP(msghdr &message, double absoluteTimestamp, bool isAudio);
+	bool FeedData(msghdr &message, double absoluteTimestamp, bool isAudio);
 };
 
 

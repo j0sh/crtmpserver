@@ -29,7 +29,13 @@ InNetLiveFLVStream::InNetLiveFLVStream(BaseProtocol *pProtocol,
 		StreamsManager *pStreamsManager, string name)
 : BaseInNetStream(pProtocol, pStreamsManager, ST_IN_NET_LIVEFLV, name) {
 	_lastVideoTime = 0;
+	_videoBytesCount = 0;
+	_videoPacketsCount = 0;
+
 	_lastAudioTime = 0;
+	_audioBytesCount = 0;
+	_audioPacketsCount = 0;
+
 	_streamCapabilities.Clear();
 }
 
@@ -44,8 +50,9 @@ StreamCapabilities * InNetLiveFLVStream::GetCapabilities() {
 bool InNetLiveFLVStream::FeedData(uint8_t *pData, uint32_t dataLength,
 		uint32_t processedLength, uint32_t totalLength, double absoluteTimestamp,
 		bool isAudio) {
-
 	if (isAudio) {
+		_audioPacketsCount++;
+		_audioBytesCount += dataLength;
 		if ((processedLength == 0) && //beginning of a packet
 				(pData[0] >> 4) == 10 && //AAC content
 				(pData[1] == 0)) {// AAC sequence header
@@ -56,6 +63,8 @@ bool InNetLiveFLVStream::FeedData(uint8_t *pData, uint32_t dataLength,
 		}
 		_lastAudioTime = absoluteTimestamp;
 	} else {
+		_videoPacketsCount++;
+		_videoBytesCount += dataLength;
 		if ((processedLength == 0) && //beginning of a packet
 				(pData[0] == 0x17) && //h264 content, keyframe
 				(pData[1] == 0)) {// AVC sequence header
@@ -90,7 +99,18 @@ void InNetLiveFLVStream::ReadyForSend() {
 }
 
 bool InNetLiveFLVStream::IsCompatibleWithType(uint64_t type) {
-	return TAG_KIND_OF(type, ST_OUT_NET_RTMP);
+	return TAG_KIND_OF(type, ST_OUT_NET_RTMP)
+			|| TAG_KIND_OF(type, ST_OUT_NET_RTP);
+}
+
+void InNetLiveFLVStream::GetStats(Variant &info, uint32_t namespaceId) {
+	BaseInNetStream::GetStats(info, namespaceId);
+	info["audio"]["bytesCount"] = _audioBytesCount;
+	info["audio"]["packetsCount"] = _audioPacketsCount;
+	info["audio"]["droppedPacketsCount"] = 0;
+	info["video"]["bytesCount"] = _videoBytesCount;
+	info["video"]["packetsCount"] = _videoPacketsCount;
+	info["video"]["droppedPacketsCount"] = 0;
 }
 
 void InNetLiveFLVStream::SignalOutStreamAttached(BaseOutStream *pOutStream) {

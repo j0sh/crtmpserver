@@ -120,7 +120,7 @@ protected:
 	virtual string GetAuthenticationRealm(RTSPProtocol *pFrom,
 			Variant &requestHeaders, string &requestContent);
 private:
-	OutboundConnectivity *GetOutboundConnectivity(RTSPProtocol *pFrom);
+	OutboundConnectivity *GetOutboundConnectivity(RTSPProtocol *pFrom, bool forceTcp);
 	BaseInNetStream *GetInboundStream(string streamName);
 	StreamCapabilities *GetInboundStreamCapabilities(string streamName);
 	string GetAudioTrack(RTSPProtocol *pFrom,

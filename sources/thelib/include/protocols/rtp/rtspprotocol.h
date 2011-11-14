@@ -34,6 +34,7 @@ class InNetRTPStream;
 class OutboundConnectivity;
 class InboundConnectivity;
 class BaseOutStream;
+struct RTPClient;
 
 class DLLEXP RTSPProtocol
 : public BaseProtocol {
@@ -118,7 +119,8 @@ public:
 	void PushResponseContent(string outboundContent, bool append);
 	bool SendResponseMessage();
 
-	OutboundConnectivity * GetOutboundConnectivity(BaseInNetStream *pInNetStream);
+	OutboundConnectivity * GetOutboundConnectivity(BaseInNetStream *pInNetStream,
+			bool forceTcp);
 	void CloseOutboundConnectivity();
 
 	InboundConnectivity *GetInboundConnectivity(string sdpStreamName,
@@ -130,6 +132,8 @@ public:
 	void CloseInboundConnectivity();
 
 	bool SendRaw(uint8_t *pBuffer, uint32_t length);
+	bool SendRaw(msghdr *pMessage, uint16_t length, RTPClient *pClient,
+			bool isAudio, bool isData);
 
 	void SetOutStream(BaseOutStream *pOutStream);
 private:

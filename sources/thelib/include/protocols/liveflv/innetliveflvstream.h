@@ -29,8 +29,15 @@ class InNetLiveFLVStream
 private:
 	IOBuffer _videoCodecInit;
 	double _lastVideoTime;
+	uint64_t _videoBytesCount;
+	uint64_t _videoPacketsCount;
+
+
 	IOBuffer _audioCodecInit;
 	double _lastAudioTime;
+	uint64_t _audioBytesCount;
+	uint64_t _audioPacketsCount;
+
 	Variant _lastStreamMessage;
 	StreamCapabilities _streamCapabilities;
 public:
@@ -45,6 +52,7 @@ public:
 			double absoluteTimestamp, bool isAudio);
 	virtual void ReadyForSend();
 	virtual bool IsCompatibleWithType(uint64_t type);
+	virtual void GetStats(Variant &info, uint32_t namespaceId);
 	virtual void SignalOutStreamAttached(BaseOutStream *pOutStream);
 	virtual void SignalOutStreamDetached(BaseOutStream *pOutStream);
 	virtual bool SignalPlay(double &absoluteTimestamp, double &length);

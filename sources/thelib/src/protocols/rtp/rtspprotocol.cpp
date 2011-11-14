@@ -351,12 +351,14 @@ bool RTSPProtocol::SendResponseMessage() {
 }
 
 OutboundConnectivity * RTSPProtocol::GetOutboundConnectivity(
-		BaseInNetStream *pInNetStream) {
+		BaseInNetStream *pInNetStream, bool forceTcp) {
 	if (_pOutboundConnectivity == NULL) {
 		BaseOutNetRTPUDPStream *pOutStream = new OutNetRTPUDPH264Stream(this,
-				GetApplication()->GetStreamsManager(), pInNetStream->GetName());
+				GetApplication()->GetStreamsManager(),
+				pInNetStream->GetName(), forceTcp);
 
-		_pOutboundConnectivity = new OutboundConnectivity();
+
+		_pOutboundConnectivity = new OutboundConnectivity(forceTcp, this);
 		if (!_pOutboundConnectivity->Initialize()) {
 			FATAL("Unable to initialize outbound connectivity");
 			return false;
@@ -375,10 +377,7 @@ OutboundConnectivity * RTSPProtocol::GetOutboundConnectivity(
 
 void RTSPProtocol::CloseOutboundConnectivity() {
 	if (_pOutboundConnectivity != NULL) {
-		_pOutboundConnectivity->UnRegisterClient(GetId());
-		if (!_pOutboundConnectivity->HasClients()) {
-			delete _pOutboundConnectivity;
-		}
+		delete _pOutboundConnectivity;
 		_pOutboundConnectivity = NULL;
 	}
 }
@@ -410,6 +409,31 @@ void RTSPProtocol::CloseInboundConnectivity() {
 
 bool RTSPProtocol::SendRaw(uint8_t *pBuffer, uint32_t length) {
 	_outputBuffer.ReadFromBuffer(pBuffer, length);
+	return EnqueueForOutbound();
+}
+
+bool RTSPProtocol::SendRaw(msghdr *pMessage, uint16_t length, RTPClient *pClient, bool isAudio,
+		bool isData) {
+	_outputBuffer.ReadFromByte((uint8_t) '$');
+	if (isAudio) {
+		if (isData) {
+			_outputBuffer.ReadFromByte(pClient->audioDataChannel);
+		} else {
+			_outputBuffer.ReadFromByte(pClient->audioRtcpChannel);
+		}
+	} else {
+		if (isData) {
+			_outputBuffer.ReadFromByte(pClient->videoDataChannel);
+		} else {
+			_outputBuffer.ReadFromByte(pClient->videoRtcpChannel);
+		}
+	}
+	length = EHTONS(length);
+	_outputBuffer.ReadFromBuffer((uint8_t *) & length, 2);
+	for (int i = 0; i < pMessage->msg_iovlen; i++) {
+		_outputBuffer.ReadFromBuffer((uint8_t*) pMessage->msg_iov[i].iov_base,
+				pMessage->msg_iov[i].iov_len);
+	}
 	return EnqueueForOutbound();
 }
 
