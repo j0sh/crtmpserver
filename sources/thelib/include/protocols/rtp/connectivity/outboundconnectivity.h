@@ -25,6 +25,7 @@
 
 class BaseOutNetRTPUDPStream;
 class RTSPProtocol;
+class NATTraversalProtocol;
 
 struct RTPClient {
 	uint32_t protocolId;
@@ -90,18 +91,22 @@ private:
 	uint8_t *_pRTCPSOC;
 	uint64_t _startupTime;
 	RTPClient _rtpClient;
-	bool _hasAudio;
-	bool _hasVideo;
 
+	bool _hasVideo;
 	int32_t _videoDataFd;
 	uint16_t _videoDataPort;
 	int32_t _videoRTCPFd;
 	uint16_t _videoRTCPPort;
+	NATTraversalProtocol *_pVideoNATData;
+	NATTraversalProtocol *_pVideoNATRTCP;
 
+	bool _hasAudio;
 	int32_t _audioDataFd;
 	uint16_t _audioDataPort;
 	int32_t _audioRTCPFd;
 	uint16_t _audioRTCPPort;
+	NATTraversalProtocol *_pAudioNATData;
+	NATTraversalProtocol *_pAudioNATRTCP;
 public:
 	OutboundConnectivity(bool forceTcp, RTSPProtocol *pRTSPProtocol);
 	virtual ~OutboundConnectivity();
@@ -128,7 +133,8 @@ public:
 	bool FeedAudioData(msghdr &message, double absoluteTimestamp);
 private:
 	bool InitializePorts(int32_t &dataFd, uint16_t &dataPort,
-			int32_t &RTCPFd, uint16_t &RTCPPort);
+			NATTraversalProtocol **ppNATData, int32_t &RTCPFd, uint16_t &RTCPPort,
+			NATTraversalProtocol **ppNATRTCP);
 	bool FeedData(msghdr &message, double absoluteTimestamp, bool isAudio);
 };
 

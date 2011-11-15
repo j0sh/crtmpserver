@@ -42,6 +42,7 @@
 #include "protocols/cli/http4cliprotocol.h"
 #include "protocols/mms/mmsprotocol.h"
 #include "protocols/rawhttpstream/inboundrawhttpstreamprotocol.h"
+#include "protocols/rtp/nattraversalprotocol.h"
 
 DefaultProtocolFactory::DefaultProtocolFactory()
 : BaseProtocolFactory() {
@@ -93,6 +94,7 @@ vector<uint64_t> DefaultProtocolFactory::HandledProtocols() {
 	ADD_VECTOR_END(result, PT_RTSP);
 	ADD_VECTOR_END(result, PT_RTCP);
 	ADD_VECTOR_END(result, PT_INBOUND_RTP);
+	ADD_VECTOR_END(result, PT_RTP_NAT_TRAVERSAL);
 #endif /* HAS_PROTOCOL_RTP */
 #ifdef HAS_PROTOCOL_CLI
 	ADD_VECTOR_END(result, PT_INBOUND_JSONCLI);
@@ -150,6 +152,7 @@ vector<string> DefaultProtocolFactory::HandledProtocolChains() {
 	ADD_VECTOR_END(result, CONF_PROTOCOL_UDP_RTCP);
 	ADD_VECTOR_END(result, CONF_PROTOCOL_INBOUND_RTSP_RTP);
 	ADD_VECTOR_END(result, CONF_PROTOCOL_INBOUND_UDP_RTP);
+	ADD_VECTOR_END(result, CONF_PROTOCOL_RTP_NAT_TRAVERSAL);
 #endif /* HAS_PROTOCOL_RTP */
 #ifdef HAS_PROTOCOL_CLI
 	ADD_VECTOR_END(result, CONF_PROTOCOL_INBOUND_CLI_JSON);
@@ -228,6 +231,9 @@ vector<uint64_t> DefaultProtocolFactory::ResolveProtocolChain(string name) {
 	} else if (name == CONF_PROTOCOL_INBOUND_UDP_RTP) {
 		ADD_VECTOR_END(result, PT_UDP);
 		ADD_VECTOR_END(result, PT_INBOUND_RTP);
+	} else if (name == CONF_PROTOCOL_RTP_NAT_TRAVERSAL) {
+		ADD_VECTOR_END(result, PT_UDP);
+		ADD_VECTOR_END(result, PT_RTP_NAT_TRAVERSAL);
 	}
 #endif /* HAS_PROTOCOL_RTP */
 #ifdef HAS_PROTOCOL_HTTP
@@ -386,6 +392,9 @@ BaseProtocol *DefaultProtocolFactory::SpawnProtocol(uint64_t type, Variant &para
 			break;
 		case PT_INBOUND_RTP:
 			pResult = new InboundRTPProtocol();
+			break;
+		case PT_RTP_NAT_TRAVERSAL:
+			pResult = new NATTraversalProtocol();
 			break;
 #endif /* HAS_PROTOCOL_RTP */
 #ifdef HAS_PROTOCOL_CLI

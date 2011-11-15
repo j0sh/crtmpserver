@@ -731,30 +731,6 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPRequestPlay(RTSPProtocol *pFrom,
 
 	//6. prepare the response
 	pFrom->PushResponseFirstLine(RTSP_VERSION_1_0, 200, "OK");
-	pFrom->PushResponseHeader(RTSP_HEADERS_RANGE, "npt=0.0-");
-
-	string rtpInfoVideo = "";
-	string rtpInfoAudio = "";
-	if (pFrom->GetCustomParameters().HasKey("videoTrackUri")) {
-		rtpInfoVideo = format("url=%s;seq=%u;rtptime=%u",
-				STR(pFrom->GetCustomParameters()["videoTrackUri"]),
-				pOutboundConnectivity->GetLastVideoSequence(),
-				0);
-	}
-	if (pFrom->GetCustomParameters().HasKey("audioTrackId")) {
-		rtpInfoAudio = format("url=%s;seq=%u;rtptime=%u",
-				STR(pFrom->GetCustomParameters()["audioTrackId"]),
-				pOutboundConnectivity->GetLastAudioSequence(),
-				0);
-	}
-	string rtpInfo = rtpInfoVideo;
-	if (rtpInfo != "") {
-		if (rtpInfoAudio != "") {
-			rtpInfo += ", " + rtpInfoAudio;
-		}
-	} else {
-		rtpInfo = rtpInfoAudio;
-	}
 
 	//7. Done
 	return pFrom->SendResponseMessage();
@@ -1669,9 +1645,9 @@ string BaseRTSPAppProtocolHandler::ComputeSDP(RTSPProtocol *pFrom,
 	result += "v=0\r\n";
 	result += format("o=- %"PRIu32" 0 IN IP4 %s\r\n", pFrom->GetId(), STR(nearAddress));
 	result += "s=" + targetStreamName + "\r\n";
-	result += "u=http://www.rtmpd.com/\r\n";
-	result += "e=crtmpserver@gmail.com\r\n";
-	result += "c=IN IP4 " + farAddress + "\r\n";
+	result += "u=http://www.evostream.com\r\n";
+	result += "e=contact@evostream.com\r\n";
+	result += "c=IN IP4 " + nearAddress + "\r\n";
 	result += "t=0 0\r\n";
 	result += "a=recvonly\r\n";
 	result += audioTrack + videoTrack;

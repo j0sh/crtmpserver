@@ -34,6 +34,7 @@ CONF_PROTOCOL_INBOUND_UDP_RTP="inboundUdpRtp",
 CONF_PROTOCOL_RTSP_RTCP="inboundRtspRtcp",
 CONF_PROTOCOL_UDP_RTCP="inboundUdpRtcp",
 CONF_PROTOCOL_INBOUND_RTSP="inboundRtsp",
+CONF_PROTOCOL_RTP_NAT_TRAVERSAL="rtpNatTraversal",
 
 -- HTTP protocols
 CONF_PROTOCOL_INBOUND_HTTP="inboundHttp",
@@ -613,6 +614,7 @@ if arg[1]=="cs" then
 	file:write("namespace "..arg[3].."\r\n{\r\n")
 	file:write("public static class "..arg[4].."\r\n{\r\n")
 	for k,v in orderedPairs(constants) do
+		print (k,v)
 		if(type(v)=="string") then
 			file:write("public const string "..k.."=\""..v.."\";\n")
 		else
@@ -620,6 +622,7 @@ if arg[1]=="cs" then
 		end
 	end
 	file:write("}\r\n}\r\n")
+	file:close()
 end
 
 
