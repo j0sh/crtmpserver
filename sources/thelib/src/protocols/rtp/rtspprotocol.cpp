@@ -226,11 +226,12 @@ bool RTSPProtocol::SignalInputData(IOBuffer &buffer) {
 					if (_pInboundConnectivity == NULL) {
 						FATAL("No inbound connectivity available");
 						return false;
-					}
-					if (!_pInboundConnectivity->FeedData(
-							_rtpDataChanel, GETIBPOINTER(buffer), _rtpDataLength)) {
-						FATAL("Unable to handle raw RTP packet");
-						return false;
+					} else {
+						if (!_pInboundConnectivity->FeedData(
+								_rtpDataChanel, GETIBPOINTER(buffer), _rtpDataLength)) {
+							FATAL("Unable to handle raw RTP packet");
+							return false;
+						}
 					}
 					buffer.Ignore(_rtpDataLength);
 					_state = RTSP_STATE_HEADERS;
