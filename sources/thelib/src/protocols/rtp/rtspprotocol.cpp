@@ -223,10 +223,7 @@ bool RTSPProtocol::SignalInputData(IOBuffer &buffer) {
 			case RTSP_STATE_PAYLOAD:
 			{
 				if (_rtpData) {
-					if (_pInboundConnectivity == NULL) {
-						FATAL("No inbound connectivity available");
-						return false;
-					} else {
+					if (_pInboundConnectivity != NULL) {
 						if (!_pInboundConnectivity->FeedData(
 								_rtpDataChanel, GETIBPOINTER(buffer), _rtpDataLength)) {
 							FATAL("Unable to handle raw RTP packet");
@@ -431,7 +428,7 @@ bool RTSPProtocol::SendRaw(msghdr *pMessage, uint16_t length, RTPClient *pClient
 	}
 	length = EHTONS(length);
 	_outputBuffer.ReadFromBuffer((uint8_t *) & length, 2);
-	for (int i = 0; i < pMessage->msg_iovlen; i++) {
+	for (int i = 0; i < (int)pMessage->msg_iovlen; i++) {
 		_outputBuffer.ReadFromBuffer((uint8_t*) pMessage->msg_iov[i].iov_base,
 				pMessage->msg_iov[i].iov_len);
 	}
