@@ -132,7 +132,7 @@ public:
 	void CloseInboundConnectivity();
 
 	bool SendRaw(uint8_t *pBuffer, uint32_t length);
-	bool SendRaw(msghdr *pMessage, uint16_t length, RTPClient *pClient,
+	bool SendRaw(MSGHDR *pMessage, uint16_t length, RTPClient *pClient,
 			bool isAudio, bool isData);
 
 	void SetOutStream(BaseOutStream *pOutStream);

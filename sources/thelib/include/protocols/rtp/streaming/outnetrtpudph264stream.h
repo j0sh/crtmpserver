@@ -28,14 +28,14 @@ class DLLEXP OutNetRTPUDPH264Stream
 private:
 	bool _forceTcp;
 	IOBuffer _videoBuffer;
-	msghdr _videoData;
+	MSGHDR _videoData;
 	uint8_t *_pSPS;
 	uint32_t _SPSLen;
 	uint8_t *_pPPS;
 	uint32_t _PPSLen;
 
 	IOBuffer _audioBuffer;
-	msghdr _audioData;
+	MSGHDR _audioData;
 
 	uint64_t _audioPacketsCount;
 	uint64_t _audioDroppedPacketsCount;

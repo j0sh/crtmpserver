@@ -141,6 +141,16 @@ typedef struct _select_event {
 	uint8_t type;
 } select_event;
 
+#define MSGHDR struct msghdr
+#define IOVEC iovec
+#define MSGHDR_MSG_IOV msg_iov
+#define MSGHDR_MSG_IOVLEN msg_iovlen
+#define MSGHDR_MSG_NAME msg_name
+#define MSGHDR_MSG_NAMELEN msg_namelen
+#define IOVEC_IOV_BASE iov_base
+#define IOVEC_IOV_LEN iov_len
+#define IOVEC_IOV_BASE_TYPE uint8_t
+#define SENDMSG(s,msg,flags,sent) sendmsg(s,msg,flags)
 
 string format(string fmt, ...);
 string vFormat(string fmt, va_list args);

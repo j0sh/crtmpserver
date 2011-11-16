@@ -410,7 +410,7 @@ bool RTSPProtocol::SendRaw(uint8_t *pBuffer, uint32_t length) {
 	return EnqueueForOutbound();
 }
 
-bool RTSPProtocol::SendRaw(msghdr *pMessage, uint16_t length, RTPClient *pClient, bool isAudio,
+bool RTSPProtocol::SendRaw(MSGHDR *pMessage, uint16_t length, RTPClient *pClient, bool isAudio,
 		bool isData) {
 	_outputBuffer.ReadFromByte((uint8_t) '$');
 	if (isAudio) {
@@ -428,9 +428,9 @@ bool RTSPProtocol::SendRaw(msghdr *pMessage, uint16_t length, RTPClient *pClient
 	}
 	length = EHTONS(length);
 	_outputBuffer.ReadFromBuffer((uint8_t *) & length, 2);
-	for (int i = 0; i < (int)pMessage->msg_iovlen; i++) {
-		_outputBuffer.ReadFromBuffer((uint8_t*) pMessage->msg_iov[i].iov_base,
-				pMessage->msg_iov[i].iov_len);
+	for (int i = 0; i < (int)pMessage->MSGHDR_MSG_IOVLEN; i++) {
+		_outputBuffer.ReadFromBuffer((uint8_t*) pMessage->MSGHDR_MSG_IOV[i].IOVEC_IOV_BASE,
+				pMessage->MSGHDR_MSG_IOV[i].IOVEC_IOV_LEN);
 	}
 	return EnqueueForOutbound();
 }

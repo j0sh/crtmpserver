@@ -35,24 +35,24 @@ OutboundConnectivity::OutboundConnectivity(bool forceTcp, RTSPProtocol *pRTSPPro
 	_pOutStream = NULL;
 
 	memset(&_dataMessage, 0, sizeof (_dataMessage));
-	_dataMessage.msg_iov = new iovec[1];
-	_dataMessage.msg_iovlen = 1;
-	_dataMessage.msg_namelen = sizeof (sockaddr_in);
+	_dataMessage.MSGHDR_MSG_IOV = new IOVEC[1];
+	_dataMessage.MSGHDR_MSG_IOVLEN = 1;
+	_dataMessage.MSGHDR_MSG_NAMELEN = sizeof (sockaddr_in);
 
 	memset(&_rtcpMessage, 0, sizeof (_rtcpMessage));
-	_rtcpMessage.msg_iov = new iovec[1];
-	_rtcpMessage.msg_iovlen = 1;
-	_rtcpMessage.msg_namelen = sizeof (sockaddr_in);
-	_rtcpMessage.msg_iov[0].iov_len = 28;
-	_rtcpMessage.msg_iov[0].iov_base = new uint8_t[_rtcpMessage.msg_iov[0].iov_len];
-	((uint8_t *) _rtcpMessage.msg_iov[0].iov_base)[0] = 0x80; //V,P,RC
-	((uint8_t *) _rtcpMessage.msg_iov[0].iov_base)[1] = 0xc8; //PT=SR=200
-	EHTONSP(((uint8_t *) _rtcpMessage.msg_iov[0].iov_base) + 2, 6); //length
-	EHTONLP(((uint8_t *) _rtcpMessage.msg_iov[0].iov_base) + 4, 0); //SSRC
-	_pRTCPNTP = ((uint8_t *) _rtcpMessage.msg_iov[0].iov_base) + 8;
-	_pRTCPRTP = ((uint8_t *) _rtcpMessage.msg_iov[0].iov_base) + 16;
-	_pRTCPSPC = ((uint8_t *) _rtcpMessage.msg_iov[0].iov_base) + 20;
-	_pRTCPSOC = ((uint8_t *) _rtcpMessage.msg_iov[0].iov_base) + 24;
+	_rtcpMessage.MSGHDR_MSG_IOV = new IOVEC[1];
+	_rtcpMessage.MSGHDR_MSG_IOVLEN = 1;
+	_rtcpMessage.MSGHDR_MSG_NAMELEN = sizeof (sockaddr_in);
+	_rtcpMessage.MSGHDR_MSG_IOV[0].IOVEC_IOV_LEN = 28;
+	_rtcpMessage.MSGHDR_MSG_IOV[0].IOVEC_IOV_BASE = new IOVEC_IOV_BASE_TYPE[_rtcpMessage.MSGHDR_MSG_IOV[0].IOVEC_IOV_LEN];
+	((uint8_t *) _rtcpMessage.MSGHDR_MSG_IOV[0].IOVEC_IOV_BASE)[0] = 0x80; //V,P,RC
+	((uint8_t *) _rtcpMessage.MSGHDR_MSG_IOV[0].IOVEC_IOV_BASE)[1] = 0xc8; //PT=SR=200
+	EHTONSP(((uint8_t *) _rtcpMessage.MSGHDR_MSG_IOV[0].IOVEC_IOV_BASE) + 2, 6); //length
+	EHTONLP(((uint8_t *) _rtcpMessage.MSGHDR_MSG_IOV[0].IOVEC_IOV_BASE) + 4, 0); //SSRC
+	_pRTCPNTP = ((uint8_t *) _rtcpMessage.MSGHDR_MSG_IOV[0].IOVEC_IOV_BASE) + 8;
+	_pRTCPRTP = ((uint8_t *) _rtcpMessage.MSGHDR_MSG_IOV[0].IOVEC_IOV_BASE) + 16;
+	_pRTCPSPC = ((uint8_t *) _rtcpMessage.MSGHDR_MSG_IOV[0].IOVEC_IOV_BASE) + 20;
+	_pRTCPSOC = ((uint8_t *) _rtcpMessage.MSGHDR_MSG_IOV[0].IOVEC_IOV_BASE) + 24;
 
 	_hasVideo = false;
 	_videoDataFd = -1;
@@ -74,9 +74,9 @@ OutboundConnectivity::OutboundConnectivity(bool forceTcp, RTSPProtocol *pRTSPPro
 }
 
 OutboundConnectivity::~OutboundConnectivity() {
-	delete[] _dataMessage.msg_iov;
-	delete[] ((uint8_t *) _rtcpMessage.msg_iov[0].iov_base);
-	delete[] _rtcpMessage.msg_iov;
+	delete[] _dataMessage.MSGHDR_MSG_IOV;
+	delete[] ((uint8_t *) _rtcpMessage.MSGHDR_MSG_IOV[0].IOVEC_IOV_BASE);
+	delete[] _rtcpMessage.MSGHDR_MSG_IOV;
 	if (_pOutStream != NULL) {
 		delete _pOutStream;
 	}
@@ -241,7 +241,7 @@ void OutboundConnectivity::SignalDetachedFromInStream() {
 	_pRTSPProtocol = NULL;
 }
 
-bool OutboundConnectivity::FeedVideoData(msghdr &message,
+bool OutboundConnectivity::FeedVideoData(MSGHDR &message,
 		double absoluteTimestamp) {
 	if (!FeedData(message, absoluteTimestamp, false)) {
 		FATAL("Unable to feed video UDP clients");
@@ -250,7 +250,7 @@ bool OutboundConnectivity::FeedVideoData(msghdr &message,
 	return true;
 }
 
-bool OutboundConnectivity::FeedAudioData(msghdr &message,
+bool OutboundConnectivity::FeedAudioData(MSGHDR &message,
 		double absoluteTimestamp) {
 	if (!FeedData(message, absoluteTimestamp, true)) {
 		FATAL("Unable to feed audio UDP clients");
@@ -344,7 +344,7 @@ bool OutboundConnectivity::InitializePorts(int32_t &dataFd, uint16_t &dataPort,
 	return false;
 }
 
-bool OutboundConnectivity::FeedData(msghdr &message, double absoluteTimestamp,
+bool OutboundConnectivity::FeedData(MSGHDR &message, double absoluteTimestamp,
 		bool isAudio) {
 	if (absoluteTimestamp == 0)
 		return true;
@@ -352,8 +352,8 @@ bool OutboundConnectivity::FeedData(msghdr &message, double absoluteTimestamp,
 	double rate = isAudio ? _pOutStream->GetCapabilities()->aac._sampleRate : 90000.0;
 	uint32_t ssrc = isAudio ? _pOutStream->AudioSSRC() : _pOutStream->VideoSSRC();
 	uint16_t messageLength = 0;
-	for (uint32_t i = 0; i < (uint32_t) message.msg_iovlen; i++) {
-		messageLength += message.msg_iov[i].iov_len;
+	for (uint32_t i = 0; i < (uint32_t) message.MSGHDR_MSG_IOVLEN; i++) {
+		messageLength += message.MSGHDR_MSG_IOV[i].IOVEC_IOV_LEN;
 	}
 
 	bool &hasTrack = isAudio ? _rtpClient.hasAudio : _rtpClient.hasVideo;
@@ -366,13 +366,13 @@ bool OutboundConnectivity::FeedData(msghdr &message, double absoluteTimestamp,
 	}
 
 	if (startRTP == 0xffffffff) {
-		startRTP = ENTOHLP(((uint8_t *) message.msg_iov[0].iov_base) + 4);
+		startRTP = ENTOHLP(((uint8_t *) message.MSGHDR_MSG_IOV[0].IOVEC_IOV_BASE) + 4);
 		startTS = absoluteTimestamp;
 	}
 
 	if ((packetsCount % 500) == 0) {
 		//FINEST("Send %c RTCP: %u", isAudio ? 'A' : 'V', packetsCount);
-		EHTONLP(((uint8_t *) _rtcpMessage.msg_iov[0].iov_base) + 4, ssrc); //SSRC
+		EHTONLP(((uint8_t *) _rtcpMessage.MSGHDR_MSG_IOV[0].IOVEC_IOV_BASE) + 4, ssrc); //SSRC
 
 
 		//NTP
@@ -392,21 +392,21 @@ bool OutboundConnectivity::FeedData(msghdr &message, double absoluteTimestamp,
 
 		//octet count
 		EHTONLP(_pRTCPSOC, bytesCount);
-		//			FINEST("\n%s", STR(IOBuffer::DumpBuffer(((uint8_t *) _rtcpMessage.msg_iov[0].iov_base),
-		//					_rtcpMessage.msg_iov[0].iov_len)));
+		//			FINEST("\n%s", STR(IOBuffer::DumpBuffer(((uint8_t *) _rtcpMessage.MSGHDR_MSG_IOV[0].IOVEC_IOV_BASE),
+		//					_rtcpMessage.MSGHDR_MSG_IOV[0].IOVEC_IOV_LEN)));
 
 		if (_rtpClient.isUdp) {
 			int32_t rtcpFd = isAudio ? _audioRTCPFd : _videoRTCPFd;
 			sockaddr_in &rtcpAddress = isAudio ? _rtpClient.audioRtcpAddress : _rtpClient.videoRtcpAddress;
-			_rtcpMessage.msg_name = &rtcpAddress;
-			if (sendmsg(rtcpFd, &_rtcpMessage, 0) <= 0) {
+			_rtcpMessage.MSGHDR_MSG_NAME = (sockaddr *)&rtcpAddress;
+			if (SENDMSG(rtcpFd, &_rtcpMessage, 0,&_dummyValue) < 0) {
 				FATAL("Unable to send message");
 				return false;
 			}
 		} else {
 			if (_pRTSPProtocol != NULL) {
 				if (!_pRTSPProtocol->SendRaw(&_rtcpMessage,
-						_rtcpMessage.msg_iov[0].iov_len, &_rtpClient, isAudio, false)) {
+						_rtcpMessage.MSGHDR_MSG_IOV[0].IOVEC_IOV_LEN, &_rtpClient, isAudio, false)) {
 					FATAL("Unable to send raw rtcp audio data");
 					return false;
 				}
@@ -418,8 +418,8 @@ bool OutboundConnectivity::FeedData(msghdr &message, double absoluteTimestamp,
 	if (_rtpClient.isUdp) {
 		int32_t dataFd = isAudio ? _audioDataFd : _videoDataFd;
 		sockaddr_in &dataAddress = isAudio ? _rtpClient.audioDataAddress : _rtpClient.videoDataAddress;
-		message.msg_name = &dataAddress;
-		if (sendmsg(dataFd, &message, 0) < 0) {
+		message.MSGHDR_MSG_NAME = (sockaddr *)&dataAddress;
+		if (SENDMSG(dataFd, &message, 0,&_dummyValue) < 0) {
 			int err = errno;
 			FATAL("Unable to send message: %d; %s", err, strerror(errno));
 			return false;

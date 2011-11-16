@@ -37,28 +37,28 @@ OutNetRTPUDPH264Stream::OutNetRTPUDPH264Stream(BaseProtocol *pProtocol,
 		_maxRTPPacketSize = MAX_RTP_PACKET_SIZE;
 
 	memset(&_videoData, 0, sizeof (_videoData));
-	_videoData.msg_iov = new iovec[2];
-	_videoData.msg_iovlen = 2;
-	_videoData.msg_namelen = sizeof (sockaddr_in);
-	_videoData.msg_iov[0].iov_base = new uint8_t[14];
-	((uint8_t *) _videoData.msg_iov[0].iov_base)[0] = 0x80;
-	EHTONLP(((uint8_t *) _videoData.msg_iov[0].iov_base) + 8, _videoSsrc);
+	_videoData.MSGHDR_MSG_IOV = new IOVEC[2];
+	_videoData.MSGHDR_MSG_IOVLEN = 2;
+	_videoData.MSGHDR_MSG_NAMELEN = sizeof (sockaddr_in);
+	_videoData.MSGHDR_MSG_IOV[0].IOVEC_IOV_BASE = new IOVEC_IOV_BASE_TYPE[14];
+	((uint8_t *) _videoData.MSGHDR_MSG_IOV[0].IOVEC_IOV_BASE)[0] = 0x80;
+	EHTONLP(((uint8_t *) _videoData.MSGHDR_MSG_IOV[0].IOVEC_IOV_BASE) + 8, _videoSsrc);
 	_pSPS = NULL;
 	_SPSLen = 0;
 	_pPPS = NULL;
 	_PPSLen = 0;
 
 	memset(&_audioData, 0, sizeof (_audioData));
-	_audioData.msg_iov = new iovec[3];
-	_audioData.msg_iovlen = 3;
-	_audioData.msg_namelen = sizeof (sockaddr_in);
-	_audioData.msg_iov[0].iov_len = 14;
-	_audioData.msg_iov[0].iov_base = new uint8_t[14];
-	((uint8_t *) _audioData.msg_iov[0].iov_base)[0] = 0x80;
-	((uint8_t *) _audioData.msg_iov[0].iov_base)[1] = 0xe0;
-	EHTONLP(((uint8_t *) _audioData.msg_iov[0].iov_base) + 8, _audioSsrc);
-	_audioData.msg_iov[1].iov_len = 0;
-	_audioData.msg_iov[1].iov_base = new uint8_t[16];
+	_audioData.MSGHDR_MSG_IOV = new IOVEC[3];
+	_audioData.MSGHDR_MSG_IOVLEN = 3;
+	_audioData.MSGHDR_MSG_NAMELEN = sizeof (sockaddr_in);
+	_audioData.MSGHDR_MSG_IOV[0].IOVEC_IOV_LEN = 14;
+	_audioData.MSGHDR_MSG_IOV[0].IOVEC_IOV_BASE = new IOVEC_IOV_BASE_TYPE[14];
+	((uint8_t *) _audioData.MSGHDR_MSG_IOV[0].IOVEC_IOV_BASE)[0] = 0x80;
+	((uint8_t *) _audioData.MSGHDR_MSG_IOV[0].IOVEC_IOV_BASE)[1] = 0xe0;
+	EHTONLP(((uint8_t *) _audioData.MSGHDR_MSG_IOV[0].IOVEC_IOV_BASE) + 8, _audioSsrc);
+	_audioData.MSGHDR_MSG_IOV[1].IOVEC_IOV_LEN = 0;
+	_audioData.MSGHDR_MSG_IOV[1].IOVEC_IOV_BASE = new IOVEC_IOV_BASE_TYPE[16];
 
 
 	_audioPacketsCount = 0;
@@ -70,17 +70,17 @@ OutNetRTPUDPH264Stream::OutNetRTPUDPH264Stream(BaseProtocol *pProtocol,
 }
 
 OutNetRTPUDPH264Stream::~OutNetRTPUDPH264Stream() {
-	delete[] (uint8_t *) _videoData.msg_iov[0].iov_base;
-	delete[] _videoData.msg_iov;
+	delete[] (uint8_t *) _videoData.MSGHDR_MSG_IOV[0].IOVEC_IOV_BASE;
+	delete[] _videoData.MSGHDR_MSG_IOV;
 	memset(&_videoData, 0, sizeof (_videoData));
 	if (_pSPS != NULL)
 		delete[] _pSPS;
 	if (_pPPS != NULL)
 		delete[] _pPPS;
 
-	delete[] (uint8_t *) _audioData.msg_iov[0].iov_base;
-	delete[] (uint8_t *) _audioData.msg_iov[1].iov_base;
-	delete[] _audioData.msg_iov;
+	delete[] (uint8_t *) _audioData.MSGHDR_MSG_IOV[0].IOVEC_IOV_BASE;
+	delete[] (uint8_t *) _audioData.MSGHDR_MSG_IOV[1].IOVEC_IOV_BASE;
+	delete[] _audioData.MSGHDR_MSG_IOV;
 	memset(&_audioData, 0, sizeof (_audioData));
 }
 
@@ -225,45 +225,45 @@ bool OutNetRTPUDPH264Stream::FeedDataVideoFUA(uint8_t *pData, uint32_t dataLengt
 
 		//1. Flags
 		if (processedLength + sentAmount + chunkSize == totalLength) {
-			((uint8_t *) _videoData.msg_iov[0].iov_base)[1] = 0xe1;
+			((uint8_t *) _videoData.MSGHDR_MSG_IOV[0].IOVEC_IOV_BASE)[1] = 0xe1;
 		} else {
-			((uint8_t *) _videoData.msg_iov[0].iov_base)[1] = 0x61;
+			((uint8_t *) _videoData.MSGHDR_MSG_IOV[0].IOVEC_IOV_BASE)[1] = 0x61;
 		}
 
 		//2. counter
-		EHTONSP(((uint8_t *) _videoData.msg_iov[0].iov_base) + 2, _videoCounter);
+		EHTONSP(((uint8_t *) _videoData.MSGHDR_MSG_IOV[0].IOVEC_IOV_BASE) + 2, _videoCounter);
 		_videoCounter++;
 
 		//3. Timestamp
-		EHTONLP(((uint8_t *) _videoData.msg_iov[0].iov_base) + 4,
+		EHTONLP(((uint8_t *) _videoData.MSGHDR_MSG_IOV[0].IOVEC_IOV_BASE) + 4,
 				BaseConnectivity::ToRTPTS(absoluteTimestamp, 90000));
 
 		if (chunkSize == totalLength) {
 			//4. No chunking
-			_videoData.msg_iov[0].iov_len = 12;
-			_videoData.msg_iov[1].iov_base = pData;
-			_videoData.msg_iov[1].iov_len = chunkSize;
+			_videoData.MSGHDR_MSG_IOV[0].IOVEC_IOV_LEN = 12;
+			_videoData.MSGHDR_MSG_IOV[1].IOVEC_IOV_BASE = (IOVEC_IOV_BASE_TYPE *)pData;
+			_videoData.MSGHDR_MSG_IOV[1].IOVEC_IOV_LEN = chunkSize;
 		} else {
 			//5. Chunking
-			_videoData.msg_iov[0].iov_len = 14;
+			_videoData.MSGHDR_MSG_IOV[0].IOVEC_IOV_LEN = 14;
 
 			if (processedLength + sentAmount == 0) {
 				//6. First chunk
-				((uint8_t *) _videoData.msg_iov[0].iov_base)[12] = (pData[0]&0xe0) | NALU_TYPE_FUA;
-				((uint8_t *) _videoData.msg_iov[0].iov_base)[13] = (pData[0]&0x1f) | 0x80;
-				_videoData.msg_iov[1].iov_base = pData + 1;
-				_videoData.msg_iov[1].iov_len = chunkSize - 1;
+				((uint8_t *) _videoData.MSGHDR_MSG_IOV[0].IOVEC_IOV_BASE)[12] = (pData[0]&0xe0) | NALU_TYPE_FUA;
+				((uint8_t *) _videoData.MSGHDR_MSG_IOV[0].IOVEC_IOV_BASE)[13] = (pData[0]&0x1f) | 0x80;
+				_videoData.MSGHDR_MSG_IOV[1].IOVEC_IOV_BASE = (IOVEC_IOV_BASE_TYPE *)(pData + 1);
+				_videoData.MSGHDR_MSG_IOV[1].IOVEC_IOV_LEN = chunkSize - 1;
 			} else {
 				if (processedLength + sentAmount + chunkSize == totalLength) {
 					//7. Last chunk
-					((uint8_t *) _videoData.msg_iov[0].iov_base)[13] &= 0x1f;
-					((uint8_t *) _videoData.msg_iov[0].iov_base)[13] |= 0x40;
+					((uint8_t *) _videoData.MSGHDR_MSG_IOV[0].IOVEC_IOV_BASE)[13] &= 0x1f;
+					((uint8_t *) _videoData.MSGHDR_MSG_IOV[0].IOVEC_IOV_BASE)[13] |= 0x40;
 				} else {
 					//8. Middle chunk
-					((uint8_t *) _videoData.msg_iov[0].iov_base)[13] &= 0x1f;
+					((uint8_t *) _videoData.MSGHDR_MSG_IOV[0].IOVEC_IOV_BASE)[13] &= 0x1f;
 				}
-				_videoData.msg_iov[1].iov_base = pData;
-				_videoData.msg_iov[1].iov_len = chunkSize;
+				_videoData.MSGHDR_MSG_IOV[1].IOVEC_IOV_BASE = (IOVEC_IOV_BASE_TYPE *)pData;
+				_videoData.MSGHDR_MSG_IOV[1].IOVEC_IOV_LEN = chunkSize;
 			}
 		}
 
@@ -285,35 +285,35 @@ bool OutNetRTPUDPH264Stream::FeedDataAudioMPEG4Generic_aggregate(uint8_t *pData,
 	}
 
 	//2. Test if we need to send what we have so far
-	if (((14 + _audioData.msg_iov[1].iov_len + GETAVAILABLEBYTESCOUNT(_audioBuffer) + 2 + dataLength - 7) > _maxRTPPacketSize)
-			|| (_audioData.msg_iov[1].iov_len == 16)) {
+	if (((14 + _audioData.MSGHDR_MSG_IOV[1].IOVEC_IOV_LEN + GETAVAILABLEBYTESCOUNT(_audioBuffer) + 2 + dataLength - 7) > _maxRTPPacketSize)
+			|| (_audioData.MSGHDR_MSG_IOV[1].IOVEC_IOV_LEN == 16)) {
 		//3. counter
-		EHTONSP(((uint8_t *) _audioData.msg_iov[0].iov_base) + 2, _audioCounter);
+		EHTONSP(((uint8_t *) _audioData.MSGHDR_MSG_IOV[0].IOVEC_IOV_BASE) + 2, _audioCounter);
 		_audioCounter++;
 
 		//4. Timestamp
-		EHTONLP(((uint8_t *) _audioData.msg_iov[0].iov_base) + 4,
+		EHTONLP(((uint8_t *) _audioData.MSGHDR_MSG_IOV[0].IOVEC_IOV_BASE) + 4,
 				BaseConnectivity::ToRTPTS(absoluteTimestamp,
 				GetCapabilities()->aac._sampleRate));
 
 		//6. put the actual buffer
-		_audioData.msg_iov[2].iov_len = GETAVAILABLEBYTESCOUNT(_audioBuffer);
-		_audioData.msg_iov[2].iov_base = GETIBPOINTER(_audioBuffer);
+		_audioData.MSGHDR_MSG_IOV[2].IOVEC_IOV_LEN = GETAVAILABLEBYTESCOUNT(_audioBuffer);
+		_audioData.MSGHDR_MSG_IOV[2].IOVEC_IOV_BASE =(IOVEC_IOV_BASE_TYPE *) GETIBPOINTER(_audioBuffer);
 
-		EHTONSP(((uint8_t *) _audioData.msg_iov[0].iov_base) + 12,
-				_audioData.msg_iov[1].iov_len * 8);
+		EHTONSP(((uint8_t *) _audioData.MSGHDR_MSG_IOV[0].IOVEC_IOV_BASE) + 12,
+				_audioData.MSGHDR_MSG_IOV[1].IOVEC_IOV_LEN * 8);
 
 		_pConnectivity->FeedAudioData(_audioData, absoluteTimestamp);
 
 		_audioBuffer.IgnoreAll();
-		_audioData.msg_iov[1].iov_len = 0;
+		_audioData.MSGHDR_MSG_IOV[1].IOVEC_IOV_LEN = 0;
 	}
 
 	//3. AU-Header
 	uint16_t auHeader = (uint16_t) ((dataLength - 7) << 3);
-	auHeader = auHeader | ((uint8_t) (_audioData.msg_iov[1].iov_len / 2));
-	EHTONSP(((uint8_t *) _audioData.msg_iov[1].iov_base) + _audioData.msg_iov[1].iov_len, auHeader);
-	_audioData.msg_iov[1].iov_len += 2;
+	auHeader = auHeader | ((uint8_t) (_audioData.MSGHDR_MSG_IOV[1].IOVEC_IOV_LEN / 2));
+	EHTONSP(((uint8_t *) _audioData.MSGHDR_MSG_IOV[1].IOVEC_IOV_BASE) + _audioData.MSGHDR_MSG_IOV[1].IOVEC_IOV_LEN, auHeader);
+	_audioData.MSGHDR_MSG_IOV[1].IOVEC_IOV_LEN += 2;
 
 
 	//4. Save the buffer
@@ -439,23 +439,23 @@ bool OutNetRTPUDPH264Stream::FeedDataAudioMPEG4Generic_one_by_one(uint8_t *pData
 	 */
 
 	//5. counter
-	EHTONSP(((uint8_t *) _audioData.msg_iov[0].iov_base) + 2, _audioCounter);
+	EHTONSP(((uint8_t *) _audioData.MSGHDR_MSG_IOV[0].IOVEC_IOV_BASE) + 2, _audioCounter);
 	_audioCounter++;
 
 	//6. Timestamp
-	EHTONLP(((uint8_t *) _audioData.msg_iov[0].iov_base) + 4,
+	EHTONLP(((uint8_t *) _audioData.MSGHDR_MSG_IOV[0].IOVEC_IOV_BASE) + 4,
 			(uint32_t) (absoluteTimestamp
 			* (double) GetCapabilities()->aac._sampleRate / 1000.000));
 
-	EHTONSP(((uint8_t *) _audioData.msg_iov[0].iov_base) + 12, 16);
+	EHTONSP(((uint8_t *) _audioData.MSGHDR_MSG_IOV[0].IOVEC_IOV_BASE) + 12, 16);
 
 	uint16_t auHeader = (uint16_t) ((dataLength - adtsHeaderLength) << 3);
-	EHTONSP(((uint8_t *) _audioData.msg_iov[1].iov_base), auHeader);
-	_audioData.msg_iov[1].iov_len = 2;
+	EHTONSP(((uint8_t *) _audioData.MSGHDR_MSG_IOV[1].IOVEC_IOV_BASE), auHeader);
+	_audioData.MSGHDR_MSG_IOV[1].IOVEC_IOV_LEN = 2;
 
 	//7. put the actual buffer
-	_audioData.msg_iov[2].iov_len = dataLength - adtsHeaderLength;
-	_audioData.msg_iov[2].iov_base = pData + adtsHeaderLength;
+	_audioData.MSGHDR_MSG_IOV[2].IOVEC_IOV_LEN = dataLength - adtsHeaderLength;
+	_audioData.MSGHDR_MSG_IOV[2].IOVEC_IOV_BASE =(IOVEC_IOV_BASE_TYPE *)(pData + adtsHeaderLength);
 
 	if (!_pConnectivity->FeedAudioData(_audioData, absoluteTimestamp)) {
 		FATAL("Unable to feed data");

@@ -83,8 +83,8 @@ private:
 	bool _forceTcp;
 	RTSPProtocol *_pRTSPProtocol;
 	BaseOutNetRTPUDPStream *_pOutStream;
-	msghdr _dataMessage;
-	msghdr _rtcpMessage;
+	MSGHDR _dataMessage;
+	MSGHDR _rtcpMessage;
 	uint8_t *_pRTCPNTP;
 	uint8_t *_pRTCPRTP;
 	uint8_t *_pRTCPSPC;
@@ -107,6 +107,8 @@ private:
 	uint16_t _audioRTCPPort;
 	NATTraversalProtocol *_pAudioNATData;
 	NATTraversalProtocol *_pAudioNATRTCP;
+
+	uint32_t _dummyValue;
 public:
 	OutboundConnectivity(bool forceTcp, RTSPProtocol *pRTSPProtocol);
 	virtual ~OutboundConnectivity();
@@ -129,13 +131,13 @@ public:
 	bool RegisterTCPVideoClient(uint32_t rtspProtocolId, uint8_t data, uint8_t rtcp);
 	bool RegisterTCPAudioClient(uint32_t rtspProtocolId, uint8_t data, uint8_t rtcp);
 	void SignalDetachedFromInStream();
-	bool FeedVideoData(msghdr &message, double absoluteTimestamp);
-	bool FeedAudioData(msghdr &message, double absoluteTimestamp);
+	bool FeedVideoData(MSGHDR &message, double absoluteTimestamp);
+	bool FeedAudioData(MSGHDR &message, double absoluteTimestamp);
 private:
 	bool InitializePorts(int32_t &dataFd, uint16_t &dataPort,
 			NATTraversalProtocol **ppNATData, int32_t &RTCPFd, uint16_t &RTCPPort,
 			NATTraversalProtocol **ppNATRTCP);
-	bool FeedData(msghdr &message, double absoluteTimestamp, bool isAudio);
+	bool FeedData(MSGHDR &message, double absoluteTimestamp, bool isAudio);
 };
 
 
