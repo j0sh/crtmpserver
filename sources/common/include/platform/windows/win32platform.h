@@ -195,22 +195,18 @@ typedef struct _select_event {
 	uint8_t type;
 } select_event;
 
-struct iovec {
-	void *iov_base; /* Base address. */
-	size_t iov_len; /* Length. */
-};
-
-struct msghdr {
-	void *msg_name; /* optional address */
-	int msg_namelen; /* size of address */
-	struct iovec *msg_iov; /* scatter/gather array */
-	int msg_iovlen; /* # elements in msg_iov */
-	void *msg_control; /* ancillary data, see below */
-	int msg_controllen; /* ancillary data buffer len */
-	int msg_flags; /* flags on received message */
-};
-
 #define FD_COPY(f, t)   (void)(*(t) = *(f))
+
+#define MSGHDR WSAMSG
+#define IOVEC WSABUF
+#define MSGHDR_MSG_IOV lpBuffers
+#define MSGHDR_MSG_IOVLEN dwBufferCount
+#define MSGHDR_MSG_NAME name
+#define MSGHDR_MSG_NAMELEN namelen
+#define IOVEC_IOV_BASE buf
+#define IOVEC_IOV_LEN len
+#define IOVEC_IOV_BASE_TYPE CHAR
+#define SENDMSG(s,msg,flags,sent) WSASendMsg(s,msg,flags,sent,NULL,NULL)
 
 DLLEXP string format(string fmt, ...);
 DLLEXP string vFormat(string fmt, va_list args);
@@ -257,7 +253,6 @@ DLLEXP int strncasecmp(const char *s1, const char *s2, size_t n);
 DLLEXP int vasprintf(char **strp, const char *fmt, va_list ap, int size = 256);
 DLLEXP int gettimeofday(struct timeval *tv, void* tz);
 DLLEXP void InitNetworking();
-DLLEXP int sendmsg(int s, const struct msghdr *msg, int flags);
 DLLEXP HMODULE UnicodeLoadLibrary(string fileName);
 DLLEXP int inet_aton(const char *pStr, struct in_addr *pRes);
 

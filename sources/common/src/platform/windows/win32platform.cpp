@@ -237,25 +237,6 @@ void InitNetworking() {
 	WSAStartup(wsa.wHighVersion, &wsa);
 }
 
-int sendmsg(int s, const struct msghdr *msg, int flags) {
-	int result = 0;
-	int sentChunk = 0;
-	for (int i = 0; i < msg->msg_iovlen; i++) {
-		sentChunk = sendto(s,
-				(char *) msg->msg_iov[i].iov_base,
-				msg->msg_iov[i].iov_len,
-				flags,
-				(sockaddr *) msg->msg_name,
-				msg->msg_namelen);
-		if (sentChunk == SOCKET_ERROR)
-			return SOCKET_ERROR;
-		result += sentChunk;
-		if (sentChunk != msg->msg_iov[i].iov_len)
-			return result;
-	}
-	return result;
-}
-
 HMODULE UnicodeLoadLibrary(string fileName) {
 	return LoadLibrary(STR(fileName));
 }
@@ -384,8 +365,8 @@ void splitFileName(string fileName, string &name, string & extension, char separ
 }
 
 string normalizePath(string base, string file) {
-//	if ((base == "") || (base[base.size() - 1] != PATH_SEPARATOR))
-//		base += PATH_SEPARATOR;
+	//	if ((base == "") || (base[base.size() - 1] != PATH_SEPARATOR))
+	//		base += PATH_SEPARATOR;
 	char dummy1[MAX_PATH ];
 	char dummy2[MAX_PATH ];
 	if (GetFullPathName(STR(base), MAX_PATH, dummy1, NULL) == 0)
