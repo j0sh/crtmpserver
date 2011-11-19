@@ -66,6 +66,8 @@ private:
 	uint8_t _rtcpPresence;
 	uint8_t _rtcpDetectionInterval;
 	time_t _rtcpDetectionStart;
+
+	bool _avCodecsSent;
 public:
 	InNetRTPStream(BaseProtocol *pProtocol, StreamsManager *pStreamsManager,
 			string name, string SPS, string PPS, string AAC,

@@ -332,7 +332,7 @@ bool InNetRTMPStream::InitializeAudioCapabilities(uint8_t *pData, uint32_t lengt
 		return false;
 	}
 
-	//	FINEST("Cached the AAC audio codec initialization: %u",
+	//	FINEST("Cached the AAC audio codec initialization: %"PRIu32,
 	//			GETAVAILABLEBYTESCOUNT(_audioCodecInit));
 
 	return true;

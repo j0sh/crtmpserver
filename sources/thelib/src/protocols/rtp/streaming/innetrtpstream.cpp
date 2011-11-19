@@ -79,6 +79,8 @@ InNetRTPStream::InNetRTPStream(BaseProtocol *pProtocol,
 	_rtcpPresence = RTCP_PRESENCE_UNKNOWN;
 	_rtcpDetectionInterval = rtcpDetectionInterval;
 	_rtcpDetectionStart = 0;
+
+	_avCodecsSent=false;
 }
 
 InNetRTPStream::~InNetRTPStream() {
@@ -104,17 +106,17 @@ void InNetRTPStream::SignalOutStreamAttached(BaseOutStream *pOutStream) {
 			if (_videoLastTs < _audioLastTs) {
 				FeedVideoCodecSetup(pOutStream);
 				FeedAudioCodecSetup(pOutStream);
-			} else {
-				FeedAudioCodecSetup(pOutStream);
-				FeedVideoCodecSetup(pOutStream);
+				_avCodecsSent=true;
 			}
 		}
 	} else {
 		if (_videoLastTs != 0) {
 			FeedVideoCodecSetup(pOutStream);
+			_avCodecsSent=true;
 		}
 		if (_audioLastTs != 0) {
 			FeedAudioCodecSetup(pOutStream);
+			_avCodecsSent=true;
 		}
 	}
 
@@ -251,16 +253,18 @@ bool InNetRTPStream::FeedData(uint8_t *pData, uint32_t dataLength,
 		return true;
 	}
 	LinkedListNode<BaseOutStream *> *pTemp = _pOutStreams;
-	if (lastTs == 0) {
-		lastTs = absoluteTimestamp;
+	lastTs = absoluteTimestamp;
+	if (!_avCodecsSent) {
 		while (pTemp != NULL) {
 			if (!pTemp->info->IsEnqueueForDelete()) {
 				SignalOutStreamAttached(pTemp->info);
 			}
 			pTemp = pTemp->pPrev;
 		}
+		if (!_avCodecsSent) {
+			return true;
+		}
 	}
-	lastTs = absoluteTimestamp;
 	if (_hasAudio && _hasVideo) {
 		if ((_audioLastTs == 0) || (_videoLastTs == 0)) {
 			return true;
