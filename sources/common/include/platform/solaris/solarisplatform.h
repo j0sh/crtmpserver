@@ -61,7 +61,7 @@ using namespace std;
 //platform defines
 #define DLLEXP
 #define HAS_MMAP 1
-#define COLOR_TYPE string
+#define COLOR_TYPE const char *
 #define FATAL_COLOR "\033[01;31m"
 #define ERROR_COLOR "\033[22;31m"
 #define WARNING_COLOR "\033[01;33m"

@@ -305,7 +305,7 @@ bool MP4Document::ParseDocument() {
 	}
 
 
-	while (!_mediaFile.Failed()) {
+	while (!_mediaFile.IsEOF()) {
 		uint64_t currentPos = _mediaFile.Cursor();
 		if (currentPos == _mediaFile.Size()) {
 			//FINEST("\n%s", STR(Hierarchy()));
