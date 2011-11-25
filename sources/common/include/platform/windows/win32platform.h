@@ -102,9 +102,7 @@
 #include <string>
 #include <vector>
 #include <map>
-#include <fstream>
 #include <fcntl.h>
-#include <iostream>
 #include <sstream>
 #include <cctype>
 #include <algorithm>
@@ -207,6 +205,9 @@ typedef struct _select_event {
 #define IOVEC_IOV_LEN len
 #define IOVEC_IOV_BASE_TYPE CHAR
 #define SENDMSG(s,msg,flags,sent) WSASendMsg(s,msg,flags,sent,NULL,NULL)
+
+#define ftell64 _ftelli64
+#define fseek64 _fseeki64
 
 DLLEXP string format(string fmt, ...);
 DLLEXP string vFormat(string fmt, va_list args);

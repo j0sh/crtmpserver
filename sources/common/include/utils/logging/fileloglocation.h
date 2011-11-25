@@ -23,10 +23,12 @@
 
 #include "utils/logging/baseloglocation.h"
 
+class File;
+
 class DLLEXP FileLogLocation
 : public BaseLogLocation {
 private:
-	ofstream _fileStream;
+	File *_fileStream;
 	bool _canLog;
 	uint32_t _counter;
 	string _newLineCharacters;
@@ -52,6 +54,7 @@ public:
 	virtual void SignalFork();
 private:
 	bool OpenFile();
+	void CloseFile();
 };
 
 

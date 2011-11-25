@@ -86,13 +86,6 @@ public:
 	bool ReadFromStdio(int32_t fd, uint32_t expected, int32_t &recvAmount);
 
 	/*!
-		@brief Read from File Stream and saves it.
-		@param fs - Descriptor that contains the data
-		@param size - Size of the receiving buffer
-	 */
-	bool ReadFromFs(fstream &fs, uint32_t size);
-
-	/*!
 		@brief Read from File Stream and saves it
 		@param fs - Descriptor that contains the data
 		@param size - Size of the receiving buffer

@@ -125,6 +125,15 @@ bool IOBuffer::ReadFromUDPFd(int32_t fd, int32_t &recvAmount, sockaddr_in &peerA
 		SANITY_INPUT_BUFFER;
 		return true;
 	} else {
+#ifdef WIN32		
+		uint32_t err = LASTSOCKETERROR;
+		if (err == SOCKERROR_RECV_CONN_RESET) {
+			WARN("Windows is stupid enough to issue a CONNRESET on a UDP socket. See http://support.microsoft.com/?kbid=263823 for details");
+			SANITY_INPUT_BUFFER;
+			return true;
+		}
+#endif		
+		FATAL("Unable to read data from UDP socket. Error was: %"PRIu32, LASTSOCKETERROR);
 		SANITY_INPUT_BUFFER;
 		return false;
 	}
@@ -148,24 +157,6 @@ bool IOBuffer::ReadFromStdio(int32_t fd, uint32_t expected, int32_t &recvAmount)
 		SANITY_INPUT_BUFFER;
 		return false;
 	}
-}
-
-bool IOBuffer::ReadFromFs(fstream &fs, uint32_t size) {
-	SANITY_INPUT_BUFFER;
-	if (_published + size > _size) {
-		if (!EnsureSize(size)) {
-			SANITY_INPUT_BUFFER;
-			return false;
-		}
-	}
-	fs.read((char *) _pBuffer + _published, size);
-	if (fs.fail()) {
-		SANITY_INPUT_BUFFER;
-		return false;
-	}
-	_published += size;
-	SANITY_INPUT_BUFFER;
-	return true;
 }
 
 bool IOBuffer::ReadFromFs(File &file, uint32_t size) {

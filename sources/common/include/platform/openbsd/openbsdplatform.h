@@ -38,9 +38,7 @@
 #include <dlfcn.h>
 #include <errno.h>
 #include <fcntl.h>
-#include <fstream>
 #include <glob.h>
-#include <iostream>
 #include <list>
 #include <map>
 #include <netdb.h>
@@ -75,7 +73,7 @@ using namespace std;
 #define FINE_COLOR "\033[22;37m"
 #define FINEST_COLOR "\033[22;37m"
 #define NORMAL_COLOR "\033[0m"
-#define SET_CONSOLE_TEXT_COLOR(color) cout<<color
+#define SET_CONSOLE_TEXT_COLOR(color) fprintf(stdout,"%s",color)
 #define READ_FD read
 #define WRITE_FD write
 #define LASTSOCKETERROR					errno
@@ -153,6 +151,9 @@ typedef struct _select_event {
 #define IOVEC_IOV_LEN iov_len
 #define IOVEC_IOV_BASE_TYPE uint8_t
 #define SENDMSG(s,msg,flags,sent) sendmsg(s,msg,flags)
+
+#define ftell64 ftello64
+#define fseek64 fseeko64
 
 string format(string fmt, ...);
 string vFormat(string fmt, va_list args);

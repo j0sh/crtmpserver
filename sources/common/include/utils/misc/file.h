@@ -31,7 +31,7 @@ enum FILE_OPEN_MODE {
 
 class DLLEXP File {
 private:
-	fstream _file;
+	FILE *_pFile;
 	uint64_t _size;
 	string _path;
 	bool _truncate;
@@ -50,7 +50,6 @@ public:
 	uint64_t Cursor();
 	bool IsEOF();
 	string GetPath();
-	bool Failed();
 	bool IsOpen();
 
 	//seeking

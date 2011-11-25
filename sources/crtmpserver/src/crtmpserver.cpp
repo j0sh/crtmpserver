@@ -74,7 +74,7 @@ int main(int argc, char **argv) {
 
 	//1. Pick up the startup parameters and hold them inside the running status
 	if (argc < 2) {
-		cout << "Invalid command line. Use --help" << endl;
+		fprintf(stdout, "Invalid command line. Use --help\n");
 		return -1;
 	}
 
@@ -155,7 +155,7 @@ bool Initialize() {
 			return false;
 		}
 #else
-		cout << "Lua is not supported by the current build of the server" << endl;
+		fprintf(stdout, "Lua is not supported by the current build of the server\n");
 		ASSERT("Lua is not supported by the current build of the server");
 		return false;
 #endif /* HAS_LUA */
@@ -188,7 +188,7 @@ bool Initialize() {
 			}
 
 			gRs.daemon = true;
-			
+
 			Logger::SignalFork();
 		}
 	}
@@ -296,33 +296,33 @@ void QuitSignalHandler(void) {
 }
 
 void PrintHelp() {
-	cout << "Usage: \n" << (string) gRs.commandLine["program"] << " [OPTIONS] [config_file_path]" << endl << endl;
-	cout << "OPTIONS:" << endl;
-	cout << "    --help" << endl;
-	cout << "      Prints this help and exit\n" << endl;
-	cout << "    --version" << endl;
-	cout << "      Prints the version and exit.\n" << endl;
-	cout << "    --use-implicit-console-appender" << endl;
-	cout << "      Adds a console log appender." << endl;
-	cout << "      Particulary useful when the server starts and stops immediatly." << endl;
-	cout << "      Allows you to see if something is wrong with the config file\n" << endl;
-	cout << "    --daemon" << endl;
-	cout << "      Overrides the daemon setting inside the config file and forces" << endl;
-	cout << "      the server to start in daemon mode.\n" << endl;
-	cout << "    --uid=<uid>" << endl;
-	cout << "      Run the process with the specified user id\n" << endl;
-	cout << "    --gid=<gid>" << endl;
-	cout << "      Run the process with the specified group id\n" << endl;
-	cout << "    --pid=<pid_file>" << endl;
-	cout << "      Create PID file." << endl;
-	cout << "      Works only if --daemon option is specified\n" << endl;
+	fprintf(stdout, "Usage: \n%s [OPTIONS] [config_file_path]\n\n", STR(gRs.commandLine["program"]));
+	fprintf(stdout, "OPTIONS:\n");
+	fprintf(stdout, "    --help\n");
+	fprintf(stdout, "      Prints this help and exit\n\n");
+	fprintf(stdout, "    --version\n");
+	fprintf(stdout, "      Prints the version and exit.\n\n");
+	fprintf(stdout, "    --use-implicit-console-appender\n");
+	fprintf(stdout, "      Adds a console log appender.\n");
+	fprintf(stdout, "      Particularly useful when the server starts and then stops immediately.\n");
+	fprintf(stdout, "      Allows you to see if something is wrong with the config file\n\n");
+	fprintf(stdout, "    --daemon\n");
+	fprintf(stdout, "      Overrides the daemon setting inside the config file and forces\n");
+	fprintf(stdout, "      the server to start in daemon mode.\n\n");
+	fprintf(stdout, "    --uid=<uid>\n");
+	fprintf(stdout, "      Run the process with the specified user id\n\n");
+	fprintf(stdout, "    --gid=<gid>\n");
+	fprintf(stdout, "      Run the process with the specified group id\n\n");
+	fprintf(stdout, "    --pid=<pid_file>\n");
+	fprintf(stdout, "      Create PID file.\n");
+	fprintf(stdout, "      Works only if --daemon option is specified\n\n");
 }
 
 void PrintVersion() {
 #ifndef RTMPSERVER_VERSION
 #define RTMPSERVER_VERSION "(version not available)"
 #endif
-	cout << HTTP_HEADERS_SERVER_US << " version " << RTMPSERVER_VERSION << endl;
+	fprintf(stdout, HTTP_HEADERS_SERVER_US" version "RTMPSERVER_VERSION"\n");
 }
 
 void NormalizeCommandLine(string configFile) {

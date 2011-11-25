@@ -26,11 +26,11 @@ File::File() {
 	_path = "";
 	_truncate = false;
 	_append = false;
+	_pFile = NULL;
 }
 
 File::~File() {
-	_file.flush();
-	_file.close();
+	Close();
 }
 
 bool File::Initialize(string path) {
@@ -38,29 +38,23 @@ bool File::Initialize(string path) {
 }
 
 bool File::Initialize(string path, FILE_OPEN_MODE mode) {
+	Close();
 	_path = path;
-	ios_base::openmode openMode = ios_base::binary;
+	string openMode = "";
 	switch (mode) {
 		case FILE_OPEN_MODE_READ:
 		{
-			openMode |= ios_base::in;
+			openMode = "r";
 			break;
 		}
 		case FILE_OPEN_MODE_TRUNCATE:
 		{
-			openMode |= ios_base::in;
-			openMode |= ios_base::out;
-			openMode |= ios_base::trunc;
+			openMode = "w+";
 			break;
 		}
 		case FILE_OPEN_MODE_APPEND:
 		{
-			openMode |= ios_base::in;
-			openMode |= ios_base::out;
-			if (fileExists(_path))
-				openMode |= ios_base::app;
-			else
-				openMode |= ios_base::trunc;
+			openMode = "a+";
 			break;
 		}
 		default:
@@ -70,17 +64,19 @@ bool File::Initialize(string path, FILE_OPEN_MODE mode) {
 		}
 	}
 
-	_file.open(STR(_path), openMode);
-	if (_file.fail()) {
-		FATAL("Unable to open file %s with mode 0x%x (%s)",
-				STR(_path), (uint32_t) openMode, strerror(errno));
+	_pFile = fopen(STR(_path), STR(openMode));
+
+	if (_pFile == NULL) {
+		int err = errno;
+		FATAL("Unable to open file %s with mode `%s`. Error was: %s (%d)",
+				STR(_path), STR(openMode), strerror(err), err);
 		return false;
 	}
 
 	if (!SeekEnd())
 		return false;
 
-	_size = _file.tellg();
+	_size = ftell64(_pFile);
 
 	if (!SeekBegin())
 		return false;
@@ -89,37 +85,57 @@ bool File::Initialize(string path, FILE_OPEN_MODE mode) {
 }
 
 void File::Close() {
-	_file.flush();
-	_file.close();
+	if (_pFile != NULL) {
+		fflush(_pFile);
+		fclose(_pFile);
+		_pFile = NULL;
+	}
+	_size = 0;
+	_path = "";
+	_truncate = false;
+	_append = false;
 }
 
 uint64_t File::Size() {
+	if (_pFile == NULL) {
+		WARN("File not opened");
+		return 0;
+	}
 	return _size;
 }
 
 uint64_t File::Cursor() {
-	return (uint64_t) _file.tellg();
+	if (_pFile == NULL) {
+		WARN("File not opened");
+		return 0;
+	}
+	return (uint64_t) ftell64(_pFile);
 }
 
 bool File::IsEOF() {
-	return _file.eof();
+	if (_pFile == NULL) {
+		WARN("File not opened");
+		return true;
+	}
+	return (feof(_pFile) != 0);
 }
 
 string File::GetPath() {
 	return _path;
 }
 
-bool File::Failed() {
-	return _file.fail();
-}
-
 bool File::IsOpen() {
-	return _file.is_open();
+	if (_pFile == NULL)
+		return false;
+	return (ferror(_pFile) == 0);
 }
 
 bool File::SeekBegin() {
-	_file.seekg(0, ios_base::beg);
-	if (_file.fail()) {
+	if (_pFile == NULL) {
+		FATAL("File not opened");
+		return false;
+	}
+	if (fseek64(_pFile, 0, SEEK_SET) != 0) {
 		FATAL("Unable to seek to the beginning of file");
 		return false;
 	}
@@ -127,8 +143,11 @@ bool File::SeekBegin() {
 }
 
 bool File::SeekEnd() {
-	_file.seekg(0, ios_base::end);
-	if (_file.fail()) {
+	if (_pFile == NULL) {
+		FATAL("File not opened");
+		return false;
+	}
+	if (fseek64(_pFile, 0, SEEK_END) != 0) {
 		FATAL("Unable to seek to the end of file");
 		return false;
 	}
@@ -136,8 +155,13 @@ bool File::SeekEnd() {
 }
 
 bool File::SeekAhead(int64_t count) {
+	if (_pFile == NULL) {
+		FATAL("File not opened");
+		return false;
+	}
+
 	if (count < 0) {
-		FATAL("Invali count");
+		FATAL("Invalid count");
 		return false;
 	}
 
@@ -146,17 +170,22 @@ bool File::SeekAhead(int64_t count) {
 		return false;
 	}
 
-	_file.seekg(count, ios_base::cur);
-	if (_file.fail()) {
+	if (fseek64(_pFile, (off_t) count, SEEK_CUR) != 0) {
 		FATAL("Unable to seek ahead %"PRId64" bytes", count);
 		return false;
 	}
+
 	return true;
 }
 
 bool File::SeekBehind(int64_t count) {
+	if (_pFile == NULL) {
+		FATAL("File not opened");
+		return false;
+	}
+
 	if (count < 0) {
-		FATAL("Invali count");
+		FATAL("Invalid count");
 		return false;
 	}
 
@@ -165,22 +194,26 @@ bool File::SeekBehind(int64_t count) {
 		return false;
 	}
 
-	_file.seekg((-1) * count, ios_base::cur);
-	if (_file.fail()) {
+	if (fseek64(_pFile, (off_t) (-1 * count), SEEK_CUR) != 0) {
 		FATAL("Unable to seek behind %"PRId64" bytes", count);
 		return false;
 	}
+
 	return true;
 }
 
 bool File::SeekTo(uint64_t position) {
+	if (_pFile == NULL) {
+		FATAL("File not opened");
+		return false;
+	}
+
 	if (_size < position) {
 		FATAL("End of file will be reached");
 		return false;
 	}
 
-	_file.seekg(position, ios_base::beg);
-	if (_file.fail()) {
+	if (fseek64(_pFile, (off_t) position, SEEK_SET) != 0) {
 		FATAL("Unable to seek to position %"PRIu64, position);
 		return false;
 	}
@@ -259,19 +292,14 @@ bool File::ReadUI64(uint64_t *pValue, bool networkOrder) {
 }
 
 bool File::ReadBuffer(uint8_t *pBuffer, uint64_t count) {
-	_file.read((char *) pBuffer, count);
-	if (_file.fail()) {
-		FATAL("Unable to read %"PRIu64" bytes from the file. Cursor: %"PRIu64" (0x%"PRIx64"); %d (%s)",
-				count, Cursor(), Cursor(), errno, strerror(errno));
+	if (_pFile == NULL) {
+		FATAL("File not opened");
 		return false;
 	}
-	return true;
-}
-
-bool File::ReadLine(uint8_t *pBuffer, uint64_t &maxSize) {
-	_file.getline((char *) pBuffer, maxSize);
-	if (_file.fail()) {
-		FATAL("Unable to read line from the file");
+	if (fread(pBuffer, count, 1, _pFile) != 1) {
+		int err = errno;
+		FATAL("Unable to read %"PRIu64" bytes from the file. Cursor: %"PRIu64" (0x%"PRIx64"); %d (%s)",
+				count, Cursor(), Cursor(), err, strerror(err));
 		return false;
 	}
 	return true;
@@ -432,20 +460,24 @@ bool File::WriteString(string &value) {
 }
 
 bool File::WriteBuffer(const uint8_t *pBuffer, uint64_t count) {
-	_file.write((char *) pBuffer, count);
-	if (_file.fail()) {
+	if (_pFile == NULL) {
+		FATAL("File not opened");
+		return false;
+	}
+	if (fwrite(pBuffer, count, 1, _pFile) != 1) {
 		FATAL("Unable to write %"PRIu64" bytes to file", count);
 		return false;
 	}
+
 	return true;
 }
 
 bool File::Flush() {
-	_file.flush();
-	if (_file.fail()) {
-		FATAL("Unable to flush to file");
+	if (_pFile == NULL) {
+		FATAL("File not opened");
 		return false;
 	}
-	return true;
+	fflush(_pFile);
+	return IsOpen();
 }
 
