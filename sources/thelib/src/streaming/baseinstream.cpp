@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -55,7 +55,8 @@ void BaseInStream::GetStats(Variant &info, uint32_t namespaceId) {
 	LinkedListNode<BaseOutStream *> *pTemp = _pOutStreams;
 	info["outStreamsUniqueIds"] = Variant();
 	while (pTemp != NULL) {
-		info["outStreamsUniqueIds"].PushToArray(pTemp->info->GetUniqueId());
+		info["outStreamsUniqueIds"].PushToArray(
+				((((uint64_t) namespaceId) << 32) | pTemp->info->GetUniqueId()));
 		pTemp = pTemp->pPrev;
 	}
 	StreamCapabilities *pCapabilities = GetCapabilities();

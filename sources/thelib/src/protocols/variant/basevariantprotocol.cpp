@@ -161,7 +161,6 @@ bool BaseVariantProtocol::Send(Variant &variant) {
 				FATAL("Unable to enqueue for outbound");
 				return false;
 			}
-			GracefullyEnqueueForDelete();
 			return true;
 		}
 		case PT_OUTBOUND_HTTP:

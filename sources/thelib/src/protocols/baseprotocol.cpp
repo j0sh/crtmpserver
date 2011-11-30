@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -260,6 +260,9 @@ BaseProtocol::operator string() {
 				break;
 			case IOHT_TIMER:
 				result = format("T(%d) <-> ", GetIOHandler()->GetInboundFd());
+				break;
+			case IOHT_STDIO:
+				result = format("STDIO <-> ");
 				break;
 			default:
 				result = format("#unknown %hhu#(%d,%d) <-> ",

@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -29,7 +29,7 @@ class BaseInStream;
 
 /*!
 	@class BaseAppProtocolHandler
-	@brief 
+	@brief
  */
 class DLLEXP BaseAppProtocolHandler {
 private:
@@ -39,14 +39,14 @@ protected:
 public:
 	BaseAppProtocolHandler(Variant &configuration);
 	virtual ~BaseAppProtocolHandler();
-	
+
 	virtual bool ParseAuthenticationNode(Variant &node, Variant &result);
 
 	/*!
 		@brief Sets the application.
 		@param pApplication
 	 */
-	void SetApplication(BaseClientApplication *pApplication);
+	virtual void SetApplication(BaseClientApplication *pApplication);
 	/*!
 		@brief Sets the pointer to the application.
 	 */
