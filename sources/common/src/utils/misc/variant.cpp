@@ -1192,6 +1192,7 @@ void Variant::Compact() {
 bool Variant::DeserializeFromBin(uint8_t *pBuffer, uint32_t bufferLength,
 		Variant &variant) {
 	uint32_t cursor = 0;
+	variant.Reset();
 	return DeserializeFromBin(pBuffer, bufferLength, variant, cursor);
 }
 
