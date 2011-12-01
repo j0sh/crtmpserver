@@ -37,6 +37,8 @@ public:
 	int64_t Current();
 	int64_t Max();
 	int64_t Total();
+	void ResetMax();
+	void ResetTotal();
 	operator string();
 	Variant ToVariant();
 };
@@ -58,6 +60,8 @@ public:
 	int64_t Current();
 	int64_t Max();
 	int64_t Total();
+	void ResetMax();
+	void ResetTotal();
 
 	BaseFdStats &GetManagedTcp();
 	BaseFdStats &GetManagedTcpAcceptors();

@@ -63,6 +63,14 @@ int64_t BaseFdStats::Total() {
 	return _total;
 }
 
+void BaseFdStats::ResetMax() {
+	_max = _current;
+}
+
+void BaseFdStats::ResetTotal() {
+	_total = _current;
+}
+
 BaseFdStats::operator string() {
 	return format("current: %"PRId64"; max: %"PRId64"; total: %"PRIu64,
 			_current, _max, _total);
@@ -114,6 +122,25 @@ int64_t FdStats::Total() {
 			+ _managedUdp.Total()
 			+ _managedNonTcpUdp.Total()
 			+ _rawUdp.Total();
+}
+
+void FdStats::ResetMax() {
+	_managedTcp.ResetMax();
+	_managedTcpAcceptors.ResetMax();
+	_managedTcpConnectors.ResetMax();
+	_managedUdp.ResetMax();
+	_managedNonTcpUdp.ResetMax();
+	_rawUdp.ResetMax();
+	_max = Current();
+}
+
+void FdStats::ResetTotal() {
+	_managedTcp.ResetTotal();
+	_managedTcpAcceptors.ResetTotal();
+	_managedTcpConnectors.ResetTotal();
+	_managedUdp.ResetTotal();
+	_managedNonTcpUdp.ResetTotal();
+	_rawUdp.ResetTotal();
 }
 
 BaseFdStats &FdStats::GetManagedTcp() {
