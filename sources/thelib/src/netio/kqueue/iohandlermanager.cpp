@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -34,6 +34,7 @@ struct kevent *IOHandlerManager::_pDetectedEvents = NULL;
 struct kevent *IOHandlerManager::_pPendingEvents = NULL;
 int32_t IOHandlerManager::_pendingEventsCount = 0;
 int32_t IOHandlerManager::_eventsSize = 0;
+FdStats IOHandlerManager::_fdStats;
 #ifndef HAS_KQUEUE_TIMERS
 struct timespec IOHandlerManager::_timeout = {1, 0};
 TimersManager *IOHandlerManager::_pTimersManager = NULL;
@@ -81,6 +82,7 @@ map<uint32_t, IOHandler *> & IOHandlerManager::GetDeadHandlers() {
 }
 
 void IOHandlerManager::Initialize() {
+	_fdStats.Reset();
 	_kq = 0;
 	_pAvailableTokens = &_tokensVector1;
 	_pRecycledTokens = &_tokensVector2;
@@ -143,18 +145,38 @@ void IOHandlerManager::RegisterIOHandler(IOHandler* pIOHandler) {
 	size_t before = _activeIOHandlers.size();
 	_activeIOHandlers[pIOHandler->GetId()] = pIOHandler;
 	SetupToken(pIOHandler);
+	_fdStats.RegisterManaged(pIOHandler->GetType());
 	DEBUG("Handlers count changed: %"PRIz"u->%"PRIz"u %s", before, before + 1,
 			STR(IOHandler::IOHTToString(pIOHandler->GetType())));
 }
 
 void IOHandlerManager::UnRegisterIOHandler(IOHandler *pIOHandler) {
 	if (MAP_HAS1(_activeIOHandlers, pIOHandler->GetId())) {
+		_fdStats.UnRegisterManaged(pIOHandler->GetType());
 		FreeToken(pIOHandler);
 		size_t before = _activeIOHandlers.size();
 		_activeIOHandlers.erase(pIOHandler->GetId());
 		DEBUG("Handlers count changed: %"PRIz"u->%"PRIz"u %s", before, before - 1,
 				STR(IOHandler::IOHTToString(pIOHandler->GetType())));
 	}
+}
+
+int IOHandlerManager::CreateRawUDPSocket() {
+	int result = socket(AF_INET, SOCK_DGRAM, 0);
+	if (result >= 0) {
+		_fdStats.RegisterRawUdp();
+	} else {
+		uint32_t err = LASTSOCKETERROR;
+		FATAL("Unable to create raw udp socket. Error code was: %"PRIu32, err);
+	}
+	return result;
+}
+
+void IOHandlerManager::CloseRawUDPSocket(int socket) {
+	if (socket > 0) {
+		_fdStats.UnRegisterRawUdp();
+	}
+	CLOSE_SOCKET(socket);
 }
 
 bool IOHandlerManager::EnableReadData(IOHandler *pIOHandler) {

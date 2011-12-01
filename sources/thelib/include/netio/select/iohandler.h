@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -22,19 +22,7 @@
 #define	_IOHANDLER_H
 
 #include "common.h"
-
-/*!
-	IO Handler types.
-*/
-typedef enum _IOHandlerType {
-	IOHT_ACCEPTOR,
-	IOHT_TCP_CONNECTOR,
-	IOHT_TCP_CARRIER,
-	IOHT_UDP_CARRIER,
-	IOHT_INBOUNDNAMEDPIPE_CARRIER,
-	IOHT_TIMER,
-	IOHT_STDIO
-} IOHandlerType;
+#include "netio/iohandlertype.h"
 
 class BaseProtocol;
 

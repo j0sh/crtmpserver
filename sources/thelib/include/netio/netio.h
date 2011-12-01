@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -20,6 +20,9 @@
 
 #ifndef _NETIO_H
 #define	_NETIO_H
+
+#include "netio/iohandlertype.h"
+#include "netio/fdstats.h"
 
 #ifdef NET_KQUEUE
 #include "netio/kqueue/iohandler.h"

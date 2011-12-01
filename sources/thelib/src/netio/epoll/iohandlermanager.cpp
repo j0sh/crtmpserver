@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -30,6 +30,7 @@ vector<IOHandlerManagerToken *> IOHandlerManager::_tokensVector2;
 vector<IOHandlerManagerToken *> *IOHandlerManager::_pAvailableTokens;
 vector<IOHandlerManagerToken *> *IOHandlerManager::_pRecycledTokens;
 TimersManager *IOHandlerManager::_pTimersManager = NULL;
+FdStats IOHandlerManager::_fdStats;
 struct epoll_event IOHandlerManager::_dummy = {0,
 	{0}};
 
@@ -42,6 +43,7 @@ map<uint32_t, IOHandler *> & IOHandlerManager::GetDeadHandlers() {
 }
 
 void IOHandlerManager::Initialize() {
+	_fdStats.Reset();
 	_eq = 0;
 	_pAvailableTokens = &_tokensVector1;
 	_pRecycledTokens = &_tokensVector2;
@@ -96,18 +98,38 @@ void IOHandlerManager::RegisterIOHandler(IOHandler* pIOHandler) {
 	SetupToken(pIOHandler);
 	size_t before = _activeIOHandlers.size();
 	_activeIOHandlers[pIOHandler->GetId()] = pIOHandler;
+	_fdStats.RegisterManaged(pIOHandler->GetType());
 	DEBUG("Handlers count changed: %"PRIz"u->%"PRIz"u %s", before, before + 1,
 			STR(IOHandler::IOHTToString(pIOHandler->GetType())));
 }
 
 void IOHandlerManager::UnRegisterIOHandler(IOHandler *pIOHandler) {
 	if (MAP_HAS1(_activeIOHandlers, pIOHandler->GetId())) {
+		_fdStats.UnRegisterManaged(pIOHandler->GetType());
 		FreeToken(pIOHandler);
 		size_t before = _activeIOHandlers.size();
 		_activeIOHandlers.erase(pIOHandler->GetId());
 		DEBUG("Handlers count changed: %"PRIz"u->%"PRIz"u %s", before, before - 1,
 				STR(IOHandler::IOHTToString(pIOHandler->GetType())));
 	}
+}
+
+int IOHandlerManager::CreateRawUDPSocket() {
+	int result = socket(AF_INET, SOCK_DGRAM, 0);
+	if (result >= 0) {
+		_fdStats.RegisterRawUdp();
+	} else {
+		uint32_t err = LASTSOCKETERROR;
+		FATAL("Unable to create raw udp socket. Error code was: %"PRIu32, err);
+	}
+	return result;
+}
+
+void IOHandlerManager::CloseRawUDPSocket(int socket) {
+	if (socket > 0) {
+		_fdStats.UnRegisterRawUdp();
+	}
+	CLOSE_SOCKET(socket);
 }
 
 bool IOHandlerManager::EnableReadData(IOHandler *pIOHandler) {

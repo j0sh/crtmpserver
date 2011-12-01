@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -23,6 +23,7 @@
 
 #include "common.h"
 #include "netio/kqueue/iohandlermanagertoken.h"
+#include "netio/fdstats.h"
 
 class IOHandler;
 
@@ -39,6 +40,7 @@ private:
 	static struct kevent *_pPendingEvents;
 	static int32_t _pendingEventsCount;
 	static int32_t _eventsSize;
+	static FdStats _fdStats;
 #ifndef HAS_KQUEUE_TIMERS
 	static struct timespec _timeout;
 	static TimersManager *_pTimersManager;
@@ -60,6 +62,8 @@ public:
 	static void Shutdown();
 	static void RegisterIOHandler(IOHandler *pIOHandler);
 	static void UnRegisterIOHandler(IOHandler *pIOHandler);
+	static int CreateRawUDPSocket();
+	static void CloseRawUDPSocket(int socket);
 	static bool EnableReadData(IOHandler *pIOHandler);
 	static bool DisableReadData(IOHandler *pIOHandler, bool ignoreError = false);
 	static bool EnableWriteData(IOHandler *pIOHandler);

@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -23,6 +23,7 @@
 #define	_IOHANDLERMANAGER_H
 
 #include "common.h"
+#include "netio/fdstats.h"
 
 class IOHandler;
 
@@ -38,6 +39,7 @@ class DLLEXP IOHandlerManager {
 	static TimersManager *_pTimersManager;
 	static map<int32_t, map<uint32_t, uint8_t> > _fdState;
 	static bool _isShuttingDown;
+	static FdStats _fdStats;
 public:
 	static map<uint32_t, IOHandler *> & GetActiveHandlers();
 	static map<uint32_t, IOHandler *> & GetDeadHandlers();
@@ -78,8 +80,11 @@ public:
 	 */
 	static void UnRegisterIOHandler(IOHandler *pIOHandler);
 
+	static int CreateRawUDPSocket();
+	static void CloseRawUDPSocket(int socket);
+
 	/*!
-		@brief Enables the IO handler to read data. 
+		@brief Enables the IO handler to read data.
 		@discussion This assigns a FDSTATE_READ_ENABLED to the inbound file descriptor's state
 	 */
 	static bool EnableReadData(IOHandler *pIOHandler);
@@ -90,7 +95,7 @@ public:
 	static bool DisableReadData(IOHandler *pIOHandler);
 
 	/*!
-		@brief Enables the IO handler to write data. 
+		@brief Enables the IO handler to write data.
 		@discussion This assigns a FDSTATE_WRITE_ENABLED to the inbound file descriptor's state
 	 */
 	static bool EnableWriteData(IOHandler *pIOHandler);

@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -23,6 +23,7 @@
 
 #include "common.h"
 #include "netio/epoll/iohandlermanagertoken.h"
+#include "netio/fdstats.h"
 
 class IOHandler;
 
@@ -40,6 +41,7 @@ private:
 	static vector<IOHandlerManagerToken *> *_pRecycledTokens;
 	static TimersManager *_pTimersManager;
 	static struct epoll_event _dummy;
+	static FdStats _fdStats;
 public:
 	static map<uint32_t, IOHandler *> & GetActiveHandlers();
 	static map<uint32_t, IOHandler *> & GetDeadHandlers();
@@ -50,6 +52,8 @@ public:
 	static void Shutdown();
 	static void RegisterIOHandler(IOHandler *pIOHandler);
 	static void UnRegisterIOHandler(IOHandler *pIOHandler);
+	static int CreateRawUDPSocket();
+	static void CloseRawUDPSocket(int socket);
 	static bool EnableReadData(IOHandler *pIOHandler);
 	static bool DisableReadData(IOHandler *pIOHandler, bool ignoreError = false);
 	static bool EnableWriteData(IOHandler *pIOHandler);
