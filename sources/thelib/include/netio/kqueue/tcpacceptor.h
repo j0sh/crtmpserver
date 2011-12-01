@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -49,6 +49,7 @@ public:
 	virtual bool OnEvent(struct kevent &event);
 	virtual bool OnConnectionAvailable(struct kevent &event);
 	bool Accept();
+	bool Drop();
 	Variant & GetParameters();
 	BaseClientApplication *GetApplication();
 	vector<uint64_t> &GetProtocolChain();

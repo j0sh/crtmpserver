@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -135,14 +135,14 @@ bool TCPAcceptor::Accept() {
 	if (!_enabled) {
 		CLOSE_SOCKET(fd);
 		_droppedCount++;
-		WARN("Acceptor is not enabled. Client dropped: %s:%hu -> %s:%hu",
+		WARN("Acceptor is not enabled. Client dropped: %s:%"PRIu16" -> %s:%"PRIu16,
 				inet_ntoa(((sockaddr_in *) & address)->sin_addr),
 				ENTOHS(((sockaddr_in *) & address)->sin_port),
 				STR(_ipAddress),
 				_port);
 		return true;
 	}
-	INFO("Client connected: %s:%hu -> %s:%hu",
+	INFO("Client connected: %s:%"PRIu16" -> %s:%"PRIu16,
 			inet_ntoa(((sockaddr_in *) & address)->sin_addr),
 			ENTOHS(((sockaddr_in *) & address)->sin_port),
 			STR(_ipAddress),
@@ -180,6 +180,32 @@ bool TCPAcceptor::Accept() {
 	_acceptedCount++;
 
 	//7. Done
+	return true;
+}
+
+bool TCPAcceptor::Drop() {
+	sockaddr address;
+	memset(&address, 0, sizeof (sockaddr));
+	socklen_t len = sizeof (sockaddr);
+
+
+	//1. Accept the connection
+	int32_t fd = accept(_inboundFd, &address, &len);
+	if (fd < 0) {
+		uint32_t err = LASTSOCKETERROR;
+		WARN("Accept failed. Error code was: %"PRIu32, err);
+		return true;
+	}
+
+	//2. Drop it now
+	CLOSE_SOCKET(fd);
+	_droppedCount++;
+
+	INFO("Client explicitly dropped: %s:%"PRIu16" -> %s:%"PRIu16,
+			inet_ntoa(((sockaddr_in *) & address)->sin_addr),
+			ENTOHS(((sockaddr_in *) & address)->sin_port),
+			STR(_ipAddress),
+			_port);
 	return true;
 }
 

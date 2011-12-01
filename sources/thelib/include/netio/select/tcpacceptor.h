@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -50,6 +50,7 @@ public:
 	virtual bool OnEvent(select_event &event);
 	virtual bool OnConnectionAvailable(select_event &event);
 	bool Accept();
+	bool Drop();
 	Variant & GetParameters();
 	BaseClientApplication *GetApplication();
 	vector<uint64_t> &GetProtocolChain();

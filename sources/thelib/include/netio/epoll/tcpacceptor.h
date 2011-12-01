@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -49,6 +49,7 @@ public:
 	virtual bool OnEvent(struct epoll_event &event);
 	virtual bool OnConnectionAvailable(struct epoll_event &event);
 	bool Accept();
+	bool Drop();
 	Variant & GetParameters();
 	BaseClientApplication *GetApplication();
 	vector<uint64_t> &GetProtocolChain();
