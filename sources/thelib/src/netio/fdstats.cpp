@@ -68,6 +68,7 @@ void BaseFdStats::ResetMax() {
 }
 
 void BaseFdStats::ResetTotal() {
+	ResetMax();
 	_total = _current;
 }
 
@@ -135,6 +136,7 @@ void FdStats::ResetMax() {
 }
 
 void FdStats::ResetTotal() {
+	ResetMax();
 	_managedTcp.ResetTotal();
 	_managedTcpAcceptors.ResetTotal();
 	_managedTcpConnectors.ResetTotal();
