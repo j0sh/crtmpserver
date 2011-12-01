@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -155,9 +155,6 @@ bool InNetRTPStream::SignalStop() {
 //#define DEBUG_RTCP_PRESENCE(...) FINEST(__VA_ARGS__)
 #define DEBUG_RTCP_PRESENCE(...)
 
-//double ___lastA = 0;
-//double ___lastV = 0;
-
 bool InNetRTPStream::FeedData(uint8_t *pData, uint32_t dataLength,
 		uint32_t processedLength, uint32_t totalLength,
 		double absoluteTimestamp, bool isAudio) {
@@ -228,13 +225,6 @@ bool InNetRTPStream::FeedData(uint8_t *pData, uint32_t dataLength,
 			return false;
 		}
 	}
-
-	//	double &___last = isAudio ? ___lastA : ___lastV;
-	//	___last = absoluteTimestamp;
-	//	FINEST("A: %.2f; V: %.2f; D: %.2f",
-	//			___lastA / 1000.0,
-	//			___lastV / 1000.0,
-	//			(___lastA - ___lastV) / 1000.0);
 
 	double &lastTs = isAudio ? _audioLastTs : _videoLastTs;
 
@@ -319,6 +309,8 @@ bool InNetRTPStream::FeedVideoData(uint8_t *pData, uint32_t dataLength,
 	if (naluType <= 23) {
 		//3. Standard NALU
 		//FINEST("V: %08"PRIx32, rtpHeader._timestamp);
+		_videoPacketsCount++;
+		_videoBytesCount += dataLength;
 		return FeedData(pData, dataLength, 0, dataLength, ts, false);
 	} else if (naluType == NALU_TYPE_FUA) {
 		if (GETAVAILABLEBYTESCOUNT(_currentNalu) == 0) {
@@ -365,7 +357,6 @@ bool InNetRTPStream::FeedVideoData(uint8_t *pData, uint32_t dataLength,
 			}
 			_videoPacketsCount++;
 			_videoBytesCount += length;
-			//FINEST("V: %08"PRIx32, rtpHeader._timestamp);
 			if (!FeedData(pData + index,
 					length, 0,
 					length,
@@ -386,7 +377,6 @@ bool InNetRTPStream::FeedVideoData(uint8_t *pData, uint32_t dataLength,
 
 bool InNetRTPStream::FeedAudioData(uint8_t *pData, uint32_t dataLength,
 		RTPHeader &rtpHeader) {
-	//FINEST("A: %08"PRIx32, rtpHeader._timestamp);
 	if (_audioSequence == 0) {
 		//this is the first packet. Make sure we start with a M packet
 		if (!GET_RTP_M(rtpHeader)) {
@@ -462,22 +452,11 @@ void InNetRTPStream::GetStats(Variant &info, uint32_t namespaceId) {
 
 void InNetRTPStream::ReportSR(uint64_t ntpMicroseconds, uint32_t rtpTimestamp,
 		bool isAudio) {
-	//uint64_t delta = 0x00000FEC9A7FA51E;
 	if (isAudio) {
-		//		delta = delta / 180000000;
-		//		delta = delta * _capabilities.aac._sampleRate;
-		//		delta += rtpTimestamp;
-		//		rtpTimestamp = delta & 0x00000000ffffffff;
-		//		WARN("**** A: %08"PRIx32, rtpTimestamp);
 		_audioRTP = (double) ComputeRTP(rtpTimestamp, _lastAudioRTCPRTP,
 				_audioRTCPRTPRollCount) / (double) _capabilities.aac._sampleRate * 1000.0;
 		_audioNTP = (double) ntpMicroseconds / 1000.0;
 	} else {
-		//		delta = delta / 180000000;
-		//		delta = delta * _capabilities.avc._rate;
-		//		delta += rtpTimestamp;
-		//		rtpTimestamp = delta & 0x00000000ffffffff;
-		//		WARN("**** V: %08"PRIx32, rtpTimestamp);
 		_videoRTP = (double) ComputeRTP(rtpTimestamp, _lastVideoRTCPRTP,
 				_videoRTCPRTPRollCount) / (double) _capabilities.avc._rate * 1000.0;
 		_videoNTP = (double) ntpMicroseconds / 1000.0;
