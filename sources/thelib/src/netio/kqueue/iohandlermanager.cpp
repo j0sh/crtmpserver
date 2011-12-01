@@ -81,6 +81,10 @@ map<uint32_t, IOHandler *> & IOHandlerManager::GetDeadHandlers() {
 	return _deadIOHandlers;
 }
 
+FdStats &IOHandlerManager::GetStats() {
+	return _fdStats;
+}
+
 void IOHandlerManager::Initialize() {
 	_fdStats.Reset();
 	_kq = 0;

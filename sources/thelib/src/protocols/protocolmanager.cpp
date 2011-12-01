@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -20,6 +20,7 @@
 
 #include "protocols/protocolmanager.h"
 #include "protocols/baseprotocol.h"
+#include "netio/netio.h"
 
 map<uint32_t, BaseProtocol *> ProtocolManager::_activeProtocols;
 map<uint32_t, BaseProtocol *> ProtocolManager::_deadProtocols;
@@ -79,4 +80,19 @@ BaseProtocol * ProtocolManager::GetProtocol(uint32_t id,
 
 map<uint32_t, BaseProtocol *> ProtocolManager::GetActiveProtocols() {
 	return _activeProtocols;
+}
+
+void ProtocolManager::GetNetworkedProtocols(map<uint32_t, BaseProtocol *> &result) {
+	result.clear();
+	FOR_MAP(_activeProtocols, uint32_t, BaseProtocol *, i) {
+		BaseProtocol *pProtocol = MAP_VAL(i)->GetNearEndpoint();
+		if (MAP_HAS1(result, pProtocol->GetId()))
+			continue;
+		IOHandler *pIOHandler = pProtocol->GetIOHandler();
+		if ((pIOHandler == NULL)
+				|| ((pIOHandler->GetType() != IOHT_TCP_CARRIER)
+				&& (pIOHandler->GetType() != IOHT_UDP_CARRIER)))
+			continue;
+		result[pProtocol->GetId()] = pProtocol;
+	}
 }

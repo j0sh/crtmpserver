@@ -116,6 +116,30 @@ int64_t FdStats::Total() {
 			+ _rawUdp.Total();
 }
 
+BaseFdStats &FdStats::GetManagedTcp() {
+	return _managedTcp;
+}
+
+BaseFdStats &FdStats::GetManagedTcpAcceptors() {
+	return _managedTcpAcceptors;
+}
+
+BaseFdStats &FdStats::GetManagedTcpConnectors() {
+	return _managedTcpConnectors;
+}
+
+BaseFdStats &FdStats::GetManagedUdp() {
+	return _managedUdp;
+}
+
+BaseFdStats &FdStats::GetManagedNonTcpUdp() {
+	return _managedNonTcpUdp;
+}
+
+BaseFdStats &FdStats::GetRawUdp() {
+	return _rawUdp;
+}
+
 void FdStats::RegisterManaged(IOHandlerType type) {
 	AccountManaged(type, true);
 }

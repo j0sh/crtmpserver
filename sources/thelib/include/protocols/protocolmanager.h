@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -68,6 +68,11 @@ public:
 		@brief Returns the vector that contains all active protocols
 	*/
 	static map<uint32_t, BaseProtocol *> GetActiveProtocols();
+
+	/*!
+		@brief Extracts only the protocols which are tied to the network layer
+	*/
+	static void GetNetworkedProtocols(map<uint32_t, BaseProtocol *> &result);
 };
 
 

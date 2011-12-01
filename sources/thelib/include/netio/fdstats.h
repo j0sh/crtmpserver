@@ -59,6 +59,13 @@ public:
 	int64_t Max();
 	int64_t Total();
 
+	BaseFdStats &GetManagedTcp();
+	BaseFdStats &GetManagedTcpAcceptors();
+	BaseFdStats &GetManagedTcpConnectors();
+	BaseFdStats &GetManagedUdp();
+	BaseFdStats &GetManagedNonTcpUdp();
+	BaseFdStats &GetRawUdp();
+
 	void RegisterManaged(IOHandlerType type);
 	void UnRegisterManaged(IOHandlerType type);
 
