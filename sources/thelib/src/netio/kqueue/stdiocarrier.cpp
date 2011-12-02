@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -49,6 +49,7 @@ StdioCarrier::StdioCarrier()
 : IOHandler(fileno(stdin), fileno(stdout), IOHT_STDIO) {
 	IOHandlerManager::EnableReadData(this);
 	_writeDataEnabled = false;
+	_ioAmount = 0;
 }
 
 StdioCarrier *StdioCarrier::GetInstance(BaseProtocol *pProtocol) {
@@ -72,31 +73,31 @@ StdioCarrier::~StdioCarrier() {
 }
 
 bool StdioCarrier::OnEvent(struct kevent &event) {
-	int32_t recvAmount = 0;
-
 	//3. Do the I/O
 	switch (event.filter) {
 		case EVFILT_READ:
 		{
 			IOBuffer *pInputBuffer = _pProtocol->GetInputBuffer();
 			assert(pInputBuffer != NULL);
-			if (!pInputBuffer->ReadFromStdio(event.ident, event.data, recvAmount)) {
+			if (!pInputBuffer->ReadFromStdio(event.ident, event.data, _ioAmount)) {
 				FATAL("Unable to read data");
 				return false;
 			}
+			ADD_IN_BYTES_MANAGED(_type, _ioAmount);
 
-			return _pProtocol->SignalInputData(recvAmount);
+			return _pProtocol->SignalInputData(_ioAmount);
 		}
 		case EVFILT_WRITE:
 		{
 			IOBuffer *pOutputBuffer = NULL;
 
 			while ((pOutputBuffer = _pProtocol->GetOutputBuffer()) != NULL) {
-				if (!pOutputBuffer->WriteToStdio(event.ident, event.data)) {
+				if (!pOutputBuffer->WriteToStdio(event.ident, event.data, _ioAmount)) {
 					FATAL("Unable to send data");
 					IOHandlerManager::EnqueueForDelete(this);
 					return false;
 				}
+				ADD_OUT_BYTES_MANAGED(_type, _ioAmount);
 				if (GETAVAILABLEBYTESCOUNT(*pOutputBuffer) > 0) {
 					ENABLE_WRITE_DATA;
 					break;

@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -36,6 +36,7 @@ private:
 	uint16_t _nearPort;
 	uint64_t _rx;
 	uint64_t _tx;
+	int32_t _ioAmount;
 public:
 	TCPCarrier(int32_t fd);
 	virtual ~TCPCarrier();

@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -36,6 +36,7 @@ private:
 	uint64_t _rx;
 	uint64_t _tx;
 	Variant _parameters;
+	int32_t _ioAmount;
 private:
 	UDPCarrier(int32_t fd);
 public:

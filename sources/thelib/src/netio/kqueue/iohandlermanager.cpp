@@ -182,6 +182,24 @@ void IOHandlerManager::CloseRawUDPSocket(int socket) {
 	}
 	CLOSE_SOCKET(socket);
 }
+#ifdef GLOBALLY_ACCOUNT_BYTES
+
+void IOHandlerManager::AddInBytesManaged(IOHandlerType type, uint64_t bytes) {
+	_fdStats.AddInBytesManaged(type, bytes);
+}
+
+void IOHandlerManager::AddOutBytesManaged(IOHandlerType type, uint64_t bytes) {
+	_fdStats.AddOutBytesManaged(type, bytes);
+}
+
+void IOHandlerManager::AddInBytesRawUdp(uint64_t bytes) {
+	_fdStats.AddInBytesRawUdp(bytes);
+}
+
+void IOHandlerManager::AddOutBytesRawUdp(uint64_t bytes) {
+	_fdStats.AddOutBytesRawUdp(bytes);
+}
+#endif /* GLOBALLY_ACCOUNT_BYTES */
 
 bool IOHandlerManager::EnableReadData(IOHandler *pIOHandler) {
 	return RegisterEvent(pIOHandler->GetInboundFd(), EVFILT_READ,

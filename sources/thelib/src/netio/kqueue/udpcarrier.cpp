@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -32,6 +32,7 @@ UDPCarrier::UDPCarrier(int32_t fd)
 	_nearPort = 0;
 	_rx = 0;
 	_tx = 0;
+	_ioAmount = 0;
 }
 
 UDPCarrier::~UDPCarrier() {
@@ -39,20 +40,19 @@ UDPCarrier::~UDPCarrier() {
 }
 
 bool UDPCarrier::OnEvent(struct kevent &event) {
-	int32_t recvAmount = 0;
-
 	//3. Do the I/O
 	switch (event.filter) {
 		case EVFILT_READ:
 		{
 			IOBuffer *pInputBuffer = _pProtocol->GetInputBuffer();
 			assert(pInputBuffer != NULL);
-			if (!pInputBuffer->ReadFromUDPFd(event.ident, recvAmount, _peerAddress)) {
+			if (!pInputBuffer->ReadFromUDPFd(event.ident, _ioAmount, _peerAddress)) {
 				FATAL("Unable to read data");
 				return false;
 			}
-			_rx += recvAmount;
-			return _pProtocol->SignalInputData(recvAmount, &_peerAddress);
+			_rx += _ioAmount;
+			ADD_IN_BYTES_MANAGED(_type, _ioAmount);
+			return _pProtocol->SignalInputData(_ioAmount, &_peerAddress);
 		}
 		case EVFILT_WRITE:
 		{

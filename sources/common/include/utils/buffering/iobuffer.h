@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -153,7 +153,7 @@ public:
 		@param fd
 		@param size
 	 */
-	bool WriteToStdio(int32_t fd, uint32_t size);
+	bool WriteToStdio(int32_t fd, uint32_t size, int32_t &sentAmount);
 
 	//Utility functions
 

@@ -23,22 +23,73 @@
 #include "common.h"
 #include "netio/iohandlertype.h"
 
+#ifdef GLOBALLY_ACCOUNT_BYTES
+#define ADD_IN_BYTES_MANAGED(t,b)  IOHandlerManager::AddInBytesManaged(t,b)
+#define ADD_OUT_BYTES_MANAGED(t,b) IOHandlerManager::AddOutBytesManaged(t,b)
+#define ADD_IN_BYTES_RAWUDP(b)   IOHandlerManager::AddInBytesRawUdp(b)
+#define ADD_OUT_BYTES_RAWUDP(b)  IOHandlerManager::AddOutBytesRawUdp(b)
+#else
+#define ADD_IN_BYTES_MANAGED(t,b)
+#define ADD_OUT_BYTES_MANAGED(t,b)
+#define ADD_IN_BYTES_RAWUDP(b)
+#define ADD_OUT_BYTES_RAWUDP(b)
+#endif /* GLOBALLY_ACCOUNT_BYTES */
+
 class BaseFdStats {
 private:
 	int64_t _current;
 	int64_t _max;
 	int64_t _total;
+#ifdef GLOBALLY_ACCOUNT_BYTES
+	uint64_t _inBytes;
+	uint64_t _outBytes;
+#endif /* GLOBALLY_ACCOUNT_BYTES */
 public:
 	BaseFdStats();
 	virtual ~BaseFdStats();
 	void Reset();
-	inline void Increment();
-	inline void Decrement();
+
+	inline void Increment() {
+		assert(_current >= 0);
+		assert(_max >= 0);
+		_current++;
+		_max = _max < _current ? _current : _max;
+		_total++;
+		assert(_current >= 0);
+		assert(_max >= 0);
+	}
+
+	inline void Decrement() {
+		assert(_current >= 0);
+		assert(_max >= 0);
+		_current--;
+		assert(_current >= 0);
+		assert(_max >= 0);
+	}
+#ifdef GLOBALLY_ACCOUNT_BYTES
+
+	inline void AddInBytes(uint64_t bytes) {
+		_inBytes += bytes;
+	}
+
+	inline void AddOutBytes(uint64_t bytes) {
+		_outBytes += bytes;
+	}
+#endif /* GLOBALLY_ACCOUNT_BYTES */
 	int64_t Current();
 	int64_t Max();
 	int64_t Total();
+#ifdef GLOBALLY_ACCOUNT_BYTES
+	uint64_t InBytes();
+	uint64_t OutBytes();
+#endif /* GLOBALLY_ACCOUNT_BYTES */
 	void ResetMax();
 	void ResetTotal();
+#ifdef GLOBALLY_ACCOUNT_BYTES
+	void ResetInBytes();
+	void ResetOutBytes();
+	void ResetInOutBytes();
+#endif /* GLOBALLY_ACCOUNT_BYTES */
 	operator string();
 	Variant ToVariant();
 };
@@ -60,8 +111,17 @@ public:
 	int64_t Current();
 	int64_t Max();
 	int64_t Total();
+#ifdef GLOBALLY_ACCOUNT_BYTES
+	uint64_t InBytes();
+	uint64_t OutBytes();
+#endif /* GLOBALLY_ACCOUNT_BYTES */
 	void ResetMax();
 	void ResetTotal();
+#ifdef GLOBALLY_ACCOUNT_BYTES
+	void ResetInBytes();
+	void ResetOutBytes();
+	void ResetInOutBytes();
+#endif /* GLOBALLY_ACCOUNT_BYTES */
 
 	BaseFdStats &GetManagedTcp();
 	BaseFdStats &GetManagedTcpAcceptors();
@@ -70,18 +130,91 @@ public:
 	BaseFdStats &GetManagedNonTcpUdp();
 	BaseFdStats &GetRawUdp();
 
-	void RegisterManaged(IOHandlerType type);
-	void UnRegisterManaged(IOHandlerType type);
+	inline void RegisterManaged(IOHandlerType type) {
+		AccountManaged(type, true);
+	}
 
+	inline void UnRegisterManaged(IOHandlerType type) {
+		AccountManaged(type, false);
+	}
+#ifdef GLOBALLY_ACCOUNT_BYTES
 
-	void RegisterRawUdp();
-	void UnRegisterRawUdp();
+	inline void AddInBytesManaged(IOHandlerType type, uint64_t bytes) {
+		GetManaged(type)->AddInBytes(bytes);
+	}
 
+	inline void AddOutBytesManaged(IOHandlerType type, uint64_t bytes) {
+		GetManaged(type)->AddOutBytes(bytes);
+	}
+#endif /* GLOBALLY_ACCOUNT_BYTES */
+
+	inline void RegisterRawUdp() {
+		AccountRawUdp(true);
+	}
+
+	inline void UnRegisterRawUdp() {
+		AccountRawUdp(false);
+	}
+#ifdef GLOBALLY_ACCOUNT_BYTES
+
+	inline void AddInBytesRawUdp(uint64_t bytes) {
+		_rawUdp.AddInBytes(bytes);
+	}
+
+	inline void AddOutBytesRawUdp(uint64_t bytes) {
+		_rawUdp.AddOutBytes(bytes);
+	}
+#endif /* GLOBALLY_ACCOUNT_BYTES */
 	operator string();
 	Variant ToVariant();
 private:
-	void AccountManaged(IOHandlerType type, bool increment);
-	void AccountRawUdp(bool increment);
+
+	inline BaseFdStats *GetManaged(IOHandlerType type) {
+		switch (type) {
+			case IOHT_ACCEPTOR:
+			{
+				return &_managedTcpAcceptors;
+			}
+			case IOHT_TCP_CONNECTOR:
+			{
+				return &_managedTcpConnectors;
+			}
+			case IOHT_TCP_CARRIER:
+			{
+				return &_managedTcp;
+			}
+			case IOHT_UDP_CARRIER:
+			{
+				return &_managedUdp;
+			}
+			case IOHT_INBOUNDNAMEDPIPE_CARRIER:
+			case IOHT_TIMER:
+			case IOHT_STDIO:
+			default:
+			{
+				return &_managedNonTcpUdp;
+			}
+		}
+	}
+
+	inline void AccountManaged(IOHandlerType type, bool increment) {
+		BaseFdStats *pFdStats = GetManaged(type);
+		if (increment)
+			pFdStats->Increment();
+		else
+			pFdStats->Decrement();
+		int64_t current = Current();
+		_max = _max < current ? current : _max;
+	}
+
+	inline void AccountRawUdp(bool increment) {
+		if (increment)
+			_rawUdp.Increment();
+		else
+			_rawUdp.Decrement();
+		int64_t current = Current();
+		_max = _max < current ? current : _max;
+	}
 };
 
 #endif	/* _FDSTATS_H */

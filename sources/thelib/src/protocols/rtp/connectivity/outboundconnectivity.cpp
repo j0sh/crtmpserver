@@ -71,6 +71,8 @@ OutboundConnectivity::OutboundConnectivity(bool forceTcp, RTSPProtocol *pRTSPPro
 	_pAudioNATRTCP = NULL;
 
 	_startupTime = (uint64_t) time(NULL);
+
+	_amountSent = 0;
 }
 
 OutboundConnectivity::~OutboundConnectivity() {
@@ -398,11 +400,13 @@ bool OutboundConnectivity::FeedData(MSGHDR &message, double absoluteTimestamp,
 		if (_rtpClient.isUdp) {
 			int32_t rtcpFd = isAudio ? _audioRTCPFd : _videoRTCPFd;
 			sockaddr_in &rtcpAddress = isAudio ? _rtpClient.audioRtcpAddress : _rtpClient.videoRtcpAddress;
-			_rtcpMessage.MSGHDR_MSG_NAME = (sockaddr *)&rtcpAddress;
-			if (SENDMSG(rtcpFd, &_rtcpMessage, 0,&_dummyValue) < 0) {
+			_rtcpMessage.MSGHDR_MSG_NAME = (sockaddr *) & rtcpAddress;
+			_amountSent = SENDMSG(rtcpFd, &_rtcpMessage, 0, &_dummyValue);
+			if (_amountSent < 0) {
 				FATAL("Unable to send message");
 				return false;
 			}
+			ADD_OUT_BYTES_MANAGED(IOHT_UDP_CARRIER, _amountSent);
 		} else {
 			if (_pRTSPProtocol != NULL) {
 				if (!_pRTSPProtocol->SendRaw(&_rtcpMessage,
@@ -418,12 +422,14 @@ bool OutboundConnectivity::FeedData(MSGHDR &message, double absoluteTimestamp,
 	if (_rtpClient.isUdp) {
 		int32_t dataFd = isAudio ? _audioDataFd : _videoDataFd;
 		sockaddr_in &dataAddress = isAudio ? _rtpClient.audioDataAddress : _rtpClient.videoDataAddress;
-		message.MSGHDR_MSG_NAME = (sockaddr *)&dataAddress;
-		if (SENDMSG(dataFd, &message, 0,&_dummyValue) < 0) {
+		message.MSGHDR_MSG_NAME = (sockaddr *) & dataAddress;
+		_amountSent = SENDMSG(dataFd, &message, 0, &_dummyValue);
+		if (_amountSent < 0) {
 			int err = errno;
 			FATAL("Unable to send message: %d; %s", err, strerror(errno));
 			return false;
 		}
+		ADD_OUT_BYTES_MANAGED(IOHT_UDP_CARRIER, _amountSent);
 	} else {
 		if (_pRTSPProtocol != NULL) {
 			if (!_pRTSPProtocol->SendRaw(&message, messageLength, &_rtpClient,

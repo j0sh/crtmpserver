@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -125,14 +125,14 @@ bool IOBuffer::ReadFromUDPFd(int32_t fd, int32_t &recvAmount, sockaddr_in &peerA
 		SANITY_INPUT_BUFFER;
 		return true;
 	} else {
-#ifdef WIN32		
+#ifdef WIN32
 		uint32_t err = LASTSOCKETERROR;
 		if (err == SOCKERROR_RECV_CONN_RESET) {
 			WARN("Windows is stupid enough to issue a CONNRESET on a UDP socket. See http://support.microsoft.com/?kbid=263823 for details");
 			SANITY_INPUT_BUFFER;
 			return true;
 		}
-#endif		
+#endif
 		FATAL("Unable to read data from UDP socket. Error was: %"PRIu32, LASTSOCKETERROR);
 		SANITY_INPUT_BUFFER;
 		return false;
@@ -307,21 +307,21 @@ bool IOBuffer::WriteToTCPFd(int32_t fd, uint32_t size, int32_t &sentAmount) {
 	return result;
 }
 
-bool IOBuffer::WriteToStdio(int32_t fd, uint32_t size) {
+bool IOBuffer::WriteToStdio(int32_t fd, uint32_t size, int32_t &sentAmount) {
 	SANITY_INPUT_BUFFER;
 	bool result = true;
-	int32_t sent = WRITE_FD(fd, (char *) (_pBuffer + _consumed),
+	sentAmount = WRITE_FD(fd, (char *) (_pBuffer + _consumed),
 			_published - _consumed);
 	//size > _published - _consumed ? _published - _consumed : size,
 	int err = LASTSOCKETERROR;
 
-	if (sent < 0) {
+	if (sentAmount < 0) {
 		FATAL("Unable to send %u bytes of data data. Size advertised by network layer was %u [%d: %s]",
 				_published - _consumed, size, err, strerror(err));
 		FATAL("Permanent error!");
 		result = false;
 	} else {
-		_consumed += sent;
+		_consumed += sentAmount;
 	}
 	if (result)
 		Recycle();

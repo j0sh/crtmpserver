@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -58,6 +58,7 @@ TCPCarrier::TCPCarrier(int32_t fd)
 	GetEndpointsInfo();
 	_rx = 0;
 	_tx = 0;
+	_ioAmount = 0;
 }
 
 TCPCarrier::~TCPCarrier() {
@@ -65,26 +66,24 @@ TCPCarrier::~TCPCarrier() {
 }
 
 bool TCPCarrier::OnEvent(struct epoll_event &event) {
-	int32_t readAmount = 0;
-	int32_t writeAmount = 0;
-
 	//1. Read data
 	if ((event.events & EPOLLIN) != 0) {
 		IOBuffer *pInputBuffer = _pProtocol->GetInputBuffer();
 		assert(pInputBuffer != NULL);
-		if (!pInputBuffer->ReadFromTCPFd(_inboundFd, _recvBufferSize, readAmount)) {
+		if (!pInputBuffer->ReadFromTCPFd(_inboundFd, _recvBufferSize, _ioAmount)) {
 			FATAL("Unable to read data. %s:%hu -> %s:%hu",
 					STR(_farIp), _farPort,
 					STR(_nearIp), _nearPort);
 			return false;
 		}
-		_rx += readAmount;
-		if (readAmount == 0) {
+		_rx += _ioAmount;
+		ADD_IN_BYTES_MANAGED(_type, _ioAmount);
+		if (_ioAmount == 0) {
 			FATAL("Connection closed");
 			return false;
 		}
 
-		if (!_pProtocol->SignalInputData(readAmount)) {
+		if (!_pProtocol->SignalInputData(_ioAmount)) {
 			FATAL("Unable to signal data available");
 			return false;
 		}
@@ -95,14 +94,15 @@ bool TCPCarrier::OnEvent(struct epoll_event &event) {
 		IOBuffer *pOutputBuffer = NULL;
 
 		if ((pOutputBuffer = _pProtocol->GetOutputBuffer()) != NULL) {
-			if (!pOutputBuffer->WriteToTCPFd(_inboundFd, _sendBufferSize, writeAmount)) {
+			if (!pOutputBuffer->WriteToTCPFd(_inboundFd, _sendBufferSize, _ioAmount)) {
 				FATAL("Unable to send data. %s:%hu -> %s:%hu",
 						STR(_farIp), _farPort,
 						STR(_nearIp), _nearPort);
 				IOHandlerManager::EnqueueForDelete(this);
 				return false;
 			}
-			_tx += writeAmount;
+			_tx += _ioAmount;
+			ADD_OUT_BYTES_MANAGED(_type, _ioAmount);
 			if (GETAVAILABLEBYTESCOUNT(*pOutputBuffer) == 0) {
 				DISABLE_WRITE_DATA;
 			}

@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -34,6 +34,7 @@ UDPCarrier::UDPCarrier(int32_t fd)
 	_nearPort = 0;
 	_rx = 0;
 	_tx = 0;
+	_ioAmount = 0;
 }
 
 UDPCarrier::~UDPCarrier() {
@@ -41,23 +42,21 @@ UDPCarrier::~UDPCarrier() {
 }
 
 bool UDPCarrier::OnEvent(struct epoll_event &event) {
-
 	//1. Read data
 	if ((event.events & EPOLLIN) != 0) {
 		IOBuffer *pInputBuffer = _pProtocol->GetInputBuffer();
 		assert(pInputBuffer != NULL);
-		int32_t recvBytes = 0;
-		if (!pInputBuffer->ReadFromUDPFd(_inboundFd, recvBytes, _peerAddress)) {
+		if (!pInputBuffer->ReadFromUDPFd(_inboundFd, _ioAmount, _peerAddress)) {
 			FATAL("Unable to read data");
 			return false;
 		}
-		if (recvBytes == 0) {
+		if (_ioAmount == 0) {
 			FATAL("Connection closed");
 			return false;
 		}
-		_rx += recvBytes;
-
-		if (!_pProtocol->SignalInputData(recvBytes, &_peerAddress)) {
+		_rx += _ioAmount;
+		ADD_IN_BYTES_MANAGED(_type, _ioAmount);
+		if (!_pProtocol->SignalInputData(_ioAmount, &_peerAddress)) {
 			FATAL("Unable to signal data available");
 			return false;
 		}

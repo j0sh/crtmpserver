@@ -212,7 +212,7 @@ bool InboundConnectivity::Initialize() {
 			bandwidth,
 			_rtcpDetectionInterval);
 
-	//6. override the width/height with the values in session (if any) 
+	//6. override the width/height with the values in session (if any)
 	Variant &session = _pRTSP->GetCustomParameters();
 	if ((session.HasKeyChain(_V_NUMERIC, true, 3, "customParameters", "externalStreamConfig", "width"))
 			&& (session.HasKeyChain(_V_NUMERIC, true, 3, "customParameters", "externalStreamConfig", "height"))) {
@@ -376,8 +376,7 @@ bool InboundConnectivity::SendRR(bool isAudio) {
 				FATAL("Unable to send data: %d %s", errno, strerror(errno));
 				return false;
 			}
-		} else {
-			//WARN("Skip this RR because we don't have a valid address yet");
+			ADD_OUT_BYTES_MANAGED(IOHT_UDP_CARRIER, 56);
 		}
 		return true;
 	}

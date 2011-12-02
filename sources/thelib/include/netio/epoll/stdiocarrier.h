@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -29,6 +29,7 @@ class StdioCarrier
 private:
 	static StdioCarrier *_pInstance;
 	bool _writeDataEnabled;
+	int32_t _ioAmount;
 private:
 	StdioCarrier();
 public:

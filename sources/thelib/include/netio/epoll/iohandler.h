@@ -34,8 +34,8 @@ protected:
 	int32_t _inboundFd;
 	int32_t _outboundFd;
 	BaseProtocol *_pProtocol;
-private:
 	IOHandlerType _type;
+private:
 	IOHandlerManagerToken *_pToken;
 public:
 	IOHandler(int32_t inboundFd, int32_t outboundFd, IOHandlerType type);

@@ -31,24 +31,10 @@ void BaseFdStats::Reset() {
 	_current = 0;
 	_max = 0;
 	_total = 0;
-}
-
-void BaseFdStats::Increment() {
-	assert(_current >= 0);
-	assert(_max >= 0);
-	_current++;
-	_max = _max < _current ? _current : _max;
-	_total++;
-	assert(_current >= 0);
-	assert(_max >= 0);
-}
-
-void BaseFdStats::Decrement() {
-	assert(_current >= 0);
-	assert(_max >= 0);
-	_current--;
-	assert(_current >= 0);
-	assert(_max >= 0);
+#ifdef GLOBALLY_ACCOUNT_BYTES
+	_inBytes = 0;
+	_outBytes = 0;
+#endif /* GLOBALLY_ACCOUNT_BYTES */
 }
 
 int64_t BaseFdStats::Current() {
@@ -62,6 +48,16 @@ int64_t BaseFdStats::Max() {
 int64_t BaseFdStats::Total() {
 	return _total;
 }
+#ifdef GLOBALLY_ACCOUNT_BYTES
+
+uint64_t BaseFdStats::InBytes() {
+	return _inBytes;
+}
+
+uint64_t BaseFdStats::OutBytes() {
+	return _outBytes;
+}
+#endif /* GLOBALLY_ACCOUNT_BYTES */
 
 void BaseFdStats::ResetMax() {
 	_max = _current;
@@ -71,10 +67,30 @@ void BaseFdStats::ResetTotal() {
 	ResetMax();
 	_total = _current;
 }
+#ifdef GLOBALLY_ACCOUNT_BYTES
+
+void BaseFdStats::ResetInBytes() {
+	_inBytes = 0;
+}
+
+void BaseFdStats::ResetOutBytes() {
+	_outBytes = 0;
+}
+
+void BaseFdStats::ResetInOutBytes() {
+	_inBytes = 0;
+	_outBytes = 0;
+}
+#endif /* GLOBALLY_ACCOUNT_BYTES */
 
 BaseFdStats::operator string() {
+#ifdef GLOBALLY_ACCOUNT_BYTES
+	return format("current: %"PRId64"; max: %"PRId64"; total: %"PRIu64"; in: %"PRIu64"; out: %"PRIu64,
+			_current, _max, _total, _inBytes, _outBytes);
+#else
 	return format("current: %"PRId64"; max: %"PRId64"; total: %"PRIu64,
 			_current, _max, _total);
+#endif /* GLOBALLY_ACCOUNT_BYTES */
 }
 
 Variant BaseFdStats::ToVariant() {
@@ -82,6 +98,10 @@ Variant BaseFdStats::ToVariant() {
 	result["current"] = (int64_t) _current;
 	result["max"] = (int64_t) _max;
 	result["total"] = (int64_t) _total;
+#ifdef GLOBALLY_ACCOUNT_BYTES
+	result["inBytes"] = (uint64_t) _inBytes;
+	result["outBytes"] = (uint64_t) _outBytes;
+#endif /* GLOBALLY_ACCOUNT_BYTES */
 	return result;
 }
 
@@ -124,6 +144,26 @@ int64_t FdStats::Total() {
 			+ _managedNonTcpUdp.Total()
 			+ _rawUdp.Total();
 }
+#ifdef GLOBALLY_ACCOUNT_BYTES
+
+uint64_t FdStats::InBytes() {
+	return _managedTcp.InBytes()
+			+ _managedTcpAcceptors.InBytes()
+			+ _managedTcpConnectors.InBytes()
+			+ _managedUdp.InBytes()
+			+ _managedNonTcpUdp.InBytes()
+			+ _rawUdp.InBytes();
+}
+
+uint64_t FdStats::OutBytes() {
+	return _managedTcp.OutBytes()
+			+ _managedTcpAcceptors.OutBytes()
+			+ _managedTcpConnectors.OutBytes()
+			+ _managedUdp.OutBytes()
+			+ _managedNonTcpUdp.OutBytes()
+			+ _rawUdp.OutBytes();
+}
+#endif /* GLOBALLY_ACCOUNT_BYTES */
 
 void FdStats::ResetMax() {
 	_managedTcp.ResetMax();
@@ -144,6 +184,35 @@ void FdStats::ResetTotal() {
 	_managedNonTcpUdp.ResetTotal();
 	_rawUdp.ResetTotal();
 }
+#ifdef GLOBALLY_ACCOUNT_BYTES
+
+void FdStats::ResetInBytes() {
+	_managedTcp.ResetInBytes();
+	_managedTcpAcceptors.ResetInBytes();
+	_managedTcpConnectors.ResetInBytes();
+	_managedUdp.ResetInBytes();
+	_managedNonTcpUdp.ResetInBytes();
+	_rawUdp.ResetInBytes();
+}
+
+void FdStats::ResetOutBytes() {
+	_managedTcp.ResetOutBytes();
+	_managedTcpAcceptors.ResetOutBytes();
+	_managedTcpConnectors.ResetOutBytes();
+	_managedUdp.ResetOutBytes();
+	_managedNonTcpUdp.ResetOutBytes();
+	_rawUdp.ResetOutBytes();
+}
+
+void FdStats::ResetInOutBytes() {
+	_managedTcp.ResetInOutBytes();
+	_managedTcpAcceptors.ResetInOutBytes();
+	_managedTcpConnectors.ResetInOutBytes();
+	_managedUdp.ResetInOutBytes();
+	_managedNonTcpUdp.ResetInOutBytes();
+	_rawUdp.ResetInOutBytes();
+}
+#endif /* GLOBALLY_ACCOUNT_BYTES */
 
 BaseFdStats &FdStats::GetManagedTcp() {
 	return _managedTcp;
@@ -169,23 +238,28 @@ BaseFdStats &FdStats::GetRawUdp() {
 	return _rawUdp;
 }
 
-void FdStats::RegisterManaged(IOHandlerType type) {
-	AccountManaged(type, true);
-}
-
-void FdStats::UnRegisterManaged(IOHandlerType type) {
-	AccountManaged(type, false);
-}
-
-void FdStats::RegisterRawUdp() {
-	AccountRawUdp(true);
-}
-
-void FdStats::UnRegisterRawUdp() {
-	AccountRawUdp(false);
-}
-
 FdStats::operator string() {
+#ifdef GLOBALLY_ACCOUNT_BYTES
+	return format(
+			"          managedTcp: %s\n"
+			" managedTcpAcceptors: %s\n"
+			"managedTcpConnectors: %s\n"
+			"          managedUdp: %s\n"
+			"    managedNonTcpUdp: %s\n"
+			"              rawUdp: %s\n"
+			"         grand total: current: %"PRId64"; max: %"PRId64"; total: %"PRIu64"; in: %"PRIu64"; out: %"PRIu64,
+			STR(_managedTcp),
+			STR(_managedTcpAcceptors),
+			STR(_managedTcpConnectors),
+			STR(_managedUdp),
+			STR(_managedNonTcpUdp),
+			STR(_rawUdp),
+			Current(),
+			Max(),
+			Total(),
+			InBytes(),
+			OutBytes());
+#else
 	return format(
 			"          managedTcp: %s\n"
 			" managedTcpAcceptors: %s\n"
@@ -203,6 +277,7 @@ FdStats::operator string() {
 			Current(),
 			Max(),
 			Total());
+#endif /* GLOBALLY_ACCOUNT_BYTES */
 }
 
 Variant FdStats::ToVariant() {
@@ -216,57 +291,9 @@ Variant FdStats::ToVariant() {
 	result["grandTotal"]["current"] = (int64_t) Current();
 	result["grandTotal"]["max"] = (int64_t) Max();
 	result["grandTotal"]["total"] = (int64_t) Total();
+#ifdef GLOBALLY_ACCOUNT_BYTES
+	result["grandTotal"]["inBytes"] = (uint64_t) InBytes();
+	result["grandTotal"]["outBytes"] = (uint64_t) OutBytes();
+#endif /* GLOBALLY_ACCOUNT_BYTES */
 	return result;
 }
-
-void FdStats::AccountManaged(IOHandlerType type, bool increment) {
-	BaseFdStats *pFdStats = NULL;
-	switch (type) {
-		case IOHT_ACCEPTOR:
-		{
-			pFdStats = &_managedTcpAcceptors;
-			break;
-		}
-		case IOHT_TCP_CONNECTOR:
-		{
-			pFdStats = &_managedTcpConnectors;
-			break;
-		}
-		case IOHT_TCP_CARRIER:
-		{
-			pFdStats = &_managedTcp;
-			break;
-		}
-		case IOHT_UDP_CARRIER:
-		{
-			pFdStats = &_managedUdp;
-			break;
-		}
-		case IOHT_INBOUNDNAMEDPIPE_CARRIER:
-		case IOHT_TIMER:
-		case IOHT_STDIO:
-		default:
-		{
-			pFdStats = &_managedNonTcpUdp;
-			break;
-		}
-	}
-	if (increment)
-		pFdStats->Increment();
-	else
-		pFdStats->Decrement();
-	int64_t current = Current();
-	_max = _max < current ? current : _max;
-	//FINEST("Stats:\n%s", STR(*this));
-}
-
-void FdStats::AccountRawUdp(bool increment) {
-	if (increment)
-		_rawUdp.Increment();
-	else
-		_rawUdp.Decrement();
-	int64_t current = Current();
-	_max = _max < current ? current : _max;
-	//FINEST("Stats:\n%s", STR(*this));
-}
-

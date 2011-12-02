@@ -84,6 +84,13 @@ public:
 	static int CreateRawUDPSocket();
 	static void CloseRawUDPSocket(int socket);
 
+#ifdef GLOBALLY_ACCOUNT_BYTES
+	static void AddInBytesManaged(IOHandlerType type, uint64_t bytes);
+	static void AddOutBytesManaged(IOHandlerType type, uint64_t bytes);
+	static void AddInBytesRawUdp(uint64_t bytes);
+	static void AddOutBytesRawUdp(uint64_t bytes);
+#endif /* GLOBALLY_ACCOUNT_BYTES */
+
 	/*!
 		@brief Enables the IO handler to read data.
 		@discussion This assigns a FDSTATE_READ_ENABLED to the inbound file descriptor's state

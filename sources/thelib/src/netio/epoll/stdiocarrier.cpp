@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -43,6 +43,7 @@ StdioCarrier::StdioCarrier()
 : IOHandler(fileno(stdin), fileno(stdout), IOHT_TCP_CARRIER) {
 	IOHandlerManager::EnableReadData(this);
 	_writeDataEnabled = false;
+	_ioAmount = 0;
 }
 
 StdioCarrier *StdioCarrier::GetInstance(BaseProtocol *pProtocol) {
@@ -66,22 +67,21 @@ StdioCarrier::~StdioCarrier() {
 }
 
 bool StdioCarrier::OnEvent(struct epoll_event &event) {
-
 	//1. Read data
 	if ((event.events & EPOLLIN) != 0) {
 		IOBuffer *pInputBuffer = _pProtocol->GetInputBuffer();
 		assert(pInputBuffer != NULL);
-		int32_t recvBytes = 0;
-		if (!pInputBuffer->ReadFromStdio(_inboundFd, FD_READ_CHUNK, recvBytes)) {
+		if (!pInputBuffer->ReadFromStdio(_inboundFd, FD_READ_CHUNK, _ioAmount)) {
 			FATAL("Unable to read data");
 			return false;
 		}
-		if (recvBytes == 0) {
+		ADD_IN_BYTES_MANAGED(_type, _ioAmount);
+		if (_ioAmount == 0) {
 			FATAL("Connection closed");
 			return false;
 		}
 
-		if (!_pProtocol->SignalInputData(recvBytes)) {
+		if (!_pProtocol->SignalInputData(_ioAmount)) {
 			FATAL("Unable to signal data available");
 			return false;
 		}
@@ -90,13 +90,13 @@ bool StdioCarrier::OnEvent(struct epoll_event &event) {
 	/*//2. Write data
 	if ((event.events & EPOLLOUT) != 0) {
 		IOBuffer *pOutputBuffer = NULL;
-
 		while ((pOutputBuffer = _pProtocol->GetOutputBuffer()) != NULL) {
-			if (!pOutputBuffer->PutToStdio(_outboundFd, FD_WRITE_CHUNK)) {
+			if (!pOutputBuffer->PutToStdio(_outboundFd, FD_WRITE_CHUNK,_ioAmount)) {
 				FATAL("Unable to send data");
 				IOHandlerManager::EnqueueForDelete(this);
 				return false;
 			}
+			ADD_OUT_BYTES_MANAGED(_type, _ioAmount);
 			if (GETAVAILABLEBYTESCOUNT(*pOutputBuffer) > 0) {
 				ENABLE_WRITE_DATA;
 				break;
@@ -115,11 +115,12 @@ bool StdioCarrier::SignalOutputData() {
 	IOBuffer *pOutputBuffer = NULL;
 
 	while ((pOutputBuffer = _pProtocol->GetOutputBuffer()) != NULL) {
-		if (!pOutputBuffer->WriteToStdio(_outboundFd, FD_WRITE_CHUNK)) {
+		if (!pOutputBuffer->WriteToStdio(_outboundFd, FD_WRITE_CHUNK, _ioAmount)) {
 			FATAL("Unable to send data");
 			IOHandlerManager::EnqueueForDelete(this);
 			return false;
 		}
+		ADD_OUT_BYTES_MANAGED(_type, _ioAmount);
 	}
 	return true;
 }

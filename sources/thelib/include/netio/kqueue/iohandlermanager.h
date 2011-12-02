@@ -65,6 +65,12 @@ public:
 	static void UnRegisterIOHandler(IOHandler *pIOHandler);
 	static int CreateRawUDPSocket();
 	static void CloseRawUDPSocket(int socket);
+#ifdef GLOBALLY_ACCOUNT_BYTES
+	static void AddInBytesManaged(IOHandlerType type, uint64_t bytes);
+	static void AddOutBytesManaged(IOHandlerType type, uint64_t bytes);
+	static void AddInBytesRawUdp(uint64_t bytes);
+	static void AddOutBytesRawUdp(uint64_t bytes);
+#endif /* GLOBALLY_ACCOUNT_BYTES */
 	static bool EnableReadData(IOHandler *pIOHandler);
 	static bool DisableReadData(IOHandler *pIOHandler, bool ignoreError = false);
 	static bool EnableWriteData(IOHandler *pIOHandler);
