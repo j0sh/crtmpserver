@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -67,6 +67,8 @@ protected:
 	Variant _requestHeaders;
 	string _requestContent;
 	uint32_t _requestSequence;
+	map<uint32_t, Variant> _pendingRequestHeaders;
+	map<uint32_t, string> _pendingRequestContent;
 
 	OutboundConnectivity *_pOutboundConnectivity;
 	InboundConnectivity *_pInboundConnectivity;
@@ -110,8 +112,7 @@ public:
 	void PushRequestContent(string outboundContent, bool append);
 	bool SendRequestMessage();
 	uint32_t LastRequestSequence();
-	Variant &GetRequestHeaders();
-	string &GetRequestContent();
+	bool GetRequest(uint32_t seqId, Variant &result, string &content);
 
 	void ClearResponseMessage();
 	void PushResponseFirstLine(string version, uint32_t code, string reason);

@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -298,6 +298,13 @@ bool RTSPProtocol::SendRequestMessage() {
 				_authentication["temp"]["authorizationHeader"]["raw"];
 	}
 
+	_pendingRequestHeaders[_requestSequence] = _requestHeaders;
+	_pendingRequestContent[_requestSequence] = _requestContent;
+	if (_pendingRequestHeaders.size() > 10 || _pendingRequestContent.size() > 10) {
+		FATAL("Requests backlog count too high");
+		return false;
+	}
+
 	//3. send the mesage
 	return SendMessage(_requestHeaders, _requestContent);
 }
@@ -306,12 +313,18 @@ uint32_t RTSPProtocol::LastRequestSequence() {
 	return _requestSequence;
 }
 
-Variant &RTSPProtocol::GetRequestHeaders() {
-	return _requestHeaders;
-}
-
-string &RTSPProtocol::GetRequestContent() {
-	return _requestContent;
+bool RTSPProtocol::GetRequest(uint32_t seqId, Variant &result, string &content) {
+	if ((!MAP_HAS1(_pendingRequestHeaders, seqId))
+			|| (!MAP_HAS1(_pendingRequestContent, seqId))) {
+		MAP_ERASE1(_pendingRequestHeaders, seqId);
+		MAP_ERASE1(_pendingRequestContent, seqId);
+		return false;
+	}
+	result = _pendingRequestHeaders[seqId];
+	content = _pendingRequestContent[seqId];
+	MAP_ERASE1(_pendingRequestHeaders, seqId);
+	MAP_ERASE1(_pendingRequestContent, seqId);
+	return true;
 }
 
 void RTSPProtocol::ClearResponseMessage() {
@@ -428,7 +441,7 @@ bool RTSPProtocol::SendRaw(MSGHDR *pMessage, uint16_t length, RTPClient *pClient
 	}
 	length = EHTONS(length);
 	_outputBuffer.ReadFromBuffer((uint8_t *) & length, 2);
-	for (int i = 0; i < (int)pMessage->MSGHDR_MSG_IOVLEN; i++) {
+	for (int i = 0; i < (int) pMessage->MSGHDR_MSG_IOVLEN; i++) {
 		_outputBuffer.ReadFromBuffer((uint8_t*) pMessage->MSGHDR_MSG_IOV[i].IOVEC_IOV_BASE,
 				pMessage->MSGHDR_MSG_IOV[i].IOVEC_IOV_LEN);
 	}

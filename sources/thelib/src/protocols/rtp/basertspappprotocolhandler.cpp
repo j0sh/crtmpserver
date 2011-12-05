@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -376,18 +376,19 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPResponse(RTSPProtocol *pFrom,
 		FATAL("Invalid response:\n%s", STR(responseHeaders.ToString()));
 		return false;
 	}
-	if ((string) responseHeaders[RTSP_HEADERS].GetValue(RTSP_HEADERS_CSEQ, false) != format("%u",
-			pFrom->LastRequestSequence())) {
-		FATAL("Invalid response sequence. Wanted: %s; Got: %s",
-				STR(format("%u", pFrom->LastRequestSequence())),
-				STR(responseHeaders[RTSP_HEADERS].GetValue(RTSP_HEADERS_CSEQ, false)));
+
+	uint32_t seqId = atoi(STR(responseHeaders[RTSP_HEADERS].GetValue(RTSP_HEADERS_CSEQ, false)));
+	Variant requestHeaders;
+	string requestContent;
+	if (!pFrom->GetRequest(seqId, requestHeaders, requestContent)) {
+		FATAL("Invalid response sequence");
 		return false;
 	}
 
 	//2. Get the request, get the response and call the stack further
 	return HandleRTSPResponse(pFrom,
-			pFrom->GetRequestHeaders(),
-			pFrom->GetRequestContent(),
+			requestHeaders,
+			requestContent,
 			responseHeaders,
 			responseContent);
 }
