@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -73,6 +73,8 @@ protected:
 			Variant &requestHeaders, string &requestContent);
 	virtual bool HandleRTSPRequestRecord(RTSPProtocol *pFrom,
 			Variant &requestHeaders, string &requestContent);
+	virtual bool HandleRTSPRequestPause(RTSPProtocol *pFrom,
+			Variant &requestHeaders, string &requestContent);
 
 	//handle response routines
 	virtual bool HandleRTSPResponse(RTSPProtocol *pFrom, Variant &requestHeaders,
@@ -132,7 +134,6 @@ private:
 	bool SendAuthenticationChallenge(RTSPProtocol *pFrom, Variant &realm);
 	string ComputeSDP(RTSPProtocol *pFrom, string localStreamName,
 			string targetStreamName, string host);
-	bool ParseTransportLine(string raw, Variant &result);
 };
 
 

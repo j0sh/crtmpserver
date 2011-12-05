@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -65,6 +65,7 @@ public:
 	Variant GetAudioTrack(uint32_t index, string uri);
 	string GetStreamName();
 	uint32_t GetTotalBandwidth();
+	static bool ParseTransportLine(string raw, Variant &result);
 private:
 	static bool ParseSection(Variant &result, vector<string> &lines,
 			uint32_t start, uint32_t length);

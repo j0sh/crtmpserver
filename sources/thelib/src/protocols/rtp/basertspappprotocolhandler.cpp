@@ -353,6 +353,10 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPRequest(RTSPProtocol *pFrom,
 		if (!HandleRTSPRequestRecord(pFrom, requestHeaders, requestContent)) {
 			return false;
 		}
+	} else if (method == RTSP_METHOD_PAUSE) {
+		if (!HandleRTSPRequestPause(pFrom, requestHeaders, requestContent)) {
+			return false;
+		}
 	} else {
 		FATAL("Method not implemented yet:\n%s", STR(requestHeaders.ToString()));
 		return false;
@@ -466,7 +470,7 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPRequestSetupOutbound(RTSPProtocol *pF
 	//2. get the transport header line
 	string raw = requestHeaders[RTSP_HEADERS].GetValue(RTSP_HEADERS_TRANSPORT, false);
 	Variant transport;
-	if (!ParseTransportLine(raw, transport)) {
+	if (!SDP::ParseTransportLine(raw, transport)) {
 		FATAL("Unable to parse transport line %s", STR(raw));
 		return false;
 	}
@@ -573,7 +577,7 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPRequestSetupInbound(RTSPProtocol *pFr
 	}
 	string transportLine = requestHeaders[RTSP_HEADERS].GetValue(RTSP_HEADERS_TRANSPORT, false);
 	Variant transport;
-	if (!ParseTransportLine(transportLine, transport)) {
+	if (!SDP::ParseTransportLine(transportLine, transport)) {
 		FATAL("Unable to parse transport line");
 		return false;
 	}
@@ -833,6 +837,12 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPRequestRecord(RTSPProtocol *pFrom,
 	}
 
 	//4. Send back the response
+	pFrom->PushResponseFirstLine(RTSP_VERSION_1_0, 200, "OK");
+	return pFrom->SendResponseMessage();
+}
+
+bool BaseRTSPAppProtocolHandler::HandleRTSPRequestPause(RTSPProtocol *pFrom,
+		Variant &requestHeaders, string &requestContent) {
 	pFrom->PushResponseFirstLine(RTSP_VERSION_1_0, 200, "OK");
 	return pFrom->SendResponseMessage();
 }
@@ -1127,7 +1137,7 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPResponse200Setup(
 		//3. get the transport header line
 		string raw = responseHeaders[RTSP_HEADERS].GetValue(RTSP_HEADERS_TRANSPORT, false);
 		Variant transport;
-		if (!ParseTransportLine(raw, transport)) {
+		if (!SDP::ParseTransportLine(raw, transport)) {
 			FATAL("Unable to parse transport line %s", STR(raw));
 			return false;
 		}
@@ -1655,63 +1665,6 @@ string BaseRTSPAppProtocolHandler::ComputeSDP(RTSPProtocol *pFrom,
 
 	//FINEST("result:\n%s", STR(result));
 	return result;
-}
-
-bool BaseRTSPAppProtocolHandler::ParseTransportLine(string raw, Variant &result) {
-	result.Reset();
-
-	//1. split after ';'
-	vector<string> parts;
-	split(raw, ";", parts);
-
-	//2. Construct the result
-	for (uint32_t i = 0; i < parts.size(); i++) {
-		string part = parts[i];
-		trim(part);
-		if (part == "")
-			continue;
-		string::size_type pos = part.find('=');
-		if (pos == string::npos) {
-			result[lowerCase(part)] = (bool)true;
-			continue;
-		}
-		result[lowerCase(part.substr(0, pos))] = part.substr(pos + 1);
-	}
-
-	vector<string> keys;
-	ADD_VECTOR_END(keys, "client_port");
-	ADD_VECTOR_END(keys, "server_port");
-	ADD_VECTOR_END(keys, "interleaved");
-
-	for (uint32_t i = 0; i < keys.size(); i++) {
-		string key = keys[i];
-		if (!result.HasKey(key))
-			continue;
-		parts.clear();
-		raw = (string) result[key];
-		split(raw, "-", parts);
-		if (parts.size() != 2) {
-			FATAL("Invalid transport line: %s", STR(raw));
-			return false;
-		}
-		uint16_t data = atoi(STR(parts[0]));
-		uint16_t rtcp = atoi(STR(parts[1]));
-		if (((data % 2) != 0) || ((data + 1) != rtcp)) {
-			FATAL("Invalid transport line: %s", STR(raw));
-			return false;
-		}
-		string all = format("%"PRIu16"-%"PRIu16, data, rtcp);
-		if (all != raw) {
-			FATAL("Invalid transport line: %s", STR(raw));
-			return false;
-		}
-		result.RemoveKey(key);
-		result[key]["data"] = (uint16_t) data;
-		result[key]["rtcp"] = (uint16_t) rtcp;
-		result[key]["all"] = all;
-	}
-
-	return true;
 }
 
 #endif /* HAS_PROTOCOL_RTP */
