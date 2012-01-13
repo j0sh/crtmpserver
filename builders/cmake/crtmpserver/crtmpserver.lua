@@ -163,7 +163,7 @@ configuration=
 			--generateMetaFiles=true, --this will generate seek/meta files on application startup
 			--renameBadFiles=false,
 			--enableCheckBandwidth=true,
-			authentication=
+			--[[authentication=
 			{
 				rtmp={
 					type="adobe",
@@ -177,7 +177,7 @@ configuration=
 				rtsp={
 					usersFile="users.lua"
 				}
-			},
+			}, --]]
 		},
 		{
 			name="samplefactory",
