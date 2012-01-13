@@ -26,10 +26,12 @@
 #include "protocols/rtmp/header.h"
 #include "protocols/rtmp/rtmpprotocolserializer.h"
 #include "protocols/rtmp/sharedobjects/somanager.h"
-#include "basertmpprotocol.h"
+#include "streaming/baseoutstream.h"
+#include "streaming/baseoutfilestream.h"
 
 class OutboundRTMPProtocol;
 class BaseRTMPProtocol;
+class BaseOutFileStream;
 
 class DLLEXP BaseRTMPAppProtocolHandler
 : public BaseAppProtocolHandler {
@@ -233,6 +235,14 @@ public:
 	 * */
 	bool SendRTMPMessage(BaseRTMPProtocol *pTo, Variant message,
 			bool trackResponse = false);
+
+	/*
+	 * Create a file stream for writing to disk.
+	 * pFrom - The connection which wants to stream to disk
+	 * meta - Stream metadata
+	 * append - Whether to append this stream to an exiting file
+	 * */
+	virtual BaseOutFileStream *CreateOutFileStream(BaseRTMPProtocol *pFrom, Variant &meta, bool append);
 private:
 	/*
 	 * Will transform stream names of type streamName?param1=value1&param2=value2&...

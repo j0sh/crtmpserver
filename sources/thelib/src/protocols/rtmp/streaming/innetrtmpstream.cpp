@@ -187,28 +187,10 @@ bool InNetRTMPStream::SendOnStatusStreamPublished() {
 	return true;
 }
 
-bool InNetRTMPStream::RecordFLV(Variant &meta, bool append) {
-	//1. Compute the file name
-	string fileName = meta[META_SERVER_MEDIA_DIR];
-	fileName += (string) meta[META_SERVER_FILE_NAME];
-	FINEST("fileName: %s", STR(fileName));
+bool InNetRTMPStream::Record(BaseOutFileStream *pOutStream) {
 
-	//2. Delete the old file
-	if (append) {
-		WARN("append not supported yet. File will be overwritten");
-	}
-	deleteFile(fileName);
-
-	//3. Create the out file
-	_pOutFileRTMPFLVStream = new OutFileRTMPFLVStream(_pProtocol,
-			_pStreamsManager, fileName);
-
-	//4. Link it
+	_pOutFileRTMPFLVStream = pOutStream;
 	return _pOutFileRTMPFLVStream->Link(this);
-}
-
-bool InNetRTMPStream::RecordMP4(Variant &meta) {
-	NYIR;
 }
 
 void InNetRTMPStream::SignalOutStreamAttached(BaseOutStream *pOutStream) {

@@ -27,6 +27,7 @@
 
 class BaseRTMPProtocol;
 class BaseOutStream;
+class BaseOutFileStream;
 
 class DLLEXP InNetRTMPStream
 : public BaseInNetStream {
@@ -70,8 +71,7 @@ public:
 	virtual bool SendStreamMessage(string functionName, Variant &parameters,
 			bool persistent = true);
 	bool SendOnStatusStreamPublished();
-	bool RecordFLV(Variant &meta, bool append);
-	bool RecordMP4(Variant &meta);
+	bool Record(BaseOutFileStream* pOutFileStream);
 
 	virtual void SignalOutStreamAttached(BaseOutStream *pOutStream);
 	virtual void SignalOutStreamDetached(BaseOutStream *pOutStream);

@@ -28,6 +28,7 @@
 #include "protocols/rtmp/streaming/baseoutnetrtmpstream.h"
 #include "protocols/rtmp/streaming/infilertmpstream.h"
 #include "protocols/rtmp/streaming/innetrtmpstream.h"
+#include "protocols/rtmp/streaming/outfilertmpflvstream.h"
 #include "streaming/streamstypes.h"
 #include "streaming/baseinstream.h"
 #include "streaming/baseinnetstream.h"
@@ -811,17 +812,10 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokePublish(BaseRTMPProtocol *pFrom,
 	if (recording || appending) {
 		Variant meta = GetMetaData(streamName, false);
 
-		if ((meta[META_MEDIA_TYPE] == MEDIA_TYPE_LIVE_OR_FLV) ||
-				(meta[META_MEDIA_TYPE] == MEDIA_TYPE_FLV)) {
-			if (!pInNetRTMPStream->RecordFLV(meta, appending)) {
-				FATAL("Unable to bind the recording stream");
-				return false;
-			}
-		} else if (meta[META_MEDIA_TYPE] == MEDIA_TYPE_MP4) {
-			if (!pInNetRTMPStream->RecordMP4(meta)) {
-				FATAL("Unable to bind the recording stream");
-				return false;
-			}
+		BaseOutFileStream *pOutFileStream = CreateOutFileStream(pFrom, meta, appending);
+		if (!pOutFileStream || !pInNetRTMPStream->Record(pOutFileStream)) {
+			FATAL("Unable to bind the recording stream");
+			return false;
 		}
 	}
 
@@ -1863,6 +1857,33 @@ bool BaseRTMPAppProtocolHandler::SendRTMPMessage(BaseRTMPProtocol *pTo,
 			return false;
 		}
 	}
+}
+
+BaseOutFileStream* BaseRTMPAppProtocolHandler::CreateOutFileStream(
+	BaseRTMPProtocol *pFrom, Variant &meta, bool append)
+{
+	//1. Compute the file name
+	string fileName = meta[META_SERVER_MEDIA_DIR];
+	fileName += (string) meta[META_SERVER_FILE_NAME];
+	FINEST("fileName: %s", STR(fileName));
+
+	//2. Delete the old file
+	if (append) {
+		WARN("append not supported yet. File will be overwritten");
+	}
+	deleteFile(fileName);
+
+	if ((meta[META_MEDIA_TYPE] == MEDIA_TYPE_LIVE_OR_FLV) ||
+			(meta[META_MEDIA_TYPE] == MEDIA_TYPE_FLV)) {
+		return new OutFileRTMPFLVStream(pFrom,
+			GetApplication()->GetStreamsManager(), fileName);
+	}
+	if (meta[META_MEDIA_TYPE] == MEDIA_TYPE_MP4) {
+		FATAL("Streaming to MP4 file not supported");
+		return NULL;
+	}
+	FATAL("Media type not supported");
+	return NULL;
 }
 
 string NormalizeStreamName(string streamName) {
