@@ -88,7 +88,7 @@ configuration=
 			--generateMetaFiles=true, --this will generate seek/meta files on application startup
 			--renameBadFiles=false,
 			mediaFolder="./media",
-			authentication=
+			--[[authentication=
 			{
 				rtmp={
 					type="adobe",
@@ -101,7 +101,7 @@ configuration=
 				rtsp={
 					usersFile="./users.lua"
 				}
-			},
+			},]]--
 		},
 	}
 }
