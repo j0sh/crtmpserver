@@ -26,12 +26,12 @@
 #include "protocols/rtmp/streaming/outfilertmpflvstream.h"
 #include "streaming/streamstypes.h"
 
-InNetRTMPStream::InNetRTMPStream(BaseProtocol *pProtocol,
+InNetRTMPStream::InNetRTMPStream(BaseRTMPProtocol *pProtocol,
 		StreamsManager *pStreamsManager, string name,
-		uint32_t rtmpStreamId, uint32_t chunkSize, uint32_t channelId)
+		uint32_t rtmpStreamId, uint32_t channelId)
 : BaseInNetStream(pProtocol, pStreamsManager, ST_IN_NET_RTMP, name) {
 	_rtmpStreamId = rtmpStreamId;
-	_chunkSize = chunkSize;
+	_chunkSize = pProtocol->GetInboundChunkSize();
 	_channelId = channelId;
 	_clientId = format("%d_%d_%"PRIz"u", _pProtocol->GetId(), _rtmpStreamId, (size_t)this);
 	_lastVideoTime = 0;

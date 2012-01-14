@@ -311,6 +311,10 @@ uint32_t BaseRTMPProtocol::GetOutboundChunkSize() {
 	return _outboundChunkSize;
 }
 
+uint32_t BaseRTMPProtocol::GetInboundChunkSize() {
+	return _inboundChunkSize;
+}
+
 bool BaseRTMPProtocol::SetInboundChunkSize(uint32_t chunkSize) {
 	/*WARN("Chunk size changed for RTMP connection %p: %u->%u", this,
 			_inboundChunkSize, chunkSize);*/
@@ -423,7 +427,7 @@ RTMPStream * BaseRTMPProtocol::CreateNeutralStream(uint32_t & streamId) {
 }
 
 InNetRTMPStream * BaseRTMPProtocol::CreateINS(uint32_t channelId,
-		uint32_t streamId, string streamName) {
+	uint32_t streamId, string streamName) {
 	if (streamId == 0 || streamId >= MAX_STREAMS_COUNT) {
 		FATAL("Invalid stream id: %u", streamId);
 		return NULL;
@@ -442,10 +446,8 @@ InNetRTMPStream * BaseRTMPProtocol::CreateINS(uint32_t channelId,
 	delete _streams[streamId];
 	_streams[streamId] = NULL;
 
-	InNetRTMPStream *pStream = new InNetRTMPStream(this,
-			GetApplication()->GetStreamsManager(), streamName, streamId,
-			_inboundChunkSize, channelId);
-
+	InNetRTMPStream *pStream = _pProtocolHandler->CreateInNetStream(this,
+		channelId, streamId, streamName);
 	_streams[streamId] = pStream;
 
 	return pStream;

@@ -53,9 +53,8 @@ private:
 	uint64_t _videoBytesCount;
 	uint64_t _videoDroppedBytesCount;
 public:
-	InNetRTMPStream(BaseProtocol *pProtocol, StreamsManager *pStreamsManager,
-			string name, uint32_t rtmpStreamId, uint32_t chunkSize,
-			uint32_t channelId);
+	InNetRTMPStream(BaseRTMPProtocol *pProtocol, StreamsManager *pStreamsManager,
+			string name, uint32_t rtmpStreamId, uint32_t channelId);
 	virtual ~InNetRTMPStream();
 	virtual StreamCapabilities * GetCapabilities();
 

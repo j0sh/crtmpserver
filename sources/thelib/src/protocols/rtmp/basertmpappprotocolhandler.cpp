@@ -1886,6 +1886,14 @@ BaseOutFileStream* BaseRTMPAppProtocolHandler::CreateOutFileStream(
 	return NULL;
 }
 
+InNetRTMPStream *BaseRTMPAppProtocolHandler::CreateInNetStream(
+	BaseRTMPProtocol *pFrom, uint32_t channelId, uint32_t streamId,
+	string streamName) {
+	return new InNetRTMPStream(pFrom,
+		GetApplication()->GetStreamsManager(), streamName, streamId, channelId);
+
+}
+
 string NormalizeStreamName(string streamName) {
 	replace(streamName, "-", "_");
 	replace(streamName, "?", "-");

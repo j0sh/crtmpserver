@@ -32,6 +32,7 @@
 class OutboundRTMPProtocol;
 class BaseRTMPProtocol;
 class BaseOutFileStream;
+class InNetRTMPStream;
 
 class DLLEXP BaseRTMPAppProtocolHandler
 : public BaseAppProtocolHandler {
@@ -243,6 +244,16 @@ public:
 	 * append - Whether to append this stream to an exiting file
 	 * */
 	virtual BaseOutFileStream *CreateOutFileStream(BaseRTMPProtocol *pFrom, Variant &meta, bool append);
+
+	/*
+	 * Create a file stream for writing to disk.
+	 * pFrom - The connection which wants to stream to disk
+	 * meta - Stream metadata
+	 * append - Whether to append this stream to an exiting file
+	 * */
+	virtual InNetRTMPStream *CreateInNetStream(BaseRTMPProtocol *pFrom,
+		uint32_t channelId, uint32_t streamId, string streamName);
+
 private:
 	/*
 	 * Will transform stream names of type streamName?param1=value1&param2=value2&...

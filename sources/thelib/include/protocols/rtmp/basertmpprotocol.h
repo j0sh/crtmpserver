@@ -103,6 +103,7 @@ public:
 	void SetWinAckSize(uint32_t winAckSize);
 
 	uint32_t GetOutboundChunkSize();
+	uint32_t GetInboundChunkSize();
 	bool SetInboundChunkSize(uint32_t chunkSize);
 	void TrySetOutboundChunkSize(uint32_t chunkSize);
 
