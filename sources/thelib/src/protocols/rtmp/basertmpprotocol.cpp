@@ -464,14 +464,14 @@ BaseOutNetRTMPStream * BaseRTMPProtocol::CreateONS(uint32_t streamId,
 		WARN("Try to play a stream on a NULL placeholder");
 	} else {
 
-	if (_streams[streamId]->GetType() != ST_NEUTRAL_RTMP) {
-		FATAL("Try to play a stream over a non neutral stream: id: %u; type: %"PRIu64,
-				streamId, _streams[streamId]->GetType());
-		return NULL;
-	}
+		if (_streams[streamId]->GetType() != ST_NEUTRAL_RTMP) {
+			FATAL("Try to play a stream over a non neutral stream: id: %u; type: %"PRIu64,
+					streamId, _streams[streamId]->GetType());
+			return NULL;
+		}
 
-	delete _streams[streamId];
-	_streams[streamId] = NULL;
+		delete _streams[streamId];
+		_streams[streamId] = NULL;
     }
 
 	BaseOutNetRTMPStream *pBaseOutNetRTMPStream = BaseOutNetRTMPStream::GetInstance(
