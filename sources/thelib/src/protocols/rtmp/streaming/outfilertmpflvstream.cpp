@@ -21,9 +21,9 @@
 #ifdef HAS_PROTOCOL_RTMP
 #include "protocols/rtmp/streaming/outfilertmpflvstream.h"
 #include "streaming/streamstypes.h"
-#include "protocols/baseprotocol.h"
+#include "protocols/rtmp/basertmpprotocol.h"
 
-OutFileRTMPFLVStream::OutFileRTMPFLVStream(BaseProtocol *pProtocol,
+OutFileRTMPFLVStream::OutFileRTMPFLVStream(BaseRTMPProtocol *pProtocol,
 		StreamsManager *pStreamsManager, string name)
 : BaseOutFileStream(pProtocol, pStreamsManager, ST_OUT_FILE_RTMP_FLV, name) {
 	_timeBase = -1;

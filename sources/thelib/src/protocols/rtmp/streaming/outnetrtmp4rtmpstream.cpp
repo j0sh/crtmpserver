@@ -21,7 +21,7 @@
 #include "protocols/rtmp/streaming/outnetrtmp4rtmpstream.h"
 #include "streaming/streamstypes.h"
 
-OutNetRTMP4RTMPStream::OutNetRTMP4RTMPStream(BaseProtocol *pProtocol,
+OutNetRTMP4RTMPStream::OutNetRTMP4RTMPStream(BaseRTMPProtocol *pProtocol,
 		StreamsManager *pStreamsManager, string name, uint32_t rtmpStreamId,
 		uint32_t chunkSize)
 : BaseOutNetRTMPStream(pProtocol, pStreamsManager, ST_OUT_NET_RTMP_4_RTMP,

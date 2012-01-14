@@ -36,7 +36,7 @@ private:
 	IOBuffer _videoBuffer;
 	bool _inboundStreamIsRTP;
 public:
-	OutNetRTMP4TSStream(BaseProtocol *pProtocol, StreamsManager *pStreamsManager,
+	OutNetRTMP4TSStream(BaseRTMPProtocol *pProtocol, StreamsManager *pStreamsManager,
 			string name, uint32_t rtmpStreamId, uint32_t chunkSize);
 	virtual ~OutNetRTMP4TSStream();
 	

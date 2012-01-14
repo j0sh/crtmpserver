@@ -24,7 +24,7 @@
 
 #define SPSPPS_MAX_LENGTH 1024
 
-OutNetRTMP4TSStream::OutNetRTMP4TSStream(BaseProtocol *pProtocol,
+OutNetRTMP4TSStream::OutNetRTMP4TSStream(BaseRTMPProtocol *pProtocol,
 		StreamsManager *pStreamsManager, string name, uint32_t rtmpStreamId,
 		uint32_t chunkSize)
 : BaseOutNetRTMPStream(pProtocol, pStreamsManager, ST_OUT_NET_RTMP_4_TS,

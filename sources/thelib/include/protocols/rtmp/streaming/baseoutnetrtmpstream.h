@@ -73,10 +73,10 @@ private:
 	uint64_t _videoBytesCount;
 	uint64_t _videoDroppedBytesCount;
 protected:
-	BaseOutNetRTMPStream(BaseProtocol *pProtocol, StreamsManager *pStreamsManager,
+	BaseOutNetRTMPStream(BaseRTMPProtocol *pProtocol, StreamsManager *pStreamsManager,
 			uint64_t type, string name, uint32_t rtmpStreamId, uint32_t chunkSize);
 public:
-	static BaseOutNetRTMPStream *GetInstance(BaseProtocol *pProtocol,
+	static BaseOutNetRTMPStream *GetInstance(BaseRTMPProtocol *pProtocol,
 			StreamsManager *pStreamsManager,
 			string name, uint32_t rtmpStreamId,
 			uint32_t chunkSize,

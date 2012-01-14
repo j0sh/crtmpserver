@@ -95,7 +95,7 @@ protected:
 	Variant _completeMetadata;
 	uint32_t _chunkSize;
 public:
-	InFileRTMPStream(BaseProtocol *pProtocol, StreamsManager *pStreamsManager,
+	InFileRTMPStream(BaseRTMPProtocol *pProtocol, StreamsManager *pStreamsManager,
 			string name);
 	virtual ~InFileRTMPStream();
 

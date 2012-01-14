@@ -24,12 +24,14 @@
 
 #include "streaming/basestream.h"
 
+class BaseRTMPProtocol;
+
 class DLLEXP RTMPStream
 : public BaseStream {
 private:
 	uint32_t _rtmpStreamId;
 public:
-	RTMPStream(BaseProtocol *pProtocol, StreamsManager *pStreamsManager,
+	RTMPStream(BaseRTMPProtocol *pProtocol, StreamsManager *pStreamsManager,
 			uint32_t rtmpStreamId);
 	virtual ~RTMPStream();
 	virtual StreamCapabilities * GetCapabilities();

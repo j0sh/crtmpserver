@@ -27,7 +27,7 @@
 class DLLEXP OutNetRTMP4RTMPStream
 : public BaseOutNetRTMPStream {
 public:
-	OutNetRTMP4RTMPStream(BaseProtocol *pProtocol, StreamsManager *pStreamsManager,
+	OutNetRTMP4RTMPStream(BaseRTMPProtocol *pProtocol, StreamsManager *pStreamsManager,
 			string name, uint32_t rtmpStreamId, uint32_t chunkSize);
 	virtual ~OutNetRTMP4RTMPStream();
 

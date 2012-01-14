@@ -173,7 +173,7 @@ bool InFileRTMPStream::PassThroughBuilder::BuildFrame(FileClass *pFile,
 	return true;
 }
 
-InFileRTMPStream::InFileRTMPStream(BaseProtocol *pProtocol,
+InFileRTMPStream::InFileRTMPStream(BaseRTMPProtocol *pProtocol,
 		StreamsManager *pStreamsManager, string name)
 : BaseInFileStream(pProtocol, pStreamsManager, ST_IN_FILE_RTMP, name) {
 	_chunkSize = 4 * 1024 * 1024;
@@ -274,7 +274,7 @@ InFileRTMPStream *InFileRTMPStream::GetInstance(BaseRTMPProtocol *pRTMPProtocol,
 			|| metadata[META_MEDIA_TYPE] == MEDIA_TYPE_MOV
 			//||metadata[META_MEDIA_TYPE] == MEDIA_TYPE_NSV
 			) {
-		pResult = new InFileRTMPStream((BaseProtocol *) pRTMPProtocol,
+		pResult = new InFileRTMPStream(pRTMPProtocol,
 				pStreamsManager, metadata[META_SERVER_FULL_PATH]);
 	} else {
 		FATAL("File type not supported yet. Metadata:\n%s",

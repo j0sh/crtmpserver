@@ -18,10 +18,11 @@
  */
 
 #ifdef HAS_PROTOCOL_RTMP
+#include "protocols/rtmp/basertmpprotocol.h"
 #include "protocols/rtmp/streaming/rtmpstream.h"
 #include "streaming/streamstypes.h"
 
-RTMPStream::RTMPStream(BaseProtocol *pProtocol,
+RTMPStream::RTMPStream(BaseRTMPProtocol *pProtocol,
 		StreamsManager *pStreamsManager, uint32_t rtmpStreamId)
 : BaseStream(pProtocol, pStreamsManager, ST_NEUTRAL_RTMP, "") {
 	_rtmpStreamId = rtmpStreamId;

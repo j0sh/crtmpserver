@@ -23,6 +23,8 @@
 
 #include "streaming/baseoutfilestream.h"
 
+class BaseRTMPProtocol;
+
 class DLLEXP OutFileRTMPFLVStream
 : public BaseOutFileStream {
 private:
@@ -32,7 +34,7 @@ private:
 	IOBuffer _videoBuffer;
 	uint32_t _prevTagSize;
 public:
-	OutFileRTMPFLVStream(BaseProtocol *pProtocol, StreamsManager *pStreamsManager,
+	OutFileRTMPFLVStream(BaseRTMPProtocol *pProtocol, StreamsManager *pStreamsManager,
 			string name);
 	virtual ~OutFileRTMPFLVStream();
 
