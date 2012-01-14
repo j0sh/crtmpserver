@@ -212,7 +212,7 @@ bool BaseHTTPProtocol::TransferCompleted() {
 	if (_chunkedContent) {
 		return _lastChunk;
 	} else {
-		assert(_sessionDecodedBytesCount <= _contentLength);
+		o_assert(_sessionDecodedBytesCount <= _contentLength);
 		return _sessionDecodedBytesCount == _contentLength;
 	}
 }
@@ -443,7 +443,7 @@ bool BaseHTTPProtocol::HandleFixedLengthContent(IOBuffer &buffer) {
 	//1. Compute the chunk size that we areg going to read
 	//which is how many bytes we have available, but no more than _contentLength
 	uint32_t chunkSize = GETAVAILABLEBYTESCOUNT(buffer);
-	assert(_sessionDecodedBytesCount <= _contentLength);
+	o_assert(_sessionDecodedBytesCount <= _contentLength);
 	uint32_t remaining = _contentLength - _sessionDecodedBytesCount;
 	chunkSize = chunkSize > remaining ? remaining : chunkSize;
 

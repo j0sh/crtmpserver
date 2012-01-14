@@ -53,7 +53,7 @@ do { \
 #define ASSERT(...) do{__VALIDATE_FROMAT_SPECIFIERS(__VA_ARGS__);Logger::Log(_FATAL_, __FILE__, __LINE__, __func__, __VA_ARGS__);assert(false);abort();}while(0)
 #define NYI WARN("%s not yet implemented",__func__);
 #define NYIR do{NYI;return false;}while(0)
-#define NYIA do{NYI;assert(false);abort();}while(0)
+#define NYIA do{NYI;o_assert(false);abort();}while(0)
 #define _PROD_ACCESS_ (_FATAL_+1)
 #define _PROD_ERROR_ (_PROD_ACCESS_+1)
 #define PROD_GENERIC(level, le) Logger::LogProd(_PROD_ACCESS_, __FILE__, __LINE__, __func__, le)

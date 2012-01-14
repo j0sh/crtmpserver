@@ -73,15 +73,15 @@ public:
 		T result = 0;
 
 		if (GETAVAILABLEBYTESCOUNT(*this) == 0) {
-			assert(false);
+			o_assert(false);
 		}
 
 		if (GETAVAILABLEBYTESCOUNT(*this) < (_cursor + count) / 8) {
-			assert(false);
+			o_assert(false);
 		}
 
 		if (count>sizeof (T)*8) {
-			assert(false);
+			o_assert(false);
 		}
 
 		for (uint8_t i = 0; i < count; i++) {
@@ -99,11 +99,11 @@ public:
 
 	void IgnoreBits(uint32_t count) {
 		if (GETAVAILABLEBYTESCOUNT(*this) == 0) {
-			assert(false);
+			o_assert(false);
 		}
 
 		if (GETAVAILABLEBYTESCOUNT(*this) < (_cursor + count) / 8) {
-			assert(false);
+			o_assert(false);
 		}
 
 		_cursor += count;

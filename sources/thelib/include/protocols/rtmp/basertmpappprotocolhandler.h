@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -252,7 +252,7 @@ public:
 	 * append - Whether to append this stream to an exiting file
 	 * */
 	virtual InNetRTMPStream *CreateInNetStream(BaseRTMPProtocol *pFrom,
-		uint32_t channelId, uint32_t streamId, string streamName);
+			uint32_t channelId, uint32_t streamId, string streamName);
 
 private:
 	/*

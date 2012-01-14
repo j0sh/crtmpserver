@@ -75,7 +75,7 @@ bool InboundNamedPipeCarrier::OnEvent(struct epoll_event &event) {
 
 	if ((event.events & EPOLLIN) != 0) {
 		IOBuffer *pInputBuffer = _pProtocol->GetInputBuffer();
-		assert(pInputBuffer != NULL);
+		o_assert(pInputBuffer != NULL);
 		if (!pInputBuffer->ReadFromPipe(_inboundFd, FD_READ_CHUNK,
 				recvBytes)) {
 			FATAL("Unable to read data");

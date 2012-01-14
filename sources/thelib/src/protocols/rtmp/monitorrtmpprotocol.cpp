@@ -281,7 +281,7 @@ bool MonitorRTMPProtocol::ProcessBytes(IOBuffer &buffer) {
 								FATAL("Invalid channel id in reset message: %"PRIu32, channelId);
 								return false;
 							}
-							assert(_channels[channelId].id == channelId);
+							o_assert(_channels[channelId].id == channelId);
 							_channels[channelId].Reset();
 						}
 

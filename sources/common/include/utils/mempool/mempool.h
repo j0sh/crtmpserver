@@ -40,7 +40,7 @@ using namespace std;
 
 #define DECLARE_MEMORY_POOL_STRUCT(Cls) \
     static void* operator new(size_t s) { \
-        assert(s == sizeof (Cls)); \
+        o_assert(s == sizeof (Cls)); \
         return StaticMemoryPool<sizeof (Cls)>::GetInstance()->Allocate(); \
     } \
     static void operator delete(void* p) { \

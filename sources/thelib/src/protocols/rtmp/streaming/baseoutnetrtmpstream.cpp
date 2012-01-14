@@ -789,7 +789,7 @@ bool BaseOutNetRTMPStream::ChunkAndSend(uint8_t *pData, uint32_t length,
 	}
 
 	if (leftBytesToSend == 0) {
-		assert(channel.lastOutProcBytes == H_ML(header));
+		o_assert(channel.lastOutProcBytes == H_ML(header));
 		channel.lastOutProcBytes = 0;
 	}
 

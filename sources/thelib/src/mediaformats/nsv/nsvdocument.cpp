@@ -101,7 +101,7 @@ bool NSVDocument::BuildFrames() {
 
 	//15. Add the binary headers
 	for (uint32_t i = 0; i < binaryHeaders.size(); i++) {
-		assert(binaryHeaders[i].absoluteTime == 0);
+		o_assert(binaryHeaders[i].absoluteTime == 0);
 		ADD_VECTOR_BEGIN(_frames, binaryHeaders[i]);
 	}
 

@@ -37,7 +37,7 @@ TCPAcceptor::TCPAcceptor(string ipAddress, uint16_t port, Variant parameters,
 
 	_address.sin_family = PF_INET;
 	_address.sin_addr.s_addr = inet_addr(ipAddress.c_str());
-	assert(_address.sin_addr.s_addr != INADDR_NONE);
+	o_assert(_address.sin_addr.s_addr != INADDR_NONE);
 	_address.sin_port = EHTONS(port); //----MARKED-SHORT----
 
 	_protocolChain = protocolChain;
@@ -94,7 +94,7 @@ bool TCPAcceptor::Bind() {
 }
 
 void TCPAcceptor::SetApplication(BaseClientApplication *pApplication) {
-	assert(_pApplication == NULL);
+	o_assert(_pApplication == NULL);
 	_pApplication = pApplication;
 }
 

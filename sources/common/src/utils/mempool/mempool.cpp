@@ -78,7 +78,7 @@ MemoryPool::MemoryPool(size_t size) {
 
 MemoryPool::~MemoryPool() {
 	Cleanup();
-	assert(_used == 0);
+	o_assert(_used == 0);
 	MemoryPoolManager::GetInstance().UnRegister(this);
 }
 
@@ -96,7 +96,7 @@ void * MemoryPool::Allocate() {
 
 void MemoryPool::Deallocate(void *p) {
 	_used--;
-	assert(p != NULL);
+	o_assert(p != NULL);
 	MemPoolEntry* pEntry = (MemPoolEntry *) (p);
 	pEntry->pNext = _pEntries;
 	_pEntries = pEntry;

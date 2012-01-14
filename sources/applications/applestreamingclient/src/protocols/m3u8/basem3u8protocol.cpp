@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -51,7 +51,7 @@ bool BaseM3U8Protocol::SignalInputData(IOBuffer &buffer) {
 
 	//1. Get the transport
 	OutboundHTTPProtocol *pHttpProtocol = (OutboundHTTPProtocol *) GetFarProtocol();
-	assert(pHttpProtocol != NULL);
+	o_assert(pHttpProtocol != NULL);
 
 	//2. See if we have the 200 OK
 	if (!pHttpProtocol->Is200OK()) {

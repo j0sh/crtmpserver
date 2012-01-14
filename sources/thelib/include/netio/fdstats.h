@@ -50,21 +50,21 @@ public:
 	void Reset();
 
 	inline void Increment() {
-		assert(_current >= 0);
-		assert(_max >= 0);
+		o_assert(_current >= 0);
+		o_assert(_max >= 0);
 		_current++;
 		_max = _max < _current ? _current : _max;
 		_total++;
-		assert(_current >= 0);
-		assert(_max >= 0);
+		o_assert(_current >= 0);
+		o_assert(_max >= 0);
 	}
 
 	inline void Decrement() {
-		assert(_current >= 0);
-		assert(_max >= 0);
+		o_assert(_current >= 0);
+		o_assert(_max >= 0);
 		_current--;
-		assert(_current >= 0);
-		assert(_max >= 0);
+		o_assert(_current >= 0);
+		o_assert(_max >= 0);
 	}
 #ifdef GLOBALLY_ACCOUNT_BYTES
 

@@ -44,7 +44,7 @@ string format(string fmt, ...) {
 string vFormat(string fmt, va_list args) {
 	char *pBuffer = NULL;
 	if (vasprintf(&pBuffer, STR(fmt), args) == -1) {
-		assert(false);
+		o_assert(false);
 		return "";
 	}
 	string result = pBuffer;

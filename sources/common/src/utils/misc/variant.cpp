@@ -362,7 +362,7 @@ string Variant::ToString(string name, uint32_t indent) {
 		default:
 		{
 			FATAL("Invalid type: %hhu", _type);
-			assert(false);
+			o_assert(false);
 		}
 	}
 	return result;

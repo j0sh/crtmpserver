@@ -57,7 +57,7 @@ void IOHandlerManager::Initialize() {
 
 void IOHandlerManager::Start() {
 	_eq = epoll_create(EPOLL_QUERY_SIZE);
-	assert(_eq > 0);
+	o_assert(_eq > 0);
 }
 
 void IOHandlerManager::SignalShutdown() {

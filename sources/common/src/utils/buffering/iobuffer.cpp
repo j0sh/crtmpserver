@@ -23,11 +23,11 @@
 
 #ifdef WITH_SANITY_INPUT_BUFFER
 #define SANITY_INPUT_BUFFER \
-assert(_consumed<=_published); \
-assert(_published<=_size);
+o_assert(_consumed<=_published); \
+o_assert(_published<=_size);
 #define SANITY_INPUT_BUFFER_INDEX \
-assert(index >= 0); \
-assert((_published - _consumed - index) > 0);
+o_assert(index >= 0); \
+o_assert((_published - _consumed - index) > 0);
 #else
 #define SANITY_INPUT_BUFFER
 #define SANITY_INPUT_BUFFER_INDEX
@@ -337,7 +337,7 @@ uint32_t IOBuffer::GetMinChunkSize() {
 
 void IOBuffer::SetMinChunkSize(uint32_t minChunkSize) {
 
-	assert(minChunkSize > 0 && minChunkSize < 16 * 1024 * 1024);
+	o_assert(minChunkSize > 0 && minChunkSize < 16 * 1024 * 1024);
 	_minChunkSize = minChunkSize;
 }
 

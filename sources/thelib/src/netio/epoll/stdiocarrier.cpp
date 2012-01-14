@@ -53,8 +53,8 @@ StdioCarrier *StdioCarrier::GetInstance(BaseProtocol *pProtocol) {
 		pProtocol->GetFarEndpoint()->SetIOHandler(_pInstance);
 		return _pInstance;
 	}
-	assert(_pInstance->_pProtocol != NULL);
-	assert(pProtocol != NULL);
+	o_assert(_pInstance->_pProtocol != NULL);
+	o_assert(pProtocol != NULL);
 	if (_pInstance->_pProtocol->GetId() != pProtocol->GetId()) {
 		FATAL("Stdio carrier is already acquired");
 		return NULL;
@@ -70,7 +70,7 @@ bool StdioCarrier::OnEvent(struct epoll_event &event) {
 	//1. Read data
 	if ((event.events & EPOLLIN) != 0) {
 		IOBuffer *pInputBuffer = _pProtocol->GetInputBuffer();
-		assert(pInputBuffer != NULL);
+		o_assert(pInputBuffer != NULL);
 		if (!pInputBuffer->ReadFromStdio(_inboundFd, FD_READ_CHUNK, _ioAmount)) {
 			FATAL("Unable to read data");
 			return false;

@@ -69,7 +69,7 @@ bool TCPCarrier::OnEvent(struct kevent &event) {
 		case EVFILT_READ:
 		{
 			IOBuffer *pInputBuffer = _pProtocol->GetInputBuffer();
-			assert(pInputBuffer != NULL);
+			o_assert(pInputBuffer != NULL);
 			if (!pInputBuffer->ReadFromTCPFd(event.ident, event.data, _ioAmount)) {
 				FATAL("Unable to read data. %s:%hu -> %s:%hu",
 						STR(_farIp), _farPort,

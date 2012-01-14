@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -53,7 +53,7 @@ bool InboundKeyProtocol::SignalInputData(IOBuffer &buffer) {
 
 	//2. Get the transport
 	OutboundHTTPProtocol *pHttpProtocol = (OutboundHTTPProtocol *) GetFarProtocol();
-	assert(pHttpProtocol != NULL);
+	o_assert(pHttpProtocol != NULL);
 
 	//3. See if we have the 200 OK
 	if (!pHttpProtocol->Is200OK()) {

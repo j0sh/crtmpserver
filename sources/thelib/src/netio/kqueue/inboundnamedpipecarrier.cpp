@@ -77,7 +77,7 @@ bool InboundNamedPipeCarrier::OnEvent(struct kevent &event) {
 		case EVFILT_READ:
 		{
 			IOBuffer *pInputBuffer = _pProtocol->GetInputBuffer();
-			assert(pInputBuffer != NULL);
+			o_assert(pInputBuffer != NULL);
 			if (!pInputBuffer->ReadFromPipe(event.ident, event.data, recvAmount)) {
 				FATAL("Unable to read data");
 				return false;

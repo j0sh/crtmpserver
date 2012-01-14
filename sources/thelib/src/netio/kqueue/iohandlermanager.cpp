@@ -98,7 +98,7 @@ void IOHandlerManager::Initialize() {
 
 void IOHandlerManager::Start() {
 	_kq = kqueue();
-	assert(_kq > 0);
+	o_assert(_kq > 0);
 }
 
 void IOHandlerManager::SignalShutdown() {

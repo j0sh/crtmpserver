@@ -45,7 +45,7 @@ bool UDPCarrier::OnEvent(struct kevent &event) {
 		case EVFILT_READ:
 		{
 			IOBuffer *pInputBuffer = _pProtocol->GetInputBuffer();
-			assert(pInputBuffer != NULL);
+			o_assert(pInputBuffer != NULL);
 			if (!pInputBuffer->ReadFromUDPFd(event.ident, _ioAmount, _peerAddress)) {
 				FATAL("Unable to read data");
 				return false;

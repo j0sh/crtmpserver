@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -427,7 +427,7 @@ RTMPStream * BaseRTMPProtocol::CreateNeutralStream(uint32_t & streamId) {
 }
 
 InNetRTMPStream * BaseRTMPProtocol::CreateINS(uint32_t channelId,
-	uint32_t streamId, string streamName) {
+		uint32_t streamId, string streamName) {
 	if (streamId == 0 || streamId >= MAX_STREAMS_COUNT) {
 		FATAL("Invalid stream id: %u", streamId);
 		return NULL;
@@ -447,7 +447,7 @@ InNetRTMPStream * BaseRTMPProtocol::CreateINS(uint32_t channelId,
 	_streams[streamId] = NULL;
 
 	InNetRTMPStream *pStream = _pProtocolHandler->CreateInNetStream(this,
-		channelId, streamId, streamName);
+			channelId, streamId, streamName);
 	_streams[streamId] = pStream;
 
 	return pStream;
@@ -472,7 +472,7 @@ BaseOutNetRTMPStream * BaseRTMPProtocol::CreateONS(uint32_t streamId,
 
 		delete _streams[streamId];
 		_streams[streamId] = NULL;
-    }
+	}
 
 	BaseOutNetRTMPStream *pBaseOutNetRTMPStream = BaseOutNetRTMPStream::GetInstance(
 			this, GetApplication()->GetStreamsManager(), streamName, streamId,

@@ -212,34 +212,34 @@ bool Header::Write(Channel &channel, IOBuffer &buffer) {
 	switch (ht) {
 		case HT_FULL:
 		{
-			assert(channel.lastOutProcBytes == 0);
-			assert(H_IA(*this));
+			o_assert(channel.lastOutProcBytes == 0);
+			o_assert(H_IA(*this));
 			break;
 		}
 		case HT_SAME_STREAM:
 		{
-			assert(channel.lastOutProcBytes == 0);
-			assert(channel.lastOutStreamId == hf.s.si);
-			assert(channel.lastOutStreamId == channel.lastOutHeader.hf.s.si);
+			o_assert(channel.lastOutProcBytes == 0);
+			o_assert(channel.lastOutStreamId == hf.s.si);
+			o_assert(channel.lastOutStreamId == channel.lastOutHeader.hf.s.si);
 			break;
 		}
 		case HT_SAME_LENGTH_AND_STREAM:
 		{
-			assert(channel.lastOutProcBytes == 0);
-			assert(channel.lastOutStreamId == hf.s.si);
-			assert(channel.lastOutStreamId == channel.lastOutHeader.hf.s.si);
-			assert(channel.lastOutHeader.hf.s.mt == hf.s.mt);
-			assert(channel.lastOutHeader.hf.s.ml == hf.s.ml);
-			assert(channel.lastOutHeader.hf.s.ts != hf.s.ts);
+			o_assert(channel.lastOutProcBytes == 0);
+			o_assert(channel.lastOutStreamId == hf.s.si);
+			o_assert(channel.lastOutStreamId == channel.lastOutHeader.hf.s.si);
+			o_assert(channel.lastOutHeader.hf.s.mt == hf.s.mt);
+			o_assert(channel.lastOutHeader.hf.s.ml == hf.s.ml);
+			o_assert(channel.lastOutHeader.hf.s.ts != hf.s.ts);
 			break;
 		}
 		case HT_CONTINUATION:
 		{
-			assert(channel.lastOutStreamId == hf.s.si);
-			assert(channel.lastOutStreamId == channel.lastOutHeader.hf.s.si);
-			assert(channel.lastOutHeader.hf.s.mt == hf.s.mt);
-			assert(channel.lastOutHeader.hf.s.ml == hf.s.ml);
-			assert(channel.lastOutHeader.hf.s.ts == hf.s.ts);
+			o_assert(channel.lastOutStreamId == hf.s.si);
+			o_assert(channel.lastOutStreamId == channel.lastOutHeader.hf.s.si);
+			o_assert(channel.lastOutHeader.hf.s.mt == hf.s.mt);
+			o_assert(channel.lastOutHeader.hf.s.ml == hf.s.ml);
+			o_assert(channel.lastOutHeader.hf.s.ts == hf.s.ts);
 			break;
 		}
 		default:

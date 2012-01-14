@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -449,7 +449,7 @@ bool ClientContext::SignalProtocolCreated(BaseProtocol *pProtocol, Variant &para
 
 	//1. Get the context
 	uint32_t contextId = parameters["contextId"];
-	assert(contextId != 0);
+	o_assert(contextId != 0);
 	ClientContext *pContext = GetContext(contextId, 0, 0);
 	if (pContext == NULL) {
 		FATAL("Unable to get the context");

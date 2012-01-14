@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -1860,8 +1860,7 @@ bool BaseRTMPAppProtocolHandler::SendRTMPMessage(BaseRTMPProtocol *pTo,
 }
 
 BaseOutFileStream* BaseRTMPAppProtocolHandler::CreateOutFileStream(
-	BaseRTMPProtocol *pFrom, Variant &meta, bool append)
-{
+		BaseRTMPProtocol *pFrom, Variant &meta, bool append) {
 	//1. Compute the file name
 	string fileName = meta[META_SERVER_MEDIA_DIR];
 	fileName += (string) meta[META_SERVER_FILE_NAME];
@@ -1876,7 +1875,7 @@ BaseOutFileStream* BaseRTMPAppProtocolHandler::CreateOutFileStream(
 	if ((meta[META_MEDIA_TYPE] == MEDIA_TYPE_LIVE_OR_FLV) ||
 			(meta[META_MEDIA_TYPE] == MEDIA_TYPE_FLV)) {
 		return new OutFileRTMPFLVStream(pFrom,
-			GetApplication()->GetStreamsManager(), fileName);
+				GetApplication()->GetStreamsManager(), fileName);
 	}
 	if (meta[META_MEDIA_TYPE] == MEDIA_TYPE_MP4) {
 		FATAL("Streaming to MP4 file not supported");
@@ -1887,10 +1886,10 @@ BaseOutFileStream* BaseRTMPAppProtocolHandler::CreateOutFileStream(
 }
 
 InNetRTMPStream *BaseRTMPAppProtocolHandler::CreateInNetStream(
-	BaseRTMPProtocol *pFrom, uint32_t channelId, uint32_t streamId,
-	string streamName) {
+		BaseRTMPProtocol *pFrom, uint32_t channelId, uint32_t streamId,
+		string streamName) {
 	return new InNetRTMPStream(pFrom,
-		GetApplication()->GetStreamsManager(), streamName, streamId, channelId);
+			GetApplication()->GetStreamsManager(), streamName, streamId, channelId);
 
 }
 
@@ -2106,12 +2105,12 @@ bool BaseRTMPAppProtocolHandler::ConnectForPullPush(BaseRTMPProtocol *pFrom,
 		}
 	}
 
-//	//3. Compute tcUrl: rtmp://host/appName
-//	string tcUrl = format("%s://%s%s/%s",
-//			STR(uri.scheme()),
-//			STR(uri.host()),
-//			STR(uri.portSpecified() ? format(":%"PRIu32) : ""),
-//			STR(appName));
+	//	//3. Compute tcUrl: rtmp://host/appName
+	//	string tcUrl = format("%s://%s%s/%s",
+	//			STR(uri.scheme()),
+	//			STR(uri.host()),
+	//			STR(uri.portSpecified() ? format(":%"PRIu32) : ""),
+	//			STR(appName));
 
 	//4. Get the user agent
 	string userAgent = "";

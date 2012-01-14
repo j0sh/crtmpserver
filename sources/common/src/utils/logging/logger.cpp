@@ -34,19 +34,19 @@ public:
 	LogLocker(pthread_mutex_t *pMutex) {
 		if (pMutex == NULL) {
 			printf("Logger not initialized\n");
-			assert(false);
+			o_assert(false);
 		}
 		_pMutex = pMutex;
 		if (pthread_mutex_lock(_pMutex) != 0) {
 			printf("Unable to lock the logger");
-			assert(false);
+			o_assert(false);
 		}
 	};
 
 	virtual ~LogLocker() {
 		if (pthread_mutex_unlock(_pMutex) != 0) {
 			printf("Unable to unlock the logger");
-			assert(false);
+			o_assert(false);
 		}
 	}
 };
@@ -75,12 +75,12 @@ void Logger::Init() {
 #ifdef HAS_SAFE_LOGGER
 	if (_pMutex != NULL) {
 		printf("logger already initialized");
-		assert(false);
+		o_assert(false);
 	}
 	_pMutex = new pthread_mutex_t;
 	if (pthread_mutex_init(_pMutex, NULL)) {
 		printf("Unable to init the logger mutex");
-		assert(false);
+		o_assert(false);
 	}
 #else
 	if (_pLogger != NULL)

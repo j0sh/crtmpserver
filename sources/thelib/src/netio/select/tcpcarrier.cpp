@@ -78,7 +78,7 @@ bool TCPCarrier::OnEvent(select_event &event) {
 		case SET_READ:
 		{
 			IOBuffer *pInputBuffer = _pProtocol->GetInputBuffer();
-			assert(pInputBuffer != NULL);
+			o_assert(pInputBuffer != NULL);
 			if (!pInputBuffer->ReadFromTCPFd(_inboundFd,
 					_recvBufferSize, _ioAmount)) {
 				FATAL("Unable to read data. %s:%hu -> %s:%hu",

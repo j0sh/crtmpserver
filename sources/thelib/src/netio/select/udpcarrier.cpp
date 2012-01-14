@@ -45,7 +45,7 @@ bool UDPCarrier::OnEvent(select_event &event) {
 		case SET_READ:
 		{
 			IOBuffer *pInputBuffer = _pProtocol->GetInputBuffer();
-			assert(pInputBuffer != NULL);
+			o_assert(pInputBuffer != NULL);
 			if (!pInputBuffer->ReadFromUDPFd(_inboundFd, _ioAmount, _peerAddress)) {
 				FATAL("Unable to read data");
 				return false;

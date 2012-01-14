@@ -247,7 +247,7 @@ void HMACsha256(const void *pData, uint32_t dataLength,
 	HMAC_Final(&ctx, (unsigned char *) pResult, &digestLen);
 	HMAC_CTX_cleanup(&ctx);
 
-	assert(digestLen == 32);
+	o_assert(digestLen == 32);
 }
 
 string b64(string source) {
