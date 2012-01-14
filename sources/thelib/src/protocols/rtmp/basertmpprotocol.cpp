@@ -359,8 +359,8 @@ bool BaseRTMPProtocol::CloseStream(uint32_t streamId, bool createNeutralStream) 
 	}
 
 	if (_streams[streamId] == NULL) {
-		FATAL("Try to close a NULL stream");
-		return false;
+		WARN("Try to close a NULL stream");
+		return true;
 	}
 
 	if (TAG_KIND_OF(_streams[streamId]->GetType(), ST_OUT_NET_RTMP)) {
@@ -461,9 +461,8 @@ BaseOutNetRTMPStream * BaseRTMPProtocol::CreateONS(uint32_t streamId,
 	}
 
 	if (_streams[streamId] == NULL) {
-		FATAL("Try to play a stream on a NULL placeholder");
-		return NULL;
-	}
+		WARN("Try to play a stream on a NULL placeholder");
+	} else {
 
 	if (_streams[streamId]->GetType() != ST_NEUTRAL_RTMP) {
 		FATAL("Try to play a stream over a non neutral stream: id: %u; type: %"PRIu64,
@@ -473,6 +472,7 @@ BaseOutNetRTMPStream * BaseRTMPProtocol::CreateONS(uint32_t streamId,
 
 	delete _streams[streamId];
 	_streams[streamId] = NULL;
+    }
 
 	BaseOutNetRTMPStream *pBaseOutNetRTMPStream = BaseOutNetRTMPStream::GetInstance(
 			this, GetApplication()->GetStreamsManager(), streamName, streamId,
