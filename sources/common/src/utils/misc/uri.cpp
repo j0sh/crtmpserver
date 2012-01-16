@@ -101,7 +101,7 @@ bool parseURI(string stringUri, URI &uri) {
 	string::size_type limit = stringUri.find("/", cursor);
 	bool hasAuthentication = false;
 	pos = stringUri.find("@", cursor);
-	if (pos != string::npos) {
+	if (pos != string::npos && pos < limit) {
 		if (limit != string::npos) {
 			hasAuthentication = pos<limit;
 		}
