@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -104,6 +104,8 @@ bool InboundRTPProtocol::SignalInputData(IOBuffer &buffer,
 	//6. Skip the RTP header
 	pBuffer += 12 + GET_RTP_CC(_rtpHeader)*4;
 	length -= 12 + GET_RTP_CC(_rtpHeader)*4;
+	if (GET_RTP_P(_rtpHeader))
+		length -= pBuffer[length - 1];
 
 	//7. Detect rollover and adjust the timestamp
 #ifdef RTP_DETECT_ROLLOVER
