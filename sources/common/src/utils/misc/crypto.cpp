@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -216,12 +216,16 @@ void InitRC4Encryption(uint8_t *secretKey, uint8_t *pubKeyIn, uint8_t *pubKeyOut
 }
 
 string md5(string source, bool textResult) {
+	return md5((uint8_t*) source.c_str(), source.length(), textResult);
+}
+
+string md5(uint8_t *pBuffer, uint32_t length, bool textResult) {
 	EVP_MD_CTX mdctx;
 	unsigned char md_value[EVP_MAX_MD_SIZE];
 	unsigned int md_len;
 
 	EVP_DigestInit(&mdctx, EVP_md5());
-	EVP_DigestUpdate(&mdctx, STR(source), source.length());
+	EVP_DigestUpdate(&mdctx, pBuffer, length);
 	EVP_DigestFinal_ex(&mdctx, md_value, &md_len);
 	EVP_MD_CTX_cleanup(&mdctx);
 
