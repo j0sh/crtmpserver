@@ -234,7 +234,7 @@ bool InNetRTPStream::FeedData(uint8_t *pData, uint32_t dataLength,
 	}
 
 	if (lastTs * 100.00 > absoluteTimestamp * 100.00) {
-		WARN("Back time on %s. ATS: %.08f LTS: %.08f; D: %.8f; isAudio: %hhu",
+		WARN("Back time on %s. ATS: %.08f LTS: %.08f; D: %.8f; isAudio: %"PRIu8,
 				STR(GetName()),
 				absoluteTimestamp,
 				lastTs,
@@ -289,7 +289,7 @@ bool InNetRTPStream::FeedVideoData(uint8_t *pData, uint32_t dataLength,
 		return true;
 	} else {
 		if ((uint16_t) (_videoSequence + 1) != (uint16_t) GET_RTP_SEQ(rtpHeader)) {
-			WARN("Missing video packet. Wanted: %hu; got: %hu on stream: %s",
+			WARN("Missing video packet. Wanted: %"PRIu16"; got: %"PRIu16" on stream: %s",
 					(uint16_t) (_videoSequence + 1),
 					(uint16_t) GET_RTP_SEQ(rtpHeader),
 					STR(GetName()));
@@ -311,6 +311,7 @@ bool InNetRTPStream::FeedVideoData(uint8_t *pData, uint32_t dataLength,
 		//FINEST("V: %08"PRIx32, rtpHeader._timestamp);
 		_videoPacketsCount++;
 		_videoBytesCount += dataLength;
+		*(pData - 1) = GET_RTP_M(rtpHeader);
 		return FeedData(pData, dataLength, 0, dataLength, ts, false);
 	} else if (naluType == NALU_TYPE_FUA) {
 		if (GETAVAILABLEBYTESCOUNT(_currentNalu) == 0) {
@@ -323,6 +324,7 @@ bool InNetRTPStream::FeedVideoData(uint8_t *pData, uint32_t dataLength,
 				return true;
 			}
 			pData[1] = (pData[0]&0xe0) | (pData[1]&0x1f);
+			_currentNalu.ReadFromByte(0);
 			_currentNalu.ReadFromBuffer(pData + 1, dataLength - 1);
 			return true;
 		} else {
@@ -332,9 +334,10 @@ bool InNetRTPStream::FeedVideoData(uint8_t *pData, uint32_t dataLength,
 				//FINEST("V: %08"PRIx32, rtpHeader._timestamp);
 				_videoPacketsCount++;
 				_videoBytesCount += GETAVAILABLEBYTESCOUNT(_currentNalu);
-				if (!FeedData(GETIBPOINTER(_currentNalu),
-						GETAVAILABLEBYTESCOUNT(_currentNalu), 0,
-						GETAVAILABLEBYTESCOUNT(_currentNalu),
+				GETIBPOINTER(_currentNalu)[0] = GET_RTP_M(rtpHeader);
+				if (!FeedData(GETIBPOINTER(_currentNalu) + 1,
+						GETAVAILABLEBYTESCOUNT(_currentNalu) - 1, 0,
+						GETAVAILABLEBYTESCOUNT(_currentNalu) - 1,
 						ts,
 						false)) {
 					FATAL("Unable to feed NALU");
@@ -357,6 +360,11 @@ bool InNetRTPStream::FeedVideoData(uint8_t *pData, uint32_t dataLength,
 			}
 			_videoPacketsCount++;
 			_videoBytesCount += length;
+			if (index + length >= dataLength) {
+				*(pData + index - 1) = 1;
+			} else {
+				*(pData + index - 1) = 0;
+			}
 			if (!FeedData(pData + index,
 					length, 0,
 					length,
@@ -386,7 +394,7 @@ bool InNetRTPStream::FeedAudioData(uint8_t *pData, uint32_t dataLength,
 		return true;
 	} else {
 		if ((uint16_t) (_audioSequence + 1) != (uint16_t) GET_RTP_SEQ(rtpHeader)) {
-			WARN("Missing audio packet. Wanted: %hu; got: %hu on stream: %s",
+			WARN("Missing audio packet. Wanted: %"PRIu16"; got: %"PRIu16" on stream: %s",
 					(uint16_t) (_audioSequence + 1),
 					(uint16_t) GET_RTP_SEQ(rtpHeader),
 					STR(GetName()));
@@ -401,7 +409,7 @@ bool InNetRTPStream::FeedAudioData(uint8_t *pData, uint32_t dataLength,
 	//1. Compute chunks count
 	uint16_t chunksCount = ENTOHSP(pData);
 	if ((chunksCount % 16) != 0) {
-		FATAL("Invalid AU headers length: %hx", chunksCount);
+		FATAL("Invalid AU headers length: %"PRIx16, chunksCount);
 		return false;
 	}
 	chunksCount = chunksCount / 16;
@@ -419,7 +427,7 @@ bool InNetRTPStream::FeedAudioData(uint8_t *pData, uint32_t dataLength,
 		}
 		ts = (double) (rtpTs + i * 1024) / (double) _capabilities.aac._sampleRate * 1000.00;
 		if ((cursor + chunkSize) > dataLength) {
-			FATAL("Unable to feed data: cursor: %u; chunkSize: %hu; dataLength: %u; chunksCount: %hu",
+			FATAL("Unable to feed data: cursor: %"PRIu32"; chunkSize: %"PRIu16"; dataLength: %"PRIu32"; chunksCount: %"PRIu16,
 					cursor, chunkSize, dataLength, chunksCount);
 			return false;
 		}

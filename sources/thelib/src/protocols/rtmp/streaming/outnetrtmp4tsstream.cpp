@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -21,6 +21,7 @@
 #include "protocols/rtmp/streaming/outnetrtmp4tsstream.h"
 #include "streaming/streamstypes.h"
 #include "streaming/nalutypes.h"
+#include "protocols/http/basehttpprotocol.h"
 
 #define SPSPPS_MAX_LENGTH 1024
 
@@ -152,9 +153,12 @@ bool OutNetRTMP4TSStream::FeedAudioData(uint8_t *pData, uint32_t dataLength,
 	}
 }
 
+//void checkData(IOBuffer &buffer);
+
 bool OutNetRTMP4TSStream::FeedVideoData(uint8_t *pData, uint32_t dataLength,
 		double absoluteTimestamp) {
-	switch (NALU_TYPE(pData[0])) {
+	uint8_t nalType = NALU_TYPE(pData[0]);
+	switch (nalType) {
 		case NALU_TYPE_SPS:
 		{
 			//1. Prepare the SPS part from video codec
@@ -203,53 +207,98 @@ bool OutNetRTMP4TSStream::FeedVideoData(uint8_t *pData, uint32_t dataLength,
 
 			return true;
 		}
-		case NALU_TYPE_IDR:
-		case NALU_TYPE_SLICE:
-		{
-			//10. Make room for the RTMP header
-			_videoBuffer.ReadFromRepeat(0, 9);
-
-			//11. Add the raw data
-			_videoBuffer.ReadFromBuffer(pData, dataLength);
-
-			uint8_t *pBuffer = GETIBPOINTER(_videoBuffer);
-
-			//12. Setup the RTMP header
-			pBuffer[0] = (NALU_TYPE(pData[0]) == NALU_TYPE_IDR) ? 0x17 : 0x27;
-			pBuffer[1] = 0x01;
-			pBuffer[2] = pBuffer[3] = pBuffer[4] = 0;
-			EHTONLP(pBuffer + 5, dataLength); //----MARKED-LONG---
-
-			//13. Send it
-			if (!BaseOutNetRTMPStream::FeedData(
-					pBuffer, //pData
-					dataLength + 9, //dataLength
-					0, //processedLength
-					dataLength + 9, //totalLength
-					absoluteTimestamp, //absoluteTimestamp
-					false //isAudio
-					)) {
-				FATAL("Unable to send video");
-				return false;
-			}
-
-			//14. Cleanup
-			_videoBuffer.IgnoreAll();
-
-			return true;
-		}
-		case NALU_TYPE_PD:
-		case NALU_TYPE_SEI:
-		case NALU_TYPE_FILL:
-		{
-			return true;
-		}
 		default:
 		{
-			WARN("Ignoring NAL: %s", STR(NALUToString(pData[0])));
+			uint8_t *pTemp = NULL;
+
+			//put the 5 bytes header
+			if (GETAVAILABLEBYTESCOUNT(_videoBuffer) == 0) {
+				_videoBuffer.ReadFromRepeat(0, 5);
+				pTemp = GETIBPOINTER(_videoBuffer);
+				pTemp[1] = 0x01;
+				pTemp[2] = pTemp[3] = pTemp[4] = 0;
+			}
+
+			if ((nalType == NALU_TYPE_IDR)
+					|| (nalType == NALU_TYPE_SLICE)
+					|| (nalType == NALU_TYPE_SEI)
+					) {
+				//put the length
+				_videoBuffer.ReadFromRepeat(0, 4);
+				pTemp = GETIBPOINTER(_videoBuffer) + GETAVAILABLEBYTESCOUNT(_videoBuffer) - 4;
+				EHTONLP(pTemp, dataLength);
+
+				//put the data
+				_videoBuffer.ReadFromBuffer(pData, dataLength);
+
+				//setup the frame type
+				if (NALU_TYPE(pData[0]) == NALU_TYPE_IDR) {
+					//FINEST("HERE");
+					GETIBPOINTER(_videoBuffer)[0] = 0x17;
+				} else {
+					//FINEST("HERE");
+					GETIBPOINTER(_videoBuffer)[0] = 0x27;
+				}
+			}
+
+			//break if this is not a M bit on a RTSP
+			if (_inboundStreamIsRTP) {
+				if ((*(pData - 1)) == 0) {
+					//check the size of _videoBuffer and watch out for HUGE frames
+					if (GETAVAILABLEBYTESCOUNT(_videoBuffer) >= 4 * 1024 * 1024) {
+						WARN("Big video frame. Discard it");
+						_videoBuffer.IgnoreAll();
+					}
+					return true;
+				}
+			}
+
+			if (GETAVAILABLEBYTESCOUNT(_videoBuffer) > 5) {
+				//checkData(_videoBuffer);
+
+				//send the data
+				if (!BaseOutNetRTMPStream::FeedData(
+						GETIBPOINTER(_videoBuffer), //pData
+						GETAVAILABLEBYTESCOUNT(_videoBuffer), //dataLength
+						0, //processedLength
+						GETAVAILABLEBYTESCOUNT(_videoBuffer), //totalLength
+						absoluteTimestamp, //absoluteTimestamp
+						false //isAudio
+						)) {
+					FATAL("Unable to send video");
+					return false;
+				}
+			}
+
+			//cleanup
+			_videoBuffer.IgnoreAll();
+
+			//done
 			return true;
 		}
 	}
 }
+
+//void checkData(IOBuffer &buffer) {
+//	uint8_t *pBuffer = GETIBPOINTER(buffer);
+//	uint32_t length = GETAVAILABLEBYTESCOUNT(buffer);
+//	uint32_t cursor = 5;
+//	uint32_t computed = 5;
+//	string dbg;
+//	dbg += format("5 bytes: %02"PRIx8" %02"PRIx8" %02"PRIx8" %02"PRIx8" %02"PRIx8"\n",
+//			pBuffer[0], pBuffer[1], pBuffer[2], pBuffer[3], pBuffer[4]);
+//	while (cursor < length) {
+//		uint32_t size = ENTOHLP(pBuffer + cursor);
+//		dbg += format("%s(%08"PRIx32")(%02"PRIx8"), ",
+//				STR(NALUToString(pBuffer[cursor + 4])),
+//				size,
+//				pBuffer[cursor + 4 + size - 1]);
+//		cursor += 4 + size;
+//		computed += 4 + size;
+//	}
+//	dbg += format("\ncomputed: %"PRIu32"; available: %"PRIu32"; ok: %"PRIu8"\n",
+//			computed, length, computed == length);
+//	fprintf(stdout, "%s\n", STR(dbg));
+//}
 #endif /* HAS_PROTOCOL_RTMP */
 
