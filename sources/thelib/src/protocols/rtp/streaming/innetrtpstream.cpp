@@ -311,7 +311,6 @@ bool InNetRTPStream::FeedVideoData(uint8_t *pData, uint32_t dataLength,
 		//FINEST("V: %08"PRIx32, rtpHeader._timestamp);
 		_videoPacketsCount++;
 		_videoBytesCount += dataLength;
-		*(pData - 1) = GET_RTP_M(rtpHeader);
 		return FeedData(pData, dataLength, 0, dataLength, ts, false);
 	} else if (naluType == NALU_TYPE_FUA) {
 		if (GETAVAILABLEBYTESCOUNT(_currentNalu) == 0) {
@@ -324,7 +323,6 @@ bool InNetRTPStream::FeedVideoData(uint8_t *pData, uint32_t dataLength,
 				return true;
 			}
 			pData[1] = (pData[0]&0xe0) | (pData[1]&0x1f);
-			_currentNalu.ReadFromByte(0);
 			_currentNalu.ReadFromBuffer(pData + 1, dataLength - 1);
 			return true;
 		} else {
@@ -334,10 +332,10 @@ bool InNetRTPStream::FeedVideoData(uint8_t *pData, uint32_t dataLength,
 				//FINEST("V: %08"PRIx32, rtpHeader._timestamp);
 				_videoPacketsCount++;
 				_videoBytesCount += GETAVAILABLEBYTESCOUNT(_currentNalu);
-				GETIBPOINTER(_currentNalu)[0] = GET_RTP_M(rtpHeader);
-				if (!FeedData(GETIBPOINTER(_currentNalu) + 1,
-						GETAVAILABLEBYTESCOUNT(_currentNalu) - 1, 0,
-						GETAVAILABLEBYTESCOUNT(_currentNalu) - 1,
+				if (!FeedData(GETIBPOINTER(_currentNalu),
+						GETAVAILABLEBYTESCOUNT(_currentNalu),
+						0,
+						GETAVAILABLEBYTESCOUNT(_currentNalu),
 						ts,
 						false)) {
 					FATAL("Unable to feed NALU");
@@ -360,11 +358,6 @@ bool InNetRTPStream::FeedVideoData(uint8_t *pData, uint32_t dataLength,
 			}
 			_videoPacketsCount++;
 			_videoBytesCount += length;
-			if (index + length >= dataLength) {
-				*(pData + index - 1) = 1;
-			} else {
-				*(pData + index - 1) = 0;
-			}
 			if (!FeedData(pData + index,
 					length, 0,
 					length,

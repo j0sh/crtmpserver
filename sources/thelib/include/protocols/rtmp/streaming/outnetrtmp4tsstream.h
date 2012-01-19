@@ -35,6 +35,8 @@ private:
 	uint32_t _PPSStart;
 	IOBuffer _videoBuffer;
 	bool _inboundStreamIsRTP;
+	double _lastVideoTimestamp;
+	bool _isKeyFrame;
 public:
 	OutNetRTMP4TSStream(BaseRTMPProtocol *pProtocol, StreamsManager *pStreamsManager,
 			string name, uint32_t rtmpStreamId, uint32_t chunkSize);

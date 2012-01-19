@@ -49,6 +49,8 @@ name, rtmpStreamId, chunkSize) {
 	_pSPSPPS[10] = 0xe1; //3 bits reserved (111) + 5 bits number of sps (00001)
 
 	_inboundStreamIsRTP = false;
+	_lastVideoTimestamp = -1;
+	_isKeyFrame = false;
 }
 
 OutNetRTMP4TSStream::~OutNetRTMP4TSStream() {
@@ -209,6 +211,29 @@ bool OutNetRTMP4TSStream::FeedVideoData(uint8_t *pData, uint32_t dataLength,
 		}
 		default:
 		{
+			//1. Create timestamp reference
+			if (_lastVideoTimestamp < 0)
+				_lastVideoTimestamp = absoluteTimestamp;
+
+			//2. Send over the accumulated stuff if this is a new packet from a
+			//brand new sequence of packets
+			if (_lastVideoTimestamp != absoluteTimestamp) {
+				if (!BaseOutNetRTMPStream::FeedData(
+						GETIBPOINTER(_videoBuffer), //pData
+						GETAVAILABLEBYTESCOUNT(_videoBuffer), //dataLength
+						0, //processedLength
+						GETAVAILABLEBYTESCOUNT(_videoBuffer), //totalLength
+						_lastVideoTimestamp, //absoluteTimestamp
+						false //isAudio
+						)) {
+					FATAL("Unable to send video");
+					return false;
+				}
+				_videoBuffer.IgnoreAll();
+				_isKeyFrame = false;
+			}
+			_lastVideoTimestamp = absoluteTimestamp;
+
 			uint8_t *pTemp = NULL;
 
 			//put the 5 bytes header
@@ -232,46 +257,21 @@ bool OutNetRTMP4TSStream::FeedVideoData(uint8_t *pData, uint32_t dataLength,
 				_videoBuffer.ReadFromBuffer(pData, dataLength);
 
 				//setup the frame type
-				if (NALU_TYPE(pData[0]) == NALU_TYPE_IDR) {
-					//FINEST("HERE");
+				_isKeyFrame |= (nalType == NALU_TYPE_IDR);
+				if (_isKeyFrame) {
 					GETIBPOINTER(_videoBuffer)[0] = 0x17;
 				} else {
-					//FINEST("HERE");
 					GETIBPOINTER(_videoBuffer)[0] = 0x27;
 				}
 			}
 
-			//break if this is not a M bit on a RTSP
-			if (_inboundStreamIsRTP) {
-				if ((*(pData - 1)) == 0) {
-					//check the size of _videoBuffer and watch out for HUGE frames
-					if (GETAVAILABLEBYTESCOUNT(_videoBuffer) >= 4 * 1024 * 1024) {
-						WARN("Big video frame. Discard it");
-						_videoBuffer.IgnoreAll();
-					}
-					return true;
-				}
+			//6. make sure the packet doesn't grow too big
+			if (GETAVAILABLEBYTESCOUNT(_videoBuffer) >= 4 * 1024 * 1024) {
+				WARN("Big video frame. Discard it");
+				_videoBuffer.IgnoreAll();
+				_isKeyFrame = false;
+				_lastVideoTimestamp = -1;
 			}
-
-			if (GETAVAILABLEBYTESCOUNT(_videoBuffer) > 5) {
-				//checkData(_videoBuffer);
-
-				//send the data
-				if (!BaseOutNetRTMPStream::FeedData(
-						GETIBPOINTER(_videoBuffer), //pData
-						GETAVAILABLEBYTESCOUNT(_videoBuffer), //dataLength
-						0, //processedLength
-						GETAVAILABLEBYTESCOUNT(_videoBuffer), //totalLength
-						absoluteTimestamp, //absoluteTimestamp
-						false //isAudio
-						)) {
-					FATAL("Unable to send video");
-					return false;
-				}
-			}
-
-			//cleanup
-			_videoBuffer.IgnoreAll();
 
 			//done
 			return true;
