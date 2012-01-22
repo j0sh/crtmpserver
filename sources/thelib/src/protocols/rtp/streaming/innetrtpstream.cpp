@@ -465,30 +465,30 @@ void InNetRTPStream::ReportSR(uint64_t ntpMicroseconds, uint32_t rtpTimestamp,
 }
 
 void InNetRTPStream::FeedVideoCodecSetup(BaseOutStream* pOutStream) {
-	if (!pOutStream->FeedData(
-			_capabilities.avc._pSPS,
-			_capabilities.avc._spsLength,
-			0,
-			_capabilities.avc._spsLength,
-			_videoLastTs,
-			false)) {
-		FATAL("Unable to feed stream");
-		if (pOutStream->GetProtocol() != NULL) {
-			pOutStream->GetProtocol()->EnqueueForDelete();
-		}
-	}
-	if (!pOutStream->FeedData(
-			_capabilities.avc._pPPS,
-			_capabilities.avc._ppsLength,
-			0,
-			_capabilities.avc._ppsLength,
-			_videoLastTs,
-			false)) {
-		FATAL("Unable to feed stream");
-		if (pOutStream->GetProtocol() != NULL) {
-			pOutStream->GetProtocol()->EnqueueForDelete();
-		}
-	}
+//	if (!pOutStream->FeedData(
+//			_capabilities.avc._pSPS,
+//			_capabilities.avc._spsLength,
+//			0,
+//			_capabilities.avc._spsLength,
+//			_videoLastTs,
+//			false)) {
+//		FATAL("Unable to feed stream");
+//		if (pOutStream->GetProtocol() != NULL) {
+//			pOutStream->GetProtocol()->EnqueueForDelete();
+//		}
+//	}
+//	if (!pOutStream->FeedData(
+//			_capabilities.avc._pPPS,
+//			_capabilities.avc._ppsLength,
+//			0,
+//			_capabilities.avc._ppsLength,
+//			_videoLastTs,
+//			false)) {
+//		FATAL("Unable to feed stream");
+//		if (pOutStream->GetProtocol() != NULL) {
+//			pOutStream->GetProtocol()->EnqueueForDelete();
+//		}
+//	}
 }
 
 void InNetRTPStream::FeedAudioCodecSetup(BaseOutStream* pOutStream) {

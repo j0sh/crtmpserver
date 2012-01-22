@@ -32,21 +32,7 @@ OutNetRTMP4TSStream::OutNetRTMP4TSStream(BaseRTMPProtocol *pProtocol,
 name, rtmpStreamId, chunkSize) {
 	_audioCodecSent = false;
 	_videoCodecSent = false;
-	_spsAvailable = false;
-	_pSPSPPS = new uint8_t[SPSPPS_MAX_LENGTH];
-	_SPSPPSLength = 0;
-	_PPSStart = 0;
 	CanDropFrames(false);
-
-
-	_pSPSPPS[0] = 0x17; //0x10 - key frame; 0x07 - H264_CODEC_ID
-	_pSPSPPS[1] = 0; //0: AVC sequence header; 1: AVC NALU; 2: AVC end of sequence
-	_pSPSPPS[2] = 0; //CompositionTime
-	_pSPSPPS[3] = 0; //CompositionTime
-	_pSPSPPS[4] = 0; //CompositionTime
-	_pSPSPPS[5] = 1; //version
-	_pSPSPPS[9] = 0xff; //6 bits reserved (111111) + 2 bits nal size length - 1 (11)
-	_pSPSPPS[10] = 0xe1; //3 bits reserved (111) + 5 bits number of sps (00001)
 
 	_inboundStreamIsRTP = false;
 	_lastVideoTimestamp = -1;
@@ -54,7 +40,7 @@ name, rtmpStreamId, chunkSize) {
 }
 
 OutNetRTMP4TSStream::~OutNetRTMP4TSStream() {
-	delete[] _pSPSPPS;
+
 }
 
 void OutNetRTMP4TSStream::SignalAttachedToInStream() {
@@ -85,43 +71,21 @@ bool OutNetRTMP4TSStream::FeedData(uint8_t *pData, uint32_t dataLength,
 
 bool OutNetRTMP4TSStream::FeedAudioData(uint8_t *pData, uint32_t dataLength,
 		double absoluteTimestamp) {
-	if (!_videoCodecSent)
-		return true;
 	//the payload here respects this format:
 	//6.2  Audio Data Transport Stream, ADTS
 	//iso13818-7 page 26/206
 
 	//1. Send the audio codec setup if necessary
 	if (!_audioCodecSent) {
-		StreamCapabilities *pCapabilities = GetCapabilities();
-		if ((pCapabilities != NULL)
-				&& (pCapabilities->audioCodecId == CODEC_AUDIO_AAC)) {
-			IOBuffer codecSetup;
-			codecSetup.ReadFromRepeat(0xaf, 1);
-			codecSetup.ReadFromRepeat(0x00, 1);
-			codecSetup.ReadFromBuffer(pCapabilities->aac._pAAC,
-					pCapabilities->aac._aacLength);
-
-			if (!BaseOutNetRTMPStream::FeedData(
-					GETIBPOINTER(codecSetup), //pData
-					GETAVAILABLEBYTESCOUNT(codecSetup), //dataLength
-					0, //processedLength
-					GETAVAILABLEBYTESCOUNT(codecSetup), //totalLength
-					absoluteTimestamp, //absoluteTimestamp
-					true //isAudio
-					)) {
-				FATAL("Unable to send audio codec setup");
-				return false;
-			}
+		if (!SendAudioCodec(absoluteTimestamp)) {
+			FATAL("Unable to send video codec");
+			return false;
 		}
-
-		_audioCodecSent = true;
 	}
 
 	if (_inboundStreamIsRTP) {
 		pData[0] = 0xaf;
 		pData[1] = 0x01;
-
 		return BaseOutNetRTMPStream::FeedData(
 				pData, //pData
 				dataLength, //dataLength
@@ -160,145 +124,150 @@ bool OutNetRTMP4TSStream::FeedAudioData(uint8_t *pData, uint32_t dataLength,
 bool OutNetRTMP4TSStream::FeedVideoData(uint8_t *pData, uint32_t dataLength,
 		double absoluteTimestamp) {
 	uint8_t nalType = NALU_TYPE(pData[0]);
-	switch (nalType) {
-		case NALU_TYPE_SPS:
-		{
-			//1. Prepare the SPS part from video codec
-			if (dataLength > 128) {
-				FATAL("SPS too big");
+
+	//1. Create timestamp reference
+	if (_lastVideoTimestamp < 0)
+		_lastVideoTimestamp = absoluteTimestamp;
+
+	//2. Send over the accumulated stuff if this is a new packet from a
+	//brand new sequence of packets
+	if (_lastVideoTimestamp != absoluteTimestamp) {
+		if (!_videoCodecSent) {
+			if (!SendVideoCodec(_lastVideoTimestamp)) {
+				FATAL("Unable to send video codec");
 				return false;
 			}
-			memcpy(_pSPSPPS + 6, pData + 1, 3); //profile,profile compat,level
-			EHTONSP(_pSPSPPS + 11, (uint16_t) dataLength);
-			memcpy(_pSPSPPS + 13, pData, dataLength);
-			_PPSStart = 13 + dataLength;
-			_spsAvailable = true;
-			return true;
 		}
-		case NALU_TYPE_PPS:
-		{
-			//2. Prepare the PPS part from video codec
-			if (dataLength > 128) {
-				FATAL("PPS too big");
-				return false;
-			}
-			if (!_spsAvailable) {
-				WARN("No SPS available yet");
-				return true;
-			}
-
-			_pSPSPPS[_PPSStart] = 1;
-			EHTONSP(_pSPSPPS + _PPSStart + 1, (uint16_t) dataLength);
-			memcpy(_pSPSPPS + _PPSStart + 1 + 2, pData, dataLength);
-			_spsAvailable = false;
-
-			//3. Send the video codec
-			if (!BaseOutNetRTMPStream::FeedData(
-					_pSPSPPS, //pData
-					_PPSStart + 1 + 2 + dataLength, //dataLength
-					0, //processedLength
-					_PPSStart + 1 + 2 + dataLength, //totalLength
-					absoluteTimestamp, //absoluteTimestamp
-					false //isAudio
-					)) {
-				FATAL("Unable to send video codec setup");
-				return false;
-			}
-
-			_videoCodecSent = true;
-
-			return true;
+		if (!BaseOutNetRTMPStream::FeedData(
+				GETIBPOINTER(_videoBuffer), //pData
+				GETAVAILABLEBYTESCOUNT(_videoBuffer), //dataLength
+				0, //processedLength
+				GETAVAILABLEBYTESCOUNT(_videoBuffer), //totalLength
+				_lastVideoTimestamp, //absoluteTimestamp
+				false //isAudio
+				)) {
+			FATAL("Unable to send video");
+			return false;
 		}
-		default:
-		{
-			//1. Create timestamp reference
-			if (_lastVideoTimestamp < 0)
-				_lastVideoTimestamp = absoluteTimestamp;
+		_videoBuffer.IgnoreAll();
+		_isKeyFrame = false;
+	}
+	_lastVideoTimestamp = absoluteTimestamp;
 
-			//2. Send over the accumulated stuff if this is a new packet from a
-			//brand new sequence of packets
-			if (_lastVideoTimestamp != absoluteTimestamp) {
-				if (!BaseOutNetRTMPStream::FeedData(
-						GETIBPOINTER(_videoBuffer), //pData
-						GETAVAILABLEBYTESCOUNT(_videoBuffer), //dataLength
-						0, //processedLength
-						GETAVAILABLEBYTESCOUNT(_videoBuffer), //totalLength
-						_lastVideoTimestamp, //absoluteTimestamp
-						false //isAudio
-						)) {
-					FATAL("Unable to send video");
-					return false;
-				}
-				_videoBuffer.IgnoreAll();
-				_isKeyFrame = false;
-			}
-			_lastVideoTimestamp = absoluteTimestamp;
+	uint8_t *pTemp = NULL;
 
-			uint8_t *pTemp = NULL;
+	//put the 5 bytes header
+	if (GETAVAILABLEBYTESCOUNT(_videoBuffer) == 0) {
+		_videoBuffer.ReadFromRepeat(0, 5);
+		pTemp = GETIBPOINTER(_videoBuffer);
+		pTemp[1] = 0x01;
+		pTemp[2] = pTemp[3] = pTemp[4] = 0;
+	}
 
-			//put the 5 bytes header
-			if (GETAVAILABLEBYTESCOUNT(_videoBuffer) == 0) {
-				_videoBuffer.ReadFromRepeat(0, 5);
-				pTemp = GETIBPOINTER(_videoBuffer);
-				pTemp[1] = 0x01;
-				pTemp[2] = pTemp[3] = pTemp[4] = 0;
-			}
+	if ((nalType == NALU_TYPE_IDR)
+			|| (nalType == NALU_TYPE_SLICE)
+			|| (nalType == NALU_TYPE_SEI)
+			) {
+		//put the length
+		_videoBuffer.ReadFromRepeat(0, 4);
+		pTemp = GETIBPOINTER(_videoBuffer) + GETAVAILABLEBYTESCOUNT(_videoBuffer) - 4;
+		EHTONLP(pTemp, dataLength);
 
-			if ((nalType == NALU_TYPE_IDR)
-					|| (nalType == NALU_TYPE_SLICE)
-					|| (nalType == NALU_TYPE_SEI)
-					) {
-				//put the length
-				_videoBuffer.ReadFromRepeat(0, 4);
-				pTemp = GETIBPOINTER(_videoBuffer) + GETAVAILABLEBYTESCOUNT(_videoBuffer) - 4;
-				EHTONLP(pTemp, dataLength);
+		//put the data
+		_videoBuffer.ReadFromBuffer(pData, dataLength);
 
-				//put the data
-				_videoBuffer.ReadFromBuffer(pData, dataLength);
-
-				//setup the frame type
-				_isKeyFrame |= (nalType == NALU_TYPE_IDR);
-				if (_isKeyFrame) {
-					GETIBPOINTER(_videoBuffer)[0] = 0x17;
-				} else {
-					GETIBPOINTER(_videoBuffer)[0] = 0x27;
-				}
-			}
-
-			//6. make sure the packet doesn't grow too big
-			if (GETAVAILABLEBYTESCOUNT(_videoBuffer) >= 4 * 1024 * 1024) {
-				WARN("Big video frame. Discard it");
-				_videoBuffer.IgnoreAll();
-				_isKeyFrame = false;
-				_lastVideoTimestamp = -1;
-			}
-
-			//done
-			return true;
+		//setup the frame type
+		_isKeyFrame |= (nalType == NALU_TYPE_IDR);
+		if (_isKeyFrame) {
+			GETIBPOINTER(_videoBuffer)[0] = 0x17;
+		} else {
+			GETIBPOINTER(_videoBuffer)[0] = 0x27;
 		}
 	}
+
+	//6. make sure the packet doesn't grow too big
+	if (GETAVAILABLEBYTESCOUNT(_videoBuffer) >= 4 * 1024 * 1024) {
+		WARN("Big video frame. Discard it");
+		_videoBuffer.IgnoreAll();
+		_isKeyFrame = false;
+		_lastVideoTimestamp = -1;
+	}
+
+	//done
+	return true;
 }
 
-//void checkData(IOBuffer &buffer) {
-//	uint8_t *pBuffer = GETIBPOINTER(buffer);
-//	uint32_t length = GETAVAILABLEBYTESCOUNT(buffer);
-//	uint32_t cursor = 5;
-//	uint32_t computed = 5;
-//	string dbg;
-//	dbg += format("5 bytes: %02"PRIx8" %02"PRIx8" %02"PRIx8" %02"PRIx8" %02"PRIx8"\n",
-//			pBuffer[0], pBuffer[1], pBuffer[2], pBuffer[3], pBuffer[4]);
-//	while (cursor < length) {
-//		uint32_t size = ENTOHLP(pBuffer + cursor);
-//		dbg += format("%s(%08"PRIx32")(%02"PRIx8"), ",
-//				STR(NALUToString(pBuffer[cursor + 4])),
-//				size,
-//				pBuffer[cursor + 4 + size - 1]);
-//		cursor += 4 + size;
-//		computed += 4 + size;
-//	}
-//	dbg += format("\ncomputed: %"PRIu32"; available: %"PRIu32"; ok: %"PRIu8"\n",
-//			computed, length, computed == length);
-//	fprintf(stdout, "%s\n", STR(dbg));
-//}
+bool OutNetRTMP4TSStream::SendVideoCodec(double absoluteTimestamp) {
+	StreamCapabilities *pCapabilities = GetCapabilities();
+	if (pCapabilities == NULL || pCapabilities->videoCodecId != CODEC_VIDEO_AVC) {
+		return true;
+	}
+
+	IOBuffer result;
+
+	result.ReadFromByte(0x17); //0x10 - key frame; 0x07 - H264_CODEC_ID
+	result.ReadFromByte(0); //0: AVC sequence header; 1: AVC NALU; 2: AVC end of sequence
+	result.ReadFromByte(0); //CompositionTime
+	result.ReadFromByte(0); //CompositionTime
+	result.ReadFromByte(0); //CompositionTime
+	result.ReadFromByte(1); //version
+	result.ReadFromBuffer(pCapabilities->avc._pSPS + 1, 3); //profile,profile compat,level
+	result.ReadFromByte(0xff); //6 bits reserved (111111) + 2 bits nal size length - 1 (11)
+	result.ReadFromByte(0xe1); //3 bits reserved (111) + 5 bits number of sps (00001)
+	uint16_t temp16 = EHTONS(pCapabilities->avc._spsLength);
+	result.ReadFromBuffer((uint8_t *) & temp16, 2); //SPS length
+	result.ReadFromBuffer(pCapabilities->avc._pSPS, pCapabilities->avc._spsLength);
+
+
+	result.ReadFromByte(1);
+	temp16 = EHTONS(pCapabilities->avc._ppsLength);
+	result.ReadFromBuffer((uint8_t *) & temp16, 2); //PPS length
+	result.ReadFromBuffer(pCapabilities->avc._pPPS, pCapabilities->avc._ppsLength);
+
+
+	//3. Send the video codec
+	if (!BaseOutNetRTMPStream::FeedData(
+			GETIBPOINTER(result), //pData
+			GETAVAILABLEBYTESCOUNT(result), //dataLength
+			0, //processedLength
+			GETAVAILABLEBYTESCOUNT(result), //totalLength
+			absoluteTimestamp, //absoluteTimestamp
+			false //isAudio
+			)) {
+		FATAL("Unable to send video codec setup");
+		return false;
+	}
+
+	_videoCodecSent = true;
+
+	return true;
+}
+
+bool OutNetRTMP4TSStream::SendAudioCodec(double absoluteTimestamp) {
+	StreamCapabilities *pCapabilities = GetCapabilities();
+	if ((pCapabilities == NULL) || (pCapabilities->audioCodecId != CODEC_AUDIO_AAC)) {
+		return true;
+	}
+	IOBuffer result;
+	result.ReadFromRepeat(0xaf, 1);
+	result.ReadFromRepeat(0x00, 1);
+	result.ReadFromBuffer(pCapabilities->aac._pAAC,
+			pCapabilities->aac._aacLength);
+
+	if (!BaseOutNetRTMPStream::FeedData(
+			GETIBPOINTER(result), //pData
+			GETAVAILABLEBYTESCOUNT(result), //dataLength
+			0, //processedLength
+			GETAVAILABLEBYTESCOUNT(result), //totalLength
+			absoluteTimestamp, //absoluteTimestamp
+			true //isAudio
+			)) {
+		FATAL("Unable to send audio codec setup");
+		return false;
+	}
+
+	_audioCodecSent = true;
+	return true;
+}
 #endif /* HAS_PROTOCOL_RTMP */
 

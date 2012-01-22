@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -41,8 +41,7 @@ private:
 #ifdef COMPUTE_DTS_TIME
 	double _dtsTimeAudio;
 #endif
-	double _deltaTimeAudio;
-	IOBuffer _audioBuffer;
+	IOBuffer _audioBucket;
 	double _lastGotAudioTimestamp;
 	double _lastSentAudioTimestamp;
 	uint64_t _audioPacketsCount;
@@ -61,18 +60,15 @@ private:
 #ifdef COMPUTE_DTS_TIME
 	double _dtsTimeVideo;
 #endif
-	double _deltaTimeVideo;
 	uint64_t _videoPacketsCount;
 	uint64_t _videoBytesCount;
 	uint64_t _videoDroppedPacketsCount;
 	uint64_t _videoDroppedBytesCount;
-	IOBuffer _currentNal;
+	IOBuffer _videoBucket;
 
-	double _feedTime;
-
-	uint32_t _cursor;
 	StreamCapabilities _streamCapabilities;
-	bool _firstNAL;
+
+	double _deltaTime;
 
 	IOBuffer _SPS;
 	IOBuffer _PPS;
@@ -84,8 +80,6 @@ public:
 
 	void SetAudioVideoPidDescriptors(_PIDDescriptor *pAudioPidDescriptor,
 			_PIDDescriptor *pVideoPidDescriptor);
-
-	double GetFeedTime();
 
 	bool FeedData(uint8_t *pData, uint32_t length, bool packetStart,
 			bool isAudio, int8_t sequenceNumber);
@@ -103,11 +97,9 @@ public:
 	virtual bool SignalStop();
 	virtual void GetStats(Variant &info, uint32_t namespaceId = 0);
 private:
-	bool HandleAudioData(uint8_t *pRawBuffer, uint32_t rawBufferLength,
-			double timestamp, bool packetStart);
-	bool HandleVideoData(uint8_t *pRawBuffer, uint32_t rawBufferLength,
-			double timestamp, bool packetStart);
-	bool ProcessNal(double timestamp);
+	bool HandleAudioData();
+	bool HandleVideoData();
+	bool ProcessNal(uint8_t *pBuffer, int32_t length, double timestamp);
 	void InitializeVideoCapabilities(uint8_t *pData, uint32_t length);
 	void InitializeAudioCapabilities(uint8_t *pData, uint32_t length);
 };

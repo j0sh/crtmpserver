@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -38,7 +38,6 @@ InNetTSStream::InNetTSStream(BaseProtocol *pProtocol,
 #ifdef COMPUTE_DTS_TIME
 	_dtsTimeAudio = 0;
 #endif
-	_deltaTimeAudio = -1;
 	_lastGotAudioTimestamp = 0;
 	_lastSentAudioTimestamp = 0;
 	_audioPacketsCount = 0;
@@ -56,16 +55,12 @@ InNetTSStream::InNetTSStream(BaseProtocol *pProtocol,
 #ifdef COMPUTE_DTS_TIME
 	_dtsTimeVideo = 0;
 #endif
-	_deltaTimeVideo = -1;
 
-	_feedTime = 0;
-	_cursor = 0;
+	_deltaTime = -1;
 	_videoPacketsCount = 0;
 	_videoBytesCount = 0;
 	_videoDroppedPacketsCount = 0;
 	_videoDroppedBytesCount = 0;
-
-	_firstNAL = true;
 }
 
 InNetTSStream::~InNetTSStream() {
@@ -87,10 +82,6 @@ void InNetTSStream::SetAudioVideoPidDescriptors(PIDDescriptor *pAudioPidDescript
 	_pVideoPidDescriptor = pVideoPidDescriptor;
 }
 
-double InNetTSStream::GetFeedTime() {
-	return _feedTime;
-}
-
 //#define __FORCE_ROLL_OVER_FOR_DEBUG 30
 //#define __DUMP_TIMESTAMP_INFO_FOR_DEBUG
 //#define __FORCE_DROPPING_PACKETS 200
@@ -102,11 +93,11 @@ uint64_t __vRoll = 0;
 
 #define DROP_PACKET \
 do { \
+	/*WARN("Video packet dropped!!!");*/ \
 	if(!isAudio) { \
-		/*WARN("Video packet dropped!!!");*/ \
-		_currentNal.IgnoreAll(); \
-		_cursor = 0; \
-		_firstNAL = true; \
+		_videoBucket.IgnoreAll(); \
+	} else { \
+		_audioBucket.IgnoreAll(); \
 	} \
 	uint64_t &droppedPacketsCount = isAudio ? _audioDroppedPacketsCount : _videoDroppedPacketsCount; \
 	droppedPacketsCount++; \
@@ -143,9 +134,15 @@ bool InNetTSStream::FeedData(uint8_t *pData, uint32_t length, bool packetStart,
 #ifdef COMPUTE_DTS_TIME
 	double &dtsTime = isAudio ? _dtsTimeAudio : _dtsTimeVideo;
 #endif
-	double &deltaTime = isAudio ? _deltaTimeAudio : _deltaTimeVideo;
 	double absoluteTime = 0;
 	if (packetStart) {
+		if (isAudio) {
+			if (!HandleAudioData())
+				return false;
+		} else {
+			if (!HandleVideoData())
+				return false;
+		}
 		if (length >= 8) {
 			uint32_t pesHeaderLength = pData[8];
 			if (pesHeaderLength + 9 > length) {
@@ -233,11 +230,10 @@ bool InNetTSStream::FeedData(uint8_t *pData, uint32_t length, bool packetStart,
 				return true;
 			}
 
-			if (deltaTime < 0)
-				deltaTime = ptsTime;
+			if (_deltaTime < 0)
+				_deltaTime = ptsTime;
 
-			absoluteTime = (ptsTime - deltaTime);
-			_feedTime = _feedTime < absoluteTime ? absoluteTime : _feedTime;
+			absoluteTime = (ptsTime - _deltaTime);
 
 			pData += 9 + pesHeaderLength;
 			length -= (9 + pesHeaderLength);
@@ -250,9 +246,10 @@ bool InNetTSStream::FeedData(uint8_t *pData, uint32_t length, bool packetStart,
 	}
 
 	if (isAudio)
-		return HandleAudioData(pData, length, ptsTime - deltaTime, packetStart);
+		_audioBucket.ReadFromBuffer(pData, length);
 	else
-		return HandleVideoData(pData, length, ptsTime - deltaTime, packetStart);
+		_videoBucket.ReadFromBuffer(pData, length);
+	return true;
 }
 
 bool InNetTSStream::FeedData(uint8_t *pData, uint32_t dataLength,
@@ -325,18 +322,27 @@ void InNetTSStream::GetStats(Variant &info, uint32_t namespaceId) {
 	info["video"]["droppedBytesCount"] = _videoDroppedBytesCount;
 }
 
-bool InNetTSStream::HandleAudioData(uint8_t *pRawBuffer, uint32_t rawBufferLength,
-		double timestamp, bool packetStart) {
-	_audioBytesCount += rawBufferLength;
+bool InNetTSStream::HandleAudioData() {
+	if (_streamCapabilities.videoCodecId != CODEC_VIDEO_AVC) {
+		if (_pVideoPidDescriptor != NULL) {
+			_audioBucket.IgnoreAll();
+			return true;
+		}
+	}
+	double timestamp = _ptsTimeAudio - _deltaTime;
+	if (_ptsTimeAudio < 0 || _deltaTime < 0 || timestamp < 0) {
+		_audioBucket.IgnoreAll();
+		return true;
+	}
+
+	_audioBytesCount += GETAVAILABLEBYTESCOUNT(_audioBucket);
 	_statsAudioPacketsCount++;
 	//the payload here respects this format:
 	//6.2  Audio Data Transport Stream, ADTS
 	//iso13818-7 page 26/206
 
-	//1. Save the data
-	_audioBuffer.ReadFromBuffer(pRawBuffer, rawBufferLength);
-
-	InitializeAudioCapabilities(pRawBuffer, rawBufferLength);
+	InitializeAudioCapabilities(GETIBPOINTER(_audioBucket),
+			GETAVAILABLEBYTESCOUNT(_audioBucket));
 
 	if (_lastGotAudioTimestamp != timestamp) {
 		_audioPacketsCount = 0;
@@ -345,8 +351,8 @@ bool InNetTSStream::HandleAudioData(uint8_t *pRawBuffer, uint32_t rawBufferLengt
 
 	for (;;) {
 		//2. Get the buffer details: length and pointer
-		uint32_t bufferLength = GETAVAILABLEBYTESCOUNT(_audioBuffer);
-		uint8_t *pBuffer = GETIBPOINTER(_audioBuffer);
+		uint32_t bufferLength = GETAVAILABLEBYTESCOUNT(_audioBucket);
+		uint8_t *pBuffer = GETIBPOINTER(_audioBucket);
 
 		//3. Do we have at least 6 bytes to read the length?
 		if (bufferLength < 6) {
@@ -354,7 +360,7 @@ bool InNetTSStream::HandleAudioData(uint8_t *pRawBuffer, uint32_t rawBufferLengt
 		}
 
 		if ((ENTOHSP(pBuffer)&0xfff0) != 0xfff0) {
-			_audioBuffer.Ignore(1);
+			_audioBucket.Ignore(1);
 			_audioDroppedBytesCount++;
 			continue;
 		} else {
@@ -366,8 +372,8 @@ bool InNetTSStream::HandleAudioData(uint8_t *pRawBuffer, uint32_t rawBufferLengt
 		uint32_t frameLength = ((((pBuffer[3]&0x03) << 8) | pBuffer[4]) << 3) | (pBuffer[5] >> 5);
 		if (frameLength < 8) {
 			WARN("Bogus frameLength %u. Skip one byte", frameLength);
-			FINEST("_audioBuffer:\n%s", STR(_audioBuffer));
-			_audioBuffer.Ignore(1);
+			FINEST("_audioBuffer:\n%s", STR(_audioBucket));
+			_audioBucket.Ignore(1);
 			continue;
 		}
 		if (bufferLength < frameLength) {
@@ -388,102 +394,79 @@ bool InNetTSStream::HandleAudioData(uint8_t *pRawBuffer, uint32_t rawBufferLengt
 		}
 
 		//6. Ignore frameLength bytes
-		_audioBuffer.Ignore(frameLength);
+		_audioBucket.Ignore(frameLength);
 	}
+
+	_audioBucket.IgnoreAll();
 
 	return true;
 }
 
-bool InNetTSStream::HandleVideoData(uint8_t *pBuffer, uint32_t length,
-		double timestamp, bool packetStart) {
-	_videoBytesCount += length;
-	_videoPacketsCount++;
-	//1. Store the data inside our buffer
-	_currentNal.ReadFromBuffer(pBuffer, length);
-
-	//2. Get the initial buffer and size
-	uint32_t size = GETAVAILABLEBYTESCOUNT(_currentNal);
-	uint8_t *pNalBuffer = GETIBPOINTER(_currentNal);
-	uint32_t testValue = 0;
-
-	//3. If this is the first NAL encountered, than lock
-	//on the first byte from the first packet
-	if (_firstNAL) {
-		_cursor = 0;
-		if (size < 4)
-			return true;
-		while (_cursor < size - 4) {
-			testValue = ENTOHLP(pNalBuffer + _cursor);
-			if ((testValue >> 8) == 1) {
-				_videoDroppedBytesCount += (_cursor + 3);
-				_currentNal.Ignore(_cursor + 3);
-				_firstNAL = false;
-				_cursor = 0;
-				size = GETAVAILABLEBYTESCOUNT(_currentNal);
-				pNalBuffer = GETIBPOINTER(_currentNal);
-				break;
-			}
-			if (testValue == 1) {
-				_videoDroppedBytesCount += (_cursor + 4);
-				_currentNal.Ignore(_cursor + 4);
-				_firstNAL = false;
-				_cursor = 0;
-				size = GETAVAILABLEBYTESCOUNT(_currentNal);
-				pNalBuffer = GETIBPOINTER(_currentNal);
-				break;
-			}
-			_cursor++;
-		}
-	}
-
-	if (size < 4) {
+bool InNetTSStream::HandleVideoData() {
+	double timestamp = _ptsTimeVideo - _deltaTime;
+	if (_ptsTimeVideo < 0 || _deltaTime < 0 || timestamp < 0) {
+		_videoBucket.IgnoreAll();
 		return true;
 	}
 
-	//4. Search for the next NAL boundary
+	uint32_t cursor = 0;
+	uint32_t length = GETAVAILABLEBYTESCOUNT(_videoBucket);
+	uint8_t *pBuffer = GETIBPOINTER(_videoBucket);
+	uint8_t *pNalStart = NULL;
+	uint8_t *pNalEnd = NULL;
+	uint32_t testValue;
+	uint8_t markerSize = 0;
 	bool found = false;
-	int8_t markerSize = 0;
 
-	while (_cursor < size - 4) {
-		testValue = ENTOHLP(pNalBuffer + _cursor);
-		if ((testValue >> 8) == 1) {
-			markerSize = 3;
-			found = true;
-		} else if (testValue == 1) {
+	while (cursor + 4 < length) {
+		testValue = ENTOHLP(pBuffer + cursor);
+		if (testValue == 1) {
 			markerSize = 4;
+			pNalEnd = pBuffer + cursor;
+			found = true;
+		} else if ((testValue >> 8) == 1) {
+			markerSize = 3;
+			pNalEnd = pBuffer + cursor;
 			found = true;
 		}
-
 		if (!found) {
-			_cursor++;
+			cursor++;
 			continue;
+		} else {
+			cursor += markerSize;
 		}
 		found = false;
-
-		if (!ProcessNal(timestamp)) {
-			FATAL("Unable to process NALU");
+		if (pNalStart != NULL) {
+			if (!ProcessNal(pNalStart, pNalEnd - pNalStart, timestamp)) {
+				FATAL("Unable to process NAL");
+				return false;
+			}
+		}
+		pNalStart = pNalEnd + markerSize;
+	}
+	if (pNalStart != NULL) {
+		int32_t lastLength = length - (pNalStart - pBuffer);
+		if (!ProcessNal(pNalStart, lastLength, timestamp)) {
+			FATAL("Unable to process NAL");
 			return false;
 		}
-
-		_currentNal.Ignore(_cursor + markerSize);
-		pNalBuffer = GETIBPOINTER(_currentNal);
-		size = GETAVAILABLEBYTESCOUNT(_currentNal);
-		_cursor = 0;
-		if (size < 4)
-			break;
 	}
-
+	_videoBucket.IgnoreAll();
 	return true;
 }
 
-bool InNetTSStream::ProcessNal(double timestamp) {
-	InitializeVideoCapabilities(GETIBPOINTER(_currentNal), _cursor);
-	//5. Feed
+bool InNetTSStream::ProcessNal(uint8_t *pBuffer, int32_t length, double timestamp) {
+	if (pBuffer == NULL || length <= 0)
+		return true;
+	InitializeVideoCapabilities(pBuffer, length);
+	if (_streamCapabilities.videoCodecId != CODEC_VIDEO_AVC) {
+		return true;
+	}
 	return FeedData(
-			GETIBPOINTER(_currentNal),
-			_cursor,
+			pBuffer,
+			length,
 			0,
-			_cursor,
+			length,
 			timestamp,
 			false);
 }
