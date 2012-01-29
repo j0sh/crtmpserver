@@ -149,13 +149,15 @@ configuration=
 					uri="rtmp://edge01.fms.dutchview.nl/botr/bunny",
 					localStreamName="stream6",
 					emulateUserAgent="MAC 10,1,82,76",
+					tcUrl="rtmp://edge01.fms.dutchview.nl/botr/bunny", --this one is usually required and should have the same value as the uri
 				}
 				{
 					uri="rtmp://edge01.fms.dutchview.nl/botr/bunny",
 					localStreamName="stream6",
-					swfUrl="http://www.example.com/example.swf";
-					pageUrl="http://www.example.com/";
+					swfUrl="http://www.example.com/example.swf",
+					pageUrl="http://www.example.com/",
 					emulateUserAgent="MAC 10,1,82,76",
+					tcUrl="rtmp://edge01.fms.dutchview.nl/botr/bunny", --this one is usually required and should have the same value as the uri
 				}
 				]]--
 			},
@@ -312,25 +314,6 @@ configuration=
 			},
 			numberOfConnections=10,
 			randomAccessStreams=false
-		},
-		{
-			name="applestreamingclient",
-			description="Apple Streaming Client",
-			protocol="dynamiclinklibrary",
-			--[[acceptors = 
-			{
-				{
-					ip="0.0.0.0",
-					port=5544,
-					protocol="inboundRtsp"
-				}
-			},]]--
-			aliases=
-			{
-				"asc",
-			},
-			--validateHandshake=true,
-			--default=true,
 		},
 		--[[{
 			name="vmapp",

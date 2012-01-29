@@ -203,12 +203,37 @@ bool parseURI(string stringUri, URI &uri) {
 			}
 		}
 
-		for (string::size_type i = fullDocumentPath.size() - 1; i >= 0; i--) {
-			if (fullDocumentPath[i] == '/')
-				break;
-			document = fullDocumentPath[i] + document;
+		bool rtmpDocument = false;
+
+		if (scheme.find("rtmp") == 0) {
+			pos = fullDocumentPath.find(':');
+			if (pos == string::npos) {
+				rtmpDocument = false;
+			} else {
+				pos = fullDocumentPath.rfind('/', pos);
+				if (pos == string::npos) {
+					rtmpDocument = false;
+				} else {
+					rtmpDocument = true;
+				}
+			}
+		} else {
+			rtmpDocument = false;
 		}
-		documentPath = fullDocumentPath.substr(0, fullDocumentPath.size() - document.size());
+
+		if (rtmpDocument) {
+			pos = fullDocumentPath.find(':');
+			pos = fullDocumentPath.rfind('/', pos);
+			documentPath = fullDocumentPath.substr(0, pos + 1);
+			document = fullDocumentPath.substr(pos + 1);
+		} else {
+			for (string::size_type i = fullDocumentPath.size() - 1; i >= 0; i--) {
+				if (fullDocumentPath[i] == '/')
+					break;
+				document = fullDocumentPath[i] + document;
+			}
+			documentPath = fullDocumentPath.substr(0, fullDocumentPath.size() - document.size());
+		}
 		documentWithFullParameters = document;
 		if (fullParameters != "")
 			documentWithFullParameters += "?" + fullParameters;

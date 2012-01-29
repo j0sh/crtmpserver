@@ -79,6 +79,7 @@ configuration=
 				--[[{
 					uri="rtmp://edge01.fms.dutchview.nl/botr/bunny",
 					localStreamName="test1",
+					tcUrl="rtmp://edge01.fms.dutchview.nl/botr/bunny", --this one is usually required and should have the same value as the uri
 				}]]--
 			},
 			validateHandshake=true,

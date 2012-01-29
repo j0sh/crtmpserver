@@ -151,8 +151,9 @@ configuration=
 				{
 					uri="rtmp://edge01.fms.dutchview.nl/botr/bunny",
 					localStreamName="rtmp_test",
-					swfUrl="http://www.example.com/example.swf";
-					pageUrl="http://www.example.com/";
+					swfUrl="http://www.example.com/example.swf",
+					pageUrl="http://www.example.com/",
+					tcUrl="rtmp://edge01.fms.dutchview.nl/botr/bunny", --this one is usually required and should have the same value as the uri
 					emulateUserAgent="MAC 10,1,82,76",
 				}]]--
 			},
