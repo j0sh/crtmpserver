@@ -21,7 +21,6 @@
 #include "protocols/cli/inboundbasecliprotocol.h"
 #include "application/clientapplicationmanager.h"
 #include "protocols/cli/basecliappprotocolhandler.h"
-#include "netio/netio.h"
 
 InboundBaseCLIProtocol::InboundBaseCLIProtocol(uint64_t type)
 : BaseProtocol(type) {

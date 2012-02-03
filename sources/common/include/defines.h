@@ -20,6 +20,18 @@
 #define AM_PAYLOADTYPE_LEN 11
 #define AM_SERVERID "serverId"
 #define AM_SERVERID_LEN 8
+#define BRANDING_BANNER "C++ RTMP Server (www.rtmpd.com)"
+#define BRANDING_BANNER_LEN 31
+#define BRANDING_COMPANY_NAME "C++ RTMP Server"
+#define BRANDING_COMPANY_NAME_LEN 15
+#define BRANDING_EMAIL "contact@rtmpd.com"
+#define BRANDING_EMAIL_LEN 17
+#define BRANDING_PRODUCT_NAME "C++ RTMP Server"
+#define BRANDING_PRODUCT_NAME_LEN 15
+#define BRANDING_WEB "www.rtmpd.com"
+#define BRANDING_WEB_LEN 13
+#define BRANDING_WEB_HTTP "http://www.rtmpd.com"
+#define BRANDING_WEB_HTTP_LEN 20
 #define CM "controlMessage"
 #define CM_LEN 14
 #define CM_OP "operation"
@@ -376,8 +388,8 @@
 #define HTTP_HEADERS_HOST_LEN 4
 #define HTTP_HEADERS_SERVER "Server"
 #define HTTP_HEADERS_SERVER_LEN 6
-#define HTTP_HEADERS_SERVER_US "EVOSTREAM Streaming Router (www.evostream.com)"
-#define HTTP_HEADERS_SERVER_US_LEN 46
+#define HTTP_HEADERS_SERVER_US "C++ RTMP Server (www.rtmpd.com)"
+#define HTTP_HEADERS_SERVER_US_LEN 31
 #define HTTP_HEADERS_TRANSFER_ENCODING "Transfer-Encoding"
 #define HTTP_HEADERS_TRANSFER_ENCODING_LEN 17
 #define HTTP_HEADERS_TRANSFER_ENCODING_CHUNKED "chunked"
@@ -388,8 +400,8 @@
 #define HTTP_HEADERS_WWWAUTHENTICATE_LEN 16
 #define HTTP_HEADERS_X_POWERED_BY "X-Powered-By"
 #define HTTP_HEADERS_X_POWERED_BY_LEN 12
-#define HTTP_HEADERS_X_POWERED_BY_US "EVOSTREAM Streaming Router (www.evostream.com)"
-#define HTTP_HEADERS_X_POWERED_BY_US_LEN 46
+#define HTTP_HEADERS_X_POWERED_BY_US "C++ RTMP Server (www.rtmpd.com)"
+#define HTTP_HEADERS_X_POWERED_BY_US_LEN 31
 #define HTTP_METHOD "method"
 #define HTTP_METHOD_LEN 6
 #define HTTP_METHOD_GET "GET"
@@ -746,16 +758,16 @@
 #define RTSP_HEADERS_RTP_INFO_LEN 8
 #define RTSP_HEADERS_SERVER "Server"
 #define RTSP_HEADERS_SERVER_LEN 6
-#define RTSP_HEADERS_SERVER_US "EVOSTREAM Streaming Router (www.evostream.com)"
-#define RTSP_HEADERS_SERVER_US_LEN 46
+#define RTSP_HEADERS_SERVER_US "C++ RTMP Server (www.rtmpd.com)"
+#define RTSP_HEADERS_SERVER_US_LEN 31
 #define RTSP_HEADERS_SESSION "Session"
 #define RTSP_HEADERS_SESSION_LEN 7
 #define RTSP_HEADERS_TRANSPORT "Transport"
 #define RTSP_HEADERS_TRANSPORT_LEN 9
 #define RTSP_HEADERS_X_POWERED_BY "X-Powered-By"
 #define RTSP_HEADERS_X_POWERED_BY_LEN 12
-#define RTSP_HEADERS_X_POWERED_BY_US "EVOSTREAM Streaming Router (www.evostream.com)"
-#define RTSP_HEADERS_X_POWERED_BY_US_LEN 46
+#define RTSP_HEADERS_X_POWERED_BY_US "C++ RTMP Server (www.rtmpd.com)"
+#define RTSP_HEADERS_X_POWERED_BY_US_LEN 31
 #define RTSP_METHOD "method"
 #define RTSP_METHOD_LEN 6
 #define RTSP_METHOD_ANNOUNCE "ANNOUNCE"

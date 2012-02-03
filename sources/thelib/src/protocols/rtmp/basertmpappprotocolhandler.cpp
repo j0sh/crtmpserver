@@ -971,9 +971,6 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokePauseRaw(BaseRTMPProtocol *pFrom,
 		Variant & request) {
 	//1. Read stream index and offset in millisecond
 	uint32_t streamId = VH_SI(request);
-	double timeOffset = 0.0;
-	if ((VariantType) M_INVOKE_PARAM(request, 1) == V_DOUBLE)
-		timeOffset = M_INVOKE_PARAM(request, 1);
 
 	//2. Find the corresponding outbound stream
 	BaseOutNetRTMPStream *pBaseOutNetRTMPStream = NULL;

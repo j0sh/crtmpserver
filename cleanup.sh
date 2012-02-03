@@ -11,7 +11,7 @@
 #for name in ${files[@]}; do
 #	for i in `find  . -type f -name "$name"`;do  rm -rf  $i;done
 #done
-
+ 
 
 
 for i in `find  ./ -type d -name "CMakeFiles"`;do  rm -rf $i;done
@@ -70,4 +70,5 @@ for i in `find  ./ -type f -name "*.ii"`;do  rm -rf  $i;done
 for i in `find  ./ -type f -name "*.s"`;do  rm -rf  $i;done
 for i in `find  ./ -type f -name "*.o"`;do  rm -rf  $i;done
 for i in `find  ./ -type f -name "*.deb"`;do  rm -rf  $i;done
+for i in `find . -type f -name "evostream\.[0-9]*\.[0-9]*"`;do  rm -rf  $i;done
 
