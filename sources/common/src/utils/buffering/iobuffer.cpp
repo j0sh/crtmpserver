@@ -425,7 +425,7 @@ bool IOBuffer::EnsureSize(uint32_t expected) {
 	return true;
 }
 
-string IOBuffer::DumpBuffer(uint8_t *pBuffer, uint32_t length) {
+string IOBuffer::DumpBuffer(const uint8_t *pBuffer, uint32_t length) {
 	IOBuffer temp;
 	temp.ReadFromBuffer(pBuffer, length);
 	return temp.ToString();

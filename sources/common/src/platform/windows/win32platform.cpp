@@ -58,11 +58,15 @@ int vasprintf(char **strp, const char *fmt, va_list ap, int size) {
 }
 
 bool fileExists(string path) {
-	char *lpStr2 = (char *) path.c_str();
-	if (PathFileExists(lpStr2))
+#ifdef UNICODE
+	//TODO: Add the unicode implementation here
+	NYIR;
+#else
+	if (PathFileExists(STR(path)))
 		return true;
 	else
 		return false;
+#endif /* UNICODE */
 }
 
 string tagToString(uint64_t tag) {
@@ -262,10 +266,9 @@ bool setFdNoSIGPIPE(int32_t fd) {
 }
 
 bool setFdKeepAlive(int32_t fd) {
-	BOOL value = TRUE;
-	if (setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, (char *) &value, sizeof (BOOL)) == SOCKET_ERROR) {
-		FATAL("Error #%u", WSAGetLastError());
-		return false;
+	int value = 1;
+	if (setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, (char *) &value, sizeof (int)) != 0) {
+		WARN("setsockopt failed with error #%u. This could be an UDP socket which on windows doesn't support SO_KEEPALIVE", WSAGetLastError());
 	}
 	return true;
 }
@@ -469,8 +472,48 @@ bool deleteFile(string path) {
 }
 
 bool deleteFolder(string path, bool force) {
-	NYIA;
+	char fileFound[256];
+	memset(fileFound, 0x00, sizeof (fileFound));
+	WIN32_FIND_DATA info;
+	HANDLE hp;
+	sprintf(fileFound, "%s\\*.*", path.c_str());
+	hp = FindFirstFile(fileFound, &info);
+	do {
+		if (!((strcmp(info.cFileName, ".") == 0) ||
+				(strcmp(info.cFileName, "..") == 0))) {
+			if ((info.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) ==
+					FILE_ATTRIBUTE_DIRECTORY) {
+				string subFolder = path.c_str();
+				subFolder.append("\\");
+				subFolder.append(info.cFileName);
+				deleteFolder((char*) subFolder.c_str(), true);
+				RemoveDirectory(subFolder.c_str());
+			} else {
+				sprintf(fileFound, "%s\\%s", path.c_str(), info.cFileName);
+				BOOL retVal = DeleteFile(fileFound);
+			}
+		}
+
+	} while (FindNextFile(hp, &info));
+	FindClose(hp);
 	return false;
+}
+
+bool createFolder(string path, bool recursive) {
+	char DirName[256];
+	char* p = (char*) path.c_str();
+	char* q = DirName;
+	while (*p) {
+		if (('\\' == *p) || ('/' == *p)) {
+			if (':' != *(p - 1)) {
+				CreateDirectory(DirName, NULL);
+			}
+		}
+		*q++ = *p++;
+		*q = '\0';
+	}
+	CreateDirectory(DirName, NULL);
+	return true;
 }
 
 bool moveFile(string src, string dst) {
@@ -481,5 +524,4 @@ bool moveFile(string src, string dst) {
 	}
 	return true;
 }
-
 #endif /* WIN32 */

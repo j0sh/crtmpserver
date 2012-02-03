@@ -499,4 +499,3 @@ void installConfRereadSignal(SignalFnc pConfRereadSignalFnc) {
 }
 
 #endif /* LINUX */
-

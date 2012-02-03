@@ -49,6 +49,7 @@ public:
 			string functionName, Variant &le);
 	static bool AddLogLocation(BaseLogLocation *pLogLocation);
 	static void SignalFork();
+	static void SetLevel(int32_t level);
 };
 
 

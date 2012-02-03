@@ -194,8 +194,6 @@ bool ParseURL(string stringUrl, string &host, uint16_t &port, string &user, stri
 bool moveFile(string src, string dst);
 void installQuitSignal(SignalFnc pQuitSignalFnc);
 void installConfRereadSignal(SignalFnc pConfRereadSignalFnc);
-
-
 #endif /* _OPENBSDPLATFORM_H */
 #endif /* OPENBSD */
 

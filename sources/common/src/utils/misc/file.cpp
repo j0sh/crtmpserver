@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -44,17 +44,17 @@ bool File::Initialize(string path, FILE_OPEN_MODE mode) {
 	switch (mode) {
 		case FILE_OPEN_MODE_READ:
 		{
-			openMode = "r";
+			openMode = "rb";
 			break;
 		}
 		case FILE_OPEN_MODE_TRUNCATE:
 		{
-			openMode = "w+";
+			openMode = "w+b";
 			break;
 		}
 		case FILE_OPEN_MODE_APPEND:
 		{
-			openMode = "a+";
+			openMode = "a+b";
 			break;
 		}
 		default:

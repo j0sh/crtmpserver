@@ -87,7 +87,7 @@ void * MemoryPool::Allocate() {
 	void* pResult = _pEntries;
 	if (pResult == NULL) {
 		_created++;
-		return ::operator new(_size, std::nothrow);
+		return ::operator new(_size, nothrow);
 	} else {
 		_pEntries = _pEntries->pNext;
 		return pResult;

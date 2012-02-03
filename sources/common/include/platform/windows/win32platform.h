@@ -106,16 +106,17 @@
 #include <sstream>
 #include <cctype>
 #include <algorithm>
+#include <stdint.h>
 using namespace std;
 
-typedef unsigned char uint8_t;
+/*typedef unsigned char uint8_t;
 typedef unsigned short int uint16_t;
 typedef unsigned long int uint32_t;
 typedef unsigned long long int uint64_t;
 typedef char int8_t;
 typedef short int int16_t;
 typedef long int int32_t;
-typedef long long int int64_t;
+typedef long long int int64_t;*/
 #define atoll atol
 
 #define DLLEXP __declspec(dllexport)
@@ -134,10 +135,12 @@ typedef long long int int64_t;
 #define MSG_NOSIGNAL 0
 #define READ_FD _read
 #define WRITE_FD _write
-#define CLOSE_SOCKET(fd) if((fd)>=0) closesocket((fd))
+#define CLOSE_SOCKET(fd) do{ if(fd>=0) closesocket(fd);fd=-1;}while(0)
 #define LASTSOCKETERROR WSAGetLastError()
 #define SOCKERROR_CONNECT_IN_PROGRESS	WSAEWOULDBLOCK
 #define SOCKERROR_SEND_IN_PROGRESS		WSAEWOULDBLOCK
+#define SOCKERROR_RECV_IN_PROGRESS		WSAEWOULDBLOCK
+#define SOCKERROR_RECV_CONN_RESET		WSAECONNRESET
 #define SET_UNKNOWN 0
 #define SET_READ 1
 #define SET_WRITE 2
@@ -228,6 +231,7 @@ DLLEXP bool setFdTOS(int32_t fd, uint8_t tos);
 DLLEXP bool setFdOptions(int32_t fd);
 DLLEXP bool deleteFile(string path);
 DLLEXP bool deleteFolder(string path, bool force);
+DLLEXP bool createFolder(string path, bool recursive);
 DLLEXP string getHostByName(string name);
 DLLEXP bool isNumeric(string value);
 DLLEXP void split(string str, string separator, vector<string> &result);
@@ -256,7 +260,5 @@ DLLEXP int gettimeofday(struct timeval *tv, void* tz);
 DLLEXP void InitNetworking();
 DLLEXP HMODULE UnicodeLoadLibrary(string fileName);
 DLLEXP int inet_aton(const char *pStr, struct in_addr *pRes);
-
-
 #endif /* _WIN32PLATFORM_H */
 #endif /* WIN32 */

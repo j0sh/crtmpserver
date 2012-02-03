@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -19,6 +19,10 @@
 
 
 #ifdef HAS_LUA
+extern "C" {
+#include <lualib.h>
+#include <lauxlib.h>
+}
 #include "utils/lua/luautils.h"
 #include "utils/logging/logging.h"
 
@@ -188,7 +192,7 @@ bool PushVariant(lua_State *pLuaState,
 			lua_settable(pLuaState, -3);
 
 			lua_pushstring(pLuaState, VAR_MONTH);
-			lua_pushnumber(pLuaState, tempTm.tm_mon+1);
+			lua_pushnumber(pLuaState, tempTm.tm_mon + 1);
 			lua_settable(pLuaState, -3);
 
 			lua_pushstring(pLuaState, VAR_DAY);
@@ -196,7 +200,7 @@ bool PushVariant(lua_State *pLuaState,
 			lua_settable(pLuaState, -3);
 
 			lua_pushstring(pLuaState, VAR_HOUR);
-			lua_pushnumber(pLuaState, tempTm.tm_hour);
+			lua_pushnumber(pLuaState, tempTm.tm_hour + 1);
 			lua_settable(pLuaState, -3);
 
 			lua_pushstring(pLuaState, VAR_MIN);
@@ -229,7 +233,7 @@ bool PushVariant(lua_State *pLuaState,
 			lua_settable(pLuaState, -3);
 
 			lua_pushstring(pLuaState, VAR_MONTH);
-			lua_pushnumber(pLuaState, tempTm.tm_mon);
+			lua_pushnumber(pLuaState, tempTm.tm_mon + 1);
 			lua_settable(pLuaState, -3);
 
 			lua_pushstring(pLuaState, VAR_DAY);
@@ -261,7 +265,7 @@ bool PushVariant(lua_State *pLuaState,
 			lua_settable(pLuaState, -3);
 
 			lua_pushstring(pLuaState, VAR_HOUR);
-			lua_pushnumber(pLuaState, tempTm.tm_hour);
+			lua_pushnumber(pLuaState, tempTm.tm_hour + 1);
 			lua_settable(pLuaState, -3);
 
 			lua_pushstring(pLuaState, VAR_MIN);

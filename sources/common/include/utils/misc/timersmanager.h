@@ -47,6 +47,8 @@ private:
 	ProcessTimerEvent _processTimerEvent;
 	vector<uint32_t> _periodsVector;
 	map<uint32_t, uint32_t> _periodsMap;
+	bool _inExecution;
+	vector<uint32_t> _pendingForRemoval;
 public:
 	TimersManager(ProcessTimerEvent processTimerEvent);
 	virtual ~TimersManager();

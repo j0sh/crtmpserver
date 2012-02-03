@@ -206,7 +206,7 @@ public:
 		@brief
 	 */
 
-	static string DumpBuffer(uint8_t *pBuffer, uint32_t length);
+	static string DumpBuffer(const uint8_t *pBuffer, uint32_t length);
 	string ToString(uint32_t startIndex = 0, uint32_t limit = 0);
 	operator string();
 

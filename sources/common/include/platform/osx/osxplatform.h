@@ -192,7 +192,5 @@ bool listFolder(string path, vector<string> &result,
 bool moveFile(string src, string dst);
 void installQuitSignal(SignalFnc pQuitSignalFnc);
 void installConfRereadSignal(SignalFnc pConfRereadSignalFnc);
-
-
 #endif /* _OSXPLATFORM_H */
 #endif /* OSX */

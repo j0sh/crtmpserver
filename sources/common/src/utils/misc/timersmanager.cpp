@@ -27,6 +27,9 @@ TimersManager::TimersManager(ProcessTimerEvent processTimerEvent) {
 	_currentSlotIndex = 0;
 	_pSlots = NULL;
 	_slotsCount = 0;
+#ifdef NET_IOCP
+	_inExecution=false;
+#endif
 }
 
 TimersManager::~TimersManager() {
@@ -34,6 +37,20 @@ TimersManager::~TimersManager() {
 		delete[] _pSlots;
 }
 
+#ifdef NET_IOCP
+void TimersManager::RemoveTimer(uint32_t eventTimerId) {
+	for (uint32_t i = 0; i < _slotsCount; i++) {
+		if (MAP_HAS1(_pSlots[i].timers, eventTimerId)) {
+			if(_inExecution){
+				_pSlots[i].timers[eventTimerId].pUserData=NULL;
+				ADD_VECTOR_END(_pendingForRemoval,eventTimerId);
+			} else {
+				_pSlots[i].timers.erase(eventTimerId);
+			}
+		}
+	}
+}
+#else
 void TimersManager::RemoveTimer(uint32_t eventTimerId) {
 	for (uint32_t i = 0; i < _slotsCount; i++) {
 		if (MAP_HAS1(_pSlots[i].timers, eventTimerId)) {
@@ -41,6 +58,7 @@ void TimersManager::RemoveTimer(uint32_t eventTimerId) {
 		}
 	}
 }
+#endif
 
 void TimersManager::AddTimer(TimerEvent& timerEvent) {
 	UpdatePeriods(timerEvent.period);
@@ -58,6 +76,31 @@ void TimersManager::AddTimer(TimerEvent& timerEvent) {
 	}
 }
 
+#ifdef NET_IOCP
+void TimersManager::TimeElapsed(uint64_t currentTime) {
+	_inExecution=true;
+	int64_t delta = currentTime - _lastTime;
+	_lastTime = currentTime;
+
+	if (delta <= 0 || _slotsCount == 0){
+		_inExecution=false;
+		return;
+	}
+
+	for (int32_t i = 0; i < delta; i++) {
+
+		FOR_MAP(_pSlots[_currentSlotIndex % _slotsCount].timers, uint32_t, TimerEvent, j) {
+			_processTimerEvent(MAP_VAL(j));
+		}
+		_currentSlotIndex++;
+	}
+	_inExecution=false;
+	for(uint32_t i=0;i<_pendingForRemoval.size();i++) {
+		RemoveTimer(_pendingForRemoval[i]);
+	}
+	_pendingForRemoval.clear();
+}
+#else
 void TimersManager::TimeElapsed(uint64_t currentTime) {
 	int64_t delta = currentTime - _lastTime;
 	_lastTime = currentTime;
@@ -73,6 +116,7 @@ void TimersManager::TimeElapsed(uint64_t currentTime) {
 		_currentSlotIndex++;
 	}
 }
+#endif
 
 void TimersManager::UpdatePeriods(uint32_t period) {
 	if (MAP_HAS1(_periodsMap, period))
@@ -108,7 +152,7 @@ uint32_t TimersManager::LCM(uint32_t a, uint32_t b) {
 	if (a == 0 || b == 0)
 		return 0;
 	uint32_t result = a * b / GCD(a, b);
-	FINEST("a: %u; b: %u; r: %u", a, b, result);
+	//FINEST("a: %u; b: %u; r: %u", a, b, result);
 	return result;
 }
 

@@ -531,4 +531,3 @@ void installConfRereadSignal(SignalFnc pConfRereadSignalFnc) {
 }
 
 #endif /* SOLARIS */
-

@@ -149,3 +149,13 @@ void Logger::SignalFork() {
 		_pLogger->_logLocations[i]->SignalFork();
 	}
 }
+
+void Logger::SetLevel(int32_t level) {
+	LOCK;
+	if (_pLogger == NULL)
+		return;
+
+	FOR_VECTOR(_pLogger->_logLocations, i) {
+		_pLogger->_logLocations[i]->SetLevel(level);
+	}
+}

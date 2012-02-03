@@ -489,6 +489,4 @@ void installConfRereadSignal(SignalFnc pConfRereadSignalFnc) {
 	installSignal(SIGHUP, pConfRereadSignalFnc);
 }
 
-
 #endif /* OPENBSD */
-

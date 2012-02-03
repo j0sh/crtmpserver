@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -217,7 +217,7 @@ public:
 	static bool DeserializeFromJSON(string &raw, Variant &result, uint32_t &start);
 	bool SerializeToJSON(string &result);
 
-	static bool DeserializeFromCmdLineArgs(uint32_t count, char **pArguments,
+	static bool DeserializeFromCmdLineArgs(uint32_t count, const char **pArguments,
 			Variant &result);
 private:
 	TiXmlElement *SerializeToXmlElement(string &name);

@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -1061,7 +1061,7 @@ bool Variant::ConvertToTimestamp() {
 	}
 
 	if (detectedType == V_TIME || detectedType == V_TIMESTAMP) {
-		temp.tm_hour = (int) ((int32_t) (*this)["hour"]);
+		temp.tm_hour = (int) ((int32_t) (*this)["hour"]) - 1;
 		temp.tm_min = (int) ((int32_t) (*this)["min"]);
 		temp.tm_sec = (int) (HasKey("sec") ?
 				(int32_t) (*this)["sec"] : 0);
@@ -1655,7 +1655,7 @@ bool Variant::SerializeToJSON(string &result) {
 	return true;
 }
 
-bool Variant::DeserializeFromCmdLineArgs(uint32_t count, char **pArguments,
+bool Variant::DeserializeFromCmdLineArgs(uint32_t count, const char **pArguments,
 		Variant &result) {
 	if (count < 1) {
 		FATAL("Inavlid parameters count");
@@ -1903,7 +1903,7 @@ bool Variant::DeserializeFromBin(uint8_t *pBuffer, uint32_t bufferSize,
 		case V_UINT32:
 		{
 			VARIANT_CHECK_BOUNDS(4);
-			variant = ENTOHLP(PTR); //----MARKED-LONG---
+			variant = (uint32_t) ENTOHLP(PTR); //----MARKED-LONG---
 			cursor += 4;
 			return true;
 		}

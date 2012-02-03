@@ -483,4 +483,3 @@ void installConfRereadSignal(SignalFnc pConfRereadSignalFnc) {
 }
 
 #endif /* ANDROID */
-
