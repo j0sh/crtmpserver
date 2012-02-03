@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -98,6 +98,14 @@ BaseInFileStream::~BaseInFileStream() {
 	ReleaseFile(_pFile);
 }
 
+bool BaseInFileStream::StreamCompleted() {
+	if (_currentFrameIndex >= _totalFrames)
+		return true;
+	if ((_playLimit >= 0) && ((_playLimit < (double) _totalSentTime)))
+		return true;
+	return false;
+}
+
 StreamCapabilities * BaseInFileStream::GetCapabilities() {
 	return &_streamCapabilities;
 }
@@ -167,7 +175,7 @@ bool BaseInFileStream::ResolveCompleteMetadata(Variant &metaData) {
 	return true;
 }
 
-bool BaseInFileStream::Initialize(int32_t clientSideBufferLength) {
+bool BaseInFileStream::Initialize(int32_t clientSideBufferLength, bool hasTimer) {
 	//1. Check to see if we have an universal seeking file
 	string seekFilePath = GetName() + "."MEDIA_TYPE_SEEK;
 	if (!fileExists(seekFilePath)) {
@@ -250,8 +258,10 @@ bool BaseInFileStream::Initialize(int32_t clientSideBufferLength) {
 	_clientSideBufferLength = clientSideBufferLength;
 
 	//6. Create the timer
-	_pTimer = new InFileStreamTimer(this);
-	_pTimer->EnqueueForTimeEvent(_clientSideBufferLength - _clientSideBufferLength / 3);
+	if (hasTimer) {
+		_pTimer = new InFileStreamTimer(this);
+		_pTimer->EnqueueForTimeEvent(_clientSideBufferLength - _clientSideBufferLength / 3);
+	}
 
 	//7. Done
 	return true;

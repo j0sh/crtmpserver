@@ -38,7 +38,6 @@ InNetTSStream::InNetTSStream(BaseProtocol *pProtocol,
 #ifdef COMPUTE_DTS_TIME
 	_dtsTimeAudio = 0;
 #endif
-	_lastGotAudioTimestamp = 0;
 	_lastSentAudioTimestamp = 0;
 	_audioPacketsCount = 0;
 	_statsAudioPacketsCount = 0;
@@ -55,8 +54,6 @@ InNetTSStream::InNetTSStream(BaseProtocol *pProtocol,
 #ifdef COMPUTE_DTS_TIME
 	_dtsTimeVideo = 0;
 #endif
-
-	_deltaTime = -1;
 	_videoPacketsCount = 0;
 	_videoBytesCount = 0;
 	_videoDroppedPacketsCount = 0;
@@ -134,7 +131,6 @@ bool InNetTSStream::FeedData(uint8_t *pData, uint32_t length, bool packetStart,
 #ifdef COMPUTE_DTS_TIME
 	double &dtsTime = isAudio ? _dtsTimeAudio : _dtsTimeVideo;
 #endif
-	double absoluteTime = 0;
 	if (packetStart) {
 		if (isAudio) {
 			if (!HandleAudioData())
@@ -230,11 +226,6 @@ bool InNetTSStream::FeedData(uint8_t *pData, uint32_t length, bool packetStart,
 				return true;
 			}
 
-			if (_deltaTime < 0)
-				_deltaTime = ptsTime;
-
-			absoluteTime = (ptsTime - _deltaTime);
-
 			pData += 9 + pesHeaderLength;
 			length -= (9 + pesHeaderLength);
 
@@ -329,8 +320,11 @@ bool InNetTSStream::HandleAudioData() {
 			return true;
 		}
 	}
-	double timestamp = _ptsTimeAudio - _deltaTime;
-	if (_ptsTimeAudio < 0 || _deltaTime < 0 || timestamp < 0) {
+	if ((_ptsTimeAudio < 0)
+			|| (GETAVAILABLEBYTESCOUNT(_audioBucket) < 2)
+			|| (GETIBPOINTER(_audioBucket)[0] != 0xff)
+			|| ((GETIBPOINTER(_audioBucket)[1] >> 4) != 0x0f)
+			) {
 		_audioBucket.IgnoreAll();
 		return true;
 	}
@@ -344,10 +338,7 @@ bool InNetTSStream::HandleAudioData() {
 	InitializeAudioCapabilities(GETIBPOINTER(_audioBucket),
 			GETAVAILABLEBYTESCOUNT(_audioBucket));
 
-	if (_lastGotAudioTimestamp != timestamp) {
-		_audioPacketsCount = 0;
-	}
-	_lastGotAudioTimestamp = timestamp;
+	_audioPacketsCount = 0;
 
 	for (;;) {
 		//2. Get the buffer details: length and pointer
@@ -380,7 +371,7 @@ bool InNetTSStream::HandleAudioData() {
 			break;
 		}
 
-		double ts = timestamp + (((double) _audioPacketsCount * 1024.00) / (double) _streamCapabilities.aac._sampleRate)*1000.0;
+		double ts = _ptsTimeAudio + (((double) _audioPacketsCount * 1024.00) / (double) _streamCapabilities.aac._sampleRate)*1000.0;
 		_audioPacketsCount++;
 		if (_lastSentAudioTimestamp >= ts) {
 			ts = _lastSentAudioTimestamp;
@@ -403,11 +394,14 @@ bool InNetTSStream::HandleAudioData() {
 }
 
 bool InNetTSStream::HandleVideoData() {
-	double timestamp = _ptsTimeVideo - _deltaTime;
-	if (_ptsTimeVideo < 0 || _deltaTime < 0 || timestamp < 0) {
+	if (_ptsTimeVideo < 0 || GETAVAILABLEBYTESCOUNT(_videoBucket) == 0) {
+		_videoDroppedPacketsCount++;
+		_videoDroppedBytesCount += GETAVAILABLEBYTESCOUNT(_videoBucket);
 		_videoBucket.IgnoreAll();
 		return true;
 	}
+	_videoPacketsCount++;
+	_videoBytesCount += GETAVAILABLEBYTESCOUNT(_videoBucket);
 
 	uint32_t cursor = 0;
 	uint32_t length = GETAVAILABLEBYTESCOUNT(_videoBucket);
@@ -437,7 +431,7 @@ bool InNetTSStream::HandleVideoData() {
 		}
 		found = false;
 		if (pNalStart != NULL) {
-			if (!ProcessNal(pNalStart, pNalEnd - pNalStart, timestamp)) {
+			if (!ProcessNal(pNalStart, pNalEnd - pNalStart, _ptsTimeVideo)) {
 				FATAL("Unable to process NAL");
 				return false;
 			}
@@ -446,7 +440,7 @@ bool InNetTSStream::HandleVideoData() {
 	}
 	if (pNalStart != NULL) {
 		int32_t lastLength = length - (pNalStart - pBuffer);
-		if (!ProcessNal(pNalStart, lastLength, timestamp)) {
+		if (!ProcessNal(pNalStart, lastLength, _ptsTimeVideo)) {
 			FATAL("Unable to process NAL");
 			return false;
 		}

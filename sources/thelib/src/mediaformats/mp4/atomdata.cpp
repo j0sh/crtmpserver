@@ -142,8 +142,8 @@ bool AtomDATA::Read() {
 	}
 }
 
-std::string AtomDATA::Hierarchy(uint32_t indent) {
-	return std::string(4 * indent, ' ') + GetTypeString();
+string AtomDATA::Hierarchy(uint32_t indent) {
+	return string(4 * indent, ' ') + GetTypeString();
 }
 
 

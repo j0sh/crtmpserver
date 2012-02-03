@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -78,6 +78,9 @@
 
 //Raw HTTP stream
 #define PT_INBOUND_RAW_HTTP_STREAM		MAKE_TAG4('I','R','H','S')
+
+//pass through protocol
+#define PT_PASSTHROUGH MAKE_TAG2('P','T')
 
 #endif	/* _PROTOCOLTYPES_H */
 

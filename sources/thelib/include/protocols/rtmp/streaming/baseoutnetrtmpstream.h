@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -34,12 +34,8 @@ private:
 	uint32_t _rtmpStreamId;
 	uint32_t _chunkSize;
 	BaseRTMPProtocol *_pRTMPProtocol;
-
-	double _deltaVideoTime;
-	double _deltaAudioTime;
-	double *_pDeltaVideoTime;
-	double *_pDeltaAudioTime;
 	double _seekTime;
+	double _start;
 
 	uint32_t _isFirstVideoFrame;
 	Header _videoHeader;
@@ -113,7 +109,6 @@ private:
 			Header &header, Channel &channel);
 	bool AllowExecution(uint32_t totalProcessed, uint32_t dataLength, bool isAudio);
 	void InternalReset();
-	void FixTimeBase();
 };
 
 

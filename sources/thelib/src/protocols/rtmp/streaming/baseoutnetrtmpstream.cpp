@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -97,7 +97,8 @@ BaseOutNetRTMPStream *BaseOutNetRTMPStream::GetInstance(BaseRTMPProtocol *pProto
 				rtmpStreamId, chunkSize);
 	} else if (TAG_KIND_OF(inStreamType, ST_IN_NET_TS)
 			|| TAG_KIND_OF(inStreamType, ST_IN_NET_RTP)
-			|| TAG_KIND_OF(inStreamType, ST_IN_NET_AAC)) {
+			|| TAG_KIND_OF(inStreamType, ST_IN_NET_AAC)
+			|| TAG_KIND_OF(inStreamType, ST_IN_NET_EXT)) {
 		pResult = new OutNetRTMP4TSStream(pProtocol, pStreamsManager, name,
 				rtmpStreamId, chunkSize);
 	} else {
@@ -172,6 +173,9 @@ void BaseOutNetRTMPStream::GetStats(Variant &info, uint32_t namespaceId) {
 bool BaseOutNetRTMPStream::FeedData(uint8_t *pData, uint32_t dataLength,
 		uint32_t processedLength, uint32_t totalLength,
 		double absoluteTimestamp, bool isAudio) {
+	if (_start < 0)
+		_start = absoluteTimestamp;
+	absoluteTimestamp -= _start;
 	if (_paused)
 		return true;
 	if (isAudio) {
@@ -190,29 +194,30 @@ bool BaseOutNetRTMPStream::FeedData(uint8_t *pData, uint32_t dataLength,
 				return true;
 			}
 
-			if ((*_pDeltaAudioTime) < 0)
-				(*_pDeltaAudioTime) = absoluteTimestamp;
-			if ((*_pDeltaAudioTime) > absoluteTimestamp) {
-				//FINEST("A: WAIT: D: %.2f", (*_pDeltaAudioTime) - absoluteTimestamp);
-				_pRTMPProtocol->EnqueueForOutbound();
-				return true;
+			if ((pData[0] >> 4) == 10 && (pData[1] == 0)) {
+				//AAC codec setup. Keep _isFirstAudioFrame == true;
+				_isFirstAudioFrame = true;
+				if (absoluteTimestamp < 0) {
+					//WARN("negative A. Force it to 0 because is a codec setup");
+					absoluteTimestamp = 0;
+				}
+			} else {
+				//not AAC codec setup
+				if (absoluteTimestamp < 0) {
+					//WARN("negative A and not a codec. Drop it");
+					_pRTMPProtocol->EnqueueForOutbound();
+					return true;
+				}
+				_isFirstAudioFrame = false;
 			}
 
 			H_IA(_audioHeader) = true;
-			H_TS(_audioHeader) = (uint32_t) (absoluteTimestamp - (*_pDeltaAudioTime) + _seekTime);
-			if ((pData[0] >> 4) == 10
-					&& (pData[1] == 0)) {
-				//AAC codec setup. Keep _isFirstAudioFrame == true;
-				_isFirstAudioFrame = true;
-			} else {
-				//not AAC codec setup
-				_isFirstAudioFrame = false;
-			}
+			H_TS(_audioHeader) = (uint32_t) (absoluteTimestamp + _seekTime);
 		} else {
 			ALLOW_EXECUTION(processedLength, dataLength, isAudio);
 			H_IA(_audioHeader) = false;
 			if (processedLength == 0)
-				H_TS(_audioHeader) = (uint32_t) ((absoluteTimestamp - (*_pDeltaAudioTime) + _seekTime)
+				H_TS(_audioHeader) = (uint32_t) ((absoluteTimestamp + _seekTime)
 					- _pChannelAudio->lastOutAbsTs);
 		}
 
@@ -246,30 +251,30 @@ bool BaseOutNetRTMPStream::FeedData(uint8_t *pData, uint32_t dataLength,
 				return true;
 			}
 
-			if ((*_pDeltaVideoTime) < 0)
-				(*_pDeltaVideoTime) = absoluteTimestamp;
-			if ((*_pDeltaVideoTime) > absoluteTimestamp) {
-				//FINEST("V: WAIT: D: %.2f", (*_pDeltaVideoTime) - absoluteTimestamp);
-				_pRTMPProtocol->EnqueueForOutbound();
-				return true;
+			if ((pData[0] == 0x17) && (pData[1] == 0)) {
+				// h264 codec setup. Keep _isFirstVideoFrame == true
+				_isFirstVideoFrame = true;
+				if (absoluteTimestamp < 0) {
+					//WARN("negative V. Force it to 0 because is a codec setup");
+					absoluteTimestamp = 0;
+				}
+			} else {
+				//not h264 codec setup
+				if (absoluteTimestamp < 0) {
+					//WARN("negative V and not a codec. Drop it");
+					_pRTMPProtocol->EnqueueForOutbound();
+					return true;
+				}
+				_isFirstVideoFrame = false;
 			}
 
 			H_IA(_videoHeader) = true;
-			H_TS(_videoHeader) = (uint32_t) (absoluteTimestamp - (*_pDeltaVideoTime) + _seekTime);
-
-			if ((pData[0] == 0x17) //AVC keyframe
-					&& (pData[1] == 0)) { //codec setup
-				// h264 codec setup. Keep _isFirstVideoFrame == true
-				_isFirstVideoFrame = true;
-			} else {
-				//not h264 codec setup
-				_isFirstVideoFrame = false;
-			}
+			H_TS(_videoHeader) = (uint32_t) (absoluteTimestamp + _seekTime);
 		} else {
 			ALLOW_EXECUTION(processedLength, dataLength, isAudio);
 			H_IA(_videoHeader) = false;
 			if (processedLength == 0)
-				H_TS(_videoHeader) = (uint32_t) ((absoluteTimestamp - (*_pDeltaVideoTime) + _seekTime)
+				H_TS(_videoHeader) = (uint32_t) ((absoluteTimestamp + _seekTime)
 					- _pChannelVideo->lastOutAbsTs);
 		}
 
@@ -309,10 +314,6 @@ void BaseOutNetRTMPStream::SignalAttachedToInStream() {
 	} else {
 		_feederChunkSize = 0xffffffff;
 	}
-
-	//3. Fix the time base
-	FixTimeBase();
-
 
 	//4. Store the metadata
 	if (TAG_KIND_OF(_attachedStreamType, ST_IN_FILE_RTMP)) {
@@ -510,7 +511,6 @@ void BaseOutNetRTMPStream::SignalDetachedFromInStream() {
 
 bool BaseOutNetRTMPStream::SignalPlay(double &absoluteTimestamp, double &length) {
 	_paused = false;
-
 	return true;
 }
 
@@ -545,7 +545,6 @@ bool BaseOutNetRTMPStream::SignalResume() {
 }
 
 bool BaseOutNetRTMPStream::SignalSeek(double &absoluteTimestamp) {
-
 	//1. Stream eof
 	Variant message = StreamMessageFactory::GetUserControlStreamEof(_rtmpStreamId);
 	TRACK_MESSAGE("Message:\n%s", STR(message.ToString()));
@@ -648,8 +647,6 @@ bool BaseOutNetRTMPStream::SignalSeek(double &absoluteTimestamp) {
 	}
 
 	InternalReset();
-
-	FixTimeBase();
 
 	_seekTime = absoluteTimestamp;
 
@@ -862,10 +859,7 @@ void BaseOutNetRTMPStream::InternalReset() {
 			|| (_pChannelVideo == NULL)
 			|| (_pChannelCommands == NULL))
 		return;
-	_deltaAudioTime = -1;
-	_deltaVideoTime = -1;
-	_pDeltaAudioTime = &_deltaAudioTime;
-	_pDeltaVideoTime = &_deltaVideoTime;
+	_start = -1;
 	_seekTime = 0;
 
 	_videoCurrentFrameDropped = false;
@@ -891,31 +885,6 @@ void BaseOutNetRTMPStream::InternalReset() {
 		InFileRTMPStream *pInFileRTMPStream = (InFileRTMPStream *) _pInStream;
 		_completeMetadata = pInFileRTMPStream->GetCompleteMetadata();
 
-	}
-}
-
-void BaseOutNetRTMPStream::FixTimeBase() {
-	//3. Fix the time base
-	if (_pInStream != NULL) {
-		uint64_t attachedStreamType = _pInStream->GetType();
-		if ((TAG_KIND_OF(attachedStreamType, ST_IN_FILE_RTMP))
-				|| (TAG_KIND_OF(attachedStreamType, ST_IN_NET_RTMP))
-				|| (TAG_KIND_OF(attachedStreamType, ST_IN_NET_LIVEFLV))
-				|| (TAG_KIND_OF(attachedStreamType, ST_IN_NET_RTP))
-				|| (TAG_KIND_OF(attachedStreamType, ST_IN_NET_MP3))
-				|| (TAG_KIND_OF(attachedStreamType, ST_IN_NET_AAC))
-				) {
-			//RTMP streams are having the same time base for audio and video
-			_pDeltaAudioTime = &_deltaAudioTime;
-			_pDeltaVideoTime = &_deltaAudioTime;
-		} else {
-			//otherwise consider them separate
-			_pDeltaAudioTime = &_deltaAudioTime;
-			_pDeltaVideoTime = &_deltaVideoTime;
-		}
-	} else {
-		_pDeltaAudioTime = &_deltaAudioTime;
-		_pDeltaVideoTime = &_deltaVideoTime;
 	}
 }
 #endif /* HAS_PROTOCOL_RTMP */

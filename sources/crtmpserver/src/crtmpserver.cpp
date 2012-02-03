@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -68,7 +68,7 @@ BaseClientApplication *SpawnApplication(Variant configuration);
 BaseProtocolFactory *SpawnFactory(Variant configuration);
 #endif
 
-int main(int argc, char **argv) {
+int main(int argc, const char **argv) {
 	SRAND();
 	InitNetworking();
 

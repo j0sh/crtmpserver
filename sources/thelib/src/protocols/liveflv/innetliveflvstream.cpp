@@ -108,10 +108,10 @@ void InNetLiveFLVStream::GetStats(Variant &info, uint32_t namespaceId) {
 	BaseInNetStream::GetStats(info, namespaceId);
 	info["audio"]["bytesCount"] = _audioBytesCount;
 	info["audio"]["packetsCount"] = _audioPacketsCount;
-	info["audio"]["droppedPacketsCount"] = 0;
+	info["audio"]["droppedPacketsCount"] = (uint32_t) 0;
 	info["video"]["bytesCount"] = _videoBytesCount;
 	info["video"]["packetsCount"] = _videoPacketsCount;
-	info["video"]["droppedPacketsCount"] = 0;
+	info["video"]["droppedPacketsCount"] = (uint32_t) 0;
 }
 
 void InNetLiveFLVStream::SignalOutStreamAttached(BaseOutStream *pOutStream) {

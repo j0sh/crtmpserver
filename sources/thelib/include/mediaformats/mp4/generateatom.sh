@@ -43,7 +43,7 @@ echo "    $CLASSNAME(MP4Document *pDocument, uint32_t type, uint32_t size, uint3
 echo "    virtual ~$CLASSNAME();" >>$FILENAME
 echo "" >>$FILENAME
 echo "    virtual bool Read();" >>$FILENAME
-echo "    std::string Hierarchy(uint32_t indent);" >>$FILENAME
+echo "    string Hierarchy(uint32_t indent);" >>$FILENAME
 echo "};" >>$FILENAME
 echo "" >>$FILENAME
 echo "#endif	/* $DEFINE */" >>$FILENAME

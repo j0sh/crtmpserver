@@ -43,21 +43,13 @@ OutNetRTMP4TSStream::~OutNetRTMP4TSStream() {
 
 }
 
-void OutNetRTMP4TSStream::SignalAttachedToInStream() {
-	if (_pInStream == NULL)
-		return;
-	if (_inboundStreamIsRTP && GetCapabilities() != NULL) {
-		_videoCodecSent = (GetCapabilities()->videoCodecId != CODEC_VIDEO_AVC);
-	}
-	BaseOutNetRTMPStream::SignalAttachedToInStream();
-}
-
 bool OutNetRTMP4TSStream::IsCompatibleWithType(uint64_t type) {
-	_inboundStreamIsRTP = TAG_KIND_OF(type, ST_IN_NET_RTP);
+	_inboundStreamIsRTP = TAG_KIND_OF(type, ST_IN_NET_RTP) || TAG_KIND_OF(type, ST_IN_NET_EXT);
 	_videoCodecSent = (type == ST_IN_NET_AAC);
 	return TAG_KIND_OF(type, ST_IN_NET_TS)
 			|| TAG_KIND_OF(type, ST_IN_NET_RTP)
-			|| TAG_KIND_OF(type, ST_IN_NET_AAC);
+			|| TAG_KIND_OF(type, ST_IN_NET_AAC)
+			|| TAG_KIND_OF(type, ST_IN_NET_EXT);
 }
 
 bool OutNetRTMP4TSStream::FeedData(uint8_t *pData, uint32_t dataLength,

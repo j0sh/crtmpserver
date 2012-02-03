@@ -576,7 +576,7 @@ bool RTMPProtocolSerializer::DeserializeUsrCtrl(IOBuffer &buffer, Variant &messa
 		case RM_USRCTRL_TYPE_STREAM_IS_RECORDED:
 		{
 			AMF_CHECK_BOUNDARIES(buffer, 4);
-			message[RM_USRCTRL_STREAMID] = ENTOHLP(GETIBPOINTER(buffer)); //----MARKED-LONG---
+			message[RM_USRCTRL_STREAMID] = (uint32_t) ENTOHLP(GETIBPOINTER(buffer)); //----MARKED-LONG---
 			if (!buffer.Ignore(4)) {
 				FATAL("Unable to ignore 4 bytes");
 				return false;
@@ -586,12 +586,12 @@ bool RTMPProtocolSerializer::DeserializeUsrCtrl(IOBuffer &buffer, Variant &messa
 		case RM_USRCTRL_TYPE_STREAM_SET_BUFFER_LENGTH:
 		{
 			AMF_CHECK_BOUNDARIES(buffer, 8);
-			message[RM_USRCTRL_STREAMID] = ENTOHLP(GETIBPOINTER(buffer)); //----MARKED-LONG---
+			message[RM_USRCTRL_STREAMID] = (uint32_t) ENTOHLP(GETIBPOINTER(buffer)); //----MARKED-LONG---
 			if (!buffer.Ignore(4)) {
 				FATAL("Unable to ignore 4 bytes");
 				return false;
 			}
-			message[RM_USRCTRL_BUFFLEN] = ENTOHLP(GETIBPOINTER(buffer)); //----MARKED-LONG---
+			message[RM_USRCTRL_BUFFLEN] = (uint32_t) ENTOHLP(GETIBPOINTER(buffer)); //----MARKED-LONG---
 			if (!buffer.Ignore(4)) {
 				FATAL("Unable to ignore 4 bytes");
 				return false;
@@ -601,7 +601,7 @@ bool RTMPProtocolSerializer::DeserializeUsrCtrl(IOBuffer &buffer, Variant &messa
 		case RM_USRCTRL_TYPE_PING_REQUEST:
 		{
 			AMF_CHECK_BOUNDARIES(buffer, 4);
-			message[RM_USRCTRL_PING] = ENTOHLP(GETIBPOINTER(buffer)); //----MARKED-LONG---
+			message[RM_USRCTRL_PING] = (uint32_t) ENTOHLP(GETIBPOINTER(buffer)); //----MARKED-LONG---
 			if (!buffer.Ignore(4)) {
 				FATAL("Unable to ignore 4 bytes");
 				return false;
@@ -611,7 +611,7 @@ bool RTMPProtocolSerializer::DeserializeUsrCtrl(IOBuffer &buffer, Variant &messa
 		case RM_USRCTRL_TYPE_PING_RESPONSE:
 		{
 			AMF_CHECK_BOUNDARIES(buffer, 4);
-			message[RM_USRCTRL_PONG] = ENTOHLP(GETIBPOINTER(buffer)); //----MARKED-LONG---
+			message[RM_USRCTRL_PONG] = (uint32_t) ENTOHLP(GETIBPOINTER(buffer)); //----MARKED-LONG---
 			if (!buffer.Ignore(4)) {
 				FATAL("Unable to ignore 4 bytes");
 				return false;
@@ -622,7 +622,7 @@ bool RTMPProtocolSerializer::DeserializeUsrCtrl(IOBuffer &buffer, Variant &messa
 		case RM_USRCTRL_TYPE_UNKNOWN2:
 		{
 			AMF_CHECK_BOUNDARIES(buffer, 4);
-			message[RM_USRCTRL_UNKNOWN_U32] = ENTOHLP(GETIBPOINTER(buffer)); //----MARKED-LONG---
+			message[RM_USRCTRL_UNKNOWN_U32] = (uint32_t) ENTOHLP(GETIBPOINTER(buffer)); //----MARKED-LONG---
 			if (!buffer.Ignore(4)) {
 				FATAL("Unable to ignore 4 bytes");
 				return false;

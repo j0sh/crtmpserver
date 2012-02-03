@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -34,7 +34,7 @@
 /*!
 	@class BaseInFileStream
 	@brief
-*/
+ */
 class DLLEXP BaseInFileStream
 : public BaseInStream {
 private:
@@ -77,15 +77,15 @@ private:
 	//current state info
 	bool _paused;
 	bool _audioVideoCodecsSent;
-	
+
 	//seek offsets
 	uint64_t _seekBaseOffset;
 	uint64_t _framesBaseOffset;
 	uint64_t _timeToIndexOffset;
-	
+
 	//stream capabilities
 	StreamCapabilities _streamCapabilities;
-	
+
 	//when to stop playback
 	double _playLimit;
 public:
@@ -93,53 +93,55 @@ public:
 			uint64_t type, string name);
 	virtual ~BaseInFileStream();
 
+	bool StreamCompleted();
+
 	/*!
 	  @brief Returns the stream capabilities. Specifically, codec and codec related info
-	*/
+	 */
 	virtual StreamCapabilities * GetCapabilities();
 
 	/*!
 		@brief Extracts the complete metadata from partial metadata
 		@param metaData - the partial metadata containing at least the media file name
-	*/
+	 */
 	static bool ResolveCompleteMetadata(Variant &metaData);
 
 	/*!
 		@brief This will initialize the stream internally.
 		@param clientSideBufferLength - the client side buffer length expressed in seconds
-	*/
-	virtual bool Initialize(int32_t clientSideBufferLength);
+	 */
+	virtual bool Initialize(int32_t clientSideBufferLength, bool hasTimer);
 
 	/*!
 		@brief Called when a play command was issued
 		@param absoluteTimestamp - the timestamp where we want to seek before start the feeding process
-	*/
+	 */
 	virtual bool SignalPlay(double &absoluteTimestamp, double &length);
 
 	/*!
 		@brief Called when a pasue command was issued
-	*/
+	 */
 	virtual bool SignalPause();
 
 	/*!
 		@brief Called when a resume command was issued
-	*/
+	 */
 	virtual bool SignalResume();
 
 	/*!
 		@brief Called when a seek command was issued
 		@param absoluteTimestamp
-	*/
+	 */
 	virtual bool SignalSeek(double &absoluteTimestamp);
 
 	/*!
 		@brief Called when a stop command was issued
-	*/
+	 */
 	virtual bool SignalStop();
 
 	/*!
 		@brief This is called by the framework. The networking layer signaled the availability for sending data
-	*/
+	 */
 	virtual void ReadyForSend();
 
 protected:
@@ -150,21 +152,23 @@ private:
 	/*!
 		@brief This will seek to the specified point in time.
 		@param absoluteTimestamp - the timestamp where we want to seek before start the feeding process
-	*/
+	 */
 	bool InternalSeek(double &absoluteTimestamp);
 
+public:
 	/*!
 		@brief This is the function that will actually do the feeding.
 		@discussion It is called by the framework and it must deliver one frame at a time to all subscribers
-	*/
-	virtual bool Feed();
+	 */
 
+	virtual bool Feed();
+private:
 	/*!
 		@brief GetFile function will open a file and will cache it if is a regular file.
 		@discussion If the file is mmap based file, it will NOT cache it
 		ReleaseFile will do the opposite: It will close the file if the references
 		count will reach 0. This always happens in case of mmap file
-	*/
+	 */
 #ifdef HAS_MMAP
 	static MmapFile* GetFile(string filePath, uint32_t windowSize);
 	static void ReleaseFile(MmapFile *pFile);
@@ -175,7 +179,7 @@ private:
 
 	/*!
 		@brief This function will ensure that the codec packets are sent. Also it preserves the current timings and frame index
-	*/
+	 */
 	bool SendCodecs();
 };
 

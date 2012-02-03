@@ -502,6 +502,7 @@ bool SDP::ParseSDPLineM(Variant &result, string line) {
 	result.Reset();
 
 	vector<string> parts;
+	trim(line);
 	split(line, " ", parts);
 	if (parts.size() != 4)
 		return false;
@@ -535,8 +536,13 @@ bool SDP::ParseSDPLineO(Variant &result, string line) {
 	}
 
 	if ((string) result["addressType"] != "IP4") {
-		FATAL("Unsupported address type: %s", STR(result["addressType"]));
-		return false;
+		if ((string) result["addressType"] != "IPV4") {
+			FATAL("Unsupported address type: %s", STR(result["addressType"]));
+			return false;
+		} else {
+			WARN("Tolerate IPV4 value inside line %s", STR(result["addressType"]));
+			result["addressType"] = "IP4";
+		}
 	}
 
 	string ip = getHostByName(result["address"]);

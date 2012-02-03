@@ -25,7 +25,7 @@
 
 class IOHandler;
 
-class TCPProtocol
+class DLLEXP TCPProtocol
 : public BaseProtocol {
 private:
 	IOHandler *_pCarrier;

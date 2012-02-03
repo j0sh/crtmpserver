@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -162,20 +162,6 @@ bool ConfigFile::ConfigInstances() {
 	if (!IsDaemon()) {
 		WARN("Daemon mode not activated. No additional instances will be spawned");
 		return true;
-	}
-
-	for (int32_t i = 0; i < instancesCount; i++) {
-		pid_t pid = fork();
-		if (pid < 0) {
-			FATAL("Unable to start child instance. fork() failed");
-			return false;
-		}
-
-		if (pid == 0) {
-			_isOrigin = false;
-			Logger::SignalFork();
-			break;
-		}
 	}
 
 	FOR_MAP(_modules, string, Module, i) {

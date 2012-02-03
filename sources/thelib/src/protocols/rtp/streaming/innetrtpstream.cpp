@@ -80,7 +80,7 @@ InNetRTPStream::InNetRTPStream(BaseProtocol *pProtocol,
 	_rtcpDetectionInterval = rtcpDetectionInterval;
 	_rtcpDetectionStart = 0;
 
-	_avCodecsSent=false;
+	_avCodecsSent = false;
 }
 
 InNetRTPStream::~InNetRTPStream() {
@@ -92,7 +92,9 @@ StreamCapabilities * InNetRTPStream::GetCapabilities() {
 
 bool InNetRTPStream::IsCompatibleWithType(uint64_t type) {
 	return (type == ST_OUT_NET_RTMP_4_TS)
+			|| (type == ST_OUT_NET_TS)
 			|| (type == ST_OUT_FILE_HLS)
+			|| (type == ST_OUT_FILE_HDS)
 			|| (type == ST_OUT_NET_RTP);
 }
 
@@ -106,17 +108,17 @@ void InNetRTPStream::SignalOutStreamAttached(BaseOutStream *pOutStream) {
 			if (_videoLastTs < _audioLastTs) {
 				FeedVideoCodecSetup(pOutStream);
 				FeedAudioCodecSetup(pOutStream);
-				_avCodecsSent=true;
+				_avCodecsSent = true;
 			}
 		}
 	} else {
 		if (_videoLastTs != 0) {
 			FeedVideoCodecSetup(pOutStream);
-			_avCodecsSent=true;
+			_avCodecsSent = true;
 		}
 		if (_audioLastTs != 0) {
 			FeedAudioCodecSetup(pOutStream);
-			_avCodecsSent=true;
+			_avCodecsSent = true;
 		}
 	}
 

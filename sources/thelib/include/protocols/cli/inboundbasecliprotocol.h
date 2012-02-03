@@ -25,7 +25,7 @@
 
 class BaseCLIAppProtocolHandler;
 
-class InboundBaseCLIProtocol
+class DLLEXP InboundBaseCLIProtocol
 : public BaseProtocol {
 private:
 	BaseCLIAppProtocolHandler *_pProtocolHandler;

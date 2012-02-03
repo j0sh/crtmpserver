@@ -81,19 +81,6 @@
 #define NETWORK_REACTOR "iocp"
 #endif
 
-#ifdef NET_IOCP2
-#include "netio/iocp2/iohandler.h"
-#include "netio/iocp2/iohandlermanager.h"
-#include "netio/iocp2/iohandlermanagertoken.h"
-#include "netio/iocp2/iotimer.h"
-#include "netio/iocp2/tcpacceptor.h"
-#include "netio/iocp2/tcpcarrier.h"
-#include "netio/iocp2/udpcarrier.h"
-#include "netio/iocp2/tcpconnector.h"
-#include "netio/iocp2/stdiocarrier.h"
-#define NETWORK_REACTOR "iocp2"
-#endif
-
 #endif	/* _NETIO_H */
 
 

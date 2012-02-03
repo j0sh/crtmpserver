@@ -256,6 +256,8 @@ bool IOHandlerManager::Pulse() {
 }
 
 bool IOHandlerManager::UpdateFdSets(int32_t fd) {
+	if( fd == 0 )
+		return true;
 	uint8_t state = 0;
 
 	FOR_MAP(_fdState[fd], uint32_t, uint8_t, i) {

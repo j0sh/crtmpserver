@@ -42,7 +42,6 @@ private:
 	double _dtsTimeAudio;
 #endif
 	IOBuffer _audioBucket;
-	double _lastGotAudioTimestamp;
 	double _lastSentAudioTimestamp;
 	uint64_t _audioPacketsCount;
 	uint64_t _statsAudioPacketsCount;
@@ -67,8 +66,6 @@ private:
 	IOBuffer _videoBucket;
 
 	StreamCapabilities _streamCapabilities;
-
-	double _deltaTime;
 
 	IOBuffer _SPS;
 	IOBuffer _PPS;

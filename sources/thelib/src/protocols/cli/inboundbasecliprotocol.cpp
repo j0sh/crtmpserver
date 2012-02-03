@@ -17,13 +17,11 @@
  *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "netio/kqueue/iohandlermanager.h"
-
-
 #ifdef HAS_PROTOCOL_CLI
 #include "protocols/cli/inboundbasecliprotocol.h"
 #include "application/clientapplicationmanager.h"
 #include "protocols/cli/basecliappprotocolhandler.h"
+#include "netio/netio.h"
 
 InboundBaseCLIProtocol::InboundBaseCLIProtocol(uint64_t type)
 : BaseProtocol(type) {

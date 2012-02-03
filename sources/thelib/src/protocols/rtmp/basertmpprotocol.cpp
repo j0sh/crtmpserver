@@ -507,8 +507,11 @@ InFileRTMPStream * BaseRTMPProtocol::CreateIFS(Variant &metadata) {
 		FATAL("Unable to get file stream. Metadata:\n%s", STR(metadata.ToString()));
 		return NULL;
 	}
+	bool hasTimer = true;
+	if (metadata.HasKeyChain(V_BOOL, true, 1, "hasTimer"))
+		hasTimer = (bool)metadata["hasTimer"];
 	if (!pRTMPInFileStream->Initialize(
-			(int32_t) metadata[CONF_APPLICATION_CLIENTSIDEBUFFER])) {
+			(int32_t) metadata[CONF_APPLICATION_CLIENTSIDEBUFFER], hasTimer)) {
 		FATAL("Unable to initialize file inbound stream");
 		delete pRTMPInFileStream;
 		return NULL;

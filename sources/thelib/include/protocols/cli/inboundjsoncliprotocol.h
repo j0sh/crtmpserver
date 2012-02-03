@@ -24,7 +24,7 @@
 
 #include "protocols/cli/inboundbasecliprotocol.h"
 
-class InboundJSONCLIProtocol
+class DLLEXP InboundJSONCLIProtocol
 : public InboundBaseCLIProtocol {
 private:
 	bool _useLengthPadding;

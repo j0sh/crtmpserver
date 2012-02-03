@@ -46,8 +46,8 @@ echo "bool $CLASSNAME::Read() {" >>$FILENAME
 echo "    return SkipRead();" >>$FILENAME
 echo "}" >>$FILENAME
 echo "" >>$FILENAME
-echo "std::string $CLASSNAME::Hierarchy(uint32_t indent) {" >>$FILENAME
-echo "    return std::string(4 * indent, ' ') + GetTypeString();" >>$FILENAME
+echo "string $CLASSNAME::Hierarchy(uint32_t indent) {" >>$FILENAME
+echo "    return string(4 * indent, ' ') + GetTypeString();" >>$FILENAME
 echo "}" >>$FILENAME
 echo "" >>$FILENAME
 

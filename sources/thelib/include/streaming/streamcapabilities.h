@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -38,7 +38,7 @@ struct _VIDEO_AVC {
 
 	DLLEXP _VIDEO_AVC();
 	DLLEXP virtual ~_VIDEO_AVC();
-	bool Init(uint8_t *pSPS, uint32_t spsLength, uint8_t *pPPS, uint32_t ppsLength);
+	bool Init(const uint8_t *pSPS, uint32_t spsLength, const uint8_t *pPPS, uint32_t ppsLength);
 	void Clear();
 
 	bool Serialize(IOBuffer & dest);
@@ -56,7 +56,7 @@ struct _AUDIO_AAC {
 
 	DLLEXP _AUDIO_AAC();
 	DLLEXP virtual ~_AUDIO_AAC();
-	bool Init(uint8_t *pBuffer, uint32_t length);
+	bool Init(const uint8_t *pBuffer, uint32_t length);
 	void Clear();
 	DLLEXP string GetRTSPFmtpConfig();
 
@@ -76,10 +76,10 @@ public:
 	StreamCapabilities();
 	virtual ~StreamCapabilities();
 
-	bool InitAudioAAC(uint8_t *pBuffer, uint32_t length);
+	bool InitAudioAAC(const uint8_t *pBuffer, uint32_t length);
 	bool InitAudioADTS();
 	bool InitAudioMP3();
-	bool InitVideoH264(uint8_t *pSPS, uint32_t spsLength, uint8_t *pPPS,
+	bool InitVideoH264(const uint8_t *pSPS, uint32_t spsLength, const uint8_t *pPPS,
 			uint32_t ppsLength);
 
 	void ClearVideo();

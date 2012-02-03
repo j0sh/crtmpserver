@@ -40,7 +40,7 @@ public:
 	Variant GetVariant();
 
 	virtual bool Read();
-	std::string Hierarchy(uint32_t indent);
+	string Hierarchy(uint32_t indent);
 };
 
 #endif	/* _ATOMDATA_H */

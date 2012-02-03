@@ -24,7 +24,7 @@
 
 #include "streaming/baseinnetstream.h"
 
-class InNetLiveFLVStream
+class DLLEXP InNetLiveFLVStream
 : public BaseInNetStream {
 private:
 	IOBuffer _videoCodecInit;

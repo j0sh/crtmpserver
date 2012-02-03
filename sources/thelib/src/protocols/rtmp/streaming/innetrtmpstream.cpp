@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -67,7 +67,9 @@ bool InNetRTMPStream::IsCompatibleWithType(uint64_t type) {
 	return TAG_KIND_OF(type, ST_OUT_NET_RTMP_4_RTMP)
 			|| TAG_KIND_OF(type, ST_OUT_FILE_RTMP)
 			|| TAG_KIND_OF(type, ST_OUT_NET_RTP)
+			|| TAG_KIND_OF(type, ST_OUT_NET_TS)
 			|| TAG_KIND_OF(type, ST_OUT_FILE_HLS);
+
 }
 
 void InNetRTMPStream::GetStats(Variant &info, uint32_t namespaceId) {
@@ -226,8 +228,8 @@ void InNetRTMPStream::SignalOutStreamAttached(BaseOutStream *pOutStream) {
 }
 
 void InNetRTMPStream::SignalOutStreamDetached(BaseOutStream *pOutStream) {
-	FINEST("outbound stream %u detached from inbound stream %u",
-			pOutStream->GetUniqueId(), GetUniqueId());
+	//FINEST("outbound stream %u detached from inbound stream %u",
+	//		pOutStream->GetUniqueId(), GetUniqueId());
 }
 
 bool InNetRTMPStream::SignalPlay(double &absoluteTimestamp, double &length) {

@@ -26,8 +26,6 @@
 #include "protocols/rtmp/header.h"
 #include "protocols/rtmp/rtmpprotocolserializer.h"
 #include "protocols/rtmp/sharedobjects/somanager.h"
-#include "streaming/baseoutstream.h"
-#include "streaming/baseoutfilestream.h"
 
 class OutboundRTMPProtocol;
 class BaseRTMPProtocol;

@@ -327,7 +327,7 @@ bool ReadPPS(BitArray &ba, Variant &v) {
 	return true;
 }
 
-bool _VIDEO_AVC::Init(uint8_t *pSPS, uint32_t spsLength, uint8_t *pPPS,
+bool _VIDEO_AVC::Init(const uint8_t *pSPS, uint32_t spsLength, const uint8_t *pPPS,
 		uint32_t ppsLength) {
 	Clear();
 	if ((spsLength <= 0)
@@ -385,7 +385,7 @@ bool _VIDEO_AVC::Init(uint8_t *pSPS, uint32_t spsLength, uint8_t *pPPS,
 			ppsBa.ReadFromRepeat(_pPPS[i], 1);
 		}
 	}
-	
+
 	if (!ReadPPS(ppsBa, _PPSInfo)) {
 		WARN("Unable to read PPS info");
 	}
@@ -483,7 +483,7 @@ _AUDIO_AAC::~_AUDIO_AAC() {
 	Clear();
 }
 
-bool _AUDIO_AAC::Init(uint8_t *pBuffer, uint32_t length) {
+bool _AUDIO_AAC::Init(const uint8_t *pBuffer, uint32_t length) {
 	Clear();
 	//http://wiki.multimedia.cx/index.php?title=MP4A#Audio_Specific_Config
 
@@ -617,7 +617,7 @@ StreamCapabilities::~StreamCapabilities() {
 	Clear();
 }
 
-bool StreamCapabilities::InitAudioAAC(uint8_t *pBuffer, uint32_t length) {
+bool StreamCapabilities::InitAudioAAC(const uint8_t *pBuffer, uint32_t length) {
 	ClearAudio();
 	if (!aac.Init(pBuffer, length)) {
 		ClearAudio();
@@ -639,8 +639,8 @@ bool StreamCapabilities::InitAudioMP3() {
 	return true;
 }
 
-bool StreamCapabilities::InitVideoH264(uint8_t *pSPS, uint32_t spsLength,
-		uint8_t *pPPS, uint32_t ppsLength) {
+bool StreamCapabilities::InitVideoH264(const uint8_t *pSPS, uint32_t spsLength,
+		const uint8_t *pPPS, uint32_t ppsLength) {
 	ClearVideo();
 	if (!avc.Init(pSPS, spsLength, pPPS, ppsLength)) {
 		ClearVideo();

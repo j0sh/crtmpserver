@@ -35,7 +35,7 @@
 #define ADD_OUT_BYTES_RAWUDP(b)
 #endif /* GLOBALLY_ACCOUNT_BYTES */
 
-class BaseFdStats {
+class DLLEXP BaseFdStats {
 private:
 	int64_t _current;
 	int64_t _max;
@@ -94,7 +94,7 @@ public:
 	Variant ToVariant();
 };
 
-class FdStats {
+class DLLEXP FdStats {
 private:
 	BaseFdStats _managedTcp;
 	BaseFdStats _managedTcpAcceptors;
