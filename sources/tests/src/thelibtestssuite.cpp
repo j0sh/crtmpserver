@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -126,18 +126,13 @@ do { \
         TS_PRINT("%02x ", (uint8_t) got[i]); \
     } */\
     TS_ASSERT(wanted == got); \
-    got = string((char *) &h, sizeof ((h))); \
-    wanted = string((char *) &mirrorHeader, sizeof (mirrorHeader)); \
-    /*TS_PRINT("\n   got: "); \
-    for (uint32_t i = 0; i < got.size(); i++) { \
-        TS_PRINT("%02x ", (uint8_t) got[i]); \
-    } \
-    TS_PRINT("\nwanted: "); \
-    for (uint32_t i = 0; i < wanted.size(); i++) { \
-        TS_PRINT("%02x ", (uint8_t) wanted[i]); \
-    } \
-    TS_PRINT("\n"); */\
-    TS_ASSERT(wanted == got); \
+    TS_ASSERT(H_HT(h) == H_HT(mirrorHeader)); \
+    TS_ASSERT(H_CI(h) == H_CI(mirrorHeader)); \
+    TS_ASSERT(H_TS(h) == H_TS(mirrorHeader)); \
+    TS_ASSERT(H_ML(h) == H_ML(mirrorHeader)); \
+    TS_ASSERT(H_MT(h) == H_MT(mirrorHeader)); \
+    TS_ASSERT(H_SI(h) == H_SI(mirrorHeader)); \
+    TS_ASSERT(H_IA(h) == H_IA(mirrorHeader)); \
 } while (0)
 
 	HEADER_READ_TEST(header, 1, 2, full_small_short, HT_FULL, true, 0x010203);
