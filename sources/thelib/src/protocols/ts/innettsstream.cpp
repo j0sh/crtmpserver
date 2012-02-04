@@ -452,9 +452,11 @@ bool InNetTSStream::HandleVideoData() {
 bool InNetTSStream::ProcessNal(uint8_t *pBuffer, int32_t length, double timestamp) {
 	if (pBuffer == NULL || length <= 0)
 		return true;
-	InitializeVideoCapabilities(pBuffer, length);
 	if (_streamCapabilities.videoCodecId != CODEC_VIDEO_AVC) {
-		return true;
+		InitializeVideoCapabilities(pBuffer, length);
+		if (_streamCapabilities.videoCodecId != CODEC_VIDEO_AVC) {
+			return true;
+		}
 	}
 	return FeedData(
 			pBuffer,
