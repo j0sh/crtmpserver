@@ -1,0 +1,27 @@
+#toolchain paths
+TOOLCHAIN_BASE=~/davinci/dvsdk/arm-2009q1/bin/
+TOOLCHAIN_PREFIX=arm-none-linux-gnueabi-
+CCOMPILER=$(TOOLCHAIN_PREFIX)gcc
+CXXCOMPILER=$(TOOLCHAIN_PREFIX)g++
+LD=$(TOOLCHAIN_PREFIX)ld
+
+#output settings
+STATIC_LIB_SUFIX=.a
+STATIC_LIB_PREFIX=lib
+DYNAMIC_LIB_SUFIX=.so
+DYNAMIC_LIB_PREFIX=lib
+FPIC = -fPIC
+OPTIMIZATIONS = -DLUA_USE_MKSTEMP
+COMPILE_FLAGS = $(FPIC) $(OPTIMIZATIONS)
+
+#linking flags
+dynamic_lib_flags = $(FPIC) $(OPTIMIZATIONS) -Wl,-soname,$(DYNAMIC_LIB_PREFIX)$(1)$(DYNAMIC_LIB_SUFIX) -Wl,-rpath,"\$$ORIGIN"
+dynamic_exec_flags = $(FPIC) $(OPTIMIZATIONS) -Wl,-rpath,"\$$ORIGIN"
+
+#compile switches
+PLATFORM_DEFINES = \
+	-DLINUX \
+	-DLITTLE_ENDIAN_SHORT_ALIGNED \
+	-DNET_EPOLL
+
+SSL_BASE=../../3rdparty/openssl
