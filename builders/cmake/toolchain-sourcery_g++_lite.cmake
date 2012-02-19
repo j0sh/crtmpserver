@@ -16,8 +16,9 @@ SET(CMAKE_SYSTEM_NAME Linux)
 
 SET(TOOLCHAIN_ROOT ${TOOLCHAIN_ROOT} CACHE PATH "Path to toolchain")
 SET(TARGET_ENV_ROOT ${TARGET_ENV_ROOT} CACHE PATH "Path to target environment")
+SET(TOOLCHAIN_LIBRARY_PATH ${TOOLCHAIN_ROOT}/lib ${TOOLCHAIN_ROOT}/*/libc/lib ${TOOLCHAIN_ROOT}/*/libc/usr/lib)
+SET(TOOLCHAIN_HEADER_PATH  ${TOOLCHAIN_ROOT}/include ${TOOLCHAIN_ROOT}/*/libc/include ${TOOLCHAIN_ROOT}/*/libc/usr/include ${TARGET_ENV_ROOT}/include ${TARGET_ENV_ROOT}/usr/include)
 
-MESSAGE(STATUS "root: ${TOOLCHAIN_ROOT}")
 
 IF(NOT DEFINED TOOLCHAIN_ROOT)
   MESSAGE(FATAL_ERROR "Variable TOOLCHAIN_ROOT is not set.It must points to Toolchain's root directory.")
