@@ -1,0 +1,100 @@
+
+Building for other platform
+  aka cross-compiling
+    user guide. :)
+===========================
+
+Table of content:
+  1. Cross-compiling theory;
+  2. Toolchains;
+  3. C++ RTMP Server pre-requirements;
+  4. Building crtmpserver;
+  5. Install or move binaries to target platform;
+  6. Credits.
+
+
+
+1. Cross-compiling theory
+-------------------------
+NDY
+
+
+2. Toolchains
+-------------
+
+At this time I test only Sourcery G++, because it is most popular software
+toolchains provider for ARM and MIPS. Most time was used Lite version, that you
+can easy download from Mentor's site(registration needed):
+ 
+http://www.mentor.com/embedded-software/sourcery-tools/sourcery-codebench/
+editions/lite-edition/
+
+
+3. C++ RTMP Server pre-requirements
+-----------------------------------
+
+The crtmpserver depends of several 3rd party software:
+  - OpenSSL
+  - Lua
+  - TinyXML
+Lua and TinyXML included into source tree(inside directory "3rdparty") and can
+be builds by crtmpserver build system. But OpenSSL not included. So we can get
+already build library(.so), archive(.a) and headers(.h) from exists platform.
+Another way is to build OpenSSL for target platform manually. This is not so
+hard as you can think about :)
+
+## OpenSSL preparation details. ##
+
+
+4. Building C++ RTMP Server
+---------------------------
+
+For successful cross compilation you need to specify at lease 3 parameters:
+  - TOOLCHAIN_ROOT - path to toolchain directory. Typically you must download
+    toolchain and extract it somewhere inside your home directory. For Sourcery
+    ARM toolchains this like "/path/to/place/arm-<YEAR>.<MONTH>";
+  - TARGET_ENV_ROOT - path to where OpenSSL and (optionally) Lua and TinyXML is
+    installed/prepared to compile/link with crtmpserver;
+  - CMAKE_TOOLCHAIN_FILE - this file contains CMake rules to configure build
+    system to use toolchain.
+  
+The general form of the CMake command is:
+  
+  cmake .. \
+    -DCRTMPSERVER_INSTALL_PREFIX=<INSTALL_PATH> \
+    -DTOOLCHAIN_ROOT=<TOOLCHAIN_PATH> \
+    -DTARGET_ENV_ROOT=<TARGET_ENV_PATH> \
+    -DCMAKE_TOOLCHAIN_FILE=<CMAKE_TOOLCHAIN_CONFIG>
+
+For example build on my system:
+
+  cmake .. \
+    -DCRTMPSERVER_INSTALL_PREFIX=/opt/crtmpserver \
+    -DTOOLCHAIN_ROOT=~/src/toolchains/arm-2011.09 \
+    -DTARGET_ENV_ROOT=~/src/arm-env \
+    -DCMAKE_TOOLCHAIN_FILE=../toolchain-sourcery_g++_lite.cmake
+
+After this step will be done without any errors we can start compile
+immediately with command:
+
+  make && sudo make install
+
+After compiling done with no errors(i hope) we got ready to use binaries for
+target platform
+
+
+5. Install or move binaries to target platform
+----------------------------------------------
+
+Just copy installed files to destination platform and it is ready to work.
+Also you can safely delete installed binaries from build host, because anyway
+this binaries will not work(due to builded for another platform)
+
+
+6. Credits
+----------
+
+This guide is written for "C++ RTMP Server" project by:
+  Andriy Beregovenko <jet@jet.kiev.ua>
+  
+Hope this guide help for someone... :)
