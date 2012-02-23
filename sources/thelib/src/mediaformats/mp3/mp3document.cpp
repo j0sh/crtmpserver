@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -154,10 +154,9 @@ bool MP3Document::BuildFrames() {
 	frame.isBinaryHeader = false;
 
 	while (_mediaFile.Cursor() != _mediaFile.Size()) {
-		//3. Read the first 4 bytes
-		if (!_mediaFile.ReadBuffer(firstBytes, 4)) {
-			FATAL("Unable to read 4 byte");
-			return false;
+		if (!_mediaFile.PeekBuffer(firstBytes, 4)) {
+			WARN("Unable to peek 4 byte");
+			return true;
 		}
 
 		if ((firstBytes[0] == 0xff) &&
@@ -170,14 +169,16 @@ bool MP3Document::BuildFrames() {
 			uint8_t paddingBit = (firstBytes[2] >> 1)&0x01;
 
 			//5. get the freame length
-			frame.start = _mediaFile.Cursor() - 4;
+			frame.start = _mediaFile.Cursor();
 			frame.length = _frameSizes[version][layer][bitRateIndex]
 					[sampleRateIndex][paddingBit];
 			if (frame.length == 0) {
-				FATAL("Invalid frame length: %hhu:%hhu:%hhu:%hhu:%hhu; Cusror: %"PRIx64,
-						version, layer, bitRateIndex, sampleRateIndex,
-						paddingBit, _mediaFile.Cursor());
-				return false;
+				WARN("Invalid frame length");
+				if (!_mediaFile.SeekAhead(1)) {
+					WARN("Unable to seek ahead 1 byte");
+					return true;
+				}
+				continue;
 			}
 
 			//6. Compute the frame duration and save the frame start
@@ -199,10 +200,12 @@ bool MP3Document::BuildFrames() {
 			//8. All good. Save the frame
 			ADD_VECTOR_END(_frames, frame);
 		} else {
-			break;
+			if (!_mediaFile.SeekAhead(1)) {
+				WARN("Unable to seek ahead 1 byte");
+				return true;
+			}
 		}
 	}
-
 
 	return true;
 }
