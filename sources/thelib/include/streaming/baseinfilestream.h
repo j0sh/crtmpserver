@@ -75,7 +75,7 @@ private:
 	IOBuffer _audioBuffer;
 
 	//current state info
-	bool _paused;
+	uint8_t _streamingState;
 	bool _audioVideoCodecsSent;
 
 	//seek offsets

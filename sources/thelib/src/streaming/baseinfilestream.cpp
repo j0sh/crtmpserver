@@ -51,6 +51,10 @@ bool BaseInFileStream::InFileStreamTimer::TimePeriodElapsed() {
 	return true;
 }
 
+#define FILE_STREAMING_STATE_PAUSED 0
+#define FILE_STREAMING_STATE_PLAYING 1
+#define FILE_STREAMING_STATE_FINISHED 2
+
 BaseInFileStream::BaseInFileStream(BaseProtocol *pProtocol,
 		StreamsManager *pStreamsManager, uint64_t type, string name)
 : BaseInStream(pProtocol, pStreamsManager, type, name) {
@@ -76,7 +80,7 @@ BaseInFileStream::BaseInFileStream(BaseProtocol *pProtocol,
 	_clientSideBufferLength = 0;
 
 	//current state info
-	_paused = true;
+	_streamingState = FILE_STREAMING_STATE_PAUSED;
 	_audioVideoCodecsSent = false;
 
 	_seekBaseOffset = 0;
@@ -281,7 +285,7 @@ bool BaseInFileStream::SignalPlay(double &absoluteTimestamp, double &length) {
 	}
 
 	//2. Put the stream in active mode
-	_paused = false;
+	_streamingState = FILE_STREAMING_STATE_PLAYING;
 
 	//3. Start the feed reaction
 	ReadyForSend();
@@ -292,11 +296,11 @@ bool BaseInFileStream::SignalPlay(double &absoluteTimestamp, double &length) {
 
 bool BaseInFileStream::SignalPause() {
 	//1. Is this already paused
-	if (_paused)
+	if (_streamingState != FILE_STREAMING_STATE_PLAYING)
 		return true;
 
 	//2. Put the stream in paused mode
-	_paused = true;
+	_streamingState = FILE_STREAMING_STATE_PAUSED;
 
 	//3. Done
 	return true;
@@ -304,11 +308,11 @@ bool BaseInFileStream::SignalPause() {
 
 bool BaseInFileStream::SignalResume() {
 	//1. Is this already active
-	if (!_paused)
+	if (_streamingState == FILE_STREAMING_STATE_PLAYING)
 		return true;
 
 	//2. Put the stream in active mode
-	_paused = false;
+	_streamingState = FILE_STREAMING_STATE_PLAYING;
 
 	//3. Start the feed reaction
 	ReadyForSend();
@@ -325,8 +329,10 @@ bool BaseInFileStream::SignalSeek(double &absoluteTimestamp) {
 	}
 
 	//2. If the stream is active, re-initiate the feed reaction
-	if (!_paused)
+	if (_streamingState == FILE_STREAMING_STATE_FINISHED) {
+		_streamingState = FILE_STREAMING_STATE_PLAYING;
 		ReadyForSend();
+	}
 
 	//3. Done
 	return true;
@@ -334,11 +340,11 @@ bool BaseInFileStream::SignalSeek(double &absoluteTimestamp) {
 
 bool BaseInFileStream::SignalStop() {
 	//1. Is this already paused
-	if (_paused)
+	if (_streamingState != FILE_STREAMING_STATE_PLAYING)
 		return true;
 
 	//2. Put the stream in paused mode
-	_paused = true;
+	_streamingState = FILE_STREAMING_STATE_PAUSED;
 
 	//3. Done
 	return true;
@@ -413,7 +419,7 @@ bool BaseInFileStream::InternalSeek(double &absoluteTimestamp) {
 
 bool BaseInFileStream::Feed() {
 	//1. Are we in paused state?
-	if (_paused)
+	if (_streamingState != FILE_STREAMING_STATE_PLAYING)
 		return true;
 
 	//2. First, send audio and video codecs
@@ -435,7 +441,7 @@ bool BaseInFileStream::Feed() {
 	if (_currentFrameIndex >= _totalFrames) {
 		FINEST("Done streaming file");
 		_pOutStreams->info->SignalStreamCompleted();
-		_paused = true;
+		_streamingState = FILE_STREAMING_STATE_FINISHED;
 		return true;
 	}
 
@@ -444,7 +450,7 @@ bool BaseInFileStream::Feed() {
 		if (_playLimit < (double) _totalSentTime) {
 			FINEST("Done streaming file");
 			_pOutStreams->info->SignalStreamCompleted();
-			_paused = true;
+			_streamingState = FILE_STREAMING_STATE_FINISHED;
 			return true;
 		}
 	}
