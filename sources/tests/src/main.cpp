@@ -22,7 +22,7 @@
 #include "varianttestssuite.h"
 #include "thelibtestssuite.h"
 
-int main(int argc, char **argv) {
+int main(void) {
 	TS_PRINT("Begin tests...\n");
 	EXECUTE_SUITE(CommonTestsSuite);
 	EXECUTE_SUITE(VariantTestsSuite);

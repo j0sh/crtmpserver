@@ -194,16 +194,16 @@ bool ConfigFile::ConfigApplications() {
 
 bool ConfigFile::ConfigLogAppender(Variant &node) {
 	BaseLogLocation *pLogLocation = NULL;
-	if ((string) node[CONF_LOG_APPENDER_TYPE] == CONF_LOG_APPENDER_TYPE_COLORED_CONSOLE) {
+	if (node[CONF_LOG_APPENDER_TYPE] == CONF_LOG_APPENDER_TYPE_COLORED_CONSOLE) {
 		node[CONF_LOG_APPENDER_COLORED] = (bool)true;
 		if (!IsDaemon()) {
 			pLogLocation = new ConsoleLogLocation(node);
 		}
-	} else if ((string) node[CONF_LOG_APPENDER_TYPE] == CONF_LOG_APPENDER_TYPE_CONSOLE) {
+	} else if (node[CONF_LOG_APPENDER_TYPE] == CONF_LOG_APPENDER_TYPE_CONSOLE) {
 		if (!IsDaemon()) {
 			pLogLocation = new ConsoleLogLocation(node);
 		}
-	} else if ((string) node[CONF_LOG_APPENDER_TYPE] == CONF_LOG_APPENDER_TYPE_FILE) {
+	} else if (node[CONF_LOG_APPENDER_TYPE] == CONF_LOG_APPENDER_TYPE_FILE) {
 		pLogLocation = new FileLogLocation(node);
 	} else {
 		NYIR;
@@ -506,7 +506,7 @@ bool ConfigFile::NormalizeApplication(Variant &node) {
 				FATAL("Invalid alias value:\n%s", STR(MAP_VAL(i).ToString()));
 				return false;
 			}
-			if ((string) MAP_VAL(i) == "") {
+			if (MAP_VAL(i) == "") {
 				FATAL("Invalid alias value:\n%s", STR(MAP_VAL(i).ToString()));
 				return false;
 			}

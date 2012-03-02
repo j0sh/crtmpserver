@@ -46,7 +46,11 @@ map<uint32_t, IOHandler *> & IOHandlerManager::GetDeadHandlers() {
 	return _deadIOHandlers;
 }
 
-FdStats &IOHandlerManager::GetStats() {
+FdStats &IOHandlerManager::GetStats(bool updateSpeeds) {
+#ifdef GLOBALLY_ACCOUNT_BYTES
+	if (updateSpeeds)
+		_fdStats.UpdateSpeeds();
+#endif /* GLOBALLY_ACCOUNT_BYTES */
 	return _fdStats;
 }
 

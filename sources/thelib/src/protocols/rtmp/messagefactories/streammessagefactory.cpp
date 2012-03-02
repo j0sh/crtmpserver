@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -100,6 +100,14 @@ Variant StreamMessageFactory::GetInvokeFCSubscribe(string streamName) {
 	FCSubscribe.PushToArray(streamName);
 	return GenericMessageFactory::GetInvoke(3, 0, 0, false, 1,
 			RM_INVOKE_FUNCTION_FCSUBSCRIBE, FCSubscribe);
+}
+
+Variant StreamMessageFactory::GetInvokeFCPublish(string streamName) {
+	Variant FCPublish;
+	FCPublish.PushToArray(Variant());
+	FCPublish.PushToArray(streamName);
+	return GenericMessageFactory::GetInvoke(3, 0, 0, false, 1,
+			RM_INVOKE_FUNCTION_FCPUBLISH, FCPublish);
 }
 
 Variant StreamMessageFactory::GetInvokeCreateStreamResult(Variant &request,

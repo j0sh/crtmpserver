@@ -298,7 +298,7 @@ bool AMF3Serializer::ReadString(IOBuffer &buffer, Variant &variant, bool readTyp
 bool AMF3Serializer::WriteString(IOBuffer &buffer, string value, bool writeType) {
 	WRITE_AMF3_TYPE(AMF3_STRING);
 
-	if (!WriteU29(buffer, (value.size() << 1) | 0x01)) {
+	if (!WriteU29(buffer, (((uint32_t)value.size()) << 1) | 0x01)) {
 		FATAL("Unable to read reference");
 		return false;
 	}
@@ -505,7 +505,7 @@ bool AMF3Serializer::ReadObject(IOBuffer &buffer, Variant &variant, bool readTyp
 		}
 	}
 
-	uint32_t objectIndex = _objects.size();
+	uint32_t objectIndex = (uint32_t)_objects.size();
 	Variant tempVariant = Variant();
 	ADD_VECTOR_END(_objects, tempVariant);
 
@@ -513,9 +513,9 @@ bool AMF3Serializer::ReadObject(IOBuffer &buffer, Variant &variant, bool readTyp
 
 	if (traitsReference) {
 		traits = _traits[traitsReferenceIndex];
-		FINEST("Traits:\n%s", STR(traits.ToString()));
+		//FINEST("Traits:\n%s", STR(traits.ToString()));
 	} else {
-		uint32_t traitsIndex = _traits.size();
+		uint32_t traitsIndex = (uint32_t)_traits.size();
 
 		tempVariant = Variant();
 		ADD_VECTOR_END(_traits, tempVariant);
@@ -666,7 +666,7 @@ bool AMF3Serializer::WriteByteArray(IOBuffer &buffer, Variant &variant, bool wri
 
 	string temp = (string) variant;
 
-	if (!WriteU29(buffer, (temp.length() << 1) | 0x01)) {
+	if (!WriteU29(buffer, (((uint32_t)temp.length()) << 1) | 0x01)) {
 		FATAL("Unable to write U29");
 
 		return false;

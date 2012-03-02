@@ -301,7 +301,7 @@ bool OutNetRTPUDPH264Stream::FeedDataAudioMPEG4Generic_aggregate(uint8_t *pData,
 		_audioData.MSGHDR_MSG_IOV[2].IOVEC_IOV_BASE =(IOVEC_IOV_BASE_TYPE *) GETIBPOINTER(_audioBuffer);
 
 		EHTONSP(((uint8_t *) _audioData.MSGHDR_MSG_IOV[0].IOVEC_IOV_BASE) + 12,
-				_audioData.MSGHDR_MSG_IOV[1].IOVEC_IOV_LEN * 8);
+				(uint16_t)(_audioData.MSGHDR_MSG_IOV[1].IOVEC_IOV_LEN * 8));
 
 		_pConnectivity->FeedAudioData(_audioData, absoluteTimestamp);
 

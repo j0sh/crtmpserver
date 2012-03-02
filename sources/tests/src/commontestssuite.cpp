@@ -718,7 +718,7 @@ void CommonTestsSuite::test_HMACsha256() {
 		0xE4, 0xC5, 0xFB, 0xAE, 0x63, 0xD1, 0xF6, 0xF3,
 		0x1F, 0x16, 0xF7, 0xC0, 0x9A, 0xD3, 0xC4, 0x07
 	};
-	HMACsha256(STR(plain), plain.length(), STR(key), key.length(), hash);
+	HMACsha256(STR(plain), (uint32_t) plain.length(), STR(key), (uint32_t) key.length(), hash);
 	for (uint32_t i = 0; i < 32; i++) {
 		TS_ASSERT(hash[i] == wanted[i]);
 	}
@@ -915,17 +915,17 @@ void CommonTestsSuite::test_ParseURL() {
 
 void CommonTestsSuite::test_setFdOptions() {
 	InitNetworking();
-	int32_t fd = socket(AF_INET, SOCK_STREAM, 0);
+	SOCKET fd = socket(AF_INET, SOCK_STREAM, 0);
 	TS_ASSERT(fd > 0);
 	TS_ASSERT(setFdNoSIGPIPE(fd));
 	TS_ASSERT(setFdNonBlock(fd));
-	TS_ASSERT(setFdNoNagle(fd));
-	TS_ASSERT(setFdKeepAlive(fd));
+	TS_ASSERT(setFdNoNagle(fd, false));
+	TS_ASSERT(setFdKeepAlive(fd, false));
 	TS_ASSERT(setFdReuseAddress(fd));
 	CLOSE_SOCKET(fd);
-	fd = -1;
+	fd = (SOCKET) - 1;
 	fd = socket(AF_INET, SOCK_STREAM, 0);
 	TS_ASSERT(fd > 0);
-	TS_ASSERT(setFdOptions(fd));
+	TS_ASSERT(setFdOptions(fd, false));
 	CLOSE_SOCKET(fd);
 }

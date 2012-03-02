@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -78,7 +78,11 @@ private:
 	void test_ToString();
 	void test_OperatorAssign();
 	void test_OperatorCast();
+	void test_OperatorEquality();
 	void test_Compact();
+	void test_SerializeDeserializeBin();
+	void test_SerializeDeserializeXml();
+	void test_LoadFromLua();
 };
 
 #endif /* __VARIANTTESTSSUITE_H */

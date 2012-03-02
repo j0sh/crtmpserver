@@ -55,7 +55,7 @@ private:
 public:
 	static map<uint32_t, IOHandler *> & GetActiveHandlers();
 	static map<uint32_t, IOHandler *> & GetDeadHandlers();
-	static FdStats &GetStats();
+	static FdStats &GetStats(bool updateSpeeds);
 	static void Initialize();
 	static void Start();
 	static void SignalShutdown();

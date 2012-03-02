@@ -1,8 +1,7 @@
-BRANDING_COMPANY_NAME="C++ RTMP Server"
-BRANDING_WEB="www.rtmpd.com"
-BRANDING_EMAIL="contact@rtmpd.com"
-BRANDING_PRODUCT_NAME=BRANDING_COMPANY_NAME
-BRANDING_WEB_HTTP="http://"..BRANDING_WEB
+require "branding"
+
+BRANDING_PRODUCT_NAME=BRANDING_COMPANY_NAME.." Media Server"                    
+BRANDING_WEB_HTTP="http://"..BRANDING_WEB                                       
 BRANDING_BANNER=BRANDING_PRODUCT_NAME.." ("..BRANDING_WEB..")"
 
 constants={

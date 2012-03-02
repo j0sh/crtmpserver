@@ -21,6 +21,7 @@
 #include "streaming/baseinstream.h"
 #include "streaming/baseoutstream.h"
 #include "streaming/streamstypes.h"
+#include "streaming/streamsmanager.h"
 
 BaseInStream::BaseInStream(BaseProtocol *pProtocol,
 		StreamsManager *pStreamsManager, uint64_t type, string name)
@@ -97,6 +98,7 @@ bool BaseInStream::UnLink(BaseOutStream *pOutStream, bool reverseUnLink) {
 		WARN("BaseInStream::UnLink: This stream is not linked");
 		return true;
 	}
+	_pStreamsManager->SignalUnLinkingStreams(this, pOutStream);
 
 	_linkedStreams.erase(pOutStream->GetUniqueId());
 	LinkedListNode<BaseOutStream *> *pTemp = _pOutStreams;

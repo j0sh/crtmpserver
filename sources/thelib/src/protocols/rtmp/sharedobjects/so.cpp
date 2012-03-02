@@ -92,7 +92,7 @@ void SO::UnRegisterProtocol(uint32_t protocolId) {
 }
 
 uint32_t SO::GetSubscribersCount() {
-	return _registeredProtocols.size();
+	return (uint32_t)_registeredProtocols.size();
 }
 
 vector<string> SO::GetPropertyNames() {

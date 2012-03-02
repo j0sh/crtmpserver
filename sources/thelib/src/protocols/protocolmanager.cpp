@@ -78,21 +78,34 @@ BaseProtocol * ProtocolManager::GetProtocol(uint32_t id,
 	return NULL;
 }
 
-map<uint32_t, BaseProtocol *> ProtocolManager::GetActiveProtocols() {
+const map<uint32_t, BaseProtocol *> & ProtocolManager::GetActiveProtocols() {
 	return _activeProtocols;
 }
 
-void ProtocolManager::GetNetworkedProtocols(map<uint32_t, BaseProtocol *> &result) {
+void ProtocolManager::GetActiveProtocols(map<uint32_t, BaseProtocol *> &result,
+		protocolManagerFilter_f filter) {
 	result.clear();
-	FOR_MAP(_activeProtocols, uint32_t, BaseProtocol *, i) {
-		BaseProtocol *pProtocol = MAP_VAL(i)->GetNearEndpoint();
-		if (MAP_HAS1(result, pProtocol->GetId()))
-			continue;
-		IOHandler *pIOHandler = pProtocol->GetIOHandler();
-		if ((pIOHandler == NULL)
-				|| ((pIOHandler->GetType() != IOHT_TCP_CARRIER)
-				&& (pIOHandler->GetType() != IOHT_UDP_CARRIER)))
-			continue;
-		result[pProtocol->GetId()] = pProtocol;
+	if (filter == NULL) {
+		result = _activeProtocols;
+		return;
 	}
+
+	FOR_MAP(_activeProtocols, uint32_t, BaseProtocol *, i) {
+		if (!filter(MAP_VAL(i)))
+			continue;
+		result[MAP_VAL(i)->GetId()] = MAP_VAL(i);
+	}
+}
+
+bool protocolManagerNetworkedProtocolsFilter(BaseProtocol *pProtocol) {
+	IOHandler *pIOHandler = pProtocol->GetIOHandler();
+	if ((pIOHandler == NULL)
+			|| ((pIOHandler->GetType() != IOHT_TCP_CARRIER)
+			&& (pIOHandler->GetType() != IOHT_UDP_CARRIER)))
+		return false;
+	return true;
+}
+
+bool protocolManagerNearProtocolsFilter(BaseProtocol *pProtocol) {
+	return pProtocol->GetNearProtocol() == NULL;
 }

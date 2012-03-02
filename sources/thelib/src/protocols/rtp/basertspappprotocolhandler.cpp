@@ -497,49 +497,47 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPRequestSetupOutbound(RTSPProtocol *pF
 	//5. Find out if this is audio or video
 	bool isAudioTrack = false;
 	string rawUrl = requestHeaders[RTSP_FIRST_LINE][RTSP_URL];
-	string audioTrackId = "trackID=" + (string) pFrom->GetCustomParameters()["audioTrackId"];
-	string videoTrackId = "trackID=" + (string) pFrom->GetCustomParameters()["videoTrackId"];
-	/*FINEST("rawUrl: %s; audioTrackId: %s; videoTrackId: %s; fa: %d; fv: %d",
-		STR(rawUrl),
-		STR(audioTrackId),
-		STR(videoTrackId),
-		rawUrl.find(audioTrackId) != string::npos,
-		rawUrl.find(videoTrackId) != string::npos
-	);*/
-	if (rawUrl.find(audioTrackId) != string::npos) {
+	Variant &customParams = pFrom->GetCustomParameters();
+	string audioTrackId;
+	if (customParams.HasKey("audioTrackId"))
+		audioTrackId = "trackID=" + (string) customParams["audioTrackId"];
+	string videoTrackId;
+	if (customParams.HasKey("videoTrackId"))
+		videoTrackId = "trackID=" + (string) customParams["videoTrackId"];
+	if ((audioTrackId != "") && (rawUrl.find(audioTrackId) != string::npos)) {
 		isAudioTrack = true;
-	} else if (rawUrl.find(videoTrackId) != string::npos) {
+	} else if ((videoTrackId != "") && (rawUrl.find(videoTrackId) != string::npos)) {
 		isAudioTrack = false;
 	} else {
 		FATAL("Invalid track. Wanted: %s or %s; Got: %s",
-				STR(pFrom->GetCustomParameters()["audioTrackId"]),
-				STR(pFrom->GetCustomParameters()["videoTrackId"]),
+				STR(audioTrackId),
+				STR(videoTrackId),
 				STR(requestHeaders[RTSP_FIRST_LINE][RTSP_URL]));
 		return false;
 	}
-	pFrom->GetCustomParameters()["isAudioTrack"] = (bool)isAudioTrack;
+	customParams["isAudioTrack"] = (bool)isAudioTrack;
 	if (isAudioTrack) {
 		if (forceTcp) {
-			pFrom->GetCustomParameters()["audioDataChannelNumber"] = transport["interleaved"]["data"];
-			pFrom->GetCustomParameters()["audioRtcpChannelNumber"] = transport["interleaved"]["rtcp"];
-			pFrom->GetCustomParameters()["audioTrackUri"] = requestHeaders[RTSP_FIRST_LINE][RTSP_URL];
+			customParams["audioDataChannelNumber"] = transport["interleaved"]["data"];
+			customParams["audioRtcpChannelNumber"] = transport["interleaved"]["rtcp"];
+			customParams["audioTrackUri"] = requestHeaders[RTSP_FIRST_LINE][RTSP_URL];
 			pOutboundConnectivity->HasAudio(true);
 		} else {
-			pFrom->GetCustomParameters()["audioDataPortNumber"] = transport["client_port"]["data"];
-			pFrom->GetCustomParameters()["audioRtcpPortNumber"] = transport["client_port"]["rtcp"];
-			pFrom->GetCustomParameters()["audioTrackUri"] = requestHeaders[RTSP_FIRST_LINE][RTSP_URL];
+			customParams["audioDataPortNumber"] = transport["client_port"]["data"];
+			customParams["audioRtcpPortNumber"] = transport["client_port"]["rtcp"];
+			customParams["audioTrackUri"] = requestHeaders[RTSP_FIRST_LINE][RTSP_URL];
 			pOutboundConnectivity->HasAudio(true);
 		}
 	} else {
 		if (forceTcp) {
-			pFrom->GetCustomParameters()["videoDataChannelNumber"] = transport["interleaved"]["data"];
-			pFrom->GetCustomParameters()["videoRtcpChannelNumber"] = transport["interleaved"]["rtcp"];
-			pFrom->GetCustomParameters()["videoTrackUri"] = requestHeaders[RTSP_FIRST_LINE][RTSP_URL];
+			customParams["videoDataChannelNumber"] = transport["interleaved"]["data"];
+			customParams["videoRtcpChannelNumber"] = transport["interleaved"]["rtcp"];
+			customParams["videoTrackUri"] = requestHeaders[RTSP_FIRST_LINE][RTSP_URL];
 			pOutboundConnectivity->HasVideo(true);
 		} else {
-			pFrom->GetCustomParameters()["videoDataPortNumber"] = transport["client_port"]["data"];
-			pFrom->GetCustomParameters()["videoRtcpPortNumber"] = transport["client_port"]["rtcp"];
-			pFrom->GetCustomParameters()["videoTrackUri"] = requestHeaders[RTSP_FIRST_LINE][RTSP_URL];
+			customParams["videoDataPortNumber"] = transport["client_port"]["data"];
+			customParams["videoRtcpPortNumber"] = transport["client_port"]["rtcp"];
+			customParams["videoTrackUri"] = requestHeaders[RTSP_FIRST_LINE][RTSP_URL];
 			pOutboundConnectivity->HasVideo(true);
 		}
 	}
@@ -754,7 +752,7 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPRequestAnnounce(RTSPProtocol *pFrom,
 		FATAL("Invalid ANNOUNCE request:\n%s", STR(requestHeaders.ToString()));
 		return false;
 	}
-	if ((string) requestHeaders[RTSP_HEADERS].GetValue(RTSP_HEADERS_CONTENT_TYPE, false)
+	if (requestHeaders[RTSP_HEADERS].GetValue(RTSP_HEADERS_CONTENT_TYPE, false)
 			!= RTSP_HEADERS_ACCEPT_APPLICATIONSDP) {
 		FATAL("Invalid ANNOUNCE request:\n%s", STR(requestHeaders.ToString()));
 		return false;
@@ -914,12 +912,12 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPResponse401(RTSPProtocol *pFrom, Vari
 	if ((!pFrom->GetCustomParameters().HasKeyChain(V_MAP, false, 1, "uri"))
 			|| (!pFrom->GetCustomParameters().HasKeyChain(V_STRING, false, 2, "uri", "userName"))
 			|| (!pFrom->GetCustomParameters().HasKeyChain(V_STRING, false, 2, "uri", "password"))
-			|| ((string) pFrom->GetCustomParameters()["uri"]["userName"] == "")) {
+			|| (pFrom->GetCustomParameters()["uri"]["userName"] == "")) {
 		FATAL("No username/password provided");
 		return false;
 	}
 	if ((!responseHeaders.HasKeyChain(V_STRING, false, 2, RTSP_HEADERS, HTTP_HEADERS_WWWAUTHENTICATE))
-			|| ((string) responseHeaders[RTSP_HEADERS][HTTP_HEADERS_WWWAUTHENTICATE] == "")) {
+			|| (responseHeaders[RTSP_HEADERS][HTTP_HEADERS_WWWAUTHENTICATE] == "")) {
 		FATAL("Invalid 401 response: %s", STR(responseHeaders.ToString()));
 		return false;
 	}
@@ -1037,7 +1035,7 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPResponse200Describe(
 		FATAL("Invalid DESCRIBE response:\n%s", STR(requestHeaders.ToString()));
 		return false;
 	}
-	if ((string) responseHeaders[RTSP_HEADERS].GetValue(RTSP_HEADERS_CONTENT_TYPE, false)
+	if (responseHeaders[RTSP_HEADERS].GetValue(RTSP_HEADERS_CONTENT_TYPE, false)
 			!= RTSP_HEADERS_ACCEPT_APPLICATIONSDP) {
 		FATAL("Invalid DESCRIBE response:\n%s", STR(requestHeaders.ToString()));
 		return false;
@@ -1258,6 +1256,7 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPResponse200Announce(RTSPProtocol *pFr
 			trackId = (string) params["videoTrackId"];
 			params.RemoveKey("videoTrackId");
 			params["lastSetup"] = "video";
+			isAudio = false;
 			pConnectivity->HasVideo(true);
 		}
 	}
@@ -1448,9 +1447,12 @@ StreamCapabilities *BaseRTSPAppProtocolHandler::GetInboundStreamCapabilities(
 
 string BaseRTSPAppProtocolHandler::GetAudioTrack(RTSPProtocol *pFrom,
 		StreamCapabilities *pCapabilities) {
-	pFrom->GetCustomParameters()["audioTrackId"] = "1"; //md5(format("A%u%s",pFrom->GetId(), STR(generateRandomString(4))), true);
 	string result = "";
 	if (pCapabilities->audioCodecId == CODEC_AUDIO_AAC) {
+		if (pFrom->GetCustomParameters().HasKey("videoTrackId"))
+			pFrom->GetCustomParameters()["audioTrackId"] = "2"; //md5(format("A%u%s",pFrom->GetId(), STR(generateRandomString(4))), true);
+		else
+			pFrom->GetCustomParameters()["audioTrackId"] = "1"; //md5(format("A%u%s",pFrom->GetId(), STR(generateRandomString(4))), true);
 		result += "m=audio 0 RTP/AVP 96\r\n";
 		result += "a=recvonly\r\n";
 		result += format("a=rtpmap:96 mpeg4-generic/%u/2\r\n",
@@ -1462,6 +1464,7 @@ string BaseRTSPAppProtocolHandler::GetAudioTrack(RTSPProtocol *pFrom,
 		result += format("a=fmtp:96 streamtype=5; profile-level-id=15; mode=AAC-hbr; %s; SizeLength=13; IndexLength=3; IndexDeltaLength=3;\r\n",
 				STR(pCapabilities->aac.GetRTSPFmtpConfig()));
 	} else {
+		pFrom->GetCustomParameters().RemoveKey("audioTrackId");
 		WARN("Unsupported audio codec: %s", STR(tagToString(pCapabilities->audioCodecId)));
 	}
 	return result;
@@ -1469,9 +1472,12 @@ string BaseRTSPAppProtocolHandler::GetAudioTrack(RTSPProtocol *pFrom,
 
 string BaseRTSPAppProtocolHandler::GetVideoTrack(RTSPProtocol *pFrom,
 		StreamCapabilities *pCapabilities) {
-	pFrom->GetCustomParameters()["videoTrackId"] = "2"; //md5(format("V%u%s",pFrom->GetId(), STR(generateRandomString(4))), true);
 	string result = "";
 	if (pCapabilities->videoCodecId == CODEC_VIDEO_AVC) {
+		if (pFrom->GetCustomParameters().HasKey("audioTrackId"))
+			pFrom->GetCustomParameters()["videoTrackId"] = "2"; //md5(format("V%u%s",pFrom->GetId(), STR(generateRandomString(4))), true);
+		else
+			pFrom->GetCustomParameters()["videoTrackId"] = "1"; //md5(format("V%u%s",pFrom->GetId(), STR(generateRandomString(4))), true);
 		result += "m=video 0 RTP/AVP 97\r\n";
 		result += "a=recvonly\r\n";
 		result += "a=control:trackID="
@@ -1488,7 +1494,7 @@ string BaseRTSPAppProtocolHandler::GetVideoTrack(RTSPProtocol *pFrom,
 		result += b64(pCapabilities->avc._pPPS,
 				pCapabilities->avc._ppsLength) + "\r\n";
 	} else {
-
+		pFrom->GetCustomParameters().RemoveKey("videoTrackId");
 		WARN("Unsupported video codec: %s", STR(tagToString(pCapabilities->videoCodecId)));
 	}
 	return result;
@@ -1584,9 +1590,9 @@ bool BaseRTSPAppProtocolHandler::ParseUsersFile() {
 	FOR_MAP(realms, string, Variant, i) {
 		Variant &realm = MAP_VAL(i);
 		if ((!realm.HasKeyChain(V_STRING, true, 1, "name"))
-				|| ((string) realm["name"] == "")
+				|| (realm["name"] == "")
 				|| (!realm.HasKeyChain(V_STRING, true, 1, "method"))
-				|| (((string) realm["method"] != "Basic") && ((string) realm["method"] != "Digest"))
+				|| ((realm["method"] != "Basic") && (realm["method"] != "Digest"))
 				|| (!realm.HasKeyChain(V_MAP, true, 1, "users"))
 				|| (realm["users"].MapSize() == 0)) {
 			FATAL("Invalid users file. Realms section is bogus: `%s`", STR(_usersFile));

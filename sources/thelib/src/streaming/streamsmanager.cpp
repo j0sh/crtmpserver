@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -281,3 +281,7 @@ BaseStream * StreamsManager::FindByUniqueId(uint32_t uniqueId) {
 	return NULL;
 }
 
+void StreamsManager::SignalUnLinkingStreams(BaseInStream *pInStream,
+		BaseOutStream *pOutStream) {
+	_pApplication->SignalUnLinkingStreams(pInStream, pOutStream);
+}

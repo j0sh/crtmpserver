@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -93,7 +93,11 @@ void VariantTestsSuite::Run() {
 	test_ToString();
 	test_OperatorAssign();
 	test_OperatorCast();
+	test_OperatorEquality();
 	test_Compact();
+	test_SerializeDeserializeBin();
+	test_SerializeDeserializeXml();
+	test_LoadFromLua();
 }
 
 void VariantTestsSuite::test_Constructors() {
@@ -435,13 +439,13 @@ void VariantTestsSuite::test_OperatorAssign() {
 	{
 		Variant variant = "This is a test";
 		TS_ASSERT(variant == V_STRING);
-		TS_ASSERT((string) variant == "This is a test");
+		TS_ASSERT(variant == "This is a test");
 	}
 
 	{
 		Variant variant = string("This is a test");
 		TS_ASSERT(variant == V_STRING);
-		TS_ASSERT((string) variant == "This is a test");
+		TS_ASSERT(variant == "This is a test");
 	}
 
 	{
@@ -693,6 +697,166 @@ void VariantTestsSuite::test_OperatorCast() {
 #endif
 }
 
+void InitV(Variant &v, bool has64bit = true, bool hasByteArray = true,
+		bool hasTypedMap = true, bool hasMap = true, bool hasArray = true,
+		bool hasNull = true, bool hasUndefined = true) {
+	if (has64bit) {
+		v["00 min_int64"] = (int64_t) (-9223372036854775807LL - 1);
+		v["01 min_int64+1"] = (int64_t) (-9223372036854775807LL);
+		v["02 min_int32-1"] = (int64_t) (-2147483649LL);
+	}
+	v["03 min_int32"] = (int64_t) (-2147483648LL);
+	v["04 min_int32+1"] = (int64_t) (-2147483647);
+	v["05 min_int16-1"] = (int64_t) (-32769);
+	v["06 min_int16"] = (int64_t) (-32768);
+	v["07 min_int16+1"] = (int64_t) (-32767);
+	v["08 min_int8-1"] = (int64_t) (-129);
+	v["09 min_int8"] = (int64_t) (-128);
+	v["10 min_int8+1"] = (int64_t) (-127);
+	v["11 0-1"] = (int64_t) (-1);
+	v["12 0"] = (uint64_t) 0;
+	v["13 0+1"] = (uint64_t) 1;
+	v["14 max_int8-1"] = (uint64_t) 126;
+	v["15 max_int8"] = (uint64_t) 127;
+	v["16 max_int8+1"] = (uint64_t) 128;
+	v["17 max_uint8-1"] = (uint64_t) 254;
+	v["18 max_uint8"] = (uint64_t) 255;
+	v["19 max_uint8+1"] = (uint64_t) 256;
+	v["20 max_int16-1"] = (uint64_t) 32766;
+	v["21 max_int16"] = (uint64_t) 32767;
+	v["22 max_int16+1"] = (uint64_t) 32768;
+	v["23 max_uint16-1"] = (uint64_t) 65534;
+	v["24 max_uint16"] = (uint64_t) 65535;
+	v["25 max_uint16+1"] = (uint64_t) 65536;
+	v["26 max_int32-1"] = (uint64_t) 2147483646;
+	v["27 max_int32"] = (uint64_t) 2147483647;
+	v["28 max_int32+1"] = (uint64_t) 2147483648LL;
+	v["29 max_uint32-1"] = (uint64_t) 4294967294LL;
+	v["30 max_uint32"] = (uint64_t) 4294967295LL;
+	if (has64bit) {
+		v["31 max_uint32+1"] = (uint64_t) 4294967296LL;
+		v["32 max_int64-1"] = (uint64_t) 9223372036854775806LL;
+		v["33 max_int64"] = (uint64_t) 9223372036854775807LL;
+		v["34 max_int64+1"] = (uint64_t) 9223372036854775808ULL;
+		v["35 max_uint64-1"] = (uint64_t) 18446744073709551614ULL;
+		v["36 max_uint64"] = (uint64_t) 18446744073709551615ULL;
+	}
+	v["37 double"] = 123.456;
+	v["38 string"] = "Hello world";
+	v["39 date"] = Variant(2012, 2, 23);
+	v["40 time"] = Variant(3, 8, 43, 0);
+	v["41 date_time"] = Variant(2012, 2, 23, 3, 8, 43, 0);
+	if (hasByteArray) {
+		uint8_t bytes[128];
+		for (uint32_t i = 0; i<sizeof (bytes); i++) {
+			bytes[i] = (uint8_t) i;
+		}
+		v["42 byteArray"] = string((char *) bytes, sizeof (bytes));
+		v["42 byteArray"].IsByteArray(true);
+	}
+	if (hasTypedMap) {
+		v["43 typedMap"]["some key"] = "value";
+		v["43 typedMap"]["some other key"] = 123.456;
+		v["43 typedMap"].SetTypeName("type name");
+	}
+	if (hasArray) {
+		v["44 array"].PushToArray("string");
+		v["44 array"].PushToArray(123.456);
+		v["44 array"].PushToArray(-8);
+	}
+	if (hasNull) {
+		v["45 null"] = Variant();
+	}
+	if (hasUndefined) {
+		v["46 undefined"].Reset(true);
+	}
+	if (hasMap) {
+		Variant temp = v;
+		v["47 map"] = temp;
+	}
+}
+
+void VariantTestsSuite::test_OperatorEquality() {
+	Variant vMap;
+	InitV(vMap);
+
+	Variant vMap1 = vMap;
+
+	Variant vMap2 = vMap;
+	vMap2["anotherKey"] = "some string";
+
+	Variant vMap3 = vMap;
+	vMap3.RemoveKey("37 double");
+
+	Variant vMap4 = vMap;
+	vMap4["37 double"] = 456.789;
+
+	Variant vMap5;
+	Variant vMap6;
+	Variant vMap7;
+	vMap7.Reset(true);
+	Variant vMap8;
+	vMap8.Reset(true);
+
+	TS_ASSERT(vMap == vMap);
+	TS_ASSERT(!(vMap != vMap));
+
+	TS_ASSERT(vMap == vMap1);
+	TS_ASSERT(!(vMap != vMap1));
+
+	TS_ASSERT(vMap != vMap2);
+	TS_ASSERT(!(vMap == vMap2));
+
+	TS_ASSERT(vMap != vMap3);
+	TS_ASSERT(!(vMap == vMap3));
+
+	TS_ASSERT(vMap != vMap4);
+	TS_ASSERT(!(vMap == vMap4));
+
+	TS_ASSERT(vMap != vMap5);
+	TS_ASSERT(!(vMap == vMap5));
+
+	TS_ASSERT(vMap != vMap6);
+	TS_ASSERT(!(vMap == vMap6));
+
+	TS_ASSERT(vMap != vMap7);
+	TS_ASSERT(!(vMap == vMap7));
+
+	TS_ASSERT(vMap != vMap8);
+	TS_ASSERT(!(vMap == vMap8));
+
+	TS_ASSERT(vMap5 == vMap6);
+	TS_ASSERT(!(vMap5 != vMap6));
+
+	TS_ASSERT(vMap7 == vMap8);
+	TS_ASSERT(!(vMap7 != vMap8));
+
+	TS_ASSERT(vMap5 == vMap7);
+	TS_ASSERT(!(vMap5 != vMap7));
+
+	Variant vString = "Some string";
+	string vString1 = "Some string";
+	string vString2 = "Some other string";
+
+	TS_ASSERT(vString == vString1);
+	TS_ASSERT(!(vString != vString1));
+
+	TS_ASSERT(vString != vString2);
+	TS_ASSERT(!(vString == vString2));
+
+	TS_ASSERT(vString == "Some string");
+	TS_ASSERT(!(vString != "Some string"));
+
+	TS_ASSERT(vString != "Some other string");
+	TS_ASSERT(!(vString == "Some other string"));
+
+	TS_ASSERT(vString == V_STRING);
+	TS_ASSERT(!(vString != V_STRING));
+
+	TS_ASSERT(vString != V_MAP);
+	TS_ASSERT(!(vString == V_MAP));
+}
+
 void VariantTestsSuite::test_Compact() {
 #define compact(v,r) { \
         Variant v_copy=v; \
@@ -867,4 +1031,183 @@ void VariantTestsSuite::test_Compact() {
 	compact(v_ui8, reference);
 }
 
+void VariantTestsSuite::test_SerializeDeserializeBin() {
+	Variant v;
+	InitV(v);
+	string vHash = "fb5284b667427dced79342643c6ab810";
 
+	Variant vCompact = v;
+	vCompact.Compact();
+	string vCompactHash = "a6458861009cafb27c193acca416e044";
+
+	string rawV;
+	TS_ASSERT(v.SerializeToBin(rawV));
+	//printf("\n%s\n", STR(md5(rawV, true)));
+	TS_ASSERT(md5(rawV, true) == vHash);
+
+	string rawVCompact;
+	TS_ASSERT(vCompact.SerializeToBin(rawVCompact));
+	//printf("\n%s\n", STR(md5(rawVCompact, true)));
+	TS_ASSERT(md5(rawVCompact, true) == vCompactHash);
+
+	Variant vTest;
+	string rawVTest;
+	TS_ASSERT(Variant::DeserializeFromBin(rawV, vTest));
+	TS_ASSERT(vTest.SerializeToBin(rawVTest));
+	TS_ASSERT(rawVTest == rawV);
+	TS_ASSERT(vTest == v);
+	TS_ASSERT(md5(rawVTest, true) == vHash);
+
+	Variant vCompactTest;
+	string rawVCompactTest;
+	TS_ASSERT(Variant::DeserializeFromBin(rawVCompact, vCompactTest));
+	TS_ASSERT(vCompactTest.SerializeToBin(rawVCompactTest));
+	TS_ASSERT(rawVCompactTest == rawVCompact);
+	TS_ASSERT(vCompactTest == vCompact);
+	TS_ASSERT(md5(rawVCompactTest, true) == vCompactHash);
+}
+
+void VariantTestsSuite::test_SerializeDeserializeXml() {
+	Variant v;
+	InitV(v);
+	string vHash = "b7429921d677f16c8f6ac153e6a96c81";
+
+	Variant vCompact = v;
+	vCompact.Compact();
+	string vCompactHash = "e9cf45e2a977d7a0c3809b295963179a";
+
+	string rawV;
+	TS_ASSERT(v.SerializeToXml(rawV));
+	//printf("\n%s\n", STR(md5(rawV, true)));
+	TS_ASSERT(md5(rawV, true) == vHash);
+
+	string rawVCompact;
+	TS_ASSERT(vCompact.SerializeToXml(rawVCompact));
+	//printf("\n%s\n", STR(md5(rawVCompact, true)));
+	TS_ASSERT(md5(rawVCompact, true) == vCompactHash);
+
+	Variant vTest;
+	string rawVTest;
+	TS_ASSERT(Variant::DeserializeFromXml(rawV, vTest));
+	TS_ASSERT(vTest.SerializeToXml(rawVTest));
+	//	printf("\rawV: `%s`\n", STR(rawV));
+	//	printf("\nrawVTest: `%s`\n", STR(rawVTest));
+	TS_ASSERT(rawVTest == rawV);
+	TS_ASSERT(vTest == v);
+	TS_ASSERT(md5(rawVTest, true) == vHash);
+
+	Variant vCompactTest;
+	string rawVCompactTest;
+	TS_ASSERT(Variant::DeserializeFromXml(rawVCompact, vCompactTest));
+	TS_ASSERT(vCompactTest.SerializeToXml(rawVCompactTest));
+	TS_ASSERT(rawVCompactTest == rawVCompact);
+	TS_ASSERT(vCompactTest == vCompact);
+	TS_ASSERT(md5(rawVCompactTest, true) == vCompactHash);
+}
+
+void VariantTestsSuite::test_LoadFromLua() {
+	Variant v;
+	InitV(v, false, false, false, true, true, false, false);
+	v.Compact();
+
+	Variant temp = v["44 array"];
+	v.RemoveKey("44 array");
+	v["44 array"]["__index__value__1"] = temp["__index__value__0"];
+	v["44 array"]["__index__value__2"] = temp["__index__value__1"];
+	v["44 array"]["__index__value__3"] = temp["__index__value__2"];
+	v["44 array"].IsArray(true);
+
+	temp = v["47 map"]["44 array"];
+	v["47 map"].RemoveKey("44 array");
+	v["47 map"]["44 array"]["__index__value__1"] = temp["__index__value__0"];
+	v["47 map"]["44 array"]["__index__value__2"] = temp["__index__value__1"];
+	v["47 map"]["44 array"]["__index__value__3"] = temp["__index__value__2"];
+	v["47 map"]["44 array"].IsArray(true);
+
+	string rawLua;
+	rawLua += "v={}\n";
+	rawLua += "    v[\"03 min_int32\"]=-2147483648\n";
+	rawLua += "    v[\"04 min_int32+1\"]=-2147483647\n";
+	rawLua += "    v[\"05 min_int16-1\"]=-32769\n";
+	rawLua += "    v[\"06 min_int16\"]=-32768\n";
+	rawLua += "    v[\"07 min_int16+1\"]=-32767\n";
+	rawLua += "    v[\"08 min_int8-1\"]=-129\n";
+	rawLua += "    v[\"09 min_int8\"]=-128\n";
+	rawLua += "    v[\"10 min_int8+1\"]=-127\n";
+	rawLua += "    v[\"11 0-1\"]=-1\n";
+	rawLua += "    v[\"12 0\"]=0\n";
+	rawLua += "    v[\"13 0+1\"]=1\n";
+	rawLua += "    v[\"14 max_int8-1\"]=126\n";
+	rawLua += "    v[\"15 max_int8\"]=127\n";
+	rawLua += "    v[\"16 max_int8+1\"]=128\n";
+	rawLua += "    v[\"17 max_uint8-1\"]=254\n";
+	rawLua += "    v[\"18 max_uint8\"]=255\n";
+	rawLua += "    v[\"19 max_uint8+1\"]=256\n";
+	rawLua += "    v[\"20 max_int16-1\"]=32766\n";
+	rawLua += "    v[\"21 max_int16\"]=32767\n";
+	rawLua += "    v[\"22 max_int16+1\"]=32768\n";
+	rawLua += "    v[\"23 max_uint16-1\"]=65534\n";
+	rawLua += "    v[\"24 max_uint16\"]=65535\n";
+	rawLua += "    v[\"25 max_uint16+1\"]=65536\n";
+	rawLua += "    v[\"26 max_int32-1\"]=2147483646\n";
+	rawLua += "    v[\"27 max_int32\"]=2147483647\n";
+	rawLua += "    v[\"28 max_int32+1\"]=2147483648\n";
+	rawLua += "    v[\"29 max_uint32-1\"]=4294967294\n";
+	rawLua += "    v[\"30 max_uint32\"]=4294967295\n";
+	rawLua += "    v[\"37 double\"]=123.456\n";
+	rawLua += "    v[\"38 string\"]=\"Hello world\"\n";
+	rawLua += "    v[\"39 date\"]={year=2012, month=02, day=23}\n";
+	rawLua += "    v[\"40 time\"]={hour=03, min=08, sec=43}\n";
+	rawLua += "    v[\"41 date_time\"]={year=2012, month=02, day=23, hour=03, min=08, sec=43}\n";
+	rawLua += "    v[\"44 array\"]={\"string\",123.456,-8}\n";
+	rawLua += "    v[\"47 map\"]={}\n";
+	rawLua += "        v[\"47 map\"][\"03 min_int32\"]=-2147483648\n";
+	rawLua += "        v[\"47 map\"][\"04 min_int32+1\"]=-2147483647\n";
+	rawLua += "        v[\"47 map\"][\"05 min_int16-1\"]=-32769\n";
+	rawLua += "        v[\"47 map\"][\"06 min_int16\"]=-32768\n";
+	rawLua += "        v[\"47 map\"][\"07 min_int16+1\"]=-32767\n";
+	rawLua += "        v[\"47 map\"][\"08 min_int8-1\"]=-129\n";
+	rawLua += "        v[\"47 map\"][\"09 min_int8\"]=-128\n";
+	rawLua += "        v[\"47 map\"][\"10 min_int8+1\"]=-127\n";
+	rawLua += "        v[\"47 map\"][\"11 0-1\"]=-1\n";
+	rawLua += "        v[\"47 map\"][\"12 0\"]=0\n";
+	rawLua += "        v[\"47 map\"][\"13 0+1\"]=1\n";
+	rawLua += "        v[\"47 map\"][\"14 max_int8-1\"]=126\n";
+	rawLua += "        v[\"47 map\"][\"15 max_int8\"]=127\n";
+	rawLua += "        v[\"47 map\"][\"16 max_int8+1\"]=128\n";
+	rawLua += "        v[\"47 map\"][\"17 max_uint8-1\"]=254\n";
+	rawLua += "        v[\"47 map\"][\"18 max_uint8\"]=255\n";
+	rawLua += "        v[\"47 map\"][\"19 max_uint8+1\"]=256\n";
+	rawLua += "        v[\"47 map\"][\"20 max_int16-1\"]=32766\n";
+	rawLua += "        v[\"47 map\"][\"21 max_int16\"]=32767\n";
+	rawLua += "        v[\"47 map\"][\"22 max_int16+1\"]=32768\n";
+	rawLua += "        v[\"47 map\"][\"23 max_uint16-1\"]=65534\n";
+	rawLua += "        v[\"47 map\"][\"24 max_uint16\"]=65535\n";
+	rawLua += "        v[\"47 map\"][\"25 max_uint16+1\"]=65536\n";
+	rawLua += "        v[\"47 map\"][\"26 max_int32-1\"]=2147483646\n";
+	rawLua += "        v[\"47 map\"][\"27 max_int32\"]=2147483647\n";
+	rawLua += "        v[\"47 map\"][\"28 max_int32+1\"]=2147483648\n";
+	rawLua += "        v[\"47 map\"][\"29 max_uint32-1\"]=4294967294\n";
+	rawLua += "        v[\"47 map\"][\"30 max_uint32\"]=4294967295\n";
+	rawLua += "        v[\"47 map\"][\"37 double\"]=123.456\n";
+	rawLua += "        v[\"47 map\"][\"38 string\"]=\"Hello world\"\n";
+	rawLua += "        v[\"47 map\"][\"39 date\"]={year=2012, month=02, day=23}\n";
+	rawLua += "        v[\"47 map\"][\"40 time\"]={hour=03, min=08, sec=43}\n";
+	rawLua += "        v[\"47 map\"][\"41 date_time\"]={year=2012, month=02, day=23, hour=03, min=08, sec=43}\n";
+	rawLua += "        v[\"47 map\"][\"44 array\"]={\"string\",123.456,-8}\n";
+
+	Variant vTest;
+	TS_ASSERT(ReadLuaString(rawLua, "v", vTest));
+
+	TS_ASSERT(v == vTest);
+	TS_ASSERT(!(v != vTest));
+
+	string vBin;
+	TS_ASSERT(v.SerializeToBin(vBin));
+
+	string vTestBin;
+	TS_ASSERT(vTest.SerializeToBin(vTestBin));
+
+	TS_ASSERT(vBin == vTestBin);
+	TS_ASSERT(md5(vBin, true) == md5(vTestBin, true));
+}

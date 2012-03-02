@@ -95,7 +95,7 @@ void FileLogLocation::Log(int32_t level, string fileName, uint32_t lineNumber,
 	_fileStream->WriteString(logEntry);
 	_fileStream->Flush();
 	if (_fileLength > 0) {
-		_currentLength += logEntry.length();
+		_currentLength += (uint32_t)logEntry.length();
 		if (_fileLength < _currentLength)
 			OpenFile();
 	}

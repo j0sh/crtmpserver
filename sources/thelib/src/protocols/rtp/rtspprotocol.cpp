@@ -694,13 +694,17 @@ bool RTSPProtocol::ParseFirstLine(string &line) {
 }
 
 bool RTSPProtocol::HandleRTSPMessage(IOBuffer &buffer) {
+	if(_pProtocolHandler==NULL){
+		FATAL("RTSP protocol decoupled from application");
+		return false;
+	}
 	//1. Get the content
 	if (_contentLength > 0) {
 		if (_contentLength > 1024 * 1024) {
 			FATAL("Bogus content length: %u", _contentLength);
 			return false;
 		}
-		uint32_t chunkLength = _contentLength - _inboundContent.size();
+		uint32_t chunkLength = _contentLength - (uint32_t)_inboundContent.size();
 		chunkLength = GETAVAILABLEBYTESCOUNT(buffer) < chunkLength ?
 				GETAVAILABLEBYTESCOUNT(buffer) : chunkLength;
 		_inboundContent += string((char *) GETIBPOINTER(buffer), chunkLength);

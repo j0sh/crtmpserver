@@ -165,7 +165,7 @@ bool InboundConnectivity::AddTrack(Variant& track, bool isAudio) {
 		_pProtocols[rtcpIdx] = *ppRTCP;
 		EHTONLP(pRR + 8, (*ppRTCP)->GetSSRC()); //SSRC of packet sender
 		EHTONLP(pRR + 40, (*ppRTCP)->GetSSRC()); //SSRC of packet sender
-		pRR[1] = rtcpIdx;
+		pRR[1] = (uint8_t)rtcpIdx;
 	} else {
 		if (!CreateCarriers(*ppRTP, *ppRTCP)) {
 			FATAL("Unable to create carriers");
@@ -380,9 +380,6 @@ bool InboundConnectivity::SendRR(bool isAudio) {
 		}
 		return true;
 	}
-
-	//3. Done
-	return true;
 }
 
 void InboundConnectivity::ReportSR(uint64_t ntpMicroseconds,

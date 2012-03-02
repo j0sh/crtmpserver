@@ -116,7 +116,7 @@ public:
 	bool ReadExpGolomb(uint64_t &value) {
 		value = 1;
 		uint32_t zeroBitsCount = 0;
-		while (true) {
+		for(;;) {
 			if (AvailableBits() == 0) {
 				return false;
 			}

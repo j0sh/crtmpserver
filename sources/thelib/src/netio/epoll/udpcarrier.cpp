@@ -139,7 +139,7 @@ UDPCarrier* UDPCarrier::Create(string bindIp, uint16_t bindPort,
 	}
 
 	//2. fd options
-	if (!setFdOptions(sock)) {
+	if (!setFdOptions(sock, true)) {
 		FATAL("Unable to set fd options");
 		CLOSE_SOCKET(sock);
 		return NULL;

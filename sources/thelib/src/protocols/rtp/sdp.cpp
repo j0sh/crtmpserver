@@ -75,8 +75,8 @@ bool SDP::ParseSDP(SDP &sdp, string &raw) {
 	media.Reset();
 	media.IsArray(false);
 	if (!ParseSection(media, lines,
-			trackIndexes[trackIndexes.size() - 1],
-			trackIndexes.size() - trackIndexes[trackIndexes.size() - 1])) {
+			trackIndexes[(uint32_t) trackIndexes.size() - 1],
+			(uint32_t) trackIndexes.size() - trackIndexes[(uint32_t) trackIndexes.size() - 1])) {
 		FATAL("Unable to parse header");
 		return false;
 	}
@@ -216,15 +216,15 @@ bool SDP::ParseTransportLine(string raw, Variant &result) {
 		uint16_t data = 0;
 		uint16_t rtcp = 0;
 		if (parts.size() == 2) {
-			data = atoi(STR(parts[0]));
-			rtcp = atoi(STR(parts[1]));
+			data = (uint16_t) atoi(STR(parts[0]));
+			rtcp = (uint16_t) atoi(STR(parts[1]));
 			if (((data % 2) != 0) || ((data + 1) != rtcp)) {
 				FATAL("Invalid transport line: %s", STR(raw));
 				return false;
 			}
 			all = format("%"PRIu16"-%"PRIu16, data, rtcp);
 		} else {
-			data = atoi(STR(parts[0]));
+			data = (uint16_t) atoi(STR(parts[0]));
 			all = format("%"PRIu16, data);
 			rtcp = 0;
 		}
@@ -530,13 +530,13 @@ bool SDP::ParseSDPLineO(Variant &result, string line) {
 	result["addressType"] = parts[4];
 	result["address"] = parts[5];
 
-	if ((string) result["networkType"] != "IN") {
+	if (result["networkType"] != "IN") {
 		FATAL("Unsupported network type: %s", STR(result["networkType"]));
 		return false;
 	}
 
-	if ((string) result["addressType"] != "IP4") {
-		if ((string) result["addressType"] != "IPV4") {
+	if (result["addressType"] != "IP4") {
+		if (result["addressType"] != "IPV4") {
 			FATAL("Unsupported address type: %s", STR(result["addressType"]));
 			return false;
 		} else {
@@ -710,18 +710,18 @@ Variant SDP::ParseAudioTrack(Variant &track) {
 		FATAL("Invalid fmtp line:\n%s", STR(fmtp.ToString()));
 		return Variant();
 	}
-	if ((string) fmtp.GetValue("sizelength", false) != "13") {
+	if (fmtp.GetValue("sizelength", false) != "13") {
 		FATAL("Invalid fmtp line:\n%s", STR(fmtp.ToString()));
 		return Variant();
 	}
 	if (fmtp.HasKey("IndexLength", false)) {
-		if ((string) fmtp.GetValue("IndexLength", false) != "3") {
+		if (fmtp.GetValue("IndexLength", false) != "3") {
 			FATAL("Invalid fmtp line:\n%s", STR(fmtp.ToString()));
 			return Variant();
 		}
 	}
 	if (fmtp.HasKey("IndexDeltaLength", false)) {
-		if ((string) fmtp.GetValue("IndexDeltaLength", false) != "3") {
+		if (fmtp.GetValue("IndexDeltaLength", false) != "3") {
 			FATAL("Invalid fmtp line:\n%s", STR(fmtp.ToString()));
 			return Variant();
 		}

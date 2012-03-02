@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -31,7 +31,7 @@ private:
 	RC4_KEY*_pKeyOut;
 	uint8_t *_pOutputBuffer;
 	uint32_t _currentFPVersion;
-	uint8_t _validationScheme;
+	uint8_t _handshakeScheme;
 public:
 	InboundRTMPProtocol();
 	virtual ~InboundRTMPProtocol();
@@ -40,7 +40,9 @@ protected:
 private:
 	bool ValidateClient(IOBuffer &inputBuffer);
 	bool ValidateClientScheme(IOBuffer &inputBuffer, uint8_t scheme);
-	bool PerformHandshake(IOBuffer &inputBuffer, bool encrypted);
+	bool PerformHandshake(IOBuffer &buffer, bool encrypted);
+	bool PerformSimpleHandshake(IOBuffer &buffer);
+	bool PerformComplexHandshake(IOBuffer &buffer, bool encrypted);
 };
 
 #endif	/* _INBOUNDRTMPPROTOCOL_H */

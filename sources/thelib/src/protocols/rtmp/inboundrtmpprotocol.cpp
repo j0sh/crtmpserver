@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -28,7 +28,7 @@ InboundRTMPProtocol::InboundRTMPProtocol()
 	_pKeyOut = NULL;
 	_pOutputBuffer = NULL;
 	_currentFPVersion = 0;
-	_validationScheme = 0;
+	_handshakeScheme = 0;
 }
 
 InboundRTMPProtocol::~InboundRTMPProtocol() {
@@ -121,14 +121,14 @@ bool InboundRTMPProtocol::PerformHandshake(IOBuffer &buffer) {
 bool InboundRTMPProtocol::ValidateClient(IOBuffer &inputBuffer) {
 	if (_currentFPVersion == 0) {
 		WARN("This version of player doesn't support validation");
-		return true;
+		return false;
 	}
 	if (ValidateClientScheme(inputBuffer, 0)) {
-		_validationScheme = 0;
+		_handshakeScheme = 0;
 		return true;
 	}
 	if (ValidateClientScheme(inputBuffer, 1)) {
-		_validationScheme = 1;
+		_handshakeScheme = 1;
 		return true;
 	}
 	FATAL("Unable to validate client");
@@ -163,17 +163,59 @@ bool InboundRTMPProtocol::ValidateClientScheme(IOBuffer &inputBuffer, uint8_t sc
 }
 
 bool InboundRTMPProtocol::PerformHandshake(IOBuffer &buffer, bool encrypted) {
-	if (!ValidateClient(buffer)) {
+	if (ValidateClient(buffer)) {
+		return PerformComplexHandshake(buffer, encrypted);
+	} else {
 		if (encrypted || _pProtocolHandler->ValidateHandshake()) {
 			FATAL("Unable to validate client");
 			return false;
 		} else {
-			WARN("Client not validated");
-			_validationScheme = 0;
+			return PerformSimpleHandshake(buffer);
 		}
 	}
+}
 
+bool InboundRTMPProtocol::PerformSimpleHandshake(IOBuffer &buffer) {
+	if (_pOutputBuffer == NULL) {
+		_pOutputBuffer = new uint8_t[1536];
+	} else {
+		delete[] _pOutputBuffer;
+		_pOutputBuffer = new uint8_t[1536];
+	}
 
+	for (uint32_t i = 0; i < 1536; i++) {
+		_pOutputBuffer[i] = rand() % 256;
+	}
+	for (uint32_t i = 0; i < 10; i++) {
+		uint32_t index = (rand() + 8) % (1536 - HTTP_HEADERS_SERVER_US_LEN);
+		memcpy(_pOutputBuffer + index, HTTP_HEADERS_SERVER_US, HTTP_HEADERS_SERVER_US_LEN);
+	}
+
+	_outputBuffer.ReadFromByte(3);
+	_outputBuffer.ReadFromBuffer(_pOutputBuffer, 1536);
+	_outputBuffer.ReadFromBuffer(GETIBPOINTER(buffer), 1536);
+
+	//final cleanup
+	delete[] _pOutputBuffer;
+	_pOutputBuffer = NULL;
+	if (!buffer.Ignore(1536)) {
+		FATAL("Unable to ignore input buffer");
+		return false;
+	}
+
+	//signal outbound data
+	if (!EnqueueForOutbound()) {
+		FATAL("Unable to signal outbound data");
+		return false;
+	}
+
+	//move to the next stage in the handshake
+	_rtmpState = RTMP_STATE_SERVER_RESPONSE_SENT;
+
+	return true;
+}
+
+bool InboundRTMPProtocol::PerformComplexHandshake(IOBuffer &buffer, bool encrypted) {
 	//get the buffers
 	uint8_t *pInputBuffer = GETIBPOINTER(buffer);
 	if (_pOutputBuffer == NULL) {
@@ -200,8 +242,8 @@ bool InboundRTMPProtocol::PerformHandshake(IOBuffer &buffer, bool encrypted) {
 
 	//**** FIRST 1536 bytes from server response ****//
 	//compute DH key position
-	uint32_t serverDHOffset = GetDHOffset(_pOutputBuffer, _validationScheme);
-	uint32_t clientDHOffset = GetDHOffset(pInputBuffer, _validationScheme);
+	uint32_t serverDHOffset = GetDHOffset(_pOutputBuffer, _handshakeScheme);
+	uint32_t clientDHOffset = GetDHOffset(pInputBuffer, _handshakeScheme);
 
 	//generate DH key
 	DHWrapper dhWrapper(1024);
@@ -244,7 +286,7 @@ bool InboundRTMPProtocol::PerformHandshake(IOBuffer &buffer, bool encrypted) {
 	}
 
 	//generate the digest
-	uint32_t serverDigestOffset = GetDigestOffset(_pOutputBuffer, _validationScheme);
+	uint32_t serverDigestOffset = GetDigestOffset(_pOutputBuffer, _handshakeScheme);
 
 	uint8_t *pTempBuffer = new uint8_t[1536 - 32];
 	memcpy(pTempBuffer, _pOutputBuffer, serverDigestOffset);
@@ -264,7 +306,7 @@ bool InboundRTMPProtocol::PerformHandshake(IOBuffer &buffer, bool encrypted) {
 
 	//**** SECOND 1536 bytes from server response ****//
 	//Compute the chalange index from the initial client request
-	uint32_t keyChallengeIndex = GetDigestOffset(pInputBuffer, _validationScheme);
+	uint32_t keyChallengeIndex = GetDigestOffset(pInputBuffer, _handshakeScheme);
 
 	//compute the key
 	pTempHash = new uint8_t[512];

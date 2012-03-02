@@ -44,7 +44,7 @@ public:
 	static map<uint32_t, IOHandler *> & GetActiveHandlers();
 	static map<uint32_t, IOHandler *> & GetDeadHandlers();
 
-	static FdStats &GetStats();
+	static FdStats &GetStats(bool updateSpeeds);
 	/*!
 		@brief Initializes the handler manager.
 	 */

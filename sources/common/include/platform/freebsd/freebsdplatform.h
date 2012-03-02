@@ -74,6 +74,7 @@ using namespace std;
 #define SET_CONSOLE_TEXT_COLOR(color) fprintf(stdout,"%s",color)
 #define READ_FD read
 #define WRITE_FD write
+#define SOCKET int32_t
 #define LASTSOCKETERROR					errno
 #define SOCKERROR_CONNECT_IN_PROGRESS	EINPROGRESS
 #define SOCKERROR_SEND_IN_PROGRESS		EAGAIN
@@ -150,8 +151,9 @@ typedef struct _select_event {
 #define IOVEC_IOV_BASE_TYPE uint8_t
 #define SENDMSG(s,msg,flags,sent) sendmsg(s,msg,flags)
 
-#define ftell64 ftello64
-#define fseek64 fseeko64
+#define FILE_OFFSET_BITS 64
+#define ftell64 ftello
+#define fseek64 fseeko
 
 string format(string fmt, ...);
 string vFormat(string fmt, va_list args);
@@ -161,15 +163,15 @@ string lowerCase(string value);
 string upperCase(string value);
 string changeCase(string &value, bool lowerCase);
 string tagToString(uint64_t tag);
-bool setFdNonBlock(int32_t fd);
-bool setFdNoSIGPIPE(int32_t fd);
-bool setFdKeepAlive(int32_t fd);
-bool setFdNoNagle(int32_t fd);
-bool setFdReuseAddress(int32_t fd);
-bool setFdTTL(int32_t fd, uint8_t ttl);
-bool setFdMulticastTTL(int32_t fd, uint8_t ttl);
-bool setFdTOS(int32_t fd, uint8_t tos);
-bool setFdOptions(int32_t fd);
+bool setFdNonBlock(SOCKET fd);
+bool setFdNoSIGPIPE(SOCKET fd);
+bool setFdKeepAlive(SOCKET fd, bool isUdp);
+bool setFdNoNagle(SOCKET fd, bool isUdp);
+bool setFdReuseAddress(SOCKET fd);
+bool setFdTTL(SOCKET fd, uint8_t ttl);
+bool setFdMulticastTTL(SOCKET fd, uint8_t ttl);
+bool setFdTOS(SOCKET fd, uint8_t tos);
+bool setFdOptions(SOCKET fd, bool isUdp);
 bool deleteFile(string path);
 bool deleteFolder(string path, bool force);
 bool createFolder(string path, bool recursive);

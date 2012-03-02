@@ -81,7 +81,7 @@ string tagToString(uint64_t tag) {
 }
 
 uint64_t getTagMask(uint64_t tag) {
-	uint64_t result = 0xffffffffffffffffLL;
+	uint64_t result = 0xffffffffffffffffULL;
 	for (int8_t i = 56; i >= 0; i -= 8) {
 		if (((tag >> i)&0xff) == 0)
 			break;
@@ -153,7 +153,7 @@ void split(string str, string separator, vector<string> &result) {
 	result.clear();
 	string::size_type position = str.find(separator);
 	string::size_type lastPosition = 0;
-	uint32_t separatorLength = separator.length();
+	uint32_t separatorLength = (uint32_t) separator.length();
 
 	while (position != str.npos) {
 		ADD_VECTOR_END(result, str.substr(lastPosition, position - lastPosition));
@@ -191,10 +191,10 @@ map<string, string> mapping(string str, string separator1, string separator2, bo
 }
 
 string changeCase(string &value, bool lowerCase) {
-	int32_t len = value.length();
+	//int32_t len = (int32_t)value.length();
 	string newvalue(value);
 	for (string::size_type i = 0, l = newvalue.length(); i < l; ++i)
-		newvalue[i] = lowerCase ? tolower(newvalue[i]) : toupper(newvalue[i]);
+		newvalue[i] = (char) (lowerCase ? tolower(newvalue[i]) : toupper(newvalue[i]));
 	return newvalue;
 }
 
@@ -250,7 +250,7 @@ int inet_aton(const char *pStr, struct in_addr *pRes) {
 	return true;
 }
 
-bool setFdNonBlock(int32_t fd) {
+bool setFdNonBlock(SOCKET fd) {
 	u_long iMode = 1; // 0 for blocking, anything else for nonblocking
 
 	if (ioctlsocket(fd, FIONBIO, &iMode) < 0) {
@@ -261,27 +261,36 @@ bool setFdNonBlock(int32_t fd) {
 	return true;
 }
 
-bool setFdNoSIGPIPE(int32_t fd) {
+bool setFdNoSIGPIPE(SOCKET fd) {
 	return true;
 }
 
-bool setFdKeepAlive(int32_t fd) {
+bool setFdKeepAlive(SOCKET fd, bool isUdp) {
+	if (isUdp)
+		return true;
 	int value = 1;
 	if (setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, (char *) &value, sizeof (int)) != 0) {
-		WARN("setsockopt failed with error #%u. This could be an UDP socket which on windows doesn't support SO_KEEPALIVE", WSAGetLastError());
-	}
-	return true;
-}
-
-bool setFdNoNagle(int32_t fd) {
-	BOOL value = TRUE;
-	if (setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, (char *) &value, sizeof (BOOL)) == SOCKET_ERROR) {
+		DWORD err = WSAGetLastError();
+		FATAL("setsockopt failed with error %"PRIu32, err);
 		return false;
 	}
 	return true;
 }
 
-bool setFdReuseAddress(int32_t fd) {
+bool setFdNoNagle(SOCKET fd, bool isUdp) {
+	if (isUdp)
+		return true;
+	BOOL value = TRUE;
+	if (setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, (char *) &value, sizeof (BOOL)) == SOCKET_ERROR) {
+		DWORD err = WSAGetLastError();
+		FATAL("Unable to disable Nagle algorithm. Error was: %"PRIu32, err);
+		return false;
+	}
+
+	return true;
+}
+
+bool setFdReuseAddress(SOCKET fd) {
 	BOOL value = TRUE;
 	if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (char *) &value, sizeof (BOOL)) == SOCKET_ERROR) {
 		FATAL("Error #%u", WSAGetLastError());
@@ -290,22 +299,22 @@ bool setFdReuseAddress(int32_t fd) {
 	return true;
 }
 
-bool setFdTTL(int32_t fd, uint8_t ttl) {
+bool setFdTTL(SOCKET fd, uint8_t ttl) {
 	NYI;
 	return true;
 }
 
-bool setFdMulticastTTL(int32_t fd, uint8_t ttl) {
+bool setFdMulticastTTL(SOCKET fd, uint8_t ttl) {
 	NYI
 	return true;
 }
 
-bool setFdTOS(int32_t fd, uint8_t tos) {
+bool setFdTOS(SOCKET fd, uint8_t tos) {
 	NYI
 	return true;
 }
 
-bool setFdOptions(int32_t fd) {
+bool setFdOptions(SOCKET fd, bool isUdp) {
 	if (!setFdNonBlock(fd)) {
 		FATAL("Unable to set non block");
 		return false;
@@ -316,12 +325,12 @@ bool setFdOptions(int32_t fd) {
 		return false;
 	}
 
-	if (!setFdKeepAlive(fd)) {
+	if (!setFdKeepAlive(fd, isUdp)) {
 		FATAL("Unable to set keep alive");
 		return false;
 	}
 
-	if (!setFdNoNagle(fd)) {
+	if (!setFdNoNagle(fd, isUdp)) {
 		WARN("Unable to disable Nagle algorithm");
 	}
 
@@ -472,12 +481,11 @@ bool deleteFile(string path) {
 }
 
 bool deleteFolder(string path, bool force) {
-	char fileFound[256];
-	memset(fileFound, 0x00, sizeof (fileFound));
+	string fileFound;
 	WIN32_FIND_DATA info;
 	HANDLE hp;
-	sprintf(fileFound, "%s\\*.*", path.c_str());
-	hp = FindFirstFile(fileFound, &info);
+	fileFound = format("%s\\*.*", STR(path));
+	hp = FindFirstFile(STR(fileFound), &info);
 	do {
 		if (!((strcmp(info.cFileName, ".") == 0) ||
 				(strcmp(info.cFileName, "..") == 0))) {
@@ -486,17 +494,25 @@ bool deleteFolder(string path, bool force) {
 				string subFolder = path.c_str();
 				subFolder.append("\\");
 				subFolder.append(info.cFileName);
-				deleteFolder((char*) subFolder.c_str(), true);
-				RemoveDirectory(subFolder.c_str());
+				if (!deleteFolder(subFolder, true)) {
+					FATAL("Unable to delete subfolder %s", STR(subFolder));
+					return false;
+				}
+				if (!RemoveDirectory(subFolder.c_str())) {
+					FATAL("Unable to delete subfolder %s", STR(subFolder));
+					return false;
+				}
 			} else {
-				sprintf(fileFound, "%s\\%s", path.c_str(), info.cFileName);
-				BOOL retVal = DeleteFile(fileFound);
+				fileFound = format("%s\\%s", STR(path), info.cFileName);
+				if (!DeleteFile(STR(fileFound))) {
+					FATAL("Unable to delete file %s", STR(fileFound));
+					return false;
+				}
 			}
 		}
-
 	} while (FindNextFile(hp, &info));
 	FindClose(hp);
-	return false;
+	return true;
 }
 
 bool createFolder(string path, bool recursive) {

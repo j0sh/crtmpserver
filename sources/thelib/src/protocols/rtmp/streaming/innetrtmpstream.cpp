@@ -68,7 +68,7 @@ bool InNetRTMPStream::IsCompatibleWithType(uint64_t type) {
 			|| TAG_KIND_OF(type, ST_OUT_FILE_RTMP)
 			|| TAG_KIND_OF(type, ST_OUT_NET_RTP)
 			|| TAG_KIND_OF(type, ST_OUT_NET_TS)
-			|| TAG_KIND_OF(type, ST_OUT_FILE_HLS);
+			;
 
 }
 

@@ -67,7 +67,7 @@ void TimersManager::AddTimer(TimerEvent& timerEvent) {
 	for (uint32_t i = 0; i < _slotsCount; i++) {
 		if (min > _pSlots[i].timers.size()) {
 			startIndex = i;
-			min = _pSlots[i].timers.size();
+			min = (uint32_t)_pSlots[i].timers.size();
 		}
 	}
 	while (!MAP_HAS1(_pSlots[startIndex % _slotsCount].timers, timerEvent.id)) {

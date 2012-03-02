@@ -55,17 +55,17 @@ OutboundConnectivity::OutboundConnectivity(bool forceTcp, RTSPProtocol *pRTSPPro
 	_pRTCPSOC = ((uint8_t *) _rtcpMessage.MSGHDR_MSG_IOV[0].IOVEC_IOV_BASE) + 24;
 
 	_hasVideo = false;
-	_videoDataFd = -1;
+	_videoDataFd = (SOCKET)-1;
 	_videoDataPort = 0;
-	_videoRTCPFd = -1;
+	_videoRTCPFd = (SOCKET)-1;
 	_videoRTCPPort = 0;
 	_pVideoNATData = NULL;
 	_pVideoNATRTCP = NULL;
 
 	_hasAudio = false;
-	_audioDataFd = -1;
+	_audioDataFd = (SOCKET)-1;
 	_audioDataPort = 0;
-	_audioRTCPFd = -1;
+	_audioRTCPFd =(SOCKET) -1;
 	_audioRTCPPort = 0;
 	_pAudioNATData = NULL;
 	_pAudioNATRTCP = NULL;
@@ -261,8 +261,8 @@ bool OutboundConnectivity::FeedAudioData(MSGHDR &message,
 	return true;
 }
 
-bool OutboundConnectivity::InitializePorts(int32_t &dataFd, uint16_t &dataPort,
-		NATTraversalProtocol **ppNATData, int32_t &RTCPFd, uint16_t &RTCPPort,
+bool OutboundConnectivity::InitializePorts(SOCKET &dataFd, uint16_t &dataPort,
+		NATTraversalProtocol **ppNATData, SOCKET &RTCPFd, uint16_t &RTCPPort,
 		NATTraversalProtocol **ppNATRTCP) {
 	UDPCarrier *pCarrier1 = NULL;
 	UDPCarrier *pCarrier2 = NULL;
@@ -355,7 +355,7 @@ bool OutboundConnectivity::FeedData(MSGHDR &message, double absoluteTimestamp,
 	uint32_t ssrc = isAudio ? _pOutStream->AudioSSRC() : _pOutStream->VideoSSRC();
 	uint16_t messageLength = 0;
 	for (uint32_t i = 0; i < (uint32_t) message.MSGHDR_MSG_IOVLEN; i++) {
-		messageLength += message.MSGHDR_MSG_IOV[i].IOVEC_IOV_LEN;
+		messageLength += (uint16_t)message.MSGHDR_MSG_IOV[i].IOVEC_IOV_LEN;
 	}
 
 	bool &hasTrack = isAudio ? _rtpClient.hasAudio : _rtpClient.hasVideo;
@@ -398,7 +398,7 @@ bool OutboundConnectivity::FeedData(MSGHDR &message, double absoluteTimestamp,
 		//					_rtcpMessage.MSGHDR_MSG_IOV[0].IOVEC_IOV_LEN)));
 
 		if (_rtpClient.isUdp) {
-			int32_t rtcpFd = isAudio ? _audioRTCPFd : _videoRTCPFd;
+			SOCKET rtcpFd = isAudio ? _audioRTCPFd : _videoRTCPFd;
 			sockaddr_in &rtcpAddress = isAudio ? _rtpClient.audioRtcpAddress : _rtpClient.videoRtcpAddress;
 			_rtcpMessage.MSGHDR_MSG_NAME = (sockaddr *) & rtcpAddress;
 			_amountSent = SENDMSG(rtcpFd, &_rtcpMessage, 0, &_dummyValue);
@@ -410,7 +410,7 @@ bool OutboundConnectivity::FeedData(MSGHDR &message, double absoluteTimestamp,
 		} else {
 			if (_pRTSPProtocol != NULL) {
 				if (!_pRTSPProtocol->SendRaw(&_rtcpMessage,
-						_rtcpMessage.MSGHDR_MSG_IOV[0].IOVEC_IOV_LEN, &_rtpClient, isAudio, false)) {
+						(uint16_t)(_rtcpMessage.MSGHDR_MSG_IOV[0].IOVEC_IOV_LEN), &_rtpClient, isAudio, false)) {
 					FATAL("Unable to send raw rtcp audio data");
 					return false;
 				}
@@ -420,7 +420,7 @@ bool OutboundConnectivity::FeedData(MSGHDR &message, double absoluteTimestamp,
 
 
 	if (_rtpClient.isUdp) {
-		int32_t dataFd = isAudio ? _audioDataFd : _videoDataFd;
+		SOCKET dataFd = isAudio ? _audioDataFd : _videoDataFd;
 		sockaddr_in &dataAddress = isAudio ? _rtpClient.audioDataAddress : _rtpClient.videoDataAddress;
 		message.MSGHDR_MSG_NAME = (sockaddr *) & dataAddress;
 		_amountSent = SENDMSG(dataFd, &message, 0, &_dummyValue);

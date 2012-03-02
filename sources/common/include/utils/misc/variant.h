@@ -170,10 +170,14 @@ public:
 	Variant & operator[](Variant &key);
 	Variant & GetValue(string key, bool caseSensitive);
 
-	bool operator==(Variant variant);
-	bool operator!=(Variant variant);
-	bool operator==(VariantType type);
-	bool operator!=(VariantType type);
+	bool operator==(const Variant &value) const;
+	bool operator!=(const Variant &value) const;
+	bool operator==(const char *pValue) const;
+	bool operator!=(const char *pValue) const;
+	bool operator==(const string &value) const;
+	bool operator!=(const string &value) const;
+	bool operator==(const VariantType value) const;
+	bool operator!=(const VariantType value) const;
 
 	string GetTypeName();
 	void SetTypeName(string name);

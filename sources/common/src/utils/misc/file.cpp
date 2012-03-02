@@ -296,7 +296,11 @@ bool File::ReadBuffer(uint8_t *pBuffer, uint64_t count) {
 		FATAL("File not opened");
 		return false;
 	}
-	if (fread(pBuffer, count, 1, _pFile) != 1) {
+	if(count>0xffffffffLL){
+		FATAL("Can't read more than 4GB of data at once");
+		return false;
+	}
+	if (fread(pBuffer, (uint32_t)count, 1, _pFile) != 1) {
 		int err = errno;
 		FATAL("Unable to read %"PRIu64" bytes from the file. Cursor: %"PRIu64" (0x%"PRIx64"); %d (%s)",
 				count, Cursor(), Cursor(), err, strerror(err));
@@ -464,7 +468,11 @@ bool File::WriteBuffer(const uint8_t *pBuffer, uint64_t count) {
 		FATAL("File not opened");
 		return false;
 	}
-	if (fwrite(pBuffer, count, 1, _pFile) != 1) {
+	if(count>0xffffffffLL){
+		FATAL("Can't write more than 4GB of data at once");
+		return false;
+	}
+	if (fwrite(pBuffer, (uint32_t)count, 1, _pFile) != 1) {
 		FATAL("Unable to write %"PRIu64" bytes to file", count);
 		return false;
 	}

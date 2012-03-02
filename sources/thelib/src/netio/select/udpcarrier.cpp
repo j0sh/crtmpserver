@@ -136,7 +136,7 @@ UDPCarrier* UDPCarrier::Create(string bindIp, uint16_t bindPort,
 	}
 
 	//2. fd options
-	if (!setFdOptions(sock)) {
+	if (!setFdOptions(sock, true)) {
 		FATAL("Unable to set fd options");
 		CLOSE_SOCKET(sock);
 		return NULL;
@@ -182,7 +182,7 @@ UDPCarrier* UDPCarrier::Create(string bindIp, uint16_t bindPort,
 			}
 		}
 		if (bind(sock, (sockaddr *) & bindAddress, sizeof (sockaddr)) != 0) {
-			int error = errno;
+			int error = LASTSOCKETERROR;
 			FATAL("Unable to bind on address: udp://%s:%"PRIu16"; Error was: %s (%"PRId32")",
 					STR(bindIp), bindPort, strerror(error), error);
 			CLOSE_SOCKET(sock);

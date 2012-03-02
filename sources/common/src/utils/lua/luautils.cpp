@@ -324,7 +324,6 @@ bool PushVariant(lua_State *pLuaState,
 			break;
 		}
 	}
-	return true;
 }
 
 bool EvalLuaExpression(lua_State *pLuaState, string expression) {

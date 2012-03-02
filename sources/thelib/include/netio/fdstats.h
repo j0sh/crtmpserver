@@ -103,6 +103,11 @@ private:
 	BaseFdStats _managedNonTcpUdp;
 	BaseFdStats _rawUdp;
 	int64_t _max;
+	double _lastUpdateSpeedsTime;
+	uint64_t _lastInBytes;
+	uint64_t _lastOutBytes;
+	double _inSpeed;
+	double _outSpeed;
 public:
 	FdStats();
 	virtual ~FdStats();
@@ -114,6 +119,8 @@ public:
 #ifdef GLOBALLY_ACCOUNT_BYTES
 	uint64_t InBytes();
 	uint64_t OutBytes();
+	double InSpeed();
+	double OutSpeed();
 #endif /* GLOBALLY_ACCOUNT_BYTES */
 	void ResetMax();
 	void ResetTotal();
@@ -163,6 +170,30 @@ public:
 
 	inline void AddOutBytesRawUdp(uint64_t bytes) {
 		_rawUdp.AddOutBytes(bytes);
+	}
+
+	inline void UpdateSpeeds() {
+		double now;
+		GETCLOCKS(now);
+		uint64_t nowInBytes = InBytes();
+		uint64_t nowOutBytes = OutBytes();
+		if (_lastUpdateSpeedsTime > 0) {
+			double period = now - _lastUpdateSpeedsTime;
+			if (period > 0) {
+				double inBytes = (double)(nowInBytes - _lastInBytes);
+				double outBytes = (double)(nowOutBytes - _lastOutBytes);
+				if (inBytes > 0)
+					_inSpeed = inBytes / (period / (double) CLOCKS_PER_SECOND);
+				if (outBytes > 0)
+					_outSpeed = outBytes / (period / (double) CLOCKS_PER_SECOND);
+			}
+		} else {
+			_inSpeed = 0;
+			_outSpeed = 0;
+		}
+		_lastInBytes = nowInBytes;
+		_lastOutBytes = nowOutBytes;
+		_lastUpdateSpeedsTime = now;
 	}
 #endif /* GLOBALLY_ACCOUNT_BYTES */
 	operator string();

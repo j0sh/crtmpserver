@@ -105,7 +105,7 @@ configuration=
 			description="FLV Playback Sample",
 			name="flvplayback",
 			protocol="dynamiclinklibrary",
-			mediaFolder="/Volumes/android/backup/media/",
+			mediaFolder="/Volumes/Storage/TCIgnored/media",
 			aliases=
 			{
 				"simpleLive",

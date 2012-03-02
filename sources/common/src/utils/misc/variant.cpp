@@ -593,9 +593,9 @@ OPERATOR_DEF(uint64_t);
 OPERATOR_DEF(double);
 
 Variant::operator Timestamp() {
-	if (_type == V_DATE ||
-			_type == V_TIME ||
-			_type == V_TIMESTAMP) {
+	if ((_type == V_DATE)
+			|| (_type == V_TIME)
+			|| (_type == V_TIMESTAMP)) {
 		return *_value.t;
 	} else {
 		ASSERT("Cast to struct tm failed: %s", STR(ToString()));
@@ -664,14 +664,13 @@ Variant::operator string() {
 			return "";
 		}
 	}
-	return "";
 }
 
 Variant& Variant::operator[](const string &key) {
-	if ((_type != V_TYPED_MAP) &&
-			(_type != V_MAP) &&
-			(_type != V_NULL) &&
-			(_type != V_UNDEFINED)) {
+	if ((_type != V_TYPED_MAP)
+			&& (_type != V_MAP)
+			&& (_type != V_NULL)
+			&& (_type != V_UNDEFINED)) {
 		ASSERT("Subscript operator applied on a incorrect Variant type: %s",
 				STR(ToString()));
 	}
@@ -680,10 +679,12 @@ Variant& Variant::operator[](const string &key) {
 		DYNAMIC_ALLOC("_value.m");
 		_value.m = new VariantMap;
 	}
-	if (!MAP_HAS1(_value.m->children, key)) {
-		_value.m->children[key] = Variant();
+	map<string, Variant>::iterator i = _value.m->children.find(key);
+	if (i == _value.m->children.end()) {
+		return (_value.m->children[key] = Variant());
+	} else {
+		return MAP_VAL(i);
 	}
-	return _value.m->children[key];
 }
 
 Variant& Variant::operator[](const char *key) {
@@ -754,32 +755,131 @@ Variant &Variant::GetValue(string key, bool caseSensitive) {
 	}
 }
 
-bool Variant::operator==(Variant variant) {
-	return ToString() == variant.ToString();
+bool Variant::operator==(const Variant &value) const {
+	if (this == &value)
+		return true;
+	if (_type != value._type) {
+		if (((_type == V_NULL) && (value._type == V_UNDEFINED))
+				|| ((_type == V_UNDEFINED) && (value._type == V_NULL)))
+			return true;
+		return false;
+	}
+	switch (_type) {
+		case V_BOOL:
+			return _value.b == value._value.b;
+		case V_INT8:
+			return _value.i8 == value._value.i8;
+		case V_INT16:
+			return _value.i16 == value._value.i16;
+		case V_INT32:
+			return _value.i32 == value._value.i32;
+		case V_INT64:
+			return _value.i64 == value._value.i64;
+		case V_UINT8:
+			return _value.ui8 == value._value.ui8;
+		case V_UINT16:
+			return _value.ui16 == value._value.ui16;
+		case V_UINT32:
+			return _value.ui32 == value._value.ui32;
+		case V_UINT64:
+			return _value.ui64 == value._value.ui64;
+		case V_DOUBLE:
+			return _value.d == value._value.d;
+		case V_TIMESTAMP:
+			return (_value.t->tm_year == value._value.t->tm_year)
+					&& (_value.t->tm_mon == value._value.t->tm_mon)
+					&& (_value.t->tm_mday == value._value.t->tm_mday)
+					&& (_value.t->tm_hour == value._value.t->tm_hour)
+					&& (_value.t->tm_min == value._value.t->tm_min)
+					&& (_value.t->tm_sec == value._value.t->tm_sec)
+					&& (_value.t->tm_isdst == value._value.t->tm_isdst)
+					;
+		case V_DATE:
+			return (_value.t->tm_year == value._value.t->tm_year)
+					&& (_value.t->tm_mon == value._value.t->tm_mon)
+					&& (_value.t->tm_mday == value._value.t->tm_mday)
+					;
+		case V_TIME:
+			return (_value.t->tm_hour == value._value.t->tm_hour)
+					&& (_value.t->tm_min == value._value.t->tm_min)
+					&& (_value.t->tm_sec == value._value.t->tm_sec)
+					&& (_value.t->tm_isdst == value._value.t->tm_isdst)
+					;
+		case V_BYTEARRAY:
+		case V_STRING:
+			return *_value.s == *value._value.s;
+		case V_TYPED_MAP:
+			if (_value.m->typeName != value._value.m->typeName)
+				return false;
+		case V_MAP:
+		{
+			if (_value.m->children.size() != value._value.m->children.size())
+				return false;
+			map<string, Variant>::iterator found;
+
+			FOR_MAP(_value.m->children, string, Variant, i) {
+				found = value._value.m->children.find(MAP_KEY(i));
+				if (found == value._value.m->children.end())
+					return false;
+				if (MAP_VAL(i) != MAP_VAL(found))
+					return false;
+			}
+			return true;
+		}
+		case V_NULL:
+		case V_UNDEFINED:
+			return true;
+		default:
+		{
+			ASSERT("Invalid variant type: %d", _type);
+			return false;
+		}
+	}
 }
 
-bool Variant::operator!=(Variant variant) {
-	return !operator==(variant);
+bool Variant::operator!=(const Variant &value) const {
+	return !(*this == value);
 }
 
-bool Variant::operator==(VariantType type) {
-	if (type == _V_NUMERIC)
-		return _type == V_INT8 ||
-			_type == V_INT8 ||
-			_type == V_INT16 ||
-			_type == V_INT32 ||
-			_type == V_INT64 ||
-			_type == V_UINT8 ||
-			_type == V_UINT16 ||
-			_type == V_UINT32 ||
-			_type == V_UINT64 ||
-			_type == V_DOUBLE;
-	else
-		return _type == type;
+bool Variant::operator==(const char *pValue) const {
+	if (_type == V_STRING)
+		return *_value.s == pValue;
+	return false;
 }
 
-bool Variant::operator!=(VariantType type) {
-	return !operator ==(type);
+bool Variant::operator!=(const char *pValue) const {
+	return !(*this == pValue);
+}
+
+bool Variant::operator==(const string &value) const {
+	if (_type == V_STRING)
+		return *_value.s == value;
+	return false;
+}
+
+bool Variant::operator!=(const string &value) const {
+	return !(*this == value);
+}
+
+bool Variant::operator==(const VariantType value) const {
+	if (value == _V_NUMERIC) {
+		return (_type == V_INT8)
+				|| (_type == V_INT8)
+				|| (_type == V_INT16)
+				|| (_type == V_INT32)
+				|| (_type == V_INT64)
+				|| (_type == V_UINT8)
+				|| (_type == V_UINT16)
+				|| (_type == V_UINT32)
+				|| (_type == V_UINT64)
+				|| (_type == V_DOUBLE);
+	} else {
+		return _type == value;
+	}
+}
+
+bool Variant::operator!=(const VariantType value) const {
+	return !(*this == value);
 }
 
 string Variant::GetTypeName() {
@@ -791,12 +891,14 @@ string Variant::GetTypeName() {
 }
 
 void Variant::SetTypeName(string name) {
-	if ((_type != V_TYPED_MAP) && (_type != V_MAP) &&
-			(_type != V_UNDEFINED) && (_type != V_NULL)) {
+	if ((_type != V_TYPED_MAP)
+			&& (_type != V_MAP)
+			&& (_type != V_UNDEFINED)
+			&& (_type != V_NULL)) {
 		ASSERT("SetMapName failed: %s", STR(ToString()));
 		return;
 	}
-	if (_type == V_UNDEFINED || _type == V_NULL) {
+	if ((_type == V_UNDEFINED) || (_type == V_NULL)) {
 		DYNAMIC_ALLOC("_value.m");
 		_value.m = new VariantMap;
 	}
@@ -805,7 +907,7 @@ void Variant::SetTypeName(string name) {
 }
 
 bool Variant::HasKey(const string &key, bool caseSensitive) {
-	if (_type != V_TYPED_MAP && _type != V_MAP) {
+	if ((_type != V_TYPED_MAP) && (_type != V_MAP)) {
 		ASSERT("HasKey failed: %s", STR(ToString()));
 		return false;
 	}
@@ -822,7 +924,7 @@ bool Variant::HasKey(const string &key, bool caseSensitive) {
 }
 
 bool Variant::HasKeyChain(VariantType end, bool caseSensitive, uint32_t depth, ...) {
-	if (_type != V_TYPED_MAP && _type != V_MAP) {
+	if ((_type != V_TYPED_MAP) && (_type != V_MAP)) {
 		return false;
 	}
 	va_list arguments;
@@ -846,11 +948,12 @@ bool Variant::HasKeyChain(VariantType end, bool caseSensitive, uint32_t depth, .
 		}
 		pCurrent = pValue;
 	}
+	va_end(arguments);
 	return false;
 }
 
 void Variant::RemoveKey(const string &key) {
-	if (_type != V_TYPED_MAP && _type != V_MAP) {
+	if ((_type != V_TYPED_MAP) && (_type != V_MAP)) {
 		ASSERT("RemoveKey failed: %s", STR(ToString()));
 		return;
 	}
@@ -858,7 +961,7 @@ void Variant::RemoveKey(const string &key) {
 }
 
 void Variant::RemoveAt(const uint32_t index) {
-	if (_type != V_TYPED_MAP && _type != V_MAP) {
+	if ((_type != V_TYPED_MAP) && (_type != V_MAP)) {
 		ASSERT("RemoveKey failed: %s", STR(ToString()));
 		return;
 	}
@@ -866,7 +969,7 @@ void Variant::RemoveAt(const uint32_t index) {
 }
 
 void Variant::RemoveAllKeys() {
-	if (_type != V_TYPED_MAP && _type != V_MAP) {
+	if ((_type != V_TYPED_MAP) && (_type != V_MAP)) {
 		ASSERT("RemoveAllKeys failed: %s", STR(ToString()));
 		return;
 	}
@@ -874,9 +977,10 @@ void Variant::RemoveAllKeys() {
 }
 
 uint32_t Variant::MapSize() {
-	if (_type == V_NULL || _type == V_UNDEFINED)
+	if ((_type == V_NULL) || (_type == V_UNDEFINED)) {
 		return 0;
-	if (_type != V_TYPED_MAP && _type != V_MAP) {
+	}
+	if ((_type != V_TYPED_MAP) && (_type != V_MAP)) {
 		ASSERT("MapSize failed: %s", STR(ToString()));
 		return 0;
 	}
@@ -884,9 +988,10 @@ uint32_t Variant::MapSize() {
 }
 
 uint32_t Variant::MapDenseSize() {
-	if (_type == V_NULL || _type == V_UNDEFINED)
+	if ((_type == V_NULL) || (_type == V_UNDEFINED)) {
 		return 0;
-	if (_type != V_TYPED_MAP && _type != V_MAP) {
+	}
+	if ((_type != V_TYPED_MAP) && (_type != V_MAP)) {
 		ASSERT("MapSize failed: %s", STR(ToString()));
 		return 0;
 	}
@@ -901,14 +1006,15 @@ uint32_t Variant::MapDenseSize() {
 }
 
 void Variant::PushToArray(Variant value) {
-	if (_type != V_NULL && _type != V_MAP)
+	if ((_type != V_NULL) && (_type != V_MAP)) {
 		ASSERT("This is not an array and it can't be converted to array");
+	}
 	IsArray(true);
 	(*this)[(uint32_t)this->MapDenseSize()] = value;
 }
 
 map<string, Variant>::iterator Variant::begin() {
-	if (_type != V_TYPED_MAP && _type != V_MAP) {
+	if ((_type != V_TYPED_MAP) && (_type != V_MAP)) {
 		ASSERT("This is not a map-like variant: %s", STR(ToString()));
 		map<string, Variant> temp;
 		return temp.begin();
@@ -917,7 +1023,7 @@ map<string, Variant>::iterator Variant::begin() {
 }
 
 map<string, Variant>::iterator Variant::end() {
-	if (_type != V_TYPED_MAP && _type != V_MAP) {
+	if ((_type != V_TYPED_MAP) && (_type != V_MAP)) {
 		ASSERT("This is not a map-like variant: %s", STR(ToString()));
 		map<string, Variant> temp;
 		return temp.end();
@@ -1000,15 +1106,15 @@ bool Variant::IsTimestamp(VariantType &type) {
 }
 
 bool Variant::IsNumeric() {
-	return _type == V_DOUBLE ||
-			_type == V_INT16 ||
-			_type == V_INT32 ||
-			_type == V_INT64 ||
-			_type == V_INT8 ||
-			_type == V_UINT16 ||
-			_type == V_UINT32 ||
-			_type == V_UINT64 ||
-			_type == V_UINT8;
+	return (_type == V_DOUBLE)
+			|| (_type == V_INT16)
+			|| (_type == V_INT32)
+			|| (_type == V_INT64)
+			|| (_type == V_INT8)
+			|| (_type == V_UINT16)
+			|| (_type == V_UINT32)
+			|| (_type == V_UINT64)
+			|| (_type == V_UINT8);
 }
 
 bool Variant::IsArray() {
@@ -1050,7 +1156,7 @@ bool Variant::ConvertToTimestamp() {
 
 	Timestamp temp = Timestamp_init;
 
-	if (detectedType == V_DATE || detectedType == V_TIMESTAMP) {
+	if ((detectedType == V_DATE) || (detectedType == V_TIMESTAMP)) {
 		temp.tm_year = (int) ((int32_t) (*this)["year"] - 1900);
 		temp.tm_mon = (int) ((int32_t) (*this)["month"]) - 1;
 		temp.tm_mday = (int) ((int32_t) (*this)["day"]);
@@ -1060,18 +1166,34 @@ bool Variant::ConvertToTimestamp() {
 		temp.tm_mday = 1;
 	}
 
-	if (detectedType == V_TIME || detectedType == V_TIMESTAMP) {
-		temp.tm_hour = (int) ((int32_t) (*this)["hour"]) - 1;
+	if ((detectedType == V_TIME) || (detectedType == V_TIMESTAMP)) {
+		temp.tm_hour = (int) ((int32_t) (*this)["hour"]);
 		temp.tm_min = (int) ((int32_t) (*this)["min"]);
 		temp.tm_sec = (int) (HasKey("sec") ?
 				(int32_t) (*this)["sec"] : 0);
-		temp.tm_isdst = HasKey("isdst") ? (bool) ((*this)["isdst"]) : false;
+		temp.tm_isdst = HasKey("isdst") ? (bool) ((*this)["isdst"]) : -1;
 	}
 
+	//Set UTC
+	char * oldTZ = getenv("TZ");
+	putenv((char*)"TZ=UTC");
+	tzset();
+
+	//Normalize time
 	if (mktime(&temp) < 0) {
 		FATAL("mktime failed");
 		return false;
 	}
+	//Reset Timezone
+	if( oldTZ == NULL )
+		putenv((char*)"TZ=");
+	else
+	{
+		char buff[50];
+		sprintf( buff, "TZ=%s", oldTZ );
+		putenv( buff );
+	}
+	tzset();
 
 	Reset();
 	DYNAMIC_ALLOC("_value.t");
@@ -1088,8 +1210,9 @@ void Variant::Compact() {
 		case V_DOUBLE:
 		{
 			if ((((double) (*this)) < INT32_MIN)
-					|| (((double) (*this)) > UINT32_MAX))
+					|| (((double) (*this)) > UINT32_MAX)) {
 				break;
+			}
 			Variant &variant = *this;
 			double doubleVal = (double) variant;
 			if ((int64_t) doubleVal != doubleVal)
@@ -1102,8 +1225,9 @@ void Variant::Compact() {
 		{
 			Variant &variant = *this;
 			int64_t val = (int64_t) variant;
-			if ((val < INT32_MIN) || (val > UINT32_MAX))
+			if ((val < INT32_MIN) || (val > UINT32_MAX)) {
 				break;
+			}
 			if (val < 0)
 				variant = (int32_t) variant;
 			else
@@ -1197,7 +1321,7 @@ bool Variant::DeserializeFromBin(uint8_t *pBuffer, uint32_t bufferLength,
 }
 
 bool Variant::DeserializeFromBin(string &data, Variant &variant) {
-	return DeserializeFromBin((uint8_t *) data.c_str(), data.size(), variant);
+	return DeserializeFromBin((uint8_t *) data.c_str(), (uint32_t) data.size(), variant);
 }
 
 bool Variant::SerializeToBin(string &result) {
@@ -1320,7 +1444,6 @@ bool Variant::SerializeToBin(string &result) {
 			return false;
 		}
 	}
-	return true;
 }
 
 bool Variant::DeserializeFromXml(const uint8_t *pBuffer, uint32_t bufferLength,
@@ -1364,7 +1487,7 @@ bool Variant::DeserializeFromXml(const uint8_t *pBuffer, uint32_t bufferLength,
 }
 
 bool Variant::DeserializeFromXml(string data, Variant &result) {
-	return DeserializeFromXml((const uint8_t *) data.c_str(), data.size(), result);
+	return DeserializeFromXml((const uint8_t *) data.c_str(), (uint32_t) data.size(), result);
 }
 
 bool Variant::SerializeToXml(string &result, bool prettyPrint) {
@@ -2097,28 +2220,29 @@ bool Variant::DeserializeFromXml(TiXmlElement *pNode, Variant &variant) {
 		variant = (double) val.d;
 		return true;
 	} else if (nodeName == "timestamp") {
-		if (strptime(STR(text), "%Y-%m-%dT%H:%M:%S.000", &val.t) == NULL) {
+		memset(&val.t, 0, sizeof (val.t));
+		if (strptime(STR(text), "%Y-%m-%dT%T.000", &val.t) == NULL) {
 			FATAL("Invalid timestamp (date, time or timestamp)");
 			return false;
 		}
-		variant = (Timestamp) val.t;
-		variant._type = V_TIMESTAMP;
+		variant = Variant((uint16_t)(val.t.tm_year + 1900), (uint8_t)(val.t.tm_mon + 1), (uint8_t)val.t.tm_mday,
+				(uint8_t)val.t.tm_hour, (uint8_t)val.t.tm_min, (uint8_t)val.t.tm_sec, 0);
 		return true;
 	} else if (nodeName == "date") {
-		if (strptime(STR(text), "%Y-%m-%u", &val.t) == NULL) {
+		memset(&val.t, 0, sizeof (val.t));
+		if (strptime(STR(text), "%Y-%m-%d", &val.t) == NULL) {
 			FATAL("Invalid timestamp (date, time or timestamp)");
 			return false;
 		}
-		variant = (Timestamp) val.t;
-		variant._type = V_DATE;
+		variant = Variant((uint16_t)(val.t.tm_year + 1900), (uint8_t)(val.t.tm_mon + 1), (uint8_t)val.t.tm_mday);
 		return true;
 	} else if (nodeName == "time") {
-		if (strptime(STR(text), "%H:%M:%S.000", &val.t) == NULL) {
+		memset(&val.t, 0, sizeof (val.t));
+		if (strptime(STR(text), "%T.000", &val.t) == NULL) {
 			FATAL("Invalid timestamp (date, time or timestamp)");
 			return false;
 		}
-		variant = (Timestamp) val.t;
-		variant._type = V_TIME;
+		variant = Variant((uint8_t)val.t.tm_hour, (uint8_t)val.t.tm_min, (uint8_t)val.t.tm_sec, 0);
 		return true;
 	} else if (nodeName == "str") {
 		variant = text;
@@ -2127,7 +2251,7 @@ bool Variant::DeserializeFromXml(TiXmlElement *pNode, Variant &variant) {
 		variant = unb64(text);
 		variant.IsByteArray(true);
 		return true;
-	} else if (nodeName == "map" || nodeName == "typed_map") {
+	} else if ((nodeName == "map") || (nodeName == "typed_map")) {
 		TiXmlAttribute *pAttribute = pNode->FirstAttribute();
 
 		//isArray and typename
@@ -2278,7 +2402,7 @@ bool Variant::ReadJSONString(string &raw, Variant &result, uint32_t &start) {
 			string value = raw.substr(start, pos - start);
 			UnEscapeJSON(value);
 			result = value;
-			start = pos + 1;
+			start = (uint32_t) (pos + 1);
 			return true;
 		}
 	}
@@ -2409,7 +2533,7 @@ bool Variant::ReadJSONBool(string &raw, Variant &result, uint32_t &start, string
 		FATAL("Invalid JSON bool");
 		return false;
 	}
-	start += wanted.size();
+	start += (uint32_t) wanted.size();
 	result = (bool)(wanted == "true");
 	return true;
 }

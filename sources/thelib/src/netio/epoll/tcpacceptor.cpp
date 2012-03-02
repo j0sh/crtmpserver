@@ -60,7 +60,7 @@ bool TCPAcceptor::Bind() {
 		return false;
 	}
 
-	if (!setFdOptions(_inboundFd)) {
+	if (!setFdOptions(_inboundFd, false)) {
 		FATAL("Unable to set socket options");
 		return false;
 	}
@@ -153,7 +153,7 @@ bool TCPAcceptor::Accept() {
 			STR(_ipAddress),
 			_port);
 
-	if (!setFdOptions(fd)) {
+	if (!setFdOptions(fd, false)) {
 		FATAL("Unable to set socket options");
 		CLOSE_SOCKET(fd);
 		return false;

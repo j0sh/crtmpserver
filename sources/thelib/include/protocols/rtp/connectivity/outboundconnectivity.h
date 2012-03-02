@@ -93,17 +93,17 @@ private:
 	RTPClient _rtpClient;
 
 	bool _hasVideo;
-	int32_t _videoDataFd;
+	SOCKET _videoDataFd;
 	uint16_t _videoDataPort;
-	int32_t _videoRTCPFd;
+	SOCKET _videoRTCPFd;
 	uint16_t _videoRTCPPort;
 	NATTraversalProtocol *_pVideoNATData;
 	NATTraversalProtocol *_pVideoNATRTCP;
 
 	bool _hasAudio;
-	int32_t _audioDataFd;
+	SOCKET _audioDataFd;
 	uint16_t _audioDataPort;
-	int32_t _audioRTCPFd;
+	SOCKET _audioRTCPFd;
 	uint16_t _audioRTCPPort;
 	NATTraversalProtocol *_pAudioNATData;
 	NATTraversalProtocol *_pAudioNATRTCP;
@@ -136,8 +136,8 @@ public:
 	bool FeedVideoData(MSGHDR &message, double absoluteTimestamp);
 	bool FeedAudioData(MSGHDR &message, double absoluteTimestamp);
 private:
-	bool InitializePorts(int32_t &dataFd, uint16_t &dataPort,
-			NATTraversalProtocol **ppNATData, int32_t &RTCPFd, uint16_t &RTCPPort,
+	bool InitializePorts(SOCKET &dataFd, uint16_t &dataPort,
+			NATTraversalProtocol **ppNATData, SOCKET &RTCPFd, uint16_t &RTCPPort,
 			NATTraversalProtocol **ppNATRTCP);
 	bool FeedData(MSGHDR &message, double absoluteTimestamp, bool isAudio);
 };

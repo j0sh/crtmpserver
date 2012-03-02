@@ -105,7 +105,7 @@ string tagToString(uint64_t tag) {
 	return result;
 }
 
-bool setFdNonBlock(int32_t fd) {
+bool setFdNonBlock(SOCKET fd) {
 	int32_t arg;
 	if ((arg = fcntl(fd, F_GETFL, NULL)) < 0) {
 		int32_t err = errno;
@@ -122,13 +122,15 @@ bool setFdNonBlock(int32_t fd) {
 	return true;
 }
 
-bool setFdNoSIGPIPE(int32_t fd) {
+bool setFdNoSIGPIPE(SOCKET fd) {
 	//This is not needed because we use MSG_NOSIGNAL when using
 	//send/write functions
 	return true;
 }
 
-bool setFdKeepAlive(int32_t fd) {
+bool setFdKeepAlive(SOCKET fd, bool isUdp) {
+	if (isUdp)
+		return true;
 	int32_t one = 1;
 	if (setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE,
 			(const char*) & one, sizeof (one)) != 0) {
@@ -138,7 +140,9 @@ bool setFdKeepAlive(int32_t fd) {
 	return true;
 }
 
-bool setFdNoNagle(int32_t fd) {
+bool setFdNoNagle(SOCKET fd, bool isUdp) {
+	if (isUdp)
+		return true;
 	int32_t one = 1;
 	if (setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, (char *) & one, sizeof (one)) != 0) {
 		return false;
@@ -146,7 +150,7 @@ bool setFdNoNagle(int32_t fd) {
 	return true;
 }
 
-bool setFdReuseAddress(int32_t fd) {
+bool setFdReuseAddress(SOCKET fd) {
 	int32_t one = 1;
 	if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (char *) & one, sizeof (one)) != 0) {
 		FATAL("Unable to reuse address");
@@ -155,7 +159,7 @@ bool setFdReuseAddress(int32_t fd) {
 	return true;
 }
 
-bool setFdTTL(int32_t fd, uint8_t ttl) {
+bool setFdTTL(SOCKET fd, uint8_t ttl) {
 	int temp = ttl;
 	if (setsockopt(fd, IPPROTO_IP, IP_TTL, &temp, sizeof (temp)) != 0) {
 		int err = errno;
@@ -164,7 +168,7 @@ bool setFdTTL(int32_t fd, uint8_t ttl) {
 	return true;
 }
 
-bool setFdMulticastTTL(int32_t fd, uint8_t ttl) {
+bool setFdMulticastTTL(SOCKET fd, uint8_t ttl) {
 	int temp = ttl;
 	if (setsockopt(fd, IPPROTO_IP, IP_MULTICAST_TTL, &temp, sizeof (temp)) != 0) {
 		int err = errno;
@@ -173,7 +177,7 @@ bool setFdMulticastTTL(int32_t fd, uint8_t ttl) {
 	return true;
 }
 
-bool setFdTOS(int32_t fd, uint8_t tos) {
+bool setFdTOS(SOCKET fd, uint8_t tos) {
 	int temp = tos;
 	if (setsockopt(fd, IPPROTO_IP, IP_TOS, &temp, sizeof (temp)) != 0) {
 		int err = errno;
@@ -182,7 +186,7 @@ bool setFdTOS(int32_t fd, uint8_t tos) {
 	return true;
 }
 
-bool setFdOptions(int32_t fd) {
+bool setFdOptions(SOCKET fd, bool isUdp) {
 	if (!setFdNonBlock(fd)) {
 		FATAL("Unable to set non block");
 		return false;
@@ -193,12 +197,12 @@ bool setFdOptions(int32_t fd) {
 		return false;
 	}
 
-	if (!setFdKeepAlive(fd)) {
+	if (!setFdKeepAlive(fd, isUdp)) {
 		FATAL("Unable to set keep alive");
 		return false;
 	}
 
-	if (!setFdNoNagle(fd)) {
+	if (!setFdNoNagle(fd, isUdp)) {
 		WARN("Unable to disable Nagle algorithm");
 	}
 

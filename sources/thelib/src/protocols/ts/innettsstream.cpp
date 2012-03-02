@@ -431,7 +431,7 @@ bool InNetTSStream::HandleVideoData() {
 		}
 		found = false;
 		if (pNalStart != NULL) {
-			if (!ProcessNal(pNalStart, pNalEnd - pNalStart, _ptsTimeVideo)) {
+			if (!ProcessNal(pNalStart, (int32_t)(pNalEnd - pNalStart), _ptsTimeVideo)) {
 				FATAL("Unable to process NAL");
 				return false;
 			}
@@ -439,7 +439,7 @@ bool InNetTSStream::HandleVideoData() {
 		pNalStart = pNalEnd + markerSize;
 	}
 	if (pNalStart != NULL) {
-		int32_t lastLength = length - (pNalStart - pBuffer);
+		int32_t lastLength = (int32_t)(length - (pNalStart - pBuffer));
 		if (!ProcessNal(pNalStart, lastLength, _ptsTimeVideo)) {
 			FATAL("Unable to process NAL");
 			return false;

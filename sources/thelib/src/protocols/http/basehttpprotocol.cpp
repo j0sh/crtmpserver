@@ -424,7 +424,7 @@ bool BaseHTTPProtocol::HandleChunkedContent(IOBuffer &buffer) {
 		}
 
 		//13. Ignore the bytes from the input buffer
-		buffer.Ignore(chunkSizeString.size() - 2 + 2 + chunkSize + 2);
+		buffer.Ignore((uint32_t)chunkSizeString.size() - 2 + 2 + chunkSize + 2);
 
 		//14. reset the state if necessary
 		if (TransferCompleted()) {

@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -335,15 +335,15 @@ bool HTTPAuthHelper::ValidateResponse(Variant &response) {
 		parameters["algorithm"] = algorithm;
 
 		if ((!parameters.HasKeyChain(V_STRING, true, 1, "nonce"))
-				|| ((string) parameters["nonce"] == "")
+				|| (parameters["nonce"] == "")
 				|| (!parameters.HasKeyChain(V_STRING, true, 1, "realm"))
-				|| ((string) parameters["realm"] == "")
+				|| (parameters["realm"] == "")
 				|| (!parameters.HasKeyChain(V_STRING, true, 1, "response"))
-				|| ((string) parameters["response"] == "")
+				|| (parameters["response"] == "")
 				|| (!parameters.HasKeyChain(V_STRING, true, 1, "uri"))
-				|| ((string) parameters["uri"] == "")
+				|| (parameters["uri"] == "")
 				|| (!parameters.HasKeyChain(V_STRING, true, 1, "username"))
-				|| ((string) parameters["username"] == "")) {
+				|| (parameters["username"] == "")) {
 			FATAL("Invalid response:\n%s", STR(response.ToString()));
 			return false;
 		}
@@ -351,9 +351,9 @@ bool HTTPAuthHelper::ValidateResponse(Variant &response) {
 		return true;
 	} else {
 		if ((!parameters.HasKeyChain(V_STRING, true, 1, "username"))
-				|| ((string) parameters["username"] == "")
+				|| (parameters["username"] == "")
 				|| (!parameters.HasKeyChain(V_STRING, true, 1, "password"))
-				|| ((string) parameters["password"] == "")) {
+				|| (parameters["password"] == "")) {
 			FATAL("Invalid response:\n%s", STR(response.ToString()));
 			return false;
 		}

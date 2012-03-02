@@ -34,7 +34,7 @@ InNetRTPStream::InNetRTPStream(BaseProtocol *pProtocol,
 	if (AAC.length() != 0) {
 		_capabilities.InitAudioAAC(
 				(uint8_t *) STR(AAC),
-				AAC.length());
+				(uint32_t)AAC.length());
 		_hasAudio = true;
 	}
 
@@ -42,9 +42,9 @@ InNetRTPStream::InNetRTPStream(BaseProtocol *pProtocol,
 	if ((SPS.length() != 0) && (PPS.length() != 0)) {
 		_capabilities.InitVideoH264(
 				(uint8_t *) STR(SPS),
-				SPS.length(),
+				(uint32_t)SPS.length(),
 				(uint8_t *) STR(PPS),
-				PPS.length());
+				(uint32_t)PPS.length());
 		_hasVideo = true;
 	}
 

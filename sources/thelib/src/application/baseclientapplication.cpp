@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -256,7 +256,7 @@ bool BaseClientApplication::PullExternalStreams() {
 	FOR_MAP(_configuration["externalStreams"], string, Variant, i) {
 		Variant &temp = MAP_VAL(i);
 		if ((!temp.HasKeyChain(V_STRING, false, 1, "localStreamName"))
-				|| ((string) temp.GetValue("localStreamName", false) == "")) {
+				|| (temp.GetValue("localStreamName", false) == "")) {
 			WARN("External stream configuration is doesn't have localStreamName property invalid:\n%s",
 					STR(temp.ToString()));
 			continue;
@@ -393,6 +393,11 @@ bool BaseClientApplication::ParseAuthentication() {
 	}
 
 	return true;
+}
+
+void BaseClientApplication::SignalUnLinkingStreams(BaseInStream *pInStream,
+		BaseOutStream *pOutStream) {
+
 }
 
 void BaseClientApplication::Shutdown(BaseClientApplication *pApplication) {

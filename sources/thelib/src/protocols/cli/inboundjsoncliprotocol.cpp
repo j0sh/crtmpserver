@@ -82,7 +82,7 @@ bool InboundJSONCLIProtocol::SendMessage(Variant &message) {
 	}
 	json += "\r\n\r\n";
 	if (_useLengthPadding) {
-		uint32_t size = htonl(json.length());
+		uint32_t size = EHTONL((uint32_t)json.length());
 		_outputBuffer.ReadFromBuffer((uint8_t *) & size, 4);
 	}
 	_outputBuffer.ReadFromString(json);

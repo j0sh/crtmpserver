@@ -114,6 +114,9 @@ FdStats::~FdStats() {
 }
 
 void FdStats::Reset() {
+	_lastUpdateSpeedsTime = -1;
+	_lastInBytes = 0;
+	_lastOutBytes = 0;
 	_managedTcp.Reset();
 	_managedTcpAcceptors.Reset();
 	_managedTcpConnectors.Reset();
@@ -163,6 +166,14 @@ uint64_t FdStats::OutBytes() {
 			+ _managedNonTcpUdp.OutBytes()
 			+ _rawUdp.OutBytes();
 }
+
+double FdStats::InSpeed() {
+	return _inSpeed;
+}
+
+double FdStats::OutSpeed() {
+	return _outSpeed;
+}
 #endif /* GLOBALLY_ACCOUNT_BYTES */
 
 void FdStats::ResetMax() {
@@ -193,6 +204,9 @@ void FdStats::ResetInBytes() {
 	_managedUdp.ResetInBytes();
 	_managedNonTcpUdp.ResetInBytes();
 	_rawUdp.ResetInBytes();
+	_lastUpdateSpeedsTime = -1;
+	_lastInBytes = 0;
+	_lastOutBytes = 0;
 }
 
 void FdStats::ResetOutBytes() {
@@ -202,6 +216,9 @@ void FdStats::ResetOutBytes() {
 	_managedUdp.ResetOutBytes();
 	_managedNonTcpUdp.ResetOutBytes();
 	_rawUdp.ResetOutBytes();
+	_lastUpdateSpeedsTime = -1;
+	_lastInBytes = 0;
+	_lastOutBytes = 0;
 }
 
 void FdStats::ResetInOutBytes() {
@@ -211,6 +228,9 @@ void FdStats::ResetInOutBytes() {
 	_managedUdp.ResetInOutBytes();
 	_managedNonTcpUdp.ResetInOutBytes();
 	_rawUdp.ResetInOutBytes();
+	_lastUpdateSpeedsTime = -1;
+	_lastInBytes = 0;
+	_lastOutBytes = 0;
 }
 #endif /* GLOBALLY_ACCOUNT_BYTES */
 
@@ -294,6 +314,8 @@ Variant FdStats::ToVariant() {
 #ifdef GLOBALLY_ACCOUNT_BYTES
 	result["grandTotal"]["inBytes"] = (uint64_t) InBytes();
 	result["grandTotal"]["outBytes"] = (uint64_t) OutBytes();
+	result["grandTotal"]["inSpeed"] = _inSpeed;
+	result["grandTotal"]["outSpeed"] = _outSpeed;
 #endif /* GLOBALLY_ACCOUNT_BYTES */
 	return result;
 }

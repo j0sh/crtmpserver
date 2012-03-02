@@ -406,7 +406,7 @@ bool MP4Document::BuildFrames() {
 			FATAL("Unable to seek into media file");
 			return false;
 		}
-		if (!raw.ReadFromFs(_mediaFile, audioHeader.length)) {
+		if (!raw.ReadFromFs(_mediaFile, (uint32_t)audioHeader.length)) {
 			FATAL("Unable to read from media file");
 			return false;
 		}
@@ -444,7 +444,7 @@ bool MP4Document::BuildFrames() {
 			FATAL("Unable to seek into media file");
 			return false;
 		}
-		if (!raw.ReadFromFs(_mediaFile, videoHeader.length)) {
+		if (!raw.ReadFromFs(_mediaFile,(uint32_t)videoHeader.length)) {
 			FATAL("Unable to read from media file");
 			return false;
 		}
@@ -551,16 +551,16 @@ bool MP4Document::BuildMOOVFrames(bool audio) {
 	//8. Extract normalized information from the atoms retrived above
 	vector<uint64_t> sampleSize = pSTSZ->GetEntries();
 	if (audio)
-		_audioSamplesCount = sampleSize.size();
+		_audioSamplesCount = (uint32_t)sampleSize.size();
 	else
-		_videoSamplesCount = sampleSize.size();
+		_videoSamplesCount = (uint32_t)sampleSize.size();
 	vector<uint32_t> sampleDeltaTime = pSTTS->GetEntries();
 	vector<uint64_t> chunckOffsets;
 	if (pSTCO != NULL)
 		chunckOffsets = pSTCO->GetEntries();
 	else
 		chunckOffsets = pCO64->GetEntries();
-	vector<uint32_t> sample2Chunk = pSTSC->GetEntries(chunckOffsets.size());
+	vector<uint32_t> sample2Chunk = pSTSC->GetEntries((uint32_t)chunckOffsets.size());
 	vector<uint32_t> keyFrames;
 	if (pSTSS != NULL)
 		keyFrames = pSTSS->GetEntries();
@@ -571,7 +571,7 @@ bool MP4Document::BuildMOOVFrames(bool audio) {
 			WARN("composition offsets count != samples count; compositionOffsets: %"PRIz"u; sampleSize.size: %"PRIz"u",
 					compositionOffsets.size(),
 					sampleSize.size());
-			for (uint32_t i = compositionOffsets.size(); i < sampleSize.size(); i++)
+			for (uint32_t i = (uint32_t)compositionOffsets.size(); i < (uint32_t)sampleSize.size(); i++)
 				ADD_VECTOR_END(compositionOffsets, 0);
 			WARN("composition offsets padded with 0. Now size is %"PRIz"u",
 					compositionOffsets.size());
@@ -583,7 +583,7 @@ bool MP4Document::BuildMOOVFrames(bool audio) {
 	uint32_t timeScale = pMDHD->GetTimeScale();
 	uint64_t totalTime = 0;
 	uint32_t localOffset = 0;
-	uint32_t startIndex = _frames.size();
+	uint32_t startIndex = (uint32_t)_frames.size();
 
 	for (uint32_t i = 0; i < sampleSize.size(); i++) {
 		MediaFrame frame = {0, 0, 0, 0, 0, 0, 0, 0};

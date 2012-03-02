@@ -136,8 +136,8 @@ bool TSPacketPMT::Read(uint8_t *pBuffer, uint32_t &cursor, uint32_t maxCursor) {
 	}
 
 	//13. Compute the streams info boundries
-	uint8_t streamsInfoLength = (uint8_t) (_sectionLength - 9 - _programInfoLength - 4);
-	uint8_t streamsInfoCursor = 0;
+	uint16_t streamsInfoLength = (uint8_t) (_sectionLength - 9 - _programInfoLength - 4);
+	uint16_t streamsInfoCursor = 0;
 
 	//14. Read the streams info
 	while (streamsInfoCursor < streamsInfoLength) {

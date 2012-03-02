@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -105,7 +105,7 @@ public:
 			return 0;
 		}
 
-		if (!setFdOptions(fd)) {
+		if (!setFdOptions(fd, false)) {
 			CLOSE_SOCKET(fd);
 			T::SignalProtocolCreated(NULL, customParameters);
 			FATAL("Unable to set socket options");

@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -140,13 +140,13 @@ public:
 	virtual void UnRegisterProtocol(BaseProtocol *pProtocol);
 
 	/*!
-		@brief Displays the registered stream's ID, type, and name in the logs 
+		@brief Displays the registered stream's ID, type, and name in the logs
 		@param pStream
 	 */
 	virtual void SignalStreamRegistered(BaseStream *pStream);
 
 	/*!
-		@brief Displays the unregistered stream's ID, type, and name in the logs 
+		@brief Displays the unregistered stream's ID, type, and name in the logs
 		@param pStream
 	 */
 	virtual void SignalStreamUnRegistered(BaseStream *pStream);
@@ -155,6 +155,8 @@ public:
 	virtual bool PullExternalStream(Variant streamConfig);
 	virtual bool PushLocalStream(Variant streamConfig);
 	bool ParseAuthentication();
+
+	virtual void SignalUnLinkingStreams(BaseInStream *pInStream, BaseOutStream *pOutStream);
 
 	/*!
 		@brief Deletes all active protocols and IOHandlers bound to the application.

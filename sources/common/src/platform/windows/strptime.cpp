@@ -104,14 +104,12 @@ static int
 match_string (const char **buf, const char **strs)
 {
     int i = 0;
-
     for (i = 0; strs[i] != NULL; ++i) {
-	int len = strlen (strs[i]);
-
-	if (strncasecmp (*buf, strs[i], len) == 0) {
-	    *buf += len;
-	    return i;
-	}
+		int len = (int)strlen (strs[i]);
+		if (strncasecmp (*buf, strs[i], len) == 0) {
+			*buf += len;
+			return i;
+		}
     }
     return -1;
 }

@@ -72,7 +72,6 @@
 #ifdef NET_IOCP
 #include "netio/iocp/iohandler.h"
 #include "netio/iocp/iohandlermanager.h"
-#include "netio/iocp/iohandlermanagertoken.h"
 #include "netio/iocp/iotimer.h"
 #include "netio/iocp/tcpacceptor.h"
 #include "netio/iocp/tcpcarrier.h"

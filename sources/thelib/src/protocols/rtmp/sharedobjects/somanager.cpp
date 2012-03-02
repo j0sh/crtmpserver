@@ -143,7 +143,6 @@ bool SOManager::ProcessSharedObjectPrimitive(BaseRTMPProtocol *pFrom, SO *pSO,
 			return false;
 		}
 	}
-	return true;
 }
 
 #endif /* HAS_PROTOCOL_RTMP */
