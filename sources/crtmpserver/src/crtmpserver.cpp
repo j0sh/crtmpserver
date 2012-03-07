@@ -170,7 +170,7 @@ bool Initialize() {
 			INFO("Daemonize...");
 			pid_t pid = fork();
 			if (pid < 0) {
-				FATAL("Unable to start daemonize. fork() failed");
+				FATAL("Unable to start as daemon. fork() failed");
 				return false;
 			}
 
@@ -183,8 +183,20 @@ bool Initialize() {
 			FINEST("Create a new SID for the daemon");
 			pid_t sid = setsid();
 			if (sid < 0) {
-				FATAL("Unable to start daemonize. setsid() failed");
+				FATAL("Unable to start as daemon. setsid() failed");
 				return false;
+			}
+
+			int fd = open("/dev/null", O_RDWR, 0);
+			if (fd < 0) {
+				FATAL("Unable to start as daemon. open(/dev/null) failed");
+				return false;
+			}
+			(void) dup2(fd, STDIN_FILENO);
+			(void) dup2(fd, STDOUT_FILENO);
+			(void) dup2(fd, STDERR_FILENO);
+			if (fd > 2) {
+				(void) close(fd);
 			}
 
 			gRs.daemon = true;

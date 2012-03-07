@@ -228,7 +228,7 @@ bool parseURI(string stringUri, URI &uri) {
 			documentPath = fullDocumentPath.substr(0, pos + 1);
 			document = fullDocumentPath.substr(pos + 1);
 		} else {
-			for (string::size_type i = fullDocumentPath.size() - 1; i >= 0; i--) {
+			for (string::size_type i = fullDocumentPath.size() - 1; i != 0; i--) {
 				if (fullDocumentPath[i] == '/')
 					break;
 				document = fullDocumentPath[i] + document;
