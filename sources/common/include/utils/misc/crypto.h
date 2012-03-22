@@ -37,7 +37,7 @@
 /*!
 	@class DHWrapper
 	@brief Class that handles the DH wrapper
-*/
+ */
 class DLLEXP DHWrapper {
 private:
 	int32_t _bitsCount;
@@ -51,35 +51,35 @@ public:
 
 	/*!
 		@brief Initializes the DH wrapper
-	*/
+	 */
 	bool Initialize();
 
 	/*!
 		@brief Copies the public key.
 		@param pDst - Where the copied key is stored
 		@param dstLength
-	*/
+	 */
 	bool CopyPublicKey(uint8_t *pDst, int32_t dstLength);
 
 	/*!
 		@brief Copies the private key.
 		@param pDst - Where the copied key is stored
 		@param dstLength
-	*/
+	 */
 	bool CopyPrivateKey(uint8_t *pDst, int32_t dstLength);
 
 	/*!
 		@brief Creates a shared secret key
 		@param pPeerPublicKey
 		@param length
-	*/
+	 */
 	bool CreateSharedKey(uint8_t *pPeerPublicKey, int32_t length);
 
 	/*!
 		@brief Copies the shared secret key.
 		@param pDst - Where the copied key is stored
 		@param dstLength
-	*/
+	 */
 	bool CopySharedKey(uint8_t *pDst, int32_t dstLength);
 private:
 	void Cleanup();

@@ -165,7 +165,6 @@ public:
 
 	Variant & operator[](const string &key);
 	Variant & operator[](const char *key);
-	Variant & operator[](const double &key);
 	Variant & operator[](const uint32_t &key);
 	Variant & operator[](Variant &key);
 	Variant & GetValue(string key, bool caseSensitive);

@@ -691,54 +691,35 @@ Variant& Variant::operator[](const char *key) {
 	return operator[](string(key));
 }
 
-Variant& Variant::operator[](const double &key) {
-	stringstream ss;
-	ss << VAR_INDEX_VALUE << key;
-	return operator[](ss.str());
-}
-
 Variant& Variant::operator[](const uint32_t &key) {
-	stringstream ss;
-	ss << VAR_INDEX_VALUE << key;
-	return operator[](ss.str());
+	char temp[11];
+	sprintf(temp, "0x%08"PRIx32, key);
+	return operator[](temp);
 }
 
 Variant& Variant::operator[](Variant &key) {
-	stringstream ss;
 	switch (key._type) {
-		case V_BOOL:
 		case V_INT8:
 		case V_INT16:
 		case V_INT32:
-		case V_INT64:
 		case V_UINT8:
 		case V_UINT16:
 		case V_UINT32:
-		case V_UINT64:
-		case V_DOUBLE:
 		{
-			ss << VAR_INDEX_VALUE << STR(key);
-			break;
+			char temp[11];
+			sprintf(temp, "0x%08"PRIx32, (uint32_t) key);
+			return operator[](temp);
 		}
 		case V_STRING:
 		{
-			ss << *key._value.s;
-			break;
+			return operator[](*key._value.s);
 		}
-		case V_NULL:
-		case V_UNDEFINED:
-		case V_DATE:
-		case V_TIME:
-		case V_TIMESTAMP:
-		case V_MAP:
-		case V_TYPED_MAP:
 		default:
 		{
 			ASSERT("Variant has invalid type to be used as an index: %s", STR(key.ToString()));
 			break;
 		}
 	}
-	return operator[](ss.str());
 }
 
 Variant &Variant::GetValue(string key, bool caseSensitive) {
@@ -965,7 +946,9 @@ void Variant::RemoveAt(const uint32_t index) {
 		ASSERT("RemoveKey failed: %s", STR(ToString()));
 		return;
 	}
-	_value.m->children.erase(format(VAR_INDEX_VALUE"%u", index));
+	char temp[11];
+	sprintf(temp, "0x%08"PRIx32, index);
+	_value.m->children.erase(temp);
 }
 
 void Variant::RemoveAllKeys() {
@@ -998,7 +981,9 @@ uint32_t Variant::MapDenseSize() {
 
 	uint32_t denseCount = 0;
 	for (denseCount = 0; denseCount < MapSize(); denseCount++) {
-		if (!MAP_HAS1(_value.m->children, format(VAR_INDEX_VALUE"%u", denseCount)))
+		char temp[11];
+		sprintf(temp, "0x%08"PRIx32, denseCount);
+		if (!MAP_HAS1(_value.m->children, temp))
 			break;
 	}
 
@@ -1176,7 +1161,7 @@ bool Variant::ConvertToTimestamp() {
 
 	//Set UTC
 	char * oldTZ = getenv("TZ");
-	putenv((char*)"TZ=UTC");
+	putenv((char*) "TZ=UTC");
 	tzset();
 
 	//Normalize time
@@ -1185,13 +1170,12 @@ bool Variant::ConvertToTimestamp() {
 		return false;
 	}
 	//Reset Timezone
-	if( oldTZ == NULL )
-		putenv((char*)"TZ=");
-	else
-	{
+	if (oldTZ == NULL) {
+		putenv((char*) "TZ=");
+	} else {
 		char buff[50];
-		sprintf( buff, "TZ=%s", oldTZ );
-		putenv( buff );
+		sprintf(buff, "TZ=%s", oldTZ);
+		putenv(buff);
 	}
 	tzset();
 
@@ -2225,8 +2209,8 @@ bool Variant::DeserializeFromXml(TiXmlElement *pNode, Variant &variant) {
 			FATAL("Invalid timestamp (date, time or timestamp)");
 			return false;
 		}
-		variant = Variant((uint16_t)(val.t.tm_year + 1900), (uint8_t)(val.t.tm_mon + 1), (uint8_t)val.t.tm_mday,
-				(uint8_t)val.t.tm_hour, (uint8_t)val.t.tm_min, (uint8_t)val.t.tm_sec, 0);
+		variant = Variant((uint16_t) (val.t.tm_year + 1900), (uint8_t) (val.t.tm_mon + 1), (uint8_t) val.t.tm_mday,
+				(uint8_t) val.t.tm_hour, (uint8_t) val.t.tm_min, (uint8_t) val.t.tm_sec, 0);
 		return true;
 	} else if (nodeName == "date") {
 		memset(&val.t, 0, sizeof (val.t));
@@ -2234,7 +2218,7 @@ bool Variant::DeserializeFromXml(TiXmlElement *pNode, Variant &variant) {
 			FATAL("Invalid timestamp (date, time or timestamp)");
 			return false;
 		}
-		variant = Variant((uint16_t)(val.t.tm_year + 1900), (uint8_t)(val.t.tm_mon + 1), (uint8_t)val.t.tm_mday);
+		variant = Variant((uint16_t) (val.t.tm_year + 1900), (uint8_t) (val.t.tm_mon + 1), (uint8_t) val.t.tm_mday);
 		return true;
 	} else if (nodeName == "time") {
 		memset(&val.t, 0, sizeof (val.t));
@@ -2242,7 +2226,7 @@ bool Variant::DeserializeFromXml(TiXmlElement *pNode, Variant &variant) {
 			FATAL("Invalid timestamp (date, time or timestamp)");
 			return false;
 		}
-		variant = Variant((uint8_t)val.t.tm_hour, (uint8_t)val.t.tm_min, (uint8_t)val.t.tm_sec, 0);
+		variant = Variant((uint8_t) val.t.tm_hour, (uint8_t) val.t.tm_min, (uint8_t) val.t.tm_sec, 0);
 		return true;
 	} else if (nodeName == "str") {
 		variant = text;

@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -28,7 +28,7 @@ TimersManager::TimersManager(ProcessTimerEvent processTimerEvent) {
 	_pSlots = NULL;
 	_slotsCount = 0;
 #ifdef NET_IOCP
-	_inExecution=false;
+	_inExecution = false;
 #endif
 }
 
@@ -38,12 +38,13 @@ TimersManager::~TimersManager() {
 }
 
 #ifdef NET_IOCP
+
 void TimersManager::RemoveTimer(uint32_t eventTimerId) {
 	for (uint32_t i = 0; i < _slotsCount; i++) {
 		if (MAP_HAS1(_pSlots[i].timers, eventTimerId)) {
-			if(_inExecution){
-				_pSlots[i].timers[eventTimerId].pUserData=NULL;
-				ADD_VECTOR_END(_pendingForRemoval,eventTimerId);
+			if (_inExecution) {
+				_pSlots[i].timers[eventTimerId].pUserData = NULL;
+				ADD_VECTOR_END(_pendingForRemoval, eventTimerId);
 			} else {
 				_pSlots[i].timers.erase(eventTimerId);
 			}
@@ -51,6 +52,7 @@ void TimersManager::RemoveTimer(uint32_t eventTimerId) {
 	}
 }
 #else
+
 void TimersManager::RemoveTimer(uint32_t eventTimerId) {
 	for (uint32_t i = 0; i < _slotsCount; i++) {
 		if (MAP_HAS1(_pSlots[i].timers, eventTimerId)) {
@@ -67,7 +69,7 @@ void TimersManager::AddTimer(TimerEvent& timerEvent) {
 	for (uint32_t i = 0; i < _slotsCount; i++) {
 		if (min > _pSlots[i].timers.size()) {
 			startIndex = i;
-			min = (uint32_t)_pSlots[i].timers.size();
+			min = (uint32_t) _pSlots[i].timers.size();
 		}
 	}
 	while (!MAP_HAS1(_pSlots[startIndex % _slotsCount].timers, timerEvent.id)) {
@@ -77,13 +79,14 @@ void TimersManager::AddTimer(TimerEvent& timerEvent) {
 }
 
 #ifdef NET_IOCP
+
 void TimersManager::TimeElapsed(uint64_t currentTime) {
-	_inExecution=true;
+	_inExecution = true;
 	int64_t delta = currentTime - _lastTime;
 	_lastTime = currentTime;
 
-	if (delta <= 0 || _slotsCount == 0){
-		_inExecution=false;
+	if (delta <= 0 || _slotsCount == 0) {
+		_inExecution = false;
 		return;
 	}
 
@@ -94,13 +97,14 @@ void TimersManager::TimeElapsed(uint64_t currentTime) {
 		}
 		_currentSlotIndex++;
 	}
-	_inExecution=false;
-	for(uint32_t i=0;i<_pendingForRemoval.size();i++) {
+	_inExecution = false;
+	for (uint32_t i = 0; i < _pendingForRemoval.size(); i++) {
 		RemoveTimer(_pendingForRemoval[i]);
 	}
 	_pendingForRemoval.clear();
 }
 #else
+
 void TimersManager::TimeElapsed(uint64_t currentTime) {
 	int64_t delta = currentTime - _lastTime;
 	_lastTime = currentTime;

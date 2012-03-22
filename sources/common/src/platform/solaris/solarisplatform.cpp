@@ -527,7 +527,7 @@ void installSignal(int sig, SignalFnc pSignalFnc) {
 }
 
 void installQuitSignal(SignalFnc pQuitSignalFnc) {
-	installSignal(SIGINT, pQuitSignalFnc);
+	installSignal(SIGTERM, pQuitSignalFnc);
 }
 
 void installConfRereadSignal(SignalFnc pConfRereadSignalFnc) {

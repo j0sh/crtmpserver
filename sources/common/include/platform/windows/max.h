@@ -105,7 +105,7 @@
 #ifndef INT8_MIN
 #define INT8_MIN   ((int8_t)(0x80))
 #endif
-*/
+ */
 
 #endif /* _MAX_H */
 #endif /* WIN32 */

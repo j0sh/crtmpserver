@@ -249,6 +249,7 @@ DLLEXP bool listFolder(string path, vector<string> &result,
 		bool normalizeAllPaths = true, bool includeFolders = false,
 		bool recursive = true);
 DLLEXP bool moveFile(string src, string dst);
+DLLEXP void installSignal(int sig, SignalFnc pSignalFnc);
 DLLEXP void installQuitSignal(SignalFnc pQuitSignalFnc);
 DLLEXP void installConfRereadSignal(SignalFnc pConfRereadSignalFnc);
 DLLEXP time_t timegm(struct tm *tm);

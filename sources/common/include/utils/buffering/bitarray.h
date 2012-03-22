@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -89,7 +89,7 @@ public:
 			uint8_t currentByteIndex = (uint8_t) (currentCursor / 8);
 			uint8_t currentBitIndex = currentCursor % 8;
 			uint8_t currentByte = GETIBPOINTER(*this)[currentByteIndex];
-			
+
 			result = (result << 1) | ((currentByte >> (7 - currentBitIndex))&0x01);
 		}
 
@@ -116,7 +116,7 @@ public:
 	bool ReadExpGolomb(uint64_t &value) {
 		value = 1;
 		uint32_t zeroBitsCount = 0;
-		for(;;) {
+		for (;;) {
 			if (AvailableBits() == 0) {
 				return false;
 			}

@@ -186,6 +186,7 @@ bool listFolder(string path, vector<string> &result,
 		bool normalizeAllPaths = true, bool includeFolders = false,
 		bool recursive = true);
 bool moveFile(string src, string dst);
+void installSignal(int sig, SignalFnc pSignalFnc);
 void installQuitSignal(SignalFnc pQuitSignalFnc);
 void installConfRereadSignal(SignalFnc pConfRereadSignalFnc);
 time_t timegm(struct tm *tm);

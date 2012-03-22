@@ -193,6 +193,7 @@ bool listFolder(string path, vector<string> &result,
 		bool recursive = true);
 bool ParseURL(string stringUrl, string &host, uint16_t &port, string &user, string &pwd, string & doc);
 bool moveFile(string src, string dst);
+void installSignal(int sig, SignalFnc pSignalFnc);
 void installQuitSignal(SignalFnc pQuitSignalFnc);
 void installConfRereadSignal(SignalFnc pConfRereadSignalFnc);
 #endif /* _OPENBSDPLATFORM_H */

@@ -255,7 +255,7 @@ void HMACsha256(const void *pData, uint32_t dataLength,
 }
 
 string b64(string source) {
-	return b64((uint8_t *) source.c_str(), (uint32_t)source.size());
+	return b64((uint8_t *) source.c_str(), (uint32_t) source.size());
 }
 
 string b64(uint8_t *pBuffer, uint32_t length) {
@@ -284,7 +284,7 @@ string b64(uint8_t *pBuffer, uint32_t length) {
 }
 
 string unb64(string source) {
-	return unb64((uint8_t *) source.c_str(), (uint32_t)source.length());
+	return unb64((uint8_t *) source.c_str(), (uint32_t) source.length());
 }
 
 string unb64(uint8_t *pBuffer, uint32_t length) {
