@@ -236,7 +236,7 @@ bool InNetRTPStream::FeedData(uint8_t *pData, uint32_t dataLength,
 	}
 
 	if (lastTs * 100.00 > absoluteTimestamp * 100.00) {
-		WARN("Back time on %s. ATS: %.08f LTS: %.08f; D: %.8f; isAudio: %"PRIu8,
+		WARN("Back time on %s. ATS: %.08f LTS: %.08f; D: %.8f; isAudio: %d",
 				STR(GetName()),
 				absoluteTimestamp,
 				lastTs,

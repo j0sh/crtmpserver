@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -48,7 +48,7 @@ bool InboundLiveFLVProtocol::Initialize(Variant &parameters) {
 		_waitForMetadata = (bool)parameters["waitForMetadata"];
 	else
 		_waitForMetadata = false;
-	FINEST("_waitForMetadata: %hhu", _waitForMetadata);
+	FINEST("_waitForMetadata: %d", _waitForMetadata);
 	return true;
 }
 

@@ -577,7 +577,7 @@ bool MP4Document::BuildMOOVFrames(bool audio) {
 					compositionOffsets.size());
 		}
 	}
-	INFO("audio: %hhu; keyFrames: %"PRIz"u; frames: %"PRIz"u; compositionOffsets: %"PRIz"u",
+	INFO("audio: %d; keyFrames: %"PRIz"u; frames: %"PRIz"u; compositionOffsets: %"PRIz"u",
 			audio, keyFrames.size(), sampleSize.size(), compositionOffsets.size());
 
 	uint32_t timeScale = pMDHD->GetTimeScale();
@@ -743,12 +743,12 @@ string MP4Document::Hierarchy() {
 AtomTRAK * MP4Document::GetTRAK(bool audio) {
 	if (_pMOOV == NULL) {
 		FATAL("Unable to find moov");
-		return false;
+		return NULL;
 	}
 	vector<AtomTRAK *> tracks = _pMOOV->GetTracks();
 	if (tracks.size() == 0) {
 		FATAL("No tracks defined");
-		return false;
+		return NULL;
 	}
 	for (uint32_t i = 0; i < tracks.size(); i++) {
 		AtomHDLR *pHDLR = (AtomHDLR *) tracks[i]->GetPath(2, A_MDIA, A_HDLR);

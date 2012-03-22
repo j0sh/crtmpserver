@@ -59,6 +59,9 @@
 #include <vector>
 using namespace std;
 
+#pragma GCC diagnostic ignored "-Wformat-nonliteral"
+#pragma GCC diagnostic ignored "-Woverloaded-virtual"
+
 //platform defines
 #define DLLEXP
 #define HAS_MMAP 1

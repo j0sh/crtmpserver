@@ -143,7 +143,7 @@ BaseProtocol *InboundHTTP4RTMP::Bind(string sid) {
 		//14. This might be a new connection. Do we have that sid generated?
 		if (!MAP_HAS1(_generatedSids, sid)) {
 			FATAL("Invalid sid: %s", STR(sid));
-			return false;
+			return NULL;
 		}
 
 		//15. See if we have to generate a new connection or we just pick up

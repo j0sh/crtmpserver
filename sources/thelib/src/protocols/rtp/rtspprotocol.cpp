@@ -372,14 +372,14 @@ OutboundConnectivity * RTSPProtocol::GetOutboundConnectivity(
 		_pOutboundConnectivity = new OutboundConnectivity(forceTcp, this);
 		if (!_pOutboundConnectivity->Initialize()) {
 			FATAL("Unable to initialize outbound connectivity");
-			return false;
+			return NULL;
 		}
 		pOutStream->SetConnectivity(_pOutboundConnectivity);
 		_pOutboundConnectivity->SetOutStream(pOutStream);
 
 		if (!pInNetStream->Link(pOutStream)) {
 			FATAL("Unable to link streams");
-			return false;
+			return NULL;
 		}
 	}
 

@@ -315,7 +315,7 @@ bool PushVariant(lua_State *pLuaState,
 		}
 		default:
 		{
-			FATAL("Unknown type %hhu", (VariantType) variant);
+			FATAL("Unknown type %d", (VariantType) variant);
 			return false;
 			break;
 		}

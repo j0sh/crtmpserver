@@ -164,7 +164,7 @@ bool AMF3Serializer::Write(IOBuffer &buffer, Variant &variant) {
 		}
 		default:
 		{
-			FATAL("Unable to serialize type %hhu; variant is:\n%s",
+			FATAL("Unable to serialize type %d; variant is:\n%s",
 					(VariantType) variant, STR(variant.ToString()));
 			return false;
 		}

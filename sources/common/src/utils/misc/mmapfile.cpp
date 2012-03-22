@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -32,34 +32,11 @@
 map<string, __FileInfo__ > MmapFile::_fds;
 int32_t MmapFile::_pageSize = 0;
 
-MmapFile::MmapFile() {
-	_cursor = 0;
-	_size = 0;
-	_failed = false;
-	if (_pageSize == 0) {
-		_pageSize = getpagesize();
-		LOG_MMAP("_pageSize: %u", _pageSize);
-	}
-	_windowSize = 0;
-	memset(&_pointer1, 0, sizeof (MmapPointer));
-	memset(&_pointer2, 0, sizeof (MmapPointer));
-}
-
-MmapFile::~MmapFile() {
-	_pointer1.Free();
-	_pointer2.Free();
-
-	if (MAP_HAS1(_fds, _path)) {
-		_fds[_path].useCount = _fds[_path].useCount - 1;
-		if (_fds[_path].useCount == 0) {
-			close(_fds[_path].fd);
-			_fds.erase(_path);
-		}
-	}
-}
-
 MmapPointer::MmapPointer() {
-
+	_pData = NULL;
+	_size = 0;
+	_cursor = 0;
+	_bytesRead = 0;
 }
 
 MmapPointer::~MmapPointer() {
@@ -149,6 +126,30 @@ MmapPointer::operator string() {
 	if (_size == 0)
 		return "[N - N](0)";
 	return format("[%"PRIu64" - %"PRIu64"](%u)", _cursor, _cursor + _size - 1, _size);
+}
+
+MmapFile::MmapFile() {
+	_cursor = 0;
+	_size = 0;
+	_failed = false;
+	if (_pageSize == 0) {
+		_pageSize = getpagesize();
+		LOG_MMAP("_pageSize: %u", _pageSize);
+	}
+	_windowSize = 0;
+}
+
+MmapFile::~MmapFile() {
+	_pointer1.Free();
+	_pointer2.Free();
+
+	if (MAP_HAS1(_fds, _path)) {
+		_fds[_path].useCount = _fds[_path].useCount - 1;
+		if (_fds[_path].useCount == 0) {
+			close(_fds[_path].fd);
+			_fds.erase(_path);
+		}
+	}
 }
 
 bool MmapFile::Initialize(string path, uint32_t windowSize, bool exclusive) {

@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -122,7 +122,7 @@ bool OutboundRTMPProtocol::PerformHandshake(IOBuffer &buffer) {
 		}
 		default:
 		{
-			FATAL("Invalid RTMP state: %hhu", _rtmpState);
+			FATAL("Invalid RTMP state: %d", _rtmpState);
 			return false;
 		}
 	}

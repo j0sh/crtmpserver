@@ -261,7 +261,7 @@ InFileRTMPStream *InFileRTMPStream::GetInstance(BaseRTMPProtocol *pRTMPProtocol,
 	metadata[META_RTMP_META][HTTP_HEADERS_SERVER] = HTTP_HEADERS_SERVER_US;
 	if (!fileExists(metadata[META_SERVER_FULL_PATH])) {
 		FATAL("File not found. fullPath: `%s`", STR(metadata[META_SERVER_FULL_PATH]));
-		return false;
+		return NULL;
 	}
 
 	InFileRTMPStream *pResult = NULL;

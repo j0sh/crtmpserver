@@ -67,7 +67,7 @@ MACRO(ADD_PRECOMPILED_HEADER _targetName _input )
 	IF(CMAKE_SYSTEM_NAME MATCHES "OpenBSD")
 		SET_TARGET_PROPERTIES(${_targetName} PROPERTIES COMPILE_FLAGS "-I${_outdir} -include ${_name}")
 	ELSE (CMAKE_SYSTEM_NAME MATCHES "OpenBSD")
-		SET_TARGET_PROPERTIES(${_targetName} PROPERTIES COMPILE_FLAGS "-I${_outdir} -include ${_name} -Winvalid-pch")
+		SET_TARGET_PROPERTIES(${_targetName} PROPERTIES COMPILE_FLAGS "-I${_outdir} -include ${_name}.h -Winvalid-pch")
 	ENDIF(CMAKE_SYSTEM_NAME MATCHES "OpenBSD")
 ENDMACRO(ADD_PRECOMPILED_HEADER)
 
