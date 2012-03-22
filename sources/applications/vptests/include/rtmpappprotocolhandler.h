@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -23,6 +23,7 @@
 #define	_RTMPAPPPROTOCOLHANDLER_H
 
 #include "protocols/rtmp/basertmpappprotocolhandler.h"
+#include "protocols/variant/basevariantappprotocolhandler.h"
 
 namespace app_vptests {
 	class VariantAppProtocolHandler;
@@ -35,9 +36,12 @@ namespace app_vptests {
 
 		virtual bool ProcessInvokeConnect(BaseRTMPProtocol *pFrom, Variant &request);
 	private:
-		VariantAppProtocolHandler *GetVariantHandler(bool xml);
-		bool Send(string ip, uint16_t port, Variant &variant, bool xml = true);
-		bool Send(string url, Variant &variant, bool xml = true);
+		VariantAppProtocolHandler *GetVariantHandler(
+				VariantSerializer serializer);
+		bool Send(string ip, uint16_t port, Variant &variant,
+				VariantSerializer serializer = VariantSerializer_XML);
+		bool Send(string url, Variant &variant,
+				VariantSerializer serializer = VariantSerializer_XML);
 	};
 }
 #endif	/* _RTMPAPPPROTOCOLHANDLER_H */

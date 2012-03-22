@@ -23,8 +23,8 @@
 
 #include "vmv8/basevmv8.h"
 
-class TestVMV8 
-:public BaseVMV8{
+class TestVMV8
+: public BaseVMV8 {
 public:
 	TestVMV8();
 	virtual ~TestVMV8();

@@ -1034,11 +1034,11 @@ void VariantTestsSuite::test_Compact() {
 void VariantTestsSuite::test_SerializeDeserializeBin() {
 	Variant v;
 	InitV(v);
-	string vHash = "fb5284b667427dced79342643c6ab810";
+	string vHash = "244c9084a34e401524e9955a77e93427";
 
 	Variant vCompact = v;
 	vCompact.Compact();
-	string vCompactHash = "a6458861009cafb27c193acca416e044";
+	string vCompactHash = "b04aae1c6e90d2c45d917728e87e2b09";
 
 	string rawV;
 	TS_ASSERT(v.SerializeToBin(rawV));
@@ -1070,11 +1070,11 @@ void VariantTestsSuite::test_SerializeDeserializeBin() {
 void VariantTestsSuite::test_SerializeDeserializeXml() {
 	Variant v;
 	InitV(v);
-	string vHash = "b7429921d677f16c8f6ac153e6a96c81";
+	string vHash = "773d80991cf4a67907a0d3f1cd2018da";
 
 	Variant vCompact = v;
 	vCompact.Compact();
-	string vCompactHash = "e9cf45e2a977d7a0c3809b295963179a";
+	string vCompactHash = "5d3ba0dca642332ae77eacf171b40f62";
 
 	string rawV;
 	TS_ASSERT(v.SerializeToXml(rawV));
@@ -1112,16 +1112,16 @@ void VariantTestsSuite::test_LoadFromLua() {
 
 	Variant temp = v["44 array"];
 	v.RemoveKey("44 array");
-	v["44 array"]["__index__value__1"] = temp["__index__value__0"];
-	v["44 array"]["__index__value__2"] = temp["__index__value__1"];
-	v["44 array"]["__index__value__3"] = temp["__index__value__2"];
+	v["44 array"]["0x00000001"] = temp["0x00000000"];
+	v["44 array"]["0x00000002"] = temp["0x00000001"];
+	v["44 array"]["0x00000003"] = temp["0x00000002"];
 	v["44 array"].IsArray(true);
 
 	temp = v["47 map"]["44 array"];
 	v["47 map"].RemoveKey("44 array");
-	v["47 map"]["44 array"]["__index__value__1"] = temp["__index__value__0"];
-	v["47 map"]["44 array"]["__index__value__2"] = temp["__index__value__1"];
-	v["47 map"]["44 array"]["__index__value__3"] = temp["__index__value__2"];
+	v["47 map"]["44 array"]["0x00000001"] = temp["0x00000000"];
+	v["47 map"]["44 array"]["0x00000002"] = temp["0x00000001"];
+	v["47 map"]["44 array"]["0x00000003"] = temp["0x00000002"];
 	v["47 map"]["44 array"].IsArray(true);
 
 	string rawLua;
