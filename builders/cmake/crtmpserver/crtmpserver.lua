@@ -200,7 +200,7 @@ configuration=
 					port=8988,
 					protocol="echoProtocol"
 				}
-			}
+			},
 			validateHandshake=false,
 			--default=true,
 		},
@@ -221,7 +221,7 @@ configuration=
 					port=1111,
 					protocol="inboundHttpXmlVariant"
 				}
-			}
+			},
 			validateHandshake=false,
 			--default=true,
 		},
@@ -243,7 +243,7 @@ configuration=
 					protocol="inboundJsonCli",
 					useLengthPadding=true
 				},
-			}
+			},
 			validateHandshake=false,
 			--default=true,
 		},
