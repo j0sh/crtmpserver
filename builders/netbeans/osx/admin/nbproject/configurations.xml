@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configurationDescriptor version="79">
+<configurationDescriptor version="80">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
@@ -43,10 +43,10 @@
             <pElem>../../../../sources/applications/admin/include</pElem>
           </incDir>
           <preprocessorList>
-            <Elem>OSX</Elem>
-            <Elem>NET_KQUEUE</Elem>
             <Elem>HAS_PROTOCOL_CLI</Elem>
             <Elem>HAS_PROTOCOL_RTMP</Elem>
+            <Elem>NET_KQUEUE</Elem>
+            <Elem>OSX</Elem>
           </preprocessorList>
         </ccTool>
         <linkerTool>
@@ -98,8 +98,8 @@
             <pElem>../../../../sources/applications/admin/include</pElem>
           </incDir>
           <preprocessorList>
-            <Elem>OSX</Elem>
             <Elem>NET_KQUEUE</Elem>
+            <Elem>OSX</Elem>
           </preprocessorList>
         </ccTool>
         <fortranCompilerTool>

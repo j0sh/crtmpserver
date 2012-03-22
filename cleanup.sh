@@ -11,7 +11,7 @@
 #for name in ${files[@]}; do
 #	for i in `find  . -type f -name "$name"`;do  rm -rf  $i;done
 #done
- 
+   
 
 
 for i in `find  ./ -type d -name "CMakeFiles"`;do  rm -rf $i;done

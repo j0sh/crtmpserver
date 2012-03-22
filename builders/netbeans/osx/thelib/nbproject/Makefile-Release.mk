@@ -59,6 +59,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/1826042562/xmlvariantprotocol.o \
 	${OBJECTDIR}/_ext/501751224/header_le_ba.o \
 	${OBJECTDIR}/_ext/1210522057/atommdhd.o \
+	${OBJECTDIR}/_ext/1826042562/jsonvariantprotocol.o \
 	${OBJECTDIR}/_ext/126235575/stdiocarrier.o \
 	${OBJECTDIR}/_ext/31226533/outnetrtmp4tsstream.o \
 	${OBJECTDIR}/_ext/1124578851/http4cliprotocol.o \
@@ -368,6 +369,11 @@ ${OBJECTDIR}/_ext/1210522057/atommdhd.o: ../../../../sources/thelib/src/mediafor
 	${MKDIR} -p ${OBJECTDIR}/_ext/1210522057
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -DHAS_MEDIA_FLV -DHAS_MEDIA_MP3 -DHAS_MEDIA_MP4 -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_LIVEFLV -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_VAR -DLITTLE_ENDIAN_BYTE_ALIGNED -DNET_KQUEUE -DOSX -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1210522057/atommdhd.o ../../../../sources/thelib/src/mediaformats/mp4/atommdhd.cpp
+
+${OBJECTDIR}/_ext/1826042562/jsonvariantprotocol.o: ../../../../sources/thelib/src/protocols/variant/jsonvariantprotocol.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1826042562
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -DHAS_MEDIA_FLV -DHAS_MEDIA_MP3 -DHAS_MEDIA_MP4 -DHAS_PROTOCOL_HTTP -DHAS_PROTOCOL_LIVEFLV -DHAS_PROTOCOL_RTMP -DHAS_PROTOCOL_RTP -DHAS_PROTOCOL_TS -DHAS_PROTOCOL_VAR -DLITTLE_ENDIAN_BYTE_ALIGNED -DNET_KQUEUE -DOSX -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1826042562/jsonvariantprotocol.o ../../../../sources/thelib/src/protocols/variant/jsonvariantprotocol.cpp
 
 ${OBJECTDIR}/_ext/126235575/stdiocarrier.o: ../../../../sources/thelib/src/netio/epoll/stdiocarrier.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/126235575

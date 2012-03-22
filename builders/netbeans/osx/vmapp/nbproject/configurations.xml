@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configurationDescriptor version="79">
+<configurationDescriptor version="80">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
-    <logicalFolder name="f1" displayName="apps" projectFiles="true" kind="ROOT">
+    <logicalFolder name="f1" displayName="apps" projectFiles="true">
       <itemPath>../../../cmake/applications/vmapp/crtmpserverdefaults.lua</itemPath>
       <itemPath>../../../cmake/applications/vmapp/flvplayback.lua</itemPath>
       <itemPath>../../../cmake/applications/vmapp/testapp.lua</itemPath>
@@ -81,11 +81,11 @@
             <pElem>../../../../sources/vm/include</pElem>
           </incDir>
           <preprocessorList>
-            <Elem>OSX</Elem>
-            <Elem>NET_KQUEUE</Elem>
-            <Elem>HAS_PROTOCOL_RTMP</Elem>
             <Elem>HAS_LUA</Elem>
-			<Elem>HAS_V8</Elem>
+            <Elem>HAS_PROTOCOL_RTMP</Elem>
+            <Elem>HAS_V8</Elem>
+            <Elem>NET_KQUEUE</Elem>
+            <Elem>OSX</Elem>
           </preprocessorList>
         </ccTool>
         <linkerTool>
@@ -138,8 +138,8 @@
             <pElem>../../../../sources/vm/include</pElem>
           </incDir>
           <preprocessorList>
-            <Elem>OSX</Elem>
             <Elem>NET_KQUEUE</Elem>
+            <Elem>OSX</Elem>
           </preprocessorList>
         </ccTool>
         <fortranCompilerTool>

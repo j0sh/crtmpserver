@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configurationDescriptor version="79">
+<configurationDescriptor version="80">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
@@ -54,9 +54,9 @@
             <pElem>../../../../../v8/include</pElem>
           </incDir>
           <preprocessorList>
-            <Elem>OSX</Elem>
             <Elem>HAS_LUA</Elem>
             <Elem>HAS_V8</Elem>
+            <Elem>OSX</Elem>
           </preprocessorList>
         </ccTool>
         <linkerTool>
@@ -96,9 +96,9 @@
             <pElem>/opt/local/include</pElem>
           </incDir>
           <preprocessorList>
-            <Elem>OSX</Elem>
             <Elem>HAS_LUA</Elem>
-			<Elem>HAS_V8</Elem>
+            <Elem>HAS_V8</Elem>
+            <Elem>OSX</Elem>
           </preprocessorList>
         </ccTool>
         <fortranCompilerTool>
