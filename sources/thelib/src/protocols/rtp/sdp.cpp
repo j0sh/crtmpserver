@@ -44,6 +44,7 @@ bool SDP::ParseSDP(SDP &sdp, string &raw) {
 	//4. Detect the media tracks indexes
 	vector<uint32_t> trackIndexes;
 	for (uint32_t i = 0; i < lines.size(); i++) {
+		trim(lines[i]);
 		if (lines[i].find("m=") == 0) {
 			ADD_VECTOR_END(trackIndexes, i);
 		}
