@@ -8,6 +8,6 @@
 				"#APPNAME_LC#_alias2",
 				"#APPNAME_LC#_alias3",
 			},
-			--validateHandshake=true,
+			validateHandshake=false,
 			--default=true,
 		},

@@ -82,7 +82,7 @@ configuration=
 					tcUrl="rtmp://edge01.fms.dutchview.nl/botr/bunny", --this one is usually required and should have the same value as the uri
 				}]]--
 			},
-			validateHandshake=true,
+			validateHandshake=false,
 			keyframeSeek=true,
 			seekGranularity=1.5, --in seconds, between 0.1 and 600
 			clientSideBuffer=12, --in seconds, between 5 and 30

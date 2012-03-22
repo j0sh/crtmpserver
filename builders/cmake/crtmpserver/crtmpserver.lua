@@ -64,7 +64,7 @@ configuration=
 			
 			-- Tells the server to validate the clien's handshake before going further. 
 			-- It is optional, defaulted to true
-			validateHandshake=true,
+			validateHandshake=false,
 			-- this is the folder from where the current application gets it's content.
 			-- It is optional. If not specified, it will be defaulted to:
 			-- <rootDirectory>/<name>/mediaFolder
@@ -157,7 +157,7 @@ configuration=
 					emulateUserAgent="MAC 10,1,82,76",
 				}]]--
 			},
-			validateHandshake=true,
+			validateHandshake=false,
 			keyframeSeek=true,
 			seekGranularity=1.5, --in seconds, between 0.1 and 600
 			clientSideBuffer=12, --in seconds, between 5 and 30
@@ -201,7 +201,7 @@ configuration=
 					protocol="echoProtocol"
 				}
 			}
-			--validateHandshake=true,
+			validateHandshake=false,
 			--default=true,
 		},
 		{
@@ -222,7 +222,7 @@ configuration=
 					protocol="inboundHttpXmlVariant"
 				}
 			}
-			--validateHandshake=true,
+			validateHandshake=false,
 			--default=true,
 		},
 		{
@@ -244,7 +244,7 @@ configuration=
 					useLengthPadding=true
 				},
 			}
-			--validateHandshake=true,
+			validateHandshake=false,
 			--default=true,
 		},
 		{
@@ -285,7 +285,7 @@ configuration=
 					keepAlive=true
 				},
 			},]]--
-			--validateHandshake=true,
+			validateHandshake=false,
 			--default=true,
 		},
 		{
