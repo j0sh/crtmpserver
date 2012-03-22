@@ -23,7 +23,10 @@ FIND_LIBRARY(DL_LIBRARY_PATH
 		/usr/local/lib
 		/sw/lib
 		/opt/local/lib
-		/lib/i386-linux-gnu/
+		/lib/i386-linux-gnu
+		/usr/lib/i386-linux-gnu
+		/lib/x86_64-linux-gnu
+		/usr/lib/x86_64-linux-gnu		
 		NO_DEFAULT_PATH)
 
 MESSAGE(STATUS "DL_INCLUDE_PATH: ${DL_INCLUDE_PATH}")
