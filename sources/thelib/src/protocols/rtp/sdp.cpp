@@ -289,7 +289,7 @@ bool SDP::ParseSDPLine(Variant &result, string &line) {
 		}
 		case 'b':
 		{
-			FORBID_DUPLICATE(SDP_B);
+			//FORBID_DUPLICATE(SDP_B);
 			return ParseSDPLineB(result[SDP_B], line.substr(2));
 		}
 		case 'c':
