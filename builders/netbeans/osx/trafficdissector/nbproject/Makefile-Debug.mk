@@ -69,32 +69,32 @@ ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/trafficdissector: ${OBJECTFILES}
 ${OBJECTDIR}/_ext/820541149/monitorstream.o: ../../../../sources/trafficdissector/src/monitorstream.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/820541149
 	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DLITTLE_ENDIAN_BYTE_ALIGNED -DNET_SELECT -DHAS_LUA -DHAS_PROTOCOL_RTMP -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/trafficdissector/include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/820541149/monitorstream.o ../../../../sources/trafficdissector/src/monitorstream.cpp
+	$(COMPILE.cc) -g -DHAS_LUA -DHAS_PROTOCOL_RTMP -DLITTLE_ENDIAN_BYTE_ALIGNED -DNET_SELECT -DOSX -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/trafficdissector/include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/820541149/monitorstream.o ../../../../sources/trafficdissector/src/monitorstream.cpp
 
 ${OBJECTDIR}/_ext/820541149/monitorrtmpprotocolhandler.o: ../../../../sources/trafficdissector/src/monitorrtmpprotocolhandler.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/820541149
 	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DLITTLE_ENDIAN_BYTE_ALIGNED -DNET_SELECT -DHAS_LUA -DHAS_PROTOCOL_RTMP -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/trafficdissector/include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/820541149/monitorrtmpprotocolhandler.o ../../../../sources/trafficdissector/src/monitorrtmpprotocolhandler.cpp
+	$(COMPILE.cc) -g -DHAS_LUA -DHAS_PROTOCOL_RTMP -DLITTLE_ENDIAN_BYTE_ALIGNED -DNET_SELECT -DOSX -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/trafficdissector/include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/820541149/monitorrtmpprotocolhandler.o ../../../../sources/trafficdissector/src/monitorrtmpprotocolhandler.cpp
 
 ${OBJECTDIR}/_ext/820541149/monitorapplication.o: ../../../../sources/trafficdissector/src/monitorapplication.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/820541149
 	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DLITTLE_ENDIAN_BYTE_ALIGNED -DNET_SELECT -DHAS_LUA -DHAS_PROTOCOL_RTMP -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/trafficdissector/include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/820541149/monitorapplication.o ../../../../sources/trafficdissector/src/monitorapplication.cpp
+	$(COMPILE.cc) -g -DHAS_LUA -DHAS_PROTOCOL_RTMP -DLITTLE_ENDIAN_BYTE_ALIGNED -DNET_SELECT -DOSX -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/trafficdissector/include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/820541149/monitorapplication.o ../../../../sources/trafficdissector/src/monitorapplication.cpp
 
 ${OBJECTDIR}/_ext/820541149/main.o: ../../../../sources/trafficdissector/src/main.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/820541149
 	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DLITTLE_ENDIAN_BYTE_ALIGNED -DNET_SELECT -DHAS_LUA -DHAS_PROTOCOL_RTMP -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/trafficdissector/include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/820541149/main.o ../../../../sources/trafficdissector/src/main.cpp
+	$(COMPILE.cc) -g -DHAS_LUA -DHAS_PROTOCOL_RTMP -DLITTLE_ENDIAN_BYTE_ALIGNED -DNET_SELECT -DOSX -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/trafficdissector/include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/820541149/main.o ../../../../sources/trafficdissector/src/main.cpp
 
 ${OBJECTDIR}/_ext/820541149/basefeeder.o: ../../../../sources/trafficdissector/src/basefeeder.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/820541149
 	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DLITTLE_ENDIAN_BYTE_ALIGNED -DNET_SELECT -DHAS_LUA -DHAS_PROTOCOL_RTMP -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/trafficdissector/include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/820541149/basefeeder.o ../../../../sources/trafficdissector/src/basefeeder.cpp
+	$(COMPILE.cc) -g -DHAS_LUA -DHAS_PROTOCOL_RTMP -DLITTLE_ENDIAN_BYTE_ALIGNED -DNET_SELECT -DOSX -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/trafficdissector/include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/820541149/basefeeder.o ../../../../sources/trafficdissector/src/basefeeder.cpp
 
 ${OBJECTDIR}/_ext/820541149/monitorrtmpprotocol.o: ../../../../sources/trafficdissector/src/monitorrtmpprotocol.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/820541149
 	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DLITTLE_ENDIAN_BYTE_ALIGNED -DNET_SELECT -DHAS_LUA -DHAS_PROTOCOL_RTMP -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/trafficdissector/include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/820541149/monitorrtmpprotocol.o ../../../../sources/trafficdissector/src/monitorrtmpprotocol.cpp
+	$(COMPILE.cc) -g -DHAS_LUA -DHAS_PROTOCOL_RTMP -DLITTLE_ENDIAN_BYTE_ALIGNED -DNET_SELECT -DOSX -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/trafficdissector/include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/820541149/monitorrtmpprotocol.o ../../../../sources/trafficdissector/src/monitorrtmpprotocol.cpp
 
 # Subprojects
 .build-subprojects:

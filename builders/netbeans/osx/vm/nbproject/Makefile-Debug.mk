@@ -68,17 +68,17 @@ ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libvm.dylib: ${OBJECTFILES}
 ${OBJECTDIR}/_ext/431490565/basevmv8.o: ../../../../sources/vm/src/vmv8/basevmv8.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/431490565
 	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DHAS_LUA -DHAS_V8 -I../../../../sources/common/include -I../../../../sources/vm/include -I../../../../3rdparty/v8/include -I/opt/local/include -I../../../../../v8/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/431490565/basevmv8.o ../../../../sources/vm/src/vmv8/basevmv8.cpp
+	$(COMPILE.cc) -g -DHAS_LUA -DHAS_V8 -DOSX -I../../../../sources/common/include -I../../../../sources/vm/include -I../../../../3rdparty/v8/include -I/opt/local/include -I../../../../../v8/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/431490565/basevmv8.o ../../../../sources/vm/src/vmv8/basevmv8.cpp
 
 ${OBJECTDIR}/_ext/910696451/basevm.o: ../../../../sources/vm/src/basevm.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/910696451
 	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DHAS_LUA -DHAS_V8 -I../../../../sources/common/include -I../../../../sources/vm/include -I../../../../3rdparty/v8/include -I/opt/local/include -I../../../../../v8/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/910696451/basevm.o ../../../../sources/vm/src/basevm.cpp
+	$(COMPILE.cc) -g -DHAS_LUA -DHAS_V8 -DOSX -I../../../../sources/common/include -I../../../../sources/vm/include -I../../../../3rdparty/v8/include -I/opt/local/include -I../../../../../v8/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/910696451/basevm.o ../../../../sources/vm/src/basevm.cpp
 
 ${OBJECTDIR}/_ext/491298005/basevmlua.o: ../../../../sources/vm/src/vmlua/basevmlua.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/491298005
 	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DHAS_LUA -DHAS_V8 -I../../../../sources/common/include -I../../../../sources/vm/include -I../../../../3rdparty/v8/include -I/opt/local/include -I../../../../../v8/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/491298005/basevmlua.o ../../../../sources/vm/src/vmlua/basevmlua.cpp
+	$(COMPILE.cc) -g -DHAS_LUA -DHAS_V8 -DOSX -I../../../../sources/common/include -I../../../../sources/vm/include -I../../../../3rdparty/v8/include -I/opt/local/include -I../../../../../v8/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/491298005/basevmlua.o ../../../../sources/vm/src/vmlua/basevmlua.cpp
 
 # Subprojects
 .build-subprojects:

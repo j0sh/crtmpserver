@@ -71,22 +71,22 @@ LDLIBSOPTIONS=-L../thelib/../Debug/GNU-MacOSX -lthelib -L../common/dist/Debug/GN
 ${OBJECTDIR}/_ext/2107059025/cliappprotocolhandler.o: ../../../../sources/applications/admin/src/cliappprotocolhandler.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/2107059025
 	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_CLI -DHAS_PROTOCOL_RTMP -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/admin/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/2107059025/cliappprotocolhandler.o ../../../../sources/applications/admin/src/cliappprotocolhandler.cpp
+	$(COMPILE.cc) -g -DHAS_PROTOCOL_CLI -DHAS_PROTOCOL_RTMP -DNET_KQUEUE -DOSX -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/admin/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/2107059025/cliappprotocolhandler.o ../../../../sources/applications/admin/src/cliappprotocolhandler.cpp
 
 ${OBJECTDIR}/_ext/2107059025/admin.o: ../../../../sources/applications/admin/src/admin.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/2107059025
 	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_CLI -DHAS_PROTOCOL_RTMP -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/admin/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/2107059025/admin.o ../../../../sources/applications/admin/src/admin.cpp
+	$(COMPILE.cc) -g -DHAS_PROTOCOL_CLI -DHAS_PROTOCOL_RTMP -DNET_KQUEUE -DOSX -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/admin/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/2107059025/admin.o ../../../../sources/applications/admin/src/admin.cpp
 
 ${OBJECTDIR}/_ext/2107059025/adminapplication.o: ../../../../sources/applications/admin/src/adminapplication.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/2107059025
 	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_CLI -DHAS_PROTOCOL_RTMP -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/admin/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/2107059025/adminapplication.o ../../../../sources/applications/admin/src/adminapplication.cpp
+	$(COMPILE.cc) -g -DHAS_PROTOCOL_CLI -DHAS_PROTOCOL_RTMP -DNET_KQUEUE -DOSX -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/admin/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/2107059025/adminapplication.o ../../../../sources/applications/admin/src/adminapplication.cpp
 
 ${OBJECTDIR}/_ext/2107059025/rtmpappprotocolhandler.o: ../../../../sources/applications/admin/src/rtmpappprotocolhandler.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/2107059025
 	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_CLI -DHAS_PROTOCOL_RTMP -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/admin/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/2107059025/rtmpappprotocolhandler.o ../../../../sources/applications/admin/src/rtmpappprotocolhandler.cpp
+	$(COMPILE.cc) -g -DHAS_PROTOCOL_CLI -DHAS_PROTOCOL_RTMP -DNET_KQUEUE -DOSX -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/admin/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/2107059025/rtmpappprotocolhandler.o ../../../../sources/applications/admin/src/rtmpappprotocolhandler.cpp
 
 # Subprojects
 .build-subprojects:

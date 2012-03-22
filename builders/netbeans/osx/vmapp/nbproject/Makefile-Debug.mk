@@ -80,67 +80,67 @@ LDLIBSOPTIONS=-L../thelib/../Debug/GNU-MacOSX -lthelib -L../common/dist/Debug/GN
 ${OBJECTDIR}/_ext/466364438/tsappprotocolhandler.o: ../../../../sources/applications/vmapp/src/tsappprotocolhandler.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/466364438
 	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTMP -DHAS_LUA -DHAS_V8 -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/vmapp/include -I../../../../sources/vm/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/466364438/tsappprotocolhandler.o ../../../../sources/applications/vmapp/src/tsappprotocolhandler.cpp
+	$(COMPILE.cc) -g -DHAS_LUA -DHAS_PROTOCOL_RTMP -DHAS_V8 -DNET_KQUEUE -DOSX -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/vmapp/include -I../../../../sources/vm/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/466364438/tsappprotocolhandler.o ../../../../sources/applications/vmapp/src/tsappprotocolhandler.cpp
 
 ${OBJECTDIR}/_ext/581372517/luaapi_handler_rtmp.o: ../../../../sources/applications/vmapp/src/vm/lua/luaapi_handler_rtmp.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/581372517
 	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTMP -DHAS_LUA -DHAS_V8 -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/vmapp/include -I../../../../sources/vm/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/581372517/luaapi_handler_rtmp.o ../../../../sources/applications/vmapp/src/vm/lua/luaapi_handler_rtmp.cpp
+	$(COMPILE.cc) -g -DHAS_LUA -DHAS_PROTOCOL_RTMP -DHAS_V8 -DNET_KQUEUE -DOSX -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/vmapp/include -I../../../../sources/vm/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/581372517/luaapi_handler_rtmp.o ../../../../sources/applications/vmapp/src/vm/lua/luaapi_handler_rtmp.cpp
 
 ${OBJECTDIR}/_ext/581372517/luaappvirtualmachine.o: ../../../../sources/applications/vmapp/src/vm/lua/luaappvirtualmachine.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/581372517
 	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTMP -DHAS_LUA -DHAS_V8 -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/vmapp/include -I../../../../sources/vm/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/581372517/luaappvirtualmachine.o ../../../../sources/applications/vmapp/src/vm/lua/luaappvirtualmachine.cpp
+	$(COMPILE.cc) -g -DHAS_LUA -DHAS_PROTOCOL_RTMP -DHAS_V8 -DNET_KQUEUE -DOSX -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/vmapp/include -I../../../../sources/vm/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/581372517/luaappvirtualmachine.o ../../../../sources/applications/vmapp/src/vm/lua/luaappvirtualmachine.cpp
 
 ${OBJECTDIR}/_ext/581372517/luaapi_protocols.o: ../../../../sources/applications/vmapp/src/vm/lua/luaapi_protocols.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/581372517
 	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTMP -DHAS_LUA -DHAS_V8 -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/vmapp/include -I../../../../sources/vm/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/581372517/luaapi_protocols.o ../../../../sources/applications/vmapp/src/vm/lua/luaapi_protocols.cpp
+	$(COMPILE.cc) -g -DHAS_LUA -DHAS_PROTOCOL_RTMP -DHAS_V8 -DNET_KQUEUE -DOSX -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/vmapp/include -I../../../../sources/vm/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/581372517/luaapi_protocols.o ../../../../sources/applications/vmapp/src/vm/lua/luaapi_protocols.cpp
 
 ${OBJECTDIR}/_ext/581372517/luaapi_handler_mpegts.o: ../../../../sources/applications/vmapp/src/vm/lua/luaapi_handler_mpegts.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/581372517
 	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTMP -DHAS_LUA -DHAS_V8 -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/vmapp/include -I../../../../sources/vm/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/581372517/luaapi_handler_mpegts.o ../../../../sources/applications/vmapp/src/vm/lua/luaapi_handler_mpegts.cpp
+	$(COMPILE.cc) -g -DHAS_LUA -DHAS_PROTOCOL_RTMP -DHAS_V8 -DNET_KQUEUE -DOSX -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/vmapp/include -I../../../../sources/vm/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/581372517/luaapi_handler_mpegts.o ../../../../sources/applications/vmapp/src/vm/lua/luaapi_handler_mpegts.cpp
 
 ${OBJECTDIR}/_ext/466364438/rtspappprotocolhandler.o: ../../../../sources/applications/vmapp/src/rtspappprotocolhandler.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/466364438
 	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTMP -DHAS_LUA -DHAS_V8 -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/vmapp/include -I../../../../sources/vm/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/466364438/rtspappprotocolhandler.o ../../../../sources/applications/vmapp/src/rtspappprotocolhandler.cpp
+	$(COMPILE.cc) -g -DHAS_LUA -DHAS_PROTOCOL_RTMP -DHAS_V8 -DNET_KQUEUE -DOSX -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/vmapp/include -I../../../../sources/vm/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/466364438/rtspappprotocolhandler.o ../../../../sources/applications/vmapp/src/rtspappprotocolhandler.cpp
 
 ${OBJECTDIR}/_ext/466364438/rtpappprotocolhandler.o: ../../../../sources/applications/vmapp/src/rtpappprotocolhandler.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/466364438
 	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTMP -DHAS_LUA -DHAS_V8 -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/vmapp/include -I../../../../sources/vm/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/466364438/rtpappprotocolhandler.o ../../../../sources/applications/vmapp/src/rtpappprotocolhandler.cpp
+	$(COMPILE.cc) -g -DHAS_LUA -DHAS_PROTOCOL_RTMP -DHAS_V8 -DNET_KQUEUE -DOSX -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/vmapp/include -I../../../../sources/vm/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/466364438/rtpappprotocolhandler.o ../../../../sources/applications/vmapp/src/rtpappprotocolhandler.cpp
 
 ${OBJECTDIR}/_ext/466364438/vmappapplication.o: ../../../../sources/applications/vmapp/src/vmappapplication.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/466364438
 	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTMP -DHAS_LUA -DHAS_V8 -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/vmapp/include -I../../../../sources/vm/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/466364438/vmappapplication.o ../../../../sources/applications/vmapp/src/vmappapplication.cpp
+	$(COMPILE.cc) -g -DHAS_LUA -DHAS_PROTOCOL_RTMP -DHAS_V8 -DNET_KQUEUE -DOSX -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/vmapp/include -I../../../../sources/vm/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/466364438/vmappapplication.o ../../../../sources/applications/vmapp/src/vmappapplication.cpp
 
 ${OBJECTDIR}/_ext/756279036/baseappvirtualmachine.o: ../../../../sources/applications/vmapp/src/vm/baseappvirtualmachine.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/756279036
 	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTMP -DHAS_LUA -DHAS_V8 -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/vmapp/include -I../../../../sources/vm/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/756279036/baseappvirtualmachine.o ../../../../sources/applications/vmapp/src/vm/baseappvirtualmachine.cpp
+	$(COMPILE.cc) -g -DHAS_LUA -DHAS_PROTOCOL_RTMP -DHAS_V8 -DNET_KQUEUE -DOSX -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/vmapp/include -I../../../../sources/vm/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/756279036/baseappvirtualmachine.o ../../../../sources/applications/vmapp/src/vm/baseappvirtualmachine.cpp
 
 ${OBJECTDIR}/_ext/581372517/luaapi_generics.o: ../../../../sources/applications/vmapp/src/vm/lua/luaapi_generics.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/581372517
 	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTMP -DHAS_LUA -DHAS_V8 -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/vmapp/include -I../../../../sources/vm/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/581372517/luaapi_generics.o ../../../../sources/applications/vmapp/src/vm/lua/luaapi_generics.cpp
+	$(COMPILE.cc) -g -DHAS_LUA -DHAS_PROTOCOL_RTMP -DHAS_V8 -DNET_KQUEUE -DOSX -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/vmapp/include -I../../../../sources/vm/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/581372517/luaapi_generics.o ../../../../sources/applications/vmapp/src/vm/lua/luaapi_generics.cpp
 
 ${OBJECTDIR}/_ext/466364438/rtmpappprotocolhandler.o: ../../../../sources/applications/vmapp/src/rtmpappprotocolhandler.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/466364438
 	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTMP -DHAS_LUA -DHAS_V8 -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/vmapp/include -I../../../../sources/vm/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/466364438/rtmpappprotocolhandler.o ../../../../sources/applications/vmapp/src/rtmpappprotocolhandler.cpp
+	$(COMPILE.cc) -g -DHAS_LUA -DHAS_PROTOCOL_RTMP -DHAS_V8 -DNET_KQUEUE -DOSX -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/vmapp/include -I../../../../sources/vm/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/466364438/rtmpappprotocolhandler.o ../../../../sources/applications/vmapp/src/rtmpappprotocolhandler.cpp
 
 ${OBJECTDIR}/_ext/466364438/vmapp.o: ../../../../sources/applications/vmapp/src/vmapp.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/466364438
 	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTMP -DHAS_LUA -DHAS_V8 -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/vmapp/include -I../../../../sources/vm/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/466364438/vmapp.o ../../../../sources/applications/vmapp/src/vmapp.cpp
+	$(COMPILE.cc) -g -DHAS_LUA -DHAS_PROTOCOL_RTMP -DHAS_V8 -DNET_KQUEUE -DOSX -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/vmapp/include -I../../../../sources/vm/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/466364438/vmapp.o ../../../../sources/applications/vmapp/src/vmapp.cpp
 
 ${OBJECTDIR}/_ext/581372517/luaapi_application.o: ../../../../sources/applications/vmapp/src/vm/lua/luaapi_application.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/581372517
 	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTMP -DHAS_LUA -DHAS_V8 -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/vmapp/include -I../../../../sources/vm/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/581372517/luaapi_application.o ../../../../sources/applications/vmapp/src/vm/lua/luaapi_application.cpp
+	$(COMPILE.cc) -g -DHAS_LUA -DHAS_PROTOCOL_RTMP -DHAS_V8 -DNET_KQUEUE -DOSX -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/vmapp/include -I../../../../sources/vm/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/581372517/luaapi_application.o ../../../../sources/applications/vmapp/src/vm/lua/luaapi_application.cpp
 
 # Subprojects
 .build-subprojects:

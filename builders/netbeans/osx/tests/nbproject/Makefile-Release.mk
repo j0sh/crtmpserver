@@ -70,27 +70,27 @@ ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libtests.a: ${OBJECTFILES}
 ${OBJECTDIR}/_ext/2055716895/basetestssuite.o: ../../../../sources/tests/src/basetestssuite.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/2055716895
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTMP -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/tests/include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/2055716895/basetestssuite.o ../../../../sources/tests/src/basetestssuite.cpp
+	$(COMPILE.cc) -O2 -DHAS_PROTOCOL_RTMP -DNET_KQUEUE -DOSX -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/tests/include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/2055716895/basetestssuite.o ../../../../sources/tests/src/basetestssuite.cpp
 
 ${OBJECTDIR}/_ext/2055716895/main.o: ../../../../sources/tests/src/main.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/2055716895
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTMP -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/tests/include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/2055716895/main.o ../../../../sources/tests/src/main.cpp
+	$(COMPILE.cc) -O2 -DHAS_PROTOCOL_RTMP -DNET_KQUEUE -DOSX -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/tests/include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/2055716895/main.o ../../../../sources/tests/src/main.cpp
 
 ${OBJECTDIR}/_ext/2055716895/thelibtestssuite.o: ../../../../sources/tests/src/thelibtestssuite.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/2055716895
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTMP -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/tests/include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/2055716895/thelibtestssuite.o ../../../../sources/tests/src/thelibtestssuite.cpp
+	$(COMPILE.cc) -O2 -DHAS_PROTOCOL_RTMP -DNET_KQUEUE -DOSX -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/tests/include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/2055716895/thelibtestssuite.o ../../../../sources/tests/src/thelibtestssuite.cpp
 
 ${OBJECTDIR}/_ext/2055716895/varianttestssuite.o: ../../../../sources/tests/src/varianttestssuite.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/2055716895
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTMP -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/tests/include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/2055716895/varianttestssuite.o ../../../../sources/tests/src/varianttestssuite.cpp
+	$(COMPILE.cc) -O2 -DHAS_PROTOCOL_RTMP -DNET_KQUEUE -DOSX -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/tests/include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/2055716895/varianttestssuite.o ../../../../sources/tests/src/varianttestssuite.cpp
 
 ${OBJECTDIR}/_ext/2055716895/commontestssuite.o: ../../../../sources/tests/src/commontestssuite.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/2055716895
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTMP -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/tests/include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/2055716895/commontestssuite.o ../../../../sources/tests/src/commontestssuite.cpp
+	$(COMPILE.cc) -O2 -DHAS_PROTOCOL_RTMP -DNET_KQUEUE -DOSX -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/tests/include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/2055716895/commontestssuite.o ../../../../sources/tests/src/commontestssuite.cpp
 
 # Subprojects
 .build-subprojects:

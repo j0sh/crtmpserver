@@ -67,22 +67,22 @@ ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libandroidapplestreaming.dylib: ${OBJ
 ${OBJECTDIR}/_ext/2044958859/variantconnection.o: ../../../../sources/androidapplestreaming/src/variantconnection.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/2044958859
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DANDROID -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/androidapplestreaming/include -I../../../../sources/applications/applestreamingclient/include -I../../../../../android/workbench/android-ndk-r4-crystax/build/platforms/android-4/arch-arm/usr/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/2044958859/variantconnection.o ../../../../sources/androidapplestreaming/src/variantconnection.cpp
+	$(COMPILE.cc) -O2 -DANDROID -DNET_KQUEUE -DOSX -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/androidapplestreaming/include -I../../../../sources/applications/applestreamingclient/include -I../../../../../android/workbench/android-ndk-r4-crystax/build/platforms/android-4/arch-arm/usr/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/2044958859/variantconnection.o ../../../../sources/androidapplestreaming/src/variantconnection.cpp
 
 ${OBJECTDIR}/_ext/2044958859/main.o: ../../../../sources/androidapplestreaming/src/main.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/2044958859
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DANDROID -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/androidapplestreaming/include -I../../../../sources/applications/applestreamingclient/include -I../../../../../android/workbench/android-ndk-r4-crystax/build/platforms/android-4/arch-arm/usr/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/2044958859/main.o ../../../../sources/androidapplestreaming/src/main.cpp
+	$(COMPILE.cc) -O2 -DANDROID -DNET_KQUEUE -DOSX -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/androidapplestreaming/include -I../../../../sources/applications/applestreamingclient/include -I../../../../../android/workbench/android-ndk-r4-crystax/build/platforms/android-4/arch-arm/usr/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/2044958859/main.o ../../../../sources/androidapplestreaming/src/main.cpp
 
 ${OBJECTDIR}/_ext/2044958859/jniwrapper.o: ../../../../sources/androidapplestreaming/src/jniwrapper.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/2044958859
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DANDROID -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/androidapplestreaming/include -I../../../../sources/applications/applestreamingclient/include -I../../../../../android/workbench/android-ndk-r4-crystax/build/platforms/android-4/arch-arm/usr/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/2044958859/jniwrapper.o ../../../../sources/androidapplestreaming/src/jniwrapper.cpp
+	$(COMPILE.cc) -O2 -DANDROID -DNET_KQUEUE -DOSX -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/androidapplestreaming/include -I../../../../sources/applications/applestreamingclient/include -I../../../../../android/workbench/android-ndk-r4-crystax/build/platforms/android-4/arch-arm/usr/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/2044958859/jniwrapper.o ../../../../sources/androidapplestreaming/src/jniwrapper.cpp
 
 ${OBJECTDIR}/_ext/2044958859/api.o: ../../../../sources/androidapplestreaming/src/api.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/2044958859
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -DANDROID -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/androidapplestreaming/include -I../../../../sources/applications/applestreamingclient/include -I../../../../../android/workbench/android-ndk-r4-crystax/build/platforms/android-4/arch-arm/usr/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/2044958859/api.o ../../../../sources/androidapplestreaming/src/api.cpp
+	$(COMPILE.cc) -O2 -DANDROID -DNET_KQUEUE -DOSX -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/androidapplestreaming/include -I../../../../sources/applications/applestreamingclient/include -I../../../../../android/workbench/android-ndk-r4-crystax/build/platforms/android-4/arch-arm/usr/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/2044958859/api.o ../../../../sources/androidapplestreaming/src/api.cpp
 
 # Subprojects
 .build-subprojects:

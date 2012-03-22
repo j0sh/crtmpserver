@@ -70,17 +70,17 @@ LDLIBSOPTIONS=-L../thelib/../Debug/GNU-MacOSX -lthelib -L../common/dist/Debug/GN
 ${OBJECTDIR}/_ext/1256058352/stresstestapplication.o: ../../../../sources/applications/stresstest/src/stresstestapplication.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1256058352
 	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTMP -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/stresstest/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1256058352/stresstestapplication.o ../../../../sources/applications/stresstest/src/stresstestapplication.cpp
+	$(COMPILE.cc) -g -DHAS_PROTOCOL_RTMP -DNET_KQUEUE -DOSX -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/stresstest/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1256058352/stresstestapplication.o ../../../../sources/applications/stresstest/src/stresstestapplication.cpp
 
 ${OBJECTDIR}/_ext/1256058352/stresstest.o: ../../../../sources/applications/stresstest/src/stresstest.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1256058352
 	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTMP -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/stresstest/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1256058352/stresstest.o ../../../../sources/applications/stresstest/src/stresstest.cpp
+	$(COMPILE.cc) -g -DHAS_PROTOCOL_RTMP -DNET_KQUEUE -DOSX -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/stresstest/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1256058352/stresstest.o ../../../../sources/applications/stresstest/src/stresstest.cpp
 
 ${OBJECTDIR}/_ext/1256058352/rtmpappprotocolhandler.o: ../../../../sources/applications/stresstest/src/rtmpappprotocolhandler.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1256058352
 	${RM} $@.d
-	$(COMPILE.cc) -g -DOSX -DNET_KQUEUE -DHAS_PROTOCOL_RTMP -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/stresstest/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1256058352/rtmpappprotocolhandler.o ../../../../sources/applications/stresstest/src/rtmpappprotocolhandler.cpp
+	$(COMPILE.cc) -g -DHAS_PROTOCOL_RTMP -DNET_KQUEUE -DOSX -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/stresstest/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1256058352/rtmpappprotocolhandler.o ../../../../sources/applications/stresstest/src/rtmpappprotocolhandler.cpp
 
 # Subprojects
 .build-subprojects:

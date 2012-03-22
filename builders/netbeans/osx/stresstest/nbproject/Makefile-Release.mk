@@ -70,17 +70,17 @@ LDLIBSOPTIONS=-L../common/dist/Release/GNU-MacOSX -lcommon -L../thelib/../Releas
 ${OBJECTDIR}/_ext/1256058352/stresstestapplication.o: ../../../../sources/applications/stresstest/src/stresstestapplication.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1256058352
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/stresstest/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1256058352/stresstestapplication.o ../../../../sources/applications/stresstest/src/stresstestapplication.cpp
+	$(COMPILE.cc) -O2 -DNET_KQUEUE -DOSX -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/stresstest/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1256058352/stresstestapplication.o ../../../../sources/applications/stresstest/src/stresstestapplication.cpp
 
 ${OBJECTDIR}/_ext/1256058352/stresstest.o: ../../../../sources/applications/stresstest/src/stresstest.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1256058352
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/stresstest/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1256058352/stresstest.o ../../../../sources/applications/stresstest/src/stresstest.cpp
+	$(COMPILE.cc) -O2 -DNET_KQUEUE -DOSX -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/stresstest/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1256058352/stresstest.o ../../../../sources/applications/stresstest/src/stresstest.cpp
 
 ${OBJECTDIR}/_ext/1256058352/rtmpappprotocolhandler.o: ../../../../sources/applications/stresstest/src/rtmpappprotocolhandler.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1256058352
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/stresstest/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1256058352/rtmpappprotocolhandler.o ../../../../sources/applications/stresstest/src/rtmpappprotocolhandler.cpp
+	$(COMPILE.cc) -O2 -DNET_KQUEUE -DOSX -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/stresstest/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1256058352/rtmpappprotocolhandler.o ../../../../sources/applications/stresstest/src/rtmpappprotocolhandler.cpp
 
 # Subprojects
 .build-subprojects:

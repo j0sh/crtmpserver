@@ -73,32 +73,32 @@ LDLIBSOPTIONS=-L../common/dist/Release/GNU-MacOSX -lcommon -L../thelib/../Releas
 ${OBJECTDIR}/_ext/1702679040/samplefactory.o: ../../../../sources/applications/samplefactory/src/samplefactory.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1702679040
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/samplefactory/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1702679040/samplefactory.o ../../../../sources/applications/samplefactory/src/samplefactory.cpp
+	$(COMPILE.cc) -O2 -DNET_KQUEUE -DOSX -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/samplefactory/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1702679040/samplefactory.o ../../../../sources/applications/samplefactory/src/samplefactory.cpp
 
 ${OBJECTDIR}/_ext/1702679040/samplefactoryapplication.o: ../../../../sources/applications/samplefactory/src/samplefactoryapplication.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1702679040
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/samplefactory/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1702679040/samplefactoryapplication.o ../../../../sources/applications/samplefactory/src/samplefactoryapplication.cpp
+	$(COMPILE.cc) -O2 -DNET_KQUEUE -DOSX -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/samplefactory/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1702679040/samplefactoryapplication.o ../../../../sources/applications/samplefactory/src/samplefactoryapplication.cpp
 
 ${OBJECTDIR}/_ext/1702679040/echoappprotocolhandler.o: ../../../../sources/applications/samplefactory/src/echoappprotocolhandler.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1702679040
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/samplefactory/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1702679040/echoappprotocolhandler.o ../../../../sources/applications/samplefactory/src/echoappprotocolhandler.cpp
+	$(COMPILE.cc) -O2 -DNET_KQUEUE -DOSX -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/samplefactory/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1702679040/echoappprotocolhandler.o ../../../../sources/applications/samplefactory/src/echoappprotocolhandler.cpp
 
 ${OBJECTDIR}/_ext/1702679040/protocolfactory.o: ../../../../sources/applications/samplefactory/src/protocolfactory.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1702679040
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/samplefactory/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1702679040/protocolfactory.o ../../../../sources/applications/samplefactory/src/protocolfactory.cpp
+	$(COMPILE.cc) -O2 -DNET_KQUEUE -DOSX -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/samplefactory/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1702679040/protocolfactory.o ../../../../sources/applications/samplefactory/src/protocolfactory.cpp
 
 ${OBJECTDIR}/_ext/1702679040/echoprotocol.o: ../../../../sources/applications/samplefactory/src/echoprotocol.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1702679040
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/samplefactory/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1702679040/echoprotocol.o ../../../../sources/applications/samplefactory/src/echoprotocol.cpp
+	$(COMPILE.cc) -O2 -DNET_KQUEUE -DOSX -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/samplefactory/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1702679040/echoprotocol.o ../../../../sources/applications/samplefactory/src/echoprotocol.cpp
 
 ${OBJECTDIR}/_ext/1702679040/httpdownloadprotocol.o: ../../../../sources/applications/samplefactory/src/httpdownloadprotocol.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1702679040
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -DOSX -DNET_KQUEUE -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/samplefactory/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1702679040/httpdownloadprotocol.o ../../../../sources/applications/samplefactory/src/httpdownloadprotocol.cpp
+	$(COMPILE.cc) -O2 -DNET_KQUEUE -DOSX -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/applications/samplefactory/include -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1702679040/httpdownloadprotocol.o ../../../../sources/applications/samplefactory/src/httpdownloadprotocol.cpp
 
 # Subprojects
 .build-subprojects:
