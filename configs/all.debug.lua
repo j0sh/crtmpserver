@@ -270,25 +270,25 @@ configuration=
 					localStreamName="gigi",
 					emulateUserAgent="FMLE/3.0 (compatible; FMSc/1.0 http://www.rtmpd.com)"
 				}]]--,
-				{
+				--[[{
 					targetUri="rtmp://localhost/vod",
 					targetStreamType="live", -- (live, record or append)
 					emulateUserAgent="My user agent",
 					localStreamName="stream1"
-				},
+				},]]--
 			},
-			--[[externalStreams = 
+			externalStreams = 
 			{
-				{
-					uri="rtsp://82.177.67.61/axis-media/media.amp",
-					localStreamName="stream4",
-					forceTcp=false
-				},
-				{
+				--[[{
+					uri="rtsp://fms20.mediadirect.ro/live2/realitatea/realitatea",
+					localStreamName="stream1",
+					forceTcp=true
+				},]]--
+				--[[{
 					uri="rtmp://edge01.fms.dutchview.nl/botr/bunny",
 					localStreamName="stream1"
-				},
-			},]]--
+				},]]--
+			},
 			validateHandshake=false,
 			--default=true,
 		},
