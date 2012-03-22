@@ -17,28 +17,26 @@
  *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifdef HAS_PROTOCOL_RTP
-#ifndef _NATTRAVERSALPROTOCOL_H
-#define	_NATTRAVERSALPROTOCOL_H
+#ifdef HAS_PROTOCOL_VAR
+#include "protocols/variant/jsonvariantprotocol.h"
 
-#include "protocols/baseprotocol.h"
+JsonVariantProtocol::JsonVariantProtocol()
+: BaseVariantProtocol(PT_JSON_VAR) {
 
-class NATTraversalProtocol
-: public BaseProtocol {
-	sockaddr_in *_pOutboundAddress;
-public:
-	NATTraversalProtocol();
-	virtual ~NATTraversalProtocol();
+}
 
-	virtual bool Initialize(Variant &parameters);
-	virtual bool AllowFarProtocol(uint64_t type);
-	virtual bool AllowNearProtocol(uint64_t type);
-	virtual bool SignalInputData(int32_t recvAmount);
-	virtual bool SignalInputData(IOBuffer &buffer);
-	virtual bool SignalInputData(IOBuffer &buffer, sockaddr_in *pPeerAddress);
+JsonVariantProtocol::~JsonVariantProtocol() {
+}
 
-	void SetOutboundAddress(sockaddr_in *pOutboundAddress);
-};
+bool JsonVariantProtocol::Serialize(string &rawData, Variant &variant) {
+	return variant.SerializeToJSON(rawData);
+}
 
-#endif	/* _NATTRAVERSALPROTOCOL_H */
-#endif /* HAS_PROTOCOL_RTP */
+bool JsonVariantProtocol::Deserialize(uint8_t *pBuffer, uint32_t bufferLength,
+		Variant &result) {
+	string raw = string((char *) pBuffer, bufferLength);
+	uint32_t start = 0;
+	return Variant::DeserializeFromJSON(raw, result, start);
+}
+#endif	/* HAS_PROTOCOL_VAR */
+

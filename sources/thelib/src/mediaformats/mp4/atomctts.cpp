@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -58,7 +58,7 @@ bool AtomCTTS::ReadData() {
 			FATAL("Unable to read sample offset");
 			return false;
 		}
-		
+
 		ADD_VECTOR_END(_entries, entry);
 	}
 	return true;

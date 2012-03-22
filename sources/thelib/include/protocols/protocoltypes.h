@@ -30,6 +30,7 @@
 //variant protocols
 #define PT_BIN_VAR				MAKE_TAG4('B','V','A','R')
 #define PT_XML_VAR				MAKE_TAG4('X','V','A','R')
+#define PT_JSON_VAR				MAKE_TAG4('J','V','A','R')
 
 //RTMP protocols
 #define PT_INBOUND_RTMP			MAKE_TAG2('I','R')

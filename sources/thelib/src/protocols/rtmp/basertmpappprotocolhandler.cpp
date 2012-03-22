@@ -71,7 +71,7 @@ bool BaseRTMPAppProtocolHandler::ParseAuthenticationNode(Variant &node,
 #endif
 	//1. Validation
 	if ((!node.HasKeyChain(V_STRING, true, 1, CONF_APPLICATION_AUTH_TYPE))
-			|| ((string) node[CONF_APPLICATION_AUTH_TYPE] != CONF_APPLICATION_AUTH_TYPE_ADOBE)) {
+			|| (node[CONF_APPLICATION_AUTH_TYPE] != CONF_APPLICATION_AUTH_TYPE_ADOBE)) {
 		FATAL("Invalid authentication type");
 		return false;
 	}
@@ -729,6 +729,16 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokePublish(BaseRTMPProtocol *pFrom,
 	}
 
 	string streamName = M_INVOKE_PARAM(request, 1);
+	string::size_type pos = streamName.find("?");
+	if (pos != string::npos) {
+		streamName = streamName.substr(0, pos);
+	}
+	trim(streamName);
+	if (streamName == "") {
+		Variant response = StreamMessageFactory::GetInvokeOnStatusStreamPublishBadName(request, streamName);
+		return pFrom->SendMessage(response);
+	}
+	M_INVOKE_PARAM(request, 1) = streamName;
 
 	//2. Check to see if we are allowed to create inbound streams
 	if (!(bool)pFrom->GetCustomParameters()["authState"]["canPublish"]) {
@@ -1168,7 +1178,17 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokeFCPublish(BaseRTMPProtocol *pFrom,
 		Variant & request) {
 
 	//1. Get the stream name
-	string streamName = request[RM_INVOKE][RM_INVOKE_PARAMS][(uint32_t) 1];
+	string streamName = M_INVOKE_PARAM(request, 1);
+	string::size_type pos = streamName.find("?");
+	if (pos != string::npos) {
+		streamName = streamName.substr(0, pos);
+	}
+	trim(streamName);
+	if (streamName == "") {
+		Variant response = StreamMessageFactory::GetInvokeOnStatusStreamPublishBadName(request, streamName);
+		return pFrom->SendMessage(response);
+	}
+	M_INVOKE_PARAM(request, 1) = streamName;
 
 	//2. Send the release stream response. Is identical to the one
 	//needed by this fucker
@@ -1245,9 +1265,14 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokeResult(BaseRTMPProtocol *pFrom,
 	if (!MAP_HAS2(_resultMessageTracking, pFrom->GetId(), M_INVOKE_ID(result))) {
 		return true;
 	}
-	return ProcessInvokeResult(pFrom,
+	if (!ProcessInvokeResult(pFrom,
 			_resultMessageTracking[pFrom->GetId()][M_INVOKE_ID(result)],
-			result);
+			result)) {
+		FATAL("Unable to process result");
+		return false;
+	}
+	_resultMessageTracking[pFrom->GetId()].erase(M_INVOKE_ID(result));
+	return true;
 }
 
 bool BaseRTMPAppProtocolHandler::ProcessInvokeResult(BaseRTMPProtocol *pFrom,
@@ -1309,12 +1334,13 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokeConnectResult(BaseRTMPProtocol *pF
 				|| (!MAP_HAS1(params, "user"))
 				|| (!MAP_HAS1(params, "salt"))
 				|| (!MAP_HAS1(params, "challenge"))
-				|| (!MAP_HAS1(params, "opaque"))
 				|| (params["reason"] != "needauth")
 				) {
 			FATAL("Connect failed:\n%s", STR(response.ToString()));
 			return false;
 		}
+		if (!MAP_HAS1(params, "opaque"))
+			params["opaque"] = "";
 
 		Variant &customParameters = pFrom->GetCustomParameters();
 		Variant &streamConfig = NeedsToPullExternalStream(pFrom)
@@ -1372,7 +1398,6 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokeCreateStreamResult(BaseRTMPProtoco
 		WARN("Default implementation of ProcessInvokeCreateStreamResult: Request:\n%s\nResponse:\n%s",
 				STR(request.ToString()),
 				STR(response.ToString()));
-
 		return true;
 	}
 
@@ -1415,6 +1440,7 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokeCreateStreamResult(BaseRTMPProtoco
 
 	//7. Create publish/play request
 	Variant publishPlayRequest;
+	Variant fcPublishSubscribe;
 	if (NeedsToPullExternalStream(pFrom)) {
 		publishPlayRequest = StreamMessageFactory::GetInvokePlay(3, rtmpStreamId,
 				parameters["uri"]["documentWithFullParameters"], -2, -1);
@@ -1430,12 +1456,19 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokeCreateStreamResult(BaseRTMPProtoco
 		}
 		publishPlayRequest = StreamMessageFactory::GetInvokePublish(3, rtmpStreamId,
 				parameters["targetStreamName"], targetStreamType);
+		fcPublishSubscribe = StreamMessageFactory::GetInvokeFCPublish(parameters["targetStreamName"]);
 	}
 
 	//8. Send it
 	if (!SendRTMPMessage(pFrom, publishPlayRequest, true)) {
 		FATAL("Unable to send request:\n%s", STR(publishPlayRequest.ToString()));
 		return false;
+	}
+	if (fcPublishSubscribe != V_NULL) {
+		if (!SendRTMPMessage(pFrom, fcPublishSubscribe, false)) {
+			FATAL("Unable to send request:\n%s", STR(fcPublishSubscribe.ToString()));
+			return false;
+		}
 	}
 
 	//9. Done
@@ -1772,7 +1805,7 @@ Variant BaseRTMPAppProtocolHandler::GetMetaData(string streamName,
 				|| (!StreamCapabilities::Deserialize(seekPath, capabilities));
 		regenerateFiles |=
 				(!result.HasKeyChain(V_STRING, false, 1, META_SERVER_FULL_PATH))
-				|| ((string) result[META_SERVER_FULL_PATH] != originalServerFullPath)
+				|| (result[META_SERVER_FULL_PATH] != originalServerFullPath)
 				|| (!result.HasKeyChain(V_BOOL, false, 1, CONF_APPLICATION_KEYFRAMESEEK))
 				|| ((bool) result[CONF_APPLICATION_KEYFRAMESEEK] != _keyframeSeek)
 				|| (!result.HasKeyChain(V_INT32, false, 1, CONF_APPLICATION_CLIENTSIDEBUFFER))
@@ -1817,7 +1850,10 @@ bool BaseRTMPAppProtocolHandler::SendRTMPMessage(BaseRTMPProtocol *pTo,
 	switch ((uint8_t) VH_MT(message)) {
 		case RM_HEADER_MESSAGETYPE_INVOKE:
 		{
-			if (M_INVOKE_FUNCTION(message) != RM_INVOKE_FUNCTION_RESULT) {
+			if ((M_INVOKE_FUNCTION(message) == RM_INVOKE_FUNCTION_RESULT)
+					|| (M_INVOKE_FUNCTION(message) == RM_INVOKE_FUNCTION_ERROR)) {
+				return pTo->SendMessage(message);
+			} else {
 				uint32_t invokeId = 0;
 				if (!MAP_HAS1(_nextInvokeId, pTo->GetId())) {
 					FATAL("Unable to get next invoke ID");
@@ -1835,8 +1871,6 @@ bool BaseRTMPAppProtocolHandler::SendRTMPMessage(BaseRTMPProtocol *pTo,
 				} else {
 					M_INVOKE_ID(message) = (uint32_t) 0;
 				}
-				return pTo->SendMessage(message);
-			} else {
 				return pTo->SendMessage(message);
 			}
 		}
@@ -2081,6 +2115,7 @@ bool BaseRTMPAppProtocolHandler::ConnectForPullPush(BaseRTMPProtocol *pFrom,
 		FATAL("Invalid uri: %s", STR(uri.fullUri()));
 		return false;
 	}
+	string authInfo = "";
 	if (uri.userName() != "") {
 		if (streamConfig.HasKey("auth")) {
 			string user = uri.userName();
@@ -2088,26 +2123,32 @@ bool BaseRTMPAppProtocolHandler::ConnectForPullPush(BaseRTMPProtocol *pFrom,
 			string salt = streamConfig["auth"]["salt"];
 			string opaque = streamConfig["auth"]["opaque"];
 			string challenge = streamConfig["auth"]["challenge"];
-			string response = b64(md5(b64(md5(user + salt + password, false)) + opaque + challenge, false));
-			appName = appName + "?authmod=adobe"
-					+ "&user=" + uri.userName()
-					+ "&challenge=" + challenge
-					+ "&opaque=" + opaque
-					+ "&salt=" + salt
-					+ "&response=" + response;
-			streamConfig["emulateUserAgent"] = "FMLE/3.0 (compatible; FMSc/1.0)";
+			string response = "";
+			if (opaque == "") {
+				string newChallenge = "c3VnaXB1bGFhZG9iZQ==";
+				response = b64(md5(b64(md5(user + salt + password, false)) + challenge + newChallenge, false));
+				authInfo = "authmod=adobe&user=" + uri.userName()
+						+ "&challenge=" + newChallenge
+						+ "&response=" + response
+						+ "&opaque=";
+			} else {
+				response = b64(md5(b64(md5(user + salt + password, false)) + opaque + challenge, false));
+				authInfo = "authmod=adobe&user=" + uri.userName()
+						+ "&challenge=" + challenge
+						+ "&opaque=" + opaque
+						+ "&salt=" + salt
+						+ "&response=" + response;
+			}
 		} else {
-			appName = appName + "?authmod=adobe&user=" + uri.userName();
-			streamConfig["emulateUserAgent"] = "FMLE/3.0 (compatible; FMSc/1.0)";
+			authInfo = "authmod=adobe&user=" + uri.userName();
 		}
 	}
-
-	//	//3. Compute tcUrl: rtmp://host/appName
-	//	string tcUrl = format("%s://%s%s/%s",
-	//			STR(uri.scheme()),
-	//			STR(uri.host()),
-	//			STR(uri.portSpecified() ? format(":%"PRIu32) : ""),
-	//			STR(appName));
+	if (authInfo != "") {
+		if (appName.find("?") == string::npos)
+			appName += "?" + authInfo;
+		else
+			appName += "&" + authInfo;
+	}
 
 	//4. Get the user agent
 	string userAgent = "";
@@ -2120,13 +2161,29 @@ bool BaseRTMPAppProtocolHandler::ConnectForPullPush(BaseRTMPProtocol *pFrom,
 
 	//5. Get swfUrl and pageUrl
 	string tcUrl = "";
-	if (streamConfig["tcUrl"] == V_STRING) {
+	if (streamConfig["tcUrl"] == V_STRING)
 		tcUrl = (string) streamConfig["tcUrl"];
+	if (tcUrl == "")
+		tcUrl = uri.fullUri();
+	if (authInfo != "") {
+		if (tcUrl.find("?") == string::npos)
+			tcUrl += "?" + authInfo;
+		else
+			tcUrl += "&" + authInfo;
 	}
+
 	string swfUrl = "";
-	if (streamConfig["swfUrl"] == V_STRING) {
+	if (streamConfig["swfUrl"] == V_STRING)
 		swfUrl = (string) streamConfig["swfUrl"];
+	if (swfUrl == "")
+		swfUrl = uri.fullUri();
+	if (authInfo != "") {
+		if (swfUrl.find("?") == string::npos)
+			swfUrl += "?" + authInfo;
+		else
+			swfUrl += "&" + authInfo;
 	}
+
 	string pageUrl = "";
 	if (streamConfig["pageUrl"] == V_STRING) {
 		pageUrl = (string) streamConfig["pageUrl"];

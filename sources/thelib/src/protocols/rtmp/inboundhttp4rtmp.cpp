@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -38,7 +38,7 @@ InboundHTTP4RTMP::~InboundHTTP4RTMP() {
 }
 
 bool InboundHTTP4RTMP::Initialize(Variant &parameters) {
-	GetCustomParameters()=parameters;
+	GetCustomParameters() = parameters;
 	return true;
 }
 

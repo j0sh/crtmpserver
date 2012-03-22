@@ -346,7 +346,7 @@ void BaseRTMPProtocol::TrySetOutboundChunkSize(uint32_t chunkSize) {
 BaseStream * BaseRTMPProtocol::GetRTMPStream(uint32_t rtmpStreamId) {
 	if (rtmpStreamId == 0 || rtmpStreamId >= MAX_STREAMS_COUNT) {
 		FATAL("Invalid stream id: %u", rtmpStreamId);
-		return false;
+		return NULL;
 	}
 	return _streams[rtmpStreamId];
 }

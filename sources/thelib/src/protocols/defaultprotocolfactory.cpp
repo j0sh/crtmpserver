@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -33,6 +33,7 @@
 #include "protocols/liveflv/inboundliveflvprotocol.h"
 #include "protocols/variant/xmlvariantprotocol.h"
 #include "protocols/variant/binvariantprotocol.h"
+#include "protocols/variant/jsonvariantprotocol.h"
 #include "protocols/udpprotocol.h"
 #include "protocols/rtp/rtspprotocol.h"
 #include "protocols/rtp/inboundrtpprotocol.h"
@@ -89,6 +90,7 @@ vector<uint64_t> DefaultProtocolFactory::HandledProtocols() {
 #ifdef HAS_PROTOCOL_VAR
 	ADD_VECTOR_END(result, PT_BIN_VAR);
 	ADD_VECTOR_END(result, PT_XML_VAR);
+	ADD_VECTOR_END(result, PT_JSON_VAR);
 #endif /* HAS_PROTOCOL_VAR */
 #ifdef HAS_PROTOCOL_RTP
 	ADD_VECTOR_END(result, PT_RTSP);
@@ -137,13 +139,23 @@ vector<string> DefaultProtocolFactory::HandledProtocolChains() {
 #ifdef HAS_PROTOCOL_VAR
 	ADD_VECTOR_END(result, CONF_PROTOCOL_INBOUND_XML_VARIANT);
 	ADD_VECTOR_END(result, CONF_PROTOCOL_INBOUND_BIN_VARIANT);
+	ADD_VECTOR_END(result, CONF_PROTOCOL_INBOUND_JSON_VARIANT);
 	ADD_VECTOR_END(result, CONF_PROTOCOL_OUTBOUND_XML_VARIANT);
 	ADD_VECTOR_END(result, CONF_PROTOCOL_OUTBOUND_BIN_VARIANT);
+	ADD_VECTOR_END(result, CONF_PROTOCOL_OUTBOUND_JSON_VARIANT);
 #ifdef HAS_PROTOCOL_HTTP
 	ADD_VECTOR_END(result, CONF_PROTOCOL_INBOUND_HTTP_XML_VARIANT);
 	ADD_VECTOR_END(result, CONF_PROTOCOL_INBOUND_HTTP_BIN_VARIANT);
+	ADD_VECTOR_END(result, CONF_PROTOCOL_INBOUND_HTTP_JSON_VARIANT);
+	ADD_VECTOR_END(result, CONF_PROTOCOL_INBOUND_HTTPS_XML_VARIANT);
+	ADD_VECTOR_END(result, CONF_PROTOCOL_INBOUND_HTTPS_BIN_VARIANT);
+	ADD_VECTOR_END(result, CONF_PROTOCOL_INBOUND_HTTPS_JSON_VARIANT);
 	ADD_VECTOR_END(result, CONF_PROTOCOL_OUTBOUND_HTTP_XML_VARIANT);
 	ADD_VECTOR_END(result, CONF_PROTOCOL_OUTBOUND_HTTP_BIN_VARIANT);
+	ADD_VECTOR_END(result, CONF_PROTOCOL_OUTBOUND_HTTP_JSON_VARIANT);
+	ADD_VECTOR_END(result, CONF_PROTOCOL_OUTBOUND_HTTPS_XML_VARIANT);
+	ADD_VECTOR_END(result, CONF_PROTOCOL_OUTBOUND_HTTPS_BIN_VARIANT);
+	ADD_VECTOR_END(result, CONF_PROTOCOL_OUTBOUND_HTTPS_JSON_VARIANT);
 #endif /* HAS_PROTOCOL_HTTP */
 #endif /* HAS_PROTOCOL_VAR */
 #ifdef HAS_PROTOCOL_RTP
@@ -255,12 +267,18 @@ vector<uint64_t> DefaultProtocolFactory::ResolveProtocolChain(string name) {
 	} else if (name == CONF_PROTOCOL_INBOUND_BIN_VARIANT) {
 		ADD_VECTOR_END(result, PT_TCP);
 		ADD_VECTOR_END(result, PT_BIN_VAR);
+	} else if (name == CONF_PROTOCOL_INBOUND_JSON_VARIANT) {
+		ADD_VECTOR_END(result, PT_TCP);
+		ADD_VECTOR_END(result, PT_JSON_VAR);
 	} else if (name == CONF_PROTOCOL_OUTBOUND_XML_VARIANT) {
 		ADD_VECTOR_END(result, PT_TCP);
 		ADD_VECTOR_END(result, PT_XML_VAR);
 	} else if (name == CONF_PROTOCOL_OUTBOUND_BIN_VARIANT) {
 		ADD_VECTOR_END(result, PT_TCP);
 		ADD_VECTOR_END(result, PT_BIN_VAR);
+	} else if (name == CONF_PROTOCOL_OUTBOUND_JSON_VARIANT) {
+		ADD_VECTOR_END(result, PT_TCP);
+		ADD_VECTOR_END(result, PT_JSON_VAR);
 	}
 #ifdef HAS_PROTOCOL_HTTP
 	else if (name == CONF_PROTOCOL_INBOUND_HTTP_XML_VARIANT) {
@@ -271,6 +289,25 @@ vector<uint64_t> DefaultProtocolFactory::ResolveProtocolChain(string name) {
 		ADD_VECTOR_END(result, PT_TCP);
 		ADD_VECTOR_END(result, PT_INBOUND_HTTP);
 		ADD_VECTOR_END(result, PT_BIN_VAR);
+	} else if (name == CONF_PROTOCOL_INBOUND_HTTP_JSON_VARIANT) {
+		ADD_VECTOR_END(result, PT_TCP);
+		ADD_VECTOR_END(result, PT_INBOUND_HTTP);
+		ADD_VECTOR_END(result, PT_JSON_VAR);
+	} else if (name == CONF_PROTOCOL_INBOUND_HTTPS_XML_VARIANT) {
+		ADD_VECTOR_END(result, PT_TCP);
+		ADD_VECTOR_END(result, PT_INBOUND_SSL);
+		ADD_VECTOR_END(result, PT_INBOUND_HTTP);
+		ADD_VECTOR_END(result, PT_XML_VAR);
+	} else if (name == CONF_PROTOCOL_INBOUND_HTTPS_BIN_VARIANT) {
+		ADD_VECTOR_END(result, PT_TCP);
+		ADD_VECTOR_END(result, PT_INBOUND_SSL);
+		ADD_VECTOR_END(result, PT_INBOUND_HTTP);
+		ADD_VECTOR_END(result, PT_BIN_VAR);
+	} else if (name == CONF_PROTOCOL_INBOUND_HTTPS_JSON_VARIANT) {
+		ADD_VECTOR_END(result, PT_TCP);
+		ADD_VECTOR_END(result, PT_INBOUND_SSL);
+		ADD_VECTOR_END(result, PT_INBOUND_HTTP);
+		ADD_VECTOR_END(result, PT_JSON_VAR);
 	} else if (name == CONF_PROTOCOL_OUTBOUND_HTTP_XML_VARIANT) {
 		ADD_VECTOR_END(result, PT_TCP);
 		ADD_VECTOR_END(result, PT_OUTBOUND_HTTP);
@@ -279,6 +316,25 @@ vector<uint64_t> DefaultProtocolFactory::ResolveProtocolChain(string name) {
 		ADD_VECTOR_END(result, PT_TCP);
 		ADD_VECTOR_END(result, PT_OUTBOUND_HTTP);
 		ADD_VECTOR_END(result, PT_BIN_VAR);
+	} else if (name == CONF_PROTOCOL_OUTBOUND_HTTP_JSON_VARIANT) {
+		ADD_VECTOR_END(result, PT_TCP);
+		ADD_VECTOR_END(result, PT_OUTBOUND_HTTP);
+		ADD_VECTOR_END(result, PT_JSON_VAR);
+	} else if (name == CONF_PROTOCOL_OUTBOUND_HTTPS_XML_VARIANT) {
+		ADD_VECTOR_END(result, PT_TCP);
+		ADD_VECTOR_END(result, PT_OUTBOUND_SSL);
+		ADD_VECTOR_END(result, PT_OUTBOUND_HTTP);
+		ADD_VECTOR_END(result, PT_XML_VAR);
+	} else if (name == CONF_PROTOCOL_OUTBOUND_HTTPS_BIN_VARIANT) {
+		ADD_VECTOR_END(result, PT_TCP);
+		ADD_VECTOR_END(result, PT_OUTBOUND_SSL);
+		ADD_VECTOR_END(result, PT_OUTBOUND_HTTP);
+		ADD_VECTOR_END(result, PT_BIN_VAR);
+	} else if (name == CONF_PROTOCOL_OUTBOUND_HTTPS_JSON_VARIANT) {
+		ADD_VECTOR_END(result, PT_TCP);
+		ADD_VECTOR_END(result, PT_OUTBOUND_SSL);
+		ADD_VECTOR_END(result, PT_OUTBOUND_HTTP);
+		ADD_VECTOR_END(result, PT_JSON_VAR);
 	}
 #endif /* HAS_PROTOCOL_HTTP */
 #endif /* HAS_PROTOCOL_VAR */
@@ -381,6 +437,9 @@ BaseProtocol *DefaultProtocolFactory::SpawnProtocol(uint64_t type, Variant &para
 			break;
 		case PT_BIN_VAR:
 			pResult = new BinVariantProtocol();
+			break;
+		case PT_JSON_VAR:
+			pResult = new JsonVariantProtocol();
 			break;
 #endif /* HAS_PROTOCOL_VAR */
 #ifdef HAS_PROTOCOL_RTP

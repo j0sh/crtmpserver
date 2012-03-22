@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -29,7 +29,7 @@ class BaseProtocol;
 
 /*!
 	@class BaseStream
-*/
+ */
 class DLLEXP BaseStream {
 protected:
 	StreamsManager *_pStreamsManager;
@@ -45,87 +45,87 @@ public:
 
 	/*!
 		@brief Returns the stream manager. This is read-only
-	*/
+	 */
 	StreamsManager * GetStreamsManager();
 
 	/*!
 		@brief Returns the stream capabilities. Specifically, codec and codec related info
-	*/
+	 */
 	virtual StreamCapabilities * GetCapabilities() = 0;
 
 	/*!
 		@brief Returns the type of this stream. This is read-only
-	*/
+	 */
 	uint64_t GetType();
 
 	/*!
 		@brief Returns the unique id of this stream. This is read-only
-	*/
+	 */
 	uint32_t GetUniqueId();
 
 	/*!
 		@brief returns the creation timestamp expressed in milliseconds for 1970 epoch
-	*/
+	 */
 	double GetSpawnTimestamp();
 
 	/*!
 		@brief Returns the name of this stream. This is setup-once
-	*/
+	 */
 	string GetName();
 
 	/*!
 		@brief Sets the name of the stream
 		@param name - Name of stream in string format
-	*/
+	 */
 	void SetName(string name);
 
 	/*!
 		@brief This will return information about the stream
 		@param info
-	*/
+	 */
 	virtual void GetStats(Variant &info, uint32_t namespaceId = 0);
 
 	/*!
 		@brief Returns the protocol that owns this stream.
-	*/
+	 */
 	BaseProtocol * GetProtocol();
 
 	/*!
 		@brief Tells if this stream is enqueued for delete or not based on the pProtocol
-	*/
+	 */
 	virtual bool IsEnqueueForDelete();
 
 	/*!
 		@brief Will enqueue this stream for delete along with his protocol
-	*/
+	 */
 	virtual void EnqueueForDelete();
 
 	/*!
 		@brief This will start the feeding process
 		@param absoluteTimestamp - the timestamp where we want to see before start the feeding process
 		@param length - time limit
-	*/
+	 */
 	virtual bool Play(double absoluteTimestamp, double length) = 0;
 
 	/*!
 		@brief This will pause the feeding process
-	*/
+	 */
 	virtual bool Pause() = 0;
 
 	/*!
 		@brief This will resume the feeding process
-	*/
+	 */
 	virtual bool Resume() = 0;
 
 	/*!
 		@brief  will seek to the specified point in time.
 		@param absoluteTimestamp
-	*/
+	 */
 	virtual bool Seek(double absoluteTimestamp) = 0;
 
 	/*!
 		 @brief This will stop the feeding process
-	*/
+	 */
 	virtual bool Stop() = 0;
 
 
@@ -133,28 +133,28 @@ public:
 		@brief Called when a play command was issued
 		@param absoluteTimestamp - the timestamp where we want to seek before start the feeding process
 		@param length
-	*/
+	 */
 	virtual bool SignalPlay(double &absoluteTimestamp, double &length) = 0;
 
 	/*!
 		@brief Called when a pasue command was issued
-	*/
+	 */
 	virtual bool SignalPause() = 0;
 
 	/*!
 		@brief Called when a resume command was issued
-	*/
+	 */
 	virtual bool SignalResume() = 0;
 
 	/*!
 		@brief Called when a seek command was issued
 		@param absoluteTimestamp
-	*/
+	 */
 	virtual bool SignalSeek(double &absoluteTimestamp) = 0;
 
 	/*!
 		@brief Called when a stop command was issued
-	*/
+	 */
 	virtual bool SignalStop() = 0;
 
 	/*!
@@ -168,20 +168,20 @@ public:
 			dataLength<=totalLength
 			processedLength<=totalLength
 			dataLength!=0
-	*/
+	 */
 	virtual bool FeedData(uint8_t *pData, uint32_t dataLength,
 			uint32_t processedLength, uint32_t totalLength,
 			double absoluteTimestamp, bool isAudio) = 0;
 
 	/*!
 		@brief The networking layer signaled the availability for sending data
-	*/
+	 */
 	virtual void ReadyForSend() = 0;
 
 	/*!
 		@brief This is called to ensure that the linking process can be done
 		@param type - the target type to which this strem must be linked against
-	*/
+	 */
 	virtual bool IsCompatibleWithType(uint64_t type) = 0;
 };
 

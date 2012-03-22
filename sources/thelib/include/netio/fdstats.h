@@ -180,8 +180,8 @@ public:
 		if (_lastUpdateSpeedsTime > 0) {
 			double period = now - _lastUpdateSpeedsTime;
 			if (period > 0) {
-				double inBytes = (double)(nowInBytes - _lastInBytes);
-				double outBytes = (double)(nowOutBytes - _lastOutBytes);
+				double inBytes = (double) (nowInBytes - _lastInBytes);
+				double outBytes = (double) (nowOutBytes - _lastOutBytes);
 				if (inBytes > 0)
 					_inSpeed = inBytes / (period / (double) CLOCKS_PER_SECOND);
 				if (outBytes > 0)

@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -148,7 +148,7 @@ bool AtomESDS::ReadData() {
 				FATAL("Unable to read unknownValue");
 				return false;
 			}
-			
+
 			if (!ReadTagAndLength(tagType, length)) {
 				FATAL("Unable to read tag type and length");
 				return false;

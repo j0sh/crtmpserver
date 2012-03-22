@@ -17,28 +17,22 @@
  *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifdef HAS_PROTOCOL_RTP
-#ifndef _NATTRAVERSALPROTOCOL_H
-#define	_NATTRAVERSALPROTOCOL_H
+#ifdef HAS_PROTOCOL_VAR
+#ifndef _JSONVARIANTPROTOCOL_H
+#define	_JSONVARIANTPROTOCOL_H
 
-#include "protocols/baseprotocol.h"
+#include "protocols/variant/basevariantprotocol.h"
 
-class NATTraversalProtocol
-: public BaseProtocol {
-	sockaddr_in *_pOutboundAddress;
+class DLLEXP JsonVariantProtocol
+: public BaseVariantProtocol {
 public:
-	NATTraversalProtocol();
-	virtual ~NATTraversalProtocol();
-
-	virtual bool Initialize(Variant &parameters);
-	virtual bool AllowFarProtocol(uint64_t type);
-	virtual bool AllowNearProtocol(uint64_t type);
-	virtual bool SignalInputData(int32_t recvAmount);
-	virtual bool SignalInputData(IOBuffer &buffer);
-	virtual bool SignalInputData(IOBuffer &buffer, sockaddr_in *pPeerAddress);
-
-	void SetOutboundAddress(sockaddr_in *pOutboundAddress);
+	JsonVariantProtocol();
+	virtual ~JsonVariantProtocol();
+protected:
+	virtual bool Serialize(string &rawData, Variant &variant);
+	virtual bool Deserialize(uint8_t *pBuffer, uint32_t bufferLength,
+			Variant &result);
 };
 
-#endif	/* _NATTRAVERSALPROTOCOL_H */
-#endif /* HAS_PROTOCOL_RTP */
+#endif	/* _JSONVARIANTPROTOCOL_H */
+#endif	/* HAS_PROTOCOL_VAR */

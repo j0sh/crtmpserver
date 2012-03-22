@@ -1,18 +1,18 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
- *  
+ *
  *  This file is part of crtmpserver.
  *  crtmpserver is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- *  
+ *
  *  crtmpserver is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
- *  
+ *
  *  You should have received a copy of the GNU General Public License
  *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -69,8 +69,8 @@ bool Transcoder::Input::Init() {
 	if (_pFmt == NULL) {
 		return false;
 	}
-	_pFormatCtx=avformat_alloc_context();
-	_pFormatCtx->pb=_pIO;
+	_pFormatCtx = avformat_alloc_context();
+	_pFormatCtx->pb = _pIO;
 	if (av_open_input_stream(&_pFormatCtx, _pIO, "", _pFmt, NULL) != 0) {
 		FATAL("Unable to open input stream");
 		return false;

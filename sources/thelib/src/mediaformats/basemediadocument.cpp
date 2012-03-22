@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -154,7 +154,7 @@ bool BaseMediaDocument::SaveSeekFile() {
 	}
 
 	//2. Write the number of frames
-	uint32_t framesCount = (uint32_t)_frames.size();
+	uint32_t framesCount = (uint32_t) _frames.size();
 	if (!seekFile.WriteUI32(framesCount, false)) {
 		FATAL("Unable to write frame count");
 		return false;

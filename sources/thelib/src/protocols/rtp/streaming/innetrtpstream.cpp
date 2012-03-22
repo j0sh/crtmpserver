@@ -34,7 +34,7 @@ InNetRTPStream::InNetRTPStream(BaseProtocol *pProtocol,
 	if (AAC.length() != 0) {
 		_capabilities.InitAudioAAC(
 				(uint8_t *) STR(AAC),
-				(uint32_t)AAC.length());
+				(uint32_t) AAC.length());
 		_hasAudio = true;
 	}
 
@@ -42,9 +42,9 @@ InNetRTPStream::InNetRTPStream(BaseProtocol *pProtocol,
 	if ((SPS.length() != 0) && (PPS.length() != 0)) {
 		_capabilities.InitVideoH264(
 				(uint8_t *) STR(SPS),
-				(uint32_t)SPS.length(),
+				(uint32_t) SPS.length(),
 				(uint8_t *) STR(PPS),
-				(uint32_t)PPS.length());
+				(uint32_t) PPS.length());
 		_hasVideo = true;
 	}
 
@@ -467,30 +467,30 @@ void InNetRTPStream::ReportSR(uint64_t ntpMicroseconds, uint32_t rtpTimestamp,
 }
 
 void InNetRTPStream::FeedVideoCodecSetup(BaseOutStream* pOutStream) {
-//	if (!pOutStream->FeedData(
-//			_capabilities.avc._pSPS,
-//			_capabilities.avc._spsLength,
-//			0,
-//			_capabilities.avc._spsLength,
-//			_videoLastTs,
-//			false)) {
-//		FATAL("Unable to feed stream");
-//		if (pOutStream->GetProtocol() != NULL) {
-//			pOutStream->GetProtocol()->EnqueueForDelete();
-//		}
-//	}
-//	if (!pOutStream->FeedData(
-//			_capabilities.avc._pPPS,
-//			_capabilities.avc._ppsLength,
-//			0,
-//			_capabilities.avc._ppsLength,
-//			_videoLastTs,
-//			false)) {
-//		FATAL("Unable to feed stream");
-//		if (pOutStream->GetProtocol() != NULL) {
-//			pOutStream->GetProtocol()->EnqueueForDelete();
-//		}
-//	}
+	//	if (!pOutStream->FeedData(
+	//			_capabilities.avc._pSPS,
+	//			_capabilities.avc._spsLength,
+	//			0,
+	//			_capabilities.avc._spsLength,
+	//			_videoLastTs,
+	//			false)) {
+	//		FATAL("Unable to feed stream");
+	//		if (pOutStream->GetProtocol() != NULL) {
+	//			pOutStream->GetProtocol()->EnqueueForDelete();
+	//		}
+	//	}
+	//	if (!pOutStream->FeedData(
+	//			_capabilities.avc._pPPS,
+	//			_capabilities.avc._ppsLength,
+	//			0,
+	//			_capabilities.avc._ppsLength,
+	//			_videoLastTs,
+	//			false)) {
+	//		FATAL("Unable to feed stream");
+	//		if (pOutStream->GetProtocol() != NULL) {
+	//			pOutStream->GetProtocol()->EnqueueForDelete();
+	//		}
+	//	}
 }
 
 void InNetRTPStream::FeedAudioCodecSetup(BaseOutStream* pOutStream) {

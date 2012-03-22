@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -39,14 +39,14 @@ vector<uint32_t> AtomSTSC::GetEntries(uint32_t totalChunksCount) {
 		}
 	}
 
-	uint32_t samplesPerChunkCount = (uint32_t)samplesPerChunk.size();
+	uint32_t samplesPerChunkCount = (uint32_t) samplesPerChunk.size();
 	for (uint32_t i = 0; i < totalChunksCount - samplesPerChunkCount; i++) {
 		ADD_VECTOR_END(samplesPerChunk,
 				_stscEntries[_stscEntries.size() - 1].samplesPerChunk);
 	}
 
 	//2. build the final result based on the expanded table
-	samplesPerChunkCount = (uint32_t)samplesPerChunk.size();
+	samplesPerChunkCount = (uint32_t) samplesPerChunk.size();
 	for (uint32_t i = 0; i < samplesPerChunkCount; i++) {
 		for (uint32_t j = 0; j < samplesPerChunk[i]; j++) {
 			ADD_VECTOR_END(_normalizedEntries, i);

@@ -303,6 +303,8 @@ bool IOHandlerManager::Pulse() {
 
 	if (result < 0) {
 		int32_t error = errno;
+		if (error == EINTR)
+			return true;
 		FATAL("kevent failed: %d = `%s`", error, strerror(error));
 		return false;
 	}

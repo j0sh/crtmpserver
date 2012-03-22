@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -152,7 +152,7 @@ bool BaseVariantProtocol::Send(Variant &variant) {
 			}
 
 			_outputBuffer.ReadFromRepeat(0, 4);
-			uint32_t rawContentSize =(uint32_t) rawContent.size();
+			uint32_t rawContentSize = (uint32_t) rawContent.size();
 			EHTONLP(GETIBPOINTER(_outputBuffer), rawContentSize);
 			_outputBuffer.ReadFromString(rawContent);
 

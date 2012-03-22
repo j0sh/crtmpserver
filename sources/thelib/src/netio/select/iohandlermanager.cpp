@@ -231,6 +231,9 @@ bool IOHandlerManager::Pulse() {
 	RESET_TIMER(_timeout, 1, 0);
 	int32_t count = select(MAP_KEY(--_fdState.end()) + 1, &_readFdsCopy, &_writeFdsCopy, NULL, &_timeout);
 	if (count < 0) {
+		int err = LASTSOCKETERROR;
+		if (err == EINTR)
+			return true;
 		FATAL("Unable to do select: %u", (uint32_t) LASTSOCKETERROR);
 		return false;
 	}
@@ -260,7 +263,7 @@ bool IOHandlerManager::Pulse() {
 }
 
 bool IOHandlerManager::UpdateFdSets(int32_t fd) {
-	if( fd == 0 )
+	if (fd == 0)
 		return true;
 	uint8_t state = 0;
 

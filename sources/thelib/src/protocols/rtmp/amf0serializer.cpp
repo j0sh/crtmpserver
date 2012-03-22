@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -254,8 +254,10 @@ bool AMF0Serializer::WriteObject(IOBuffer &buffer, Variant &variant,
 
 	FOR_MAP(temp, string, Variant, i) {
 		string key = MAP_KEY(i);
-		if (key.find(VAR_INDEX_VALUE) == 0) {
-			key = key.substr(VAR_INDEX_VALUE_LEN);
+		if ((key.length() == 10)
+				&& (key[0] = '0')
+				&& (key[1] = 'x')) {
+			key = format("%"PRIu32, (uint32_t) strtol(key.c_str(), NULL, 16));
 		}
 		if (!WriteShortString(buffer, key, false)) {
 			FATAL("Unable to serialize key");
@@ -383,8 +385,10 @@ bool AMF0Serializer::WriteMixedArray(IOBuffer &buffer, Variant &variant,
 
 	FOR_MAP(temp, string, Variant, i) {
 		string key = MAP_KEY(i);
-		if (key.find(VAR_INDEX_VALUE) == 0) {
-			key = key.substr(VAR_INDEX_VALUE_LEN);
+		if ((key.length() == 10)
+				&& (key[0] = '0')
+				&& (key[1] = 'x')) {
+			key = format("%"PRIu32, (uint32_t) strtol(key.c_str(), NULL, 16));
 		}
 		if (!WriteShortString(buffer, key, false)) {
 			FATAL("Unable to serialize key");

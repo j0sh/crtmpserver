@@ -1,18 +1,18 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
- *  
+ *
  *  This file is part of crtmpserver.
  *  crtmpserver is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- *  
+ *
  *  crtmpserver is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
- *  
+ *
  *  You should have received a copy of the GNU General Public License
  *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -26,14 +26,25 @@
 
 class BaseVariantProtocol;
 
+typedef enum {
+	VariantSerializer_BIN,
+	VariantSerializer_XML,
+	VariantSerializer_JSON
+} VariantSerializer;
+
 class DLLEXP BaseVariantAppProtocolHandler
 : public BaseAppProtocolHandler {
 private:
 	Variant _urlCache;
 	vector<uint64_t> _outboundHttpBinVariant;
 	vector<uint64_t> _outboundHttpXmlVariant;
+	vector<uint64_t> _outboundHttpJsonVariant;
+	vector<uint64_t> _outboundHttpsBinVariant;
+	vector<uint64_t> _outboundHttpsXmlVariant;
+	vector<uint64_t> _outboundHttpsJsonVariant;
 	vector<uint64_t> _outboundBinVariant;
 	vector<uint64_t> _outboundXmlVariant;
+	vector<uint64_t> _outboundJsonVariant;
 public:
 	BaseVariantAppProtocolHandler(Variant &configuration);
 	virtual ~BaseVariantAppProtocolHandler();
@@ -43,11 +54,13 @@ public:
 
 	//opens an OUTBOUNDXMLVARIANT or an OUTBOUNDBINVARIANT
 	//and sends the variant
-	bool Send(string ip, uint16_t port, Variant &variant, bool xml = true);
+	bool Send(string ip, uint16_t port, Variant &variant,
+			VariantSerializer serializer = VariantSerializer_XML);
 
 	//opens an OUTBOUNDHTTPXMLVARIANT or an OUTBOUNDHTTPBINVARIANT
 	//and sends the variant
-	bool Send(string url, Variant &variant, bool xml = true);
+	bool Send(string url, Variant &variant,
+			VariantSerializer serializer = VariantSerializer_XML);
 
 	//used internally
 	static bool SignalProtocolCreated(BaseProtocol *pProtocol, Variant &parameters);
@@ -58,7 +71,8 @@ public:
 			Variant &lastSent, Variant &lastReceived);
 
 private:
-	Variant GetScaffold(string uriString);
+	Variant &GetScaffold(string &uriString);
+	vector<uint64_t> &GetTransport(VariantSerializer serializerType, bool isHttp, bool isSsl);
 };
 
 

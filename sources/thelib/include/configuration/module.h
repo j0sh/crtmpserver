@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -47,7 +47,7 @@ struct Module {
 	bool LoadLibrary();
 	bool ConfigFactory();
 	bool BindAcceptors();
-	bool BindAcceptor(Variant &node);
+	bool BindAcceptor(Variant & node);
 	bool ConfigApplication();
 };
 

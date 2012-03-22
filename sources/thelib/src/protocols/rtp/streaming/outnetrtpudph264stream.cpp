@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -241,7 +241,7 @@ bool OutNetRTPUDPH264Stream::FeedDataVideoFUA(uint8_t *pData, uint32_t dataLengt
 		if (chunkSize == totalLength) {
 			//4. No chunking
 			_videoData.MSGHDR_MSG_IOV[0].IOVEC_IOV_LEN = 12;
-			_videoData.MSGHDR_MSG_IOV[1].IOVEC_IOV_BASE = (IOVEC_IOV_BASE_TYPE *)pData;
+			_videoData.MSGHDR_MSG_IOV[1].IOVEC_IOV_BASE = (IOVEC_IOV_BASE_TYPE *) pData;
 			_videoData.MSGHDR_MSG_IOV[1].IOVEC_IOV_LEN = chunkSize;
 		} else {
 			//5. Chunking
@@ -251,7 +251,7 @@ bool OutNetRTPUDPH264Stream::FeedDataVideoFUA(uint8_t *pData, uint32_t dataLengt
 				//6. First chunk
 				((uint8_t *) _videoData.MSGHDR_MSG_IOV[0].IOVEC_IOV_BASE)[12] = (pData[0]&0xe0) | NALU_TYPE_FUA;
 				((uint8_t *) _videoData.MSGHDR_MSG_IOV[0].IOVEC_IOV_BASE)[13] = (pData[0]&0x1f) | 0x80;
-				_videoData.MSGHDR_MSG_IOV[1].IOVEC_IOV_BASE = (IOVEC_IOV_BASE_TYPE *)(pData + 1);
+				_videoData.MSGHDR_MSG_IOV[1].IOVEC_IOV_BASE = (IOVEC_IOV_BASE_TYPE *) (pData + 1);
 				_videoData.MSGHDR_MSG_IOV[1].IOVEC_IOV_LEN = chunkSize - 1;
 			} else {
 				if (processedLength + sentAmount + chunkSize == totalLength) {
@@ -262,7 +262,7 @@ bool OutNetRTPUDPH264Stream::FeedDataVideoFUA(uint8_t *pData, uint32_t dataLengt
 					//8. Middle chunk
 					((uint8_t *) _videoData.MSGHDR_MSG_IOV[0].IOVEC_IOV_BASE)[13] &= 0x1f;
 				}
-				_videoData.MSGHDR_MSG_IOV[1].IOVEC_IOV_BASE = (IOVEC_IOV_BASE_TYPE *)pData;
+				_videoData.MSGHDR_MSG_IOV[1].IOVEC_IOV_BASE = (IOVEC_IOV_BASE_TYPE *) pData;
 				_videoData.MSGHDR_MSG_IOV[1].IOVEC_IOV_LEN = chunkSize;
 			}
 		}
@@ -298,10 +298,10 @@ bool OutNetRTPUDPH264Stream::FeedDataAudioMPEG4Generic_aggregate(uint8_t *pData,
 
 		//6. put the actual buffer
 		_audioData.MSGHDR_MSG_IOV[2].IOVEC_IOV_LEN = GETAVAILABLEBYTESCOUNT(_audioBuffer);
-		_audioData.MSGHDR_MSG_IOV[2].IOVEC_IOV_BASE =(IOVEC_IOV_BASE_TYPE *) GETIBPOINTER(_audioBuffer);
+		_audioData.MSGHDR_MSG_IOV[2].IOVEC_IOV_BASE = (IOVEC_IOV_BASE_TYPE *) GETIBPOINTER(_audioBuffer);
 
 		EHTONSP(((uint8_t *) _audioData.MSGHDR_MSG_IOV[0].IOVEC_IOV_BASE) + 12,
-				(uint16_t)(_audioData.MSGHDR_MSG_IOV[1].IOVEC_IOV_LEN * 8));
+				(uint16_t) (_audioData.MSGHDR_MSG_IOV[1].IOVEC_IOV_LEN * 8));
 
 		_pConnectivity->FeedAudioData(_audioData, absoluteTimestamp);
 
@@ -455,7 +455,7 @@ bool OutNetRTPUDPH264Stream::FeedDataAudioMPEG4Generic_one_by_one(uint8_t *pData
 
 	//7. put the actual buffer
 	_audioData.MSGHDR_MSG_IOV[2].IOVEC_IOV_LEN = dataLength - adtsHeaderLength;
-	_audioData.MSGHDR_MSG_IOV[2].IOVEC_IOV_BASE =(IOVEC_IOV_BASE_TYPE *)(pData + adtsHeaderLength);
+	_audioData.MSGHDR_MSG_IOV[2].IOVEC_IOV_BASE = (IOVEC_IOV_BASE_TYPE *) (pData + adtsHeaderLength);
 
 	if (!_pConnectivity->FeedAudioData(_audioData, absoluteTimestamp)) {
 		FATAL("Unable to feed data");

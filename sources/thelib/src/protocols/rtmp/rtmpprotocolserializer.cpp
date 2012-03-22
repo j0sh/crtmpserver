@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -549,6 +549,8 @@ bool RTMPProtocolSerializer::DeserializeInvoke(IOBuffer &buffer, Variant &messag
 			return false;
 		}
 	}
+
+	message[RM_INVOKE_PARAMS].IsArray(true);
 
 	return true;
 }
