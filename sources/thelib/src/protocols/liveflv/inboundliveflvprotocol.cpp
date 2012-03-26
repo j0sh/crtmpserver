@@ -209,24 +209,7 @@ bool InboundLiveFLVProtocol::SignalInputData(IOBuffer &buffer) {
 }
 
 bool InboundLiveFLVProtocol::InitializeStream(string streamName) {
-	if (streamName == "") {
-		//1. Compute a stream name based on the nature of the carrier (if any...)
-		if (GetIOHandler() != NULL) {
-			//we have a carrier
-			if (GetIOHandler()->GetType() == IOHT_TCP_CARRIER) {
-				//this is a tcp carrier
-				streamName = format("%s_%hu",
-						STR(((TCPCarrier *) GetIOHandler())->GetFarEndpointAddressIp()),
-						((TCPCarrier *) GetIOHandler())->GetFarEndpointPort());
-			} else {
-				//this is not a TCP carrier
-				streamName = format("flv_%u", GetId());
-			}
-		} else {
-			//we don't have a carrier. This protocl might be artificially fed
-			streamName = format("flv_%u", GetId());
-		}
-	}
+	streamName = ComputeStreamName(streamName);
 
 	if (!GetApplication()->StreamNameAvailable(streamName, this)) {
 		FATAL("Stream %s already taken", STR(streamName));
@@ -248,5 +231,38 @@ bool InboundLiveFLVProtocol::InitializeStream(string streamName) {
 		pBaseOutStream->Link(_pStream);
 	}
 	return true;
+}
+
+string InboundLiveFLVProtocol::ComputeStreamName(string suggestion) {
+	//1. validate the suggestion
+	trim(suggestion);
+	if (suggestion != "")
+		return suggestion;
+
+	//2. Pick it up from the acceptor
+	Variant &customParameters = GetCustomParameters();
+	if (customParameters.HasKeyChain(V_STRING, true, 1, "localStreamName")) {
+		string streamName = customParameters["localStreamName"];
+		trim(streamName);
+		if (streamName != "")
+			return streamName;
+	}
+
+	//3. Compute a stream name based on the nature of the carrier (if any...)
+	if (GetIOHandler() != NULL) {
+		//we have a carrier
+		if (GetIOHandler()->GetType() == IOHT_TCP_CARRIER) {
+			//this is a tcp carrier
+			return format("%s_%hu",
+					STR(((TCPCarrier *) GetIOHandler())->GetFarEndpointAddressIp()),
+					((TCPCarrier *) GetIOHandler())->GetFarEndpointPort());
+		} else {
+			//this is not a TCP carrier
+			return format("flv_%u", GetId());
+		}
+	} else {
+		//we don't have a carrier. This protocl might be artificially fed
+		return format("flv_%u", GetId());
+	}
 }
 #endif /* HAS_PROTOCOL_LIVEFLV */

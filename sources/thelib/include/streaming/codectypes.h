@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -37,6 +37,7 @@
 #define CODEC_AUDIO_AAC				MAKE_TAG4('A','A','A','C')
 #define CODEC_AUDIO_ADTS			MAKE_TAG5('A','A','D','T','S')
 #define CODEC_AUDIO_MP3				MAKE_TAG4('A','M','P','3')
+#define CODEC_AUDIO_G711			MAKE_TAG5('A','G','7','1','1')
 
 #endif	/* _CODECTYPES_H */
 

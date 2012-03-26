@@ -639,6 +639,12 @@ bool StreamCapabilities::InitAudioMP3() {
 	return true;
 }
 
+bool StreamCapabilities::InitAudioG711() {
+	ClearAudio();
+	audioCodecId = CODEC_AUDIO_G711;
+	return true;
+}
+
 bool StreamCapabilities::InitVideoH264(const uint8_t *pSPS, uint32_t spsLength,
 		const uint8_t *pPPS, uint32_t ppsLength) {
 	ClearVideo();
