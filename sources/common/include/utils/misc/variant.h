@@ -126,6 +126,7 @@ public:
 
 	Variant(const char *pValue);
 	Variant(const string &value);
+	Variant(const uint8_t *pValue, uint32_t len);
 
 	virtual ~Variant();
 

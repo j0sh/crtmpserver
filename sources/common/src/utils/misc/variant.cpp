@@ -188,6 +188,14 @@ Variant::Variant(const string &val) {
 	_value.s = new string(val);
 }
 
+Variant::Variant(const uint8_t *pVal, uint32_t len) {
+	CONSTRUCTOR;
+	_type = V_BYTEARRAY;
+	memset(&_value, 0, sizeof (_value));
+	DYNAMIC_ALLOC("_value.s");
+	_value.s = new string((const char*)pVal, (size_t)len);
+}
+
 Variant::~Variant() {
 	DESTRUCTOR;
 	Reset();
