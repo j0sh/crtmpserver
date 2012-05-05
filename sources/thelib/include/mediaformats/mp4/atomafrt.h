@@ -17,23 +17,34 @@
  *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+
 #ifdef HAS_MEDIA_MP4
-#include "mediaformats/mp4/atommfhd.h"
+#ifndef _ATOMAFRT_H
+#define _ATOMAFRT_H
 
-AtomMFHD::AtomMFHD(MP4Document *pDocument, uint32_t type, uint64_t size,
-		uint64_t start)
-: VersionedAtom(pDocument, type, size, start) {
-	_sequenceNumber = 0;
-}
+#include "mediaformats/mp4/versionedatom.h"
 
-AtomMFHD::~AtomMFHD() {
-}
+struct FRAGMENTRUNENTRY {
+	uint32_t firstFragment;
+	uint64_t firstFragmentTimestamp;
+	uint32_t fragmentDuration;
+	uint8_t discontinuityIndicator;
+};
 
-bool AtomMFHD::ReadData() {
-	if (!ReadInt32(_sequenceNumber)) {
-		FATAL("Unable to read creation time");
-		return false;
-	}
-	return true;
-}
+class AtomAFRT
+: public VersionedAtom {
+private:
+	uint32_t _timeScale;
+	uint8_t _qualityEntryCount;
+	vector<string> _qualitySegmentUrlModifiers;
+	uint32_t _fragmentRunEntryCount;
+	vector<FRAGMENTRUNENTRY> _fragmentRunEntryTable;
+public:
+	AtomAFRT(MP4Document *pDocument, uint32_t type, uint64_t size, uint64_t start);
+	virtual ~AtomAFRT();
+protected:
+	virtual bool ReadData();
+};
+
+#endif	/* _ATOMAFRT_H */
 #endif /* HAS_MEDIA_MP4 */

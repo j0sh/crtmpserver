@@ -59,22 +59,22 @@ string RTMPProtocolSerializer::GetSOPrimitiveString(uint8_t type) {
 			return "SOT_CS_CONNECT";
 		case SOT_CS_DISCONNECT:
 			return "SOT_CS_DISCONNECT";
-		case SOT_CS_SET_ATTRIBUTE:
-			return "SOT_CS_SET_ATTRIBUTE";
-		case SOT_SC_UPDATE_DATA:
-			return "SOT_SC_UPDATE_DATA";
-		case SOT_SC_UPDATE_DATA_ACK:
-			return "SOT_SC_UPDATE_DATA_ACK";
+		case SOT_CS_UPDATE_FIELD_REQUEST:
+			return "SOT_CS_UPDATE_FIELD_REQUEST";
+		case SOT_CS_UPDATE_FIELD:
+			return "SOT_CS_UPDATE_FIELD";
+		case SOT_CS_UPDATE_FIELD_ACK:
+			return "SOT_CS_UPDATE_FIELD_ACK";
 		case SOT_BW_SEND_MESSAGE:
 			return "SOT_BW_SEND_MESSAGE";
 		case SOT_SC_STATUS:
 			return "SOT_SC_STATUS";
 		case SOT_SC_CLEAR_DATA:
 			return "SOT_SC_CLEAR_DATA";
-		case SOT_SC_DELETE_DATA:
-			return "SOT_SC_DELETE_DATA";
-		case SOT_CSC_DELETE_DATA:
-			return "SOT_CSC_DELETE_DATA";
+		case SOT_SC_DELETE_FIELD:
+			return "SOT_SC_DELETE_FIELD";
+		case SOT_CS_DELETE_FIELD_REQUEST:
+			return "SOT_CS_DELETE_FIELD_REQUEST";
 		case SOT_SC_INITIAL_DATA:
 			return "SOT_SC_INITIAL_DATA";
 		default:
@@ -164,6 +164,11 @@ bool RTMPProtocolSerializer::Serialize(Channel &channel,
 		case RM_HEADER_MESSAGETYPE_FLEXSTREAMSEND:
 		{
 			result = SerializeFlexStreamSend(_internalBuffer, message[RM_FLEXSTREAMSEND]);
+			break;
+		}
+		case RM_HEADER_MESSAGETYPE_FLEXSHAREDOBJECT:
+		{
+			result = SerializeFlexSharedObject(_internalBuffer, message[RM_SHAREDOBJECT]);
 			break;
 		}
 		case RM_HEADER_MESSAGETYPE_SHAREDOBJECT:
@@ -379,6 +384,12 @@ bool RTMPProtocolSerializer::SerializeClientBW(IOBuffer &buffer, Variant value) 
 	return true;
 }
 
+bool RTMPProtocolSerializer::SerializeFlexSharedObject(IOBuffer &buffer, Variant &message) {
+	buffer.ReadFromByte(0);
+
+	return SerializeSharedObject(buffer, message);
+}
+
 bool RTMPProtocolSerializer::SerializeSharedObject(IOBuffer &buffer,
 		Variant &message) {
 	string name = message[RM_SHAREDOBJECT_NAME];
@@ -421,8 +432,9 @@ bool RTMPProtocolSerializer::SerializeSharedObject(IOBuffer &buffer,
 		}
 
 		switch ((uint8_t) primitive[RM_SHAREDOBJECTPRIMITIVE_TYPE]) {
-			case SOT_SC_UPDATE_DATA:
+			case SOT_CS_UPDATE_FIELD:
 			case SOT_SC_INITIAL_DATA:
+			case SOT_CS_UPDATE_FIELD_REQUEST:
 			{
 				uint32_t rawLengthPosition = buffer.GetCurrentWritePosition();
 				//length
@@ -461,8 +473,9 @@ bool RTMPProtocolSerializer::SerializeSharedObject(IOBuffer &buffer,
 				}
 				break;
 			}
-			case SOT_SC_DELETE_DATA:
-			case SOT_SC_UPDATE_DATA_ACK:
+			case SOT_SC_DELETE_FIELD:
+			case SOT_CS_UPDATE_FIELD_ACK:
+			case SOT_CS_DELETE_FIELD_REQUEST:
 			{
 				uint32_t rawLengthPosition = buffer.GetCurrentWritePosition();
 				//length
@@ -485,6 +498,36 @@ bool RTMPProtocolSerializer::SerializeSharedObject(IOBuffer &buffer,
 				EHTONLP(buffer.GetPointer() + rawLengthPosition, length);
 				break;
 			}
+			case SOT_BW_SEND_MESSAGE:
+			{
+				uint32_t rawLengthPosition = buffer.GetCurrentWritePosition();
+				if (!_amf0.WriteUInt32(buffer, 0, false)) {
+					FATAL("Unable to write data");
+					return false;
+				}
+
+				Variant &payload = primitive[RM_SHAREDOBJECTPRIMITIVE_PAYLOAD];
+
+				FOR_MAP(payload, string, Variant, i) {
+					if (!_amf0.Write(buffer, MAP_VAL(i))) {
+						FATAL("Unable to write data: %s", STR(MAP_VAL(i).ToString()));
+						return false;
+					}
+				}
+				uint32_t length = buffer.GetCurrentWritePosition()
+						- rawLengthPosition - 4;
+				EHTONLP(buffer.GetPointer() + rawLengthPosition, length);
+				break;
+			}
+			case SOT_CS_CONNECT:
+			{
+				//uint32_t rawLengthPosition = buffer.GetCurrentWritePosition();
+				if (!_amf0.WriteUInt32(buffer, 0, false)) {
+					FATAL("Unable to write data");
+					return false;
+				}
+				break;
+			}
 			default:
 			{
 				FATAL("Unable to serialize primitive:\n%s",
@@ -493,7 +536,6 @@ bool RTMPProtocolSerializer::SerializeSharedObject(IOBuffer &buffer,
 			}
 		}
 	}
-
 	return true;
 }
 
@@ -750,7 +792,7 @@ bool RTMPProtocolSerializer::DeserializeSharedObject(IOBuffer &buffer, Variant &
 			{
 				break;
 			}
-			case SOT_CS_SET_ATTRIBUTE:
+			case SOT_CS_UPDATE_FIELD_REQUEST:
 			{
 				uint32_t read = 0;
 				uint32_t beforeRead = 0;
@@ -773,7 +815,7 @@ bool RTMPProtocolSerializer::DeserializeSharedObject(IOBuffer &buffer, Variant &
 					}
 					afterRead = GETAVAILABLEBYTESCOUNT(buffer);
 					read += beforeRead - afterRead;
-					primitive[RM_SHAREDOBJECTPRIMITIVE_PAYLOAD][STR(key)] = value;
+					primitive[RM_SHAREDOBJECTPRIMITIVE_PAYLOAD][key] = value;
 				}
 				if (read != rawLength) {
 					FATAL("length mismatch");
@@ -781,19 +823,26 @@ bool RTMPProtocolSerializer::DeserializeSharedObject(IOBuffer &buffer, Variant &
 				}
 				break;
 			}
-			case SOT_SC_UPDATE_DATA:
-			{
-				NYIR;
-				break;
-			}
-			case SOT_SC_UPDATE_DATA_ACK:
-			{
-				NYIR;
-				break;
-			}
 			case SOT_BW_SEND_MESSAGE:
 			{
-				NYIR;
+				uint32_t read = 0;
+				uint32_t beforeRead = 0;
+				uint32_t afterRead = 0;
+				while (read < rawLength) {
+					Variant value;
+					beforeRead = GETAVAILABLEBYTESCOUNT(buffer);
+					if (!_amf0.Read(buffer, value)) {
+						FATAL("Unable to read value");
+						return false;
+					}
+					afterRead = GETAVAILABLEBYTESCOUNT(buffer);
+					read += beforeRead - afterRead;
+					primitive[RM_SHAREDOBJECTPRIMITIVE_PAYLOAD].PushToArray(value);
+				}
+				if (read != rawLength) {
+					FATAL("length mismatch");
+					return false;
+				}
 				break;
 			}
 			case SOT_SC_STATUS:
@@ -803,22 +852,82 @@ bool RTMPProtocolSerializer::DeserializeSharedObject(IOBuffer &buffer, Variant &
 			}
 			case SOT_SC_CLEAR_DATA:
 			{
-				NYIR;
 				break;
 			}
-			case SOT_SC_DELETE_DATA:
+			case SOT_CS_UPDATE_FIELD_ACK:
+			case SOT_SC_DELETE_FIELD:
 			{
-				NYIR;
+				uint32_t read = 0;
+				uint32_t beforeRead = 0;
+				uint32_t afterRead = 0;
+				while (read < rawLength) {
+					Variant key;
+					beforeRead = GETAVAILABLEBYTESCOUNT(buffer);
+					if (!_amf0.ReadShortString(buffer, key, false)) {
+						FATAL("Unable to read key");
+						return false;
+					}
+					afterRead = GETAVAILABLEBYTESCOUNT(buffer);
+					read += beforeRead - afterRead;
+					primitive[RM_SHAREDOBJECTPRIMITIVE_PAYLOAD].PushToArray(key);
+				}
+				if (read != rawLength) {
+					FATAL("length mismatch");
+					return false;
+				}
 				break;
 			}
-			case SOT_CSC_DELETE_DATA:
+			case SOT_CS_DELETE_FIELD_REQUEST:
 			{
-				NYIR;
+				Variant value;
+				uint32_t beforeRead = GETAVAILABLEBYTESCOUNT(buffer);
+				if (!_amf0.ReadShortString(buffer, value, false)) {
+					FATAL("Unable to read value");
+					return false;
+				}
+				uint32_t afterRead = GETAVAILABLEBYTESCOUNT(buffer);
+				primitive[RM_SHAREDOBJECTPRIMITIVE_PAYLOAD].PushToArray(value);
+				if ((beforeRead - afterRead) != rawLength) {
+					FATAL("length mismatch");
+					return false;
+				}
 				break;
 			}
+			case SOT_CS_UPDATE_FIELD:
 			case SOT_SC_INITIAL_DATA:
 			{
-				NYIR;
+				primitive[RM_SHAREDOBJECTPRIMITIVE_PAYLOAD].IsArray(false);
+				uint32_t read = 0;
+				uint32_t beforeRead = 0;
+				uint32_t afterRead = 0;
+				while (read < rawLength) {
+					Variant key;
+					beforeRead = GETAVAILABLEBYTESCOUNT(buffer);
+					if (!_amf0.ReadShortString(buffer, key, false)) {
+						FATAL("Unable to read key");
+						return false;
+					}
+					afterRead = GETAVAILABLEBYTESCOUNT(buffer);
+					read += beforeRead - afterRead;
+					if (read >= rawLength) {
+						FATAL("No more data");
+						return false;
+					}
+					Variant value;
+					beforeRead = GETAVAILABLEBYTESCOUNT(buffer);
+					if (!_amf0.Read(buffer, value)) {
+						FATAL("Unable to read value");
+						return false;
+					}
+					afterRead = GETAVAILABLEBYTESCOUNT(buffer);
+					read += beforeRead - afterRead;
+
+					primitive[RM_SHAREDOBJECTPRIMITIVE_PAYLOAD][key] = value;
+				}
+				if (read != rawLength) {
+					FATAL("length mismatch");
+					return false;
+				}
 				break;
 			}
 			default:

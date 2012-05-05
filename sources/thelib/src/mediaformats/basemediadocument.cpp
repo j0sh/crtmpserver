@@ -165,7 +165,7 @@ bool BaseMediaDocument::SaveSeekFile() {
 	uint64_t maxFrameSize = 0;
 
 	FOR_VECTOR(_frames, i) {
-		MediaFrame frame = _frames[i];
+		MediaFrame &frame = _frames[i];
 		if (maxFrameSize < frame.length) {
 			//WARN("maxFrameSize bumped up: %"PRIu64" -> %"PRIu64, maxFrameSize, frame.length);
 			maxFrameSize = frame.length;

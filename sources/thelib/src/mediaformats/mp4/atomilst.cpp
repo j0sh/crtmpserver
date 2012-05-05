@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -24,49 +24,47 @@
 
 AtomILST::AtomILST(MP4Document *pDocument, uint32_t type, uint64_t size, uint64_t start)
 : BoxAtom(pDocument, type, size, start) {
+	_metadata.IsArray(false);
 }
 
 AtomILST::~AtomILST() {
 }
 
-Variant AtomILST::GetVariant() {
-	Variant result;
-
-	FOR_VECTOR(_metaFields, i) {
-		result[_metaFields[i]->GetTypeString()] = _metaFields[i]->GetVariant();
-	}
-	return result;
+Variant &AtomILST::GetMetadata() {
+	return _metadata;
 }
 
 bool AtomILST::AtomCreated(BaseAtom *pAtom) {
+	if ((pAtom->GetTypeNumeric() >> 24) == 0xa9) {
+		AtomMetaField *pField = (AtomMetaField *) pAtom;
+		_metadata[pField->GetName()] = pField->GetValue();
+		return true;
+	}
 	switch (pAtom->GetTypeNumeric()) {
-		case A__NAM:
+		case A_AART:
+		case A_COVR:
 		case A_CPIL:
+		case A_DESC:
+		case A_DISK:
+		case A_GNRE:
 		case A_PGAP:
 		case A_TMPO:
-		case A__TOO:
-		case A__ART1:
-		case A__ART2:
-		case A__PRT:
-		case A__ALB:
-		case A_GNRE:
 		case A_TRKN:
-		case A__DAY:
-		case A_DISK:
-		case A__CMT:
-		case A_COVR:
-		case A_AART:
-		case A__WRT:
-		case A__GRP:
-		case A__LYR:
-		case A_DESC:
-		case A_TVSH:
 		case A_TVEN:
-		case A_TVSN:
 		case A_TVES:
-		case A__DES:
-			ADD_VECTOR_END(_metaFields, (AtomMetaField *) pAtom);
+		case A_TVSH:
+		case A_TVSN:
+		case A_SONM:
+		case A_SOAL:
+		case A_SOAR:
+		case A_SOAA:
+		case A_SOCO:
+		case A_SOSN:
+		{
+			AtomMetaField *pField = (AtomMetaField *) pAtom;
+			_metadata[pField->GetName()] = pField->GetValue();
 			return true;
+		}
 		default:
 		{
 			FATAL("Invalid atom type: %s", STR(pAtom->GetTypeString()));

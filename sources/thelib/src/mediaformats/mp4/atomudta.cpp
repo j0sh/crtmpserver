@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -20,41 +20,33 @@
 #ifdef HAS_MEDIA_MP4
 #include "mediaformats/mp4/atomudta.h"
 #include "mediaformats/mp4/mp4document.h"
+#include "mediaformats/mp4/atommetafield.h"
 
 AtomUDTA::AtomUDTA(MP4Document *pDocument, uint32_t type, uint64_t size, uint64_t start)
 : BoxAtom(pDocument, type, size, start) {
-	_pMETA = NULL;
+	_metadata.IsArray(false);
 }
 
 AtomUDTA::~AtomUDTA() {
 }
 
-bool AtomUDTA::Read() {
-	if (_pParent == NULL)
-		return SkipRead(false);
-	if (_pParent->GetTypeNumeric() != A_MOOV)
-		return SkipRead(false);
-	return BoxAtom::Read();
+Variant &AtomUDTA::GetMetadata() {
+	return _metadata;
 }
 
 bool AtomUDTA::AtomCreated(BaseAtom *pAtom) {
+	if ((pAtom->GetTypeNumeric() >> 24) == 0xa9) {
+		AtomMetaField *pField = (AtomMetaField *) pAtom;
+		_metadata[pField->GetName()] = pField->GetValue();
+		return true;
+	}
 	switch (pAtom->GetTypeNumeric()) {
 		case A_META:
-			_pMETA = (AtomMETA *) pAtom;
 			return true;
 		case A_NAME:
-		case A__ALB:
-		case A__ART1:
-		case A__ART2:
-		case A__PRT:
-		case A__CMT:
-		case A__CPY:
-		case A__DES:
-		case A__NAM:
-		case A__COM:
-		case A__GEN:
 		{
-			ADD_VECTOR_END(_metaFields, (AtomMetaField *) pAtom);
+			AtomMetaField *pField = (AtomMetaField *) pAtom;
+			_metadata[pField->GetName()] = pField->GetValue();
 			return true;
 		}
 		default:

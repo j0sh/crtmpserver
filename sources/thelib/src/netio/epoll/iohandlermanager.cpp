@@ -231,6 +231,8 @@ bool IOHandlerManager::EnableAcceptConnections(IOHandler *pIOHandler) {
 	evt.data.ptr = pIOHandler->GetIOHandlerManagerToken();
 	if (epoll_ctl(_eq, EPOLL_CTL_ADD, pIOHandler->GetInboundFd(), &evt) != 0) {
 		int32_t err = errno;
+		if (err == EEXIST)
+			return true;
 		FATAL("Unable to enable accept connections: (%d) %s", err, strerror(err));
 		return false;
 	}

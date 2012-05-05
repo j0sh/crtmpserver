@@ -245,11 +245,12 @@ bool BaseOutNetRTMPStream::FeedData(uint8_t *pData, uint32_t dataLength,
 				_pRTMPProtocol->EnqueueForOutbound();
 				return true;
 			}
-
+#ifndef WIN32
 			if ((pData[0] >> 4) != 1) {
 				_pRTMPProtocol->EnqueueForOutbound();
 				return true;
 			}
+#endif /* WIN32 */
 
 			if ((pData[0] == 0x17) && (pData[1] == 0)) {
 				// h264 codec setup. Keep _isFirstVideoFrame == true

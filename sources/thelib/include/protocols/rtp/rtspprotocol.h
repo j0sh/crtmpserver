@@ -81,6 +81,7 @@ protected:
 	string _keepAliveURI;
 
 	string _sessionId;
+	bool _enableTearDown;
 public:
 	RTSPProtocol();
 	virtual ~RTSPProtocol();
@@ -93,6 +94,7 @@ public:
 	virtual bool SignalInputData(int32_t recvAmount);
 	virtual bool SignalInputData(IOBuffer &buffer);
 	virtual void GetStats(Variant &info, uint32_t namespaceId = 0);
+	virtual void EnqueueForDelete();
 
 	string GetSessionId();
 	string GenerateSessionId();
@@ -101,6 +103,7 @@ public:
 	bool SetAuthentication(string wwwAuthenticateHeader, string userName,
 			string password);
 	bool EnableKeepAlive(uint32_t period, string keepAliveURI);
+	void EnableTearDown();
 	bool SendKeepAliveOptions();
 	bool HasConnectivity();
 

@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -23,18 +23,14 @@
 
 #include "mediaformats/mp4/boxatom.h"
 
-class AtomMetaField;
-
 class AtomILST
 : public BoxAtom {
 private:
-	vector<AtomMetaField *> _metaFields;
+	Variant _metadata;
 public:
 	AtomILST(MP4Document *pDocument, uint32_t type, uint64_t size, uint64_t start);
 	virtual ~AtomILST();
-
-	Variant GetVariant();
-
+	Variant &GetMetadata();
 protected:
 	virtual bool AtomCreated(BaseAtom *pAtom);
 };

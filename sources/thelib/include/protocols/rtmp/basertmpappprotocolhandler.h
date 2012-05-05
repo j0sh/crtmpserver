@@ -31,6 +31,7 @@ class OutboundRTMPProtocol;
 class BaseRTMPProtocol;
 class BaseOutFileStream;
 class InNetRTMPStream;
+class ClientSO;
 
 class DLLEXP BaseRTMPAppProtocolHandler
 : public BaseAppProtocolHandler {
@@ -70,6 +71,10 @@ public:
 	 * This will return the shared objects manager for this particular application
 	 * */
 	SOManager *GetSOManager();
+	virtual void SignalClientSOConnected(BaseRTMPProtocol *pFrom, ClientSO *pClientSO);
+	virtual void SignalClientSOUpdated(BaseRTMPProtocol *pFrom, ClientSO *pClientSO);
+	virtual void SignalClientSOSend(BaseRTMPProtocol *pFrom, ClientSO *pClientSO,
+			Variant &parameters);
 
 	/*
 	 * (Un)Register connection. This is called by the framework
@@ -84,12 +89,16 @@ public:
 	 * Basically, this will open a RTMP client and start playback a stream
 	 * */
 	virtual bool PullExternalStream(URI uri, Variant streamConfig);
+	virtual bool PullExternalStream(URI &uri, BaseRTMPProtocol *pFrom,
+			string &sourceName, string &destName);
 
 	/*
 	 * This is called by the framework when a stream needs to be pushed forward
 	 * Basically, this will open a RTMP client and start publishing a stream
 	 * */
 	virtual bool PushLocalStream(Variant streamConfig);
+	virtual bool PushLocalStream(BaseRTMPProtocol *pFrom, string sourceName,
+			string destName);
 
 	/*
 	 * This is called bt the framework when an outbound connection was established
@@ -170,6 +179,8 @@ public:
 	virtual bool ProcessInvokeOnStatus(BaseRTMPProtocol *pFrom,
 			Variant &request);
 	virtual bool ProcessInvokeFCPublish(BaseRTMPProtocol *pFrom,
+			Variant &request);
+	virtual bool ProcessInvokeFCSubscribe(BaseRTMPProtocol *pFrom,
 			Variant &request);
 	virtual bool ProcessInvokeGetStreamLength(BaseRTMPProtocol *pFrom,
 			Variant &request);
@@ -252,6 +263,10 @@ public:
 	virtual InNetRTMPStream *CreateInNetStream(BaseRTMPProtocol *pFrom,
 			uint32_t channelId, uint32_t streamId, string streamName);
 
+	/*
+	 * Opens a client-side connection for a shared object
+	 * */
+	bool OpenClientSharedObject(BaseRTMPProtocol *pFrom, string soName);
 private:
 	/*
 	 * Will transform stream names of type streamName?param1=value1&param2=value2&...

@@ -159,6 +159,19 @@ Variant StreamMessageFactory::GetInvokeOnFCPublish(uint32_t channelId,
 			timeStamp, isAbsolute, requestId, "onFCPublish", params);
 }
 
+Variant StreamMessageFactory::GetInvokeOnFCSubscribe(uint32_t channelId,
+		uint32_t streamId, double timeStamp, bool isAbsolute,
+		double requestId, string code, string description) {
+	Variant params;
+
+	params[(uint32_t) 0] = Variant();
+	params[(uint32_t) 1][RM_INVOKE_PARAMS_ONSTATUS_CODE] = code;
+	params[(uint32_t) 1][RM_INVOKE_PARAMS_ONSTATUS_DESCRIPTION] = description;
+
+	return GenericMessageFactory::GetInvoke(channelId, streamId,
+			timeStamp, isAbsolute, requestId, "onFCSubscribe", params);
+}
+
 Variant StreamMessageFactory::GetInvokeOnStatusStreamPublishBadName(Variant &request,
 		string streamName) {
 	return GetInvokeOnStatusStreamPublishBadName(

@@ -28,6 +28,7 @@
 #include "protocols/ts/innettsstream.h"
 #include "protocols/ts/tsboundscheck.h"
 #include "protocols/rtmp/header_le_ba.h"
+#include "streaming/baseoutstream.h"
 
 InboundTSProtocol::InboundTSProtocol()
 : BaseProtocol(PT_INBOUND_TS) {
@@ -93,6 +94,21 @@ InboundTSProtocol::~InboundTSProtocol() {
 
 bool InboundTSProtocol::Initialize(Variant &parameters) {
 	GetCustomParameters() = parameters;
+
+	bool fireOnlyOnce = false;
+
+	if (parameters.HasKeyChain(V_BOOL, true, 1, "fireOnlyOnce"))
+		fireOnlyOnce = (bool)parameters["fireOnlyOnce"];
+
+	if (fireOnlyOnce) {
+		if (parameters.HasKeyChain(_V_NUMERIC, true, 1, "id")) {
+			uint32_t id = (uint32_t) parameters["id"];
+			map<uint32_t, IOHandler *>& handlers = IOHandlerManager::GetActiveHandlers();
+			if (MAP_HAS1(handlers, id)) {
+				IOHandlerManager::EnqueueForDelete(handlers[id]);
+			}
+		}
+	}
 	return true;
 }
 
@@ -444,6 +460,20 @@ bool InboundTSProtocol::ProcessPidTypePMT(uint32_t packetHeader,
 		}
 		pStream = new InNetTSStream(this, GetApplication()->GetStreamsManager(),
 				streamName, packetPMT.GetBandwidth());
+
+		//7. Pickup all outbound waiting streams
+		map<uint32_t, BaseOutStream *> subscribedOutStreams =
+				GetApplication()->GetStreamsManager()->GetWaitingSubscribers(
+				streamName, pStream->GetType(), true);
+		//FINEST("subscribedOutStreams count: %"PRIz"u", subscribedOutStreams.size());
+
+
+		//8. Bind the waiting subscribers
+
+		FOR_MAP(subscribedOutStreams, uint32_t, BaseOutStream *, i) {
+			BaseOutStream *pBaseOutStream = MAP_VAL(i);
+			pBaseOutStream->Link(pStream);
+		}
 	}
 
 	//5. Create the pid descriptors for audioPid and videoPid and store them

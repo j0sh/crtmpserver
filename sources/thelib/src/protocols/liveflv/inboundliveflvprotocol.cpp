@@ -43,7 +43,7 @@ InboundLiveFLVProtocol::~InboundLiveFLVProtocol() {
 
 bool InboundLiveFLVProtocol::Initialize(Variant &parameters) {
 	GetCustomParameters() = parameters;
-	FINEST("parameters:\n%s", STR(parameters.ToString()));
+	//FINEST("parameters:\n%s", STR(parameters.ToString()));
 	if (parameters.HasKey("waitForMetadata"))
 		_waitForMetadata = (bool)parameters["waitForMetadata"];
 	else
@@ -222,7 +222,7 @@ bool InboundLiveFLVProtocol::InitializeStream(string streamName) {
 	//6. Get the list of waiting subscribers
 	map<uint32_t, BaseOutStream *> subscribedOutStreams =
 			GetApplication()->GetStreamsManager()->GetWaitingSubscribers(
-			streamName, _pStream->GetType());
+			streamName, _pStream->GetType(), true);
 
 	//7. Bind the waiting subscribers
 

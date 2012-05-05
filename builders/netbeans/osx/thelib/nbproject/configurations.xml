@@ -26,6 +26,10 @@
           <itemPath>../../../../sources/thelib/include/mediaformats/mp3/mp3document.h</itemPath>
         </logicalFolder>
         <logicalFolder name="mp4" displayName="mp4" projectFiles="true">
+          <itemPath>../../../../sources/thelib/include/mediaformats/mp4/atomabst.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/mediaformats/mp4/atomafra.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/mediaformats/mp4/atomafrt.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/mediaformats/mp4/atomasrt.h</itemPath>
           <itemPath>../../../../sources/thelib/include/mediaformats/mp4/atomavc1.h</itemPath>
           <itemPath>../../../../sources/thelib/include/mediaformats/mp4/atomavcc.h</itemPath>
           <itemPath>../../../../sources/thelib/include/mediaformats/mp4/atomco64.h</itemPath>
@@ -96,6 +100,18 @@
           <itemPath>../../../../sources/thelib/include/netio/epoll/tcpconnector.h</itemPath>
           <itemPath>../../../../sources/thelib/include/netio/epoll/udpcarrier.h</itemPath>
         </logicalFolder>
+        <logicalFolder name="iocp" displayName="iocp" projectFiles="true">
+          <itemPath>../../../../sources/thelib/include/netio/iocp/inboundnamedpipecarrier.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/netio/iocp/iocpevent.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/netio/iocp/iohandler.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/netio/iocp/iohandlermanager.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/netio/iocp/iotimer.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/netio/iocp/stdiocarrier.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/netio/iocp/tcpacceptor.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/netio/iocp/tcpcarrier.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/netio/iocp/tcpconnector.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/netio/iocp/udpcarrier.h</itemPath>
+        </logicalFolder>
         <logicalFolder name="kqueue" displayName="kqueue" projectFiles="true">
           <itemPath>../../../../sources/thelib/include/netio/kqueue/inboundnamedpipecarrier.h</itemPath>
           <itemPath>../../../../sources/thelib/include/netio/kqueue/iohandler.h</itemPath>
@@ -119,6 +135,8 @@
           <itemPath>../../../../sources/thelib/include/netio/select/tcpconnector.h</itemPath>
           <itemPath>../../../../sources/thelib/include/netio/select/udpcarrier.h</itemPath>
         </logicalFolder>
+        <itemPath>../../../../sources/thelib/include/netio/fdstats.h</itemPath>
+        <itemPath>../../../../sources/thelib/include/netio/iohandlertype.h</itemPath>
         <itemPath>../../../../sources/thelib/include/netio/netio.h</itemPath>
       </logicalFolder>
       <logicalFolder name="protocols" displayName="protocols" projectFiles="true">
@@ -131,6 +149,14 @@
         <logicalFolder name="dns" displayName="dns" projectFiles="true">
           <itemPath>../../../../sources/thelib/include/protocols/dns/inbounddnsresolverprotocol.h</itemPath>
           <itemPath>../../../../sources/thelib/include/protocols/dns/outbounddnsresolverprotocol.h</itemPath>
+        </logicalFolder>
+        <logicalFolder name="external" displayName="external" projectFiles="true">
+          <itemPath>../../../../sources/thelib/include/protocols/external/evostreamprotocol.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/protocols/external/externalappprotocolhandler.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/protocols/external/externaljobtimerprotocol.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/protocols/external/externalmoduleapi.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/protocols/external/externalprotocol.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/protocols/external/externalprotocolmodule.h</itemPath>
         </logicalFolder>
         <logicalFolder name="http" displayName="http" projectFiles="true">
           <itemPath>../../../../sources/thelib/include/protocols/http/basehttpprotocol.h</itemPath>
@@ -150,6 +176,10 @@
           <itemPath>../../../../sources/thelib/include/protocols/mms/innetmp3stream.h</itemPath>
           <itemPath>../../../../sources/thelib/include/protocols/mms/mmsprotocol.h</itemPath>
           <itemPath>../../../../sources/thelib/include/protocols/mms/transcoder.h</itemPath>
+        </logicalFolder>
+        <logicalFolder name="passthrough" displayName="passthrough" projectFiles="true">
+          <itemPath>../../../../sources/thelib/include/protocols/passthrough/passthroughappprotocolhandler.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/protocols/passthrough/passthroughprotocol.h</itemPath>
         </logicalFolder>
         <logicalFolder name="rawhttpstream"
                        displayName="rawhttpstream"
@@ -264,6 +294,15 @@
         <itemPath>../../../../sources/thelib/include/protocols/udpprotocol.h</itemPath>
       </logicalFolder>
       <logicalFolder name="streaming" displayName="streaming" projectFiles="true">
+        <logicalFolder name="hls" displayName="hls" projectFiles="true">
+          <itemPath>../../../../sources/thelib/include/streaming/hls/baseouthlsstream.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/streaming/hls/basetssegment.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/streaming/hls/filetssegment.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/streaming/hls/hlsplaylist.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/streaming/hls/nettssegment.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/streaming/hls/outfilehlsstream.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/streaming/hls/outnethlsstream.h</itemPath>
+        </logicalFolder>
         <itemPath>../../../../sources/thelib/include/streaming/baseinfilestream.h</itemPath>
         <itemPath>../../../../sources/thelib/include/streaming/baseinnetstream.h</itemPath>
         <itemPath>../../../../sources/thelib/include/streaming/baseinstream.h</itemPath>
@@ -272,10 +311,14 @@
         <itemPath>../../../../sources/thelib/include/streaming/baseoutstream.h</itemPath>
         <itemPath>../../../../sources/thelib/include/streaming/basestream.h</itemPath>
         <itemPath>../../../../sources/thelib/include/streaming/codectypes.h</itemPath>
+        <itemPath>../../../../sources/thelib/include/streaming/innetexternalstream.h</itemPath>
+        <itemPath>../../../../sources/thelib/include/streaming/innetpassthroughstream.h</itemPath>
         <itemPath>../../../../sources/thelib/include/streaming/innetrawstream.h</itemPath>
         <itemPath>../../../../sources/thelib/include/streaming/nalutypes.h</itemPath>
+        <itemPath>../../../../sources/thelib/include/streaming/outnetpassthroughstream.h</itemPath>
         <itemPath>../../../../sources/thelib/include/streaming/outnetrawstream.h</itemPath>
         <itemPath>../../../../sources/thelib/include/streaming/packetqueue.h</itemPath>
+        <itemPath>../../../../sources/thelib/include/streaming/sink.h</itemPath>
         <itemPath>../../../../sources/thelib/include/streaming/streamcapabilities.h</itemPath>
         <itemPath>../../../../sources/thelib/include/streaming/streamsmanager.h</itemPath>
         <itemPath>../../../../sources/thelib/include/streaming/streamstypes.h</itemPath>
@@ -308,6 +351,10 @@
           <itemPath>../../../../sources/thelib/src/mediaformats/mp3/mp3document.cpp</itemPath>
         </logicalFolder>
         <logicalFolder name="mp4" displayName="mp4" projectFiles="true">
+          <itemPath>../../../../sources/thelib/src/mediaformats/mp4/atomabst.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/mediaformats/mp4/atomafra.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/mediaformats/mp4/atomafrt.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/mediaformats/mp4/atomasrt.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/mediaformats/mp4/atomavc1.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/mediaformats/mp4/atomavcc.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/mediaformats/mp4/atomco64.cpp</itemPath>
@@ -374,6 +421,16 @@
           <itemPath>../../../../sources/thelib/src/netio/epoll/tcpcarrier.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/netio/epoll/udpcarrier.cpp</itemPath>
         </logicalFolder>
+        <logicalFolder name="iocp" displayName="iocp" projectFiles="true">
+          <itemPath>../../../../sources/thelib/src/netio/iocp/inboundnamedpipecarrier.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/netio/iocp/iohandler.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/netio/iocp/iohandlermanager.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/netio/iocp/iotimer.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/netio/iocp/stdiocarrier.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/netio/iocp/tcpacceptor.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/netio/iocp/tcpcarrier.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/netio/iocp/udpcarrier.cpp</itemPath>
+        </logicalFolder>
         <logicalFolder name="kqueue" displayName="kqueue" projectFiles="true">
           <itemPath>../../../../sources/thelib/src/netio/kqueue/inboundnamedpipecarrier.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/netio/kqueue/iohandler.cpp</itemPath>
@@ -394,6 +451,7 @@
           <itemPath>../../../../sources/thelib/src/netio/select/tcpcarrier.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/netio/select/udpcarrier.cpp</itemPath>
         </logicalFolder>
+        <itemPath>../../../../sources/thelib/src/netio/fdstats.cpp</itemPath>
       </logicalFolder>
       <logicalFolder name="protocols" displayName="protocols" projectFiles="true">
         <logicalFolder name="cli" displayName="cli" projectFiles="true">
@@ -405,6 +463,13 @@
         <logicalFolder name="dns" displayName="dns" projectFiles="true">
           <itemPath>../../../../sources/thelib/src/protocols/dns/inbounddnsresolverprotocol.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/protocols/dns/outbounddnsresolverprotocol.cpp</itemPath>
+        </logicalFolder>
+        <logicalFolder name="external" displayName="external" projectFiles="true">
+          <itemPath>../../../../sources/thelib/src/protocols/external/externalappprotocolhandler.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/protocols/external/externaljobtimerprotocol.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/protocols/external/externalmoduleapi.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/protocols/external/externalprotocol.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/protocols/external/externalprotocolmodule.cpp</itemPath>
         </logicalFolder>
         <logicalFolder name="http" displayName="http" projectFiles="true">
           <itemPath>../../../../sources/thelib/src/protocols/http/basehttpappprotocolhandler.cpp</itemPath>
@@ -424,6 +489,10 @@
           <itemPath>../../../../sources/thelib/src/protocols/mms/innetmp3stream.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/protocols/mms/mmsprotocol.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/protocols/mms/transcoder.cpp</itemPath>
+        </logicalFolder>
+        <logicalFolder name="passthrough" displayName="passthrough" projectFiles="true">
+          <itemPath>../../../../sources/thelib/src/protocols/passthrough/passthroughappprotocolhandler.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/protocols/passthrough/passthroughprotocol.cpp</itemPath>
         </logicalFolder>
         <logicalFolder name="rawhttpstream"
                        displayName="rawhttpstream"
@@ -530,6 +599,15 @@
         <itemPath>../../../../sources/thelib/src/protocols/udpprotocol.cpp</itemPath>
       </logicalFolder>
       <logicalFolder name="streaming" displayName="streaming" projectFiles="true">
+        <logicalFolder name="hls" displayName="hls" projectFiles="true">
+          <itemPath>../../../../sources/thelib/src/streaming/hls/baseouthlsstream.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/streaming/hls/basetssegment.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/streaming/hls/filetssegment.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/streaming/hls/hlsplaylist.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/streaming/hls/nettssegment.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/streaming/hls/outfilehlsstream.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/streaming/hls/outnethlsstream.cpp</itemPath>
+        </logicalFolder>
         <itemPath>../../../../sources/thelib/src/streaming/baseinfilestream.cpp</itemPath>
         <itemPath>../../../../sources/thelib/src/streaming/baseinnetstream.cpp</itemPath>
         <itemPath>../../../../sources/thelib/src/streaming/baseinstream.cpp</itemPath>
@@ -537,10 +615,14 @@
         <itemPath>../../../../sources/thelib/src/streaming/baseoutnetstream.cpp</itemPath>
         <itemPath>../../../../sources/thelib/src/streaming/baseoutstream.cpp</itemPath>
         <itemPath>../../../../sources/thelib/src/streaming/basestream.cpp</itemPath>
+        <itemPath>../../../../sources/thelib/src/streaming/innetexternalstream.cpp</itemPath>
+        <itemPath>../../../../sources/thelib/src/streaming/innetpassthroughstream.cpp</itemPath>
         <itemPath>../../../../sources/thelib/src/streaming/innetrawstream.cpp</itemPath>
         <itemPath>../../../../sources/thelib/src/streaming/nalutypes.cpp</itemPath>
+        <itemPath>../../../../sources/thelib/src/streaming/outnetpassthroughstream.cpp</itemPath>
         <itemPath>../../../../sources/thelib/src/streaming/outnetrawstream.cpp</itemPath>
         <itemPath>../../../../sources/thelib/src/streaming/packetqueue.cpp</itemPath>
+        <itemPath>../../../../sources/thelib/src/streaming/sink.cpp</itemPath>
         <itemPath>../../../../sources/thelib/src/streaming/streamcapabilities.cpp</itemPath>
         <itemPath>../../../../sources/thelib/src/streaming/streamsmanager.cpp</itemPath>
       </logicalFolder>
@@ -583,6 +665,8 @@
           <preprocessorList>
             <Elem>CreateRTCPPacket=CreateRTCPPacket_none</Elem>
             <Elem>FeedDataAudioMPEG4Generic=FeedDataAudioMPEG4Generic_one_by_one</Elem>
+            <Elem>GLOBALLY_ACCOUNT_BYTES</Elem>
+            <Elem>HAS_LICENSE</Elem>
             <Elem>HAS_LUA</Elem>
             <Elem>HAS_MEDIA_FLV</Elem>
             <Elem>HAS_MEDIA_MKV</Elem>
@@ -591,6 +675,8 @@
             <Elem>HAS_MEDIA_MP4</Elem>
             <Elem>HAS_MEDIA_NSV</Elem>
             <Elem>HAS_PROTOCOL_CLI</Elem>
+            <Elem>HAS_PROTOCOL_EXTERNAL</Elem>
+            <Elem>HAS_PROTOCOL_HLS</Elem>
             <Elem>HAS_PROTOCOL_HTTP</Elem>
             <Elem>HAS_PROTOCOL_LIVEFLV</Elem>
             <Elem>HAS_PROTOCOL_MMS</Elem>

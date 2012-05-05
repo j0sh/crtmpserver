@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -74,9 +74,8 @@ protected:
 	bool ReadInt64(int64_t &val, bool networkOrder = true);
 	bool SkipBytes(uint64_t count);
 	bool ReadString(string &val, uint64_t size);
+	bool ReadNullTerminatedString(string &val);
 };
 
 #endif	/* _BASEATOM_H */
-
-
 #endif /* HAS_MEDIA_MP4 */

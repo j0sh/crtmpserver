@@ -18,24 +18,39 @@
  */
 
 #ifdef HAS_MEDIA_MP4
-#ifndef _ATOMUDTA_H
-#define _ATOMUDTA_H
+#ifndef _ATOMABST_H
+#define _ATOMABST_H
 
-#include "mediaformats/mp4/boxatom.h"
+#include "mediaformats/mp4/versionedatom.h"
 
-class AtomUDTA
-: public BoxAtom {
+class AtomABST
+: public VersionedAtom {
 private:
-	Variant _metadata;
+	uint32_t _bootstrapInfoVersion;
+	uint8_t _profile;
+	bool _live;
+	bool _update;
+	uint32_t _timeScale;
+	uint64_t _currentMediaTime;
+	uint64_t _smpteTimeCodeOffset;
+	string _movieIdentifier;
+	uint8_t _serverEntryCount;
+	vector<string> _serverEntryTable;
+	uint8_t _qualityEntryCount;
+	vector<string> _qualityEntryTable;
+	string _drmData;
+	string _metaData;
+	uint8_t _segmentRunTableCount;
+	vector<BaseAtom*> _segmentRunTableEntries;
+	uint8_t _fragmentRunTableCount;
+	vector<BaseAtom*> _fragmentRunTableEntries;
 public:
-	AtomUDTA(MP4Document *pDocument, uint32_t type, uint64_t size, uint64_t start);
-	virtual ~AtomUDTA();
-	Variant &GetMetadata();
+	AtomABST(MP4Document *pDocument, uint32_t type, uint64_t size, uint64_t start);
+	virtual ~AtomABST();
+	virtual string Hierarchy(uint32_t indent);
 protected:
-	virtual bool AtomCreated(BaseAtom *pAtom);
+	virtual bool ReadData();
 };
 
-#endif	/* _ATOMUDTA_H */
-
-
+#endif	/* _ATOMABST_H */
 #endif /* HAS_MEDIA_MP4 */

@@ -196,9 +196,10 @@ bool TCPAcceptor::Drop() {
 	//1. Accept the connection
 	int32_t fd = accept(_inboundFd, &address, &len);
 	if (fd < 0) {
-		uint32_t err = LASTSOCKETERROR;
-		WARN("Accept failed. Error code was: %"PRIu32, err);
-		return true;
+		uint32_t err = errno;
+		if (err != EWOULDBLOCK)
+			WARN("Accept failed. Error code was: %"PRIu32, err);
+		return false;
 	}
 
 	//2. Drop it now

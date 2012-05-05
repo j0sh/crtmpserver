@@ -175,4 +175,20 @@ bool BaseAtom::ReadString(string &val, uint64_t size) {
 	return result;
 }
 
+bool BaseAtom::ReadNullTerminatedString(string &val) {
+	val = "";
+	uint8_t c = 0;
+
+	do {
+		if (!ReadUInt8(c)) {
+			FATAL("Unable to read character");
+			return false;
+		}
+		if (c != 0)
+			val += (char) c;
+	} while (c != 0);
+
+	return true;
+}
+
 #endif /* HAS_MEDIA_MP4 */

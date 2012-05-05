@@ -62,6 +62,10 @@
 #include "mediaformats/mp4/atomwave.h"
 #include "mediaformats/mp4/baseatom.h"
 #include "mediaformats/mp4/ignoredatom.h"
+#include "mediaformats/mp4/atomafra.h"
+#include "mediaformats/mp4/atomabst.h"
+#include "mediaformats/mp4/atomasrt.h"
+#include "mediaformats/mp4/atomafrt.h"
 
 //TODO: See how the things are impemented inside mp4v2. Good source
 //for looking at the avcC atom format for exampl
@@ -70,6 +74,8 @@ MP4Document::MP4Document(Variant &metadata)
 : BaseMediaDocument(metadata) {
 	_pFTYP = NULL;
 	_pMOOV = NULL;
+	_pAFRA = NULL;
+	_pABST = NULL;
 }
 
 MP4Document::~MP4Document() {
@@ -244,35 +250,89 @@ BaseAtom * MP4Document::ReadAtom(BaseAtom *pParentAtom) {
 		case A_CO64:
 			pAtom = new AtomCO64(this, type, size, currentPos);
 			break;
-		case A__COM:
-		case A_NAME:
-		case A_COVR:
+		case A_AFRA:
+			pAtom = new AtomAFRA(this, type, size, currentPos);
+			break;
+		case A_ABST:
+			pAtom = new AtomABST(this, type, size, currentPos);
+			break;
+		case A_ASRT:
+			pAtom = new AtomASRT(this, type, size, currentPos);
+			break;
+		case A_AFRT:
+			pAtom = new AtomAFRT(this, type, size, currentPos);
+			break;
 		case A_AART:
-		case A__WRT:
-		case A__GRP:
-		case A__LYR:
-		case A__NAM:
-		case A__ART1:
-		case A__ART2:
-		case A__PRT:
-		case A__TOO:
-		case A__DAY:
-		case A__CMT:
-		case A__CPY:
-		case A__DES:
-		case A__ALB:
-		case A_TRKN:
+		case A_COVR:
 		case A_CPIL:
+		case A_DESC:
+		case A_DISK:
+		case A_GNRE:
+		case A_NAME:
 		case A_PGAP:
 		case A_TMPO:
-		case A_GNRE:
-		case A_DISK:
-		case A__GEN:
-		case A_DESC:
-		case A_TVSH:
+		case A_TRKN:
 		case A_TVEN:
-		case A_TVSN:
 		case A_TVES:
+		case A_TVSH:
+		case A_TVSN:
+		case A_SONM:
+		case A_SOAL:
+		case A_SOAR:
+		case A_SOAA:
+		case A_SOCO:
+		case A_SOSN:
+		case A__ART1:
+		case A__ALB:
+		case A__ARG:
+		case A__ARK:
+		case A__ART2:
+		case A__CMT:
+		case A__COK:
+		case A__COM:
+		case A__CPY:
+		case A__DAY:
+		case A__DES:
+		case A__DIR:
+		case A__ED1:
+		case A__ED2:
+		case A__ED3:
+		case A__ED4:
+		case A__ED5:
+		case A__ED6:
+		case A__ED7:
+		case A__ED8:
+		case A__ED9:
+		case A__FMT:
+		case A__GEN:
+		case A__GRP:
+		case A__INF:
+		case A__ISR:
+		case A__LAB:
+		case A__LAL:
+		case A__LYR:
+		case A__MAK:
+		case A__MAL:
+		case A__MOD:
+		case A__NAK:
+		case A__NAM:
+		case A__PDK:
+		case A__PHG:
+		case A__PRD:
+		case A__PRF:
+		case A__PRK:
+		case A__PRL:
+		case A__PRT:
+		case A__REQ:
+		case A__SNK:
+		case A__SNM:
+		case A__SRC:
+		case A__SWF:
+		case A__SWK:
+		case A__SWR:
+		case A__TOO:
+		case A__WRT:
+		case A__XYZ:
 			pAtom = new AtomMetaField(this, type, size, currentPos);
 			break;
 		default:
@@ -327,6 +387,12 @@ bool MP4Document::ParseDocument() {
 				case A_MOOF:
 					ADD_VECTOR_END(_moof, (AtomMOOF *) pAtom);
 					break;
+				case A_AFRA:
+					_pAFRA = (AtomAFRA *) pAtom;
+					break;
+				case A_ABST:
+					_pABST = (AtomABST *) pAtom;
+					break;
 				default:
 				{
 					FATAL("Invalid atom %s", STR(pAtom->GetTypeString()));
@@ -336,7 +402,7 @@ bool MP4Document::ParseDocument() {
 		}
 		ADD_VECTOR_END(_topAtoms, pAtom);
 	}
-
+	//FINEST("\n%s", STR(Hierarchy()));
 	return true;
 }
 
@@ -717,13 +783,30 @@ Variant MP4Document::GetRTMPMeta() {
 		}
 	}
 
-	if (_pMOOV != NULL) {
-		AtomILST *pILST = (AtomILST *) _pMOOV->GetPath(3, A_UDTA, A_META, A_ILST);
+	for (uint32_t i = 0; i < _allAtoms.size(); i++) {
+		switch (_allAtoms[i]->GetTypeNumeric()) {
+			case A_ILST:
+			{
+				Variant &meta = ((AtomILST *) _allAtoms[i])->GetMetadata();
 
-		if (pILST != NULL) {
-			result["tags"] = pILST->GetVariant();
-		} else {
-			WARN("No ilst atom present");
+				FOR_MAP(meta, string, Variant, m) {
+					result["ILST"][MAP_KEY(m)] = MAP_VAL(m);
+				}
+				break;
+			}
+			case A_UDTA:
+			{
+				Variant &meta = ((AtomUDTA *) _allAtoms[i])->GetMetadata();
+
+				FOR_MAP(meta, string, Variant, m) {
+					result["UDTA"][MAP_KEY(m)] = MAP_VAL(m);
+				}
+				break;
+			}
+			default:
+			{
+				continue;
+			}
 		}
 	}
 

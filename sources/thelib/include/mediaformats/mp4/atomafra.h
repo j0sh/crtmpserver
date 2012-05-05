@@ -18,22 +18,39 @@
  */
 
 #ifdef HAS_MEDIA_MP4
-#include "mediaformats/mp4/atommfhd.h"
+#ifndef _ATOMAFRA_H
+#define _ATOMAFRA_H
 
-AtomMFHD::AtomMFHD(MP4Document *pDocument, uint32_t type, uint64_t size,
-		uint64_t start)
-: VersionedAtom(pDocument, type, size, start) {
-	_sequenceNumber = 0;
-}
+#include "mediaformats/mp4/versionedatom.h"
 
-AtomMFHD::~AtomMFHD() {
-}
+struct AFRAENTRY {
+	uint64_t time;
+	uint64_t offset;
+};
 
-bool AtomMFHD::ReadData() {
-	if (!ReadInt32(_sequenceNumber)) {
-		FATAL("Unable to read creation time");
-		return false;
-	}
-	return true;
-}
+struct GLOBALAFRAENTRY {
+	uint64_t time;
+	uint32_t segment;
+	uint32_t fragment;
+	uint64_t afraOffset;
+	uint64_t offsetFromAfra;
+};
+
+class AtomAFRA
+: public VersionedAtom {
+private:
+	uint8_t _flags;
+	uint32_t _timeScale;
+	uint32_t _entryCount;
+	uint32_t _globalEntryCount;
+	vector<AFRAENTRY> _localAccessEntries;
+	vector<GLOBALAFRAENTRY> _globalAccessEntries;
+public:
+	AtomAFRA(MP4Document *pDocument, uint32_t type, uint64_t size, uint64_t start);
+	virtual ~AtomAFRA();
+protected:
+	virtual bool ReadData();
+};
+
+#endif	/* _ATOMAFRA_H */
 #endif /* HAS_MEDIA_MP4 */

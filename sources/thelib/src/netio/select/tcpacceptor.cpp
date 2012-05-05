@@ -194,7 +194,7 @@ bool TCPAcceptor::Drop() {
 	if (fd < 0) {
 		uint32_t err = LASTSOCKETERROR;
 		WARN("Accept failed. Error code was: %"PRIu32, err);
-		return true;
+		return false;
 	}
 
 	//2. Drop it now

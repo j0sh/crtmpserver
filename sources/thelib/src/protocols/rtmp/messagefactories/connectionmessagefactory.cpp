@@ -21,7 +21,7 @@
 #include "protocols/rtmp/messagefactories/connectionmessagefactory.h"
 #include "protocols/rtmp/rtmpprotocolserializer.h"
 
-Variant ConnectionMessageFactory::GetPong() {
+Variant ConnectionMessageFactory::GetPong(uint32_t pingValue) {
 	Variant result;
 
 	VH(result, HT_FULL, 2, 0, 0, RM_HEADER_MESSAGETYPE_USRCTRL,
@@ -30,7 +30,9 @@ Variant ConnectionMessageFactory::GetPong() {
 	M_USRCTRL_TYPE(result) = (uint16_t) RM_USRCTRL_TYPE_PING_RESPONSE;
 	M_USRCTRL_TYPE_STRING(result) =
 			RTMPProtocolSerializer::GetUserCtrlTypeString(RM_USRCTRL_TYPE_PING_RESPONSE);
-	uint64_t ts = (uint64_t) time(NULL)*1000;
+	uint64_t ts = pingValue;
+	if (ts == 0)
+		ts = (uint64_t) time(NULL)*1000;
 	M_USRCTRL_PONG(result) = (uint32_t) (ts & 0x00000000ffffffffLL);
 
 	return result;
@@ -68,6 +70,27 @@ Variant ConnectionMessageFactory::GetInvokeConnect(string appName, string tcUrl,
 	connectRequest[(uint32_t) 0]["objectEncoding"] = objectEncoding;
 
 	return GenericMessageFactory::GetInvoke(3, 0, 0, false, 1, RM_INVOKE_FUNCTION_CONNECT, connectRequest);
+}
+
+Variant ConnectionMessageFactory::GetInvokeConnect(
+		Variant &extraParams, ConnectExtraParameters connectExtraParameters,
+		string appName, string tcUrl, double audioCodecs, double capabilities,
+		string flashVer, bool fPad, string pageUrl, string swfUrl, double videoCodecs,
+		double videoFunction, double objectEncoding) {
+	Variant connectRequest = GetInvokeConnect(appName, tcUrl, audioCodecs,
+			capabilities, flashVer, fPad, pageUrl, swfUrl, videoCodecs,
+			videoFunction, objectEncoding);
+	StoreConnectExtraParameters(connectRequest, extraParams, connectExtraParameters);
+	return connectRequest;
+}
+
+Variant ConnectionMessageFactory::GetInvokeConnect(Variant &firstParam,
+		Variant &extraParams, ConnectExtraParameters connectExtraParameters) {
+	Variant connectParams;
+	connectParams.PushToArray(firstParam);
+	Variant connectRequest = GenericMessageFactory::GetInvoke(3, 0, 0, false, 1, RM_INVOKE_FUNCTION_CONNECT, connectParams);
+	StoreConnectExtraParameters(connectRequest, extraParams, connectExtraParameters);
+	return connectRequest;
 }
 
 Variant ConnectionMessageFactory::GetInvokeClose() {
@@ -138,6 +161,24 @@ Variant ConnectionMessageFactory::GetInvokeConnectError(Variant request,
 			level,
 			code,
 			decription);
+}
+
+void ConnectionMessageFactory::StoreConnectExtraParameters(Variant &connectRequest,
+		Variant &extraParams, ConnectExtraParameters connectExtraParameters) {
+	if (connectExtraParameters == CEP_AUTO) {
+		if (extraParams.IsArray())
+			connectExtraParameters = CEP_INLINE;
+		else
+			connectExtraParameters = CEP_OBJECT;
+	}
+	if (connectExtraParameters == CEP_INLINE) {
+
+		FOR_MAP(extraParams, string, Variant, i) {
+			M_INVOKE_PARAMS(connectRequest).PushToArray(MAP_VAL(i));
+		}
+	} else {
+		M_INVOKE_PARAMS(connectRequest).PushToArray(extraParams);
+	}
 }
 #endif /* HAS_PROTOCOL_RTMP */
 

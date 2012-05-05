@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -63,9 +63,33 @@ public:
 
 	operator string();
 
-	Variant & Get(string key);
-	Variant & Set(string key, Variant value, uint32_t protocolId = 0);
-	void UnSet(string key);
+	Variant & Get(string &key);
+	Variant & Set(string &key, Variant &value, uint32_t version,
+			uint32_t protocolId);
+	void UnSet(string key, uint32_t version);
+	bool SendMessage(Variant &message);
+};
+
+class DLLEXP ClientSO
+: public Variant {
+private:
+	Variant _dummy1;
+	Variant _dummy2;
+public:
+
+	ClientSO() {
+		Variant v1;
+		v1.IsArray(false);
+		properties(v1);
+		Variant v2;
+		v2.IsArray(true);
+		changedProperties(v2);
+	}
+	VARIANT_GETSET(string, name, "");
+	VARIANT_GETSET(uint32_t, version, 0);
+	VARIANT_GETSET(bool, persistent, 0);
+	VARIANT_GETSET(Variant&, properties, _dummy1);
+	VARIANT_GETSET(Variant&, changedProperties, _dummy2);
 };
 
 

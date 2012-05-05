@@ -1229,7 +1229,14 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPResponse200Play(
 	}
 
 	//3. Enable keep alive
-	return pFrom->EnableKeepAlive(10, pFrom->GetCustomParameters()["uri"]["fullUri"]);
+	if (!pFrom->EnableKeepAlive(10, pFrom->GetCustomParameters()["uri"]["fullUri"])) {
+		FATAL("Unable to enale RTSP keep-alive");
+		return false;
+	}
+
+	pFrom->EnableTearDown();
+
+	return true;
 }
 
 bool BaseRTSPAppProtocolHandler::HandleRTSPResponse200Announce(RTSPProtocol *pFrom, Variant &requestHeaders,
@@ -1341,6 +1348,9 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPResponse200Record(RTSPProtocol *pFrom
 			result |= true;
 		}
 	}
+
+	if (result)
+		pFrom->EnableTearDown();
 
 	return result;
 }
@@ -1667,6 +1677,7 @@ string BaseRTSPAppProtocolHandler::ComputeSDP(RTSPProtocol *pFrom,
 	result += "c=IN IP4 " + nearAddress + "\r\n";
 	result += "t=0 0\r\n";
 	result += "a=recvonly\r\n";
+	result += "a=control:*\r\n";
 	result += audioTrack + videoTrack;
 
 	//FINEST("result:\n%s", STR(result));

@@ -28,7 +28,7 @@ FIND_LIBRARY(OPENSSL_LIBRARY_PATH
 		/sw/lib
 		/usr/local/ssl/lib
 		/lib
-		/lib/i387-linux-gnu
+		/lib/i386-linux-gnu
 		/usr/lib/i386-linux-gnu
 		/lib/x86_64-linux-gnu
 		/usr/lib/x86_64-linux-gnu

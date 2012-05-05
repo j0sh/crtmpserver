@@ -79,7 +79,7 @@ void SO::RegisterProtocol(uint32_t protocolId) {
 
 	FOR_MAP(_payload, string, Variant, i) {
 		di.propertyName = MAP_KEY(i);
-		di.type = SOT_SC_UPDATE_DATA;
+		di.type = SOT_CS_UPDATE_FIELD;
 		ADD_VECTOR_END(_dirtyPropsByProtocol[protocolId], di);
 	}
 }
@@ -145,16 +145,16 @@ void SO::Track() {
 		vector<Variant> primitives;
 
 		FOR_VECTOR_ITERATOR(DirtyInfo, dirtyness, j) {
-			string key = VECTOR_VAL(j).propertyName;
+			string &key = VECTOR_VAL(j).propertyName;
 			uint8_t type = VECTOR_VAL(j).type;
 			Variant primitive;
 			primitive[RM_SHAREDOBJECTPRIMITIVE_TYPE] = type;
 			switch (type) {
-				case SOT_SC_DELETE_DATA:
-				case SOT_SC_UPDATE_DATA_ACK:
+				case SOT_SC_DELETE_FIELD:
+				case SOT_CS_UPDATE_FIELD_ACK:
 					primitive[RM_SHAREDOBJECTPRIMITIVE_PAYLOAD][(uint32_t) 0] = key;
 					break;
-				case SOT_SC_UPDATE_DATA:
+				case SOT_CS_UPDATE_FIELD:
 					primitive[RM_SHAREDOBJECTPRIMITIVE_PAYLOAD][key] = _payload[key];
 					break;
 				case SOT_SC_INITIAL_DATA:
@@ -187,13 +187,13 @@ SO::operator string() {
 	return _payload.ToString();
 }
 
-Variant & SO::Get(string key) {
+Variant & SO::Get(string &key) {
 	if (!_payload.HasKey(key))
 		_payload[key] = Variant();
 	return _payload[key];
 }
 
-Variant & SO::Set(string key, Variant value, uint32_t protocolId) {
+Variant & SO::Set(string &key, Variant &value, uint32_t version, uint32_t protocolId) {
 	if (!_versionIncremented) {
 		_version++;
 		_versionIncremented = true;
@@ -205,9 +205,9 @@ Variant & SO::Set(string key, Variant value, uint32_t protocolId) {
 		DirtyInfo di;
 		di.propertyName = key;
 		if (currentProtocolId == protocolId) {
-			di.type = SOT_SC_UPDATE_DATA_ACK;
+			di.type = SOT_CS_UPDATE_FIELD_ACK;
 		} else {
-			di.type = SOT_SC_UPDATE_DATA;
+			di.type = SOT_CS_UPDATE_FIELD;
 		}
 		ADD_VECTOR_END(_dirtyPropsByProtocol[currentProtocolId], di);
 	}
@@ -215,7 +215,7 @@ Variant & SO::Set(string key, Variant value, uint32_t protocolId) {
 	return _payload[key];
 }
 
-void SO::UnSet(string key) {
+void SO::UnSet(string key, uint32_t version) {
 	if (!_versionIncremented) {
 		_version++;
 		_versionIncremented = true;
@@ -228,9 +228,23 @@ void SO::UnSet(string key) {
 		uint32_t currentProtocolId = MAP_VAL(i);
 		DirtyInfo di;
 		di.propertyName = key;
-		di.type = SOT_SC_DELETE_DATA;
+		di.type = SOT_SC_DELETE_FIELD;
 		ADD_VECTOR_END(_dirtyPropsByProtocol[currentProtocolId], di);
 	}
+}
+
+bool SO::SendMessage(Variant &message) {
+
+	FOR_MAP(_registeredProtocols, uint32_t, uint32_t, i) {
+		BaseRTMPProtocol *pTo = (BaseRTMPProtocol *)
+				ProtocolManager::GetProtocol(MAP_VAL(i));
+		if (pTo != NULL) {
+			if (!pTo->SendMessage(message)) {
+				pTo->EnqueueForDelete();
+			}
+		}
+	}
+	return true;
 }
 #endif /* HAS_PROTOCOL_RTMP */
 

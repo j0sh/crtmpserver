@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -221,8 +221,8 @@ bool InNetLiveFLVStream::InitializeAudioCapabilities(uint8_t *pData, uint32_t le
 		FATAL("InitAudioAAC failed");
 		return false;
 	}
-	FINEST("Cached the AAC audio codec initialization: %u",
-			GETAVAILABLEBYTESCOUNT(_audioCodecInit));
+	//	FINEST("Cached the AAC audio codec initialization: %u",
+	//			GETAVAILABLEBYTESCOUNT(_audioCodecInit));
 	return true;
 }
 
@@ -242,8 +242,8 @@ bool InNetLiveFLVStream::InitializeVideoCapabilities(uint8_t *pData, uint32_t le
 		return false;
 	}
 
-	FINEST("Cached the h264 video codec initialization: %u",
-			GETAVAILABLEBYTESCOUNT(_videoCodecInit));
+	//	FINEST("Cached the h264 video codec initialization: %u",
+	//			GETAVAILABLEBYTESCOUNT(_videoCodecInit));
 
 	return true;
 }

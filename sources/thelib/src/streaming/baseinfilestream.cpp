@@ -155,7 +155,7 @@ bool BaseInFileStream::ResolveCompleteMetadata(Variant &metaData) {
 	}
 
 	//2. Process the document
-	FINEST("Processing file %s", STR(metaData[META_SERVER_FULL_PATH]));
+	INFO("Generate seek/meta files for `%s`", STR(metaData[META_SERVER_FULL_PATH]));
 	if (!pDocument->Process()) {
 		FATAL("Unable to process document");
 		delete pDocument;
@@ -201,6 +201,11 @@ bool BaseInFileStream::Initialize(int32_t clientSideBufferLength, bool hasTimer)
 	//3. read stream capabilities
 	uint32_t streamCapabilitiesSize = 0;
 	IOBuffer raw;
+//	if(!_pSeekFile->SeekBegin()){
+//		FATAL("Unable to seek to the beginning og the file");
+//		return false;
+//	}
+//
 	if (!_pSeekFile->ReadUI32(&streamCapabilitiesSize, false)) {
 		FATAL("Unable to read stream Capabilities Size");
 		return false;
@@ -539,17 +544,10 @@ void BaseInFileStream::ReleaseFile(MmapFile *pFile) {
 #else
 
 File* BaseInFileStream::GetFile(string filePath, uint32_t windowSize) {
-	File *pResult = NULL;
-	if (!MAP_HAS1(_fileCache, filePath)) {
-		pResult = new File();
-		if (!pResult->Initialize(filePath)) {
-			delete pResult;
-			return NULL;
-		}
-		_fileCache[filePath] = pair<uint32_t, File *>(1, pResult);
-	} else {
-		pResult = _fileCache[filePath].second;
-		_fileCache[filePath].first++;
+	File *pResult = new File();
+	if (!pResult->Initialize(filePath)) {
+		delete pResult;
+		return NULL;
 	}
 	return pResult;
 }
@@ -557,15 +555,7 @@ File* BaseInFileStream::GetFile(string filePath, uint32_t windowSize) {
 void BaseInFileStream::ReleaseFile(File *pFile) {
 	if (pFile == NULL)
 		return;
-	if (!MAP_HAS1(_fileCache, pFile->GetPath())) {
-		WARN("You tryed to release a non-cached file: %s", STR(pFile->GetPath()));
-		return;
-	}
-	_fileCache[pFile->GetPath()].first--;
-	if (_fileCache[pFile->GetPath()].first == 0) {
-		_fileCache.erase(pFile->GetPath());
-		delete pFile;
-	}
+	delete pFile;
 }
 #endif /* HAS_MMAP */
 

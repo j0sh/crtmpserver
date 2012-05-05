@@ -55,6 +55,9 @@ public:
 	static Variant GetInvokeOnFCPublish(uint32_t channelId,
 			uint32_t streamId, double timeStamp, bool isAbsolute,
 			double requestId, string code, string description);
+	static Variant GetInvokeOnFCSubscribe(uint32_t channelId,
+			uint32_t streamId, double timeStamp, bool isAbsolute,
+			double requestId, string code, string description);
 
 	//event notifications
 	static Variant GetInvokeOnStatusStreamPublishBadName(Variant &request,

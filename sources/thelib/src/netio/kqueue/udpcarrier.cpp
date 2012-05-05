@@ -164,6 +164,13 @@ UDPCarrier* UDPCarrier::Create(string bindIp, uint16_t bindPort,
 		uint32_t testVal = EHTONL(bindAddress.sin_addr.s_addr);
 		if ((testVal > 0xe0000000) && (testVal < 0xefffffff)) {
 			INFO("Subscribe to multicast %s:%"PRIu16, STR(bindIp), bindPort);
+			int activateBroadcast = 1;
+			if (setsockopt(sock, SOL_SOCKET, SO_BROADCAST, &activateBroadcast,
+					sizeof (activateBroadcast)) != 0) {
+				int err = errno;
+				FATAL("Unable to activate SO_BROADCAST on the socket: %d", err);
+				return NULL;
+			}
 			if (ttl <= 255) {
 				if (!setFdMulticastTTL(sock, (uint8_t) ttl)) {
 					FATAL("Unable to set ttl");

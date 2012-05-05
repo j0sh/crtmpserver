@@ -76,6 +76,7 @@ RTSPProtocol::RTSPProtocol()
 	_pInboundConnectivity = NULL;
 	_keepAliveTimerId = 0;
 	_pOutStream = NULL;
+	_enableTearDown = false;
 }
 
 RTSPProtocol::~RTSPProtocol() {
@@ -143,6 +144,20 @@ void RTSPProtocol::GetStats(Variant &info, uint32_t namespaceId) {
 	}
 }
 
+void RTSPProtocol::EnqueueForDelete() {
+	if (!_enableTearDown) {
+		BaseProtocol::EnqueueForDelete();
+		return;
+	}
+	_enableTearDown = false;
+	Variant &params = GetCustomParameters();
+	Variant &variantUri = params["uri"];
+	string uri = (string) variantUri["fullUri"];
+	PushRequestFirstLine(RTSP_METHOD_TEARDOWN, uri, RTSP_VERSION_1_0);
+	SendRequestMessage();
+	GracefullyEnqueueForDelete();
+}
+
 string RTSPProtocol::GetSessionId() {
 	return _sessionId;
 }
@@ -188,6 +203,10 @@ bool RTSPProtocol::EnableKeepAlive(uint32_t period, string keepAliveURI) {
 	if (_keepAliveURI == "")
 		_keepAliveURI = "*";
 	return pTimer->EnqueueForTimeEvent(period);
+}
+
+void RTSPProtocol::EnableTearDown() {
+	_enableTearDown = true;
 }
 
 bool RTSPProtocol::SendKeepAliveOptions() {

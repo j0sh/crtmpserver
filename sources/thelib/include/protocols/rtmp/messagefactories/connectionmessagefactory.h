@@ -1,18 +1,18 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
- *  
+ *
  *  This file is part of crtmpserver.
  *  crtmpserver is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- *  
+ *
  *  crtmpserver is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
- *  
+ *
  *  You should have received a copy of the GNU General Public License
  *  along with crtmpserver.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -24,9 +24,15 @@
 
 #include "protocols/rtmp/messagefactories/genericmessagefactory.h"
 
+enum ConnectExtraParameters {
+	CEP_INLINE,
+	CEP_OBJECT,
+	CEP_AUTO
+};
+
 class DLLEXP ConnectionMessageFactory {
 public:
-	static Variant GetPong();
+	static Variant GetPong(uint32_t pingValue);
 	static Variant GetInvokeConnect(string appName,
 			string tcUrl = "",
 			double audioCodecs = 615,
@@ -38,6 +44,22 @@ public:
 			double videoCodecs = 124,
 			double videoFunction = 1,
 			double objectEncoding = 0);
+	static Variant GetInvokeConnect(
+			Variant &extraParams,
+			ConnectExtraParameters connectExtraParameters,
+			string appName,
+			string tcUrl = "",
+			double audioCodecs = 615,
+			double capabilities = 15,
+			string flashVer = "LNX 9,0,48,00",
+			bool fPad = false,
+			string pageUrl = "file:///mac.html",
+			string swfUrl = "file:///mac.flv",
+			double videoCodecs = 124,
+			double videoFunction = 1,
+			double objectEncoding = 0);
+	static Variant GetInvokeConnect(Variant &firstParam, Variant &extraParams,
+			ConnectExtraParameters connectExtraParameters);
 
 	static Variant GetInvokeClose();
 
@@ -55,6 +77,9 @@ public:
 			string decription,
 			string level = RM_INVOKE_PARAMS_RESULT_LEVEL_ERROR,
 			string code = RM_INVOKE_PARAMS_RESULT_CODE_NETCONNECTIONCONNECTREJECTED);
+private:
+	static void StoreConnectExtraParameters(Variant &connectRequest,
+			Variant &extraParams, ConnectExtraParameters connectExtraParameters);
 };
 
 

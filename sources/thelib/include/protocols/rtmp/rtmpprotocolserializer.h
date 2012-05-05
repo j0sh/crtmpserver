@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -51,6 +51,7 @@ private:
 	bool SerializeWinAckSize(IOBuffer &buffer, uint32_t value);
 	bool SerializeAbortMessage(IOBuffer &buffer, uint32_t value);
 	bool SerializeClientBW(IOBuffer &buffer, Variant value);
+	bool SerializeFlexSharedObject(IOBuffer &buffer, Variant &message);
 	bool SerializeSharedObject(IOBuffer &buffer, Variant &message);
 
 

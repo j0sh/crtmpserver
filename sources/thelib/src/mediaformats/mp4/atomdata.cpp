@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -57,18 +57,18 @@ Variant AtomDATA::GetVariant() {
 			result.IsArray(true);
 			return result;
 		}
-		case 14:
-		case 15:
+		case 13: //JPEG
+		case 14: //PNG
+		case 15: //? (looks like this is an image as well... Don't know the type)
+		case 27: //BMP
 		{
-			//jpg/png image data
 			Variant result = _dataImg;
 			result.IsByteArray(true);
 			return result;
-			//TODO: for now, return null
 		}
 		default:
 		{
-			FATAL("Type %u not yet implemented", _type);
+			FATAL("Type %"PRIu32" not yet implemented", _type);
 			return false;
 		}
 	}
@@ -125,6 +125,7 @@ bool AtomDATA::Read() {
 			}
 			return true;
 		}
+		case 13:
 		case 14:
 		case 15:
 		{

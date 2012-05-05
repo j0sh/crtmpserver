@@ -34,7 +34,7 @@
 #define MIN_AV_CHANNLES 20
 #define MAX_AV_CHANNLES MAX_CHANNELS_COUNT
 
-typedef enum _RTMPState {
+typedef enum {
 	RTMP_STATE_NOT_INITIALIZED,
 	RTMP_STATE_CLIENT_REQUEST_RECEIVED,
 	RTMP_STATE_CLIENT_REQUEST_SENT,
@@ -48,6 +48,7 @@ class BaseOutNetRTMPStream;
 class InFileRTMPStream;
 class InNetRTMPStream;
 class BaseRTMPAppProtocolHandler;
+class ClientSO;
 #ifdef ENFORCE_RTMP_OUTPUT_CHECKS
 class MonitorRTMPProtocol;
 #endif  /* ENFORCE_RTMP_OUTPUT_CHECKS */
@@ -78,9 +79,18 @@ protected:
 	map<InFileRTMPStream *, InFileRTMPStream *> _inFileStreams;
 	uint64_t _rxInvokes;
 	uint64_t _txInvokes;
+	map<string, ClientSO *> _sos;
 public:
 	BaseRTMPProtocol(uint64_t protocolType);
 	virtual ~BaseRTMPProtocol();
+
+	ClientSO *GetSO(string &name);
+	bool CreateSO(string &name);
+	void SignalBeginSOProcess(string &name);
+	bool HandleSOPrimitive(string &name, Variant &primitive);
+	void SignalEndSOProcess(string &name, uint32_t versionNumber);
+	bool ClientSOSend(string &name, Variant &parameters);
+	bool ClientSOSetProperty(string &soName, string &propName, Variant &propValue);
 
 	virtual bool Initialize(Variant &parameters);
 	virtual bool AllowFarProtocol(uint64_t type);

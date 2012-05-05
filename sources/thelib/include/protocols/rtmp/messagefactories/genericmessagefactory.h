@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -85,7 +85,7 @@ public:
 	//invokes and notify
 	static Variant GetInvoke(uint32_t channelId, uint32_t streamId,
 			double timeStamp, bool isAbsolute, double requestId,
-			string functionName, Variant &parameters);
+			string functionName, Variant &parameters, bool insertNull = false);
 	static Variant GetNotify(uint32_t channelId,
 			uint32_t streamId, double timeStamp, bool isAbsolute,
 			string handlerName, Variant params);

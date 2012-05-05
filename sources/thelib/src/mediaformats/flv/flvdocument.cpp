@@ -153,8 +153,8 @@ bool FLVDocument::BuildFrames() {
 				frame.isBinaryHeader = ((word & 0x00ff) == 0);
 			}
 		}
-		if (frame.isBinaryHeader)
-			WARN("frame: %s", STR(frame));
+		//if (frame.isBinaryHeader)
+		//	WARN("frame: %s", STR(frame));
 
 		if (!_mediaFile.SeekAhead(frame.length)) {
 			WARN("Unable to seek in file");

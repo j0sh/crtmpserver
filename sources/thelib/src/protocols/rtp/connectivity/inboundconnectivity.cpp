@@ -242,7 +242,7 @@ bool InboundConnectivity::Initialize() {
 	//7. Pickup all outbound waiting streams
 	map<uint32_t, BaseOutStream *> subscribedOutStreams =
 			pApplication->GetStreamsManager()->GetWaitingSubscribers(
-			_streamName, _pInStream->GetType());
+			_streamName, _pInStream->GetType(), true);
 	//FINEST("subscribedOutStreams count: %"PRIz"u", subscribedOutStreams.size());
 
 

@@ -83,7 +83,7 @@ public:
 		@param inboundStreamType
 	 */
 	map<uint32_t, BaseOutStream *> GetWaitingSubscribers(string streamName,
-			uint64_t inboundStreamType);
+			uint64_t inboundStreamType, bool closeIncompatibleStreams);
 
 	/*!
 		@brief Find streams by name

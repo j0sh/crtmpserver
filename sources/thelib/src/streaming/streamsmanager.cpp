@@ -85,7 +85,8 @@ map<uint32_t, BaseStream *> StreamsManager::GetAllStreams() {
 	return _streamsByUniqueId;
 }
 
-map<uint32_t, BaseOutStream *> StreamsManager::GetWaitingSubscribers(string streamName, uint64_t inboundStreamType) {
+map<uint32_t, BaseOutStream *> StreamsManager::GetWaitingSubscribers(
+		string streamName, uint64_t inboundStreamType, bool closeIncompatibleStreams) {
 	//1. Validate the inbound stream type
 	if (!TAG_KIND_OF(inboundStreamType, ST_IN))
 		return map<uint32_t, BaseOutStream *>();
@@ -111,16 +112,22 @@ map<uint32_t, BaseOutStream *> StreamsManager::GetWaitingSubscribers(string stre
 	FOR_MAP(shortSubscribers, uint32_t, BaseStream *, i) {
 		if (((BaseOutStream *) MAP_VAL(i))->IsLinked())
 			continue;
-		if (!((BaseOutStream *) MAP_VAL(i))->IsCompatibleWithType(inboundStreamType))
+		if (!((BaseOutStream *) MAP_VAL(i))->IsCompatibleWithType(inboundStreamType)) {
+			if (closeIncompatibleStreams)
+				((BaseOutStream *) MAP_VAL(i))->EnqueueForDelete();
 			continue;
+		}
 		result[MAP_KEY(i)] = (BaseOutStream *) MAP_VAL(i);
 	}
 
 	FOR_MAP(longSubscribers, uint32_t, BaseStream *, i) {
 		if (((BaseOutStream *) MAP_VAL(i))->IsLinked())
 			continue;
-		if (!((BaseOutStream *) MAP_VAL(i))->IsCompatibleWithType(inboundStreamType))
+		if (!((BaseOutStream *) MAP_VAL(i))->IsCompatibleWithType(inboundStreamType)) {
+			if (closeIncompatibleStreams)
+				((BaseOutStream *) MAP_VAL(i))->EnqueueForDelete();
 			continue;
+		}
 		result[MAP_KEY(i)] = (BaseOutStream *) MAP_VAL(i);
 	}
 
