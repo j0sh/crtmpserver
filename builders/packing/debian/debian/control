@@ -16,7 +16,7 @@ Depends: ${shlibs:Depends},
  ${misc:Depends},
  openssl,
  liblua5.1-0,
- libtinyxml2.5.3
+ libtinyxml2.5.3 | libtinyxml2.6.2
 Pre-Depends: adduser
 Description: High performance RTMP/RTSP streaming server
  crtmpserver is a high performance streaming server able to stream
