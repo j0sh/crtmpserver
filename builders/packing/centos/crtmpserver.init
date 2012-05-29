@@ -1,0 +1,38 @@
+#! /bin/sh
+# Basic support for IRIX style chkconfig
+###
+# chkconfig: 235 98 55
+# description: Manages the services you are controlling with the chkconfig command
+###
+
+# Source function library.
+. /etc/init.d/functions
+
+SERVICENAME="crtmpserver"
+CONFIG_FILE="/etc/crtmpserver/crtmpserver.lua"
+
+case "$1" in
+  start)
+	echo -n "Starting $SERVICENAME"
+	#To run it as root:
+	/usr/sbin/crtmpserver --use-implicit-console-appender --daemon --pid=/var/run/${SERVICENAME}.pid ${CONFIG_FILE}
+	#Or to run it as some other user:
+	#/bin/su - username -c /path/to/command/to/start/new-service
+	echo "."
+	;;
+  stop)
+	echo -n "Stopping $SERVICENAME"
+	killproc /usr/sbin/crtmpserver
+	#To run it as root:
+	#/path/to/command/to/stop/new-service
+	#Or to run it as some other user:
+	#/bin/su - username -c /path/to/command/to/stop/new-service
+	echo "."
+	;;
+
+  *)
+	echo "Usage: /sbin/service $SERVICENAME {start|stop}"
+	exit 1
+esac
+
+exit 0
