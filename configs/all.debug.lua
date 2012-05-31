@@ -30,7 +30,7 @@ configuration=
 			type="file",
 			level=6,
 			-- the file where the log messages are going to land
-			fileName="/tmp/crtmpserver.log"
+			fileName="/tmp/crtmpserver.log",
 			fileHistorySize=10,
 			fileLength=1024*1024,
 			singleLine=true
