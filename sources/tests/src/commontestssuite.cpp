@@ -282,7 +282,7 @@ void CommonTestsSuite::test_Endianess() {
 #endif /* BIG_ENDIAN_BYTE_ALIGNED */
 
 #ifdef BIG_ENDIAN_SHORT_ALIGNED
-#error BIG_ENDIAN_SHORT_ALIGNED set of tests not yet implemented!!! Please take care of this first!!!
+#error BIG_ENDIAN_SHORT_ALIGNED set of tests not yet implemented! Please take care of this first!
 #endif /* BIG_ENDIAN_SHORT_ALIGNED */
 
 	//double mirror
