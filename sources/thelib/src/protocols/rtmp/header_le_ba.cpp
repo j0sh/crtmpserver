@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -244,7 +244,7 @@ bool Header::Write(Channel &channel, IOBuffer &buffer) {
 		}
 		default:
 		{
-			ASSERT("Invalid header type!!!");
+			ASSERT("Invalid header type!");
 		}
 	}
 #endif /* ENFORCE_RTMP_OUTPUT_CHECKS */

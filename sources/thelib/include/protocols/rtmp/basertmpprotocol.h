@@ -122,7 +122,7 @@ public:
 	RTMPStream * CreateNeutralStream(uint32_t &streamId);
 	InNetRTMPStream * CreateINS(uint32_t channelId, uint32_t streamId, string streamName);
 	BaseOutNetRTMPStream * CreateONS(uint32_t streamId, string streamName,
-			uint64_t inStreamType);
+			uint64_t inStreamType, uint32_t &clientSideBuffer);
 	void SignalONS(BaseOutNetRTMPStream *pONS);
 	InFileRTMPStream * CreateIFS(Variant &metadata);
 	void RemoveIFS(InFileRTMPStream *pIFS);

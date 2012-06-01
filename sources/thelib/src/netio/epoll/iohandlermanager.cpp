@@ -20,6 +20,9 @@
 #ifdef NET_EPOLL
 #include "netio/epoll/iohandlermanager.h"
 #include "netio/epoll/iohandler.h"
+#ifdef HAS_EPOLL_TIMERS
+#include <sys/timerfd.h>
+#endif /* HAS_EPOLL_TIMERS */
 
 int32_t IOHandlerManager::_eq = 0;
 map<uint32_t, IOHandler *> IOHandlerManager::_activeIOHandlers;
@@ -29,7 +32,10 @@ vector<IOHandlerManagerToken *> IOHandlerManager::_tokensVector1;
 vector<IOHandlerManagerToken *> IOHandlerManager::_tokensVector2;
 vector<IOHandlerManagerToken *> *IOHandlerManager::_pAvailableTokens;
 vector<IOHandlerManagerToken *> *IOHandlerManager::_pRecycledTokens;
+#ifndef HAS_EPOLL_TIMERS
 TimersManager *IOHandlerManager::_pTimersManager = NULL;
+#endif /* HAS_EPOLL_TIMERS */
+
 FdStats IOHandlerManager::_fdStats;
 struct epoll_event IOHandlerManager::_dummy = {0,
 	{0}};
@@ -55,7 +61,9 @@ void IOHandlerManager::Initialize() {
 	_eq = 0;
 	_pAvailableTokens = &_tokensVector1;
 	_pRecycledTokens = &_tokensVector2;
+#ifndef HAS_EPOLL_TIMERS
 	_pTimersManager = new TimersManager(ProcessTimer);
+#endif /* HAS_EPOLL_TIMERS */
 	memset(&_dummy, 0, sizeof (_dummy));
 }
 
@@ -88,13 +96,13 @@ void IOHandlerManager::Shutdown() {
 		delete _tokensVector2[i];
 	_tokensVector2.clear();
 	_pRecycledTokens = &_tokensVector2;
-
+#ifndef HAS_EPOLL_TIMERS
 	delete _pTimersManager;
 	_pTimersManager = NULL;
-
+#endif /* HAS_EPOLL_TIMERS */
 
 	if (_activeIOHandlers.size() != 0 || _deadIOHandlers.size() != 0) {
-		FATAL("Incomplete shutdown!!!");
+		FATAL("Incomplete shutdown!");
 	}
 
 }
@@ -255,17 +263,61 @@ bool IOHandlerManager::DisableAcceptConnections(IOHandler *pIOHandler, bool igno
 }
 
 bool IOHandlerManager::EnableTimer(IOHandler *pIOHandler, uint32_t seconds) {
+#ifdef HAS_EPOLL_TIMERS
+	itimerspec tmp;
+	itimerspec dummy;
+	memset(&tmp, 0, sizeof (tmp));
+	tmp.it_interval.tv_nsec = 0;
+	tmp.it_interval.tv_sec = seconds;
+	tmp.it_value.tv_nsec = 0;
+	tmp.it_value.tv_sec = seconds;
+	if (timerfd_settime(pIOHandler->GetInboundFd(), 0, &tmp, &dummy) != 0) {
+		int err = errno;
+		FATAL("timerfd_settime failed with error %d (%s)", err, strerror(err));
+		return false;
+	}
+	struct epoll_event evt = {0,
+		{0}};
+	evt.events = EPOLLIN;
+	evt.data.ptr = pIOHandler->GetIOHandlerManagerToken();
+	if (epoll_ctl(_eq, EPOLL_CTL_ADD, pIOHandler->GetInboundFd(), &evt) != 0) {
+		int32_t err = errno;
+		FATAL("Unable to enable read data: (%d) %s", err, strerror(err));
+		return false;
+	}
+	return true;
+#else /* HAS_EPOLL_TIMERS */
 	TimerEvent event = {0, 0, 0};
 	event.id = pIOHandler->GetId();
 	event.period = seconds;
 	event.pUserData = pIOHandler->GetIOHandlerManagerToken();
 	_pTimersManager->AddTimer(event);
 	return true;
+#endif /* HAS_EPOLL_TIMERS */
 }
 
 bool IOHandlerManager::DisableTimer(IOHandler *pIOHandler, bool ignoreError) {
+#ifdef HAS_EPOLL_TIMERS
+	itimerspec tmp;
+	itimerspec dummy;
+	memset(&tmp, 0, sizeof (tmp));
+	timerfd_settime(pIOHandler->GetInboundFd(), 0, &tmp, &dummy);
+	struct epoll_event evt = {0,
+		{0}};
+	evt.events = EPOLLIN;
+	evt.data.ptr = pIOHandler->GetIOHandlerManagerToken();
+	if (epoll_ctl(_eq, EPOLL_CTL_DEL, pIOHandler->GetInboundFd(), &evt) != 0) {
+		if (!ignoreError) {
+			int32_t err = errno;
+			FATAL("Unable to disable read data: (%d) %s", err, strerror(err));
+			return false;
+		}
+	}
+	return true;
+#else /* HAS_EPOLL_TIMERS */
 	_pTimersManager->RemoveTimer(pIOHandler->GetId());
 	return true;
+#endif /* HAS_EPOLL_TIMERS */
 }
 
 void IOHandlerManager::EnqueueForDelete(IOHandler *pIOHandler) {
@@ -290,6 +342,15 @@ uint32_t IOHandlerManager::DeleteDeadHandlers() {
 
 bool IOHandlerManager::Pulse() {
 	int32_t eventsCount = 0;
+#ifdef HAS_EPOLL_TIMERS
+	if ((eventsCount = epoll_wait(_eq, _query, EPOLL_QUERY_SIZE, -1)) < 0) {
+		int32_t err = errno;
+		if (err == EINTR)
+			return true;
+		FATAL("Unable to execute epoll_wait: (%d) %s", err, strerror(err));
+		return false;
+	}
+#else /* HAS_EPOLL_TIMERS */
 	if ((eventsCount = epoll_wait(_eq, _query, EPOLL_QUERY_SIZE, 1000)) < 0) {
 		int32_t err = errno;
 		if (err == EINTR)
@@ -299,6 +360,7 @@ bool IOHandlerManager::Pulse() {
 	}
 
 	_pTimersManager->TimeElapsed(time(NULL));
+#endif /* HAS_EPOLL_TIMERS */
 
 	for (int32_t i = 0; i < eventsCount; i++) {
 		//1. Get the token
@@ -361,6 +423,8 @@ void IOHandlerManager::FreeToken(IOHandler *pIOHandler) {
 	ADD_VECTOR_END((*_pRecycledTokens), pToken);
 }
 
+#ifndef HAS_EPOLL_TIMERS
+
 void IOHandlerManager::ProcessTimer(TimerEvent &event) {
 	IOHandlerManagerToken *pToken =
 			(IOHandlerManagerToken *) event.pUserData;
@@ -373,7 +437,7 @@ void IOHandlerManager::ProcessTimer(TimerEvent &event) {
 		FATAL("Invalid token");
 	}
 }
-
+#endif /* HAS_EPOLL_TIMERS */
 #endif /* NET_EPOLL */
 
 

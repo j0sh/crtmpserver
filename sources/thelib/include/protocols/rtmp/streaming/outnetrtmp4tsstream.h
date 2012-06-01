@@ -28,6 +28,7 @@ class DLLEXP OutNetRTMP4TSStream
 : public BaseOutNetRTMPStream {
 private:
 	bool _audioCodecSent;
+	bool _audioIsG711;
 	bool _videoCodecSent;
 	IOBuffer _videoBuffer;
 	bool _inboundStreamIsRTP;

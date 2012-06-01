@@ -94,8 +94,10 @@ bool InNetRTPStream::IsCompatibleWithType(uint64_t type) {
 	return (type == ST_OUT_NET_RTMP_4_TS)
 			|| (type == ST_OUT_NET_TS)
 			|| (type == ST_OUT_FILE_HLS)
+            || (type == ST_OUT_FILE_TS)
 			|| (type == ST_OUT_FILE_HDS)
-			|| (type == ST_OUT_NET_RTP);
+			|| (type == ST_OUT_NET_RTP)
+            || (type == ST_OUT_FILE_RTMP_FLV);
 }
 
 void InNetRTPStream::ReadyForSend() {

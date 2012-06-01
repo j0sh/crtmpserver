@@ -199,7 +199,8 @@ BaseProtocol *BaseProtocol::GetNearEndpoint() {
 }
 
 void BaseProtocol::EnqueueForDelete() {
-	if (_enqueueForDelete) return;
+	if (_enqueueForDelete)
+		return;
 	_enqueueForDelete = true;
 	ProtocolManager::EnqueueForDelete(this);
 }

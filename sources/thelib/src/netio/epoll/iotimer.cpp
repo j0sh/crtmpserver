@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -22,15 +22,31 @@
 #include "netio/epoll/iohandlermanager.h"
 #include "protocols/baseprotocol.h"
 
+#ifdef HAS_EPOLL_TIMERS
+#include <sys/timerfd.h>
+#else /* HAS_EPOLL_TIMERS */
 int32_t IOTimer::_idGenerator;
+#endif /* HAS_EPOLL_TIMERS */
 
 IOTimer::IOTimer()
 : IOHandler(0, 0, IOHT_TIMER) {
+#ifdef HAS_EPOLL_TIMERS
+	_count = 0;
+	_inboundFd = _outboundFd = timerfd_create(CLOCK_MONOTONIC, TFD_NONBLOCK);
+	if (_inboundFd < 0) {
+		int err = errno;
+		ASSERT("timerfd_create failed with error %d (%s)", err, strerror(err));
+	}
+#else /* HAS_EPOLL_TIMERS */
 	_inboundFd = _outboundFd = ++_idGenerator;
+#endif /* HAS_EPOLL_TIMERS */
 }
 
 IOTimer::~IOTimer() {
 	IOHandlerManager::DisableTimer(this, true);
+#ifdef HAS_EPOLL_TIMERS
+	CLOSE_SOCKET(_inboundFd);
+#endif /* HAS_EPOLL_TIMERS */
 }
 
 bool IOTimer::SignalOutputData() {
@@ -39,6 +55,9 @@ bool IOTimer::SignalOutputData() {
 }
 
 bool IOTimer::OnEvent(struct epoll_event &/*ignored*/) {
+#ifdef HAS_EPOLL_TIMERS
+	read(_inboundFd, &_count, 8);
+#endif /* HAS_EPOLL_TIMERS */
 	if (!_pProtocol->IsEnqueueForDelete()) {
 		if (!_pProtocol->TimePeriodElapsed()) {
 			FATAL("Unable to handle TimeElapsed event");

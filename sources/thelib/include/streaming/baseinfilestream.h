@@ -70,7 +70,7 @@ private:
 	time_t _startFeedingTime;
 
 	//buffering info
-	int32_t _clientSideBufferLength;
+	uint32_t _clientSideBufferLength;
 	IOBuffer _videoBuffer;
 	IOBuffer _audioBuffer;
 
@@ -88,10 +88,20 @@ private:
 
 	//when to stop playback
 	double _playLimit;
+
+#ifdef HAS_VOD_MANAGER
+	uint64_t _mediaFileSize;
+	uint64_t _servedBytes;
+	string _infoFilePath;
+	Variant _filePaths;
+#endif /* HAS_VOD_MANAGER */
 public:
 	BaseInFileStream(BaseProtocol *pProtocol, StreamsManager *pStreamsManager,
 			uint64_t type, string name);
 	virtual ~BaseInFileStream();
+
+	void SetClientSideBuffer(uint32_t value);
+	uint32_t GetClientSideBuffer();
 
 	bool StreamCompleted();
 
@@ -110,7 +120,12 @@ public:
 		@brief This will initialize the stream internally.
 		@param clientSideBufferLength - the client side buffer length expressed in seconds
 	 */
+#ifdef HAS_VOD_MANAGER
+	virtual bool Initialize(Variant &medatada, int32_t clientSideBufferLength,
+			bool hasTimer);
+#else /* HAS_VOD_MANAGER */
 	virtual bool Initialize(int32_t clientSideBufferLength, bool hasTimer);
+#endif /* HAS_VOD_MANAGER */
 
 	/*!
 		@brief Called when a play command was issued
@@ -181,6 +196,11 @@ private:
 		@brief This function will ensure that the codec packets are sent. Also it preserves the current timings and frame index
 	 */
 	bool SendCodecs();
+
+#ifdef HAS_VOD_MANAGER
+	void UpdateServedBytesInfo();
+	void UpdateOpenCountInfo();
+#endif /* HAS_VOD_MANAGER */
 };
 
 #endif	/* _BASEINFILESTREAM_H */

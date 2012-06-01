@@ -26,6 +26,7 @@ RTMPStream::RTMPStream(BaseRTMPProtocol *pProtocol,
 		StreamsManager *pStreamsManager, uint32_t rtmpStreamId)
 : BaseStream(pProtocol, pStreamsManager, ST_NEUTRAL_RTMP, "") {
 	_rtmpStreamId = rtmpStreamId;
+	_clientSideBufer = 0;
 }
 
 RTMPStream::~RTMPStream() {
@@ -34,6 +35,14 @@ RTMPStream::~RTMPStream() {
 StreamCapabilities * RTMPStream::GetCapabilities() {
 	ASSERT("Operation not supported");
 	return NULL;
+}
+
+void RTMPStream::SetClientSideBuffer(uint32_t value) {
+	_clientSideBufer = value;
+}
+
+uint32_t RTMPStream::GetClientSideBuffer() {
+	return _clientSideBufer;
 }
 
 bool RTMPStream::Play(double absoluteTimestamp, double length) {

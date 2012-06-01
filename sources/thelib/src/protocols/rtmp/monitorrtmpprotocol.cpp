@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -286,7 +286,7 @@ bool MonitorRTMPProtocol::ProcessBytes(IOBuffer &buffer) {
 						}
 
 						if (GETAVAILABLEBYTESCOUNT(channel.inputData) != 0) {
-							FATAL("Invalid message!!! We have leftovers: %u bytes",
+							FATAL("Invalid message! We have leftovers: %u bytes",
 									GETAVAILABLEBYTESCOUNT(channel.inputData));
 							return false;
 						}

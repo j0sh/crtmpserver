@@ -68,7 +68,10 @@ bool InNetRTMPStream::IsCompatibleWithType(uint64_t type) {
 			|| TAG_KIND_OF(type, ST_OUT_FILE_RTMP)
 			|| TAG_KIND_OF(type, ST_OUT_NET_RTP)
 			|| TAG_KIND_OF(type, ST_OUT_NET_TS)
-			;
+			|| TAG_KIND_OF(type, ST_OUT_FILE_HLS)
+			|| TAG_KIND_OF(type, ST_OUT_FILE_HDS)
+			|| TAG_KIND_OF(type, ST_OUT_FILE_TS)
+			|| TAG_KIND_OF(type, ST_OUT_FILE_RTMP_FLV);
 
 }
 
@@ -190,7 +193,7 @@ bool InNetRTMPStream::SendOnStatusStreamPublished() {
 }
 
 bool InNetRTMPStream::Record(BaseOutFileStream *pOutStream) {
-
+	
 	_pOutFileRTMPFLVStream = pOutStream;
 	return _pOutFileRTMPFLVStream->Link(this);
 }

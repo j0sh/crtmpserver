@@ -150,18 +150,29 @@ bool BaseOutStream::Resume() {
 }
 
 bool BaseOutStream::Seek(double absoluteTimestamp) {
-	if (!SignalSeek(absoluteTimestamp)) {
-		FATAL("Unable to signal seek");
-		return false;
-	}
-
+#ifdef HAS_VOD_MANAGER
 	if (_pInStream != NULL) {
 		if (!_pInStream->SignalSeek(absoluteTimestamp)) {
 			FATAL("Unable to signal seek");
 			return false;
 		}
 	}
-
+	if (!SignalSeek(absoluteTimestamp)) {
+		FATAL("Unable to signal seek");
+		return false;
+	}
+#else /* HAS_VOD_MANAGER */
+	if (!SignalSeek(absoluteTimestamp)) {
+		FATAL("Unable to signal seek");
+		return false;
+	}
+	if (_pInStream != NULL) {
+		if (!_pInStream->SignalSeek(absoluteTimestamp)) {
+			FATAL("Unable to signal seek");
+			return false;
+		}
+	}
+#endif /* HAS_VOD_MANAGER */
 	return true;
 }
 

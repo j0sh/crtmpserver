@@ -19,10 +19,10 @@
 
 #include "mediaformats/basemediadocument.h"
 
-BaseMediaDocument::BaseMediaDocument(Variant &metadata) {
+BaseMediaDocument::BaseMediaDocument(Variant &metadata)
+: _metadata(metadata) {
 	_audioSamplesCount = 0;
 	_videoSamplesCount = 0;
-	_metadata = metadata;
 	_keyframeSeek = false;
 }
 
@@ -35,11 +35,21 @@ bool BaseMediaDocument::Process() {
 	GETCLOCKS(startTime);
 
 	//1. Compute the names
+#ifdef HAS_VOD_MANAGER
+	_mediaFilePath = (string) _metadata[META_MEDIA_FILE_PATHS][META_MEDIA_CACHE];
+	if (_mediaFilePath == "")
+		_mediaFilePath = (string) _metadata[META_MEDIA_FILE_PATHS][META_MEDIA_ORIGIN];
+	_metaFilePath = (string) _metadata[META_MEDIA_FILE_PATHS][META_MEDIA_META];
+	_seekFilePath = (string) _metadata[META_MEDIA_FILE_PATHS][META_MEDIA_SEEK];
+	_keyframeSeek = (bool)_metadata[META_MEDIA_SEEK_SETTINGS][META_MEDIA_KEYFRAME_SEEK];
+	_seekGranularity = (uint32_t) _metadata[META_MEDIA_SEEK_SETTINGS][META_MEDIA_GRANULARITY];
+#else
 	_mediaFilePath = (string) _metadata[META_SERVER_FULL_PATH];
 	_metaFilePath = _mediaFilePath + "."MEDIA_TYPE_META;
 	_seekFilePath = _mediaFilePath + "."MEDIA_TYPE_SEEK;
 	_keyframeSeek = (bool)_metadata[CONF_APPLICATION_KEYFRAMESEEK];
 	_seekGranularity = (uint32_t) _metadata[CONF_APPLICATION_SEEKGRANULARITY];
+#endif /* HAS_VOD_MANAGER */
 
 	//1. Open the media file
 #ifdef HAS_MMAP
@@ -228,21 +238,20 @@ bool BaseMediaDocument::SaveSeekFile() {
 }
 
 bool BaseMediaDocument::SaveMetaFile() {
-	_metadata[META_AUDIO_FRAMES_COUNT] = _audioSamplesCount;
-	_metadata[META_VIDEO_FRAMES_COUNT] = _videoSamplesCount;
-	_metadata[META_TOTAL_FRAMES_COUNT] = (uint32_t) _frames.size();
-
-	_metadata[META_FILE_SIZE] = (uint64_t) _mediaFile.Size();
+	double duration = 0;
 	if (_frames.size() > 0) {
-		_metadata[META_FILE_DURATION] = (uint32_t) _frames[_frames.size() - 1].absoluteTime;
-		_metadata[META_FILE_BANDWIDTH] = _streamCapabilities.bandwidthHint;
+		duration = _frames[_frames.size() - 1].absoluteTime;
 	} else {
-		_metadata[META_FILE_DURATION] = (uint32_t) 0;
+		duration = 0;
 	}
 
 	_metadata[META_RTMP_META] = GetRTMPMeta();
-	_metadata[META_RTMP_META]["duration"] = (double) _metadata[META_FILE_DURATION] / 1000.00;
-	_metadata[META_RTMP_META][META_FILE_BANDWIDTH] = _streamCapabilities.bandwidthHint;
+	_metadata[META_RTMP_META][META_DURATION] = duration / 1000.00;
+	_metadata[META_RTMP_META][META_BANDWIDTH] = _streamCapabilities.bandwidthHint;
+	_metadata[META_RTMP_META][META_AUDIO_FRAMES_COUNT] = _audioSamplesCount;
+	_metadata[META_RTMP_META][META_VIDEO_FRAMES_COUNT] = _videoSamplesCount;
+	_metadata[META_RTMP_META][META_TOTAL_FRAMES_COUNT] = (uint32_t) _frames.size();
+	_metadata[META_RTMP_META][META_FILE_SIZE] = (uint64_t) _mediaFile.Size();
 
-	return _metadata.SerializeToBinFile(_metaFilePath + ".tmp");
+	return _metadata.SerializeToXmlFile(_metaFilePath + ".tmp");
 }

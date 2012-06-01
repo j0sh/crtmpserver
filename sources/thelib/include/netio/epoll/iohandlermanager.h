@@ -39,7 +39,9 @@ private:
 	static vector<IOHandlerManagerToken *> _tokensVector2;
 	static vector<IOHandlerManagerToken *> *_pAvailableTokens;
 	static vector<IOHandlerManagerToken *> *_pRecycledTokens;
+#ifndef HAS_EPOLL_TIMERS
 	static TimersManager *_pTimersManager;
+#endif /* HAS_EPOLL_TIMERS */
 	static struct epoll_event _dummy;
 	static FdStats _fdStats;
 public:
@@ -75,7 +77,9 @@ public:
 private:
 	static void SetupToken(IOHandler *pIOHandler);
 	static void FreeToken(IOHandler *pIOHandler);
+#ifndef HAS_EPOLL_TIMERS
 	static void ProcessTimer(TimerEvent &event);
+#endif /* HAS_EPOLL_TIMERS */
 };
 
 

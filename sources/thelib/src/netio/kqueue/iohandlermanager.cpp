@@ -142,7 +142,7 @@ void IOHandlerManager::Shutdown() {
 	_eventsSize = 0;
 
 	if (_activeIOHandlers.size() != 0 || _deadIOHandlers.size() != 0) {
-		FATAL("Incomplete shutdown!!!");
+		FATAL("Incomplete shutdown!");
 	}
 }
 

@@ -30,12 +30,14 @@ class DLLEXP RTMPStream
 : public BaseStream {
 private:
 	uint32_t _rtmpStreamId;
+	uint32_t _clientSideBufer;
 public:
 	RTMPStream(BaseRTMPProtocol *pProtocol, StreamsManager *pStreamsManager,
 			uint32_t rtmpStreamId);
 	virtual ~RTMPStream();
 	virtual StreamCapabilities * GetCapabilities();
-
+	void SetClientSideBuffer(uint32_t value);
+	uint32_t GetClientSideBuffer();
 
 	virtual bool Play(double absoluteTimestamp, double length);
 	virtual bool Pause();

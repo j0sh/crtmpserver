@@ -83,7 +83,7 @@ void IOHandlerManager::Shutdown() {
 	_pTimersManager = NULL;
 
 	if (_activeIOHandlers.size() != 0 || _deadIOHandlers.size() != 0) {
-		FATAL("Incomplete shutdown!!!");
+		FATAL("Incomplete shutdown!");
 	}
 }
 

@@ -31,6 +31,7 @@ OutNetRTMP4TSStream::OutNetRTMP4TSStream(BaseRTMPProtocol *pProtocol,
 : BaseOutNetRTMPStream(pProtocol, pStreamsManager, ST_OUT_NET_RTMP_4_TS,
 name, rtmpStreamId, chunkSize) {
 	_audioCodecSent = false;
+	_audioIsG711 = false;
 	_videoCodecSent = false;
 	CanDropFrames(false);
 
@@ -75,9 +76,7 @@ bool OutNetRTMP4TSStream::FeedAudioData(uint8_t *pData, uint32_t dataLength,
 		}
 	}
 
-	if (_inboundStreamIsRTP) {
-		pData[0] = 0xaf;
-		pData[1] = 0x01;
+	if (_audioIsG711) {
 		return BaseOutNetRTMPStream::FeedData(
 				pData, //pData
 				dataLength, //dataLength
@@ -87,27 +86,48 @@ bool OutNetRTMP4TSStream::FeedAudioData(uint8_t *pData, uint32_t dataLength,
 				true //isAudio
 				);
 	} else {
-		//2. Skip the ADTS headers and re-position the buffer
-		uint32_t totalADTSHeaderLength = 0;
-		if (((pData[1])&0x01) == 0)
-			totalADTSHeaderLength = 9;
-		else
-			totalADTSHeaderLength = 7;
-		pData += totalADTSHeaderLength - 2;
+		if (_inboundStreamIsRTP) {
+			pData[0] = 0xaf;
+			pData[1] = 0x01;
+			return BaseOutNetRTMPStream::FeedData(
+					pData, //pData
+					dataLength, //dataLength
+					0, //processedLength
+					dataLength, //totalLength
+					absoluteTimestamp, //absoluteTimestamp
+					true //isAudio
+					);
+		} else {
+			//2. Skip the ADTS headers and re-position the buffer
+			uint32_t totalADTSHeaderLength = 0;
+			if (((pData[1])&0x01) == 0)
+				totalADTSHeaderLength = 9;
+			else
+				totalADTSHeaderLength = 7;
+			pData += totalADTSHeaderLength - 2;
 
-		//3. Setup the RTMP header
-		pData[0] = 0xaf;
-		pData[1] = 0x01;
+			//3. Setup the RTMP header
+			uint8_t b1 = pData[0];
+			uint8_t b2 = pData[1];
+			pData[0] = 0xaf;
+			pData[1] = 0x01;
 
-		//4. Feed
-		return BaseOutNetRTMPStream::FeedData(
-				pData, //pData
-				dataLength - totalADTSHeaderLength + 2, //dataLength
-				0, //processedLength
-				dataLength - totalADTSHeaderLength + 2, //totalLength
-				absoluteTimestamp, //absoluteTimestamp
-				true //isAudio
-				);
+			//4. Feed
+			if (!BaseOutNetRTMPStream::FeedData(
+					pData, //pData
+					dataLength - totalADTSHeaderLength + 2, //dataLength
+					0, //processedLength
+					dataLength - totalADTSHeaderLength + 2, //totalLength
+					absoluteTimestamp, //absoluteTimestamp
+					true //isAudio
+					)) {
+				FATAL("BaseOutNetRTMPStream::FeedData failed");
+				return false;
+			}
+			pData[0] = b1;
+			pData[1] = b2;
+			return true;
+		}
 	}
 }
 
@@ -237,7 +257,14 @@ bool OutNetRTMP4TSStream::SendVideoCodec(double absoluteTimestamp) {
 
 bool OutNetRTMP4TSStream::SendAudioCodec(double absoluteTimestamp) {
 	StreamCapabilities *pCapabilities = GetCapabilities();
-	if ((pCapabilities == NULL) || (pCapabilities->audioCodecId != CODEC_AUDIO_AAC)) {
+	if ((pCapabilities == NULL)
+			|| ((pCapabilities->audioCodecId != CODEC_AUDIO_AAC)
+			&& (pCapabilities->audioCodecId != CODEC_AUDIO_G711))) {
+		return true;
+	}
+	if (pCapabilities->audioCodecId == CODEC_AUDIO_G711) {
+		_audioCodecSent = true;
+		_audioIsG711 = true;
 		return true;
 	}
 	IOBuffer result;
@@ -259,6 +286,7 @@ bool OutNetRTMP4TSStream::SendAudioCodec(double absoluteTimestamp) {
 	}
 
 	_audioCodecSent = true;
+	_audioIsG711 = false;
 	return true;
 }
 #endif /* HAS_PROTOCOL_RTMP */

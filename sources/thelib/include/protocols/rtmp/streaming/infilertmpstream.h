@@ -99,7 +99,12 @@ public:
 			string name);
 	virtual ~InFileRTMPStream();
 
+#ifdef HAS_VOD_MANAGER
+	virtual bool Initialize(Variant &medatada, int32_t clientSideBufferLength,
+			bool hasTimer);
+#else /* HAS_VOD_MANAGER */
 	virtual bool Initialize(int32_t clientSideBufferLength, bool hasTimer);
+#endif /* HAS_VOD_MANAGER */
 
 	virtual bool FeedData(uint8_t *pData, uint32_t dataLength,
 			uint32_t processedLength, uint32_t totalLength,

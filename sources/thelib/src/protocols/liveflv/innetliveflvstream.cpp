@@ -101,7 +101,10 @@ void InNetLiveFLVStream::ReadyForSend() {
 bool InNetLiveFLVStream::IsCompatibleWithType(uint64_t type) {
 	return TAG_KIND_OF(type, ST_OUT_NET_RTMP)
 			|| TAG_KIND_OF(type, ST_OUT_NET_RTP)
-			|| TAG_KIND_OF(type, ST_OUT_FILE_HLS);
+			|| TAG_KIND_OF(type, ST_OUT_FILE_HLS)
+			|| TAG_KIND_OF(type, ST_OUT_FILE_HDS)
+        	|| TAG_KIND_OF(type, ST_OUT_FILE_TS)
+            || TAG_KIND_OF(type, ST_OUT_FILE_RTMP_FLV);
 }
 
 void InNetLiveFLVStream::GetStats(Variant &info, uint32_t namespaceId) {

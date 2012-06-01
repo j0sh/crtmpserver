@@ -90,7 +90,7 @@ uint64_t __vRoll = 0;
 
 #define DROP_PACKET \
 do { \
-	/*WARN("Video packet dropped!!!");*/ \
+	/*WARN("Video packet dropped!");*/ \
 	if(!isAudio) { \
 		_videoBucket.IgnoreAll(); \
 	} else { \
@@ -270,7 +270,9 @@ void InNetTSStream::ReadyForSend() {
 bool InNetTSStream::IsCompatibleWithType(uint64_t type) {
 	return TAG_KIND_OF(type, ST_OUT_NET_RTMP_4_TS)
 			|| (type == ST_OUT_NET_RTP)
-			|| (type == ST_OUT_FILE_HLS);
+            || (type == ST_OUT_FILE_HLS)
+			|| (type == ST_OUT_FILE_HDS)
+			|| (type == ST_OUT_FILE_TS);
 }
 
 void InNetTSStream::SignalOutStreamAttached(BaseOutStream *pOutStream) {

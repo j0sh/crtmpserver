@@ -192,6 +192,58 @@ InFileRTMPStream::~InFileRTMPStream() {
 	}
 }
 
+#ifdef HAS_VOD_MANAGER
+
+bool InFileRTMPStream::Initialize(Variant &medatada,
+		int32_t clientSideBufferLength, bool hasTimer) {
+	//1. Base init
+	if (!BaseInFileStream::Initialize(medatada, clientSideBufferLength, hasTimer)) {
+		FATAL("Unable to initialize stream");
+		return false;
+	}
+
+	//2. Get stream capabilities
+	StreamCapabilities *pCapabilities = GetCapabilities();
+	if (pCapabilities == NULL) {
+		FATAL("Invalid stream capabilities");
+		return false;
+	}
+
+	//3. Create the video builder
+	if ((pCapabilities->videoCodecId != 0)
+			&& (pCapabilities->videoCodecId != CODEC_VIDEO_UNKNOWN)
+			&& (pCapabilities->videoCodecId != CODEC_VIDEO_AVC)
+			&& (pCapabilities->videoCodecId != CODEC_VIDEO_PASS_THROUGH)) {
+		FATAL("Invalid video stream capabilities: %s", STR(tagToString(pCapabilities->videoCodecId)));
+		return false;
+	}
+	if (pCapabilities->videoCodecId == CODEC_VIDEO_AVC) {
+		_pVideoBuilder = new AVCBuilder();
+	} else if (pCapabilities->videoCodecId == CODEC_VIDEO_PASS_THROUGH) {
+		_pVideoBuilder = new PassThroughBuilder();
+	}
+
+	//4. Create the audio builder
+	if ((pCapabilities->audioCodecId != 0)
+			&& (pCapabilities->audioCodecId != CODEC_AUDIO_UNKNOWN)
+			&& (pCapabilities->audioCodecId != CODEC_AUDIO_AAC)
+			&& (pCapabilities->audioCodecId != CODEC_AUDIO_MP3)
+			&& (pCapabilities->audioCodecId != CODEC_AUDIO_PASS_THROUGH)) {
+		FATAL("Invalid audio stream capabilities: %s", STR(tagToString(pCapabilities->audioCodecId)));
+		return false;
+	}
+	if (pCapabilities->audioCodecId == CODEC_AUDIO_AAC) {
+		_pAudioBuilder = new AACBuilder();
+	} else if (pCapabilities->audioCodecId == CODEC_AUDIO_MP3) {
+		_pAudioBuilder = new MP3Builder();
+	} else if (pCapabilities->audioCodecId == CODEC_AUDIO_PASS_THROUGH) {
+		_pAudioBuilder = new PassThroughBuilder();
+	}
+
+	return true;
+}
+#else /* HAS_VOD_MANAGER */
+
 bool InFileRTMPStream::Initialize(int32_t clientSideBufferLength, bool hasTimer) {
 	//1. Base init
 	if (!BaseInFileStream::Initialize(clientSideBufferLength, hasTimer)) {
@@ -239,6 +291,7 @@ bool InFileRTMPStream::Initialize(int32_t clientSideBufferLength, bool hasTimer)
 
 	return true;
 }
+#endif /* HAS_VOD_MANAGER */
 
 bool InFileRTMPStream::FeedData(uint8_t *pData, uint32_t dataLength,
 		uint32_t processedLength, uint32_t totalLength,
@@ -249,12 +302,46 @@ bool InFileRTMPStream::FeedData(uint8_t *pData, uint32_t dataLength,
 
 bool InFileRTMPStream::IsCompatibleWithType(uint64_t type) {
 	return TAG_KIND_OF(type, ST_OUT_NET_RTMP)
-			|| TAG_KIND_OF(type, ST_OUT_FILE_HLS);
+			|| TAG_KIND_OF(type, ST_OUT_FILE_HLS)
+			|| TAG_KIND_OF(type, ST_OUT_FILE_HDS)
+			|| TAG_KIND_OF(type, ST_OUT_FILE_RTMP_FLV)
+			|| TAG_KIND_OF(type, ST_OUT_FILE_TS);
 }
 
 uint32_t InFileRTMPStream::GetChunkSize() {
 	return _chunkSize;
 }
+
+#ifdef HAS_VOD_MANAGER
+
+InFileRTMPStream *InFileRTMPStream::GetInstance(BaseRTMPProtocol *pRTMPProtocol,
+		StreamsManager *pStreamsManager, Variant &metadata) {
+	metadata[META_RTMP_META][HTTP_HEADERS_SERVER] = HTTP_HEADERS_SERVER_US;
+
+	InFileRTMPStream *pResult = NULL;
+
+	if (metadata[META_MEDIA_TYPE] == MEDIA_TYPE_FLV
+			|| metadata[META_MEDIA_TYPE] == MEDIA_TYPE_LIVE_OR_FLV
+			|| metadata[META_MEDIA_TYPE] == MEDIA_TYPE_MP3
+			|| metadata[META_MEDIA_TYPE] == MEDIA_TYPE_MP4
+			|| metadata[META_MEDIA_TYPE] == MEDIA_TYPE_M4A
+			|| metadata[META_MEDIA_TYPE] == MEDIA_TYPE_M4V
+			|| metadata[META_MEDIA_TYPE] == MEDIA_TYPE_MOV
+			) {
+		pResult = new InFileRTMPStream((BaseProtocol *) pRTMPProtocol,
+				pStreamsManager, metadata[META_MEDIA_FILE_PATHS][META_MEDIA_ORIGIN]);
+	} else {
+		FATAL("File type not supported yet. Metadata:\n%s",
+				STR(metadata.ToString()));
+	}
+
+	if (pResult != NULL) {
+		pResult->SetCompleteMetadata(metadata);
+	}
+
+	return pResult;
+}
+#else /* HAS_VOD_MANAGER */
 
 InFileRTMPStream *InFileRTMPStream::GetInstance(BaseRTMPProtocol *pRTMPProtocol,
 		StreamsManager *pStreamsManager, Variant &metadata) {
@@ -288,6 +375,7 @@ InFileRTMPStream *InFileRTMPStream::GetInstance(BaseRTMPProtocol *pRTMPProtocol,
 
 	return pResult;
 }
+#endif /* HAS_VOD_MANAGER */
 
 void InFileRTMPStream::SetCompleteMetadata(Variant &completeMetadata) {
 	_completeMetadata = completeMetadata;

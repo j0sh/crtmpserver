@@ -36,8 +36,8 @@ private:
 public:
 	OutFileRTMPFLVStream(BaseRTMPProtocol *pProtocol, StreamsManager *pStreamsManager,
 			string name);
-	virtual ~OutFileRTMPFLVStream();
 
+	virtual ~OutFileRTMPFLVStream();
 	virtual bool SignalPlay(double &absoluteTimestamp, double &length);
 	virtual bool SignalPause();
 	virtual bool SignalResume();
@@ -50,6 +50,8 @@ public:
 	virtual void SignalAttachedToInStream();
 	virtual void SignalDetachedFromInStream();
 	virtual void SignalStreamCompleted();
+private:
+	bool Initialize();
 };
 
 

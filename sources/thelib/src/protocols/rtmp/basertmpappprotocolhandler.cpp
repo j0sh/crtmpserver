@@ -33,6 +33,8 @@
 #include "streaming/streamstypes.h"
 #include "streaming/baseinstream.h"
 #include "streaming/baseinnetstream.h"
+#include "vod/basevodmanager.h"
+#include "vod/basevodsource.h"
 
 #define ONBWCHECK_SIZE 32767
 
@@ -242,8 +244,8 @@ bool BaseRTMPAppProtocolHandler::PullExternalStream(URI &uri,
 	parameters["customParameters"]["externalStreamConfig"]["rtcpDetectionInterval"] = (uint32_t) 10;
 	parameters["customParameters"]["externalStreamConfig"]["swfUrl"] = "";
 	parameters["customParameters"]["externalStreamConfig"]["tcUrl"] = "";
-	parameters["customParameters"]["externalStreamConfig"]["tos"] = (uint8_t) 256;
-	parameters["customParameters"]["externalStreamConfig"]["ttl"] = (uint8_t) 256;
+	parameters["customParameters"]["externalStreamConfig"]["tos"] = (uint16_t) 256;
+	parameters["customParameters"]["externalStreamConfig"]["ttl"] = (uint16_t) 256;
 	parameters["customParameters"]["externalStreamConfig"]["uri"] = uri;
 
 	//5. Create the createStream request
@@ -359,8 +361,8 @@ bool BaseRTMPAppProtocolHandler::PushLocalStream(BaseRTMPProtocol *pFrom,
 	parameters["customParameters"]["localStreamConfig"]["targetStreamType"] = "live";
 	parameters["customParameters"]["localStreamConfig"]["targetUri"].IsArray(false);
 	parameters["customParameters"]["localStreamConfig"]["tcUrl"] = "";
-	parameters["customParameters"]["localStreamConfig"]["tos"] = (uint8_t) 256;
-	parameters["customParameters"]["localStreamConfig"]["ttl"] = (uint8_t) 256;
+	parameters["customParameters"]["localStreamConfig"]["tos"] = (uint16_t) 256;
+	parameters["customParameters"]["localStreamConfig"]["ttl"] = (uint16_t) 256;
 	parameters["customParameters"]["localStreamConfig"]["localUniqueStreamId"] = pInStream->GetUniqueId();
 
 	//5. Create the createStream request
@@ -620,8 +622,37 @@ bool BaseRTMPAppProtocolHandler::ProcessUsrCtrl(BaseRTMPProtocol *pFrom,
 			Variant response = ConnectionMessageFactory::GetPong((uint32_t) M_USRCTRL_PING(request));
 			return SendRTMPMessage(pFrom, response);
 		}
-		case RM_USRCTRL_TYPE_STREAM_BEGIN:
 		case RM_USRCTRL_TYPE_STREAM_SET_BUFFER_LENGTH:
+		{
+			//1. Get the stream id
+			//FINEST("request:\n%s", STR(request.ToString()));
+			uint32_t streamId = M_USRCTRL_STREAMID(request);
+			uint32_t bufferLen = M_USRCTRL_BUFFERLEN(request);
+			if ((bufferLen % 1000) != 0)
+				bufferLen = bufferLen / 1000 + 1;
+			else
+				bufferLen = bufferLen / 1000;
+			//			FINEST("streamId: %"PRIu32, streamId);
+			//			FINEST("bufferLen: %"PRIu32, bufferLen);
+			BaseStream *pStream = pFrom->GetRTMPStream(streamId);
+			if (pStream == NULL) {
+				return true;
+			}
+			if (pStream->GetType() == ST_NEUTRAL_RTMP) {
+				((RTMPStream *) pStream)->SetClientSideBuffer(bufferLen);
+			} else {
+				if ((!TAG_KIND_OF(pStream->GetType(), ST_OUT_NET_RTMP))
+						|| (((BaseOutStream *) pStream)->GetInStream() == NULL)
+						|| (!TAG_KIND_OF(((BaseOutStream *) pStream)->GetInStream()->GetType(), ST_IN_FILE_RTMP))
+						) {
+					return true;
+				}
+
+				((BaseInFileStream *) ((BaseOutStream *) pStream)->GetInStream())->SetClientSideBuffer(bufferLen);
+			}
+			return true;
+		}
+		case RM_USRCTRL_TYPE_STREAM_BEGIN:
 		case RM_USRCTRL_TYPE_STREAM_IS_RECORDED:
 		case RM_USRCTRL_TYPE_PING_RESPONSE:
 		{
@@ -943,6 +974,9 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokePublish(BaseRTMPProtocol *pFrom,
 
 	//9. Start recording if necessary
 	if (recording || appending) {
+#ifdef HAS_VOD_MANAGER
+		NYIR;
+#else /* HAS_VOD_MANAGER */
 		Variant meta = GetMetaData(streamName, false);
 
 		BaseOutFileStream *pOutFileStream = CreateOutFileStream(pFrom, meta, appending);
@@ -950,6 +984,7 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokePublish(BaseRTMPProtocol *pFrom,
 			FATAL("Unable to bind the recording stream");
 			return false;
 		}
+#endif /* HAS_VOD_MANAGER */
 	}
 
 	//10. Done
@@ -1001,6 +1036,16 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokePlay(BaseRTMPProtocol *pFrom,
 
 	//3. Gather required data from the request
 	string streamName = M_INVOKE_PARAM(request, 1);
+	trim(streamName);
+	if (streamName == "") {
+		FATAL("Invalid request:\n%s", STR(request.ToString()));
+		return false;
+	}
+	streamName = GetApplication()->GetStreamNameByAlias(streamName, true);
+	if (streamName == "") {
+		FATAL("No stream alias found:\n%s", STR(request.ToString()));
+		return false;
+	}
 	double startTime = -2;
 	double length = -1;
 	if (M_INVOKE_PARAM(request, 2) == V_DOUBLE)
@@ -1014,12 +1059,17 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokePlay(BaseRTMPProtocol *pFrom,
 	if (length < 0 && length != -1)
 		length = -1;
 
+	uint32_t dummy = 0;
+
+#ifdef HAS_VOD_MANAGER
+#else /* HAS_VOD_MANAGER */
 	//4. Get the metadata for the stream
 	Variant metadata = GetMetaData(streamName, true);
 	if (metadata != V_MAP) {
 		FATAL("Unable to get metadata");
 		return false;
 	}
+#endif /* HAS_VOD_MANAGER */
 
 	INFO("Play request for stream name `%s`. Start: %.0f; length: %.0f",
 			STR(streamName), startTime, length);
@@ -1039,6 +1089,15 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokePlay(BaseRTMPProtocol *pFrom,
 			if (linked)
 				return true;
 
+#ifdef HAS_VOD_MANAGER
+			//4. Get the metadata for the stream
+			Variant metadata = GetMetaData(streamName, true);
+			if (metadata != V_MAP) {
+				FATAL("Unable to get metadata");
+				return false;
+			}
+#endif /* HAS_VOD_MANAGER */
+
 			//8. try to link to file stream
 			if (!TryLinkToFileStream(pFrom, VH_SI(request), metadata, streamName,
 					startTime, length, linked)) {
@@ -1053,7 +1112,8 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokePlay(BaseRTMPProtocol *pFrom,
 			BaseOutNetRTMPStream * pBaseOutNetRTMPStream = pFrom->CreateONS(
 					VH_SI(request),
 					streamName,
-					ST_IN_NET_RTMP);
+					ST_IN_NET_RTMP,
+					dummy);
 			request["waitForLiveStream"] = (bool)true;
 			request["streamName"] = streamName;
 			return pBaseOutNetRTMPStream != NULL;
@@ -1075,13 +1135,22 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokePlay(BaseRTMPProtocol *pFrom,
 			BaseOutNetRTMPStream * pBaseOutNetRTMPStream = pFrom->CreateONS(
 					VH_SI(request),
 					streamName,
-					ST_IN_NET_RTMP);
+					ST_IN_NET_RTMP,
+					dummy);
 			request["waitForLiveStream"] = (bool)true;
 			request["streamName"] = streamName;
 			return pBaseOutNetRTMPStream != NULL;
 		}
 		default: //only recorded
 		{
+#ifdef HAS_VOD_MANAGER
+			//4. Get the metadata for the stream
+			Variant metadata = GetMetaData(streamName, true);
+			if (metadata != V_MAP) {
+				FATAL("Unable to get metadata");
+				return false;
+			}
+#endif /* HAS_VOD_MANAGER */
 			//12. Perform little adjustment on metadata
 			if (metadata[META_MEDIA_TYPE] == MEDIA_TYPE_LIVE_OR_FLV) {
 				metadata[META_MEDIA_TYPE] = MEDIA_TYPE_FLV;
@@ -1280,10 +1349,12 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokeOnStatus(BaseRTMPProtocol *pFrom,
 		}
 
 		//5. Create the network outbound stream
+		uint32_t dummy = 0;
 		BaseOutNetRTMPStream *pBaseOutNetRTMPStream = pProtocol->CreateONS(
 				VH_SI(request),
 				pBaseInStream->GetName(),
-				pBaseInStream->GetType());
+				pBaseInStream->GetType(),
+				dummy);
 		if (pBaseOutNetRTMPStream == NULL) {
 			FATAL("Unable to create outbound stream");
 			return false;
@@ -1372,7 +1443,7 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokeGetStreamLength(BaseRTMPProtocol *
 	Variant params;
 	params[(uint32_t) 0] = Variant();
 	if ((VariantType) metadata == V_MAP)
-		params[(uint32_t) 1] = (double) metadata[META_FILE_DURATION] / 1000.00;
+		params[(uint32_t) 1] = (double) metadata[META_RTMP_META][META_DURATION];
 	else
 		params[(uint32_t) 1] = 0.0;
 
@@ -1885,6 +1956,19 @@ string BaseRTMPAppProtocolHandler::GetAuthPassword(string user) {
 	}
 }
 
+#ifdef HAS_VOD_MANAGER
+
+Variant BaseRTMPAppProtocolHandler::GetMetaData(string streamName, bool extractInnerMetadata) {
+	Variant result;
+	result.IsArray(false);
+	if (!GetApplication()->GetVODManager()->GetVODSourceByAdobeNotation(streamName, result)) {
+		return Variant();
+	}
+	result[CONF_APPLICATION_CLIENTSIDEBUFFER] = (int32_t) _clientSideBuffer;
+	return result;
+}
+#else /* HAS_VOD_MANAGER */
+
 Variant BaseRTMPAppProtocolHandler::GetMetaData(string streamName,
 		bool extractInnerMetadata) {
 	Variant result;
@@ -1993,6 +2077,7 @@ Variant BaseRTMPAppProtocolHandler::GetMetaData(string streamName,
 	}
 	return result;
 }
+#endif /* HAS_VOD_MANAGER */
 
 bool BaseRTMPAppProtocolHandler::OpenClientSharedObject(BaseRTMPProtocol *pFrom,
 		string soName) {
@@ -2159,8 +2244,9 @@ bool BaseRTMPAppProtocolHandler::TryLinkToLiveStream(BaseRTMPProtocol *pFrom,
 	}
 
 	//6. Create the outbound stream
+	uint32_t dummy = 0;
 	BaseOutNetRTMPStream * pBaseOutNetRTMPStream = pFrom->CreateONS(streamId,
-			streamName, pBaseInNetStream->GetType());
+			streamName, pBaseInNetStream->GetType(), dummy);
 	if (pBaseOutNetRTMPStream == NULL) {
 		FATAL("Unable to create network outbound stream");
 		return false;
@@ -2180,6 +2266,7 @@ bool BaseRTMPAppProtocolHandler::TryLinkToLiveStream(BaseRTMPProtocol *pFrom,
 bool BaseRTMPAppProtocolHandler::TryLinkToFileStream(BaseRTMPProtocol *pFrom,
 		uint32_t streamId, Variant &metadata, string streamName, double startTime,
 		double length, bool &linked) {
+	uint32_t clientSideBuffer = 0;
 	linked = false;
 
 	//1. Try to create the in file streams
@@ -2191,11 +2278,13 @@ bool BaseRTMPAppProtocolHandler::TryLinkToFileStream(BaseRTMPProtocol *pFrom,
 
 	//2. Try to create the out net stream
 	BaseOutNetRTMPStream * pBaseOutNetRTMPStream = pFrom->CreateONS(
-			streamId, streamName, pRTMPInFileStream->GetType());
+			streamId, streamName, pRTMPInFileStream->GetType(), clientSideBuffer);
 	if (pBaseOutNetRTMPStream == NULL) {
 		FATAL("Unable to create network outbound stream");
 		return false;
 	}
+
+	pRTMPInFileStream->SetClientSideBuffer(clientSideBuffer);
 
 	//3. Link them
 	if (!pRTMPInFileStream->Link(pBaseOutNetRTMPStream)) {

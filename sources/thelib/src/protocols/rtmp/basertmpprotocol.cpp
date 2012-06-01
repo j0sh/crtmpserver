@@ -255,7 +255,6 @@ bool BaseRTMPProtocol::HandleSOPrimitive(string &name, Variant &primitive) {
 			return false;
 		}
 	}
-	return true;
 }
 
 bool BaseRTMPProtocol::Initialize(Variant &parameters) {
@@ -488,7 +487,7 @@ void BaseRTMPProtocol::TrySetOutboundChunkSize(uint32_t chunkSize) {
 
 BaseStream * BaseRTMPProtocol::GetRTMPStream(uint32_t rtmpStreamId) {
 	if (rtmpStreamId == 0 || rtmpStreamId >= MAX_STREAMS_COUNT) {
-		FATAL("Invalid stream id: %u", rtmpStreamId);
+		//WARN("Invalid stream id: %"PRIu32, rtmpStreamId);
 		return NULL;
 	}
 	return _streams[rtmpStreamId];
@@ -506,6 +505,8 @@ bool BaseRTMPProtocol::CloseStream(uint32_t streamId, bool createNeutralStream) 
 		return true;
 	}
 
+	uint32_t clientSideBuffer = 0;
+
 	if (TAG_KIND_OF(_streams[streamId]->GetType(), ST_OUT_NET_RTMP)) {
 		//2. Remove it from signaled streams
 		LinkedListNode<BaseOutNetRTMPStream *> *pTemp = _pSignaledRTMPOutNetStream;
@@ -522,9 +523,13 @@ bool BaseRTMPProtocol::CloseStream(uint32_t streamId, bool createNeutralStream) 
 		//is a file, close that as well
 		BaseOutNetRTMPStream *pBaseOutNetRTMPStream = (BaseOutNetRTMPStream *) _streams[streamId];
 		if (pBaseOutNetRTMPStream->GetInStream() != NULL) {
-			if (TAG_KIND_OF(pBaseOutNetRTMPStream->GetInStream()->GetType(), ST_IN_FILE_RTMP))
+			if (TAG_KIND_OF(pBaseOutNetRTMPStream->GetInStream()->GetType(), ST_IN_FILE_RTMP)) {
+				clientSideBuffer = ((InFileRTMPStream *) pBaseOutNetRTMPStream->GetInStream())->GetClientSideBuffer()*1000;
 				RemoveIFS((InFileRTMPStream *) pBaseOutNetRTMPStream->GetInStream());
+			}
 		}
+	} else if (_streams[streamId]->GetType() == ST_NEUTRAL_RTMP) {
+		clientSideBuffer = ((RTMPStream *) _streams[streamId])->GetClientSideBuffer();
 	}
 
 	//4. Delete the stream and replace it with a neutral one
@@ -533,6 +538,7 @@ bool BaseRTMPProtocol::CloseStream(uint32_t streamId, bool createNeutralStream) 
 	if ((createNeutralStream) && (GetApplication() != NULL)) {
 		_streams[streamId] = new RTMPStream(this,
 				GetApplication()->GetStreamsManager(), streamId);
+		((RTMPStream *) _streams[streamId])->SetClientSideBuffer(clientSideBuffer);
 	}
 
 	return true;
@@ -597,7 +603,9 @@ InNetRTMPStream * BaseRTMPProtocol::CreateINS(uint32_t channelId,
 }
 
 BaseOutNetRTMPStream * BaseRTMPProtocol::CreateONS(uint32_t streamId,
-		string streamName, uint64_t inStreamType) {
+		string streamName, uint64_t inStreamType, uint32_t &clientSideBuffer) {
+	clientSideBuffer = 0;
+
 	if (streamId == 0 || streamId >= MAX_STREAMS_COUNT) {
 		FATAL("Invalid stream id: %u", streamId);
 		return NULL;
@@ -613,6 +621,7 @@ BaseOutNetRTMPStream * BaseRTMPProtocol::CreateONS(uint32_t streamId,
 			return NULL;
 		}
 
+		clientSideBuffer = ((RTMPStream *) _streams[streamId])->GetClientSideBuffer();
 		delete _streams[streamId];
 		_streams[streamId] = NULL;
 	}
@@ -653,12 +662,22 @@ InFileRTMPStream * BaseRTMPProtocol::CreateIFS(Variant &metadata) {
 	bool hasTimer = true;
 	if (metadata.HasKeyChain(V_BOOL, true, 1, "hasTimer"))
 		hasTimer = (bool)metadata["hasTimer"];
+#ifdef HAS_VOD_MANAGER
+	if (!pRTMPInFileStream->Initialize(metadata,
+			(int32_t) metadata[CONF_APPLICATION_CLIENTSIDEBUFFER],
+			hasTimer)) {
+		FATAL("Unable to initialize file inbound stream");
+		delete pRTMPInFileStream;
+		return NULL;
+	}
+#else /* HAS_VOD_MANAGER */
 	if (!pRTMPInFileStream->Initialize(
 			(int32_t) metadata[CONF_APPLICATION_CLIENTSIDEBUFFER], hasTimer)) {
 		FATAL("Unable to initialize file inbound stream");
 		delete pRTMPInFileStream;
 		return NULL;
 	}
+#endif /* HAS_VOD_MANAGER */
 	_inFileStreams[pRTMPInFileStream] = pRTMPInFileStream;
 	return pRTMPInFileStream;
 }
@@ -950,7 +969,7 @@ bool BaseRTMPProtocol::ProcessBytes(IOBuffer &buffer) {
 						_rxInvokes++;
 
 						if (GETAVAILABLEBYTESCOUNT(channel.inputData) != 0) {
-							FATAL("Invalid message!!! We have leftovers: %u bytes",
+							FATAL("Invalid message! We have leftovers: %u bytes",
 									GETAVAILABLEBYTESCOUNT(channel.inputData));
 							return false;
 						}

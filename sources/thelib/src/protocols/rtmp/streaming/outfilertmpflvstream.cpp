@@ -20,6 +20,7 @@
 
 #ifdef HAS_PROTOCOL_RTMP
 #include "protocols/rtmp/streaming/outfilertmpflvstream.h"
+#include "application/baseclientapplication.h"
 #include "streaming/streamstypes.h"
 #include "protocols/rtmp/basertmpprotocol.h"
 
@@ -56,6 +57,13 @@ bool OutFileRTMPFLVStream::SignalStop() {
 bool OutFileRTMPFLVStream::FeedData(uint8_t *pData, uint32_t dataLength,
 		uint32_t processedLength, uint32_t totalLength,
 		double absoluteTimestamp, bool isAudio) {
+	if (!_file.IsOpen()) {
+		if (!Initialize()) {
+			FATAL("Unable to initialize the FLV out file stream");
+			return false;
+		}
+	}
+
 	if (_timeBase < 0)
 		_timeBase = absoluteTimestamp;
 
@@ -118,10 +126,21 @@ bool OutFileRTMPFLVStream::IsCompatibleWithType(uint64_t type) {
 }
 
 void OutFileRTMPFLVStream::SignalAttachedToInStream() {
-	//1. Initialize the file
+
+}
+
+void OutFileRTMPFLVStream::SignalDetachedFromInStream() {
+	_file.Close();
+}
+
+void OutFileRTMPFLVStream::SignalStreamCompleted() {
+}
+
+bool OutFileRTMPFLVStream::Initialize() {
 	if (!_file.Initialize(_name, FILE_OPEN_MODE_TRUNCATE)) {
 		FATAL("Unable to initialize file %s", STR(_name));
 		_pProtocol->EnqueueForDelete();
+		return false;
 	}
 
 	//REFERENCE: video_file_format_spec_v10.pdf page 8/48
@@ -131,53 +150,47 @@ void OutFileRTMPFLVStream::SignalAttachedToInStream() {
 	if (!_file.WriteString(flv)) {
 		FATAL("Unable to write FLV signature");
 		_pProtocol->EnqueueForDelete();
-		return;
+		return false;
 	}
 
 	//3. Write FLV version
 	if (!_file.WriteUI8(1)) {
 		FATAL("Unable to write FLV version");
 		_pProtocol->EnqueueForDelete();
-		return;
+		return false;
 	}
 
 	//4. Write FLV flags
 	if (!_file.WriteUI8(5)) {
 		FATAL("Unable to write flags");
 		_pProtocol->EnqueueForDelete();
-		return;
+		return false;
 	}
 
 	//5. Write FLV offset
 	if (!_file.WriteUI32(9)) {
 		FATAL("Unable to write data offset");
 		_pProtocol->EnqueueForDelete();
-		return;
+		return false;
 	}
 
 	//6. Write first dummy audio
 	if (!FeedData(NULL, 0, 0, 0, 0, true)) {
 		FATAL("Unable to write dummy audio packet");
 		_pProtocol->EnqueueForDelete();
-		return;
+		return false;
 	}
 
 	//7. Write first dummy video
 	if (!FeedData(NULL, 0, 0, 0, 0, false)) {
 		FATAL("Unable to write dummy audio packet");
 		_pProtocol->EnqueueForDelete();
-		return;
+		return false;
 	}
 
 	//8. Set the timebase to unknown value
 	_timeBase = -1;
-}
-
-void OutFileRTMPFLVStream::SignalDetachedFromInStream() {
-	_file.Close();
-}
-
-void OutFileRTMPFLVStream::SignalStreamCompleted() {
+	return false;
 }
 #endif /* HAS_PROTOCOL_RTMP */
 

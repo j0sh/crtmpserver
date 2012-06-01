@@ -32,7 +32,7 @@ protected:
 	vector<MediaFrame> _frames;
 	uint32_t _audioSamplesCount;
 	uint32_t _videoSamplesCount;
-	Variant _metadata;
+	Variant &_metadata;
 	string _mediaFilePath;
 	string _seekFilePath;
 	string _metaFilePath;
