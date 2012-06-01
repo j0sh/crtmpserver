@@ -56,7 +56,10 @@ bool IOTimer::SignalOutputData() {
 
 bool IOTimer::OnEvent(struct epoll_event &/*ignored*/) {
 #ifdef HAS_EPOLL_TIMERS
-	read(_inboundFd, &_count, 8);
+	if (read(_inboundFd, &_count, 8) != 8) {
+		FATAL("Timer failed!");
+		return false;
+	}
 #endif /* HAS_EPOLL_TIMERS */
 	if (!_pProtocol->IsEnqueueForDelete()) {
 		if (!_pProtocol->TimePeriodElapsed()) {

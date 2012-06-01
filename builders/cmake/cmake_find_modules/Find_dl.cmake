@@ -1,5 +1,5 @@
 MESSAGE(STATUS "Looking for dl")
-FIND_PATH(DL_INCLUDE_PATH 
+FIND_PATH(DL_INCLUDE_PATH
 	NAMES
 		dlfcn.h
 	PATHS
@@ -17,16 +17,20 @@ FIND_LIBRARY(DL_LIBRARY_PATH
 		dl
 	PATHS
 		${TOOLCHAIN_LIBRARY_PATH}
+		/lib64
 		/usr/lib64
-		/usr/lib
 		/usr/local/lib64
+		/lib/x86_64-linux-gnu
+		/usr/lib/x86_64-linux-gnu
+		/opt/local/lib64
+		/sw/lib64
+		/lib
+		/usr/lib
 		/usr/local/lib
-		/sw/lib
-		/opt/local/lib
 		/lib/i386-linux-gnu
 		/usr/lib/i386-linux-gnu
-		/lib/x86_64-linux-gnu
-		/usr/lib/x86_64-linux-gnu		
+		/opt/local/lib
+		/sw/lib
 		NO_DEFAULT_PATH)
 
 MESSAGE(STATUS "DL_INCLUDE_PATH: ${DL_INCLUDE_PATH}")

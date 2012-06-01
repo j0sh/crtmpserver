@@ -1,4 +1,4 @@
-FIND_PATH(OPENSSL_INCLUDE_PATH 
+FIND_PATH(OPENSSL_INCLUDE_PATH
 	NAMES
 		openssl/ssl.h
 	PATHS
@@ -20,18 +20,21 @@ FIND_LIBRARY(OPENSSL_LIBRARY_PATH
 		ssl
 	PATHS
 		${TOOLCHAIN_LIBRARY_PATH}
-		/opt/local/lib
+		/lib64
 		/usr/lib64
-		/usr/lib
 		/usr/local/lib64
-		/usr/local/lib
-		/sw/lib
-		/usr/local/ssl/lib
-		/lib
-		/lib/i386-linux-gnu
-		/usr/lib/i386-linux-gnu
 		/lib/x86_64-linux-gnu
 		/usr/lib/x86_64-linux-gnu
+		/opt/local/lib64
+		/sw/lib64
+		/lib
+		/usr/lib
+		/usr/local/lib
+		/lib/i386-linux-gnu
+		/usr/lib/i386-linux-gnu
+		/opt/local/lib
+		/sw/lib
+		/usr/local/ssl/lib
 		NO_DEFAULT_PATH)
 
 FIND_LIBRARY(CRYPTO_LIBRARY_PATH
@@ -39,18 +42,21 @@ FIND_LIBRARY(CRYPTO_LIBRARY_PATH
 		crypto
 	PATHS
 		${TOOLCHAIN_LIBRARY_PATH}
-		/opt/local/lib
+		/lib64
 		/usr/lib64
-		/usr/lib
 		/usr/local/lib64
-		/usr/local/lib
-		/sw/lib
-		/usr/local/ssl/lib
-		/lib
-		/lib/i386-linux-gnu
-		/usr/lib/i386-linux-gnu
 		/lib/x86_64-linux-gnu
 		/usr/lib/x86_64-linux-gnu
+		/opt/local/lib64
+		/sw/lib64
+		/lib
+		/usr/lib
+		/usr/local/lib
+		/lib/i386-linux-gnu
+		/usr/lib/i386-linux-gnu
+		/opt/local/lib
+		/sw/lib
+		/usr/local/ssl/lib
 		NO_DEFAULT_PATH)
 
 IF($ENV{COMPILE_STATIC} MATCHES "1")
@@ -58,18 +64,21 @@ IF($ENV{COMPILE_STATIC} MATCHES "1")
 		NAMES
 			z
 		PATHS
-			/opt/local/lib
+			/lib64
 			/usr/lib64
-			/usr/lib
 			/usr/local/lib64
-			/usr/local/lib
-			/sw/lib
-			/usr/local/ssl/lib
-			/lib
-			/lib/i386-linux-gnu
-			/usr/lib/i386-linux-gnu
 			/lib/x86_64-linux-gnu
 			/usr/lib/x86_64-linux-gnu
+			/opt/local/lib64
+			/sw/lib64
+			/lib
+			/usr/lib
+			/usr/local/lib
+			/lib/i386-linux-gnu
+			/usr/lib/i386-linux-gnu
+			/opt/local/lib
+			/sw/lib
+			/usr/local/ssl/lib
 			NO_DEFAULT_PATH)
 	SET(CMAKE_FIND_LIBRARY_SUFFIXES ${CMAKE_FIND_LIBRARY_SUFFIXES_OLD})
 ELSEIF($ENV{COMPILE_STATIC} MATCHES "1")

@@ -40,3 +40,4 @@ public:
 
 #endif	/* _BASEVODSOURCE_H */
 #endif /* HAS_VOD_MANAGER */
+

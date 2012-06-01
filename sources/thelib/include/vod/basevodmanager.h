@@ -51,3 +51,4 @@ private:
 
 #endif	/* _BASEVODMANAGER_H */
 #endif /* HAS_VOD_MANAGER */
+
