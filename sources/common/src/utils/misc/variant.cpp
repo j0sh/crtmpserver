@@ -193,7 +193,7 @@ Variant::Variant(const uint8_t *pVal, uint32_t len) {
 	_type = V_BYTEARRAY;
 	memset(&_value, 0, sizeof (_value));
 	DYNAMIC_ALLOC("_value.s");
-	_value.s = new string((const char*)pVal, (size_t)len);
+	_value.s = new string((const char*) pVal, (size_t) len);
 }
 
 Variant::~Variant() {

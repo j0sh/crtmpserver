@@ -106,6 +106,7 @@ using namespace std;
 #define SRAND() sranddev();
 #define Timestamp struct tm
 #define Timestamp_init {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+#define PIOFFT off_t
 
 #define CLOCKS_PER_SECOND CLOCKS_PER_SEC
 #define GETCLOCKS(result) \

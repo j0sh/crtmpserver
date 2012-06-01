@@ -164,6 +164,7 @@ typedef long long int int64_t;*/
 #define Timestamp_init {0, 0, 0, 0, 0, 0, 0, 0, 0}
 #define snprintf sprintf_s
 #define pid_t int32_t
+#define PIOFFT __int64
 
 #define gmtime_r(_p_time_t, _p_struct_tm) *(_p_struct_tm) = *gmtime(_p_time_t);
 

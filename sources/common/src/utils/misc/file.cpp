@@ -170,7 +170,7 @@ bool File::SeekAhead(int64_t count) {
 		return false;
 	}
 
-	if (fseek64(_pFile, (off_t) count, SEEK_CUR) != 0) {
+	if (fseek64(_pFile, (PIOFFT) count, SEEK_CUR) != 0) {
 		FATAL("Unable to seek ahead %"PRId64" bytes", count);
 		return false;
 	}
@@ -194,7 +194,7 @@ bool File::SeekBehind(int64_t count) {
 		return false;
 	}
 
-	if (fseek64(_pFile, (off_t) (-1 * count), SEEK_CUR) != 0) {
+	if (fseek64(_pFile, (PIOFFT) (-1 * count), SEEK_CUR) != 0) {
 		FATAL("Unable to seek behind %"PRId64" bytes", count);
 		return false;
 	}
@@ -213,7 +213,7 @@ bool File::SeekTo(uint64_t position) {
 		return false;
 	}
 
-	if (fseek64(_pFile, (off_t) position, SEEK_SET) != 0) {
+	if (fseek64(_pFile, (PIOFFT) position, SEEK_SET) != 0) {
 		FATAL("Unable to seek to position %"PRIu64, position);
 		return false;
 	}
@@ -296,12 +296,11 @@ bool File::ReadBuffer(uint8_t *pBuffer, uint64_t count) {
 		FATAL("File not opened");
 		return false;
 	}
+	if (count == 0)
+		return true;
 	if (count > 0xffffffffLL) {
 		FATAL("Can't read more than 4GB of data at once");
 		return false;
-	}
-	if (count == 0) {
-		return true;
 	}
 	if (fread(pBuffer, (uint32_t) count, 1, _pFile) != 1) {
 		int err = errno;
@@ -471,9 +470,8 @@ bool File::WriteBuffer(const uint8_t *pBuffer, uint64_t count) {
 		FATAL("File not opened");
 		return false;
 	}
-	if (count == 0) {
+	if (count == 0)
 		return true;
-	}
 	if (count > 0xffffffffLL) {
 		FATAL("Can't write more than 4GB of data at once");
 		return false;
