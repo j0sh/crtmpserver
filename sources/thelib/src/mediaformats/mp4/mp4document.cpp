@@ -350,9 +350,19 @@ BaseAtom * MP4Document::ReadAtom(BaseAtom *pParentAtom) {
 	}
 
 	if (currentPos + pAtom->GetSize() != _mediaFile.Cursor()) {
-		FATAL("atom start: %"PRIu64"; Atom size: %"PRIu64"; currentPos: %"PRIu64,
-				currentPos, pAtom->GetSize(), _mediaFile.Cursor());
-		return NULL;
+		if (currentPos + pAtom->GetSize() < _mediaFile.Cursor()) {
+			FATAL("atom overflow: atom start: %"PRIu64"; Atom size: %"PRIu64"; currentPos: %"PRIu64,
+					currentPos, pAtom->GetSize(), _mediaFile.Cursor());
+			return NULL;
+		} else {
+			WARN("wasted space inside atom! atom start: %"PRIu64"; Atom size: %"PRIu64"; currentPos: %"PRIu64,
+					currentPos, pAtom->GetSize(), _mediaFile.Cursor());
+			if (!_mediaFile.SeekTo(pAtom->GetStart() + pAtom->GetSize())) {
+				FATAL("Unable to skip atom");
+				return NULL;
+			}
+		}
+
 	}
 	return pAtom;
 }
