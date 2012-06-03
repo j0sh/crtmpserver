@@ -40,7 +40,6 @@ bool IgnoredAtom::Read() {
 			&& (_type != A_MDAT)
 			&& (_type != A_IODS)
 			&& (_type != A_WIDE)
-			&& (_type != A_UUID)
 			&& (_type != A_TREF)
 			&& (_type != A_TMCD)
 			&& (_type != A_TAPT)

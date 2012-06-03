@@ -66,6 +66,7 @@
 #include "mediaformats/mp4/atomabst.h"
 #include "mediaformats/mp4/atomasrt.h"
 #include "mediaformats/mp4/atomafrt.h"
+#include "mediaformats/mp4/atomuuid.h"
 
 //TODO: See how the things are impemented inside mp4v2. Good source
 //for looking at the avcC atom format for exampl
@@ -262,6 +263,9 @@ BaseAtom * MP4Document::ReadAtom(BaseAtom *pParentAtom) {
 		case A_AFRT:
 			pAtom = new AtomAFRT(this, type, size, currentPos);
 			break;
+		case A_UUID:
+			pAtom = new AtomUUID(this, type, size, currentPos);
+			break;
 		case A_AART:
 		case A_COVR:
 		case A_CPIL:
@@ -402,6 +406,8 @@ bool MP4Document::ParseDocument() {
 					break;
 				case A_ABST:
 					_pABST = (AtomABST *) pAtom;
+					break;
+				case A_UUID:
 					break;
 				default:
 				{
@@ -811,6 +817,11 @@ Variant MP4Document::GetRTMPMeta() {
 				FOR_MAP(meta, string, Variant, m) {
 					result["UDTA"][MAP_KEY(m)] = MAP_VAL(m);
 				}
+				break;
+			}
+			case A_UUID:
+			{
+				result["UUID"].PushToArray(((AtomUUID *) _allAtoms[i])->GetMetadata());
 				break;
 			}
 			default:

@@ -158,7 +158,7 @@ UDPCarrier* UDPCarrier::Create(string bindIp, uint16_t bindPort,
 	memset(&bindAddress, 0, sizeof (bindAddress));
 	if (bindIp != "") {
 		bindAddress.sin_family = PF_INET;
-		bindAddress.sin_addr.s_addr = inet_addr(bindIp.c_str());
+		bindAddress.sin_addr.s_addr = inet_addr(STR(bindIp));
 		bindAddress.sin_port = EHTONS(bindPort); //----MARKED-SHORT----
 		if (bindAddress.sin_addr.s_addr == INADDR_NONE) {
 			FATAL("Unable to bind on address %s:%hu", STR(bindIp), bindPort);
@@ -200,7 +200,7 @@ UDPCarrier* UDPCarrier::Create(string bindIp, uint16_t bindPort,
 		}
 		if ((testVal > 0xe0000000) && (testVal < 0xefffffff)) {
 			struct ip_mreq group;
-			group.imr_multiaddr.s_addr = inet_addr(bindIp.c_str());
+			group.imr_multiaddr.s_addr = inet_addr(STR(bindIp));
 			group.imr_interface.s_addr = INADDR_ANY;
 			if (setsockopt(sock, IPPROTO_IP, IP_ADD_MEMBERSHIP, (char *) &group, sizeof (group)) < 0) {
 				FATAL("Adding multicast group error");

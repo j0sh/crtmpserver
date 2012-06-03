@@ -49,7 +49,7 @@ bool VariantConnection::SendMessage(Variant &message, Variant &response) {
 		FATAL("Unable to serialize message");
 		return false;
 	}
-	uint8_t *pBuffer = (uint8_t *) rawContent.c_str();
+	uint8_t *pBuffer = (uint8_t *) rawContent.data();
 	uint32_t size = rawContent.size();
 	EHTONLP(pBuffer, size - 4);
 

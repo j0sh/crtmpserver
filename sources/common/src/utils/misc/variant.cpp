@@ -1313,7 +1313,7 @@ bool Variant::DeserializeFromBin(uint8_t *pBuffer, uint32_t bufferLength,
 }
 
 bool Variant::DeserializeFromBin(string &data, Variant &variant) {
-	return DeserializeFromBin((uint8_t *) data.c_str(), (uint32_t) data.size(), variant);
+	return DeserializeFromBin((uint8_t *) data.data(), (uint32_t) data.size(), variant);
 }
 
 bool Variant::SerializeToBin(string &result) {

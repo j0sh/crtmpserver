@@ -33,7 +33,7 @@ TCPAcceptor::TCPAcceptor(string ipAddress, uint16_t port, Variant parameters,
 	memset(&_address, 0, sizeof (sockaddr_in));
 
 	_address.sin_family = PF_INET;
-	_address.sin_addr.s_addr = inet_addr(ipAddress.c_str());
+	_address.sin_addr.s_addr = inet_addr(STR(ipAddress));
 	o_assert(_address.sin_addr.s_addr != INADDR_NONE);
 	_address.sin_port = EHTONS(port); //----MARKED-SHORT----
 

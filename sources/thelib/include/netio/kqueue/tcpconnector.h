@@ -135,7 +135,7 @@ public:
 		sockaddr_in address;
 
 		address.sin_family = PF_INET;
-		address.sin_addr.s_addr = inet_addr(_ip.c_str());
+		address.sin_addr.s_addr = inet_addr(STR(_ip));
 		if (address.sin_addr.s_addr == INADDR_NONE) {
 			FATAL("Unable to translate string %s to a valid IP address", STR(_ip));
 			return 0;

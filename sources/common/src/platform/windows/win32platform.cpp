@@ -414,14 +414,14 @@ bool listFolder(string path, vector<string> &result, bool normalizeAllPaths,
 	// Check that the input path plus 3 is not longer than MAX_PATH.
 	// Three characters are for the "\*" plus NULL appended below.
 	if (path.size() > (MAX_PATH - 3)) {
-		WARN("Directory path is too long: %s.", path.c_str());
+		WARN("Directory path is too long: %s.", STR(path));
 		return false;
 	}
 
 	// Prepare string for use with FindFile functions.  First, copy the
 	// string to a buffer, then append '\*' to the directory name.
 
-	StringCchCopy(szDir, MAX_PATH, path.c_str());
+	StringCchCopy(szDir, MAX_PATH, STR(path));
 	StringCchCat(szDir, MAX_PATH, TEXT("\\*"));
 
 	// Find the first file in the directory.
@@ -491,14 +491,14 @@ bool deleteFolder(string path, bool force) {
 				(strcmp(info.cFileName, "..") == 0))) {
 			if ((info.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) ==
 					FILE_ATTRIBUTE_DIRECTORY) {
-				string subFolder = path.c_str();
+				string subFolder = path;
 				subFolder.append("\\");
 				subFolder.append(info.cFileName);
 				if (!deleteFolder(subFolder, true)) {
 					FATAL("Unable to delete subfolder %s", STR(subFolder));
 					return false;
 				}
-				if (!RemoveDirectory(subFolder.c_str())) {
+				if (!RemoveDirectory(subFolder)) {
 					FATAL("Unable to delete subfolder %s", STR(subFolder));
 					return false;
 				}
@@ -517,7 +517,7 @@ bool deleteFolder(string path, bool force) {
 
 bool createFolder(string path, bool recursive) {
 	char DirName[256];
-	char* p = (char*) path.c_str();
+	char* p = STR(path);
 	char* q = DirName;
 	while (*p) {
 		if (('\\' == *p) || ('/' == *p)) {
