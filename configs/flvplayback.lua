@@ -14,7 +14,7 @@ configuration=
 			name="file appender",
 			type="file",
 			level=6,
-			fileName="/tmp/crtmpserver",
+			fileName="./logs/crtmpserver",
 			fileHistorySize=10,
 			fileLength=1024*1024,
 			singleLine=true	
@@ -49,8 +49,8 @@ configuration=
 					ip="0.0.0.0",
 					port=8081,
 					protocol="inboundRtmps",
-					sslKey="server.key",
-					sslCert="server.crt"
+					sslKey="./ssl/server.key",
+					sslCert="./ssl/server.crt"
 				},
 				{
 					ip="0.0.0.0",
@@ -97,10 +97,10 @@ configuration=
 					{
 						"FMLE/3.0 (compatible; FMSc/1.0)",
 					},
-					usersFile="./users.lua"
+					usersFile="./configs/users.lua"
 				},
 				rtsp={
-					usersFile="./users.lua"
+					usersFile="./configs/users.lua"
 				}
 			},]]--
 		},

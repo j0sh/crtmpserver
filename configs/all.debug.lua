@@ -30,7 +30,7 @@ configuration=
 			type="file",
 			level=6,
 			-- the file where the log messages are going to land
-			fileName="/tmp/crtmpserver.log",
+			fileName="./logs/crtmpserver",
 			fileHistorySize=10,
 			fileLength=1024*1024,
 			singleLine=true
@@ -77,6 +77,7 @@ configuration=
 			-- This flag designates the default application. The default application
 			-- is responsable of analyzing the "connect" request and distribute 
 			-- the future connection to the correct application.
+			mediaFolder="./media",
 			default=true,
 			acceptors = 
 			{
@@ -89,8 +90,8 @@ configuration=
 					ip="0.0.0.0",
 					port=8081,
 					protocol="inboundRtmps",
-					sslKey="server.key",
-					sslCert="server.crt"
+					sslKey="./ssl/server.key",
+					sslCert="./ssl/server.crt"
 				},
 				{
 					ip="0.0.0.0",
@@ -103,6 +104,7 @@ configuration=
 			description="FLV Playback Sample",
 			name="flvplayback",
 			protocol="dynamiclinklibrary",
+			mediaFolder="./media",
 			aliases=
 			{
 				"simpleLive",
@@ -175,10 +177,10 @@ configuration=
 					{
 						"FMLE/3.0 (compatible; FMSc/1.0)",
 					},
-					usersFile="./users.lua"
+					usersFile="./configs/users.lua"
 				},
 				rtsp={
-					usersFile="./users.lua"
+					usersFile="./configs/users.lua"
 				}
 			},]]--		
 		},
@@ -186,6 +188,7 @@ configuration=
 			name="samplefactory",
 			description="asdsadasdsa",
 			protocol="dynamiclinklibrary",
+			mediaFolder="./media",
 			aliases=
 			{
 				"httpOutboundTest"
@@ -210,6 +213,7 @@ configuration=
 			name="vptests",
 			description="Variant protocol tests",
 			protocol="dynamiclinklibrary",
+			mediaFolder="./media",
 			aliases=
 			{
 				"vptests_alias1",
@@ -231,6 +235,7 @@ configuration=
 			name="admin",
 			description="Application for administering",
 			protocol="dynamiclinklibrary",
+			mediaFolder="./media",
 			aliases=
 			{
 				"admin_alias1",
@@ -253,6 +258,7 @@ configuration=
 			name="proxypublish",
 			description="Application for forwarding streams to another RTMP server",
 			protocol="dynamiclinklibrary",
+			mediaFolder="./media",
 			acceptors =
 			{
 				{	
@@ -299,6 +305,7 @@ configuration=
 			targetServer="localhost",
 			targetApp="vod",
 			active=false,
+			mediaFolder="./media",
 			--[[streams = 
 			{
 				"lg00","lg01","lg02","lg03","lg04","lg05","lg06","lg07","lg08",
