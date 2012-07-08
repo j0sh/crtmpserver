@@ -69,6 +69,7 @@
           <itemPath>../../../../sources/thelib/include/mediaformats/mp4/atomtrun.h</itemPath>
           <itemPath>../../../../sources/thelib/include/mediaformats/mp4/atomudta.h</itemPath>
           <itemPath>../../../../sources/thelib/include/mediaformats/mp4/atomurl.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/mediaformats/mp4/atomuuid.h</itemPath>
           <itemPath>../../../../sources/thelib/include/mediaformats/mp4/atomvmhd.h</itemPath>
           <itemPath>../../../../sources/thelib/include/mediaformats/mp4/atomwave.h</itemPath>
           <itemPath>../../../../sources/thelib/include/mediaformats/mp4/baseatom.h</itemPath>
@@ -162,6 +163,8 @@
           <itemPath>../../../../sources/thelib/include/protocols/http/basehttpprotocol.h</itemPath>
           <itemPath>../../../../sources/thelib/include/protocols/http/basehttpprotocolhandler.h</itemPath>
           <itemPath>../../../../sources/thelib/include/protocols/http/httpauthhelper.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/protocols/http/httpinterface.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/protocols/http/httpprotocol.h</itemPath>
           <itemPath>../../../../sources/thelib/include/protocols/http/inboundhttpprotocol.h</itemPath>
           <itemPath>../../../../sources/thelib/include/protocols/http/outboundhttpprotocol.h</itemPath>
         </logicalFolder>
@@ -186,6 +189,13 @@
                        projectFiles="true">
           <itemPath>../../../../sources/thelib/include/protocols/rawhttpstream/baserawhttpstreamappprotocolhandler.h</itemPath>
           <itemPath>../../../../sources/thelib/include/protocols/rawhttpstream/inboundrawhttpstreamprotocol.h</itemPath>
+        </logicalFolder>
+        <logicalFolder name="rpc" displayName="rpc" projectFiles="true">
+          <itemPath>../../../../sources/thelib/include/protocols/rpc/baserpcappprotocolhandler.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/protocols/rpc/baserpcprotocol.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/protocols/rpc/inboundrpcprotocol.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/protocols/rpc/outboundrpcprotocol.h</itemPath>
+          <itemPath>../../../../sources/thelib/include/protocols/rpc/rpcserializer.h</itemPath>
         </logicalFolder>
         <logicalFolder name="rtmfp" displayName="rtmfp" projectFiles="true">
           <itemPath>../../../../sources/thelib/include/protocols/rtmfp/basertmfpappprotocolhandler.h</itemPath>
@@ -293,6 +303,14 @@
         <itemPath>../../../../sources/thelib/include/protocols/tcpprotocol.h</itemPath>
         <itemPath>../../../../sources/thelib/include/protocols/udpprotocol.h</itemPath>
       </logicalFolder>
+      <logicalFolder name="recording" displayName="recording" projectFiles="true">
+        <logicalFolder name="flv" displayName="flv" projectFiles="true">
+          <itemPath>../../../../sources/thelib/include/recording/flv/outfileflv.h</itemPath>
+        </logicalFolder>
+        <logicalFolder name="ts" displayName="ts" projectFiles="true">
+          <itemPath>../../../../sources/thelib/include/recording/ts/outfilets.h</itemPath>
+        </logicalFolder>
+      </logicalFolder>
       <logicalFolder name="streaming" displayName="streaming" projectFiles="true">
         <logicalFolder name="hls" displayName="hls" projectFiles="true">
           <itemPath>../../../../sources/thelib/include/streaming/hls/baseouthlsstream.h</itemPath>
@@ -322,6 +340,10 @@
         <itemPath>../../../../sources/thelib/include/streaming/streamcapabilities.h</itemPath>
         <itemPath>../../../../sources/thelib/include/streaming/streamsmanager.h</itemPath>
         <itemPath>../../../../sources/thelib/include/streaming/streamstypes.h</itemPath>
+      </logicalFolder>
+      <logicalFolder name="vod" displayName="vod" projectFiles="true">
+        <itemPath>../../../../sources/thelib/include/vod/basevodmanager.h</itemPath>
+        <itemPath>../../../../sources/thelib/include/vod/basevodsource.h</itemPath>
       </logicalFolder>
     </logicalFolder>
     <logicalFolder name="SourceFiles"
@@ -394,6 +416,7 @@
           <itemPath>../../../../sources/thelib/src/mediaformats/mp4/atomtrun.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/mediaformats/mp4/atomudta.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/mediaformats/mp4/atomurl.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/mediaformats/mp4/atomuuid.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/mediaformats/mp4/atomvmhd.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/mediaformats/mp4/atomwave.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/mediaformats/mp4/baseatom.cpp</itemPath>
@@ -475,6 +498,7 @@
           <itemPath>../../../../sources/thelib/src/protocols/http/basehttpappprotocolhandler.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/protocols/http/basehttpprotocol.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/protocols/http/httpauthhelper.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/protocols/http/httpprotocol.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/protocols/http/inboundhttpprotocol.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/protocols/http/outboundhttpprotocol.cpp</itemPath>
         </logicalFolder>
@@ -499,6 +523,13 @@
                        projectFiles="true">
           <itemPath>../../../../sources/thelib/src/protocols/rawhttpstream/baserawhttpstreamappprotocolhandler.cpp</itemPath>
           <itemPath>../../../../sources/thelib/src/protocols/rawhttpstream/inboundrawhttpstreamprotocol.cpp</itemPath>
+        </logicalFolder>
+        <logicalFolder name="rpc" displayName="rpc" projectFiles="true">
+          <itemPath>../../../../sources/thelib/src/protocols/rpc/baserpcappprotocolhandler.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/protocols/rpc/baserpcprotocol.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/protocols/rpc/inboundrpcprotocol.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/protocols/rpc/outboundrpcprotocol.cpp</itemPath>
+          <itemPath>../../../../sources/thelib/src/protocols/rpc/rpcserializer.cpp</itemPath>
         </logicalFolder>
         <logicalFolder name="rtmfp" displayName="rtmfp" projectFiles="true">
           <itemPath>../../../../sources/thelib/src/protocols/rtmfp/basertmfpappprotocolhandler.cpp</itemPath>
@@ -598,6 +629,14 @@
         <itemPath>../../../../sources/thelib/src/protocols/tcpprotocol.cpp</itemPath>
         <itemPath>../../../../sources/thelib/src/protocols/udpprotocol.cpp</itemPath>
       </logicalFolder>
+      <logicalFolder name="recording" displayName="recording" projectFiles="true">
+        <logicalFolder name="flv" displayName="flv" projectFiles="true">
+          <itemPath>../../../../sources/thelib/src/recording/flv/outfileflv.cpp</itemPath>
+        </logicalFolder>
+        <logicalFolder name="ts" displayName="ts" projectFiles="true">
+          <itemPath>../../../../sources/thelib/src/recording/ts/outfilets.cpp</itemPath>
+        </logicalFolder>
+      </logicalFolder>
       <logicalFolder name="streaming" displayName="streaming" projectFiles="true">
         <logicalFolder name="hls" displayName="hls" projectFiles="true">
           <itemPath>../../../../sources/thelib/src/streaming/hls/baseouthlsstream.cpp</itemPath>
@@ -626,6 +665,9 @@
         <itemPath>../../../../sources/thelib/src/streaming/streamcapabilities.cpp</itemPath>
         <itemPath>../../../../sources/thelib/src/streaming/streamsmanager.cpp</itemPath>
       </logicalFolder>
+      <logicalFolder name="vod" displayName="vod" projectFiles="true">
+        <itemPath>../../../../sources/thelib/src/vod/basevodmanager.cpp</itemPath>
+      </logicalFolder>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -646,6 +688,10 @@
     <Elem>../../../../sources/thelib/src/streaming</Elem>
     <Elem>../../../../sources/thelib/include/mediaformats</Elem>
     <Elem>../../../../sources/thelib/src/mediaformats</Elem>
+    <Elem>../../../../sources/thelib/src/recording</Elem>
+    <Elem>../../../../sources/thelib/include/recording</Elem>
+    <Elem>../../../../sources/thelib/include/vod</Elem>
+    <Elem>../../../../sources/thelib/src/vod</Elem>
   </sourceRootList>
   <projectmakefile>Makefile.nb</projectmakefile>
   <confs>
@@ -678,15 +724,19 @@
             <Elem>HAS_PROTOCOL_EXTERNAL</Elem>
             <Elem>HAS_PROTOCOL_HLS</Elem>
             <Elem>HAS_PROTOCOL_HTTP</Elem>
+            <Elem>HAS_PROTOCOL_HTTP2</Elem>
+            <Elem>HAS_PROTOCOL_HTTP_VER2</Elem>
             <Elem>HAS_PROTOCOL_LIVEFLV</Elem>
             <Elem>HAS_PROTOCOL_MMS</Elem>
             <Elem>HAS_PROTOCOL_RAWHTTPSTREAM</Elem>
+            <Elem>HAS_PROTOCOL_RPC</Elem>
             <Elem>HAS_PROTOCOL_RTMFP</Elem>
             <Elem>HAS_PROTOCOL_RTMP</Elem>
             <Elem>HAS_PROTOCOL_RTP</Elem>
             <Elem>HAS_PROTOCOL_TS</Elem>
             <Elem>HAS_PROTOCOL_VAR</Elem>
             <Elem>HAS_SYSLOG</Elem>
+            <Elem>HAS_VOD_MANAGER</Elem>
             <Elem>LITTLE_ENDIAN_BYTE_ALIGNED</Elem>
             <Elem>NET_KQUEUE</Elem>
             <Elem>OSX</Elem>

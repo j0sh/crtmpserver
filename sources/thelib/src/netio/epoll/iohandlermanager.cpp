@@ -135,8 +135,9 @@ int IOHandlerManager::CreateRawUDPSocket() {
 	if (result >= 0) {
 		_fdStats.RegisterRawUdp();
 	} else {
-		uint32_t err = LASTSOCKETERROR;
-		FATAL("Unable to create raw udp socket. Error code was: %"PRIu32, err);
+		int err = errno;
+		FATAL("Unable to create raw udp socket. Error code was: (%d) %s",
+				err, strerror(err));
 	}
 	return result;
 }
@@ -173,7 +174,7 @@ bool IOHandlerManager::EnableReadData(IOHandler *pIOHandler) {
 	evt.events = EPOLLIN;
 	evt.data.ptr = pIOHandler->GetIOHandlerManagerToken();
 	if (epoll_ctl(_eq, EPOLL_CTL_ADD, pIOHandler->GetInboundFd(), &evt) != 0) {
-		int32_t err = errno;
+		int err = errno;
 		FATAL("Unable to enable read data: (%d) %s", err, strerror(err));
 		return false;
 	}
@@ -187,7 +188,7 @@ bool IOHandlerManager::DisableReadData(IOHandler *pIOHandler, bool ignoreError) 
 	evt.data.ptr = pIOHandler->GetIOHandlerManagerToken();
 	if (epoll_ctl(_eq, EPOLL_CTL_DEL, pIOHandler->GetInboundFd(), &evt) != 0) {
 		if (!ignoreError) {
-			int32_t err = errno;
+			int err = errno;
 			FATAL("Unable to disable read data: (%d) %s", err, strerror(err));
 			return false;
 		}
@@ -209,7 +210,7 @@ bool IOHandlerManager::EnableWriteData(IOHandler *pIOHandler) {
 		operation = EPOLL_CTL_MOD;
 
 	if (epoll_ctl(_eq, operation, pIOHandler->GetOutboundFd(), &evt) != 0) {
-		int32_t err = errno;
+		int err = errno;
 		FATAL("Unable to enable read data: (%d) %s", err, strerror(err));
 		return false;
 	}
@@ -224,7 +225,7 @@ bool IOHandlerManager::DisableWriteData(IOHandler *pIOHandler, bool ignoreError)
 	evt.data.ptr = pIOHandler->GetIOHandlerManagerToken();
 	if (epoll_ctl(_eq, EPOLL_CTL_MOD, pIOHandler->GetOutboundFd(), &evt) != 0) {
 		if (!ignoreError) {
-			int32_t err = errno;
+			int err = errno;
 			FATAL("Unable to disable write data: (%d) %s", err, strerror(err));
 			return false;
 		}
@@ -238,7 +239,7 @@ bool IOHandlerManager::EnableAcceptConnections(IOHandler *pIOHandler) {
 	evt.events = EPOLLIN;
 	evt.data.ptr = pIOHandler->GetIOHandlerManagerToken();
 	if (epoll_ctl(_eq, EPOLL_CTL_ADD, pIOHandler->GetInboundFd(), &evt) != 0) {
-		int32_t err = errno;
+		int err = errno;
 		if (err == EEXIST)
 			return true;
 		FATAL("Unable to enable accept connections: (%d) %s", err, strerror(err));
@@ -254,7 +255,7 @@ bool IOHandlerManager::DisableAcceptConnections(IOHandler *pIOHandler, bool igno
 	evt.data.ptr = pIOHandler->GetIOHandlerManagerToken();
 	if (epoll_ctl(_eq, EPOLL_CTL_DEL, pIOHandler->GetInboundFd(), &evt) != 0) {
 		if (!ignoreError) {
-			int32_t err = errno;
+			int err = errno;
 			FATAL("Unable to disable accept connections: (%d) %s", err, strerror(err));
 			return false;
 		}
@@ -273,7 +274,7 @@ bool IOHandlerManager::EnableTimer(IOHandler *pIOHandler, uint32_t seconds) {
 	tmp.it_value.tv_sec = seconds;
 	if (timerfd_settime(pIOHandler->GetInboundFd(), 0, &tmp, &dummy) != 0) {
 		int err = errno;
-		FATAL("timerfd_settime failed with error %d (%s)", err, strerror(err));
+		FATAL("timerfd_settime failed with error (%d) %s", err, strerror(err));
 		return false;
 	}
 	struct epoll_event evt = {0,
@@ -281,7 +282,7 @@ bool IOHandlerManager::EnableTimer(IOHandler *pIOHandler, uint32_t seconds) {
 	evt.events = EPOLLIN;
 	evt.data.ptr = pIOHandler->GetIOHandlerManagerToken();
 	if (epoll_ctl(_eq, EPOLL_CTL_ADD, pIOHandler->GetInboundFd(), &evt) != 0) {
-		int32_t err = errno;
+		int err = errno;
 		FATAL("Unable to enable read data: (%d) %s", err, strerror(err));
 		return false;
 	}
@@ -308,7 +309,7 @@ bool IOHandlerManager::DisableTimer(IOHandler *pIOHandler, bool ignoreError) {
 	evt.data.ptr = pIOHandler->GetIOHandlerManagerToken();
 	if (epoll_ctl(_eq, EPOLL_CTL_DEL, pIOHandler->GetInboundFd(), &evt) != 0) {
 		if (!ignoreError) {
-			int32_t err = errno;
+			int err = errno;
 			FATAL("Unable to disable read data: (%d) %s", err, strerror(err));
 			return false;
 		}
@@ -344,7 +345,7 @@ bool IOHandlerManager::Pulse() {
 	int32_t eventsCount = 0;
 #ifdef HAS_EPOLL_TIMERS
 	if ((eventsCount = epoll_wait(_eq, _query, EPOLL_QUERY_SIZE, -1)) < 0) {
-		int32_t err = errno;
+		int err = errno;
 		if (err == EINTR)
 			return true;
 		FATAL("Unable to execute epoll_wait: (%d) %s", err, strerror(err));
@@ -352,7 +353,7 @@ bool IOHandlerManager::Pulse() {
 	}
 #else /* HAS_EPOLL_TIMERS */
 	if ((eventsCount = epoll_wait(_eq, _query, EPOLL_QUERY_SIZE, 1000)) < 0) {
-		int32_t err = errno;
+		int err = errno;
 		if (err == EINTR)
 			return true;
 		FATAL("Unable to execute epoll_wait: (%d) %s", err, strerror(err));

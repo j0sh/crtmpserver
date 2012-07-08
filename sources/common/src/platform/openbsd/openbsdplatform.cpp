@@ -105,14 +105,14 @@ string tagToString(uint64_t tag) {
 bool setFdNonBlock(SOCKET fd) {
 	int32_t arg;
 	if ((arg = fcntl(fd, F_GETFL, NULL)) < 0) {
-		int32_t err = errno;
-		FATAL("Unable to get fd flags: %d,%s", err, strerror(err));
+		int err = errno;
+		FATAL("Unable to get fd flags: (%d) %s", err, strerror(err));
 		return false;
 	}
 	arg |= O_NONBLOCK;
 	if (fcntl(fd, F_SETFL, arg) < 0) {
-		int32_t err = errno;
-		FATAL("Unable to set fd flags: %d,%s", err, strerror(err));
+		int err = errno;
+		FATAL("Unable to set fd flags: (%d) %s", err, strerror(err));
 		return false;
 	}
 
@@ -170,7 +170,7 @@ bool setFdTTL(SOCKET fd, uint8_t ttl) {
 	int temp = ttl;
 	if (setsockopt(fd, IPPROTO_IP, IP_TTL, &temp, sizeof (temp)) != 0) {
 		int err = errno;
-		WARN("Unable to set IP_TTL: %"PRIu8"; error was %"PRId32" %s", ttl, err, strerror(err));
+		WARN("Unable to set IP_TTL: %"PRIu8"; error was (%d) %s", ttl, err, strerror(err));
 	}
 	return true;
 }
@@ -179,7 +179,7 @@ bool setFdMulticastTTL(SOCKET fd, uint8_t ttl) {
 	int temp = ttl;
 	if (setsockopt(fd, IPPROTO_IP, IP_MULTICAST_TTL, &temp, sizeof (temp)) != 0) {
 		int err = errno;
-		WARN("Unable to set IP_MULTICAST_TTL: %"PRIu8"; error was %"PRId32" %s", ttl, err, strerror(err));
+		WARN("Unable to set IP_MULTICAST_TTL: %"PRIu8"; error was (%d) %s", ttl, err, strerror(err));
 	}
 	return true;
 }
@@ -188,7 +188,7 @@ bool setFdTOS(SOCKET fd, uint8_t tos) {
 	int temp = tos;
 	if (setsockopt(fd, IPPROTO_IP, IP_TOS, &temp, sizeof (temp)) != 0) {
 		int err = errno;
-		WARN("Unable to set IP_TOS: %"PRIu8"; error was %"PRId32" %s", tos, err, strerror(err));
+		WARN("Unable to set IP_TOS: %"PRIu8"; error was (%d) %s", tos, err, strerror(err));
 	}
 	return true;
 }
@@ -416,7 +416,7 @@ bool listFolder(string path, vector<string> &result, bool normalizeAllPaths,
 	pDir = opendir(STR(path));
 	if (pDir == NULL) {
 		int err = errno;
-		FATAL("Unable to open folder: %s %d %s", STR(path), err, strerror(err));
+		FATAL("Unable to open folder: %s (%d) %s", STR(path), err, strerror(err));
 		return false;
 	}
 
@@ -491,6 +491,26 @@ void installQuitSignal(SignalFnc pQuitSignalFnc) {
 
 void installConfRereadSignal(SignalFnc pConfRereadSignalFnc) {
 	installSignal(SIGHUP, pConfRereadSignalFnc);
+}
+
+static time_t _gUTCOffset = -1;
+
+void computeGMTTimeOffset() {
+	time_t now = time(NULL);
+	struct tm *pTemp = localtime(&now);
+	_gUTCOffset = pTemp->tm_gmtoff;
+}
+
+time_t getlocaltime() {
+	if (_gUTCOffset == -1)
+		computeGMTTimeOffset();
+	return getutctime() + _gUTCOffset;
+}
+
+time_t gettimeoffset() {
+	if (_gUTCOffset == -1)
+		computeGMTTimeOffset();
+	return _gUTCOffset;
 }
 
 #endif /* OPENBSD */

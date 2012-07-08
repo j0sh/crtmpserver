@@ -108,7 +108,7 @@ public:
 		if (fd < 0) {
 			T::SignalProtocolCreated(NULL, customParameters);
 			int err = errno;
-			FATAL("Unable to create fd: %s(%d)", strerror(err), err);
+			FATAL("Unable to create fd: (%d) %s", err, strerror(err));
 			return 0;
 		}
 
@@ -150,7 +150,7 @@ public:
 		if (connect(_inboundFd, (sockaddr *) & address, sizeof (address)) != 0) {
 			int err = errno;
 			if (err != EINPROGRESS) {
-				FATAL("Unable to connect to %s:%hu (%d) (%s)", STR(_ip), _port,
+				FATAL("Unable to connect to %s:%hu (%d) %s", STR(_ip), _port,
 						err, strerror(err));
 				_closeSocket = true;
 				return false;

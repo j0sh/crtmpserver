@@ -72,6 +72,8 @@
           <itemPath>../../../../sources/common/include/utils/misc/crypto.h</itemPath>
           <itemPath>../../../../sources/common/include/utils/misc/dhgroups.h</itemPath>
           <itemPath>../../../../sources/common/include/utils/misc/file.h</itemPath>
+          <itemPath>../../../../sources/common/include/utils/misc/license.h</itemPath>
+          <itemPath>../../../../sources/common/include/utils/misc/licensehw.h</itemPath>
           <itemPath>../../../../sources/common/include/utils/misc/linkedlist.h</itemPath>
           <itemPath>../../../../sources/common/include/utils/misc/misc.h</itemPath>
           <itemPath>../../../../sources/common/include/utils/misc/mmapfile.h</itemPath>
@@ -94,28 +96,36 @@
       <logicalFolder name="platform" displayName="platform" projectFiles="true">
         <logicalFolder name="android" displayName="android" projectFiles="true">
           <itemPath>../../../../sources/common/src/platform/android/androidplatform.cpp</itemPath>
+          <itemPath>../../../../sources/common/src/platform/android/platformlicenseandroid.cpp</itemPath>
           <itemPath>../../../../sources/common/src/platform/android/timegm.cpp</itemPath>
         </logicalFolder>
         <logicalFolder name="dfreebsd" displayName="dfreebsd" projectFiles="true">
           <itemPath>../../../../sources/common/src/platform/dfreebsd/dfreebsdplatform.cpp</itemPath>
+          <itemPath>../../../../sources/common/src/platform/dfreebsd/platformlicensedfreebsd.cpp</itemPath>
         </logicalFolder>
         <logicalFolder name="freebsd" displayName="freebsd" projectFiles="true">
           <itemPath>../../../../sources/common/src/platform/freebsd/freebsdplatform.cpp</itemPath>
+          <itemPath>../../../../sources/common/src/platform/freebsd/platformlicensefreebsd.cpp</itemPath>
         </logicalFolder>
         <logicalFolder name="linux" displayName="linux" projectFiles="true">
           <itemPath>../../../../sources/common/src/platform/linux/linuxplatform.cpp</itemPath>
+          <itemPath>../../../../sources/common/src/platform/linux/platformlicenselinux.cpp</itemPath>
         </logicalFolder>
         <logicalFolder name="openbsd" displayName="openbsd" projectFiles="true">
           <itemPath>../../../../sources/common/src/platform/openbsd/openbsdplatform.cpp</itemPath>
+          <itemPath>../../../../sources/common/src/platform/openbsd/platformlicenseopenbsd.cpp</itemPath>
         </logicalFolder>
         <logicalFolder name="osx" displayName="osx" projectFiles="true">
           <itemPath>../../../../sources/common/src/platform/osx/osxplatform.cpp</itemPath>
+          <itemPath>../../../../sources/common/src/platform/osx/platformlicenseosx.cpp</itemPath>
         </logicalFolder>
         <logicalFolder name="solaris" displayName="solaris" projectFiles="true">
+          <itemPath>../../../../sources/common/src/platform/solaris/platformlicensesolaris.cpp</itemPath>
           <itemPath>../../../../sources/common/src/platform/solaris/solarisplatform.cpp</itemPath>
           <itemPath>../../../../sources/common/src/platform/solaris/timegm.cpp</itemPath>
         </logicalFolder>
         <logicalFolder name="windows" displayName="windows" projectFiles="true">
+          <itemPath>../../../../sources/common/src/platform/windows/platformlicensewin32.cpp</itemPath>
           <itemPath>../../../../sources/common/src/platform/windows/strncasecmp.cpp</itemPath>
           <itemPath>../../../../sources/common/src/platform/windows/strptime.cpp</itemPath>
           <itemPath>../../../../sources/common/src/platform/windows/timegm.cpp</itemPath>
@@ -146,6 +156,8 @@
         <logicalFolder name="misc" displayName="misc" projectFiles="true">
           <itemPath>../../../../sources/common/src/utils/misc/crypto.cpp</itemPath>
           <itemPath>../../../../sources/common/src/utils/misc/file.cpp</itemPath>
+          <itemPath>../../../../sources/common/src/utils/misc/license.cpp</itemPath>
+          <itemPath>../../../../sources/common/src/utils/misc/licensehw.cpp</itemPath>
           <itemPath>../../../../sources/common/src/utils/misc/mmapfile.cpp</itemPath>
           <itemPath>../../../../sources/common/src/utils/misc/timersmanager.cpp</itemPath>
           <itemPath>../../../../sources/common/src/utils/misc/uri.cpp</itemPath>
@@ -169,6 +181,7 @@
     <Elem>../../../../sources/common/include/utils</Elem>
     <Elem>../../../../sources/common/src/platform</Elem>
     <Elem>../../../../sources/common/src/utils</Elem>
+    <Elem>../../../../sources/common/include</Elem>
   </sourceRootList>
   <projectmakefile>Makefile.nb</projectmakefile>
   <confs>
@@ -185,7 +198,9 @@
             <pElem>../../../../3rdparty/tinyxml</pElem>
           </incDir>
           <preprocessorList>
+            <Elem>ASM_IOBUFFER</Elem>
             <Elem>DEBUG_MEM_POOL</Elem>
+            <Elem>HAS_LICENSE</Elem>
             <Elem>HAS_LUA</Elem>
             <Elem>HAS_SYSLOG</Elem>
             <Elem>LITTLE_ENDIAN_SHORT_ALIGNED</Elem>

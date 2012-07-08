@@ -40,6 +40,7 @@ IOBuffer::IOBuffer() {
 	_consumed = 0;
 	_minChunkSize = 4096;
 	_dummy = sizeof (sockaddr_in);
+	_sendLimit = 0xffffffff;
 	SANITY_INPUT_BUFFER;
 }
 
@@ -74,9 +75,9 @@ bool IOBuffer::ReadFromPipe(int32_t fd, uint32_t expected, int32_t &recvAmount) 
 		SANITY_INPUT_BUFFER;
 		return true;
 	} else {
-		int32_t err = errno;
+		int err = errno;
 		if (err != EINPROGRESS) {
-			FATAL("Unable to read from pipe: %d %s", err, strerror(err));
+			FATAL("Unable to read from pipe: (%d) %s", err, strerror(err));
 			SANITY_INPUT_BUFFER;
 			return false;
 		}
@@ -125,15 +126,15 @@ bool IOBuffer::ReadFromUDPFd(int32_t fd, int32_t &recvAmount, sockaddr_in &peerA
 		SANITY_INPUT_BUFFER;
 		return true;
 	} else {
+		int err = LASTSOCKETERROR;
 #ifdef WIN32
-		uint32_t err = LASTSOCKETERROR;
 		if (err == SOCKERROR_RECV_CONN_RESET) {
 			WARN("Windows is stupid enough to issue a CONNRESET on a UDP socket. See http://support.microsoft.com/?kbid=263823 for details");
 			SANITY_INPUT_BUFFER;
 			return true;
 		}
-#endif
-		FATAL("Unable to read data from UDP socket. Error was: %"PRIu32, LASTSOCKETERROR);
+#endif /* WIN32 */
+		FATAL("Unable to read data from UDP socket. Error was: %d", err);
 		SANITY_INPUT_BUFFER;
 		return false;
 	}
@@ -284,6 +285,9 @@ void IOBuffer::ReadFromRepeat(uint8_t byte, uint32_t size) {
 bool IOBuffer::WriteToTCPFd(int32_t fd, uint32_t size, int32_t &sentAmount) {
 	SANITY_INPUT_BUFFER;
 	bool result = true;
+	if (_sendLimit != 0xffffffff) {
+		size = size > _sendLimit ? _sendLimit : size;
+	}
 	sentAmount = send(fd, (char *) (_pBuffer + _consumed),
 			//_published - _consumed,
 			size > _published - _consumed ? _published - _consumed : size,
@@ -292,13 +296,13 @@ bool IOBuffer::WriteToTCPFd(int32_t fd, uint32_t size, int32_t &sentAmount) {
 
 	if (sentAmount < 0) {
 		if (err != SOCKERROR_SEND_IN_PROGRESS) {
-			FATAL("Unable to send %u bytes of data data. Size advertised by network layer was %u [%d: %s]",
-					_published - _consumed, size, err, strerror(err));
-			FATAL("Permanent error!");
+			FATAL("Unable to send %"PRIu32" bytes of data data. Size advertised by network layer was %"PRIu32". Permanent error: %d",
+					_published - _consumed, size, err);
 			result = false;
 		}
 	} else {
 		_consumed += sentAmount;
+		_sendLimit -= sentAmount;
 	}
 	if (result)
 		Recycle();
@@ -313,12 +317,11 @@ bool IOBuffer::WriteToStdio(int32_t fd, uint32_t size, int32_t &sentAmount) {
 	sentAmount = WRITE_FD(fd, (char *) (_pBuffer + _consumed),
 			_published - _consumed);
 	//size > _published - _consumed ? _published - _consumed : size,
-	int err = LASTSOCKETERROR;
+	int err = errno;
 
 	if (sentAmount < 0) {
-		FATAL("Unable to send %u bytes of data data. Size advertised by network layer was %u [%d: %s]",
+		FATAL("Unable to send %"PRIu32" bytes of data data. Size advertised by network layer was %"PRIu32". Permanent error: (%d) %s",
 				_published - _consumed, size, err, strerror(err));
-		FATAL("Permanent error!");
 		result = false;
 	} else {
 		_consumed += sentAmount;
@@ -439,6 +442,10 @@ string IOBuffer::ToString(uint32_t startIndex, uint32_t limit) {
 	ss << "Size: " << _size << endl;
 	ss << "Published: " << _published << endl;
 	ss << "Consumed: " << _consumed << endl;
+	if (_sendLimit == 0xffffffff)
+		ss << "Send limit: unlimited" << endl;
+	else
+		ss << "Send limit: " << _sendLimit << endl;
 	ss << format("Address: %p", _pBuffer) << endl;
 	if (limit != 0) {
 		ss << format("Limited to %u bytes", limit) << endl;

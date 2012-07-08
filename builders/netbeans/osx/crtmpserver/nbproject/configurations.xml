@@ -4,6 +4,7 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
+      <itemPath>../../../../sources/crtmpserver/include/jsonparser.h</itemPath>
     </logicalFolder>
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
@@ -16,6 +17,15 @@
       <itemPath>Makefile.nb</itemPath>
     </logicalFolder>
   </logicalFolder>
+  <sourceRootList>
+    <Elem>../../../../sources/crtmpserver/include</Elem>
+    <Elem>../../../../sources/crtmpserver/src</Elem>
+    <Elem>../../../cmake</Elem>
+    <Elem>../../../../appscaffold</Elem>
+    <Elem>../../../../docs</Elem>
+    <Elem>../../../../constants</Elem>
+    <Elem>../../../make</Elem>
+  </sourceRootList>
   <projectmakefile>Makefile.nb</projectmakefile>
   <confs>
     <conf name="Debug" type="1">
@@ -29,8 +39,14 @@
             <pElem>/opt/local/include</pElem>
             <pElem>../../../../sources/common/include</pElem>
             <pElem>../../../../sources/thelib/include</pElem>
+            <pElem>../../../../sources/crtmpserver/include</pElem>
           </incDir>
           <preprocessorList>
+            <Elem>COMPILE_STATIC</Elem>
+            <Elem>HAS_APP_AGX</Elem>
+            <Elem>HAS_APP_HTTPTESTS</Elem>
+            <Elem>HAS_APP_VBRICK</Elem>
+            <Elem>HAS_LICENSE</Elem>
             <Elem>NET_KQUEUE</Elem>
             <Elem>OSX</Elem>
           </preprocessorList>

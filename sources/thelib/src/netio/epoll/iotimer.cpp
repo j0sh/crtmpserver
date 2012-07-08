@@ -35,7 +35,7 @@ IOTimer::IOTimer()
 	_inboundFd = _outboundFd = timerfd_create(CLOCK_MONOTONIC, TFD_NONBLOCK);
 	if (_inboundFd < 0) {
 		int err = errno;
-		ASSERT("timerfd_create failed with error %d (%s)", err, strerror(err));
+		ASSERT("timerfd_create failed with error (%d) %s", err, strerror(err));
 	}
 #else /* HAS_EPOLL_TIMERS */
 	_inboundFd = _outboundFd = ++_idGenerator;

@@ -69,6 +69,7 @@ bool IgnoredAtom::Read() {
 			&& (_type != A_COLR)
 			&& (_type != A_CSLG)
 			&& (_type != A_____)
+			&& (_type != A_UUID)
 			);
 }
 

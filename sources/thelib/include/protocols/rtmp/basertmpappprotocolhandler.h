@@ -186,6 +186,8 @@ public:
 			Variant &request);
 	virtual bool ProcessInvokeOnBWDone(BaseRTMPProtocol *pFrom,
 			Variant &request);
+	virtual bool ProcessInvokeOnFCPublish(BaseRTMPProtocol *pFrom,
+			Variant &request);
 	virtual bool ProcessInvokeCheckBandwidth(BaseRTMPProtocol *pFrom,
 			Variant &request);
 	virtual bool ProcessInvokeGeneric(BaseRTMPProtocol *pFrom,
@@ -204,6 +206,10 @@ public:
 	virtual bool ProcessInvokeResult(BaseRTMPProtocol *pFrom,
 			Variant &request, Variant &response);
 	virtual bool ProcessInvokeConnectResult(BaseRTMPProtocol *pFrom,
+			Variant &request, Variant &response);
+	virtual bool ProcessInvokeReleaseStreamResult(BaseRTMPProtocol *pFrom,
+			Variant &request, Variant &response);
+	virtual bool ProcessInvokeFCPublishStreamResult(BaseRTMPProtocol *pFrom,
 			Variant &request, Variant &response);
 	virtual bool ProcessInvokeCreateStreamResult(BaseRTMPProtocol *pFrom,
 			Variant &request, Variant &response);

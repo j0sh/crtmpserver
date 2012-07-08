@@ -174,8 +174,9 @@ int IOHandlerManager::CreateRawUDPSocket() {
 	if (result >= 0) {
 		_fdStats.RegisterRawUdp();
 	} else {
-		uint32_t err = LASTSOCKETERROR;
-		FATAL("Unable to create raw udp socket. Error code was: %"PRIu32, err);
+		int err = errno;
+		FATAL("Unable to create raw udp socket. Error code was: (%d) %s",
+				err, strerror(err));
 	}
 	return result;
 }
@@ -302,10 +303,10 @@ bool IOHandlerManager::Pulse() {
 #endif
 
 	if (result < 0) {
-		int32_t error = errno;
-		if (error == EINTR)
+		int err = errno;
+		if (err == EINTR)
 			return true;
-		FATAL("kevent failed: %d = `%s`", error, strerror(error));
+		FATAL("kevent failed: (%d) %s", err, strerror(err));
 		return false;
 	}
 	for (int32_t i = 0; i < result; i++) {

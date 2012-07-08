@@ -131,7 +131,7 @@ UDPCarrier* UDPCarrier::Create(string bindIp, uint16_t bindPort,
 	int sock = socket(AF_INET, SOCK_DGRAM, 0);
 	if (sock < 0) {
 		int err = LASTSOCKETERROR;
-		FATAL("Unable to create socket: %s(%d)", strerror(err), err);
+		FATAL("Unable to create socket: %d", err);
 		return NULL;
 	}
 
@@ -168,7 +168,7 @@ UDPCarrier* UDPCarrier::Create(string bindIp, uint16_t bindPort,
 			int activateBroadcast = 1;
 			if (setsockopt(sock, SOL_SOCKET, SO_BROADCAST, &activateBroadcast,
 					sizeof (activateBroadcast)) != 0) {
-				int err = errno;
+				int err = LASTSOCKETERROR;
 				FATAL("Unable to activate SO_BROADCAST on the socket: %d", err);
 				return NULL;
 			}
@@ -189,9 +189,9 @@ UDPCarrier* UDPCarrier::Create(string bindIp, uint16_t bindPort,
 			}
 		}
 		if (bind(sock, (sockaddr *) & bindAddress, sizeof (sockaddr)) != 0) {
-			int error = LASTSOCKETERROR;
-			FATAL("Unable to bind on address: udp://%s:%"PRIu16"; Error was: %s (%"PRId32")",
-					STR(bindIp), bindPort, strerror(error), error);
+			int err = LASTSOCKETERROR;
+			FATAL("Unable to bind on address: udp://%s:%"PRIu16"; Error was: %d",
+					STR(bindIp), bindPort, err);
 			CLOSE_SOCKET(sock);
 			return NULL;
 		}

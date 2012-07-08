@@ -36,8 +36,10 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 OBJECTFILES= \
 	${OBJECTDIR}/_ext/674965218/mmapfile.o \
 	${OBJECTDIR}/_ext/1980509653/timegm.o \
+	${OBJECTDIR}/_ext/1145168487/platformlicensesolaris.o \
 	${OBJECTDIR}/_ext/1874657879/syslogloglocation.o \
 	${OBJECTDIR}/_ext/674965218/variant.o \
+	${OBJECTDIR}/_ext/674965218/licensehw.o \
 	${OBJECTDIR}/_ext/1874657879/fileloglocation.o \
 	${OBJECTDIR}/_ext/1874657879/baseloglocation.o \
 	${OBJECTDIR}/_ext/420206423/tinyxml.o \
@@ -53,9 +55,13 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/1874657879/logeventfactory.o \
 	${OBJECTDIR}/_ext/230374975/win32platform.o \
 	${OBJECTDIR}/_ext/1912657765/openbsdplatform.o \
-	${OBJECTDIR}/_ext/674965218/file.o \
-	${OBJECTDIR}/_ext/1145168487/solarisplatform.o \
+	${OBJECTDIR}/_ext/1912657765/platformlicenseopenbsd.o \
+	${OBJECTDIR}/_ext/674965218/license.o \
 	${OBJECTDIR}/_ext/420206423/tinyxmlparser.o \
+	${OBJECTDIR}/_ext/674965218/file.o \
+	${OBJECTDIR}/_ext/230374975/platformlicensewin32.o \
+	${OBJECTDIR}/_ext/1145168487/solarisplatform.o \
+	${OBJECTDIR}/_ext/1980509653/platformlicenseandroid.o \
 	${OBJECTDIR}/_ext/1874657879/consoleloglocation.o \
 	${OBJECTDIR}/_ext/872974544/osxplatform.o \
 	${OBJECTDIR}/_ext/674965218/timersmanager.o \
@@ -64,10 +70,14 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/714509122/luautils.o \
 	${OBJECTDIR}/_ext/674965218/uri.o \
 	${OBJECTDIR}/_ext/230374975/strncasecmp.o \
+	${OBJECTDIR}/_ext/872974544/platformlicenseosx.o \
 	${OBJECTDIR}/_ext/1998150091/baseplatform.o \
 	${OBJECTDIR}/_ext/1267630661/mempool.o \
 	${OBJECTDIR}/_ext/1406839728/linuxplatform.o \
-	${OBJECTDIR}/_ext/1980509653/androidplatform.o
+	${OBJECTDIR}/_ext/1722917885/platformlicensefreebsd.o \
+	${OBJECTDIR}/_ext/1980509653/androidplatform.o \
+	${OBJECTDIR}/_ext/1406839728/platformlicenselinux.o \
+	${OBJECTDIR}/_ext/1545610023/platformlicensedfreebsd.o
 
 
 # C Compiler Flags
@@ -104,6 +114,11 @@ ${OBJECTDIR}/_ext/1980509653/timegm.o: ../../../../sources/common/src/platform/a
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -DDEBUG_MEM_POOL -DHAS_LUA -DLITTLE_ENDIAN_SHORT_ALIGNED -DOSX -DUSE_MEM_POOL -I/opt/local/include -I../../../../sources/common/include -I/opt/local/include/libxml2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1980509653/timegm.o ../../../../sources/common/src/platform/android/timegm.cpp
 
+${OBJECTDIR}/_ext/1145168487/platformlicensesolaris.o: ../../../../sources/common/src/platform/solaris/platformlicensesolaris.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1145168487
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -DDEBUG_MEM_POOL -DHAS_LUA -DLITTLE_ENDIAN_SHORT_ALIGNED -DOSX -DUSE_MEM_POOL -I/opt/local/include -I../../../../sources/common/include -I/opt/local/include/libxml2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1145168487/platformlicensesolaris.o ../../../../sources/common/src/platform/solaris/platformlicensesolaris.cpp
+
 ${OBJECTDIR}/_ext/1874657879/syslogloglocation.o: ../../../../sources/common/src/utils/logging/syslogloglocation.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1874657879
 	${RM} $@.d
@@ -113,6 +128,11 @@ ${OBJECTDIR}/_ext/674965218/variant.o: ../../../../sources/common/src/utils/misc
 	${MKDIR} -p ${OBJECTDIR}/_ext/674965218
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -DDEBUG_MEM_POOL -DHAS_LUA -DLITTLE_ENDIAN_SHORT_ALIGNED -DOSX -DUSE_MEM_POOL -I/opt/local/include -I../../../../sources/common/include -I/opt/local/include/libxml2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/674965218/variant.o ../../../../sources/common/src/utils/misc/variant.cpp
+
+${OBJECTDIR}/_ext/674965218/licensehw.o: ../../../../sources/common/src/utils/misc/licensehw.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/674965218
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -DDEBUG_MEM_POOL -DHAS_LUA -DLITTLE_ENDIAN_SHORT_ALIGNED -DOSX -DUSE_MEM_POOL -I/opt/local/include -I../../../../sources/common/include -I/opt/local/include/libxml2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/674965218/licensehw.o ../../../../sources/common/src/utils/misc/licensehw.cpp
 
 ${OBJECTDIR}/_ext/1874657879/fileloglocation.o: ../../../../sources/common/src/utils/logging/fileloglocation.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1874657879
@@ -189,20 +209,40 @@ ${OBJECTDIR}/_ext/1912657765/openbsdplatform.o: ../../../../sources/common/src/p
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -DDEBUG_MEM_POOL -DHAS_LUA -DLITTLE_ENDIAN_SHORT_ALIGNED -DOSX -DUSE_MEM_POOL -I/opt/local/include -I../../../../sources/common/include -I/opt/local/include/libxml2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1912657765/openbsdplatform.o ../../../../sources/common/src/platform/openbsd/openbsdplatform.cpp
 
+${OBJECTDIR}/_ext/1912657765/platformlicenseopenbsd.o: ../../../../sources/common/src/platform/openbsd/platformlicenseopenbsd.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1912657765
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -DDEBUG_MEM_POOL -DHAS_LUA -DLITTLE_ENDIAN_SHORT_ALIGNED -DOSX -DUSE_MEM_POOL -I/opt/local/include -I../../../../sources/common/include -I/opt/local/include/libxml2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1912657765/platformlicenseopenbsd.o ../../../../sources/common/src/platform/openbsd/platformlicenseopenbsd.cpp
+
+${OBJECTDIR}/_ext/674965218/license.o: ../../../../sources/common/src/utils/misc/license.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/674965218
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -DDEBUG_MEM_POOL -DHAS_LUA -DLITTLE_ENDIAN_SHORT_ALIGNED -DOSX -DUSE_MEM_POOL -I/opt/local/include -I../../../../sources/common/include -I/opt/local/include/libxml2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/674965218/license.o ../../../../sources/common/src/utils/misc/license.cpp
+
+${OBJECTDIR}/_ext/420206423/tinyxmlparser.o: ../../../../3rdparty/tinyxml/tinyxmlparser.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/420206423
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -DDEBUG_MEM_POOL -DHAS_LUA -DLITTLE_ENDIAN_SHORT_ALIGNED -DOSX -DUSE_MEM_POOL -I/opt/local/include -I../../../../sources/common/include -I/opt/local/include/libxml2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/420206423/tinyxmlparser.o ../../../../3rdparty/tinyxml/tinyxmlparser.cpp
+
 ${OBJECTDIR}/_ext/674965218/file.o: ../../../../sources/common/src/utils/misc/file.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/674965218
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -DDEBUG_MEM_POOL -DHAS_LUA -DLITTLE_ENDIAN_SHORT_ALIGNED -DOSX -DUSE_MEM_POOL -I/opt/local/include -I../../../../sources/common/include -I/opt/local/include/libxml2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/674965218/file.o ../../../../sources/common/src/utils/misc/file.cpp
+
+${OBJECTDIR}/_ext/230374975/platformlicensewin32.o: ../../../../sources/common/src/platform/windows/platformlicensewin32.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/230374975
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -DDEBUG_MEM_POOL -DHAS_LUA -DLITTLE_ENDIAN_SHORT_ALIGNED -DOSX -DUSE_MEM_POOL -I/opt/local/include -I../../../../sources/common/include -I/opt/local/include/libxml2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/230374975/platformlicensewin32.o ../../../../sources/common/src/platform/windows/platformlicensewin32.cpp
 
 ${OBJECTDIR}/_ext/1145168487/solarisplatform.o: ../../../../sources/common/src/platform/solaris/solarisplatform.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1145168487
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -DDEBUG_MEM_POOL -DHAS_LUA -DLITTLE_ENDIAN_SHORT_ALIGNED -DOSX -DUSE_MEM_POOL -I/opt/local/include -I../../../../sources/common/include -I/opt/local/include/libxml2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1145168487/solarisplatform.o ../../../../sources/common/src/platform/solaris/solarisplatform.cpp
 
-${OBJECTDIR}/_ext/420206423/tinyxmlparser.o: ../../../../3rdparty/tinyxml/tinyxmlparser.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/420206423
+${OBJECTDIR}/_ext/1980509653/platformlicenseandroid.o: ../../../../sources/common/src/platform/android/platformlicenseandroid.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1980509653
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -DDEBUG_MEM_POOL -DHAS_LUA -DLITTLE_ENDIAN_SHORT_ALIGNED -DOSX -DUSE_MEM_POOL -I/opt/local/include -I../../../../sources/common/include -I/opt/local/include/libxml2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/420206423/tinyxmlparser.o ../../../../3rdparty/tinyxml/tinyxmlparser.cpp
+	$(COMPILE.cc) -O2 -DDEBUG_MEM_POOL -DHAS_LUA -DLITTLE_ENDIAN_SHORT_ALIGNED -DOSX -DUSE_MEM_POOL -I/opt/local/include -I../../../../sources/common/include -I/opt/local/include/libxml2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1980509653/platformlicenseandroid.o ../../../../sources/common/src/platform/android/platformlicenseandroid.cpp
 
 ${OBJECTDIR}/_ext/1874657879/consoleloglocation.o: ../../../../sources/common/src/utils/logging/consoleloglocation.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1874657879
@@ -244,6 +284,11 @@ ${OBJECTDIR}/_ext/230374975/strncasecmp.o: ../../../../sources/common/src/platfo
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -DDEBUG_MEM_POOL -DHAS_LUA -DLITTLE_ENDIAN_SHORT_ALIGNED -DOSX -DUSE_MEM_POOL -I/opt/local/include -I../../../../sources/common/include -I/opt/local/include/libxml2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/230374975/strncasecmp.o ../../../../sources/common/src/platform/windows/strncasecmp.cpp
 
+${OBJECTDIR}/_ext/872974544/platformlicenseosx.o: ../../../../sources/common/src/platform/osx/platformlicenseosx.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/872974544
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -DDEBUG_MEM_POOL -DHAS_LUA -DLITTLE_ENDIAN_SHORT_ALIGNED -DOSX -DUSE_MEM_POOL -I/opt/local/include -I../../../../sources/common/include -I/opt/local/include/libxml2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/872974544/platformlicenseosx.o ../../../../sources/common/src/platform/osx/platformlicenseosx.cpp
+
 ${OBJECTDIR}/_ext/1998150091/baseplatform.o: ../../../../sources/common/src/platform/baseplatform.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1998150091
 	${RM} $@.d
@@ -259,10 +304,25 @@ ${OBJECTDIR}/_ext/1406839728/linuxplatform.o: ../../../../sources/common/src/pla
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -DDEBUG_MEM_POOL -DHAS_LUA -DLITTLE_ENDIAN_SHORT_ALIGNED -DOSX -DUSE_MEM_POOL -I/opt/local/include -I../../../../sources/common/include -I/opt/local/include/libxml2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1406839728/linuxplatform.o ../../../../sources/common/src/platform/linux/linuxplatform.cpp
 
+${OBJECTDIR}/_ext/1722917885/platformlicensefreebsd.o: ../../../../sources/common/src/platform/freebsd/platformlicensefreebsd.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1722917885
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -DDEBUG_MEM_POOL -DHAS_LUA -DLITTLE_ENDIAN_SHORT_ALIGNED -DOSX -DUSE_MEM_POOL -I/opt/local/include -I../../../../sources/common/include -I/opt/local/include/libxml2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1722917885/platformlicensefreebsd.o ../../../../sources/common/src/platform/freebsd/platformlicensefreebsd.cpp
+
 ${OBJECTDIR}/_ext/1980509653/androidplatform.o: ../../../../sources/common/src/platform/android/androidplatform.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1980509653
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -DDEBUG_MEM_POOL -DHAS_LUA -DLITTLE_ENDIAN_SHORT_ALIGNED -DOSX -DUSE_MEM_POOL -I/opt/local/include -I../../../../sources/common/include -I/opt/local/include/libxml2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1980509653/androidplatform.o ../../../../sources/common/src/platform/android/androidplatform.cpp
+
+${OBJECTDIR}/_ext/1406839728/platformlicenselinux.o: ../../../../sources/common/src/platform/linux/platformlicenselinux.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1406839728
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -DDEBUG_MEM_POOL -DHAS_LUA -DLITTLE_ENDIAN_SHORT_ALIGNED -DOSX -DUSE_MEM_POOL -I/opt/local/include -I../../../../sources/common/include -I/opt/local/include/libxml2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1406839728/platformlicenselinux.o ../../../../sources/common/src/platform/linux/platformlicenselinux.cpp
+
+${OBJECTDIR}/_ext/1545610023/platformlicensedfreebsd.o: ../../../../sources/common/src/platform/dfreebsd/platformlicensedfreebsd.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1545610023
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -DDEBUG_MEM_POOL -DHAS_LUA -DLITTLE_ENDIAN_SHORT_ALIGNED -DOSX -DUSE_MEM_POOL -I/opt/local/include -I../../../../sources/common/include -I/opt/local/include/libxml2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1545610023/platformlicensedfreebsd.o ../../../../sources/common/src/platform/dfreebsd/platformlicensedfreebsd.cpp
 
 # Subprojects
 .build-subprojects:

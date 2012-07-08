@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -38,8 +38,8 @@ InboundNamedPipeCarrier *InboundNamedPipeCarrier::Create(string path,
 	int32_t fd = open(STR(path), O_RDONLY/* | O_NONBLOCK*/);
 	if (fd < 0) {
 		int err = errno;
-		FATAL("Unable to open named pipe %s:%s (%d)",
-				STR(path), strerror(err), err);
+		FATAL("Unable to open named pipe %s: (%d) %s",
+				STR(path), err, strerror(err));
 		deleteFile(path);
 		return NULL;
 	}

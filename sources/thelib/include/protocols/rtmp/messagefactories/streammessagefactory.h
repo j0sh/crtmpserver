@@ -35,6 +35,7 @@ public:
 
 	//management requests
 	static Variant GetInvokeCreateStream();
+	static Variant GetInvokeReleaseStream(string streamName);
 	static Variant GetInvokeCloseStream(uint32_t channelId, uint32_t streamId);
 	static Variant GetInvokeDeleteStream(uint32_t channelId, uint32_t streamId);
 	static Variant GetInvokePublish(uint32_t channelId, uint32_t streamId,

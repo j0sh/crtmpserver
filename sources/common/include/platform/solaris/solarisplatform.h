@@ -200,6 +200,9 @@ void installConfRereadSignal(SignalFnc pConfRereadSignalFnc);
 time_t timegm(struct tm *tm);
 int vasprintf(char **ret, const char *format, va_list args);
 int asprintf(char **strp, const char *fmt, ...);
+#define getutctime() time(NULL)
+time_t getlocaltime();
+time_t gettimeoffset();
 #endif /* _SOLARISPLATFORM_H */
 #endif /* SOLARIS */
 

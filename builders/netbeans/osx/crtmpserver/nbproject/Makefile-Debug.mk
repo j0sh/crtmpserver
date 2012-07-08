@@ -68,7 +68,7 @@ LDLIBSOPTIONS=-L../thelib/../Debug/GNU-MacOSX -lthelib -L../common/dist/Debug/GN
 ${OBJECTDIR}/_ext/802483657/crtmpserver.o: ../../../../sources/crtmpserver/src/crtmpserver.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/802483657
 	${RM} $@.d
-	$(COMPILE.cc) -g -DNET_KQUEUE -DOSX -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/802483657/crtmpserver.o ../../../../sources/crtmpserver/src/crtmpserver.cpp
+	$(COMPILE.cc) -g -DCOMPILE_STATIC -DHAS_APP_AGX -DHAS_APP_HTTPTESTS -DHAS_APP_VBRICK -DHAS_LICENSE -DNET_KQUEUE -DOSX -I/opt/local/include -I../../../../sources/common/include -I../../../../sources/thelib/include -I../../../../sources/crtmpserver/include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/802483657/crtmpserver.o ../../../../sources/crtmpserver/src/crtmpserver.cpp
 
 # Subprojects
 .build-subprojects:

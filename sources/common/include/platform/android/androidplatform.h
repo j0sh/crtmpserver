@@ -191,6 +191,8 @@ void installSignal(int sig, SignalFnc pSignalFnc);
 void installQuitSignal(SignalFnc pQuitSignalFnc);
 void installConfRereadSignal(SignalFnc pConfRereadSignalFnc);
 time_t timegm(struct tm *tm);
-
+#define getutctime() time(NULL)
+time_t getlocaltime();
+time_t gettimeoffset();
 #endif /* _ANDROIDPLATFORM_H */
 #endif /* ANDROID */

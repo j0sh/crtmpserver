@@ -19,7 +19,7 @@
 
 #include "mediaformats/mp4/atomuuid.h"
 
-AtomUUID::AtomUUID(MP4Document *pDocument, uint32_t type, uint32_t size, uint32_t start)
+AtomUUID::AtomUUID(MP4Document *pDocument, uint32_t type, uint64_t size, uint64_t start)
 : BaseAtom(pDocument, type, size, start) {
 
 }
@@ -61,7 +61,7 @@ bool AtomUUID::Read() {
 		_metadata["payload"] = payload;
 	} else {
 		if ((_size - 16 - 8) > 0) {
-			uint32_t tempSize = _size - 16 - 8;
+			uint32_t tempSize = (uint32_t) _size - 16 - 8;
 			uint8_t *pTemp = new uint8_t[tempSize];
 			if (!ReadArray(pTemp, tempSize)) {
 				FATAL("Unable to read UUID raw content");

@@ -201,6 +201,9 @@ bool moveFile(string src, string dst);
 void installSignal(int sig, SignalFnc pSignalFnc);
 void installQuitSignal(SignalFnc pQuitSignalFnc);
 void installConfRereadSignal(SignalFnc pConfRereadSignalFnc);
+#define getutctime() time(NULL)
+time_t getlocaltime();
+time_t gettimeoffset();
 #endif /* _LINUXPLATFORM_H */
 #endif /* LINUX */
 

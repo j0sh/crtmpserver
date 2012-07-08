@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -20,8 +20,71 @@
 
 #include "utils/logging/logger.h"
 #include "utils/logging/baseloglocation.h"
+#include "version.h"
 
 Logger *Logger::_pLogger = NULL;
+
+string Version::GetBuildNumber() {
+#ifdef CRTMPSERVER_VERSION_BUILD_NUMBER
+	return CRTMPSERVER_VERSION_BUILD_NUMBER;
+#else /* EVOSTREAM_VERSION_BUILD_NUMBER */
+	return "";
+#endif /* EVOSTREAM_VERSION_BUILD_NUMBER */
+}
+
+uint64_t Version::GetBuildDate() {
+#ifdef CRTMPSERVER_VERSION_BUILD_DATE
+	return CRTMPSERVER_VERSION_BUILD_DATE;
+#else /* EVOSTREAM_VERSION_BUILD_DATE */
+	return 0;
+#endif /* EVOSTREAM_VERSION_BUILD_DATE */
+}
+
+string Version::GetBuildDateString() {
+	time_t buildDate = (time_t) GetBuildDate();
+	if (buildDate == 0) {
+		return "";
+	}
+	Timestamp *pTs = gmtime(&buildDate);
+	Variant v(*pTs);
+	return (string) v;
+}
+
+string Version::GetReleaseNumber() {
+#ifdef CRTMPSERVER_VERSION_RELEASE_NUMBER
+	return CRTMPSERVER_VERSION_RELEASE_NUMBER;
+#else /* EVOSTREAM_VERSION_RELEASE_NUMBER */
+	return "";
+#endif /* EVOSTREAM_VERSION_RELEASE_NUMBER */
+}
+
+string Version::GetCodeName() {
+#ifdef CRTMPSERVER_VERSION_CODE_NAME
+	return CRTMPSERVER_VERSION_CODE_NAME;
+#else /* EVOSTREAM_VERSION_CODE_NAME */
+	return "";
+#endif /* EVOSTREAM_VERSION_CODE_NAME */
+}
+
+string Version::GetBanner() {
+	string result = HTTP_HEADERS_SERVER_US;
+	if (GetReleaseNumber() != "")
+		result += " version " + GetReleaseNumber();
+	result += " build " + GetBuildNumber() + " - " + GetBuildDateString();
+	if (GetCodeName() != "")
+		result += " (" + GetCodeName() + ")";
+	return result;
+}
+
+Variant Version::GetAll() {
+	Variant result;
+	result["buildNumber"] = (string) GetBuildNumber();
+	result["buildDate"] = (uint64_t) GetBuildDate();
+	result["releaseNumber"] = (string) GetReleaseNumber();
+	result["codeName"] = (string) GetCodeName();
+	result["banner"] = (string) GetBanner();
+	return result;
+}
 
 #ifdef HAS_SAFE_LOGGER
 pthread_mutex_t *Logger::_pMutex = NULL;

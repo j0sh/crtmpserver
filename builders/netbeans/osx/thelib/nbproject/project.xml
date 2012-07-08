@@ -25,6 +25,10 @@
                 <sourceRootElem>../../../../sources/thelib/src/streaming</sourceRootElem>
                 <sourceRootElem>../../../../sources/thelib/include/mediaformats</sourceRootElem>
                 <sourceRootElem>../../../../sources/thelib/src/mediaformats</sourceRootElem>
+                <sourceRootElem>../../../../sources/thelib/src/recording</sourceRootElem>
+                <sourceRootElem>../../../../sources/thelib/include/recording</sourceRootElem>
+                <sourceRootElem>../../../../sources/thelib/include/vod</sourceRootElem>
+                <sourceRootElem>../../../../sources/thelib/src/vod</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>

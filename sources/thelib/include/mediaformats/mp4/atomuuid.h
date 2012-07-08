@@ -27,7 +27,7 @@ class AtomUUID
 private:
 	Variant _metadata;
 public:
-	AtomUUID(MP4Document *pDocument, uint32_t type, uint32_t size, uint32_t start);
+	AtomUUID(MP4Document *pDocument, uint32_t type, uint64_t size, uint64_t start);
 	virtual ~AtomUUID();
 
 	virtual bool Read();

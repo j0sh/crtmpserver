@@ -263,9 +263,9 @@ BaseAtom * MP4Document::ReadAtom(BaseAtom *pParentAtom) {
 		case A_AFRT:
 			pAtom = new AtomAFRT(this, type, size, currentPos);
 			break;
-		case A_UUID:
-			pAtom = new AtomUUID(this, type, size, currentPos);
-			break;
+			//		case A_UUID:
+			//			pAtom = new AtomUUID(this, type, size, currentPos);
+			//			break;
 		case A_AART:
 		case A_COVR:
 		case A_CPIL:
@@ -819,11 +819,11 @@ Variant MP4Document::GetRTMPMeta() {
 				}
 				break;
 			}
-			case A_UUID:
-			{
-				result["UUID"].PushToArray(((AtomUUID *) _allAtoms[i])->GetMetadata());
-				break;
-			}
+				//			case A_UUID:
+				//			{
+				//				result["UUID"].PushToArray(((AtomUUID *) _allAtoms[i])->GetMetadata());
+				//				break;
+				//			}
 			default:
 			{
 				continue;

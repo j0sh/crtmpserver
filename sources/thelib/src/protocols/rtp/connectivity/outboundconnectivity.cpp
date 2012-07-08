@@ -425,8 +425,8 @@ bool OutboundConnectivity::FeedData(MSGHDR &message, double absoluteTimestamp,
 		message.MSGHDR_MSG_NAME = (sockaddr *) & dataAddress;
 		_amountSent = SENDMSG(dataFd, &message, 0, &_dummyValue);
 		if (_amountSent < 0) {
-			int err = errno;
-			FATAL("Unable to send message: %d; %s", err, strerror(errno));
+			int err = LASTSOCKETERROR;
+			FATAL("Unable to send message: %d", err);
 			return false;
 		}
 		ADD_OUT_BYTES_MANAGED(IOHT_UDP_CARRIER, _amountSent);

@@ -43,6 +43,7 @@
 #define ST_OUT_NET_RTP			MAKE_TAG3('O','N','P')
 #define ST_OUT_NET_RAW			MAKE_TAG3('O','N','W')
 #define	ST_OUT_NET_TS			MAKE_TAG4('O','N','T','S')
+#define ST_OUT_NET_EXT			MAKE_TAG5('O','N','E','X','T')
 #define ST_OUT_NET_PASSTHROUGH	MAKE_TAG3('O','N','S')
 #define ST_OUT_FILE				MAKE_TAG2('O','F')
 #define ST_OUT_FILE_RTMP		MAKE_TAG3('O','F','R')

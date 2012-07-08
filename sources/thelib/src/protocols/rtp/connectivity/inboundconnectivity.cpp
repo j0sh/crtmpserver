@@ -373,7 +373,8 @@ bool InboundConnectivity::SendRR(bool isAudio) {
 			if (sendto(pRTCP->GetIOHandler()->GetOutboundFd(),
 					(char *) (pBuffer + 4), 56, 0,
 					(sockaddr *) pRTCP->GetLastAddress(), sizeof (sockaddr)) != 56) {
-				FATAL("Unable to send data: %d %s", errno, strerror(errno));
+				int err = LASTSOCKETERROR;
+				FATAL("Unable to send data: %d", err);
 				return false;
 			}
 			ADD_OUT_BYTES_MANAGED(IOHT_UDP_CARRIER, 56);

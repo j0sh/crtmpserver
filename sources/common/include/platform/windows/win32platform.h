@@ -262,5 +262,8 @@ DLLEXP int gettimeofday(struct timeval *tv, void* tz);
 DLLEXP void InitNetworking();
 DLLEXP HMODULE UnicodeLoadLibrary(string fileName);
 DLLEXP int inet_aton(const char *pStr, struct in_addr *pRes);
+#define getutctime() time(NULL)
+DLLEXP time_t getlocaltime();
+DLLEXP time_t gettimeoffset();
 #endif /* _WIN32PLATFORM_H */
 #endif /* WIN32 */

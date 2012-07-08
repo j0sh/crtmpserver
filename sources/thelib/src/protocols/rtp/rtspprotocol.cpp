@@ -55,12 +55,15 @@ bool RTSPProtocol::RTSPKeepAliveTimer::TimePeriodElapsed() {
 	RTSPProtocol *pProtocol = (RTSPProtocol *) ProtocolManager::GetProtocol(_protocolId);
 	if (pProtocol == NULL) {
 		FATAL("Unable to get parent protocol");
-		return false;
+		EnqueueForDelete();
+		return true;
 	}
 	if (!pProtocol->SendKeepAliveOptions()) {
 		FATAL("Unable to send keep alive options");
-		return false;
+		pProtocol->EnqueueForDelete();
+		return true;
 	}
+
 	return true;
 }
 

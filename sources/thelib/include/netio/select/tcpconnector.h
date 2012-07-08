@@ -99,9 +99,9 @@ public:
 
 		int32_t fd = (int32_t) socket(PF_INET, SOCK_STREAM, 0);
 		if (fd < 0) {
-			T::SignalProtocolCreated(NULL, customParameters);
 			int err = LASTSOCKETERROR;
-			FATAL("Unable to create fd: %s(%d)", strerror(err), err);
+			T::SignalProtocolCreated(NULL, customParameters);
+			FATAL("Unable to create fd: %d", err);
 			return 0;
 		}
 
@@ -143,8 +143,7 @@ public:
 		if (connect(_inboundFd, (sockaddr *) & address, sizeof (address)) != 0) {
 			int err = LASTSOCKETERROR;
 			if (err != SOCKERROR_CONNECT_IN_PROGRESS) {
-				FATAL("Unable to connect to %s:%hu (%d) (%s)", STR(_ip), _port,
-						err, strerror(err));
+				FATAL("Unable to connect to %s:%hu %d", STR(_ip), _port, err);
 				_closeSocket = true;
 				return false;
 			}

@@ -2,32 +2,17 @@ rm -rf ../../media/*.seek
 rm -rf ../../media/*.meta
 #./renamebadfiles.sh
 
-COMPILE_STATIC=1 cmake -DCMAKE_BUILD_TYPE=Release .
-#cmake .
+COMPILE_STATIC=1 cmake -DCRTMPSERVER_VERSION_RELEASE_NUMBER=trunk -DCRTMPSERVER_VERSION_CODE_NAME=Barbarian -DCMAKE_BUILD_TYPE=Release .
 if [ "$?" -ne "0" ]; then
         echo "cmake failed";
         exit 1;
 fi
 
-#make vmtests
-#make tssplitter
-#make rtmpserver
-#make mpegts2
-#make tests; make vmtests;
-#make trafficdisector
-#make tests
-#make thelib
 make
 if [ "$?" -ne "0" ]; then
 	echo "build failed";
 	exit 1;
 fi
 
-#./tssplitter/tssplitter ./tssplitter/tssplitter.lua 
-#./vmtests/vmtests ./vmtests/vmtests.lua ./vmtests/utils.lua
+killall -9 crtmpserver
 ./crtmpserver/crtmpserver ./crtmpserver/crtmpserver.lua
-#./androidapplestreaming/androidapplestreaming
-#./tests/tests
-#./vmtests/vmtests
-#./trafficdisector/trafficdisector ~/Desktop/fms.pcap
-

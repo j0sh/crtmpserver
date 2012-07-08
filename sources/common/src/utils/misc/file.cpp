@@ -68,8 +68,8 @@ bool File::Initialize(string path, FILE_OPEN_MODE mode) {
 
 	if (_pFile == NULL) {
 		int err = errno;
-		FATAL("Unable to open file %s with mode `%s`. Error was: %s (%d)",
-				STR(_path), STR(openMode), strerror(err), err);
+		FATAL("Unable to open file %s with mode `%s`. Error was: (%d) %s",
+				STR(_path), STR(openMode), err, strerror(err));
 		return false;
 	}
 
@@ -304,7 +304,7 @@ bool File::ReadBuffer(uint8_t *pBuffer, uint64_t count) {
 	}
 	if (fread(pBuffer, (uint32_t) count, 1, _pFile) != 1) {
 		int err = errno;
-		FATAL("Unable to read %"PRIu64" bytes from the file. Cursor: %"PRIu64" (0x%"PRIx64"); %d (%s)",
+		FATAL("Unable to read %"PRIu64" bytes from the file. Cursor: %"PRIu64" (0x%"PRIx64"); (%d) %s",
 				count, Cursor(), Cursor(), err, strerror(err));
 		return false;
 	}

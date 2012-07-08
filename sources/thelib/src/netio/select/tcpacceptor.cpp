@@ -54,7 +54,7 @@ bool TCPAcceptor::Bind() {
 	_inboundFd = _outboundFd = (int) socket(PF_INET, SOCK_STREAM, 0);
 	if (_inboundFd < 0) {
 		int err = LASTSOCKETERROR;
-		FATAL("Unable to create socket: %s(%d)", strerror(err), err);
+		FATAL("Unable to create socket: %d", err);
 		return false;
 	}
 
@@ -64,12 +64,11 @@ bool TCPAcceptor::Bind() {
 	}
 
 	if (bind(_inboundFd, (sockaddr *) & _address, sizeof (sockaddr)) != 0) {
-		int error = LASTSOCKETERROR;
-		FATAL("Unable to bind on address: tcp://%s:%hu; Error was: %s (%d)",
+		int err = LASTSOCKETERROR;
+		FATAL("Unable to bind on address: tcp://%s:%hu; Error was: %d",
 				inet_ntoa(((sockaddr_in *) & _address)->sin_addr),
 				ENTOHS(((sockaddr_in *) & _address)->sin_port),
-				strerror(error),
-				error);
+				err);
 		return false;
 	}
 
@@ -123,13 +122,12 @@ bool TCPAcceptor::Accept() {
 	memset(&address, 0, sizeof (sockaddr));
 	socklen_t len = sizeof (sockaddr);
 	int32_t fd;
-	int32_t error;
 
 	//1. Accept the connection
 	fd = accept(_inboundFd, &address, &len);
-	error = LASTSOCKETERROR;
 	if (fd < 0) {
-		FATAL("Unable to accept client connection: %s (%d)", strerror(error), error);
+		int err = LASTSOCKETERROR;
+		FATAL("Unable to accept client connection: %d", err);
 		return false;
 	}
 	if (!_enabled) {
@@ -192,8 +190,8 @@ bool TCPAcceptor::Drop() {
 	//1. Accept the connection
 	int32_t fd = accept(_inboundFd, &address, &len);
 	if (fd < 0) {
-		uint32_t err = LASTSOCKETERROR;
-		WARN("Accept failed. Error code was: %"PRIu32, err);
+		int err = LASTSOCKETERROR;
+		WARN("Accept failed. Error code was: %d", err);
 		return false;
 	}
 

@@ -212,6 +212,8 @@ bool Initialize() {
 		return false;
 	}
 
+	INFO("%s", STR(Version::GetBanner()));
+
 	INFO("Initialize I/O handlers manager: %s", NETWORK_REACTOR);
 	IOHandlerManager::Initialize();
 
@@ -331,10 +333,7 @@ void PrintHelp() {
 }
 
 void PrintVersion() {
-#ifndef RTMPSERVER_VERSION
-#define RTMPSERVER_VERSION "(version not available)"
-#endif
-	fprintf(stdout, HTTP_HEADERS_SERVER_US" version "RTMPSERVER_VERSION"\n");
+	fprintf(stdout, "%s\n", STR(Version::GetBanner()));
 }
 
 void NormalizeCommandLine(string configFile) {
@@ -386,9 +385,12 @@ void WritePidFile(pid_t pid) {
 	struct stat sb;
 	if (stat(STR(pidFile), &sb) == 0) {
 		WARN("pid file %s already exists\n", STR(pidFile));
-	} else if (errno != ENOENT) {
-		WARN("stat: %s", strerror(errno));
-		return;
+	} else {
+		int err = errno;
+		if (err != ENOENT) {
+			WARN("stat: (%d) %s", err, strerror(err));
+			return;
+		}
 	}
 
 	File f;

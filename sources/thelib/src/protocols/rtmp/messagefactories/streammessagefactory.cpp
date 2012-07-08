@@ -59,6 +59,14 @@ Variant StreamMessageFactory::GetInvokeCreateStream() {
 			RM_INVOKE_FUNCTION_CREATESTREAM, createStream);
 }
 
+Variant StreamMessageFactory::GetInvokeReleaseStream(string streamName) {
+	Variant releaseStream;
+	releaseStream[(uint32_t) 0] = Variant();
+	releaseStream[(uint32_t) 1] = streamName;
+	return GenericMessageFactory::GetInvoke(3, 0, 0, false, 1,
+			RM_INVOKE_FUNCTION_RELEASESTREAM, releaseStream);
+}
+
 Variant StreamMessageFactory::GetInvokeCloseStream(uint32_t channelId, uint32_t streamId) {
 	Variant closeStream;
 	closeStream[(uint32_t) 0] = Variant();

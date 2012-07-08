@@ -650,6 +650,15 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPRequestSetupInbound(RTSPProtocol *pFr
 bool BaseRTSPAppProtocolHandler::HandleRTSPRequestPlay(RTSPProtocol *pFrom,
 		Variant &requestHeaders, string &requestContent) {
 
+	if (pFrom->GetCustomParameters()["isInbound"] != V_BOOL) {
+		FATAL("Invalid state");
+		return false;
+	}
+
+	if ((bool)pFrom->GetCustomParameters()["isInbound"]) {
+		return HandleRTSPRequestRecord(pFrom, requestHeaders, requestContent);
+	}
+
 	//1. Get the outbound connectivity
 	bool forceTcp = (bool)pFrom->GetCustomParameters().GetValue("forceTcp", false);
 	OutboundConnectivity *pOutboundConnectivity = GetOutboundConnectivity(pFrom, true);

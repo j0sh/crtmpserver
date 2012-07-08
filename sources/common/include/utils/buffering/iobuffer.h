@@ -28,6 +28,14 @@
 
 #define GETAVAILABLEBYTESCOUNT(x)     ((x)._published - (x)._consumed)
 #define GETIBPOINTER(x)     ((uint8_t *)((x)._pBuffer + (x)._consumed))
+#define SETIBSENDLIMIT(x,y) \
+{ \
+	if(((x)._sendLimit!=0)&&((x)._sendLimit!=0xffffffff)){ \
+		ASSERT("Setting a IOBufer send limit over an existing limit"); \
+	} \
+	(x)._sendLimit=(y); \
+}
+#define GETIBSENDLIMIT(x) ((x)._sendLimit)
 
 /*!
 	@class IOBuffer
@@ -41,6 +49,7 @@ public:
 	uint32_t _consumed;
 	uint32_t _minChunkSize;
 	socklen_t _dummy;
+	uint32_t _sendLimit;
 public:
 	//constructor/destructor and initialization
 	IOBuffer();

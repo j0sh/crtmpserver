@@ -806,6 +806,8 @@ bool BaseRTMPAppProtocolHandler::ProcessInvoke(BaseRTMPProtocol *pFrom,
 		return ProcessInvokeOnBWDone(pFrom, request);
 	} else if (functionName == RM_INVOKE_FUNCTION_CHECKBANDWIDTH) {
 		return ProcessInvokeCheckBandwidth(pFrom, request);
+	} else if (functionName == RM_INVOKE_FUNCTION_ONFCPUBLISH) {
+		return ProcessInvokeOnFCPublish(pFrom, request);
 	} else {
 		return ProcessInvokeGeneric(pFrom, request);
 	}
@@ -1461,6 +1463,11 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokeOnBWDone(BaseRTMPProtocol *pFrom,
 	return true;
 }
 
+bool BaseRTMPAppProtocolHandler::ProcessInvokeOnFCPublish(BaseRTMPProtocol *pFrom,
+		Variant &request) {
+	return true;
+}
+
 bool BaseRTMPAppProtocolHandler::ProcessInvokeCheckBandwidth(BaseRTMPProtocol *pFrom,
 		Variant &request) {
 	if (!_enableCheckBandwidth) {
@@ -1507,6 +1514,10 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokeResult(BaseRTMPProtocol *pFrom,
 		return ProcessInvokeConnectResult(pFrom, request, response);
 	} else if (functionName == RM_INVOKE_FUNCTION_CREATESTREAM) {
 		return ProcessInvokeCreateStreamResult(pFrom, request, response);
+	} else if (functionName == RM_INVOKE_FUNCTION_RELEASESTREAM) {
+		return ProcessInvokeReleaseStreamResult(pFrom, request, response);
+	} else if (functionName == RM_INVOKE_FUNCTION_FCPUBLISH) {
+		return ProcessInvokeFCPublishStreamResult(pFrom, request, response);
 	} else if (functionName == RM_INVOKE_FUNCTION_FCSUBSCRIBE) {
 		return ProcessInvokeFCSubscribeResult(pFrom, request, response);
 	} else if (functionName == RM_INVOKE_FUNCTION_ONBWCHECK) {
@@ -1591,21 +1602,112 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokeConnectResult(BaseRTMPProtocol *pF
 		return false;
 	}
 
-	//3. Create the createStream request
+	//3. Send the winack size
+	Variant winAckSize = GenericMessageFactory::GetWinAckSize(2500000);
+	if (!SendRTMPMessage(pFrom, winAckSize)) {
+		FATAL("Unable to send message to client");
+		return false;
+	}
+
+	if (NeedsToPushLocalStream(pFrom)) {
+		//4. Create the releaseStream message
+		Variant releaseStreamRequest = StreamMessageFactory::GetInvokeReleaseStream(
+				pFrom->GetCustomParameters()["customParameters"]["localStreamConfig"]["targetStreamName"]);
+
+		//5. Send it
+		if (!SendRTMPMessage(pFrom, releaseStreamRequest, true)) {
+			FATAL("Unable to send request:\n%s", STR(releaseStreamRequest.ToString()));
+			return false;
+		}
+
+		//6. Create the fcPublish request
+		Variant fcPublish = StreamMessageFactory::GetInvokeFCPublish(
+				pFrom->GetCustomParameters()["customParameters"]["localStreamConfig"]["targetStreamName"]);
+
+		//7. Send it
+		if (!SendRTMPMessage(pFrom, fcPublish, true)) {
+			FATAL("Unable to send request:\n%s", STR(fcPublish.ToString()));
+			return false;
+		}
+	}
+	//8. Create the createStream request
 	Variant createStreamRequest = StreamMessageFactory::GetInvokeCreateStream();
 
-	//4. Send it
+	//9. Send it
 	if (!SendRTMPMessage(pFrom, createStreamRequest, true)) {
 		FATAL("Unable to send request:\n%s", STR(createStreamRequest.ToString()));
 		return false;
 	}
 
-	//5. Done
+
+	//10. Done
+	return true;
+}
+
+bool BaseRTMPAppProtocolHandler::ProcessInvokeReleaseStreamResult(BaseRTMPProtocol *pFrom,
+		Variant &request, Variant & response) {
+	//	FINEST("Got releaseStreamResult");
+	//	//1. Do we need to push a stream?
+	//	if (!NeedsToPushLocalStream(pFrom)) {
+	//		WARN("Default implementation of ProcessInvokeReleaseStreamResult: Request:\n%s\nResponse:\n%s",
+	//				STR(request.ToString()),
+	//				STR(response.ToString()));
+	//		return true;
+	//	}
+	//
+	//	//2. Create the fcPublish request
+	//	Variant fcPublish = StreamMessageFactory::GetInvokeFCPublish(
+	//			pFrom->GetCustomParameters()["customParameters"]["localStreamConfig"]["targetStreamName"]);
+	//
+	//	//3. Send it
+	//	if (!SendRTMPMessage(pFrom, fcPublish, true)) {
+	//		FATAL("Unable to send request:\n%s", STR(fcPublish.ToString()));
+	//		return false;
+	//	}
+	//	FINEST("Sent fcPublish");
+	//
+	//	//4. Create the createStream request
+	//	Variant createStreamRequest = StreamMessageFactory::GetInvokeCreateStream();
+	//
+	//	//5. Send it
+	//	if (!SendRTMPMessage(pFrom, createStreamRequest, true)) {
+	//		FATAL("Unable to send request:\n%s", STR(createStreamRequest.ToString()));
+	//		return false;
+	//	}
+	//	FINEST("Sent createStreamRequest");
+	//
+	//	//6. Done
+	return true;
+}
+
+bool BaseRTMPAppProtocolHandler::ProcessInvokeFCPublishStreamResult(BaseRTMPProtocol *pFrom,
+		Variant &request, Variant &response) {
+	//	FINEST("Got FCPublishStreamResult");
+	//	//1. Do we need to push a stream?
+	//	if (!NeedsToPushLocalStream(pFrom)) {
+	//		WARN("Default implementation of ProcessInvokeFCPublishStreamResult: Request:\n%s\nResponse:\n%s",
+	//				STR(request.ToString()),
+	//				STR(response.ToString()));
+	//		return true;
+	//	}
+	//
+	//	//2. Create the createStream request
+	//	Variant createStreamRequest = StreamMessageFactory::GetInvokeCreateStream();
+	//
+	//	//3. Send it
+	//	if (!SendRTMPMessage(pFrom, createStreamRequest, true)) {
+	//		FATAL("Unable to send request:\n%s", STR(createStreamRequest.ToString()));
+	//		return false;
+	//	}
+	//
+	//	//4. Done
+	//	return true;
 	return true;
 }
 
 bool BaseRTMPAppProtocolHandler::ProcessInvokeCreateStreamResult(BaseRTMPProtocol *pFrom,
 		Variant &request, Variant & response) {
+	//	FINEST("Got CreateStreamResult");
 	//1. Do we need to push/pull a stream?
 	if ((!NeedsToPullExternalStream(pFrom))
 			&& (!NeedsToPushLocalStream(pFrom))) {
@@ -1654,7 +1756,6 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokeCreateStreamResult(BaseRTMPProtoco
 
 	//7. Create publish/play request
 	Variant publishPlayRequest;
-	Variant fcPublish;
 	Variant fcSubscribe;
 	if (NeedsToPullExternalStream(pFrom)) {
 		publishPlayRequest = StreamMessageFactory::GetInvokePlay(3, rtmpStreamId,
@@ -1673,7 +1774,6 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokeCreateStreamResult(BaseRTMPProtoco
 		}
 		publishPlayRequest = StreamMessageFactory::GetInvokePublish(3, rtmpStreamId,
 				parameters["targetStreamName"], targetStreamType);
-		fcPublish = StreamMessageFactory::GetInvokeFCPublish(parameters["targetStreamName"]);
 	}
 
 	//8. Send it
@@ -1683,16 +1783,11 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokeCreateStreamResult(BaseRTMPProtoco
 			return false;
 		}
 	}
-	if (!SendRTMPMessage(pFrom, publishPlayRequest, true)) {
+	if (!SendRTMPMessage(pFrom, publishPlayRequest, false)) {
 		FATAL("Unable to send request:\n%s", STR(publishPlayRequest.ToString()));
 		return false;
 	}
-	if (fcPublish != V_NULL) {
-		if (!SendRTMPMessage(pFrom, fcPublish, false)) {
-			FATAL("Unable to send request:\n%s", STR(fcPublish.ToString()));
-			return false;
-		}
-	}
+	//	FINEST("Sent publishPlayRequest");
 
 	//9. Done
 	return true;

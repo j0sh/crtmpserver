@@ -15,6 +15,7 @@
                 <sourceRootElem>../../../../sources/common/include/utils</sourceRootElem>
                 <sourceRootElem>../../../../sources/common/src/platform</sourceRootElem>
                 <sourceRootElem>../../../../sources/common/src/utils</sourceRootElem>
+                <sourceRootElem>../../../../sources/common/include</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>

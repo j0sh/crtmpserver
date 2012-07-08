@@ -73,7 +73,8 @@ bool MmapPointer::Allocate(int fd, uint64_t cursor,
 			_cursor);
 	if (_pData == MAP_FAILED) {
 		_pData = NULL;
-		FATAL("Unable to mmap: %d %s", errno, strerror(errno));
+		int err = errno;
+		FATAL("Unable to mmap: (%d) %s", err, strerror(err));
 		return false;
 	}
 
@@ -84,7 +85,8 @@ bool MmapPointer::Free() {
 	if (_size == 0)
 		return true;
 	if (munmap(_pData, _size) != 0) {
-		FATAL("Unable to munmap: %d %s", errno, strerror(errno));
+		int err = errno;
+		FATAL("Unable to munmap: (%d) %s", err, strerror(err));
 		return false;
 	}
 	_pData = NULL;
@@ -171,13 +173,15 @@ bool MmapFile::Initialize(string path, uint32_t windowSize, bool exclusive) {
 			fi.fd = open(STR(_path), O_RDONLY);
 		}
 		if (fi.fd <= 0) {
-			FATAL("Unable to open file %s: %d: %s", STR(_path), errno, strerror(errno));
+			int err = errno;
+			FATAL("Unable to open file %s: (%d) %s", STR(_path), err, strerror(err));
 			_failed = true;
 			return false;
 		}
 		if (exclusive) {
 			if (lockf(fi.fd, F_TLOCK, 0) != 0) {
-				FATAL("Unable to lock file %s: %d: %s", STR(_path), errno, strerror(errno));
+				int err = errno;
+				FATAL("Unable to lock file %s: (%d) %s", STR(_path), err, strerror(err));
 				_failed = true;
 				close(fi.fd);
 				return false;
@@ -187,7 +191,8 @@ bool MmapFile::Initialize(string path, uint32_t windowSize, bool exclusive) {
 		//2. Get its size
 		struct stat s;
 		if (fstat(fi.fd, &s) != 0) {
-			FATAL("Unable to stat file %s: %d: %s", STR(_path), errno, strerror(errno));
+			int err = errno;
+			FATAL("Unable to stat file %s: (%d) %s", STR(_path), err, strerror(err));
 			_failed = true;
 			close(fi.fd);
 			return false;

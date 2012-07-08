@@ -7,13 +7,21 @@
             <make-project-type>0</make-project-type>
             <c-extensions/>
             <cpp-extensions>cpp</cpp-extensions>
-            <header-extensions/>
+            <header-extensions>h</header-extensions>
             <sourceEncoding>UTF-8</sourceEncoding>
             <make-dep-projects>
                 <make-dep-project>../thelib</make-dep-project>
                 <make-dep-project>../common</make-dep-project>
             </make-dep-projects>
-            <sourceRootList/>
+            <sourceRootList>
+                <sourceRootElem>../../../../sources/crtmpserver/include</sourceRootElem>
+                <sourceRootElem>../../../../sources/crtmpserver/src</sourceRootElem>
+                <sourceRootElem>../../../cmake</sourceRootElem>
+                <sourceRootElem>../../../../appscaffold</sourceRootElem>
+                <sourceRootElem>../../../../docs</sourceRootElem>
+                <sourceRootElem>../../../../constants</sourceRootElem>
+                <sourceRootElem>../../../make</sourceRootElem>
+            </sourceRootList>
             <confList>
                 <confElem>
                     <name>Debug</name>

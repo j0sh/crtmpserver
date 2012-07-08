@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (c) 2010,
  *  Gavriloaie Eugen-Andrei (shiretu@gmail.com)
  *
@@ -73,12 +73,12 @@ public:
 	 */
 	double GetSpawnTimestamp();
 
-	/*! 
+	/*!
 		@brief Gets the far protocol
 	 */
 	BaseProtocol *GetFarProtocol();
 
-	/*! 
+	/*!
 		@brief Sets the far protocol
 		@param pProtocol
 	 */
@@ -217,7 +217,7 @@ public:
 	 */
 	virtual bool EnqueueForOutbound();
 
-	/*! 
+	/*!
 		@brief Enqueue the current protocol stack for timed event
 		@param seconds
 	 */
@@ -234,7 +234,7 @@ public:
 	virtual void ReadyForSend();
 
 	/*!
-	 *	@brief This is invoked from various parts of the project to signal inter-protocol events. 
+	 *	@brief This is invoked from various parts of the project to signal inter-protocol events.
 		@param event
 	 *   @discussion For example, you enqueue a DNS request and you want to be informed when the request is done and the results are available. It will always bubble up towards the near protocol
 	 */

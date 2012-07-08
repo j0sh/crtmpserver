@@ -254,8 +254,8 @@ bool setFdNonBlock(SOCKET fd) {
 	u_long iMode = 1; // 0 for blocking, anything else for nonblocking
 
 	if (ioctlsocket(fd, FIONBIO, &iMode) < 0) {
-		int32_t err = errno;
-		FATAL("Unable to set fd flags: %d,%s", err, strerror(err));
+		int err = LASTSOCKETERROR;
+		FATAL("Unable to set fd flags: %d", err);
 		return false;
 	}
 	return true;
@@ -498,7 +498,7 @@ bool deleteFolder(string path, bool force) {
 					FATAL("Unable to delete subfolder %s", STR(subFolder));
 					return false;
 				}
-				if (!RemoveDirectory(subFolder)) {
+				if (!RemoveDirectory(STR(subFolder))) {
 					FATAL("Unable to delete subfolder %s", STR(subFolder));
 					return false;
 				}
@@ -517,7 +517,7 @@ bool deleteFolder(string path, bool force) {
 
 bool createFolder(string path, bool recursive) {
 	char DirName[256];
-	char* p = STR(path);
+	const char* p = path.c_str();
 	char* q = DirName;
 	while (*p) {
 		if (('\\' == *p) || ('/' == *p)) {
@@ -539,5 +539,26 @@ bool moveFile(string src, string dst) {
 		return false;
 	}
 	return true;
+}
+
+static time_t _gUTCOffset = -1;
+
+void computeGMTTimeOffset() {
+	//time_t now = time(NULL);
+	//struct tm *pTemp = localtime(&now);
+	//_gUTCOffset = pTemp->tm_gmtoff;
+	NYIA;
+}
+
+time_t getlocaltime() {
+	if (_gUTCOffset == -1)
+		computeGMTTimeOffset();
+	return getutctime() + _gUTCOffset;
+}
+
+time_t gettimeoffset() {
+	if (_gUTCOffset == -1)
+		computeGMTTimeOffset();
+	return _gUTCOffset;
 }
 #endif /* WIN32 */
