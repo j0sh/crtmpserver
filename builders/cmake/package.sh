@@ -14,6 +14,6 @@ cp ../../configs/*.lua /tmp/crtmpserver-trunk-$OS_ARCH-$OS_NAME-$OS_VERSION/conf
 cp ../../LICENSE /tmp/crtmpserver-trunk-$OS_ARCH-$OS_NAME-$OS_VERSION/
 cp ../../configs/*.sh /tmp/crtmpserver-trunk-$OS_ARCH-$OS_NAME-$OS_VERSION/
 cp applications/appselector/server.* /tmp/crtmpserver-trunk-$OS_ARCH-$OS_NAME-$OS_VERSION/ssl/
-cd /tmp
-tar czfv crtmpserver-trunk-$OS_ARCH-$OS_NAME-$OS_VERSION.tar.gz crtmpserver-trunk-$OS_ARCH-$OS_NAME-$OS_VERSION
+(cd /tmp && tar czfv crtmpserver-trunk-$OS_ARCH-$OS_NAME-$OS_VERSION.tar.gz crtmpserver-trunk-$OS_ARCH-$OS_NAME-$OS_VERSION)
+mv /tmp/crtmpserver-trunk-$OS_ARCH-$OS_NAME-$OS_VERSION.tar.gz ./
 
