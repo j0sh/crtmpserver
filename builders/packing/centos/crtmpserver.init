@@ -1,0 +1,37 @@
+#! /bin/sh
+# Basic support for IRIX style chkconfig
+###
+# chkconfig: 235 98 55
+# description: Manages the services you are controlling with the chkconfig command
+###
+
+# Source function library.
+. /etc/init.d/functions
+
+NAME=crtmpserver
+DAEMON=/usr/sbin/crtmpserver
+DAEMON_ARGS=" --daemon "
+CONFIG_FILE="/etc/crtmpserver/crtmpserver.lua"
+DAEMON_USER=crtmpserver
+
+DAEMON_UID=$(getent passwd ${DAEMON_USER} | cut -d":" -f3)
+[ -z ${DAEMON_UID} ] && (echo "User ${DAEMON_USER} not exists"; return 1)
+DAEMON_UID_ARG=" --uid=${DAEMON_UID} "
+
+case "$1" in
+  start)
+	echo -n "Starting $NAME"
+	${DAEMON} ${DAEMON_ARGS} ${DAEMON_UID_ARG} --pid=/var/run/${NAME}.pid ${CONFIG_FILE}
+	echo "."
+	;;
+  stop)
+	echo -n "Stopping $NAME"
+	killproc ${DAEMON}
+	echo "."
+	;;
+  *)
+	echo "Usage: /sbin/service $NAME {start|stop}"
+	exit 1
+esac
+
+exit 0
