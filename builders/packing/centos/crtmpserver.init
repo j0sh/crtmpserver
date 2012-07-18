@@ -14,14 +14,16 @@ DAEMON_ARGS=" --daemon "
 CONFIG_FILE="/etc/crtmpserver/crtmpserver.lua"
 DAEMON_USER=crtmpserver
 
-DAEMON_UID=$(getent passwd ${DAEMON_USER} | cut -d":" -f3)
+DAEMON_UID=$(id -u ${DAEMON_USER})
+DAEMON_GID=$(id -g ${DAEMON_USER})
 [ -z ${DAEMON_UID} ] && (echo "User ${DAEMON_USER} not exists"; return 1)
-DAEMON_UID_ARG=" --uid=${DAEMON_UID} "
+[ -z ${DAEMON_GID} ] && (echo "User ${DAEMON_USER} not exists"; return 1)
+DAEMON_ID_ARG=" --uid=${DAEMON_UID} --gid=${DAEMON_GID}"
 
 case "$1" in
   start)
 	echo -n "Starting $NAME"
-	${DAEMON} ${DAEMON_ARGS} ${DAEMON_UID_ARG} --pid=/var/run/${NAME}.pid ${CONFIG_FILE}
+	${DAEMON} ${DAEMON_ARGS} ${DAEMON_ID_ARG} --pid=/var/run/${NAME}.pid ${CONFIG_FILE}
 	echo "."
 	;;
   stop)
