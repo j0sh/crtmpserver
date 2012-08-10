@@ -1248,7 +1248,7 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokeReleaseStream(BaseRTMPProtocol *pF
 	}
 
 	if (streamId > 0) {
-		//5. Send the response
+		//5. Send the _result response
 		Variant response = StreamMessageFactory::GetInvokeReleaseStreamResult(3,
 				streamId, M_INVOKE_ID(request), streamId);
 		if (!pFrom->SendMessage(response)) {
@@ -1256,6 +1256,7 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokeReleaseStream(BaseRTMPProtocol *pF
 			return false;
 		}
 	} else {
+		//6. Send the _error response
 		Variant response =
 				StreamMessageFactory::GetInvokeReleaseStreamErrorNotFound(request);
 		if (!pFrom->SendMessage(response)) {
@@ -1264,7 +1265,7 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokeReleaseStream(BaseRTMPProtocol *pF
 		}
 	}
 
-	//3. Done
+	//7. Done
 	return true;
 }
 
@@ -1488,8 +1489,12 @@ bool BaseRTMPAppProtocolHandler::ProcessInvokeGeneric(BaseRTMPProtocol *pFrom,
 		Variant & request) {
 	WARN("Default implementation of ProcessInvokeGeneric: Request: %s",
 			STR(M_INVOKE_FUNCTION(request)));
-	Variant response = GenericMessageFactory::GetInvokeCallFailedError(request);
-	return SendRTMPMessage(pFrom, response);
+	if ((uint32_t) M_INVOKE_ID(request) != 0) {
+		Variant response = GenericMessageFactory::GetInvokeCallFailedError(request);
+		return SendRTMPMessage(pFrom, response);
+	} else {
+		return true;
+	}
 }
 
 bool BaseRTMPAppProtocolHandler::ProcessInvokeResult(BaseRTMPProtocol *pFrom,
