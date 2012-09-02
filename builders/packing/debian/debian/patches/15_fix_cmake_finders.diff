@@ -32,21 +32,39 @@ Index: cmake_find_modules/Find_openssl.cmake
 ===================================================================
 --- a/cmake_find_modules/Find_openssl.cmake
 +++ b/cmake_find_modules/Find_openssl.cmake
-@@ -26,7 +26,7 @@
- 		/sw/lib
+@@ -8,7 +8,7 @@
+ 		/usr/include
+ 		/usr/local/include
+ 		/usr/local/ssl/include
+-		NO_DEFAULT_PATH)
++		)
+ 
+ IF($ENV{COMPILE_STATIC} MATCHES "1")
+ 	SET(CMAKE_FIND_LIBRARY_SUFFIXES_OLD ${CMAKE_FIND_LIBRARY_SUFFIXES})
+@@ -36,7 +36,7 @@
+ 		/lib/i386-linux-gnu
+ 		/usr/lib/i386-linux-gnu
  		/usr/local/ssl/lib
- 		/lib
 -		NO_DEFAULT_PATH)
 +		)
  
  FIND_LIBRARY(CRYPTO_LIBRARY_PATH
  	NAMES
-@@ -40,7 +40,7 @@
- 		/sw/lib
+@@ -58,7 +58,7 @@
+ 		/lib/i386-linux-gnu
+ 		/usr/lib/i386-linux-gnu
  		/usr/local/ssl/lib
- 		/lib
 -		NO_DEFAULT_PATH)
 +		)
  
  IF($ENV{COMPILE_STATIC} MATCHES "1")
  	FIND_LIBRARY(Z_LIBRARY_PATH
+@@ -80,7 +80,7 @@
+ 			/lib/i386-linux-gnu
+ 			/usr/lib/i386-linux-gnu
+ 			/usr/local/ssl/lib
+-			NO_DEFAULT_PATH)
++			)
+ 	SET(CMAKE_FIND_LIBRARY_SUFFIXES ${CMAKE_FIND_LIBRARY_SUFFIXES_OLD})
+ ELSEIF($ENV{COMPILE_STATIC} MATCHES "1")
+ 	SET(Z_LIBRARY_PATH "")
