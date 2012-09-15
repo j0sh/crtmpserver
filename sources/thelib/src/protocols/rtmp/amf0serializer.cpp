@@ -255,8 +255,8 @@ bool AMF0Serializer::WriteObject(IOBuffer &buffer, Variant &variant,
 	FOR_MAP(temp, string, Variant, i) {
 		string key = MAP_KEY(i);
 		if ((key.length() == 10)
-				&& (key[0] = '0')
-				&& (key[1] = 'x')) {
+				&& (key[0] == '0')
+				&& (key[1] == 'x')) {
 			key = format("%"PRIu32, (uint32_t) strtol(key.c_str(), NULL, 16));
 		}
 		if (!WriteShortString(buffer, key, false)) {
@@ -386,8 +386,8 @@ bool AMF0Serializer::WriteMixedArray(IOBuffer &buffer, Variant &variant,
 	FOR_MAP(temp, string, Variant, i) {
 		string key = MAP_KEY(i);
 		if ((key.length() == 10)
-				&& (key[0] = '0')
-				&& (key[1] = 'x')) {
+				&& (key[0] == '0')
+				&& (key[1] == 'x')) {
 			key = format("%"PRIu32, (uint32_t) strtol(key.c_str(), NULL, 16));
 		}
 		if (!WriteShortString(buffer, key, false)) {

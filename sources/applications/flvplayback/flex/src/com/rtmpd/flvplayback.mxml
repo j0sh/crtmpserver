@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" creationComplete="ConnectToServer();" xmlns:local="*" backgroundColor="black" color="white" borderColor="#BABABA" xmlns:rtmpd="com.rtmpd.*">
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
+				xmlns:local="*"
+				xmlns:rtmpd="com.rtmpd.*"
+				backgroundColor="black" borderColor="#BABABA" color="white"
+				creationComplete="ConnectToServer();" layout="absolute">
 	<mx:Script>
 		<![CDATA[
 			import mx.controls.Alert;
@@ -82,12 +86,13 @@
 					Alert.show("Please select a flv first");
 					return;
 				}
-				InitializeVideo(streamName.text);
+				var bt:Number=Number(txtBufferTime.text);
+				InitializeVideo(streamName.text, bt);
 			}
 			
-			private function InitializeVideo(streamName:String):void
+			private function InitializeVideo(streamName:String,bufferTime:Number):void
 			{
-				video.PlayStream(_connection,streamName);				
+				video.PlayStream(_connection,streamName,bufferTime);				
 			}
 			
 			[Bindable(event="VideoDisplayTitleChanged")]
@@ -150,38 +155,47 @@
 				}
 				if((dgFlvs.selectedIndex+1)<_availableFlvs.length){
 					dgFlvs.selectedIndex++;
-					InitializeVideo(_availableFlvs[dgFlvs.selectedIndex].flvName);
+					var bt:Number=Number(txtBufferTime.text);
+					InitializeVideo(_availableFlvs[dgFlvs.selectedIndex].flvName,bt);
 					video.SeekTo(5);
 				}
 			}
 		]]>
 	</mx:Script>
 	<mx:HBox width="100%" height="100%">
-		<mx:Panel width="100%" height="100%" title="{VideoDisplayTitle}" id="videoPanel" backgroundColor="black">
-			<rtmpd:MyVideo id="video" width="100%" height="100%" />
+		<mx:Panel id="videoPanel" width="100%" height="100%" backgroundColor="black"
+				  title="{VideoDisplayTitle}">
+			<rtmpd:MyVideo id="video" width="100%" height="100%"/>
 		</mx:Panel>
-		<mx:VBox width="200" height="100%" id="controls">
-			<mx:Button id="fullScreen" click="FullScreen()" label="Full Screen"/>
-			<mx:Button id="lastInMetaData" click="LastOnMetaData()" label="Last onMetaData"/>
-			<mx:Button id="insertMetadata" click="InsertMetadata()" label="Insert metadata from player"/>
-			<mx:Button id="seek" click="SeekTo()" label="seekTo 00:30"/>
-			<mx:Button id="pause" click="Pause()" label="Pause"/>
-			<mx:Button id="resume" click="Resume()" label="Resume"/>
-			<mx:Button id="next" click="Next()" label="Next"/>
-			<mx:Label id="cplabel" />
+		<mx:VBox id="controls" width="200" height="100%">
+			<mx:Button id="fullScreen" label="Full Screen" click="FullScreen()"/>
+			<mx:Button id="lastInMetaData" label="Last onMetaData" click="LastOnMetaData()"/>
+			<mx:Button id="insertMetadata" label="Insert metadata from player"
+					   click="InsertMetadata()"/>
+			<mx:Button id="seek" label="seekTo 00:30" click="SeekTo()"/>
+			<mx:Button id="pause" label="Pause" click="Pause()"/>
+			<mx:Button id="resume" label="Resume" click="Resume()"/>
+			<mx:Button id="next" label="Next" click="Next()"/>
+			<mx:Label id="cplabel"/>
 			<mx:Panel width="100%" height="100%" title="Available FLVs">
-				<mx:DataGrid id="dgFlvs" width="100%" height="100%" headerHeight="0" dataProvider="{AvailableFlvs}" alternatingItemColors="[#030303, #404040]">
+				<mx:DataGrid id="dgFlvs" width="100%" height="100%"
+							 alternatingItemColors="[#030303, #404040]"
+							 dataProvider="{AvailableFlvs}" headerHeight="0">
 					<mx:columns>
-						<mx:DataGridColumn headerText="" dataField="flvName" />
+						<mx:DataGridColumn dataField="flvName" headerText=""/>
 					</mx:columns>
 				</mx:DataGrid>
 			</mx:Panel>
-			<mx:TextInput id="streamName" backgroundColor="#404040" width="100%" text="{_availableFlvs[dgFlvs.selectedIndex].flvName}"/>
+			<mx:TextInput id="txtBufferTime" width="100%" backgroundColor="#404040" text="0"/>
+			<mx:TextInput id="streamName" width="100%" backgroundColor="#404040"
+						  text="{_availableFlvs[dgFlvs.selectedIndex].flvName}"/>
 			<mx:Label text="Connecting string"/>
-			<mx:TextInput id="connectingString" text="rtmp://127.0.0.1/flvplayback" backgroundColor="#404040" width="100%"/>
+			<mx:TextInput id="connectingString" width="100%" backgroundColor="#404040"
+						  text="rtmp://127.0.0.1/flvplayback"/>
 			<mx:HBox width="100%">
-				<mx:Button width="100%" label="{IsConnected?'Disconnect':'Connect'}" click="ConnectDisconnect();"/>
-				<mx:Button width="100%" label="Play" enabled="{IsConnected}" click="PlayStream();"/>	
+				<mx:Button width="100%" label="{IsConnected?'Disconnect':'Connect'}"
+						   click="ConnectDisconnect();"/>
+				<mx:Button width="100%" label="Play" click="PlayStream();" enabled="{IsConnected}"/>	
 			</mx:HBox>
 		</mx:VBox>
 	</mx:HBox>

@@ -75,11 +75,11 @@
 				return new Rectangle(position.x,position.y,_video.width,_video.height);
 			}
 			
-			public function PlayStream(nc:NetConnection, streamName:String):void{
+			public function PlayStream(nc:NetConnection, streamName:String, bufferTime:Number):void{
 				Reset();
 				_stream=new NetStream(nc);
 				_stream.client=this;
-				_stream.bufferTime=0;
+				_stream.bufferTime=bufferTime;
 				_stream.play(streamName);
 				_streamName=streamName;
 				
