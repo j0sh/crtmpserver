@@ -30,7 +30,7 @@ namespace app_applestreamingclient {
 	private:
 		IOBuffer _tempBuffer;
 		IOBuffer _inputBuffer;
-		EVP_CIPHER_CTX _decContex;
+		EVP_CIPHER_CTX *_decContex;
 		bool _lastChunk;
 		uint8_t *_pIV;
 		uint8_t *_pKey;

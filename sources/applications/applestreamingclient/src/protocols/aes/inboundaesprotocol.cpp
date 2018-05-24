@@ -31,13 +31,12 @@ InboundAESProtocol::InboundAESProtocol()
 	memset(_pIV, 0, 16);
 	_pKey = new uint8_t[16];
 	memset(_pKey, 0, 16);
-	memset(&_decContex, 0, sizeof (EVP_CIPHER_CTX));
+	_decContex = EVP_CIPHER_CTX_new();
 	_totalDecrypted = 0;
 }
 
 InboundAESProtocol::~InboundAESProtocol() {
-	EVP_CIPHER_CTX_cleanup(&_decContex);
-	memset(&_decContex, 0, sizeof (EVP_CIPHER_CTX));
+	EVP_CIPHER_CTX_free(_decContex);
 	delete[] _pIV;
 	delete[] _pKey;
 }
@@ -60,11 +59,9 @@ bool InboundAESProtocol::Initialize(Variant &parameters) {
 	_inputBuffer.IgnoreAll();
 	_tempBuffer.IgnoreAll();
 
-	EVP_CIPHER_CTX_cleanup(&_decContex);
-	memset(&_decContex, 0, sizeof (EVP_CIPHER_CTX));
-	EVP_CIPHER_CTX_init(&_decContex);
-	EVP_DecryptInit_ex(&_decContex, EVP_aes_128_cbc(), NULL, _pKey, _pIV);
-	EVP_CIPHER_CTX_set_padding(&_decContex, 0);
+	EVP_CIPHER_CTX_reset(_decContex);
+	EVP_DecryptInit_ex(_decContex, EVP_aes_128_cbc(), NULL, _pKey, _pIV);
+	EVP_CIPHER_CTX_set_padding(_decContex, 0);
 
 	return true;
 }
@@ -105,14 +102,14 @@ bool InboundAESProtocol::SignalInputData(IOBuffer &buffer) {
 	int decryptedFinalSize = 0;
 	uint32_t padding = 0;
 
-	EVP_DecryptUpdate(&_decContex, pTempData, &decryptedSize, GETIBPOINTER(buffer), safeSize);
+	EVP_DecryptUpdate(_decContex, pTempData, &decryptedSize, GETIBPOINTER(buffer), safeSize);
 	_totalDecrypted += decryptedSize;
 
 	//6. Decrypt leftovers
 	bool transferCompleted = false;
 	if (((HTTPBufferProtocol *) GetFarProtocol())->TransferCompleted()) {
 		transferCompleted = true;
-		EVP_DecryptFinal_ex(&_decContex,
+		EVP_DecryptFinal_ex(_decContex,
 				pTempData + decryptedSize,
 				&decryptedFinalSize);
 		_totalDecrypted += decryptedFinalSize;
