@@ -211,6 +211,7 @@ string BaseSSLProtocol::GetSSLErrors() {
 
 string BaseSSLProtocol::DumpBIO(BIO *pBIO) {
 	string formatString;
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
 	formatString = "method: %p\n";
 	formatString += "callback: %p\n";
 	formatString += "cb_arg: %p\n";
@@ -240,6 +241,39 @@ string BaseSSLProtocol::DumpBIO(BIO *pBIO) {
 			pBIO->references,
 			(int64_t) pBIO->num_read,
 			(int64_t) pBIO->num_write);
+#else
+// Some of these are problematic in openssl >= 1.1, since
+// the BIO struct is opaque.
+	formatString = "method: %s\n";
+	formatString += "callback: %p\n";
+	formatString += "cb_arg: %p\n";
+	formatString += "init: %d\n";
+	formatString += "shutdown: %d\n";
+	formatString += "flags: %d\n";
+	formatString += "retry_reason: %d\n";
+	formatString += "num: %d\n";
+	formatString += "ptr: %p\n";
+	formatString += "next_bio: %p\n";
+	formatString += "prev_bio: %s\n";
+	formatString += "references: %s\n";
+	formatString += "num_read: %"PRId64"\n";
+	formatString += "num_write: %"PRId64;
+	return format(formatString,
+			BIO_method_name(pBIO),
+			BIO_get_callback(pBIO),
+			BIO_get_callback_arg(pBIO),
+			BIO_get_init(pBIO),
+			BIO_get_shutdown(pBIO),
+			BIO_get_flags(pBIO),
+			BIO_get_retry_reason(pBIO),
+			BIO_get_fd(pBIO, NULL),
+			BIO_get_data(pBIO),
+			BIO_next(pBIO),
+			"unknown", //prev_bio
+			"unknown", //references
+			BIO_number_read(pBIO),
+			BIO_number_written(pBIO));
+#endif
 }
 
 void BaseSSLProtocol::InitRandGenerator() {
